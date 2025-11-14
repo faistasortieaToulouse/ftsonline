@@ -49,7 +49,7 @@ const deduplicateEvents = (events) => {
   return Array.from(map.values());
 };
 
-// --- Fetch RSS La French Tech Toulouse via proxy ---
+// --- Fetch RSS La French Tech Toulouse ---
 const fetchFrenchTechRSS = async () => {
   try {
     const parser = new Parser();
@@ -74,7 +74,7 @@ const fetchFrenchTechRSS = async () => {
       };
     });
   } catch (err) {
-    console.error('⚠️ Impossible de récupérer les événements La French Tech Toulouse.', err.message);
+    console.error('⚠️ La French Tech RSS fetch failed:', err.message);
     return [];
   }
 };
@@ -102,20 +102,23 @@ const fetchOpenData = async () => {
       };
     });
   } catch (err) {
-    console.error('⚠️ Impossible de récupérer les événements Haute-Garonne OpenData.', err.message);
+    console.error('⚠️ OpenData fetch failed:', err.message);
     return [];
   }
 };
 
 // --- Fonction principale ---
 const main = async () => {
+  console.log('🔄 Fetching events...');
   const [frenchTech, openData] = await Promise.all([fetchFrenchTechRSS(), fetchOpenData()]);
+
   const allEvents = [...initialEvents, ...frenchTech, ...openData];
   const uniqueEvents = deduplicateEvents(allEvents);
   const upcomingEvents = uniqueEvents.filter((e) => new Date(e.date) >= new Date());
-  const filePath = path.join(__dirname, '../src/data/events.json');
+
+  const filePath = path.join(__dirname, '../public/data/events.json');
   fs.writeFileSync(filePath, JSON.stringify(upcomingEvents, null, 2), 'utf-8');
-  console.log(`✅ events.json généré avec ${upcomingEvents.length} événements`);
+  console.log(`✅ events.json generated with ${upcomingEvents.length} events`);
 };
 
 main();
