@@ -6,6 +6,10 @@ const Parser = require("rss-parser");
 
 console.log("🚀 Script fetch-events.js démarré");
 
+// --- Dossier output pour Vercel ---
+const OUTPUT_DIR = path.join(process.cwd(), ".vercel/output/static/data");
+const OUTPUT_FILE = path.join(OUTPUT_DIR, "events.json");
+
 // Placeholders
 const PlaceHolderImages = [
   { imageUrl: "/placeholder1.jpg", imageHint: "Image 1" },
@@ -187,15 +191,13 @@ const main = async () => {
 
   console.log(`⏳ Événements à venir: ${upcoming.length}`);
 
-  const filePath = path.join(__dirname, "../public/data/events.json");
+  // --- ✔️ Correction Vercel : créer dossier output ---
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-  console.log("📁 Chemin fichier :", filePath);
+  // --- ✔️ Écrire dans Vercel output ---
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(upcoming, null, 2), "utf8");
 
-  console.log("📄 Exemple événement :", upcoming[0] || "Aucun");
-
-  fs.writeFileSync(filePath, JSON.stringify(upcoming, null, 2), "utf8");
-
-  console.log(`✅ events.json écrit avec ${upcoming.length} événements`);
+  console.log(`✅ events.json écrit dans ${OUTPUT_FILE}`);
 };
 
 main();
