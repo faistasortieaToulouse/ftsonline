@@ -2,7 +2,6 @@
 const fs = require("fs");
 const path = require("path");
 const Parser = require("rss-parser");
-const cheerio = require("cheerio");
 
 console.log("🚀 Script fetch-events.js démarré");
 
@@ -75,11 +74,11 @@ const fetchFrenchTechRSS = async () => {
     console.log(`   ✔️ French Tech reçu : ${feed.items.length} items`);
 
     return feed.items.map((item, i) => {
-      // Essayer d'extraire une image du contenu HTML
+      // Essayer d'extraire une image du contenu HTML avec regex
       let imageUrl = item.enclosure?.url || item["media:content"]?.url;
       if (!imageUrl && item.content) {
-        const $ = cheerio.load(item.content);
-        imageUrl = $("img").attr("src");
+        const match = item.content.match(/<img[^>]+src="([^">]+)"/i);
+        if (match) imageUrl = match[1];
       }
       return {
         id: item.guid || `frenchtech-${i}`,
