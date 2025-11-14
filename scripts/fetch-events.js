@@ -49,7 +49,7 @@ const deduplicateEvents = (events) => {
   return Array.from(map.values());
 };
 
-// --- Fetch RSS La French Tech Toulouse ---
+// --- Fetch RSS La French Tech Toulouse via proxy ---
 const fetchFrenchTechRSS = async () => {
   try {
     const parser = new Parser();
@@ -74,7 +74,7 @@ const fetchFrenchTechRSS = async () => {
       };
     });
   } catch (err) {
-    console.error('⚠️ La French Tech RSS fetch failed:', err.message);
+    console.error('⚠️ Impossible de récupérer les événements La French Tech Toulouse.', err.message);
     return [];
   }
 };
@@ -102,23 +102,55 @@ const fetchOpenData = async () => {
       };
     });
   } catch (err) {
-    console.error('⚠️ OpenData fetch failed:', err.message);
+    console.error('⚠️ Impossible de récupérer les événements Haute-Garonne OpenData.', err.message);
+    return [];
+  }
+};
+
+// --- Fetch OpenData Toulouse Métropole ---
+const fetchToulouseOpenData = async () => {
+  try {
+    const url = 'https://data.toulouse-metropole.fr/api/records/1.0/search/?dataset=agenda-des-manifestations-culturelles-so-toulouse&rows=50';
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Toulouse OpenData fetch failed with status ${res.status}`);
+    const json = await res.json();
+    if (!json.records) return [];
+
+    return json.records.map((r, i) => {
+      const f = r.fields || {};
+      const randomImage = PlaceHolderImages[i % PlaceHolderImages.length];
+      return {
+        id: f.uid || `toulouse-${i}`,
+        name: f.title || f.nom || 'Événement sans titre',
+        date: f.start_date || f.date_debut || new Date().toISOString(),
+        location: f.venue_name || f.lieu || 'Lieu à définir',
+        description: f.description || 'Pas de description.',
+        image: randomImage.imageUrl,
+        imageHint: randomImage.imageHint,
+      };
+    });
+  } catch (err) {
+    console.error('⚠️ Impossible de récupérer les événements Toulouse Métropole.', err.message);
     return [];
   }
 };
 
 // --- Fonction principale ---
 const main = async () => {
-  console.log('🔄 Fetching events...');
-  const [frenchTech, openData] = await Promise.all([fetchFrenchTechRSS(), fetchOpenData()]);
+  console.log('🔄 Récupération des événements...');
+  const [frenchTech, openData, toulouseData] = await Promise.all([
+    fetchFrenchTechRSS(),
+    fetchOpenData(),
+    fetchToulouseOpenData(),
+  ]);
 
-  const allEvents = [...initialEvents, ...frenchTech, ...openData];
+  const allEvents = [...initialEvents, ...frenchTech, ...openData, ...toulouseData];
   const uniqueEvents = deduplicateEvents(allEvents);
   const upcomingEvents = uniqueEvents.filter((e) => new Date(e.date) >= new Date());
 
   const filePath = path.join(__dirname, '../public/data/events.json');
   fs.writeFileSync(filePath, JSON.stringify(upcomingEvents, null, 2), 'utf-8');
-  console.log(`✅ events.json generated with ${upcomingEvents.length} events`);
+  console.log(`✅ events.json généré avec ${upcomingEvents.length} événements`);
 };
 
 main();
