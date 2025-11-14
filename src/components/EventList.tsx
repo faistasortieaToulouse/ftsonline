@@ -15,8 +15,9 @@ export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [frenchTechError, setFrenchTechError] = useState(false);
+  const [openDataError, setOpenDataError] = useState(false);
 
-  // --- Fetch côté client via API route ---
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -26,18 +27,26 @@ export function EventList() {
       .then(fetchedEvents => {
         if (isMounted) {
           setEvents(fetchedEvents);
+
+          // Vérification simple pour détecter si une source n’a rien renvoyé
+          setFrenchTechError(!fetchedEvents.some(e => e.id.startsWith('french-tech')));
+          setOpenDataError(!fetchedEvents.some(e => e.id.startsWith('opendata')));
+
           setLoading(false);
         }
       })
       .catch(err => {
         console.error('Failed to fetch events from API route', err);
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setFrenchTechError(true);
+          setOpenDataError(true);
+          setLoading(false);
+        }
       });
 
     return () => { isMounted = false; };
   }, []);
 
-  // --- Filtrage et recherche ---
   const filteredEvents = useMemo(() => {
     const upcoming = events
       .filter(event => new Date(event.date) >= new Date())
@@ -110,34 +119,46 @@ export function EventList() {
             Nous rassemblons les dernières sorties pour vous.
           </p>
         </div>
-      ) : filteredEvents.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          <AnimatePresence>
-            {filteredEvents.map((event, index) => (
-              <motion.div
-                key={event.id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <EventCard event={event} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
       ) : (
-        <div className="flex flex-col items-center justify-center text-center py-20 px-4 rounded-lg border-2 border-dashed bg-card">
-          <h2 className="font-headline text-2xl font-semibold text-foreground mb-2">
-            Aucun événement trouvé
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            {searchTerm
-              ? 'Essayez de modifier votre recherche.'
-              : 'Revenez plus tard pour de nouveaux événements !'}
-          </p>
-        </div>
+        <>
+          {/* Message d'erreur spécifique pour les sources */}
+          {(frenchTechError || openDataError) && (
+            <div className="mb-6 p-4 rounded bg-yellow-100 text-yellow-900 border border-yellow-200">
+              {frenchTechError && <p>⚠️ Impossible de récupérer les événements de La French Tech Toulouse.</p>}
+              {openDataError && <p>⚠️ Impossible de récupérer les événements de Haute-Garonne OpenData.</p>}
+            </div>
+          )}
+
+          {filteredEvents.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              <AnimatePresence>
+                {filteredEvents.map((event, index) => (
+                  <motion.div
+                    key={event.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                  >
+                    <EventCard event={event} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center py-20 px-4 rounded-lg border-2 border-dashed bg-card">
+              <h2 className="font-headline text-2xl font-semibold text-foreground mb-2">
+                Aucun événement trouvé
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                {searchTerm
+                  ? 'Essayez de modifier votre recherche.'
+                  : 'Revenez plus tard pour de nouveaux événements !'}
+              </p>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
