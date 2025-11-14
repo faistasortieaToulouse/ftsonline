@@ -1,7 +1,6 @@
 // scripts/fetch-events.js
 const fs = require("fs");
 const path = require("path");
-const fetch = require("node-fetch");
 const Parser = require("rss-parser");
 
 console.log("🚀 Script fetch-events.js démarré");
