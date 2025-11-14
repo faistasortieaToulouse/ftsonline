@@ -18,6 +18,7 @@ const PlaceHolderImages = [
   { imageUrl: "/placeholder4.jpg", imageHint: "Image 4" },
 ];
 
+// Helper date
 const addDays = (days) => {
   const date = new Date();
   date.setDate(date.getDate() + days);
@@ -191,10 +192,10 @@ const main = async () => {
 
   console.log(`⏳ Événements à venir: ${upcoming.length}`);
 
-  // --- ✔️ Correction Vercel : créer dossier output ---
+  // --- ✔️ Création dossier ---
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-  // --- ✔️ Écrire dans Vercel output ---
+  // --- ✔️ Écriture fichier ---
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(upcoming, null, 2), "utf8");
 
   console.log(`✅ events.json écrit dans ${OUTPUT_FILE}`);
