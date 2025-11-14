@@ -122,7 +122,7 @@ const fetchOpenData = async () => {
   }
 };
 
-// --- Fetch Toulouse Métropole ---
+// --- Fetch Toulouse Métropole amélioré ---
 const fetchToulouseMetropole = async () => {
   console.log("➡️ Fetch Toulouse Métropole…");
   try {
@@ -133,19 +133,47 @@ const fetchToulouseMetropole = async () => {
     if (!res.ok) throw new Error(`TM error ${res.status}`);
 
     const json = await res.json();
-    const records = json.records || [];
-    console.log(`   ✔️ Toulouse Métropole reçu : ${records.length} items`);
+    console.log(
+      `   ✔️ Toulouse Métropole reçu : ${(json.records || []).length} items`
+    );
 
-    return records.map((r, i) => {
+    if (!json.records) return [];
+
+    return json.records.map((r, i) => {
       const f = r.fields || {};
+
+      // Tentatives multiples pour récupérer titre / description / image
+      const title =
+        f.titre ||
+        f.nom ||
+        f.libelle ||
+        f.intitule ||
+        "Événement sans titre";
+
+      const description =
+        f.description ||
+        f.infos_pratiques ||
+        f.resume ||
+        f.commentaires ||
+        "Pas de description.";
+
+      const image =
+        f.image ||
+        f.photo_url ||
+        (f.media && f.media[0]?.url) ||
+        PlaceHolderImages[i % 4].imageUrl;
+
+      const imageHint =
+        f.image ? "Image du flux" : PlaceHolderImages[i % 4].imageHint;
+
       return {
         id: f.id_manif || `tm-${i}`,
-        name: f.titre || f.nom || "Événement sans titre",
+        name: title,
         date: f.date_debut || f.date || new Date().toISOString(),
         location: f.commune || f.lieu || "Lieu à définir",
-        description: f.description || f.infos_pratiques || "Pas de description.",
-        image: f.image || f.photo_url || PlaceHolderImages[(i + 1) % 4].imageUrl,
-        imageHint: PlaceHolderImages[(i + 1) % 4].imageHint,
+        description,
+        image,
+        imageHint,
       };
     });
   } catch (e) {
@@ -153,6 +181,7 @@ const fetchToulouseMetropole = async () => {
     return [];
   }
 };
+
 
 // --- Fonction principale ---
 const main = async () => {
