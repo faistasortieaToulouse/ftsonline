@@ -1,21 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import type { Event } from '@/lib/types';
 import Parser from 'rss-parser';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 import { Header } from '@/components/Header';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import dynamic from 'next/dynamic';
 
-// Fix problème des icônes Leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+// ⛔ IMPORTANT : on ne charge PAS Leaflet ici
+
+// On charge la carte uniquement côté client
+const EventMap = dynamic(() => import('@/components/EventMap'), {
+  ssr: false,
 });
 
 export default function MapPage() {
@@ -35,10 +32,10 @@ export default function MapPage() {
           id: item.guid || item.link || `ft-${i}`,
           name: item.title || 'Événement sans titre',
           date: item.isoDate || new Date().toISOString(),
-          location: 'Lieu à définir', // le RSS n’indique pas toujours la localisation exacte
+          location: 'Lieu à définir',
           description: item.contentSnippet || item.content || 'Pas de description.',
-          image: '', // optionnel
-          imageHint: '', // optionnel
+          image: '',
+          imageHint: '',
         }));
 
         setEvents(mappedEvents);
@@ -69,7 +66,7 @@ export default function MapPage() {
             Carte des événements
           </h1>
 
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full h-[70vh]">
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full h-[70vh] overflow-hidden">
             {loading ? (
               <p className="text-center text-muted-foreground mt-8">
                 Chargement des événements...
@@ -79,28 +76,7 @@ export default function MapPage() {
                 Aucun événement trouvé.
               </p>
             ) : (
-              <MapContainer
-                center={[43.6045, 1.444]} // Toulouse
-                zoom={12}
-                style={{ height: '100%', width: '100%' }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {events.map((event) => (
-                  <Marker
-                    key={event.id}
-                    position={[43.6045, 1.444]} // TODO: remplacer par lat/lng si disponibles
-                  >
-                    <Popup>
-                      <strong>{event.name}</strong>
-                      <p>{event.location}</p>
-                      <p>{new Date(event.date).toLocaleString()}</p>
-                    </Popup>
-                  </Marker>
-                ))}
-              </MapContainer>
+              <EventMap events={events} />
             )}
           </div>
         </div>
