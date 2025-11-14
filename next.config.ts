@@ -1,7 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    appDir: true, // ✅ Obligatoire pour App Router
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -10,35 +12,13 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.lafrenchtechtoulouse.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.culture-en-mouvements.org',
-      },
+      { protocol: 'https', hostname: 'placehold.co', port: '', pathname: '/**' },
+      { protocol: 'https', hostname: 'images.unsplash.com', port: '', pathname: '/**' },
+      { protocol: 'https', hostname: 'picsum.photos', port: '', pathname: '/**' },
+      { protocol: 'https', hostname: '**.lafrenchtechtoulouse.com' },
+      { protocol: 'https', hostname: 'www.culture-en-mouvements.org' },
     ],
   },
-
   // 🔹 Configuration i18n pour la traduction multi-langues
   i18n: {
     locales: [
