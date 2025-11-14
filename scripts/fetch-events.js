@@ -64,6 +64,7 @@ const fetchFrenchTechRSS = async () => {
     const text = await res.text();
     const feed = await parser.parseString(text);
 
+    console.log("🔍 Exemple BRUT FrenchTech :", JSON.stringify(feed.items[0], null, 2));
     console.log(`   ✔️ ${feed.items.length} items French Tech`);
 
     return feed.items.map((item, i) => ({
@@ -99,6 +100,8 @@ const fetchToulouseMetropole = async () => {
     const records = json.results || [];
 
     console.log(`   ✔️ ${records.length} items Toulouse Métropole`);
+        // 👉 INSERT ICI :
+    console.log("🔍 Exemple BRUT TM :", JSON.stringify(records[0], null, 2));
 
     return records.map((r, i) => ({
       id: r.id_manif || `tm-${i}`,
@@ -149,6 +152,7 @@ const fetchOpenDataHG = async () => {
     const json = await res.json();
     const records = json.results || [];
 
+    console.log("🔍 Exemple BRUT HG :", JSON.stringify(records[0], null, 2));
     console.log(`   ✔️ ${records.length} items Haute-Garonne`);
 
     return records.map((r, i) => ({
