@@ -1,3 +1,4 @@
+// src/lib/events.ts
 import type { Event } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import Parser from 'rss-parser';
@@ -16,7 +17,8 @@ const initialEvents: Event[] = [
     name: 'Festival de Musique de Toulouse',
     date: addDays(15),
     location: 'Prairie des Filtres, Toulouse',
-    description: 'Un festival de musique annuel présentant des artistes locaux et internationaux. Un incontournable pour tous les amateurs de musique.',
+    description:
+      'Un festival de musique annuel présentant des artistes locaux et internationaux. Un incontournable pour tous les amateurs de musique.',
     image: PlaceHolderImages[0].imageUrl,
     imageHint: PlaceHolderImages[0].imageHint,
   },
@@ -25,7 +27,8 @@ const initialEvents: Event[] = [
     name: 'Conférence Tech 2024',
     date: addDays(45),
     location: 'Centre de Congrès Pierre Baudis, Toulouse',
-    description: 'La plus grande conférence technologique de Haute-Garonne, couvrant l\'IA, la blockchain et les technologies futures.',
+    description:
+      "La plus grande conférence technologique de Haute-Garonne, couvrant l'IA, la blockchain et les technologies futures.",
     image: PlaceHolderImages[1].imageUrl,
     imageHint: PlaceHolderImages[1].imageHint,
   },
@@ -34,7 +37,8 @@ const initialEvents: Event[] = [
     name: 'Marché de Noël',
     date: addDays(120),
     location: 'Place du Capitole, Toulouse',
-    description: 'Le marché de Noël traditionnel. Trouvez des cadeaux uniques, dégustez du vin chaud et imprégnez-vous de l\'atmosphère festive.',
+    description:
+      "Le marché de Noël traditionnel. Trouvez des cadeaux uniques, dégustez du vin chaud et imprégnez-vous de l'atmosphère festive.",
     image: PlaceHolderImages[2].imageUrl,
     imageHint: PlaceHolderImages[2].imageHint,
   },
@@ -43,7 +47,8 @@ const initialEvents: Event[] = [
     name: 'Rassemblement Communautaire',
     date: addDays(30),
     location: 'Jardin des Plantes, Toulouse',
-    description: 'Une journée de détente pour la communauté avec des jeux, de la nourriture et de la musique. Parfait pour les familles.',
+    description:
+      'Une journée de détente pour la communauté avec des jeux, de la nourriture et de la musique. Parfait pour les familles.',
     image: PlaceHolderImages[3].imageUrl,
     imageHint: PlaceHolderImages[3].imageHint,
   },
@@ -54,7 +59,7 @@ let cachedEvents: Event[] | null = null;
 let cacheTimestamp: number = 0;
 const CACHE_DURATION = 1000 * 60 * 15; // 15 minutes
 
-// --- Fetch RSS La French Tech Toulouse ---
+// --- Fetch RSS avec fallback CORS ---
 const fetchWithCorsFallback = async (url: string): Promise<Response> => {
   try {
     const controller = new AbortController();
@@ -75,6 +80,7 @@ const fetchWithCorsFallback = async (url: string): Promise<Response> => {
   }
 };
 
+// --- Parse RSS La French Tech Toulouse ---
 const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
   try {
     const parser = new Parser();
@@ -100,6 +106,34 @@ const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
   }
 };
 
+// --- Fetch OpenData Haute-Garonne ---
+const fetchOpenDataHauteGaronne = async (): Promise<Event[]> => {
+  try {
+    const res = await fetch(
+      'https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=50'
+    );
+    if (!res.ok) throw new Error(`OpenData fetch failed: ${res.status}`);
+    const json = await res.json();
+
+    return json.records.map((r: any, index: number) => {
+      const randomImage = PlaceHolderImages[(index + 8) % PlaceHolderImages.length];
+      const fields = r.fields;
+      return {
+        id: fields.uid || `opendata-${index}`,
+        name: fields.title || 'Événement sans titre',
+        date: fields.date_start || new Date().toISOString(),
+        location: fields.venue_name || 'Lieu à définir',
+        description: fields.description || 'Pas de description.',
+        image: randomImage.imageUrl,
+        imageHint: randomImage.imageHint,
+      };
+    });
+  } catch (err) {
+    console.error("Failed to fetch OpenData Haute-Garonne:", err);
+    return [];
+  }
+};
+
 // --- Déduplication ---
 const deduplicateEvents = (events: Event[]): Event[] => {
   const uniqueMap = new Map<string, Event>();
@@ -110,7 +144,7 @@ const deduplicateEvents = (events: Event[]): Event[] => {
   return Array.from(uniqueMap.values());
 };
 
-// --- Fonction principale ---
+// --- Fonction principale pour récupérer tous les événements ---
 export const getEvents = async (): Promise<Event[]> => {
   if (cachedEvents && Date.now() - cacheTimestamp < CACHE_DURATION) {
     return cachedEvents;
@@ -120,6 +154,7 @@ export const getEvents = async (): Promise<Event[]> => {
     const sources = [
       Promise.resolve(initialEvents),
       parseLaFrenchTechToulouse(),
+      fetchOpenDataHauteGaronne(),
     ];
 
     const allEventsArrays = await Promise.all(sources);
