@@ -2,7 +2,7 @@ name: Fetch Events
 
 on:
   schedule:
-    - cron: '0 * * * *'  # toutes les heures, tu peux ajuster
+    - cron: '0 * * * *'  # toutes les heures, à ajuster si besoin
   workflow_dispatch:     # permet de déclencher manuellement
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: false  # important pour push avec GITHUB_TOKEN
+          persist-credentials: false  # nécessaire pour push avec GITHUB_TOKEN
 
       # 2️⃣ Installer Node.js
       - name: Setup Node.js
@@ -35,9 +35,9 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add src/data/events.json
+          git add public/data/events.json
           # commit seulement si des changements
           git diff --staged --quiet || git commit -m "Update events.json [skip ci]"
-          git push
+          git push origin HEAD:main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
