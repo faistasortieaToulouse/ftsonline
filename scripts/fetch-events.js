@@ -11,10 +11,10 @@ const OUTPUT_PUBLIC = path.join(process.cwd(), "public/data/events.json");
 
 // Placeholders
 const PlaceHolderImages = [
-  { imageUrl: "/placeholder1.jpg", imageHint: "Image 1" },
-  { imageUrl: "/placeholder2.jpg", imageHint: "Image 2" },
-  { imageUrl: "/placeholder3.jpg", imageHint: "Image 3" },
-  { imageUrl: "/placeholder4.jpg", imageHint: "Image 4" },
+  { imageUrl: '/images/placeholders/placeholder1.jpg', imageHint: 'Image 1' },
+  { imageUrl: '/images/placeholders/placeholder2.jpg', imageHint: 'Image 2' },
+  { imageUrl: '/images/placeholders/placeholder3.jpg', imageHint: 'Image 3' },
+  { imageUrl: '/images/placeholders/placeholder4.jpg', imageHint: 'Image 4' },
 ];
 
 // Helper date
