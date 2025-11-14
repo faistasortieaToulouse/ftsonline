@@ -1,4 +1,3 @@
-// src/lib/events.ts
 import type { Event } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import Parser from 'rss-parser';
@@ -54,39 +53,27 @@ const initialEvents: Event[] = [
   },
 ];
 
-// --- Cache mémoire ---
-let cachedEvents: Event[] | null = null;
-let cacheTimestamp: number = 0;
-const CACHE_DURATION = 1000 * 60 * 15; // 15 minutes
-
-// --- Fetch RSS avec fallback CORS ---
-const fetchWithCorsFallback = async (url: string): Promise<Response> => {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-    const response = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-    return response;
-  } catch (err) {
-    console.warn(`Fetch failed for ${url}, trying CORS proxy`, err);
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000);
-    const response = await fetch(proxyUrl, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    if (!response.ok) throw new Error(`Proxy fetch failed: ${response.status}`);
-    return response;
-  }
+// --- Déduplication ---
+const deduplicateEvents = (events: Event[]): Event[] => {
+  const uniqueMap = new Map<string, Event>();
+  events.forEach(event => {
+    const key = `${event.name.toLowerCase().trim()}-${event.date.split('T')[0]}`;
+    if (!uniqueMap.has(key)) uniqueMap.set(key, event);
+  });
+  return Array.from(uniqueMap.values());
 };
 
 // --- Parse RSS La French Tech Toulouse ---
 const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
   try {
     const parser = new Parser();
-    const response = await fetchWithCorsFallback('https://www.lafrenchtechtoulouse.com/feed/');
+    const response = await fetch('https://www.lafrenchtechtoulouse.com/feed/');
+    console.log('[RSS] Status:', response.status);
     const feedText = await response.text();
+    console.log('[RSS] Length:', feedText.length);
+
     const feed = await parser.parseString(feedText);
+    console.log('[RSS] Items:', feed.items.length);
 
     return feed.items.map((item, index) => {
       const randomImage = PlaceHolderImages[(index + 4) % PlaceHolderImages.length];
@@ -101,7 +88,7 @@ const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
       };
     });
   } catch (err) {
-    console.error("Failed to parse La French Tech Toulouse RSS feed:", err);
+    console.error('[RSS] Failed to fetch or parse La French Tech Toulouse:', err);
     return [];
   }
 };
@@ -109,15 +96,16 @@ const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
 // --- Fetch OpenData Haute-Garonne ---
 const fetchOpenDataHauteGaronne = async (): Promise<Event[]> => {
   try {
-    const res = await fetch(
-      'https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=50'
-    );
-    if (!res.ok) throw new Error(`OpenData fetch failed: ${res.status}`);
+    const url =
+      'https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=50';
+    const res = await fetch(url);
+    console.log('[OpenData] Status:', res.status);
     const json = await res.json();
+    console.log('[OpenData] Records:', json.records.length);
 
     return json.records.map((r: any, index: number) => {
-      const randomImage = PlaceHolderImages[(index + 8) % PlaceHolderImages.length];
       const fields = r.fields;
+      const randomImage = PlaceHolderImages[(index + 8) % PlaceHolderImages.length];
       return {
         id: fields.uid || `opendata-${index}`,
         name: fields.title || 'Événement sans titre',
@@ -129,48 +117,35 @@ const fetchOpenDataHauteGaronne = async (): Promise<Event[]> => {
       };
     });
   } catch (err) {
-    console.error("Failed to fetch OpenData Haute-Garonne:", err);
+    console.error('[OpenData] Failed to fetch Haute-Garonne OpenData:', err);
     return [];
   }
 };
 
-// --- Déduplication ---
-const deduplicateEvents = (events: Event[]): Event[] => {
-  const uniqueMap = new Map<string, Event>();
-  events.forEach(event => {
-    const key = `${event.name.toLowerCase().trim()}-${event.date.split('T')[0]}`;
-    if (!uniqueMap.has(key)) uniqueMap.set(key, event);
-  });
-  return Array.from(uniqueMap.values());
-};
-
-// --- Fonction principale pour récupérer tous les événements ---
+// --- Fonction principale ---
 export const getEvents = async (): Promise<Event[]> => {
-  if (cachedEvents && Date.now() - cacheTimestamp < CACHE_DURATION) {
-    return cachedEvents;
-  }
-
+  console.log('Fetching all events...');
   try {
-    const sources = [
-      Promise.resolve(initialEvents),
-      parseLaFrenchTechToulouse(),
-      fetchOpenDataHauteGaronne(),
-    ];
+    const initial = initialEvents;
+    console.log('Initial events:', initial.length);
 
-    const allEventsArrays = await Promise.all(sources);
-    const flattened = allEventsArrays.flat();
-    const uniqueEvents = deduplicateEvents(flattened);
+    const frenchTech = await parseLaFrenchTechToulouse();
+    console.log('French Tech events:', frenchTech.length);
+
+    const openData = await fetchOpenDataHauteGaronne();
+    console.log('OpenData events:', openData.length);
+
+    const allEvents = [...initial, ...frenchTech, ...openData];
+    const uniqueEvents = deduplicateEvents(allEvents);
 
     const upcomingEvents = uniqueEvents
       .filter(e => new Date(e.date) >= new Date())
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    cachedEvents = upcomingEvents;
-    cacheTimestamp = Date.now();
-
+    console.log('Upcoming events:', upcomingEvents.length);
     return upcomingEvents;
   } catch (err) {
-    console.error("Error fetching events, returning initial events only.", err);
+    console.error('Error in getEvents:', err);
     return initialEvents;
   }
 };
