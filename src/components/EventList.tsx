@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Calendar, Map, Loader2, Search } from 'lucide-react';
 import { Input } from './ui/input';
 import { format } from 'date-fns';
-import { fr } from 'date-fns';
+import { fr as frLocale } from 'date-fns/locale';
 
 export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -27,11 +27,8 @@ export function EventList() {
       .then(fetchedEvents => {
         if (isMounted) {
           setEvents(fetchedEvents);
-
-          // Vérification simple pour détecter si une source n’a rien renvoyé
           setFrenchTechError(!fetchedEvents.some(e => e.id.startsWith('french-tech')));
           setOpenDataError(!fetchedEvents.some(e => e.id.startsWith('opendata')));
-
           setLoading(false);
         }
       })
@@ -57,7 +54,7 @@ export function EventList() {
     const searchKeywords = searchTerm.toLowerCase().split(' ').filter(Boolean);
 
     return upcoming.filter(event => {
-      const formattedDate = format(new Date(event.date), 'PPP p', { locale: fr }).toLowerCase();
+      const formattedDate = format(new Date(event.date), 'PPP p', { locale: frLocale }).toLowerCase();
       const searchableText = [
         event.name.toLowerCase(),
         event.description.toLowerCase(),
@@ -121,7 +118,6 @@ export function EventList() {
         </div>
       ) : (
         <>
-          {/* Message d'erreur spécifique pour les sources */}
           {(frenchTechError || openDataError) && (
             <div className="mb-6 p-4 rounded bg-yellow-100 text-yellow-900 border border-yellow-200">
               {frenchTechError && <p>⚠️ Impossible de récupérer les événements de La French Tech Toulouse.</p>}
