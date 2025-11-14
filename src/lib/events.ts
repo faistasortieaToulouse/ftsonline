@@ -1,6 +1,7 @@
 import type { Event } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import Parser from 'rss-parser';
+import * as cheerio from "cheerio";
 
 const addDays = (days: number): string => {
   const date = new Date();
@@ -73,19 +74,31 @@ const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
     const text = await res.text();
     const feed = await parser.parseString(text);
 
-    return feed.items.map((item, i) => {
-      const randomImage = PlaceHolderImages[(i + 4) % PlaceHolderImages.length];
-      const date = item.isoDate ? new Date(item.isoDate).toISOString() : new Date().toISOString();
-      return {
-        id: item.guid || item.link || `french-tech-${i}`,
-        name: item.title || 'Événement sans titre',
-        date,
-        location: 'Lieu à définir',
-        description: item.contentSnippet || item.content || 'Pas de description.',
-        image: item.enclosure?.url || randomImage.imageUrl,
-        imageHint: randomImage.imageHint,
-      };
-    });
+return feed.items.map((item, i) => {
+  const randomImage = PlaceHolderImages[(i + 4) % PlaceHolderImages.length];
+
+  // --- Extraction d'image depuis le HTML (cheerio) ---
+  let imageUrl = item.enclosure?.url || item["media:content"]?.url;
+
+  if (!imageUrl && item.content) {
+    const $ = cheerio.load(item.content);
+    const img = $("img").first().attr("src");
+    if (img) imageUrl = img;
+  }
+
+  const date = item.isoDate ? new Date(item.isoDate).toISOString() : new Date().toISOString();
+
+  return {
+    id: item.guid || item.link || `french-tech-${i}`,
+    name: item.title || 'Événement sans titre',
+    date,
+    location: 'Lieu à définir',
+    description: item.contentSnippet || item.content || 'Pas de description.',
+    image: imageUrl || randomImage.imageUrl,
+    imageHint: randomImage.imageHint,
+  };
+});
+
   } catch (err) {
     console.error('⚠️ Impossible de récupérer les événements de La French Tech Toulouse.', err);
     return [];
