@@ -101,7 +101,7 @@ const fetchOpenData = async () => {
   console.log("➡️ Fetch Haute-Garonne…");
   try {
     const url =
-      "https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=200";
+  "https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=200&sort=firstdate_begin&refine.firstdate_begin=[NOW/DAY]";
 
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HG error ${res.status}`);
@@ -134,7 +134,7 @@ const fetchToulouseMetropole = async () => {
   console.log("➡️ Fetch Toulouse Métropole…");
   try {
     const url =
-      "https://data.toulouse-metropole.fr/api/records/1.0/search/?dataset=agenda-des-manifestations-culturelles-so-toulouse&rows=200";
+  "https://data.toulouse-metropole.fr/api/records/1.0/search/?dataset=agenda-des-manifestations-culturelles-so-toulouse&rows=200&sort=date_debut&refine.date_debut=[NOW/DAY]";
 
     const res = await fetch(url);
     if (!res.ok) throw new Error(`TM error ${res.status}`);
