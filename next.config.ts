@@ -1,5 +1,4 @@
-
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -29,15 +28,24 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-       {
+      {
         protocol: 'https',
         hostname: '**.lafrenchtechtoulouse.com',
       },
       {
         protocol: 'https',
         hostname: 'www.culture-en-mouvements.org',
-      }
+      },
     ],
+  },
+
+  // 🔹 Configuration i18n pour la traduction multi-langues
+  i18n: {
+    locales: [
+      "fr", "de", "en", "ar", "eu", "zh-CN", "es",
+      "fa", "hi", "it", "ja", "oc", "pt", "ru", "tr", "no", "ro"
+    ],
+    defaultLocale: "fr",
   },
 };
 
