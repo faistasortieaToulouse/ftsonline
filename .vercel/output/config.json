@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "builds": [],
-  "routes": [
-    { "src": "/data/(.*)", "dest": "/data/$1" }
-  ]
-}
