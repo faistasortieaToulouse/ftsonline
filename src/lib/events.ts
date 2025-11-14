@@ -1,4 +1,3 @@
-// src/lib/events.ts
 import type { Event } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import Parser from 'rss-parser';
@@ -49,7 +48,7 @@ const initialEvents: Event[] = [
   },
 ];
 
-// --- Déduplication ---
+// Déduplication
 const deduplicateEvents = (events: Event[]): Event[] => {
   const map = new Map<string, Event>();
   events.forEach(e => {
@@ -59,24 +58,25 @@ const deduplicateEvents = (events: Event[]): Event[] => {
   return Array.from(map.values());
 };
 
-// --- Fetch RSS La French Tech Toulouse via proxy ---
+// RSS La French Tech Toulouse
 const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
   try {
     const parser = new Parser();
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://www.lafrenchtechtoulouse.com/feed/')}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+      'https://www.lafrenchtechtoulouse.com/feed/'
+    )}`;
     const res = await fetch(proxyUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-    console.log('[RSS] Status:', res.status);
     if (!res.ok) throw new Error('RSS fetch failed');
     const text = await res.text();
     const feed = await parser.parseString(text);
-    console.log('[RSS] Items:', feed.items.length);
 
     return feed.items.map((item, i) => {
       const randomImage = PlaceHolderImages[(i + 4) % PlaceHolderImages.length];
+      const date = item.isoDate ? new Date(item.isoDate).toISOString() : new Date().toISOString();
       return {
         id: item.guid || item.link || `french-tech-${i}`,
         name: item.title || 'Événement sans titre',
-        date: item.isoDate || new Date().toISOString(),
+        date,
         location: 'Lieu à définir',
         description: item.contentSnippet || item.content || 'Pas de description.',
         image: item.enclosure?.url || randomImage.imageUrl,
@@ -84,44 +84,46 @@ const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
       };
     });
   } catch (err) {
-    console.error('[RSS] La French Tech Toulouse fetch failed:', err);
+    console.error('⚠️ Impossible de récupérer les événements de La French Tech Toulouse.', err);
     return [];
   }
 };
 
-// --- Fetch OpenData Haute-Garonne ---
+// OpenData Haute-Garonne
 const fetchOpenDataHauteGaronne = async (): Promise<Event[]> => {
   try {
-    const url = 'https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=50';
+    const url =
+      'https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=50';
     const res = await fetch(url);
-    console.log('[OpenData] Status:', res.status);
     if (!res.ok) throw new Error('OpenData fetch failed');
-
     const json = await res.json();
-    console.log('[OpenData] Records:', json.records?.length || 0);
-
     if (!json.records) return [];
 
     return json.records.map((r: any, i: number) => {
-      const fields = r.fields || {};
-      const randomImage = PlaceHolderImages[(i + 8) % PlaceHolderImages.length];
+      const f = r.fields || {};
+      const date =
+        f.date_start || f.date_debut || new Date().toISOString();
+      const name = f.title || f.nom || 'Événement sans titre';
+      const location = f.venue_name || f.lieu || 'Lieu à définir';
+      const description = f.description || 'Pas de description.';
+      const randomImage = PlaceHolderImages[i % PlaceHolderImages.length];
       return {
-        id: fields.uid || `opendata-${i}`,
-        name: fields.title || 'Événement sans titre',
-        date: fields.date_start || new Date().toISOString(),
-        location: fields.venue_name || 'Lieu à définir',
-        description: fields.description || 'Pas de description.',
+        id: f.uid || `opendata-${i}`,
+        name,
+        date,
+        location,
+        description,
         image: randomImage.imageUrl,
         imageHint: randomImage.imageHint,
       };
     });
   } catch (err) {
-    console.error('[OpenData] Haute-Garonne fetch failed:', err);
+    console.error('⚠️ Impossible de récupérer les événements de Haute-Garonne OpenData.', err);
     return [];
   }
 };
 
-// --- Fonction principale ---
+// Fonction principale
 export const getEvents = async (): Promise<Event[]> => {
   try {
     console.log('Fetching events...');
@@ -131,7 +133,11 @@ export const getEvents = async (): Promise<Event[]> => {
     ]);
 
     const allEvents = [...initialEvents, ...frenchTech, ...openData];
-    const uniqueEvents = deduplicateEvents(allEvents);
+
+    // Filtrer uniquement les événements avec une date valide
+    const validEvents = allEvents.filter(e => !isNaN(new Date(e.date).getTime()));
+
+    const uniqueEvents = deduplicateEvents(validEvents);
 
     const upcomingEvents = uniqueEvents
       .filter(e => new Date(e.date) >= new Date())
