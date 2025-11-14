@@ -10,26 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Récupérer le code
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # important pour push avec GITHUB_TOKEN
 
+      # 2️⃣ Installer Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
+      # 3️⃣ Installer les dépendances
       - name: Install dependencies
         run: npm install
 
+      # 4️⃣ Exécuter le script qui récupère les événements et génère events.json
       - name: Fetch events and generate JSON
         run: node scripts/fetch-events.js
 
+      # 5️⃣ Commit et push le fichier mis à jour
       - name: Commit and push updated JSON
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add src/data/events.json
-          git commit -m "Update events.json [skip ci]" || echo "No changes to commit"
+          # commit seulement si des changements
+          git diff --staged --quiet || git commit -m "Update events.json [skip ci]"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
