@@ -1,14 +1,17 @@
 // scripts/fetch-events.js
-const fs = require('fs');
-const path = require('path');
-const fetch = require('node-fetch');
-const Parser = require('rss-parser');
+const fs = require("fs");
+const path = require("path");
+const fetch = require("node-fetch");
+const Parser = require("rss-parser");
 
+console.log("🚀 Script fetch-events.js démarré");
+
+// Placeholders
 const PlaceHolderImages = [
-  { imageUrl: '/placeholder1.jpg', imageHint: 'Image 1' },
-  { imageUrl: '/placeholder2.jpg', imageHint: 'Image 2' },
-  { imageUrl: '/placeholder3.jpg', imageHint: 'Image 3' },
-  { imageUrl: '/placeholder4.jpg', imageHint: 'Image 4' },
+  { imageUrl: "/placeholder1.jpg", imageHint: "Image 1" },
+  { imageUrl: "/placeholder2.jpg", imageHint: "Image 2" },
+  { imageUrl: "/placeholder3.jpg", imageHint: "Image 3" },
+  { imageUrl: "/placeholder4.jpg", imageHint: "Image 4" },
 ];
 
 const addDays = (days) => {
@@ -20,30 +23,32 @@ const addDays = (days) => {
 // --- Événements statiques ---
 const initialEvents = [
   {
-    id: 'static-1',
-    name: 'Festival de Musique de Toulouse',
+    id: "static-1",
+    name: "Festival de Musique de Toulouse",
     date: addDays(15),
-    location: 'Prairie des Filtres, Toulouse',
-    description: 'Un festival de musique annuel présentant des artistes locaux et internationaux.',
+    location: "Prairie des Filtres, Toulouse",
+    description:
+      "Un festival de musique annuel présentant des artistes locaux et internationaux.",
     image: PlaceHolderImages[0].imageUrl,
     imageHint: PlaceHolderImages[0].imageHint,
   },
   {
-    id: 'static-2',
-    name: 'Conférence Tech 2024',
+    id: "static-2",
+    name: "Conférence Tech 2024",
     date: addDays(45),
-    location: 'Centre de Congrès Pierre Baudis, Toulouse',
-    description: "La plus grande conférence technologique locale autour de l’IA et des technologies futures.",
+    location: "Centre de Congrès Pierre Baudis, Toulouse",
+    description:
+      "La plus grande conférence technologique locale autour de l’IA et des technologies futures.",
     image: PlaceHolderImages[1].imageUrl,
     imageHint: PlaceHolderImages[1].imageHint,
-  }
+  },
 ];
 
 // --- Déduplication ---
 const deduplicateEvents = (events) => {
   const map = new Map();
   events.forEach((e) => {
-    const key = `${e.name.toLowerCase().trim()}-${(e.date || "").split('T')[0]}`;
+    const key = `${e.name?.toLowerCase().trim()}-${(e.date || "").split("T")[0]}`;
     if (!map.has(key)) map.set(key, e);
   });
   return [...map.values()];
@@ -51,6 +56,7 @@ const deduplicateEvents = (events) => {
 
 // --- Fetch French Tech RSS ---
 const fetchFrenchTechRSS = async () => {
+  console.log("➡️ Fetch French Tech…");
   try {
     const parser = new Parser();
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
@@ -58,10 +64,12 @@ const fetchFrenchTechRSS = async () => {
     )}`;
 
     const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error("RSS error");
+    if (!res.ok) throw new Error(`RSS error ${res.status}`);
 
     const text = await res.text();
     const feed = await parser.parseString(text);
+
+    console.log(`   ✔️ French Tech reçu : ${feed.items.length} items`);
 
     return feed.items.map((item, i) => ({
       id: item.guid || `frenchtech-${i}`,
@@ -80,14 +88,17 @@ const fetchFrenchTechRSS = async () => {
 
 // --- Fetch OpenData Haute-Garonne ---
 const fetchOpenData = async () => {
+  console.log("➡️ Fetch Haute-Garonne…");
   try {
     const url =
       "https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=50";
 
     const res = await fetch(url);
-    if (!res.ok) throw new Error("OpenData HG error");
+    if (!res.ok) throw new Error(`HG error ${res.status}`);
 
     const json = await res.json();
+    console.log(`   ✔️ Haute-Garonne reçu : ${(json.records || []).length} items`);
+
     if (!json.records) return [];
 
     return json.records.map((r, i) => {
@@ -111,14 +122,19 @@ const fetchOpenData = async () => {
 
 // --- Fetch Toulouse Métropole ---
 const fetchToulouseMetropole = async () => {
+  console.log("➡️ Fetch Toulouse Métropole…");
   try {
     const url =
       "https://data.toulouse-metropole.fr/api/records/1.0/search/?dataset=agenda-des-manifestations-culturelles-so-toulouse&rows=50";
 
     const res = await fetch(url);
-    if (!res.ok) throw new Error("OpenData Toulouse Métropole error");
+    if (!res.ok) throw new Error(`TM error ${res.status}`);
 
     const json = await res.json();
+    console.log(
+      `   ✔️ Toulouse Métropole reçu : ${(json.records || []).length} items`
+    );
+
     if (!json.records) return [];
 
     return json.records.map((r, i) => {
@@ -142,28 +158,44 @@ const fetchToulouseMetropole = async () => {
 
 // --- Fonction principale ---
 const main = async () => {
+  console.log("➡️ Récupération des 3 flux…");
+
   const [frenchTech, openDataHG, toulouseMetro] = await Promise.all([
     fetchFrenchTechRSS(),
     fetchOpenData(),
     fetchToulouseMetropole(),
   ]);
 
+  console.log(`📊 FrenchTech        : ${frenchTech.length}`);
+  console.log(`📊 Haute-Garonne     : ${openDataHG.length}`);
+  console.log(`📊 Toulouse Métropole: ${toulouseMetro.length}`);
+
   const all = [
     ...initialEvents,
     ...frenchTech,
     ...openDataHG,
-    ...toulouseMetro
+    ...toulouseMetro,
   ];
+
+  console.log(`📦 Total avant filtre: ${all.length}`);
 
   const unique = deduplicateEvents(all);
 
+  console.log(`🔍 Après déduplication: ${unique.length}`);
+
   const upcoming = unique.filter((e) => new Date(e.date) >= new Date());
+
+  console.log(`⏳ Événements à venir: ${upcoming.length}`);
 
   const filePath = path.join(__dirname, "../public/data/events.json");
 
+  console.log("📁 Chemin fichier :", filePath);
+
+  console.log("📄 Exemple événement :", upcoming[0] || "Aucun");
+
   fs.writeFileSync(filePath, JSON.stringify(upcoming, null, 2), "utf8");
 
-  console.log(`✅ events.json généré avec ${upcoming.length} événements`);
+  console.log(`✅ events.json écrit avec ${upcoming.length} événements`);
 };
 
 main();
