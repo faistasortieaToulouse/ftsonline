@@ -48,6 +48,11 @@ const initialEvents: Event[] = [
   },
 ];
 
+// --- Cache serveur ---
+let cachedEvents: Event[] | null = null;
+let cacheTime = 0;
+const CACHE_DURATION = 1000 * 60 * 15; // 15 minutes
+
 // Déduplication
 const deduplicateEvents = (events: Event[]): Event[] => {
   const map = new Map<string, Event>();
@@ -58,15 +63,13 @@ const deduplicateEvents = (events: Event[]): Event[] => {
   return Array.from(map.values());
 };
 
-// RSS La French Tech Toulouse
+// --- RSS La French Tech Toulouse ---
 const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
   try {
     const parser = new Parser();
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-      'https://www.lafrenchtechtoulouse.com/feed/'
-    )}`;
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent('https://www.lafrenchtechtoulouse.com/feed/')}`;
     const res = await fetch(proxyUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-    if (!res.ok) throw new Error('RSS fetch failed');
+    if (!res.ok) throw new Error(`RSS fetch failed, status ${res.status}`);
     const text = await res.text();
     const feed = await parser.parseString(text);
 
@@ -89,20 +92,19 @@ const parseLaFrenchTechToulouse = async (): Promise<Event[]> => {
   }
 };
 
-// OpenData Haute-Garonne
+// --- OpenData Haute-Garonne ---
 const fetchOpenDataHauteGaronne = async (): Promise<Event[]> => {
   try {
     const url =
       'https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=50';
     const res = await fetch(url);
-    if (!res.ok) throw new Error('OpenData fetch failed');
+    if (!res.ok) throw new Error(`OpenData fetch failed, status ${res.status}`);
     const json = await res.json();
     if (!json.records) return [];
 
     return json.records.map((r: any, i: number) => {
       const f = r.fields || {};
-      const date =
-        f.date_start || f.date_debut || new Date().toISOString();
+      const date = f.date_start || f.date_debut || new Date().toISOString();
       const name = f.title || f.nom || 'Événement sans titre';
       const location = f.venue_name || f.lieu || 'Lieu à définir';
       const description = f.description || 'Pas de description.';
@@ -123,8 +125,10 @@ const fetchOpenDataHauteGaronne = async (): Promise<Event[]> => {
   }
 };
 
-// Fonction principale
+// --- Fonction principale ---
 export const getEvents = async (): Promise<Event[]> => {
+  if (cachedEvents && Date.now() - cacheTime < CACHE_DURATION) return cachedEvents;
+
   try {
     console.log('Fetching events...');
     const [frenchTech, openData] = await Promise.all([
@@ -133,15 +137,14 @@ export const getEvents = async (): Promise<Event[]> => {
     ]);
 
     const allEvents = [...initialEvents, ...frenchTech, ...openData];
-
-    // Filtrer uniquement les événements avec une date valide
     const validEvents = allEvents.filter(e => !isNaN(new Date(e.date).getTime()));
-
     const uniqueEvents = deduplicateEvents(validEvents);
-
     const upcomingEvents = uniqueEvents
       .filter(e => new Date(e.date) >= new Date())
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    cachedEvents = upcomingEvents;
+    cacheTime = Date.now();
 
     console.log('Upcoming events count:', upcomingEvents.length);
     return upcomingEvents;
