@@ -1,0 +1,35 @@
+name: Fetch Events
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # toutes les heures, tu peux ajuster
+  workflow_dispatch:     # permet de déclencher manuellement
+
+jobs:
+  fetch-events:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Fetch events and generate JSON
+        run: node scripts/fetch-events.js
+
+      - name: Commit and push updated JSON
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add src/data/events.json
+          git commit -m "Update events.json [skip ci]" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
