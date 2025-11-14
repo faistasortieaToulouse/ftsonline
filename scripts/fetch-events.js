@@ -7,10 +7,33 @@ const Parser = require("rss-parser");
 console.log("🚀 Script fetch-events.js démarré");
 
 // --- Dossier output pour Vercel ---
-const OUTPUT_DIR = path.join(process.cwd(), ".vercel/output/static/data");
-const OUTPUT_FILE = path.join(OUTPUT_DIR, "events.json");
+const VERCEL_OUTPUT_DIR = path.join(process.cwd(), ".vercel/output");
+const STATIC_DIR = path.join(VERCEL_OUTPUT_DIR, "static/data");
+const EVENTS_FILE = path.join(STATIC_DIR, "events.json");
+const CONFIG_FILE = path.join(VERCEL_OUTPUT_DIR, "config.json");
 
-// Placeholders
+// --- Crée dossier static/data ---
+fs.mkdirSync(STATIC_DIR, { recursive: true });
+
+// --- Crée config.json si absent ---
+if (!fs.existsSync(CONFIG_FILE)) {
+  fs.writeFileSync(
+    CONFIG_FILE,
+    JSON.stringify(
+      {
+        version: 3,
+        builds: [],
+        routes: [{ src: "/data/(.*)", dest: "/data/$1" }],
+      },
+      null,
+      2
+    ),
+    "utf8"
+  );
+  console.log("✅ config.json créé pour Vercel Build Output");
+}
+
+// --- Placeholders ---
 const PlaceHolderImages = [
   { imageUrl: "/placeholder1.jpg", imageHint: "Image 1" },
   { imageUrl: "/placeholder2.jpg", imageHint: "Image 2" },
@@ -18,7 +41,7 @@ const PlaceHolderImages = [
   { imageUrl: "/placeholder4.jpg", imageHint: "Image 4" },
 ];
 
-// Helper date
+// --- Helper date ---
 const addDays = (days) => {
   const date = new Date();
   date.setDate(date.getDate() + days);
@@ -67,15 +90,11 @@ const fetchFrenchTechRSS = async () => {
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(
       "https://www.lafrenchtechtoulouse.com/feed/"
     )}`;
-
     const res = await fetch(proxyUrl);
     if (!res.ok) throw new Error(`RSS error ${res.status}`);
-
     const text = await res.text();
     const feed = await parser.parseString(text);
-
     console.log(`   ✔️ French Tech reçu : ${feed.items.length} items`);
-
     return feed.items.map((item, i) => ({
       id: item.guid || `frenchtech-${i}`,
       name: item.title || "Événement sans titre",
@@ -97,18 +116,13 @@ const fetchOpenData = async () => {
   try {
     const url =
       "https://data.haute-garonne.fr/api/records/1.0/search/?dataset=evenements-publics&rows=50";
-
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HG error ${res.status}`);
-
     const json = await res.json();
     console.log(`   ✔️ Haute-Garonne reçu : ${(json.records || []).length} items`);
-
     if (!json.records) return [];
-
     return json.records.map((r, i) => {
       const f = r.fields || {};
-
       return {
         id: f.uid || `hg-${i}`,
         name: f.title || "Événement sans titre",
@@ -131,20 +145,13 @@ const fetchToulouseMetropole = async () => {
   try {
     const url =
       "https://data.toulouse-metropole.fr/api/records/1.0/search/?dataset=agenda-des-manifestations-culturelles-so-toulouse&rows=50";
-
     const res = await fetch(url);
     if (!res.ok) throw new Error(`TM error ${res.status}`);
-
     const json = await res.json();
-    console.log(
-      `   ✔️ Toulouse Métropole reçu : ${(json.records || []).length} items`
-    );
-
+    console.log(`   ✔️ Toulouse Métropole reçu : ${(json.records || []).length} items`);
     if (!json.records) return [];
-
     return json.records.map((r, i) => {
       const f = r.fields || {};
-
       return {
         id: f.id_manif || `tm-${i}`,
         name: f.titre || "Événement sans titre",
@@ -164,41 +171,27 @@ const fetchToulouseMetropole = async () => {
 // --- Fonction principale ---
 const main = async () => {
   console.log("➡️ Récupération des 3 flux…");
-
   const [frenchTech, openDataHG, toulouseMetro] = await Promise.all([
     fetchFrenchTechRSS(),
     fetchOpenData(),
     fetchToulouseMetropole(),
   ]);
-
   console.log(`📊 FrenchTech        : ${frenchTech.length}`);
   console.log(`📊 Haute-Garonne     : ${openDataHG.length}`);
   console.log(`📊 Toulouse Métropole: ${toulouseMetro.length}`);
 
-  const all = [
-    ...initialEvents,
-    ...frenchTech,
-    ...openDataHG,
-    ...toulouseMetro,
-  ];
-
+  const all = [...initialEvents, ...frenchTech, ...openDataHG, ...toulouseMetro];
   console.log(`📦 Total avant filtre: ${all.length}`);
 
   const unique = deduplicateEvents(all);
-
   console.log(`🔍 Après déduplication: ${unique.length}`);
 
   const upcoming = unique.filter((e) => new Date(e.date) >= new Date());
-
   console.log(`⏳ Événements à venir: ${upcoming.length}`);
 
-  // --- ✔️ Création dossier ---
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-
-  // --- ✔️ Écriture fichier ---
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(upcoming, null, 2), "utf8");
-
-  console.log(`✅ events.json écrit dans ${OUTPUT_FILE}`);
+  // --- ✔️ Écriture fichier events.json ---
+  fs.writeFileSync(EVENTS_FILE, JSON.stringify(upcoming, null, 2), "utf8");
+  console.log(`✅ events.json écrit dans ${EVENTS_FILE}`);
 };
 
 main();
