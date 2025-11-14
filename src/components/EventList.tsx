@@ -9,29 +9,32 @@ import Link from 'next/link';
 import { Calendar, Map, Loader2, Search } from 'lucide-react';
 import { Input } from './ui/input';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { getEvents } from '@/lib/events';
+import { fr } from 'date-fns';
 
 export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // --- Récupérer les événements côté client ---
+  // --- Fetch côté client via API route ---
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
 
-    getEvents().then(fetchedEvents => {
-      if (isMounted) {
-        setEvents(fetchedEvents);
-        setLoading(false);
-      }
-    });
+    fetch('/api/events')
+      .then(res => res.json())
+      .then(fetchedEvents => {
+        if (isMounted) {
+          setEvents(fetchedEvents);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch events from API route', err);
+        if (isMounted) setLoading(false);
+      });
 
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, []);
 
   // --- Filtrage et recherche ---
