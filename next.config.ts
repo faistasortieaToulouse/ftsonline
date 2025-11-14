@@ -1,31 +1,29 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  experimental: {
-    appDir: true, // ✅ Obligatoire pour App Router
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
+
+  // Autoriser TOUTES les images HTTPS (nécessaire pour RSS + proxys)
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'placehold.co', port: '', pathname: '/**' },
-      { protocol: 'https', hostname: 'images.unsplash.com', port: '', pathname: '/**' },
-      { protocol: 'https', hostname: 'picsum.photos', port: '', pathname: '/**' },
-      { protocol: 'https', hostname: '**.lafrenchtechtoulouse.com' },
-      { protocol: 'https', hostname: 'www.culture-en-mouvements.org' },
+      {
+        protocol: 'https',
+        hostname: '**',
+        pathname: '/**',
+      },
     ],
   },
-  // 🔹 Configuration i18n pour la traduction multi-langues
+
+  // ❗ i18n App Router → doit être retiré, mais on garde les locales
+  // via un système différent (middleware ou route groups)
   i18n: {
-    locales: [
-      "fr", "de", "en", "ar", "eu", "zh-CN", "es",
-      "fa", "hi", "it", "ja", "oc", "pt", "ru", "tr", "no", "ro"
-    ],
-    defaultLocale: "fr",
+    locales: ['fr'],
+    defaultLocale: 'fr',
   },
 };
 
