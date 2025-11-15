@@ -71,6 +71,11 @@ export function EventList() {
         </div>
         <div className="flex flex-col sm:flex-row flex-shrink-0 gap-2">
           <Button asChild variant="outline">
+  <Link href="/test-api">
+    Tester API HG
+  </Link>
+</Button>
+          <Button asChild variant="outline">
             <Link href="/calendar">
               <Calendar />
               Voir le calendrier
