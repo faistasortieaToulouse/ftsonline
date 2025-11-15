@@ -1,9 +1,8 @@
 import fs from 'fs';
 import axios from 'axios';
-import Parser from 'rss-parser';
 import { parseISO, isValid } from 'date-fns';
 
-const EVENTS_FILE = './events.json';
+const EVENTS_FILE = './public/data/events.json';
 const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/400x200?text=Événement';
 
 // Helper pour nettoyer texte et retirer balises HTML
@@ -12,46 +11,29 @@ function cleanText(text) {
   return text.replace(/<\/?[^>]+(>|$)/g, '').trim();
 }
 
-// Normalisation d'un événement
-function normalizeEvent(raw) {
-  const name = cleanText(raw.title || raw.name || '');
-  const description = cleanText(raw.description || '');
-  const location = cleanText(raw.location || raw.address || '');
-  const date = raw.date ? parseISO(raw.date) : null;
-  const image = raw.image || PLACEHOLDER_IMAGE;
+// Normalisation d'un événement Haute-Garonne
+function normalizeHauteGaronne(item) {
+  if (!item.record?.fields) return null;
+  const fields = item.record.fields;
 
-  // Filtrage strict : on ne garde que les événements complets
-  if (!name || !description || !location || !date || !isValid(date)) {
-    return null;
-  }
+  const name = cleanText(fields.title_fr || fields.title || '');
+  const description = cleanText(fields.description_fr || fields.description || '');
+  const location = cleanText(fields.location_name || fields.lieu || '');
+  const dateStr = fields.firstdate_begin || fields.firstdate_end || '';
+  const date = dateStr ? parseISO(dateStr) : null;
+  const image = fields.image || fields.thumbnail || PLACEHOLDER_IMAGE;
+
+  if (!name || !description || !location || !date || !isValid(date)) return null;
 
   return {
-    id: raw.id || `${name}-${date.toISOString()}`,
+    id: fields.uid || `${name}-${date.toISOString()}`,
     name,
     description,
     location,
     date: date.toISOString(),
     image,
+    url: fields.canonicalurl || '',
   };
-}
-
-// Fetch RSS French Tech
-async function fetchFrenchTech() {
-  const parser = new Parser();
-  const feed = await parser.parseURL('https://frenchtech.example.com/events.rss');
-  return feed.items.map(item => normalizeEvent(item)).filter(Boolean);
-}
-
-// Fetch API Toulouse Métropole
-async function fetchToulouseMetropole() {
-  const res = await axios.get('https://data.toulouse-metropole.fr/api/events');
-  return res.data.map(item => normalizeEvent(item)).filter(Boolean);
-}
-
-// Fetch API Haute-Garonne
-async function fetchHauteGaronne() {
-  const res = await axios.get('https://data.haute-garonne.fr/api/events');
-  return res.data.map(item => normalizeEvent(item)).filter(Boolean);
 }
 
 // Déduplication par nom + date
@@ -65,19 +47,29 @@ function deduplicate(events) {
   });
 }
 
-async function main() {
-  const eventsFT = await fetchFrenchTech();
-  const eventsTM = await fetchToulouseMetropole();
-  const eventsHG = await fetchHauteGaronne();
+async function fetchHauteGaronneEvents() {
+  try {
+    const res = await axios.get(
+      'https://data.haute-garonne.fr/api/explore/v2.1/catalog/datasets/evenements-publics/records?limit=500'
+    );
 
-  const allEvents = [...eventsFT, ...eventsTM, ...eventsHG];
-  const deduped = deduplicate(allEvents);
+    const events = res.data.results
+      .map(normalizeHauteGaronne)
+      .filter(Boolean);
 
-  // Trier par date
-  deduped.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const deduped = deduplicate(events);
 
-  fs.writeFileSync(EVENTS_FILE, JSON.stringify(deduped, null, 2));
-  console.log(`✅ ${deduped.length} événements complets enregistrés dans ${EVENTS_FILE}`);
+    // Tri par date
+    deduped.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Écriture dans events.json
+    fs.mkdirSync('./public/data', { recursive: true });
+    fs.writeFileSync(EVENTS_FILE, JSON.stringify(deduped, null, 2), 'utf-8');
+
+    console.log(`✅ ${deduped.length} événements complets enregistrés dans ${EVENTS_FILE}`);
+  } catch (err) {
+    console.error('❌ Erreur lors de la récupération des événements Haute-Garonne :', err);
+  }
 }
 
-main().catch(err => console.error(err));
+fetchHauteGaronneEvents();
