@@ -71,11 +71,6 @@ export function EventList() {
         </div>
         <div className="flex flex-col sm:flex-row flex-shrink-0 gap-2">
           <Button asChild variant="outline">
-  <Link href="/test-api">
-    Tester API HG
-  </Link>
-</Button>
-          <Button asChild variant="outline">
             <Link href="/calendar">
               <Calendar />
               Voir le calendrier
@@ -95,7 +90,7 @@ export function EventList() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Rechercher par titre, lieu, date, mot-clé..."
+            placeholder="Rechercher par titre, lieu, date, description, mot-clé..."
             className="w-full pl-10"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
