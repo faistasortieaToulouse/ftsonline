@@ -82,3 +82,37 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Ajoute ceci dans ton global.css */
+.scrollable::-webkit-scrollbar {
+  width: 12px;              /* largeur de la barre */
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background: hsl(var(--muted)); /* couleur du fond */
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary)); /* couleur du curseur */
+  border-radius: 6px;
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary-foreground));
+}
+
+/* Flèches haut/bas simulées */
+.scrollable::-webkit-scrollbar-button:single-button {
+  display: block;
+  background: hsl(var(--border));
+  height: 12px;
+}
+
+.scrollable::-webkit-scrollbar-button:single-button:vertical:decrement {
+  content: "▲"; /* flèche haut */
+}
+
+.scrollable::-webkit-scrollbar-button:single-button:vertical:increment {
+  content: "▼"; /* flèche bas */
+}
+
