@@ -13,8 +13,9 @@ export async function GET() {
     const events = Object.values(data)
       .filter(ev => ev.type === "VEVENT")
       .filter(ev => {
-        const postal = ev.location || "";
-        return postal.includes("31"); // filtrage Haute-Garonne
+        const loc = ev.location || "";
+        // ✅ filtrage sur département Haute-Garonne (31)
+        return loc.includes("(31)");
       })
       .map(ev => ({
         id: ev.uid,

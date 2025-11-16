@@ -32,7 +32,7 @@ export default function CultureEnMouvementsPage() {
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">
-        Événements Culture en Mouvements (Haute-Garonne)
+        Événements Culture en Mouvements (Haute-Garonne - 31)
       </h1>
       <p className="text-muted-foreground mb-6">
         Récupération des événements via le flux iCal, filtrés sur le département 31.
@@ -50,7 +50,7 @@ export default function CultureEnMouvementsPage() {
 
       {events.length === 0 && !loading && (
         <p className="text-muted-foreground">
-          Aucun événement trouvé en Haute-Garonne.
+          Aucun événement trouvé en Haute-Garonne (31).
         </p>
       )}
 
