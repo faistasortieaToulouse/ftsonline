@@ -1,8 +1,16 @@
+import { headers } from "next/headers";
+
 export const dynamic = "force-dynamic";
 
 async function getEvents() {
   try {
-    const res = await fetch("/api/actutoulouse", { cache: "no-store" });
+    // 🔥 Récupère l'URL complète du site (ftsonline.vercel.app)
+    const host = headers().get("host");
+    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+
+    const res = await fetch(`${protocol}://${host}/api/actutoulouse`, {
+      cache: "no-store",
+    });
 
     if (!res.ok) return null;
 
@@ -15,7 +23,7 @@ async function getEvents() {
 
 export default async function ActuToulousePage() {
   const data = await getEvents();
-  const events = data?.records ?? []; // <-- Sécurisé
+  const events = data?.records ?? [];
 
   return (
     <main className="p-6">
@@ -27,7 +35,7 @@ export default async function ActuToulousePage() {
 
       <ul className="space-y-4">
         {events.map((event: any) => {
-          const f = event.fields || {}; // <-- Sécurise les champs
+          const f = event.fields || {};
 
           return (
             <li key={event.recordid} className="border p-4 rounded">
