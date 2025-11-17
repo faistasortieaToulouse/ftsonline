@@ -3,9 +3,9 @@
 export const dynamic = "force-dynamic"; // pour éviter le cache Next.js
 
 async function getEvents() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/actutoulouse`, {
-    cache: "no-store",
-  });
+const res = await fetch("/api/actutoulouse", {
+  cache: "no-store",
+});
 
   if (!res.ok) {
     throw new Error("Impossible de récupérer les événements");
