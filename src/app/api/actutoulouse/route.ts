@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const apiUrl =
-      "https://datainfolocale.opendatasoft.com/api/records/1.0/search/?dataset=agenda-des-manifestations&rows=100";
+      "https://datainfolocale.opendatasoft.com/api/records/1.0/search/" +
+      "?dataset=agenda_culturel&rows=200&refine.departement=31";
 
     const res = await fetch(apiUrl);
 
