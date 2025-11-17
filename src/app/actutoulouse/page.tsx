@@ -1,52 +1,85 @@
-import { headers } from "next/headers";
+// src/app/actutoulouse/page.tsx
 
-export const dynamic = "force-dynamic";
+import { headers } from 'next/headers';
+// Importez ici les autres modules nécessaires.
+
+// ====================================================================
+// 1. Fonction de récupération des données (getEvents) - DOIT ÊTRE DÉFINIE EN PREMIER
+// ====================================================================
 
 async function getEvents() {
-  try {
-    // 🔥 Récupère l'URL complète du site (ftsonline.vercel.app)
-    const host = headers().get("host");
-    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+    try {
+        // La déclaration 'let host' est maintenant CORRECTE
+        let host = headers().get("host"); 
+        
+        if (!host) {
+            const defaultHost = process.env.NODE_ENV === "development" ? "localhost:9002" : null;
+            if (!defaultHost) {
+                throw new Error("Cannot determine host header.");
+            }
+            host = defaultHost; 
+        }
+        
+        const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+        
+        const apiUrl = `${protocol}://${host}/api/actutoulouse`;
+        
+        console.log(`Fetching local API: ${apiUrl}`); 
+        
+        const res = await fetch(apiUrl, {
+            cache: 'no-store', 
+        });
+        
+        if (!res.ok) {
+            console.error(`Local API fetch failed with status: ${res.status}`);
+            return []; 
+        }
 
-    const res = await fetch(`${protocol}://${host}/api/actutoulouse`, {
-      cache: "no-store",
-    });
-
-    if (!res.ok) return null;
-
-    return await res.json();
-  } catch (e) {
-    console.error("PAGE FETCH ERROR:", e);
-    return null;
-  }
+        const data = await res.json();
+        return data.records || [];
+        
+    } catch (err) {
+        console.error("Error in getEvents:", err);
+        return [];
+    }
 }
 
+// ====================================================================
+// 2. Composant React principal (EXPORT PAR DÉFAUT)
+// ====================================================================
+
+/**
+ * Ce composant est l'export par défaut requis par Next.js (page.tsx).
+ */
 export default async function ActuToulousePage() {
-  const data = await getEvents();
-  const events = data?.records ?? [];
+    // L'appel fonctionne maintenant car getEvents est défini au-dessus
+    const events = await getEvents();
 
-  return (
-    <main className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Évènements à Toulouse</h1>
-
-      {events.length === 0 && (
-        <p className="text-red-500">Aucun événement trouvé.</p>
-      )}
-
-      <ul className="space-y-4">
-        {events.map((event: any) => {
-          const f = event.fields || {};
-
-          return (
-            <li key={event.recordid} className="border p-4 rounded">
-              <h2 className="text-xl font-semibold">{f.titre || "Sans titre"}</h2>
-              <p>{f.description || "Pas de description"}</p>
-              {f.date && <p>📅 {f.date}</p>}
-              {f.lieu && <p>📍 {f.lieu}</p>}
-            </li>
-          );
-        })}
-      </ul>
-    </main>
-  );
+    return (
+        <main style={{ padding: '20px' }}>
+            <h1>📰 Actualités et Événements à Toulouse</h1>
+            
+            {events.length === 0 ? (
+                <p style={{ color: 'orange', border: '1px solid orange', padding: '10px' }}>
+                    Aucun événement trouvé ou erreur de chargement.
+                    (Vérifiez le terminal serveur si le GET est 500 ou 502)
+                </p>
+            ) : (
+                <section>
+                    <h2>Événements trouvés : {events.length}</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                        {/* ⚠️ Assurez-vous d'avoir ici le code d'affichage final avec les bons noms de champs (title, date, etc.) */}
+                        {events.map((event, index) => (
+                            <div 
+                                key={event.id || event.uid || index} 
+                                style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '5px' }}
+                            >
+                                <h3>{event.title || event.name || event.titre || "Titre Indisponible"}</h3>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+        </main>
+    );
 }
