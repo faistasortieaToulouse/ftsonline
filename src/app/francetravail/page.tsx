@@ -1,3 +1,5 @@
+"use client"; // ⚠️ Indispensable si tu utilises useState / useEffect
+
 import React, { useState, useEffect } from "react";
 
 type Event = {
