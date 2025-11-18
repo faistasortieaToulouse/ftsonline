@@ -1,9 +1,6 @@
 // src/app/api/cotetoulouse/route.ts
 import { NextResponse } from "next/server";
 
-// src/app/api/cotetoulouse/route.ts
-import { NextResponse } from "next/server";
-
 export async function GET() {
   const categories = [
     { label: "Toulouse : ce week-end", url: "https://infolocale.actu.fr/evenements/toulouse-31000/sortir-ce-weekend" },
