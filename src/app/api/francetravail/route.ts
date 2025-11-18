@@ -73,4 +73,10 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    console.error("🔥 Erreur serveur :", err
+    console.error("🔥 Erreur serveur :", error);
+    return NextResponse.json(
+      { error: "Erreur serveur", details: error },
+      { status: 500 }
+    );
+  }
+}
