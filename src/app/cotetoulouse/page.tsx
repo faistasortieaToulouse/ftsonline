@@ -1,4 +1,3 @@
-// src/app/cotetoulouse/page.tsx
 import { headers } from "next/headers";
 
 async function getCategories() {
@@ -33,46 +32,41 @@ export default async function CoteToulousePage() {
   const categories = await getCategories();
 
   return (
-    <main style={{ padding: "20px" }}>
-      <h1>📚 Thématiques Toulouse</h1>
+    <main style={{ padding: "20px", fontFamily: "sans-serif" }}>
+      <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>📚 Liens Côté Toulouse</h1>
 
       {categories.length === 0 ? (
         <p style={{ color: "orange", border: "1px solid orange", padding: "10px" }}>
           Aucun lien trouvé ou erreur API.
         </p>
       ) : (
-        <section>
-          <h2>Liens disponibles : {categories.length}</h2>
-
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: "15px",
-            marginTop: "20px"
-          }}>
-            {categories.map((cat: { label: string; url: string }, index: number) => (
-              <a
-                key={index}
-                href={cat.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "block",
-                  padding: "12px",
-                  border: "1px solid #ccc",
-                  borderRadius: "6px",
-                  textAlign: "center",
-                  background: "#f8f8f8",
-                  textDecoration: "none",
-                  color: "#333",
-                  fontWeight: "bold"
-                }}
-              >
-                {cat.label}
-              </a>
-            ))}
-          </div>
-        </section>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gap: "15px"
+        }}>
+          {categories.map((item: { label: string; url: string }, i: number) => (
+            <a
+              key={i}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "block",
+                padding: "12px",
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+                textAlign: "center",
+                background: "#f8f8f8",
+                textDecoration: "none",
+                color: "#333",
+                fontWeight: "bold"
+              }}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
       )}
     </main>
   );
