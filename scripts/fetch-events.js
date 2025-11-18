@@ -50,7 +50,7 @@ function deduplicate(events) {
 async function fetchHauteGaronneEvents() {
   try {
     const res = await axios.get(
-      'https://data.haute-garonne.fr/api/explore/v2.1/catalog/datasets/evenements-publics/records?limit=500'
+      'https://data.haute-garonne.fr/api/explore/v2.1/catalog/datasets/evenements-publics/records?limit=100'
     );
 
     const events = res.data.results
