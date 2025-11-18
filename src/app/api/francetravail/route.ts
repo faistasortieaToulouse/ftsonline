@@ -4,7 +4,6 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    // Pagination / filtrage depuis le query param si nécessaire
     const page = searchParams.get("page") || "1";
     const startDate = searchParams.get("start_date") || "2025-11-10";
 
@@ -22,7 +21,9 @@ export async function GET(request: Request) {
     }
 
     const data = await res.json();
-    return NextResponse.json(data);
+
+    // ✅ On renvoie seulement le tableau d'événements
+    return NextResponse.json({ events: data.data || [] });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
