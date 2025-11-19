@@ -29,9 +29,11 @@ export async function GET(request: Request) {
 // et assurez-vous que tous les paramètres suivent le point d'interrogation.
 // Ancienne ligne (à remplacer) :
 // const apiUrl = `https://www.eventbriteapi.com/v3/events/search?location.address=Toulouse&location.within=50km&page=${page}`;
+// const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?q=Toulouse&page=${page}`;
 
 // NOUVELLE LIGNE SIMPLIFIÉE (pour test) :
-const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?q=Toulouse&page=${page}`;
+// L'URL et les en-têtes doivent ressembler à ceci :
+const apiUrl = `https://www.eventbriteapi.com/v3/events/search?location.address=Toulouse&location.within=10km&page=${page}`;
 
     const res = await fetch(apiUrl, {
       headers: {
