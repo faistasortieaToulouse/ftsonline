@@ -20,8 +20,8 @@ export async function GET(request: Request) {
     const startDate =
       searchParams.get("start_date") || new Date().toISOString().split("T")[0];
 
-    const clientId = process.env.FRANCETRAVAIL_API_KEY;
-    const clientSecret = process.env.FRANCETRAVAIL_CLE_SECRETE;
+    const clientId = process.env.FRANCETRAVAIL_CLIENT_ID;
+    const clientSecret = process.env.FRANCETRAVAIL_CLIENT_SECRET;
     const scope = process.env.FRANCETRAVAIL_SCOPE;
 
     if (!clientId || !clientSecret || !scope) {
