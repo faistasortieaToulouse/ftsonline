@@ -17,9 +17,7 @@ export async function GET(request: Request) {
 
     // const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=10km&page=${page}`;
     // const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=10km&page=1`;
-    const apiUrl =
-  `https://www.eventbriteapi.com/v3/events/search/?` + 
-  `location.address=Toulouse&location.within=10km&sort_by=date&page=${page}`;
+    const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=10km&sort_by=date`;
     
     // 🟦 LOGS DEBUG COMPLETS
     console.log("========== EVENTBRITE DEBUG ==========");
