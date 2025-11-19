@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     }
 
     // Exemple : récupérer les évènements publics en France
-    const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=50km&page=${page}`;
+    const apiUrl = `https://www.eventbriteapi.com/v3/events/search?location.address=Toulouse&location.within=50km&page=${page}`;
 
     const res = await fetch(apiUrl, {
       headers: {
