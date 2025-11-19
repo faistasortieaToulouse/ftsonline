@@ -23,7 +23,11 @@ export async function GET(request: Request) {
     }
 
     // ⚠️ Correction : ajout du slash après "search/"
-    const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=50km&page=${page}`;
+// AVANT :
+// const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=50km&page=${page}`;
+// APRÈS : Utilisez simplement l'endpoint 'events/search' sans slash de fin,
+// et assurez-vous que tous les paramètres suivent le point d'interrogation.
+const apiUrl = `https://www.eventbriteapi.com/v3/events/search?location.address=Toulouse&location.within=50km&page=${page}`;
 
     const res = await fetch(apiUrl, {
       headers: {
