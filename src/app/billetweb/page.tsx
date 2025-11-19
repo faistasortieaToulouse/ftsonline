@@ -5,10 +5,13 @@ import React, { useState, useEffect } from "react";
 type BilletwebEvent = {
   id: string;
   name: string;
+  start: string;
+  end?: string;
+  place?: string;
+  shop?: string;
   description?: string;
-  start_date: string;
-  end_date?: string;
-  url: string;
+  image?: string;
+  cover?: string;
 };
 
 export default function BilletwebPage() {
@@ -57,26 +60,36 @@ export default function BilletwebPage() {
               <h2>{event.name}</h2>
               <p>
                 Début :{" "}
-                {new Date(event.start_date).toLocaleString("fr-FR", {
+                {new Date(event.start).toLocaleString("fr-FR", {
                   dateStyle: "full",
                   timeStyle: "short",
                 })}
               </p>
-              {event.end_date && (
+              {event.end && (
                 <p>
                   Fin :{" "}
-                  {new Date(event.end_date).toLocaleString("fr-FR", {
+                  {new Date(event.end).toLocaleString("fr-FR", {
                     dateStyle: "full",
                     timeStyle: "short",
                   })}
                 </p>
               )}
+              {event.place && <p>Lieu : {event.place}</p>}
               {event.description && <p>{event.description}</p>}
-              <p>
-                <a href={event.url} target="_blank" rel="noopener noreferrer">
-                  Voir sur Billetweb
-                </a>
-              </p>
+              {event.shop && (
+                <p>
+                  <a href={event.shop} target="_blank" rel="noopener noreferrer">
+                    Billetterie
+                  </a>
+                </p>
+              )}
+              {event.image && (
+                <img
+                  src={event.image}
+                  alt={event.name}
+                  style={{ maxWidth: "300px", marginTop: "0.5rem" }}
+                />
+              )}
             </li>
           ))}
         </ul>
