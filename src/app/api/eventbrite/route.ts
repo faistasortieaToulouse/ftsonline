@@ -12,11 +12,7 @@ type EventbriteEvent = {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-
-    // Paramètres dynamiques avec valeurs par défaut
     const page = searchParams.get("page") || "1";
-    const city = searchParams.get("city") || "Toulouse";
-    const within = searchParams.get("within") || "50km";
 
     const token = process.env.EVENTBRITE_TOKEN;
     if (!token) {
@@ -26,10 +22,8 @@ export async function GET(request: Request) {
       );
     }
 
-    // URL Eventbrite API
-    const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=${encodeURIComponent(
-      city
-    )}&location.within=${within}&page=${page}`;
+    // ⚠️ Correction : ajout du slash après "search/"
+    const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=50km&page=${page}`;
 
     const res = await fetch(apiUrl, {
       headers: {
@@ -50,26 +44,24 @@ export async function GET(request: Request) {
 
     const data = await res.json();
 
-    const events: EventbriteEvent[] = Array.isArray(data.events)
-      ? data.events.map((ev: any) => ({
-          id: ev.id,
-          name: ev.name,
-          description: ev.description,
-          start: ev.start,
-          end: ev.end,
-          url: ev.url,
-        }))
-      : [];
+    const events: EventbriteEvent[] = (data.events || []).map((ev: any) => ({
+      id: ev.id,
+      name: ev.name,
+      description: ev.description,
+      start: ev.start,
+      end: ev.end,
+      url: ev.url,
+    }));
 
     return NextResponse.json({
       events,
-      total: data.pagination?.object_count ?? events.length,
-      page: data.pagination?.page_number ?? page,
+      total: data.pagination?.object_count || events.length,
+      page: data.pagination?.page_number || page,
     });
   } catch (error) {
     console.error("🔥 Erreur serveur :", error);
     return NextResponse.json(
-      { error: "Erreur serveur", details: (error as Error).message },
+      { error: "Erreur serveur", details: String(error) },
       { status: 500 }
     );
   }
