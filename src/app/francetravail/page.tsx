@@ -6,12 +6,11 @@ type FTEvent = {
   idEvenement: string;
   titre: string;
   dateDebut: string;
-  lieu?: {
-    nom?: string;
-    codePostal?: string;
-    ville?: string;
-  };
+  dateFin?: string;
   description?: string;
+  localisation?: string;
+  organismeOrganisateur?: string;
+  urlSalonEnLigne?: string;
 };
 
 export default function FranceTravailPage() {
@@ -45,7 +44,7 @@ export default function FranceTravailPage() {
           setEvents(sorted);
         }
       } catch (error) {
-        console.error("Erreur chargement événements", error);
+        console.error("Erreur chargement salons en ligne", error);
         setError("Impossible de charger les salons en ligne.");
       }
       setLoading(false);
@@ -79,7 +78,7 @@ export default function FranceTravailPage() {
             <li key={event.idEvenement} style={{ marginBottom: "1rem" }}>
               <h2>{event.titre}</h2>
               <p>
-                Date :{" "}
+                Début :{" "}
                 {new Date(event.dateDebut).toLocaleDateString("fr-FR", {
                   weekday: "long",
                   year: "numeric",
@@ -87,17 +86,34 @@ export default function FranceTravailPage() {
                   day: "numeric",
                 })}
               </p>
-
-              {event.lieu && (
+              {event.dateFin && (
                 <p>
-                  Lieu :{" "}
-                  {event.lieu.nom
-                    ? event.lieu.nom
-                    : `${event.lieu.codePostal || ""} ${event.lieu.ville || ""}`}
+                  Fin :{" "}
+                  {new Date(event.dateFin).toLocaleDateString("fr-FR", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
                 </p>
               )}
 
-              {event.description && <p>{event.description}</p>}
+              {event.localisation && <p>Localisation : {event.localisation}</p>}
+              {event.organismeOrganisateur && (
+                <p>Organisateur : {event.organismeOrganisateur}</p>
+              )}
+              {event.description && <p dangerouslySetInnerHTML={{ __html: event.description }} />}
+              {event.urlSalonEnLigne && (
+                <p>
+                  <a
+                    href={event.urlSalonEnLigne}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Voir le salon en ligne
+                  </a>
+                </p>
+              )}
             </li>
           ))}
         </ul>
