@@ -18,6 +18,7 @@ export default function FranceTravailPage() {
   const [events, setEvents] = useState<FTEvent[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -25,15 +26,27 @@ export default function FranceTravailPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
+      setError(null);
       try {
         const res = await fetch(
           `/api/francetravail?page=${page}&start_date=${startDate}`
         );
         const data = await res.json();
 
-        setEvents(data.events || []);
+        if (data.error) {
+          setError(data.details || "Erreur API France Travail");
+          setEvents([]);
+        } else {
+          // Tri chronologique
+          const sorted = (data.events || []).sort(
+            (a: FTEvent, b: FTEvent) =>
+              new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime()
+          );
+          setEvents(sorted);
+        }
       } catch (error) {
         console.error("Erreur chargement événements", error);
+        setError("Impossible de charger les salons en ligne.");
       }
       setLoading(false);
     };
@@ -43,7 +56,7 @@ export default function FranceTravailPage() {
 
   return (
     <div>
-      <h1>Événements France Travail - Haute-Garonne</h1>
+      <h1>Salons en ligne France Travail - Haute-Garonne</h1>
 
       <label>
         Filtrer à partir de la date :{" "}
@@ -56,14 +69,24 @@ export default function FranceTravailPage() {
 
       {loading ? (
         <p>Chargement...</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>{error}</p>
       ) : events.length === 0 ? (
-        <p>Aucun événement trouvé.</p>
+        <p>Aucun salon en ligne trouvé.</p>
       ) : (
         <ul>
           {events.map((event) => (
             <li key={event.idEvenement} style={{ marginBottom: "1rem" }}>
               <h2>{event.titre}</h2>
-              <p>Date : {event.dateDebut}</p>
+              <p>
+                Date :{" "}
+                {new Date(event.dateDebut).toLocaleDateString("fr-FR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
 
               {event.lieu && (
                 <p>
