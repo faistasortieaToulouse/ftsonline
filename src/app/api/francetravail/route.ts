@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
 
+type FTEvent = {
+  idEvenement: string;
+  titre: string;
+  dateDebut: string;
+  lieu?: {
+    nom?: string;
+    codePostal?: string;
+    ville?: string;
+  };
+  description?: string;
+};
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
     const page = searchParams.get("page") || "1";
-    const startDate = new Date().toISOString().split("T")[0];
+    const startDate =
+      searchParams.get("start_date") || new Date().toISOString().split("T")[0];
 
     const clientId = process.env.FRANCETRAVAIL_CLIENT_ID;
     const clientSecret = process.env.FRANCETRAVAIL_CLIENT_SECRET;
@@ -46,7 +59,7 @@ export async function GET(request: Request) {
     const { access_token } = await tokenResponse.json();
 
     // --- 2) Appel API des événements ---
-    const apiUrl = `https://api.francetravail.io/partenaire/evenements/v1/evenements?departement=31&dateDebut=${startDate}&page=${page}`;
+    const apiUrl = `https://api.francetravail.fr/partenaire/evenements/v1/evenements?departement=31&dateDebutMin=${startDate}&page=${page}`;
 
     const res = await fetch(apiUrl, {
       headers: {
@@ -66,16 +79,30 @@ export async function GET(request: Request) {
 
     const data = await res.json();
 
+    // --- 3) Normalisation vers FTEvent ---
+    const events: FTEvent[] = (data.evenements || []).map((ev: any) => ({
+      idEvenement: ev.idEvenement,
+      titre: ev.titre,
+      dateDebut: ev.dateDebut,
+      description: ev.description,
+      lieu: ev.lieu
+        ? {
+            nom: ev.lieu.nom,
+            codePostal: ev.lieu.codePostal,
+            ville: ev.lieu.ville,
+          }
+        : undefined,
+    }));
+
     return NextResponse.json({
-      events: data.evenements || [],
-      total: data.total || 0,
+      events,
+      total: data.total || events.length,
       page: data.page || page,
     });
-
   } catch (error) {
     console.error("🔥 Erreur serveur :", error);
     return NextResponse.json(
-      { error: "Erreur serveur", details: error },
+      { error: "Erreur serveur", details: String(error) },
       { status: 500 }
     );
   }
