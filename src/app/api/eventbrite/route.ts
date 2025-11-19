@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 
 // NOUVELLE LIGNE SIMPLIFIÉE (pour test) :
 // L'URL et les en-têtes doivent ressembler à ceci :
-const apiUrl = `https://www.eventbriteapi.com/v3/events/search?location.address=Toulouse&location.within=10km&page=${page}`;
+const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=10km&page=${page}`;
 
     const res = await fetch(apiUrl, {
       headers: {
