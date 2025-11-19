@@ -1,77 +1,69 @@
 import { NextResponse } from "next/server";
 
-type EventbriteEvent = {
-  id: string;
-  name: { text: string };
-  description?: { text: string };
-  start: { local: string };
-  end: { local: string };
-  url: string;
-};
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const page = searchParams.get("page") || "1";
 
     const token = process.env.EVENTBRITE_TOKEN;
+
     if (!token) {
+      console.error("❌ TOKEN MANQUANT");
       return NextResponse.json(
         { error: "Token Eventbrite manquant" },
         { status: 500 }
       );
     }
 
-    // ⚠️ Correction : ajout du slash après "search/"
-// AVANT :
-// const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=50km&page=${page}`;
-// APRÈS : Utilisez simplement l'endpoint 'events/search' sans slash de fin,
-// et assurez-vous que tous les paramètres suivent le point d'interrogation.
-// Ancienne ligne (à remplacer) :
-// const apiUrl = `https://www.eventbriteapi.com/v3/events/search?location.address=Toulouse&location.within=50km&page=${page}`;
-// const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?q=Toulouse&page=${page}`;
+    const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=10km&page=${page}`;
 
-// NOUVELLE LIGNE SIMPLIFIÉE (pour test) :
-// L'URL et les en-têtes doivent ressembler à ceci :
-const apiUrl = `https://www.eventbriteapi.com/v3/events/search/?location.address=Toulouse&location.within=10km&page=${page}`;
+    // 🟦 LOGS DEBUG COMPLETS
+    console.log("========== EVENTBRITE DEBUG ==========");
+    console.log("➡️ URL appelée :", apiUrl);
+    console.log("➡️ Headers envoyés :", {
+      Authorization: `Bearer ${token.substring(0, 5)}…(masqué)`,
+      "Content-Type": "application/json",
+    });
+    console.log("======================================");
 
     const res = await fetch(apiUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      cache: "no-store", // évite la mise en cache côté Next.js
+      cache: "no-store",
     });
 
+    const rawText = await res.text();
+
+    // 🟥 Si erreur HTTP → on log le contenu exact renvoyé par Eventbrite
     if (!res.ok) {
-      const errText = await res.text();
-      console.error("❌ Erreur API Eventbrite :", errText);
+      console.error("❌ Eventbrite status:", res.status);
+      console.error("❌ Eventbrite raw response:", rawText);
+
       return NextResponse.json(
-        { error: "Erreur API Eventbrite", details: errText },
+        {
+          error: "Erreur API Eventbrite",
+          status: res.status,
+          raw: rawText,
+          url: apiUrl,
+        },
         { status: res.status }
       );
     }
 
-    const data = await res.json();
-
-    const events: EventbriteEvent[] = (data.events || []).map((ev: any) => ({
-      id: ev.id,
-      name: ev.name,
-      description: ev.description,
-      start: ev.start,
-      end: ev.end,
-      url: ev.url,
-    }));
+    // 🟩 OK → parse JSON
+    const data = JSON.parse(rawText);
 
     return NextResponse.json({
-      events,
-      total: data.pagination?.object_count || events.length,
-      page: data.pagination?.page_number || page,
+      debug_url: apiUrl,
+      pagination: data.pagination,
+      events: data.events || [],
     });
-  } catch (error) {
-    console.error("🔥 Erreur serveur :", error);
+  } catch (error: any) {
+    console.error("🔥 Crash non géré :", error);
     return NextResponse.json(
-      { error: "Erreur serveur", details: String(error) },
+      { error: "Erreur serveur", details: error.message || String(error) },
       { status: 500 }
     );
   }
