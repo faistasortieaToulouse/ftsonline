@@ -33,7 +33,8 @@ export async function GET(request: Request) {
       );
     }
 
-    const apiUrl = `https://www.billetweb.fr/api/events?user=${userId}&key=${apiKey}&version=1&past=${past}&online=${online}&description=${description}`;
+    // const apiUrl = `https://www.billetweb.fr/api/events?user=${userId}&key=${apiKey}&version=1&past=${past}&online=${online}&description=${description}`;
+    const apiUrl = `https://www.billetweb.fr/api/events?user=${userId}&key=${apiKey}&version=1&past=1&online=1&description=1`;
 
     const res = await fetch(apiUrl, {
       headers: { "Content-Type": "application/json" },
