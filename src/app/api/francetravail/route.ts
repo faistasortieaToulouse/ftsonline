@@ -58,19 +58,19 @@ export async function GET(request: Request) {
 
     const { access_token } = await tokenResponse.json();
 
-    // --- 2) Appel API des événements ---
-    const apiUrl = `https://api.francetravail.fr/partenaire/evenements/v1/evenements?departement=31&dateDebutMin=${startDate}&page=${page}`;
+    // --- 2) Appel API des salons en ligne ---
+    const apiUrl = `https://api.francetravail.io/partenaire/evenements/v1/salonsenligne?departement=31&dateDebutMin=${startDate}&page=${page}`;
 
     const res = await fetch(apiUrl, {
       headers: {
         Authorization: `Bearer ${access_token}`,
-        "Content-Type": "application/json",
+        Accept: "application/json",
       },
     });
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error("❌ Erreur API FT Evenements :", errText);
+      console.error("❌ Erreur API FT Salons en ligne :", errText);
       return NextResponse.json(
         { error: "Erreur API France Travail", details: errText },
         { status: res.status }
@@ -80,7 +80,7 @@ export async function GET(request: Request) {
     const data = await res.json();
 
     // --- 3) Normalisation vers FTEvent ---
-    const events: FTEvent[] = (data.evenements || []).map((ev: any) => ({
+    const events: FTEvent[] = (data.salonEnLigne || []).map((ev: any) => ({
       idEvenement: ev.idEvenement,
       titre: ev.titre,
       dateDebut: ev.dateDebut,
