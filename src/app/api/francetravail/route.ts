@@ -4,12 +4,11 @@ type FTEvent = {
   idEvenement: string;
   titre: string;
   dateDebut: string;
-  lieu?: {
-    nom?: string;
-    codePostal?: string;
-    ville?: string;
-  };
+  dateFin?: string;
   description?: string;
+  localisation?: string;
+  organismeOrganisateur?: string;
+  urlSalonEnLigne?: string;
 };
 
 export async function GET(request: Request) {
@@ -80,18 +79,15 @@ export async function GET(request: Request) {
     const data = await res.json();
 
     // --- 3) Normalisation vers FTEvent ---
-    const events: FTEvent[] = (data.salonEnLigne || []).map((ev: any) => ({
-      idEvenement: ev.idEvenement,
+    const events: FTEvent[] = (data.salonEnLigne || []).map((ev: any, idx: number) => ({
+      idEvenement: ev.idEvenement || `salon-${idx}`,
       titre: ev.titre,
       dateDebut: ev.dateDebut,
+      dateFin: ev.dateFin,
       description: ev.description,
-      lieu: ev.lieu
-        ? {
-            nom: ev.lieu.nom,
-            codePostal: ev.lieu.codePostal,
-            ville: ev.lieu.ville,
-          }
-        : undefined,
+      localisation: ev.localisation,
+      organismeOrganisateur: ev.organismeOrganisateur,
+      urlSalonEnLigne: ev.urlSalonEnLigne,
     }));
 
     return NextResponse.json({
