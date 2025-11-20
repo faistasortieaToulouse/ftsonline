@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const apiKey = process.env.TICKETMASTER_KEY; // ton Consumer Key dans .env.local
+  const apiKey = process.env.TICKETMASTER_KEY;
   const url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${apiKey}&countryCode=FR&size=10`;
 
   try {
@@ -19,6 +19,8 @@ export async function GET() {
       venue: ev._embedded?.venues?.[0]?.name,
       city: ev._embedded?.venues?.[0]?.city?.name,
       url: ev.url,
+      description: ev.info || ev.pleaseNote || "", // champ description
+      image: ev.images?.[0]?.url || null,          // première image
     })) || [];
 
     return NextResponse.json({ events });
