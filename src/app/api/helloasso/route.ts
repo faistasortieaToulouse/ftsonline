@@ -24,7 +24,7 @@ export async function GET() {
     const tokenData = await tokenRes.json();
     const accessToken = tokenData.access_token;
 
-    // 2. Récupérer les événements de ton organisation "bilingue"
+    // 2. Récupérer les événements de ton organisation bilingue
     const eventsRes = await fetch(
       `https://api.helloasso.com/v5/organizations/${orgSlug}/events`,
       { headers: { Authorization: `Bearer ${accessToken}` } }
