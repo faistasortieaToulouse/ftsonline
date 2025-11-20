@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
 import * as cheerio from "cheerio";
 
+type JDSEvent = {
+  title: string;
+  description?: string;
+  url: string;
+  image?: string;
+  categories?: string[];
+};
+
 export async function GET() {
   try {
-    const res = await fetch("https://www.jds.fr/toulouse/agenda/musique-et-concerts-96_B", {
+    const res = await fetch("https://www.jds.fr/toulouse/agenda/agenda-du-jour/-aujourdhui_JPJ", {
       cache: "no-store",
     });
 
@@ -15,24 +23,22 @@ export async function GET() {
     const html = await res.text();
     const $ = cheerio.load(html);
 
-    const events: any[] = [];
+    const events: JDSEvent[] = [];
 
-    $("article").each((_, el) => {
-      const title = $(el).find("h2, h3").text().trim();
-      const date = $(el).find(".bi-clock").parent().text().trim();
-      const place = $(el).find(".bi-geo-alt").parent().text().trim();
-      const price = $(el).find(".bi-currency-euro").parent().text().trim();
-      const description = $(el).find(".description").text().trim();
-      const url = $(el).find("a").attr("href");
+    $("article.agenda-item").each((_, el) => {
+      const title = $(el).find("a.titre").text().trim();
+      const url = $(el).find("a.titre").attr("href");
+      const description = $(el).find("span.description").text().trim();
+      const image = $(el).find("a.image img").attr("src");
+      const categories = $(el).find(".rubriques span").map((_, s) => $(s).text().trim()).get();
 
       if (title) {
         events.push({
           title,
-          date,
-          place,
-          price,
           description,
-          url: url ? `https://www.jds.fr${url}` : null,
+          url: url ? `https://www.jds.fr${url}` : "",
+          image,
+          categories,
         });
       }
     });
