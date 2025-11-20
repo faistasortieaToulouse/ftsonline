@@ -9,6 +9,8 @@ type TicketmasterEvent = {
   venue?: string;
   city?: string;
   url: string;
+  description?: string;
+  image?: string;
 };
 
 export default function TicketmasterPage() {
@@ -62,9 +64,17 @@ export default function TicketmasterPage() {
               }}
             >
               <h2>{ev.name}</h2>
+              {ev.image && (
+                <img
+                  src={ev.image}
+                  alt={ev.name}
+                  style={{ maxWidth: "300px", borderRadius: "6px" }}
+                />
+              )}
               {ev.date && <p>Date : {ev.date}</p>}
               {ev.venue && <p>Lieu : {ev.venue}</p>}
               {ev.city && <p>Ville : {ev.city}</p>}
+              {ev.description && <p>{ev.description}</p>}
               <p>
                 <a href={ev.url} target="_blank" rel="noopener noreferrer">
                   Voir sur Ticketmaster
