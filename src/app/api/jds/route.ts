@@ -21,6 +21,8 @@ export async function GET() {
     }
 
     const html = await res.text();
+    // 👉 Mets ton console.log ici
+    console.log(html.substring(0, 2000));
     const $ = cheerio.load(html);
 
     const events: JDSEvent[] = [];
