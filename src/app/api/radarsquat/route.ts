@@ -1,142 +1,165 @@
 // src/app/api/radarsquat/route.ts
+// Solution finale avec scraping HTML, filtre 31 jours, et gestion de la pagination.
 
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+import * as cheerio from 'cheerio'; 
 
-// Petit parseur ICS minimaliste
-function parseICS(ics: string) {
-  const events: any[] = [];
-  // Gère les retours à la ligne autour de BEGIN:VEVENT de manière plus robuste
-  const blocks = ics.split(/\r?\nBEGIN:VEVENT/i).slice(1);
+// --- Fonction utilitaire de date ---
+function toISO(dateString: string | undefined): string | null {
+    if (!dateString) return null;
+    try {
+        const date = new Date(dateString); 
+        if (isNaN(date.getTime())) return null;
+        return date.toISOString();
+    } catch (e) {
+        return null;
+    }
+}
 
-  for (const block of blocks) {
-    const lines = block.split(/\r?\n/);
+// --- Fonction de scraping HTML ---
+function scrapeHtml(html: string): any[] {
+    const $ = cheerio.load(html);
+    const events: any[] = [];
+    
+    // Ciblage précis pour ne prendre que les articles d'événements à l'intérieur du conteneur de vue
+    const $events = $('div.view-content article[typeof="Event"]'); 
 
-    const get = (prop: string) => {
-      // REGEX AMÉLIORÉE: Capture le contenu après le dernier ':' ou ';'
-      // ^${prop} : commence par la propriété (ex: DTSTART)
-      // (?:;[^:\r\n]*)? : Gère ZÉRO ou PLUS de paramètres (comme ;VALUE=DATE) jusqu'au dernier ':'
-      const regex = new RegExp(`^${prop}(?:;[^:\r\n]*)*:([^\r\n]*)$`, "i");
-      let value = "";
-      
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const m = line.match(regex);
-
-        if (m) {
-          // La valeur est le groupe de capture 1 (tout après le dernier :)
-          value = m[1]; 
-          
-          // Concaténation des lignes repliées (continuation avec espace au début)
-          let j = i + 1;
-          while (j < lines.length && lines[j].startsWith(" ")) {
-            value += lines[j].slice(1);
-            j++;
-          }
-          
-          // Dé-échapper les caractères ICS (selon RFC 5545)
-          value = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\\\/g, '\\').replace(/\\n/g, '\n');
-          break;
-        }
-      }
-      return value || null;
-    };
-
-    const summary = get("SUMMARY");
-    const description = get("DESCRIPTION");
-    const location = get("LOCATION");
-    const url = get("URL");
-    const dtstart = get("DTSTART");
-    const dtend = get("DTEND");
-    const uid = get("UID");
-
-    // Convertir dates (gère formats Zulu YYYYMMDDTHHMMSSZ, YYYYMMDDTHHMMSS et date-only YYYYMMDD)
-    const toISO = (s: string | null) => {
-      if (!s) return null;
-      
-      // La regex accepte Z (UTC) ou pas de Z (Local Time/TZID).
-      // Nous utiliserons Date.UTC uniquement si Z est présent, sinon nous le laissons comme heure locale.
-      const m = s.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2}))?(Z)?$/);
-      if (!m) return null;
-      
-      const [_, Y, M, D, h, mi, se, Z] = m;
-      
-      if (h) {
-        // Format YYYYMMDDTHHMMSS
-        const dateString = `${Y}-${M}-${D}T${h}:${mi}:${se || '00'}`;
+    $events.each((index, element) => {
+        const $event = $(element);
         
-        if (Z) {
-          // Si 'Z' est présent (UTC), nous l'ajoutons et l'analysons en tant que tel
-          return new Date(dateString + 'Z').toISOString();
-        } else {
-          // Si pas de 'Z', c'est une heure locale (avec TZID ou par défaut)
-          // Next.js/Node le traitera comme l'heure locale du serveur (qui est correct ici)
-          return new Date(dateString).toISOString();
+        // 1. Extraction du titre et du lien
+        const title = $event.find('h4 a').text().trim() || null;
+        const link = $event.find('h4 a[property="url"]').attr('href') || null;
+        
+        if (!title) return; 
+
+        // 2. Extraction du lieu
+        const locationName = $event.find('div.grey span[property="name"]').text().trim() || null;
+        const streetAddress = $event.find('div.grey span[property="streetAddress"]').text().trim() || null;
+        const addressLocality = $event.find('div.grey span[property="addressLocality"]').text().trim() || null;
+        const location = [locationName, streetAddress, addressLocality].filter(Boolean).join(', ');
+        
+        // 3. Extraction des dates à partir de l'attribut 'content' (Schema.org)
+        const dtstartContent = $event.find('span[property="schema:startDate"]').attr('content');
+        const dtendContent = $event.find('span[property="schema:endDate"]').attr('content');
+        
+        // 4. Extraction de la description/tags (texte après la date de fin)
+        let description = $event.find('.date-display-single, .date-display-range').nextAll().text();
+        
+        // 5. Conversion des dates
+        const startISO = toISO(dtstartContent);
+        const endISO = toISO(dtendContent);
+
+        // Validation minimale
+        if (startISO) {
+            events.push({
+                id: link,
+                source: "Radar Squat Toulouse",
+                title: title,
+                description: description.replace(/—\s*/, '').trim() || null, 
+                location: location,
+                link: link,
+                start: startISO,
+                end: endISO,
+                image: "/logo/logoproxyradarsquat.jpg",
+            });
         }
-      } else {
-        // Format YYYYMMDD (Date-only)
-        // Les événements de jour complet sont mieux gérés comme des dates ISO sans heure (ex: 2025-11-21)
-        // Cependant, pour l'affichage, il est plus sûr d'utiliser minuit UTC
-        return new Date(Date.UTC(+Y, +M - 1, +D, 0, 0, 0)).toISOString();
-      }
-    };
-
-    const startISO = toISO(dtstart);
-    const endISO = toISO(dtend);
-
-    // Filtrer les événements ayant un titre et une date de début valides
-    if (!summary || !startISO || isNaN(new Date(startISO).getTime())) continue;
-
-    events.push({
-      id: uid || url || summary,
-      source: "Radar Squat Toulouse",
-      title: summary,
-      description,
-      location,
-      link: url,
-      start: startISO,
-      end: endISO,
-      image: "/logo/logodemosphere.jpg",
     });
-  }
 
-  // Filtrer les événements qui pourraient être dans le passé (la source devrait le faire, mais c'est une sécurité)
-  const now = Date.now();
-  return events.filter(e => {
-      // Garde seulement les événements qui commencent dans le futur ou qui ont commencé mais ne sont pas encore terminés
-      if (!e.end) return new Date(e.start!).getTime() >= now;
-      return new Date(e.end).getTime() >= now;
-  });
+    return events;
 }
 
 
-// EXPORT ASYNC FUNCTION GET()
-export async function GET() {
-  // ... (le reste de la fonction GET avec le fetch vers l'API externe)
-  // Utilisez le code GET de l'étape précédente.
-  try {
-    const res = await fetch("https://radar.squat.net/fr/events/city/Toulouse/ical", {
-      headers: { "Accept": "text/calendar" },
-      next: { revalidate: 3600 }, 
-    });
-
-    if (!res.ok) {
-      const status = res.status;
-      return NextResponse.json(
-        { error: `Impossible de récupérer le flux ICS (Statut: ${status}).` }, 
-        { status: 404 } 
-      );
-    }
-
-    const ics = await res.text();
-    const events = parseICS(ics);
-
-    return NextResponse.json(events);
+// --- Fonction GET (API Route) ---
+export async function GET(request: NextRequest) {
+    const BASE_URL = "https://radar.squat.net/fr/events/city/Toulouse";
+    const MAX_PAGES = 5; // Scrape jusqu'à 5 pages (page 0 à 4) pour couvrir 31 jours
+    let allScrapedEvents: any[] = [];
     
-  } catch (error) {
-    console.error("Échec de la connexion réseau ou du parsing:", error);
-    return NextResponse.json(
-      { error: "Échec de la connexion réseau au service externe." }, 
-      { status: 500 }
-    );
-  }
+    // Définition de la limite de temps pour le filtre
+    const now = Date.now();
+    const futureLimit = now + (31 * 24 * 60 * 60 * 1000); // 31 jours en millisecondes
+    
+    try {
+        for (let page = 0; page < MAX_PAGES; page++) {
+            // Construit l'URL : la page 0 n'a pas de paramètre "?page=0"
+            const URL_TO_FETCH = page === 0 ? BASE_URL : `${BASE_URL}?page=${page}`;
+            
+            console.log(`[SCRAPING] Fetching page: ${page} (${URL_TO_FETCH})`);
+
+            const res = await fetch(URL_TO_FETCH, {
+                headers: { 
+                    "User-Agent": "NextJS Scraping Client" 
+                },
+                // Révalidation du cache pour toutes les pages
+                next: { revalidate: 3600 }, 
+            });
+
+            if (!res.ok) {
+                console.error(`Erreur lors du scraping de la page ${page}: ${res.status}`);
+                break; // Arrête la boucle si une page renvoie une erreur
+            }
+
+            const html = await res.text();
+            const eventsOnPage = scrapeHtml(html);
+            
+            // Si la page est vide (et n'est pas la page 0), on arrête
+            if (eventsOnPage.length === 0 && page > 0) {
+                 console.log(`[SCRAPING] Reached end of events on page ${page}. Stopping.`);
+                break; 
+            }
+
+            // Ajoute les événements de cette page à la liste globale
+            allScrapedEvents.push(...eventsOnPage);
+
+            // --- Vérification précoce pour optimiser : Si le dernier événement dépasse le 31ème jour, on arrête ---
+            const lastEvent = eventsOnPage[eventsOnPage.length - 1];
+            if (lastEvent && lastEvent.start) {
+                const lastEventStartMs = new Date(lastEvent.start).getTime();
+                if (lastEventStartMs > futureLimit) {
+                    console.log(`[SCRAPING] Last event on page ${page} is outside 31-day limit. Stopping pagination early.`);
+                    break; 
+                }
+            }
+        }
+
+        // --- FILTRAGE FINAL SUR LA LISTE COMPLÈTE ---
+        const searchParams = request.nextUrl.searchParams;
+        const includePast = searchParams.get('past') === 'true';
+
+        if (includePast) {
+            // Si le mode "passé" est activé, on retourne tout ce qui a été scrappé
+            return NextResponse.json(allScrapedEvents);
+        }
+        
+        // Appliquer le filtre strict des 31 jours (à partir de maintenant)
+        const eventsFuture = allScrapedEvents.filter(e => {
+            if (!e.start) return false; 
+            
+            const eventStartMs = new Date(e.start).getTime();
+            const eventEndMs = e.end ? new Date(e.end).getTime() : eventStartMs; 
+
+            // Condition 1: L'événement n'est pas terminé (il est en cours ou à venir)
+            const isFuture = eventEndMs >= now;
+
+            // Condition 2: L'événement commence dans la fenêtre des 31 jours
+            const isWithinLimit = eventStartMs < futureLimit; 
+            
+            return isFuture && isWithinLimit;
+        });
+
+        // DEBUG : Afficher le nombre d'événements trouvés
+        console.log(`[DEBUG FILTER] Total Scraped Events (all pages): ${allScrapedEvents.length}`);
+        console.log(`[DEBUG FILTER] Final Future Events Count (31 days): ${eventsFuture.length}`);
+
+        return NextResponse.json(eventsFuture);
+        
+    } catch (error) {
+        console.error("Échec du scraping (GÉNÉRAL):", error);
+        // Utilise NextResponse qui est importé en haut
+        return NextResponse.json(
+            { error: "Échec du scraping HTML ou du réseau." }, 
+            { status: 500 }
+        );
+    }
 }
