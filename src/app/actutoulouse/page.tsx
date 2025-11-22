@@ -1,21 +1,44 @@
 // src/app/actutoulouse/page.tsx
 
 import { headers } from 'next/headers';
-// Importez ici les autres modules nécessaires.
+import React from 'react';
+// Importez ici les autres modules nécessaires (ex: EventItem type si défini ailleurs)
 
 // ====================================================================
-// 1. Fonction de récupération des données (getEvents) - DOIT ÊTRE DÉFINIE EN PREMIER
+// NOUVELLE DIRECTIVE: Forcer le rendu dynamique
+// Cela résout l'erreur Vercel car 'headers()' est utilisé ci-dessous.
+export const dynamic = 'force-dynamic';
 // ====================================================================
 
-async function getEvents() {
+// Interface de base pour les événements (ajoutez les champs réels si vous en avez)
+interface EventItem {
+    id?: string;
+    uid?: string;
+    title?: string;
+    name?: string;
+    titre?: string;
+    // ... ajoutez d'autres champs si nécessaires (date, description, etc.)
+    [key: string]: any; // Fallback pour les champs non spécifiés
+}
+
+// ====================================================================
+// 1. Fonction de récupération des données (getEvents)
+// ====================================================================
+
+async function getEvents(): Promise<EventItem[]> {
     try {
         // La déclaration 'let host' est maintenant CORRECTE
         let host = headers().get("host"); 
         
         if (!host) {
-            const defaultHost = process.env.NODE_ENV === "development" ? "localhost:9002" : null;
+            // Dans certains environnements Vercel (Edge/Lambdas), le 'host' peut être vide.
+            // Utiliser un fallback pour le développement.
+            const defaultHost = process.env.NODE_ENV === "development" ? "localhost:3000" : null;
             if (!defaultHost) {
-                throw new Error("Cannot determine host header.");
+                // Pour Vercel en production, le domaine réel est souvent injecté. 
+                // Si headers().get("host") échoue, il y a un problème de configuration.
+                // On peut utiliser une URL absolue si elle est connue (mais on préfère la dynamique).
+                throw new Error("Cannot determine host header for API call.");
             }
             host = defaultHost; 
         }
@@ -27,6 +50,7 @@ async function getEvents() {
         console.log(`Fetching local API: ${apiUrl}`); 
         
         const res = await fetch(apiUrl, {
+            // Utiliser 'no-store' est essentiel pour les API dynamiques
             cache: 'no-store', 
         });
         
@@ -36,10 +60,12 @@ async function getEvents() {
         }
 
         const data = await res.json();
-        return data.records || [];
+        // Assurez-vous que la structure de retour est correcte
+        return Array.isArray(data.records) ? data.records : [];
         
     } catch (err) {
-        console.error("Error in getEvents:", err);
+        // @ts-ignore
+        console.error("Error in getEvents:", err.message || err);
         return [];
     }
 }
@@ -56,25 +82,52 @@ export default async function ActuToulousePage() {
     const events = await getEvents();
 
     return (
-        <main style={{ padding: '20px' }}>
-            <h1>📰 Actualités et Événements à Toulouse</h1>
+        <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+            <h1 style={{ textAlign: 'center', color: '#8b0000', marginBottom: '30px' }}>
+                📰 Actualités et Événements à Toulouse
+            </h1>
             
             {events.length === 0 ? (
-                <p style={{ color: 'orange', border: '1px solid orange', padding: '10px' }}>
+                <p 
+                    style={{ 
+                        color: 'red', 
+                        border: '1px solid #ff4500', 
+                        padding: '15px', 
+                        borderRadius: '5px',
+                        backgroundColor: '#fffafa',
+                        textAlign: 'center' 
+                    }}
+                >
                     Aucun événement trouvé ou erreur de chargement.
-                    (Vérifiez le terminal serveur si le GET est 500 ou 502)
+                    (Vérifiez le terminal serveur si le GET vers `/api/actutoulouse` renvoie une erreur 500/502.)
                 </p>
             ) : (
                 <section>
-                    <h2>Événements trouvés : {events.length}</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-                        {/* ⚠️ Assurez-vous d'avoir ici le code d'affichage final avec les bons noms de champs (title, date, etc.) */}
+                    <h2 style={{ fontSize: '1.5em', marginBottom: '20px', color: '#444' }}>
+                        Articles trouvés : {events.length}
+                    </h2>
+                    <div 
+                        style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+                            gap: '20px' 
+                        }}
+                    >
                         {events.map((event, index) => (
                             <div 
                                 key={event.id || event.uid || index} 
-                                style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '5px' }}
+                                style={{ 
+                                    border: '1px solid #ccc', 
+                                    padding: '15px', 
+                                    borderRadius: '8px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                    backgroundColor: '#fff'
+                                }}
                             >
-                                <h3>{event.title || event.name || event.titre || "Titre Indisponible"}</h3>
+                                <h3 style={{ color: '#8b0000', marginBottom: '10px' }}>
+                                    {event.title || event.name || event.titre || "Titre Indisponible"}
+                                </h3>
+                                {/* Vous pouvez ajouter ici plus de détails extraits de votre API, comme la date ou un résumé */}
                             </div>
                         ))}
                     </div>
