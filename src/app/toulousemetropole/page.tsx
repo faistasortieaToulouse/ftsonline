@@ -17,7 +17,7 @@ export default function ToulouseEventsPage() {
     setEvents([]);
 
     try {
-      const res = await fetch("/api/toulouse-events");
+      const res = await fetch("/api/toulousemetropole");
       if (!res.ok) throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
 
       const data = await res.json();
