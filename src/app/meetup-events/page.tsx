@@ -87,7 +87,7 @@ export default function MeetupEventsPage() {
       <h1 className="text-3xl font-bold mb-4">Évènements de Meetup à Toulouse</h1>
       
       <p className="text-muted-foreground mb-6">
-        Prochains événements consolidés de deux groupes Meetup toulousains, triés par date.
+        Prochains événements consolidés des groupes Meetup toulousains, sur 31 jours.
       </p>
 
       <Button onClick={fetchEvents} disabled={loading} className="mb-6 bg-red-600 hover:bg-red-700">
