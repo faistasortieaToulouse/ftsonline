@@ -21,10 +21,10 @@ const nextConfig: NextConfig = {
 
   // ❗ i18n App Router → doit être retiré, mais on garde les locales
   // via un système différent (middleware ou route groups)
-  i18n: {
-    locales: ['fr'],
-    defaultLocale: 'fr',
-  },
+  // i18n: {
+  //   locales: ['fr'],
+  //   defaultLocale: 'fr',
+  // },
 };
 
 export default nextConfig;
