@@ -1,11 +1,28 @@
 import { headers } from "next/headers";
+import React from "react";
 
-async function getCategories() {
+// ====================================================================
+// NOUVELLE DIRECTIVE: Forcer le rendu dynamique
+// Ceci est ESSENTIEL car la fonction getCategories utilise 'headers()',
+// ce qui empêche Next.js de générer cette page statiquement au build.
+export const dynamic = 'force-dynamic';
+// ====================================================================
+
+// Interface de base pour les éléments retournés par l'API
+interface CategorieItem {
+    label: string;
+    url: string;
+    [key: string]: any; 
+}
+
+
+async function getCategories(): Promise<CategorieItem[]> {
   try {
     let host = headers().get("host");
 
     if (!host) {
       const defaultHost = process.env.NODE_ENV === "development" ? "localhost:3000" : null;
+      // On utilise 3000 comme port par défaut en dev si l'host est indéterminé
       if (!defaultHost) throw new Error("Cannot determine host header.");
       host = defaultHost;
     }
@@ -21,9 +38,11 @@ async function getCategories() {
     }
 
     const data = await res.json();
-    return data.records || [];
+    // On s'attend à ce que l'API retourne un objet { records: [] }
+    return Array.isArray(data.records) ? data.records : [];
   } catch (err) {
-    console.error("Error in getCategories:", err);
+    // @ts-ignore
+    console.error("Error in getCategories:", err.message || err);
     return [];
   }
 }
@@ -32,20 +51,31 @@ export default async function CoteToulousePage() {
   const categories = await getCategories();
 
   return (
-    <main style={{ padding: "20px", fontFamily: "sans-serif" }}>
-      <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>📚 Liens Côté Toulouse</h1>
+    <main style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto", fontFamily: "sans-serif" }}>
+      <h1 style={{ fontSize: "28px", marginBottom: "30px", textAlign: "center", color: "#6A057F" }}>
+        📚 Liens Côté Toulouse (Rubriques)
+      </h1>
 
       {categories.length === 0 ? (
-        <p style={{ color: "orange", border: "1px solid orange", padding: "10px" }}>
-          Aucun lien trouvé ou erreur API.
+        <p 
+          style={{ 
+            color: "#FF5733", 
+            border: "1px solid #FF5733", 
+            padding: "15px", 
+            borderRadius: "6px",
+            backgroundColor: "#fff0f0",
+            textAlign: "center"
+          }}
+        >
+          Aucun lien trouvé ou erreur de connexion à l'API locale.
         </p>
       ) : (
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: "15px"
+          gap: "20px"
         }}>
-          {categories.map((item: { label: string; url: string }, i: number) => (
+          {categories.map((item, i: number) => (
             <a
               key={i}
               href={item.url}
@@ -53,14 +83,30 @@ export default async function CoteToulousePage() {
               rel="noopener noreferrer"
               style={{
                 display: "block",
-                padding: "12px",
-                border: "1px solid #ccc",
-                borderRadius: "6px",
+                padding: "15px",
+                border: "2px solid #6A057F",
+                borderRadius: "10px",
                 textAlign: "center",
-                background: "#f8f8f8",
+                background: "#fdfdff",
                 textDecoration: "none",
                 color: "#333",
-                fontWeight: "bold"
+                fontWeight: "bold",
+                fontSize: "1.1em",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.2s, box-shadow 0.2s",
+              }}
+              // Ajouter un petit style pour l'effet de survol (hover)
+              onMouseOver={(e) => {
+                // @ts-ignore
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                // @ts-ignore
+                e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseOut={(e) => {
+                // @ts-ignore
+                e.currentTarget.style.transform = 'translateY(0)';
+                // @ts-ignore
+                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
               }}
             >
               {item.label}
