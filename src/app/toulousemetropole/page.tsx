@@ -11,6 +11,9 @@ export default function ToulouseEventsPage() {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
 
+  // 🟦 Mode d'affichage : card = plein écran, list = vignette
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+
   async function fetchUpcomingEvents() {
     setLoading(true);
     setError(null);
@@ -21,12 +24,8 @@ export default function ToulouseEventsPage() {
       if (!res.ok) throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
 
       const data = await res.json();
-      if (!data || !Array.isArray(data)) {
-        setEvents([]);
-        return;
-      }
+      if (!data || !Array.isArray(data)) return setEvents([]);
 
-      // Supprimer doublons par title+date+location
       const unique = new Map<string, any>();
       data.forEach(ev => {
         const key = `${ev.title}-${ev.date}-${ev.lieu_nom || ev.location}`;
@@ -37,7 +36,6 @@ export default function ToulouseEventsPage() {
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
         .slice(0, MAX_EVENTS)
         .map((ev, index) => {
-          // Construire adresse complète
           const fullAddress = [
             ev.lieu_nom,
             ev.lieu_adresse_1,
@@ -84,9 +82,26 @@ export default function ToulouseEventsPage() {
         Cette page affiche les 100 prochains événements culturels à Toulouse.
       </p>
 
-      <Button onClick={fetchUpcomingEvents} disabled={loading} className="mb-6">
-        {loading ? "Chargement..." : "📡 Actualiser"}
-      </Button>
+      {/* BOUTONS D'ACTION + MODE */}
+      <div className="flex flex-wrap gap-4 mb-6">
+        <Button onClick={fetchUpcomingEvents} disabled={loading}>
+          {loading ? "Chargement..." : "📡 Actualiser"}
+        </Button>
+
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          📺 Plein écran
+        </Button>
+
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
+          🔲 Vignette
+        </Button>
+      </div>
 
       {error && (
         <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">
@@ -98,54 +113,95 @@ export default function ToulouseEventsPage() {
         <p className="text-muted-foreground">Aucun événement à venir.</p>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events.map(ev => (
-          <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col">
-            <img
-              src={ev.image}
-              alt={ev.title}
-              className="w-full aspect-[16/9] object-cover"
-            />
+      {/* ========================================================== */}
+      {/* MODE PLEIN ÉCRAN (CARD) */}
+      {/* ========================================================== */}
+      {viewMode === "card" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map(ev => (
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-full">
+              {ev.image && (
+                <img
+                  src={ev.image}
+                  alt={ev.title}
+                  className="w-full aspect-[16/9] object-cover"
+                />
+              )}
 
-            <div className="p-4 flex flex-col flex-1">
-              <h2 className="text-xl font-semibold">{ev.title}</h2>
+              <div className="p-4 flex flex-col flex-1 gap-1">
+                <h2 className="text-xl font-semibold">{ev.title}</h2>
 
-              {/* Catégorie / type / thème */}
-              {(ev.category || ev.type || ev.theme) && (
-                <p className="text-sm text-blue-600 font-medium mt-1">
-                  {ev.category || ev.type || ev.theme}
+                {(ev.category || ev.type || ev.theme) && (
+                  <p className="text-sm text-blue-600 font-medium mt-1">
+                    {ev.category || ev.type || ev.theme}
+                  </p>
+                )}
+
+                <p className="text-sm text-muted-foreground mt-2 line-clamp-4">
+                  {ev.description}
                 </p>
-              )}
 
-              <p className="text-sm text-muted-foreground mt-2 flex-1 line-clamp-4">
-                {ev.description}
-              </p>
+                <p className="text-sm mt-2">{ev.dateFormatted}</p>
 
-              <p className="text-sm mt-2">{ev.dateFormatted}</p>
+                {ev.fullAddress && (
+                  <p className="text-sm text-muted-foreground">{ev.fullAddress}</p>
+                )}
 
-              {/* Adresse complète */}
-              {ev.fullAddress && (
-                <p className="text-sm text-muted-foreground">{ev.fullAddress}</p>
-              )}
+                <p className="text-xs text-muted-foreground italic mt-1">
+                  Source : Toulouse Métropole
+                </p>
 
-              <p className="text-xs text-muted-foreground italic mt-1">
-                Source : Toulouse Métropole
-              </p>
-
-              {ev.url && (
-                <a
-                  href={ev.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
-                >
-                  🔗 Voir l’événement officiel
-                </a>
-              )}
+                {ev.url && (
+                  <a
+                    href={ev.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
+                  >
+                    🔗 Voir l’événement officiel
+                  </a>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
+      {/* ========================================================== */}
+      {/* MODE LISTE (VIGNETTE) */}
+      {/* ========================================================== */}
+      {viewMode === "list" && (
+        <div className="space-y-4">
+          {events.map(ev => (
+            <div key={ev.id} className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm">
+              {ev.image && (
+                <img
+                  src={ev.image}
+                  alt={ev.title}
+                  className="w-24 h-24 rounded object-cover flex-shrink-0"
+                />
+              )}
+              <div className="flex flex-col flex-1 gap-1">
+                <h2 className="text-lg font-semibold line-clamp-2">{ev.title}</h2>
+                {ev.dateFormatted && <p className="text-sm text-blue-600">{ev.dateFormatted}</p>}
+                {ev.fullAddress && <p className="text-sm text-muted-foreground">{ev.fullAddress}</p>}
+                {ev.description && <p className="text-sm text-muted-foreground line-clamp-3">{ev.description}</p>}
+                {ev.url && (
+                  <a
+                    href={ev.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-500 underline mt-1"
+                  >
+                    Voir l’événement
+                  </a>
+                )}
+                <p className="text-xs text-muted-foreground mt-1 italic">Source : Toulouse Métropole</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

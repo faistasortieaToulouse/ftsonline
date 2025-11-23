@@ -1,138 +1,195 @@
-// src/app/actutoulouse/page.tsx
+"use client";
 
-import { headers } from 'next/headers';
-import React from 'react';
-// Importez ici les autres modules nécessaires (ex: EventItem type si défini ailleurs)
+import React, { useState, useEffect } from "react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-// ====================================================================
-// NOUVELLE DIRECTIVE: Forcer le rendu dynamique
-// Cela résout l'erreur Vercel car 'headers()' est utilisé ci-dessous.
-export const dynamic = 'force-dynamic';
-// ====================================================================
+type BilletwebEvent = {
+  id: string;
+  name: string;
+  start: string;
+  end?: string;
+  place?: string;
+  shop?: string;
+  description?: string;
+  image?: string;
+  cover?: string;
+};
 
-// Interface de base pour les événements (ajoutez les champs réels si vous en avez)
-interface EventItem {
-    id?: string;
-    uid?: string;
-    title?: string;
-    name?: string;
-    titre?: string;
-    // ... ajoutez d'autres champs si nécessaires (date, description, etc.)
-    [key: string]: any; // Fallback pour les champs non spécifiés
-}
+const PLACEHOLDER_IMAGE =
+  "https://via.placeholder.com/400x200?text=Événement";
 
-// ====================================================================
-// 1. Fonction de récupération des données (getEvents)
-// ====================================================================
+export default function BilletwebPage() {
+  const [events, setEvents] = useState<BilletwebEvent[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-async function getEvents(): Promise<EventItem[]> {
-    try {
-        // La déclaration 'let host' est maintenant CORRECTE
-        let host = headers().get("host"); 
-        
-        if (!host) {
-            // Dans certains environnements Vercel (Edge/Lambdas), le 'host' peut être vide.
-            // Utiliser un fallback pour le développement.
-            const defaultHost = process.env.NODE_ENV === "development" ? "localhost:3000" : null;
-            if (!defaultHost) {
-                // Pour Vercel en production, le domaine réel est souvent injecté. 
-                // Si headers().get("host") échoue, il y a un problème de configuration.
-                // On peut utiliser une URL absolue si elle est connue (mais on préfère la dynamique).
-                throw new Error("Cannot determine host header for API call.");
-            }
-            host = defaultHost; 
-        }
-        
-        const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-        
-        const apiUrl = `${protocol}://${host}/api/actutoulouse`;
-        
-        console.log(`Fetching local API: ${apiUrl}`); 
-        
-        const res = await fetch(apiUrl, {
-            // Utiliser 'no-store' est essentiel pour les API dynamiques
-            cache: 'no-store', 
-        });
-        
-        if (!res.ok) {
-            console.error(`Local API fetch failed with status: ${res.status}`);
-            return []; 
-        }
+  // 🟦 Mode d’affichage : plein écran par défaut
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/billetweb");
         const data = await res.json();
-        // Assurez-vous que la structure de retour est correcte
-        return Array.isArray(data.records) ? data.records : [];
-        
-    } catch (err) {
-        // @ts-ignore
-        console.error("Error in getEvents:", err.message || err);
-        return [];
-    }
-}
 
-// ====================================================================
-// 2. Composant React principal (EXPORT PAR DÉFAUT)
-// ====================================================================
+        if (data.error) {
+          setError(data.details || "Erreur API Billetweb");
+          setEvents([]);
+        } else {
+          setEvents(data.events || []);
+        }
+      } catch (err) {
+        console.error("Erreur chargement Billetweb", err);
+        setError("Impossible de charger les évènements Billetweb.");
+      }
+      setLoading(false);
+    };
 
-/**
- * Ce composant est l'export par défaut requis par Next.js (page.tsx).
- */
-export default async function ActuToulousePage() {
-    // L'appel fonctionne maintenant car getEvents est défini au-dessus
-    const events = await getEvents();
+    fetchEvents();
+  }, []);
 
-    return (
-        <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-            <h1 style={{ textAlign: 'center', color: '#8b0000', marginBottom: '30px' }}>
-                📰 Actualités et Événements à Toulouse
-            </h1>
-            
-            {events.length === 0 ? (
-                <p 
-                    style={{ 
-                        color: 'red', 
-                        border: '1px solid #ff4500', 
-                        padding: '15px', 
-                        borderRadius: '5px',
-                        backgroundColor: '#fffafa',
-                        textAlign: 'center' 
-                    }}
-                >
-                    Aucun événement trouvé ou erreur de chargement.
-                    (Vérifiez le terminal serveur si le GET vers `/api/actutoulouse` renvoie une erreur 500/502.)
+  return (
+    <div className="container mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-4">
+        Évènements Billetweb (Haute-Garonne)
+      </h1>
+
+      {/* 🟦 Toggle plein écran / vignette */}
+      {events.length > 0 && (
+        <ToggleGroup
+          type="single"
+          value={viewMode}
+          onValueChange={(v) => v && setViewMode(v as "card" | "list")}
+          className="mb-6"
+        >
+          <ToggleGroupItem value="card" className="px-4 py-2">
+            🗂️ Plein écran
+          </ToggleGroupItem>
+          <ToggleGroupItem value="list" className="px-4 py-2">
+            📋 Vignette
+          </ToggleGroupItem>
+        </ToggleGroup>
+      )}
+
+      {loading && <p>Chargement...</p>}
+      {error && <p className="text-red-600">{error}</p>}
+      {events.length === 0 && !loading && !error && (
+        <p>Aucun évènement trouvé.</p>
+      )}
+
+      {/* ====================================================== */}
+      {/* 🟥 MODE PLEIN ÉCRAN (CARDS) */}
+      {/* ====================================================== */}
+      {viewMode === "card" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className="bg-white rounded shadow flex flex-col overflow-hidden"
+            >
+              <img
+                src={event.image || PLACEHOLDER_IMAGE}
+                alt={event.name}
+                className="w-full aspect-[16/9] object-cover"
+              />
+
+              <div className="p-4 flex flex-col flex-1">
+                <h2 className="text-xl font-semibold mb-1">{event.name}</h2>
+
+                <p className="text-sm text-muted-foreground mb-1">
+                  Début :{" "}
+                  {new Date(event.start).toLocaleString("fr-FR", {
+                    dateStyle: "full",
+                    timeStyle: "short",
+                  })}
                 </p>
-            ) : (
-                <section>
-                    <h2 style={{ fontSize: '1.5em', marginBottom: '20px', color: '#444' }}>
-                        Articles trouvés : {events.length}
-                    </h2>
-                    <div 
-                        style={{ 
-                            display: 'grid', 
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
-                            gap: '20px' 
-                        }}
-                    >
-                        {events.map((event, index) => (
-                            <div 
-                                key={event.id || event.uid || index} 
-                                style={{ 
-                                    border: '1px solid #ccc', 
-                                    padding: '15px', 
-                                    borderRadius: '8px',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                                    backgroundColor: '#fff'
-                                }}
-                            >
-                                <h3 style={{ color: '#8b0000', marginBottom: '10px' }}>
-                                    {event.title || event.name || event.titre || "Titre Indisponible"}
-                                </h3>
-                                {/* Vous pouvez ajouter ici plus de détails extraits de votre API, comme la date ou un résumé */}
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
-        </main>
-    );
+
+                {event.end && (
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Fin :{" "}
+                    {new Date(event.end).toLocaleString("fr-FR", {
+                      dateStyle: "full",
+                      timeStyle: "short",
+                    })}
+                  </p>
+                )}
+
+                {event.place && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Lieu : {event.place}
+                  </p>
+                )}
+
+                {event.description && (
+                  <p className="text-sm text-muted-foreground flex-1 mb-3 line-clamp-4">
+                    {event.description}
+                  </p>
+                )}
+
+                {event.shop && (
+                  <a
+                    href={event.shop}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-auto inline-block bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700 transition"
+                  >
+                    🎟️ Billetterie
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ====================================================== */}
+      {/* 🟨 MODE LISTE (VIGNETTES) */}
+      {/* ====================================================== */}
+      {viewMode === "list" && (
+        <div className="space-y-4">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className="flex items-start gap-4 p-4 bg-white rounded shadow"
+            >
+              <img
+                src={event.image || PLACEHOLDER_IMAGE}
+                alt={event.name}
+                className="w-24 h-24 rounded object-cover flex-shrink-0"
+              />
+
+              <div>
+                <h2 className="text-lg font-semibold">{event.name}</h2>
+
+                <p className="text-sm text-muted-foreground">
+                  {new Date(event.start).toLocaleString("fr-FR", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </p>
+
+                {event.place && (
+                  <p className="text-sm text-muted-foreground">
+                    📍 {event.place}
+                  </p>
+                )}
+
+                {event.shop && (
+                  <a
+                    href={event.shop}
+                    target="_blank"
+                    className="text-blue-600 underline text-sm"
+                  >
+                    Billetterie →
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

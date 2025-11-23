@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,9 @@ export default function HelloAssoPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<HelloAssoEvent[]>([]);
+
+  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   async function fetchEvents() {
     setLoading(true);
@@ -52,6 +55,22 @@ export default function HelloAssoPage() {
         Cette page affiche les événements de ton association via l’API HelloAsso.
       </p>
 
+      {/* 🟦 Boutons pour changer le mode d'affichage */}
+      <div className="flex gap-4 mb-6">
+        <Button
+          onClick={() => setViewMode("card")}
+          className={viewMode === "card" ? "bg-blue-600 text-white" : ""}
+        >
+          🗂️ Plein écran
+        </Button>
+        <Button
+          onClick={() => setViewMode("list")}
+          className={viewMode === "list" ? "bg-blue-600 text-white" : ""}
+        >
+          📋 Vignette
+        </Button>
+      </div>
+
       <Button onClick={fetchEvents} disabled={loading} className="mb-6">
         {loading ? "Chargement..." : "📡 Rafraîchir"}
       </Button>
@@ -62,10 +81,11 @@ export default function HelloAssoPage() {
         </div>
       )}
 
-      {events.length > 0 ? (
+      {/* 🟥 Mode plein écran */}
+      {viewMode === "card" && events.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {events.map(event => (
-            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[480px]">
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
                 alt={event.name}
@@ -99,10 +119,46 @@ export default function HelloAssoPage() {
             </div>
           ))}
         </div>
-      ) : (
-        <p className="mt-6 text-muted-foreground">
-          {loading ? "Chargement des événements..." : "Aucun événement trouvé."}
-        </p>
+      )}
+
+      {/* 🟨 Mode vignette */}
+      {viewMode === "list" && events.length > 0 && (
+        <div className="space-y-4 mt-6">
+          {events.map(event => (
+            <div key={event.id} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
+              <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs overflow-hidden">
+                <img
+                  src={event.image || PLACEHOLDER_IMAGE}
+                  alt={event.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold line-clamp-2">{event.name}</h2>
+                <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
+                {event.date && (
+                  <p className="text-sm font-medium mt-1">
+                    {new Date(event.date).toLocaleString("fr-FR")}
+                  </p>
+                )}
+                {event.url && (
+                  <a
+                    href={event.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline text-sm mt-1 block"
+                  >
+                    Voir →
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {events.length === 0 && !loading && (
+        <p className="mt-6 text-muted-foreground">Aucun événement trouvé.</p>
       )}
     </div>
   );

@@ -1,12 +1,10 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
-// Assurez-vous que le chemin vers votre composant Button est correct
 import { Button } from "@/components/ui/button"; 
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Meetup";
 
-// Type d'événement Meetup 
 type MeetupEvent = {
   title: string;
   link: string;
@@ -18,11 +16,13 @@ type MeetupEvent = {
   image?: string;           
 };
 
-// Le composant doit être une fonction React valide et exportée par défaut
 export default function MeetupEventsPage() { 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<MeetupEvent[]>([]);
+
+  // Mode d'affichage : "card" = plein écran, "list" = vignette
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   async function fetchEvents() {
     setLoading(true);
@@ -43,9 +43,8 @@ export default function MeetupEventsPage() {
         return;
       }
 
-      const mapped: MeetupEvent[] = data.events.map((ev: any, index: number) => {
+      const mapped: MeetupEvent[] = data.events.map((ev: any) => {
         const dateRaw = ev.startDate ? new Date(ev.startDate) : null;
-        
         const dateFormatted = dateRaw
           ? dateRaw.toLocaleString("fr-FR", {
               weekday: "long",
@@ -90,6 +89,21 @@ export default function MeetupEventsPage() {
         Prochains événements consolidés des groupes Meetup toulousains, sur 31 jours.
       </p>
 
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => setViewMode("card")}
+          className={`px-4 py-2 rounded ${viewMode === "card" ? "bg-red-600 text-white" : "bg-gray-200"}`}
+        >
+          🗂️ Plein écran
+        </button>
+        <button
+          onClick={() => setViewMode("list")}
+          className={`px-4 py-2 rounded ${viewMode === "list" ? "bg-red-600 text-white" : "bg-gray-200"}`}
+        >
+          📋 Vignette
+        </button>
+      </div>
+
       <Button onClick={fetchEvents} disabled={loading} className="mb-6 bg-red-600 hover:bg-red-700">
         {loading ? "Chargement..." : "🔄 Rafraîchir les événements"}
       </Button>
@@ -100,13 +114,17 @@ export default function MeetupEventsPage() {
         </div>
       )}
 
-      {events.length > 0 ? (
+      {events.length === 0 && !loading && (
+        <p className="mt-6 text-xl text-gray-500 p-8 border border-dashed rounded-lg text-center">
+          Aucun événement à venir trouvé.
+        </p>
+      )}
+
+      {/* Mode plein écran */}
+      {viewMode === "card" && events.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {events.map((event, index) => (
-            <div
-              key={event.link || index}
-              className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col border border-gray-100"
-            >
+            <div key={event.link || index} className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col border border-gray-100">
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
                 alt={event.title}
@@ -114,21 +132,10 @@ export default function MeetupEventsPage() {
               />
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-xl font-semibold mb-2 text-red-700">{event.title}</h2>
-                
                 <p className="text-sm font-medium mb-1">📍 {event.fullAddress}</p>
-                
                 <p className="text-sm text-gray-600 mb-3 font-semibold">{event.dateFormatted}</p>
-                
-                <p 
-                  className="text-sm text-gray-700 mb-2 flex-1 line-clamp-4 whitespace-pre-wrap"
-                >
-                    {event.description}
-                </p>
-
-                <p className="text-xs text-muted-foreground italic mb-3 mt-auto">
-                  Source : Meetup
-                </p>
-                
+                <p className="text-sm text-gray-700 mb-2 flex-1 line-clamp-4 whitespace-pre-wrap">{event.description}</p>
+                <p className="text-xs text-muted-foreground italic mb-3 mt-auto">Source : Meetup</p>
                 {event.link && (
                   <a
                     href={event.link}
@@ -143,13 +150,37 @@ export default function MeetupEventsPage() {
             </div>
           ))}
         </div>
-      ) : (
-        <p className="mt-6 text-xl text-gray-500 p-8 border border-dashed rounded-lg text-center">
-          {loading 
-            ? "Chargement des événements..." 
-            : "Aucun événement à venir trouvé. Le tri et le filtrage ont été effectués par iCalendar."
-          }
-        </p>
+      )}
+
+      {/* Mode vignette */}
+      {viewMode === "list" && events.length > 0 && (
+        <div className="space-y-4 mt-6">
+          {events.map((event, index) => (
+            <div key={event.link || index} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
+              <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden flex items-center justify-center">
+                <img
+                  src={event.image || PLACEHOLDER_IMAGE}
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold line-clamp-2">{event.title}</h2>
+                {event.description && <p className="text-sm text-gray-600 line-clamp-2">{event.description}</p>}
+                <p className="text-sm mt-1">📍 {event.fullAddress}</p>
+                <p className="text-sm mt-1">{event.dateFormatted}</p>
+                <a
+                  href={event.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-red-600 underline text-sm mt-1 block"
+                >
+                  Voir →
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

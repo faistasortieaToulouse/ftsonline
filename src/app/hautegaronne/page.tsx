@@ -11,6 +11,9 @@ export default function HauteGaronnePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+
   async function fetchEvents() {
     setLoading(true);
     setError(null);
@@ -37,6 +40,23 @@ export default function HauteGaronnePage() {
         Cette page affiche les événements à venir dans les 31 prochains jours pour la Haute-Garonne.
       </p>
 
+      {/* BOUTONS MODE PLEIN ÉCRAN / VIGNETTE */}
+      <div className="flex gap-4 mb-6">
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          📺 Plein écran
+        </Button>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
+          🔲 Vignette
+        </Button>
+      </div>
+
+      {/* BOUTON ACTUALISER */}
       <Button onClick={fetchEvents} disabled={loading} className="mb-6">
         {loading ? "Chargement..." : "📡 Actualiser les événements"}
       </Button>
@@ -47,10 +67,11 @@ export default function HauteGaronnePage() {
         </div>
       )}
 
-      {events.length > 0 ? (
+      {/* 🟥 Mode plein écran */}
+      {viewMode === "card" && events.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {events.map(event => (
-            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[480px]">
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
                 alt={event.title}
@@ -76,10 +97,42 @@ export default function HauteGaronnePage() {
             </div>
           ))}
         </div>
-      ) : (
-        <p className="mt-6 text-muted-foreground">
-          {loading ? "Chargement des événements..." : "Aucun événement à venir trouvé."}
-        </p>
+      )}
+
+      {/* 🟨 Mode vignette */}
+      {viewMode === "list" && events.length > 0 && (
+        <div className="space-y-4 mt-6">
+          {events.map(event => (
+            <div key={event.id} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
+              <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs overflow-hidden">
+                <img
+                  src={event.image || PLACEHOLDER_IMAGE}
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold line-clamp-2">{event.title}</h2>
+                <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
+                <p className="text-sm font-medium mt-1">{event.dateFormatted}</p>
+                {event.url && (
+                  <a
+                    href={event.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline text-sm mt-1 block"
+                  >
+                    Voir →
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {events.length === 0 && !loading && (
+        <p className="mt-6 text-muted-foreground">Aucun événement à venir trouvé.</p>
       )}
     </div>
   );

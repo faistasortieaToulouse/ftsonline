@@ -2,29 +2,35 @@ import { NextResponse } from "next/server";
 import * as ical from "node-ical";
 
 export async function GET() {
+  const url = "https://toulouse.demosphere.net/events.ics";
+
   try {
-    const url = "https://toulouse.demosphere.net/events.ics";
     const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    if (!res.ok) {
+      console.error("❌ Demosphere HTTP error:", res.status, res.statusText);
+      return NextResponse.json([]); // retourne toujours un tableau
+    }
+
     const icsText = await res.text();
 
     const data = ical.parseICS(icsText);
 
     const events = Object.values(data)
-      .filter(ev => ev.type === "VEVENT")
-      .map(ev => ({
+      .filter((ev: any) => ev.type === "VEVENT")
+      .map((ev: any) => ({
         id: ev.uid,
         title: ev.summary,
         start: ev.start,
         end: ev.end,
         location: ev.location || null,
         description: ev.description || null,
-        source: "Demosphere Toulouse (iCal)",
+        source: "Demosphere (iCal)",
       }));
 
-    return NextResponse.json(events, { status: 200 });
+    return NextResponse.json(events);
   } catch (err: any) {
-    console.error("Demosphere error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error("❌ Demosphere parse error:", err.message);
+    return NextResponse.json([]); // IMPORTANT
   }
 }

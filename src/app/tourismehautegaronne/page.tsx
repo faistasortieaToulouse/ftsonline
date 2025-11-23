@@ -16,7 +16,6 @@ const THEME_IMAGES: Record<string, string> = {
   "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
 };
 
-// Placeholder générique si la thématique n’est pas reconnue
 const DEFAULT_IMAGE = "/images/tourismehg31/placeholder.jpg";
 const PAGE_LIMIT = 100;
 
@@ -28,7 +27,7 @@ interface Event {
   commune?: string;
   adresse?: string;
   url?: string;
-  code_insee?: string; // pour filtrer Haute-Garonne
+  code_insee?: string;
   thematique?: string;
 }
 
@@ -36,6 +35,9 @@ export default function TourismeHGPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
+
+  // 🟦 Nouveau : mode d'affichage (card = plein écran, list = vignette)
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   async function fetchUpcomingEvents() {
     setLoading(true);
@@ -52,7 +54,6 @@ export default function TourismeHGPage() {
         return;
       }
 
-      // Normaliser la date au début de la journée
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -67,7 +68,6 @@ export default function TourismeHGPage() {
           if (!ev.titre || !ev.description || !date || isNaN(date.getTime())) return null;
           if (date < today || date > maxDate) return null;
 
-          // Nettoyer la thématique pour correspondre exactement aux clés du mapping
           const themeKey = ev.thematique?.trim().replace(/\s+/g, ' ') || "Autres";
           const image = THEME_IMAGES[themeKey] || DEFAULT_IMAGE;
 
@@ -93,7 +93,7 @@ export default function TourismeHGPage() {
           };
         })
         .filter(Boolean)
-        .sort((a, b) => a.date.getTime() - b.date.getTime()) // tri chronologique
+        .sort((a, b) => a.date.getTime() - b.date.getTime())
         .slice(0, PAGE_LIMIT);
 
       setEvents(mapped);
@@ -115,9 +115,24 @@ export default function TourismeHGPage() {
         Cette page affiche les événements à venir dans les 31 prochains jours pour la Haute-Garonne (31) depuis le dataset OpenData de la Région Occitanie.
       </p>
 
-      <Button onClick={fetchUpcomingEvents} disabled={loading} className="mb-6">
-        {loading ? "Chargement..." : "📡 Charger les événements"}
-      </Button>
+      {/* Boutons d'action et mode */}
+      <div className="flex flex-wrap gap-3 mb-6">
+        <Button onClick={fetchUpcomingEvents} disabled={loading}>
+          {loading ? "Chargement..." : "📡 Charger les événements"}
+        </Button>
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          📺 Plein écran
+        </Button>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
+          🔲 Vignette
+        </Button>
+      </div>
 
       {error && (
         <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
@@ -125,40 +140,76 @@ export default function TourismeHGPage() {
         </div>
       )}
 
-      {events.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {events.map(event => (
-            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full aspect-[16/9] object-cover"
-              />
-              <div className="p-4 flex flex-col flex-1">
-                <h2 className="text-xl font-semibold mb-2">{event.title}</h2>
-                <p className="text-sm text-muted-foreground mb-2 flex-1 line-clamp-4">{event.description}</p>
-                <p className="text-sm font-medium mb-1">{event.dateFormatted}</p>
-                <p className="text-sm text-muted-foreground mb-1">{event.fullAddress}</p>
-                <p className="text-xs text-muted-foreground italic mb-3">Thématique : {event.thematique}</p>
-                <p className="text-xs text-muted-foreground italic mb-3">Source : {event.source}</p>
-                {event.url && (
-                  <a
-                    href={event.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
-                  >
-                    🔗 Voir l’événement officiel
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
+      {!loading && events.length === 0 && (
         <p className="mt-6 text-muted-foreground">
-          {loading ? "Chargement des événements..." : "Aucun événement à venir dans les 31 prochains jours pour la Haute-Garonne."}
+          Aucun événement à venir dans les 31 prochains jours pour la Haute-Garonne.
         </p>
+      )}
+
+      {!loading && events.length > 0 && (
+        <>
+          {viewMode === "card" ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {events.map(event => (
+                <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="w-full aspect-[16/9] object-cover"
+                  />
+                  <div className="p-4 flex flex-col flex-1">
+                    <h2 className="text-xl font-semibold mb-2">{event.title}</h2>
+                    <p className="text-sm text-muted-foreground mb-2 flex-1 line-clamp-4">{event.description}</p>
+                    <p className="text-sm font-medium mb-1">{event.dateFormatted}</p>
+                    <p className="text-sm text-muted-foreground mb-1">{event.fullAddress}</p>
+                    <p className="text-xs text-muted-foreground italic mb-1">Thématique : {event.thematique}</p>
+                    <p className="text-xs text-muted-foreground italic mb-3">Source : {event.source}</p>
+                    {event.url && (
+                      <a
+                        href={event.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
+                      >
+                        🔗 Voir l’événement officiel
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4 mt-6">
+              {events.map(event => (
+                <div key={event.id} className="flex flex-col sm:flex-row bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden">
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="w-full sm:w-48 h-32 object-cover flex-shrink-0"
+                  />
+                  <div className="p-4 flex flex-col flex-1">
+                    <h2 className="text-lg font-semibold mb-1">{event.title}</h2>
+                    <p className="text-sm text-muted-foreground mb-1 line-clamp-3">{event.description}</p>
+                    <p className="text-sm font-medium">{event.dateFormatted}</p>
+                    <p className="text-sm text-muted-foreground">{event.fullAddress}</p>
+                    <p className="text-xs text-muted-foreground italic">Thématique : {event.thematique}</p>
+                    <p className="text-xs text-muted-foreground italic mb-1">Source : {event.source}</p>
+                    {event.url && (
+                      <a
+                        href={event.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
+                      >
+                        🔗 Voir l’événement officiel
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
