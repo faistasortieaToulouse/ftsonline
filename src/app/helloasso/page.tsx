@@ -19,15 +19,14 @@ export default function HelloAssoPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<HelloAssoEvent[]>([]);
-
-  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
+  const [filteredEvents, setFilteredEvents] = useState<HelloAssoEvent[]>([]);
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
 
   async function fetchEvents() {
     setLoading(true);
     setError(null);
     setEvents([]);
-
     try {
       const res = await fetch("/api/helloasso");
       const data = await res.json();
@@ -36,6 +35,7 @@ export default function HelloAssoPage() {
         setError(data.error);
       } else {
         setEvents(data.events || []);
+        setFilteredEvents(data.events || []);
       }
     } catch (err: any) {
       setError("Impossible de charger les événements HelloAsso.");
@@ -48,12 +48,42 @@ export default function HelloAssoPage() {
     fetchEvents();
   }, []);
 
+  // Filtrage dynamique multi-critères
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = events.filter(event =>
+      (event.name?.toLowerCase().includes(query) ?? false) ||
+      (event.description?.toLowerCase().includes(query) ?? false) ||
+      (event.location?.toLowerCase().includes(query) ?? false) ||
+      (event.date?.toLowerCase().includes(query) ?? false)
+    );
+
+    setFilteredEvents(filtered);
+  }, [searchQuery, events]);
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Évènements HelloAsso – bilingue</h1>
       <p className="text-muted-foreground mb-6">
         Cette page affiche les événements de ton association via l’API HelloAsso.
       </p>
+
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu, date..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur dynamique */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
       {/* 🟦 Boutons pour changer le mode d'affichage */}
       <div className="flex gap-4 mb-6">
@@ -82,9 +112,9 @@ export default function HelloAssoPage() {
       )}
 
       {/* 🟥 Mode plein écran */}
-      {viewMode === "card" && events.length > 0 && (
+      {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {events.map(event => (
+          {filteredEvents.map(event => (
             <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[480px]">
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
@@ -122,9 +152,9 @@ export default function HelloAssoPage() {
       )}
 
       {/* 🟨 Mode vignette */}
-      {viewMode === "list" && events.length > 0 && (
+      {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
-          {events.map(event => (
+          {filteredEvents.map(event => (
             <div key={event.id} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
               <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs overflow-hidden">
                 <img
@@ -157,7 +187,7 @@ export default function HelloAssoPage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="mt-6 text-muted-foreground">Aucun événement trouvé.</p>
       )}
     </div>
