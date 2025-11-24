@@ -11,8 +11,34 @@ export default function AgendaToulousePage() {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
 
-  // 🔵 Mode affichage (par défaut plein écran)
+  // 🔵 Mode affichage
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+
+  // 🔍 Barre de recherche + filtrage
+  const [search, setSearch] = useState("");
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+
+  // 🔖 Extraction automatique de catégories
+  function getCategory(event: any) {
+    return (
+      event.category ||
+      event.type ||
+      event.tags?.join(", ") ||
+      detectCategory(event.title + " " + event.description)
+    );
+  }
+
+  // 🔎 Détection basique de catégories dans le texte
+  function detectCategory(text: string) {
+    const t = text.toLowerCase();
+    if (t.includes("concert")) return "Concert";
+    if (t.includes("théâtre") || t.includes("theatre")) return "Théâtre";
+    if (t.includes("exposition")) return "Exposition";
+    if (t.includes("festival")) return "Festival";
+    if (t.includes("salon")) return "Salon";
+    if (t.includes("conférence")) return "Conférence";
+    return "Autre";
+  }
 
   async function fetchEvents() {
     setLoading(true);
@@ -27,6 +53,7 @@ export default function AgendaToulousePage() {
       const data = await res.json();
 
       setEvents(data.events || []);
+      setFilteredEvents(data.events || []);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
     } finally {
@@ -38,11 +65,55 @@ export default function AgendaToulousePage() {
     fetchEvents();
   }, []);
 
+  // 🔍 Filtrage dynamique selon recherche multi-critères
+  useEffect(() => {
+    if (!search.trim()) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = search.toLowerCase();
+
+    const result = events.filter((ev) => {
+      const category = getCategory(ev);
+
+      const combined = `
+        ${ev.title}
+        ${ev.description}
+        ${ev.fullAddress || ev.location}
+        ${ev.dateFormatted || ev.date}
+        ${category}
+      `
+        .toLowerCase()
+        .trim();
+
+      return combined.includes(q);
+    });
+
+    setFilteredEvents(result);
+  }, [search, events]);
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">
         Agenda Toulouse – Tous les événements
       </h1>
+
+      {/* 🔍 Barre de recherche */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Rechercher par titre, lieu, date, description, catégorie…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      {/* 🔢 Compteur */}
+      <p className="text-muted-foreground mb-4">
+        {filteredEvents.length} événement(s) trouvé(s)
+      </p>
 
       {/* 🔘 Boutons Plein écran / Vignette */}
       <div className="flex gap-4 mb-6">
@@ -74,9 +145,9 @@ export default function AgendaToulousePage() {
       {/* 🟥 MODE PLEIN ÉCRAN */}
       {/* ========================================================= */}
 
-      {viewMode === "card" && events.length > 0 && (
+      {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {events.map((event, i) => (
+          {filteredEvents.map((event, i) => (
             <div
               key={event.id || i}
               className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
@@ -103,7 +174,7 @@ export default function AgendaToulousePage() {
                 </p>
 
                 <p className="text-xs text-muted-foreground italic mb-3">
-                  Source : {event.source}
+                  Catégorie : {getCategory(event)}
                 </p>
 
                 {event.url && (
@@ -123,12 +194,12 @@ export default function AgendaToulousePage() {
       )}
 
       {/* ========================================================= */}
-      {/* 🟨 MODE LISTE / VIGNETTE */}
+      {/* 🟨 MODE LISTE */}
       {/* ========================================================= */}
 
-      {viewMode === "list" && events.length > 0 && (
+      {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
-          {events.map((event, i) => (
+          {filteredEvents.map((event, i) => (
             <div
               key={event.id || i}
               className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
@@ -150,6 +221,10 @@ export default function AgendaToulousePage() {
 
                 <p className="text-sm">{event.dateFormatted}</p>
 
+                <p className="text-xs text-muted-foreground italic">
+                  Catégorie : {getCategory(event)}
+                </p>
+
                 {event.url && (
                   <a
                     href={event.url}
@@ -165,9 +240,9 @@ export default function AgendaToulousePage() {
         </div>
       )}
 
-      {!loading && events.length === 0 && !error && (
+      {!loading && filteredEvents.length === 0 && !error && (
         <p className="mt-6 text-muted-foreground">
-          Aucun événement à venir trouvé.
+          Aucun événement ne correspond à la recherche.
         </p>
       )}
     </div>
