@@ -3,7 +3,15 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
+// Images par défaut selon le type
+const getEventImage = (title: string | undefined) => {
+  if (!title) return "/images/ut3/ut3default.jpg";
+  const lower = title.toLowerCase();
+  if (lower.includes("ciné") || lower.includes("cine")) return "/images/ut3/ut3cine.jpg";
+  if (lower.includes("conf")) return "/images/ut3/ut3conf.jpg";
+  if (lower.includes("expo")) return "/images/ut3/ut3expo.jpg";
+  return "/images/ut3/ut3default.jpg";
+};
 
 export default function UT3MinPage() {
   const [loading, setLoading] = useState(false);
@@ -21,8 +29,15 @@ export default function UT3MinPage() {
       const res = await fetch("/api/ut3-min");
       if (!res.ok) throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
       const data = await res.json();
-      setEvents(data);
-      setFilteredEvents(data);
+
+      // Correction : s'assurer que l'URL est bien une string
+      const eventsWithUrl = data.map((ev: any) => ({
+        ...ev,
+        url: typeof ev.url === "string" ? ev.url : ev.url?.href || "",
+      }));
+
+      setEvents(eventsWithUrl);
+      setFilteredEvents(eventsWithUrl);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
     } finally {
@@ -58,7 +73,7 @@ export default function UT3MinPage() {
       </p>
 
       {/* 🔘 Boutons d'action et mode */}
-      <div className="flex flex-wrap gap-3 mb-4">
+      <div className="flex flex-wrap gap-3 mb-4 items-center">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
@@ -106,7 +121,7 @@ export default function UT3MinPage() {
           {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[520px]">
               <img
-                src={ev.attachments || PLACEHOLDER_IMAGE}
+                src={ev.attachments || getEventImage(ev.title)}
                 alt={ev.title}
                 className="w-full h-48 object-cover"
               />
@@ -147,7 +162,7 @@ export default function UT3MinPage() {
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
               <img
-                src={ev.attachments || PLACEHOLDER_IMAGE}
+                src={ev.attachments || getEventImage(ev.title)}
                 alt={ev.title}
                 className="w-24 h-24 rounded object-cover flex-shrink-0"
               />
