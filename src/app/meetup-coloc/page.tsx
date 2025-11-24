@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button"; 
+import { Button } from "@/components/ui/button";
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Meetup";
 
@@ -20,14 +20,16 @@ export default function MeetupEventsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<MeetupEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<MeetupEvent[]>([]);
   
-  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
 
   async function fetchEvents() {
     setLoading(true);
     setError(null);
     setEvents([]);
+    setFilteredEvents([]);
 
     try {
       const res = await fetch("/api/meetup-coloc");
@@ -37,10 +39,7 @@ export default function MeetupEventsPage() {
       }
 
       const data = await res.json();
-      if (!data.events || data.events.length === 0) {
-        setEvents([]);
-        return;
-      }
+      if (!data.events || data.events.length === 0) return;
 
       const mapped: MeetupEvent[] = data.events.map((ev: any) => {
         const dateRaw = ev.startDate ? new Date(ev.startDate) : null;
@@ -68,6 +67,7 @@ export default function MeetupEventsPage() {
       });
 
       setEvents(mapped);
+      setFilteredEvents(mapped);
 
     } catch (err: any) {
       setError(err.message || "Erreur inconnue lors du chargement des événements.");
@@ -75,6 +75,22 @@ export default function MeetupEventsPage() {
       setLoading(false);
     }
   }
+
+  // Filtrage dynamique
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    const filtered = events.filter(ev =>
+      ev.title.toLowerCase().includes(q) ||
+      ev.description.toLowerCase().includes(q) ||
+      ev.location.toLowerCase().includes(q)
+    );
+    setFilteredEvents(filtered);
+  }, [searchQuery, events]);
 
   useEffect(() => {
     fetchEvents();
@@ -90,23 +106,32 @@ export default function MeetupEventsPage() {
         Prochains événements du groupe Meetup sur 31 jours.
       </p>
 
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-red-300"
+      />
+
+      {/* Compteur d'événements */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
+
+      {/* 🔘 Boutons Plein écran / Vignette */}
       <div className="flex gap-4 mb-6">
-        <button
+        <Button
           onClick={() => setViewMode("card")}
-          className={`px-4 py-2 rounded ${
-            viewMode === "card" ? "bg-red-600 text-white" : "bg-gray-200"
-          }`}
+          variant={viewMode === "card" ? "default" : "secondary"}
         >
-          🗂️ Plein écran
-        </button>
-        <button
+          📺 Plein écran
+        </Button>
+        <Button
           onClick={() => setViewMode("list")}
-          className={`px-4 py-2 rounded ${
-            viewMode === "list" ? "bg-red-600 text-white" : "bg-gray-200"
-          }`}
+          variant={viewMode === "list" ? "default" : "secondary"}
         >
-          📋 Vignette
-        </button>
+          🔲 Vignette
+        </Button>
       </div>
 
       <Button onClick={fetchEvents} disabled={loading} className="mb-6 bg-red-600 hover:bg-red-700">
@@ -119,16 +144,16 @@ export default function MeetupEventsPage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="mt-6 text-xl text-gray-500 p-8 border border-dashed rounded-lg text-center">
           Aucun événement à venir trouvé.
         </p>
       )}
 
       {/* 🟥 Mode plein écran */}
-      {viewMode === "card" && events.length > 0 && (
+      {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <div key={event.link || index} className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col border border-gray-100">
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
@@ -158,9 +183,9 @@ export default function MeetupEventsPage() {
       )}
 
       {/* 🟨 Mode vignette */}
-      {viewMode === "list" && events.length > 0 && (
+      {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
-          {events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <div key={event.link || index} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
               <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden flex items-center justify-center">
                 <img
