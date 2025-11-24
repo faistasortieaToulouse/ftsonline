@@ -13,7 +13,6 @@ export default function UT3MinPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
-  // Récupération des événements
   async function fetchEvents() {
     setLoading(true);
     setError(null);
@@ -31,13 +30,11 @@ export default function UT3MinPage() {
     }
   }
 
-  // Filtrage multi-critères : titre, description, lieu, date
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
       return;
     }
-
     const q = searchQuery.toLowerCase();
     setFilteredEvents(
       events.filter(ev =>
@@ -60,35 +57,33 @@ export default function UT3MinPage() {
         Événements filtrés depuis le flux officiel de l’Université Toulouse III.
       </p>
 
-      {/* Boutons et recherche */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6 items-center">
-        <div className="flex flex-wrap gap-3">
-          <Button onClick={fetchEvents} disabled={loading}>
-            {loading ? "Chargement..." : "📡 Actualiser"}
-          </Button>
-          <Button
-            onClick={() => setViewMode("card")}
-            variant={viewMode === "card" ? "default" : "secondary"}
-          >
-            📺 Plein écran
-          </Button>
-          <Button
-            onClick={() => setViewMode("list")}
-            variant={viewMode === "list" ? "default" : "secondary"}
-          >
-            🔲 Vignette
-          </Button>
-        </div>
-
-        {/* Barre de recherche pleine largeur */}
-        <input
-          type="text"
-          placeholder="Rechercher par titre, description, lieu ou date..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-4 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
-        />
+      {/* 🔘 Boutons d'action et mode */}
+      <div className="flex flex-wrap gap-3 mb-4">
+        <Button onClick={fetchEvents} disabled={loading}>
+          {loading ? "Chargement..." : "📡 Actualiser"}
+        </Button>
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          📺 Plein écran
+        </Button>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
+          🔲 Vignette
+        </Button>
       </div>
+
+      {/* Barre de recherche pleine largeur */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu ou date..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="mb-4 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+      />
 
       {/* Compteur d'événements */}
       <p className="mb-4 text-sm text-gray-600">
