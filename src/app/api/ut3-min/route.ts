@@ -1,4 +1,3 @@
-// src/app/api/ut3-min/route.ts
 import { NextResponse } from "next/server";
 import * as ical from "node-ical";
 
@@ -18,23 +17,16 @@ export async function GET() {
     const events = Object.values(data)
       .filter(ev => ev.type === "VEVENT")
       .map(ev => {
-        // Extraire l’URL propre
-        let eventUrl = "";
-        if (ev.url) {
-          if (typeof ev.url === "string") eventUrl = ev.url;
-          else if (ev.url.value) eventUrl = ev.url.value;
-        }
+        // URL correct
+        let urlField = ev.url;
+        if (!urlField && ev['URL;VALUE=URI']) urlField = ev['URL;VALUE=URI'];
 
-        // Extraire l’attachment comme image
-        let imageUrl: string | null = null;
-        if (ev.attach) {
-          if (Array.isArray(ev.attach) && ev.attach.length > 0) {
-            imageUrl = ev.attach[0].val || ev.attach[0];
-          } else if (typeof ev.attach === "object" && ev.attach.val) {
-            imageUrl = ev.attach.val;
-          } else if (typeof ev.attach === "string") {
-            imageUrl = ev.attach;
-          }
+        // ATTACH : peut être un tableau ou un objet
+        let attachField: string | null = null;
+        if (Array.isArray(ev.attach)) {
+          attachField = ev.attach[0]?.url ?? null;
+        } else if (ev.attach && typeof ev.attach === "object" && 'params' in ev.attach && ev.attach?.uri) {
+          attachField = ev.attach.uri;
         }
 
         return {
@@ -44,12 +36,15 @@ export async function GET() {
           end: ev.end,
           location: ev.location || null,
           description: ev.description || null,
-          url: eventUrl || null,
-          attachments: imageUrl,
+          url: urlField || null,
+          attachments: attachField,
           source: "Université Toulouse III - Paul Sabatier",
         };
       })
-      .filter(ev => ev.title && keywords.some(k => ev.title.toLowerCase().includes(k)));
+      .filter(ev =>
+        ev.title &&
+        keywords.some(k => ev.title.toLowerCase().includes(k))
+      );
 
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
