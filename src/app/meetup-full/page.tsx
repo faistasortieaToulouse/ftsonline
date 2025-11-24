@@ -121,7 +121,7 @@ export default function MeetupFullPage() {
       </h1>
 
       <p className="text-muted-foreground mb-6">
-        Fusion de 4 groupes Meetup — {filteredEvents.length} évènement(s)
+        Fusion des groupes Meetup de loisirs — {filteredEvents.length} évènement(s)
       </p>
 
       {/* 🔍 Barre de recherche */}
