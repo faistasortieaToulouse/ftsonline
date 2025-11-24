@@ -12,25 +12,32 @@ export async function GET() {
     const icsText = await res.text();
 
     const data = ical.parseICS(icsText);
-
     const keywords = ["ciné", "conf", "expo"];
 
     const events = Object.values(data)
-      .filter(ev => ev.type === "VEVENT")
-      .map(ev => ({
-        id: ev.uid,
-        title: ev.summary,
-        start: ev.start,
-        end: ev.end,
-        location: ev.location || null,
-        description: ev.description || null,
-        url: ev.url || null,
-        attachments: ev.attach || null,
-        source: "Université Toulouse III - Paul Sabatier",
-      }))
-      // Filtrer par mots-clés dans le titre
+      .filter(ev => ev.type === "VEVENT" && ev.summary)
+      .map(ev => {
+        // Attachments → image
+        const image = ev.attach
+          ? Array.isArray(ev.attach)
+            ? ev.attach[0]
+            : ev.attach
+          : null;
+
+        return {
+          id: ev.uid,
+          title: ev.summary,
+          start: ev.start,
+          end: ev.end,
+          location: ev.location || null,
+          description: null, // pas dispo dans le flux iCal
+          url: ev.url ? String(ev.url) : null, // convertir en string
+          image,
+          source: "Université Toulouse III - Paul Sabatier",
+        };
+      })
+      // filtrage par mots-clés
       .filter(ev =>
-        ev.title &&
         keywords.some(k => ev.title.toLowerCase().includes(k))
       );
 
