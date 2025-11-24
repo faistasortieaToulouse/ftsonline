@@ -12,17 +12,30 @@ export async function GET() {
     const icsText = await res.text();
 
     const data = ical.parseICS(icsText);
+
     const keywords = ["ciné", "conf", "expo"];
 
     const events = Object.values(data)
-      .filter(ev => ev.type === "VEVENT" && ev.summary)
+      .filter(ev => ev.type === "VEVENT")
       .map(ev => {
-        // Attachments → image
-        const image = ev.attach
-          ? Array.isArray(ev.attach)
-            ? ev.attach[0]
-            : ev.attach
-          : null;
+        // Extraire l’URL propre
+        let eventUrl = "";
+        if (ev.url) {
+          if (typeof ev.url === "string") eventUrl = ev.url;
+          else if (ev.url.value) eventUrl = ev.url.value;
+        }
+
+        // Extraire l’attachment comme image
+        let imageUrl: string | null = null;
+        if (ev.attach) {
+          if (Array.isArray(ev.attach) && ev.attach.length > 0) {
+            imageUrl = ev.attach[0].val || ev.attach[0];
+          } else if (typeof ev.attach === "object" && ev.attach.val) {
+            imageUrl = ev.attach.val;
+          } else if (typeof ev.attach === "string") {
+            imageUrl = ev.attach;
+          }
+        }
 
         return {
           id: ev.uid,
@@ -30,16 +43,13 @@ export async function GET() {
           start: ev.start,
           end: ev.end,
           location: ev.location || null,
-          description: null, // pas dispo dans le flux iCal
-          url: ev.url ? String(ev.url) : null, // convertir en string
-          image,
+          description: ev.description || null,
+          url: eventUrl || null,
+          attachments: imageUrl,
           source: "Université Toulouse III - Paul Sabatier",
         };
       })
-      // filtrage par mots-clés
-      .filter(ev =>
-        keywords.some(k => ev.title.toLowerCase().includes(k))
-      );
+      .filter(ev => ev.title && keywords.some(k => ev.title.toLowerCase().includes(k)));
 
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
