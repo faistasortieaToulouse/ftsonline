@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -16,14 +16,15 @@ type FTEvent = {
 
 export default function FranceTravailPage() {
   const [events, setEvents] = useState<FTEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<FTEvent[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   useEffect(() => {
@@ -39,22 +40,45 @@ export default function FranceTravailPage() {
         if (data.error) {
           setError(data.details || "Erreur API France Travail");
           setEvents([]);
+          setFilteredEvents([]);
         } else {
           const sorted = (data.events || []).sort(
             (a: FTEvent, b: FTEvent) =>
               new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime()
           );
           setEvents(sorted);
+          setFilteredEvents(sorted);
         }
       } catch (error) {
         console.error("Erreur chargement salons en ligne", error);
         setError("Impossible de charger les salons en ligne.");
+        setEvents([]);
+        setFilteredEvents([]);
       }
       setLoading(false);
     };
 
     fetchEvents();
   }, [page, startDate]);
+
+  // Filtrage dynamique
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = events.filter((ev) =>
+      ev.titre.toLowerCase().includes(query) ||
+      (ev.description?.toLowerCase().includes(query) ?? false) ||
+      (ev.localisation?.toLowerCase().includes(query) ?? false) ||
+      (ev.organismeOrganisateur?.toLowerCase().includes(query) ?? false) ||
+      (ev.dateDebut?.toLowerCase().includes(query) ?? false)
+    );
+
+    setFilteredEvents(filtered);
+  }, [searchQuery, events]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -72,7 +96,19 @@ export default function FranceTravailPage() {
         />
       </label>
 
-      {/* 🔘 Boutons pour changer le mode d'affichage */}
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu, organisme, date..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur d'événements */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
+
+      {/* Boutons pour changer le mode d'affichage */}
       <div className="flex gap-4 mb-6">
         <Button
           onClick={() => setViewMode("card")}
@@ -92,16 +128,14 @@ export default function FranceTravailPage() {
         <p>Chargement...</p>
       ) : error ? (
         <p className="text-red-600">{error}</p>
-      ) : events.length === 0 ? (
+      ) : filteredEvents.length === 0 ? (
         <p>Aucun salon en ligne trouvé.</p>
       ) : (
         <>
-          {/* ============================================ */}
-          {/* 🟥 Mode Plein écran */}
-          {/* ============================================ */}
+          {/* Mode plein écran */}
           {viewMode === "card" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {events.map((event) => (
+              {filteredEvents.map((event) => (
                 <div
                   key={event.idEvenement}
                   className="border rounded-lg shadow p-4 bg-white flex flex-col"
@@ -164,12 +198,10 @@ export default function FranceTravailPage() {
             </div>
           )}
 
-          {/* ============================================ */}
-          {/* 🟨 Mode Vignette */}
-          {/* ============================================ */}
+          {/* Mode vignette */}
           {viewMode === "list" && (
             <div className="space-y-4">
-              {events.map((event) => (
+              {filteredEvents.map((event) => (
                 <div
                   key={event.idEvenement}
                   className="flex gap-4 p-4 border rounded-lg shadow bg-white"
