@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
-
 export default function UT3MinPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -12,6 +10,8 @@ export default function UT3MinPage() {
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+
+  const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
   // Récupération des événements
   async function fetchEvents() {
@@ -60,7 +60,7 @@ export default function UT3MinPage() {
         Événements filtrés depuis le flux officiel de l’Université Toulouse III.
       </p>
 
-      {/* Boutons d'action et mode + barre de recherche */}
+      {/* Boutons d'action et mode */}
       <div className="flex flex-wrap gap-3 mb-6 items-center">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
@@ -107,28 +107,24 @@ export default function UT3MinPage() {
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[420px]">
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[520px]">
               {ev.attachments ? (
-                <img
-                  src={Array.isArray(ev.attachments) ? ev.attachments[0] : ev.attachments}
-                  alt={ev.title}
-                  className="w-full h-48 object-cover"
-                />
+                <img src={ev.attachments} alt={ev.title} className="w-full aspect-[16/9] object-cover" />
               ) : (
-                <img src={PLACEHOLDER_IMAGE} alt={ev.title} className="w-full h-48 object-cover" />
+                <img src={PLACEHOLDER_IMAGE} alt="placeholder" className="w-full aspect-[16/9] object-cover" />
               )}
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && (
                   <p className="text-sm text-blue-600 font-medium mb-2">
-                    {new Date(ev.start).toLocaleString()} → {ev.end ? new Date(ev.end).toLocaleString() : ""}
+                    {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
                   </p>
                 )}
                 {ev.location && (
                   <p className="text-sm text-muted-foreground mb-2">📍 {ev.location}</p>
                 )}
                 {ev.description && (
-                  <div className="text-sm text-muted-foreground overflow-y-auto h-20 mb-2 pr-1 scrollable">
+                  <div className="text-sm text-muted-foreground overflow-y-auto h-24 mb-2 pr-1 scrollable">
                     {ev.description}
                   </div>
                 )}
@@ -154,19 +150,15 @@ export default function UT3MinPage() {
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
               {ev.attachments ? (
-                <img
-                  src={Array.isArray(ev.attachments) ? ev.attachments[0] : ev.attachments}
-                  alt={ev.title}
-                  className="w-24 h-24 rounded object-cover flex-shrink-0"
-                />
+                <img src={ev.attachments} alt={ev.title} className="w-24 h-24 rounded object-cover flex-shrink-0" />
               ) : (
-                <img src={PLACEHOLDER_IMAGE} alt={ev.title} className="w-24 h-24 rounded object-cover flex-shrink-0" />
+                <img src={PLACEHOLDER_IMAGE} alt="placeholder" className="w-24 h-24 rounded object-cover flex-shrink-0" />
               )}
               <div className="flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && (
                   <p className="text-sm text-blue-600 font-medium mb-1">
-                    {new Date(ev.start).toLocaleString()} → {ev.end ? new Date(ev.end).toLocaleString() : ""}
+                    {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
                   </p>
                 )}
                 {ev.location && (
