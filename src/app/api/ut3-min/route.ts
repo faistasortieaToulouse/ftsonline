@@ -1,3 +1,4 @@
+// src/app/api/ut3-min/route.ts
 import { NextResponse } from "next/server";
 import * as ical from "node-ical";
 import Parser from "rss-parser";
@@ -28,7 +29,7 @@ export async function GET() {
     const parser = new Parser();
     const rssFeed = await parser.parseURL(rssUrl);
 
-    // 3️⃣ Construire les événements iCal filtrés
+    // 3️⃣ Construire les événements iCal
     const icalEvents = Object.values(icalData)
       .filter(ev => ev.type === "VEVENT")
       .map(ev => ({
@@ -38,7 +39,7 @@ export async function GET() {
         end: ev.end,
         location: ev.location || null,
         description: ev.description || null,
-        url: null, // à remplir depuis RSS
+        url: null, // à remplir via RSS
         image: getEventImage(ev.summary),
         source: "Université Toulouse III - Paul Sabatier",
       }))
@@ -47,7 +48,7 @@ export async function GET() {
         ev.title && keywords.some(k => ev.title.toLowerCase().includes(k))
       );
 
-    // 4️⃣ Associer URL depuis RSS via correspondance approximative sur le titre
+    // 4️⃣ Associer URL depuis RSS via titre (approx)
     const events = icalEvents.map(ev => {
       const rssItem = rssFeed.items.find(item =>
         ev.title &&
