@@ -1,1 +1,180 @@
-import { headers } from "next/headers"; import React from "react"; // ==================================================================== // NOUVELLE DIRECTIVE: Forcer le rendu dynamique // Ceci est ESSENTIEL car la fonction getCategories utilise 'headers()', // ce qui empêche Next.js de générer cette page statiquement au build. export const dynamic = 'force-dynamic'; // ==================================================================== // Interface de base pour les éléments retournés par l'API interface CategorieItem { label: string; url: string; [key: string]: any; } async function getCategories(): Promise<CategorieItem[]> { try { let host = headers().get("host"); if (!host) { const defaultHost = process.env.NODE_ENV === "development" ? "localhost:3000" : null; // On utilise 3000 comme port par défaut en dev si l'host est indéterminé if (!defaultHost) throw new Error("Cannot determine host header."); host = defaultHost; } const protocol = process.env.NODE_ENV === "production" ? "https" : "http"; const apiUrl = ${protocol}://${host}/api/cotetoulouse; const res = await fetch(apiUrl, { cache: "no-store" }); if (!res.ok) { console.error("Fetch /api/cotetoulouse failed:", res.status); return []; } const data = await res.json(); // On s'attend à ce que l'API retourne un objet { records: [] } return Array.isArray(data.records) ? data.records : []; } catch (err) { // @ts-ignore console.error("Error in getCategories:", err.message || err); return []; } } export default async function CoteToulousePage() { const categories = await getCategories(); return ( <main style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto", fontFamily: "sans-serif" }}> <h1 style={{ fontSize: "28px", marginBottom: "30px", textAlign: "center", color: "#6A057F" }}> 📚 Liens Côté Toulouse (Rubriques) </h1> {categories.length === 0 ? ( <p style={{ color: "#FF5733", border: "1px solid #FF5733", padding: "15px", borderRadius: "6px", backgroundColor: "#fff0f0", textAlign: "center" }} > Aucun lien trouvé ou erreur de connexion à l'API locale. </p> ) : ( <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "20px" }}> {categories.map((item, i: number) => ( <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", padding: "15px", border: "2px solid #6A057F", borderRadius: "10px", textAlign: "center", background: "#fdfdff", textDecoration: "none", color: "#333", fontWeight: "bold", fontSize: "1.1em", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", transition: "transform 0.2s, box-shadow 0.2s", }} // Ajouter un petit style pour l'effet de survol (hover) onMouseOver={(e) => { // @ts-ignore e.currentTarget.style.transform = 'translateY(-3px)'; // @ts-ignore e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.15)'; }} onMouseOut={(e) => { // @ts-ignore e.currentTarget.style.transform = 'translateY(0)'; // @ts-ignore e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)'; }} > {item.label} </a> ))} </div> )} </main> ); }
+'use client';
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+
+// Configuration pour le format de date français
+const dateFormatOptions: Intl.DateTimeFormatOptions = {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+};
+
+export default function CultureEnMouvementsPage() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = useState<any[]>([]);
+
+  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+
+  async function fetchEvents() {
+    setLoading(true);
+    setError(null);
+    setEvents([]);
+
+    try {
+      const res = await fetch("/api/cultureenmouvements");
+      if (!res.ok) {
+        const errorBody = await res.json();
+        throw new Error(`API HTTP error: ${res.status} ${res.statusText} - ${errorBody.error || 'Erreur non détaillée'}`);
+      }
+      const data = await res.json();
+      setEvents(data);
+    } catch (err: any) {
+      setError(err.message || "Erreur inconnue lors de la récupération des événements.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  return (
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold mb-4">
+        Événements Culture en Mouvements (Haute-Garonne - 31)
+      </h1>
+      <p className="text-muted-foreground mb-6">
+        Récupération des événements du site officiel, filtrés sur le département 31.
+      </p>
+
+      {/* 🔘 Boutons pour changer le mode d'affichage */}
+      <div className="flex gap-4 mb-6">
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          📺 Plein écran
+        </Button>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
+          🔲 Vignette
+        </Button>
+      </div>
+
+      <Button onClick={fetchEvents} disabled={loading} className="mb-6 bg-blue-600 hover:bg-blue-700 text-white shadow-lg transition duration-200">
+        {loading ? "Chargement..." : "📡 Actualiser"}
+      </Button>
+
+      {error && (
+        <div className="p-4 bg-red-100 text-red-800 border-l-4 border-red-600 rounded mb-6 font-mono text-sm">
+          Erreur: {error}
+        </div>
+      )}
+
+      {events.length === 0 && !loading && (
+        <p className="text-gray-500 italic">
+          Aucun événement trouvé en Haute-Garonne (31) ou l'API n'a pas encore renvoyé de données.
+        </p>
+      )}
+
+      {/* ============================================ */}
+      {/* 🟥 Mode Plein écran */}
+      {/* ============================================ */}
+      {viewMode === "card" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map(ev => (
+            <div
+              key={ev.id}
+              className="bg-white shadow-xl rounded-xl overflow-hidden flex flex-col transition duration-300 hover:shadow-2xl border border-gray-100"
+            >
+              <div className="h-48 overflow-hidden">
+                <img 
+                  src={ev.image.startsWith('/') ? `https://www.cultureenmouvements.org${ev.image}` : ev.image} 
+                  alt={`Illustration pour ${ev.title}`}
+                  className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
+                  onError={(e) => { 
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null; 
+                    target.src = 'https://placehold.co/600x400/94A3B8/FFFFFF?text=Culture+en+Mouvements'; 
+                  }}
+                />
+              </div>
+
+              <div className="p-4 flex flex-col flex-1">
+                <h2 className="text-xl font-bold mb-1 text-gray-800 line-clamp-2">{ev.title}</h2>
+
+                {ev.start && (
+                  <p className="text-sm text-indigo-600 font-semibold mb-2 flex items-center">
+                    {new Date(ev.start).toLocaleDateString('fr-FR', dateFormatOptions)}
+                  </p>
+                )}
+
+                {ev.location && (
+                  <p className="text-sm text-gray-600 mb-2 flex items-center">{ev.location}</p>
+                )}
+
+                {ev.link && (
+                  <a href={ev.link} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:text-blue-700 mt-auto pt-2 transition duration-200 font-medium flex items-center">
+                    Voir les détails
+                  </a>
+                )}
+
+                <p className="text-xs text-gray-400 mt-1">
+                  Source : {ev.source}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ============================================ */}
+      {/* 🟨 Mode Vignette */}
+      {/* ============================================ */}
+      {viewMode === "list" && (
+        <div className="space-y-4">
+          {events.map(ev => (
+            <div key={ev.id} className="flex gap-4 p-4 border rounded-lg shadow bg-white">
+              <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs">
+                <img 
+                  src={ev.image.startsWith('/') ? `https://www.cultureenmouvements.org${ev.image}` : ev.image} 
+                  alt={`Illustration pour ${ev.title}`}
+                  className="w-full h-full object-cover rounded"
+                  onError={(e) => { 
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null; 
+                    target.src = 'https://placehold.co/96x96/94A3B8/FFFFFF?text=Culture'; 
+                  }}
+                />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold line-clamp-2">{ev.title}</h2>
+                {ev.start && (
+                  <p className="text-sm text-indigo-600">
+                    {new Date(ev.start).toLocaleDateString('fr-FR', dateFormatOptions)}
+                  </p>
+                )}
+                {ev.location && (
+                  <p className="text-sm text-gray-600">{ev.location}</p>
+                )}
+                {ev.link && (
+                  <a href={ev.link} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:text-blue-700 mt-1 block">
+                    Voir les détails
+                  </a>
+                )}
+                <p className="text-xs text-gray-400 mt-1">Source : {ev.source}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
