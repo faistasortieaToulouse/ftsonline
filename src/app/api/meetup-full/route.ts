@@ -2,13 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Liste de TOUTES les routes API à agréger
 const API_ROUTES = [
-    "agenda-trad",
-    "cultureenmouvements",
-    "demosphere",
-    "hautegaronne",
-    "radarsquat",
-    "toulousemetropole",
-    "tourismehautegaronne",
     "meetup-events",
     "meetup-expats", // Ajouter vos routes Meetup
     "meetup-coloc",

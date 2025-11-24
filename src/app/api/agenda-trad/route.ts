@@ -2,9 +2,12 @@ import RSSParser from "rss-parser";
 
 const parser = new RSSParser();
 
+// GET : récupérer les événements AgendaTrad
 export async function GET() {
   try {
-    const feed = await parser.parseURL("https://agendatrad.org/rss/events/next/France/Occitanie/Haute-Garonne.xml?lang=fr");
+    const feed = await parser.parseURL(
+      "https://agendatrad.org/rss/events/next/France/Occitanie/Haute-Garonne.xml?lang=fr"
+    );
 
     const events = feed.items
       .map((item: any) => {
@@ -18,7 +21,6 @@ export async function GET() {
         const category = item.categories?.[0] || "Danse";
         const image = feed.image?.url || "/images/categories/danse.jpg";
 
-        // Construire une adresse si disponible
         const address = item.location || "";
 
         return {
@@ -43,8 +45,12 @@ export async function GET() {
       })
       .filter(Boolean);
 
-    return new Response(JSON.stringify(events), { status: 200 });
+    // Retourner un objet avec clé "events" pour l'agrégateur
+    return new Response(JSON.stringify({ events }), { status: 200 });
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(
+      JSON.stringify({ events: [], error: err.message }),
+      { status: 500 }
+    );
   }
 }

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,15 +10,10 @@ export default function AgendaToulousePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
-
-  // 🔵 Mode affichage
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
-
-  // 🔍 Barre de recherche + filtrage
   const [search, setSearch] = useState("");
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
 
-  // 🔖 Extraction automatique de catégories
   function getCategory(event: any) {
     return (
       event.category ||
@@ -28,7 +23,6 @@ export default function AgendaToulousePage() {
     );
   }
 
-  // 🔎 Détection basique de catégories dans le texte
   function detectCategory(text: string) {
     const t = text.toLowerCase();
     if (t.includes("concert")) return "Concert";
@@ -65,7 +59,6 @@ export default function AgendaToulousePage() {
     fetchEvents();
   }, []);
 
-  // 🔍 Filtrage dynamique selon recherche multi-critères
   useEffect(() => {
     if (!search.trim()) {
       setFilteredEvents(events);
@@ -73,19 +66,15 @@ export default function AgendaToulousePage() {
     }
 
     const q = search.toLowerCase();
-
     const result = events.filter((ev) => {
       const category = getCategory(ev);
-
       const combined = `
         ${ev.title}
         ${ev.description}
         ${ev.fullAddress || ev.location}
         ${ev.dateFormatted || ev.date}
         ${category}
-      `
-        .toLowerCase()
-        .trim();
+      `.toLowerCase().trim();
 
       return combined.includes(q);
     });
@@ -99,7 +88,7 @@ export default function AgendaToulousePage() {
         Agenda Toulouse – Tous les événements
       </h1>
 
-      {/* 🔍 Barre de recherche */}
+      {/* Barre de recherche */}
       <div className="mb-4">
         <input
           type="text"
@@ -110,12 +99,12 @@ export default function AgendaToulousePage() {
         />
       </div>
 
-      {/* 🔢 Compteur */}
+      {/* Compteur */}
       <p className="text-muted-foreground mb-4">
         {filteredEvents.length} événement(s) trouvé(s)
       </p>
 
-      {/* 🔘 Boutons Plein écran / Vignette */}
+      {/* Boutons Plein écran / Vignette */}
       <div className="flex gap-4 mb-6">
         <Button
           onClick={() => setViewMode("card")}
@@ -141,29 +130,31 @@ export default function AgendaToulousePage() {
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* 🟥 MODE PLEIN ÉCRAN */}
-      {/* ========================================================= */}
-
+      {/* Mode plein écran */}
       {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredEvents.map((event, i) => (
             <div
               key={event.id || i}
-              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]"
             >
               <img
                 src={event.image || event.coverImage || PLACEHOLDER_IMAGE}
                 alt={event.title}
-                className="w-full aspect-[16/9] object-cover"
+                className="w-full h-54 sm:h-56 md:h-60 object-contain"
+
               />
 
               <div className="p-4 flex flex-col flex-1">
-                <h2 className="text-xl font-semibold mb-2">{event.title}</h2>
+                {/* Titre avec barre de défilement si trop long */}
+                <div className="text-xl font-semibold mb-2 line-clamp-2 overflow-y-auto max-h-14">
+                  {event.title}
+                </div>
 
-                <p className="text-sm text-muted-foreground mb-2 flex-1 line-clamp-4">
+                {/* Description avec barre de défilement si trop longue */}
+                <div className="text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto max-h-20">
                   {event.description}
-                </p>
+                </div>
 
                 <p className="text-sm font-medium mb-1">
                   {event.dateFormatted || event.date || event.start || ""}
@@ -173,9 +164,9 @@ export default function AgendaToulousePage() {
                   {event.fullAddress || event.location}
                 </p>
 
-                <p className="text-xs text-muted-foreground italic mb-3">
-                  Catégorie : {getCategory(event)}
-                </p>
+		<p className="text-xs text-muted-foreground italic mb-3">
+		  Catégorie : {getCategory(event)} • Source : {event.source || "Inconnue"}
+		</p>
 
                 {event.url && (
                   <a
@@ -193,10 +184,7 @@ export default function AgendaToulousePage() {
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* 🟨 MODE LISTE */}
-      {/* ========================================================= */}
-
+      {/* Mode liste */}
       {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
           {filteredEvents.map((event, i) => (
@@ -211,13 +199,13 @@ export default function AgendaToulousePage() {
               />
 
               <div className="flex flex-col flex-1">
-                <h2 className="text-lg font-semibold text-blue-700 line-clamp-2">
+                <div className="text-lg font-semibold text-blue-700 line-clamp-2 overflow-y-auto max-h-10">
                   {event.title}
-                </h2>
+                </div>
 
-                <p className="text-sm text-muted-foreground line-clamp-2">
+                <div className="text-sm text-muted-foreground line-clamp-2 overflow-y-auto max-h-14">
                   {event.description}
-                </p>
+                </div>
 
                 <p className="text-sm">{event.dateFormatted}</p>
 

@@ -8,21 +8,18 @@ const API_ROUTES = [
   "radarsquat",
   "toulousemetropole",
   "tourismehautegaronne",
-  "meetup-events",
+  "meetup-full",
 ];
 
-// 📌 Placeholder en cas d’image manquante
+// 📌 Placeholder par défaut
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
 /**
- * Normalisation d'un événement venant de n'importe quelle source.
+ * Normalisation d'un événement
  */
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
 
-  // ————————————————————————————
-  // 🕒 Normalisation des dates
-  // ————————————————————————————
   const rawDate =
     ev.date ||
     ev.start ||
@@ -45,9 +42,6 @@ function normalizeEvent(ev: any, sourceName: string) {
     minute: "2-digit",
   });
 
-  // ————————————————————————————
-  // 📍 Normalisation du lieu
-  // ————————————————————————————
   const fullAddress =
     ev.fullAddress ||
     ev.location ||
@@ -63,30 +57,16 @@ function normalizeEvent(ev: any, sourceName: string) {
     ev.ville ||
     "";
 
-  // ————————————————————————————
-  // 🖼 Normalisation de l’image
-  // ————————————————————————————
+  // 🔵 Gestion spécifique Demosphere
   const image =
     ev.image ||
     ev.coverImage ||
-    PLACEHOLDER_IMAGE;
+    (sourceName === "demosphere" ? "/logo/demosphereoriginal.png" : PLACEHOLDER_IMAGE);
 
-  // ————————————————————————————
-  // 🔗 Normalisation de l’URL
-  // ————————————————————————————
-  const url =
-    ev.url ||
-    ev.link ||
-    "";
+  const url = ev.url || ev.link || "";
 
-  // ————————————————————————————
-  // 🏷 Source
-  // ————————————————————————————
   const source = ev.source || sourceName;
 
-  // ————————————————————————————
-  // 🧱 Construction de l’événement normalisé
-  // ————————————————————————————
   return {
     id: ev.id || `${ev.title}-${dateISO}`,
     title: ev.title || "Événement",
@@ -101,39 +81,38 @@ function normalizeEvent(ev: any, sourceName: string) {
   };
 }
 
-// ————————————————————————————
-// MAIN : GET
-// ————————————————————————————
+/**
+ * GET : agrégation
+ */
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
-  const fetchPromises = API_ROUTES.map(route =>
-    fetch(`${origin}/api/${route}`)
-      .then(res => res.json())
-      .then(data => ({ route, data }))
-      .catch(() => ({ route, data: [] }))
-  );
-
   try {
-    const results = await Promise.all(fetchPromises);
+    const results = await Promise.all(
+      API_ROUTES.map(route =>
+        fetch(`${origin}/api/${route}`)
+          .then(res => res.json())
+          .then(data => ({ route, data }))
+          .catch(() => ({ route, data: [] }))
+      )
+    );
 
-    // 🔵 Fusion de tous les flux
     const allEvents = results.flatMap(({ route, data }) => {
       const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
       return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
     const now = new Date();
-    const limit = new Date();
-    limit.setDate(now.getDate() + 31);
+    const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const limitDate = new Date(nowDate);
+    limitDate.setDate(limitDate.getDate() + 31);
 
-    // 🔵 Filtrer aujourd’hui → +31 jours
     const filtered = allEvents.filter(ev => {
-      const d = new Date(ev.date);
-      return d >= now && d <= limit;
+      const evDate = new Date(ev.date);
+      return evDate >= nowDate && evDate < limitDate;
     });
 
-    // 🔵 Supprimer doublons selon title + date
+    // Supprimer doublons
     const uniqMap = new Map<string, any>();
     filtered.forEach(ev => {
       const key = `${ev.title}-${ev.date}`;
@@ -142,7 +121,7 @@ export async function GET(request: NextRequest) {
 
     const finalEvents = Array.from(uniqMap.values());
 
-    // 🔵 Tri chronologique
+    // Tri chronologique
     finalEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return NextResponse.json({
