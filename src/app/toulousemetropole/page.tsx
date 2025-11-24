@@ -10,14 +10,16 @@ export default function ToulouseEventsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
 
-  // 🟦 Mode d'affichage : card = plein écran, list = vignette
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
 
   async function fetchUpcomingEvents() {
     setLoading(true);
     setError(null);
     setEvents([]);
+    setFilteredEvents([]);
 
     try {
       const res = await fetch("/api/toulousemetropole");
@@ -63,6 +65,7 @@ export default function ToulouseEventsPage() {
         });
 
       setEvents(cleaned);
+      setFilteredEvents(cleaned);
 
     } catch (err: any) {
       setError(err.message);
@@ -75,12 +78,43 @@ export default function ToulouseEventsPage() {
     fetchUpcomingEvents();
   }, []);
 
+  // Filtrage multi-critères
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    setFilteredEvents(events.filter(ev =>
+      (ev.title?.toLowerCase().includes(q) ?? false) ||
+      (ev.description?.toLowerCase().includes(q) ?? false) ||
+      (ev.fullAddress?.toLowerCase().includes(q) ?? false) ||
+      (ev.dateFormatted?.toLowerCase().includes(q) ?? false) ||
+      (ev.category?.toLowerCase().includes(q) ?? false) ||
+      (ev.type?.toLowerCase().includes(q) ?? false) ||
+      (ev.theme?.toLowerCase().includes(q) ?? false)
+    ));
+  }, [searchQuery, events]);
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Événements Toulouse Métropole</h1>
       <p className="text-muted-foreground mb-6">
         Cette page affiche les 100 prochains événements culturels à Toulouse.
       </p>
+
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu, date, catégorie..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
       {/* BOUTONS D'ACTION + MODE */}
       <div className="flex flex-wrap gap-4 mb-6">
@@ -109,48 +143,25 @@ export default function ToulouseEventsPage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && (
-        <p className="text-muted-foreground">Aucun événement à venir.</p>
+      {filteredEvents.length === 0 && !loading && (
+        <p className="text-muted-foreground">Aucun événement à afficher.</p>
       )}
 
-      {/* ========================================================== */}
       {/* MODE PLEIN ÉCRAN (CARD) */}
-      {/* ========================================================== */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map(ev => (
+          {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-full">
-              {ev.image && (
-                <img
-                  src={ev.image}
-                  alt={ev.title}
-                  className="w-full aspect-[16/9] object-cover"
-                />
-              )}
-
+              {ev.image && <img src={ev.image} alt={ev.title} className="w-full aspect-[16/9] object-cover" />}
               <div className="p-4 flex flex-col flex-1 gap-1">
                 <h2 className="text-xl font-semibold">{ev.title}</h2>
-
                 {(ev.category || ev.type || ev.theme) && (
-                  <p className="text-sm text-blue-600 font-medium mt-1">
-                    {ev.category || ev.type || ev.theme}
-                  </p>
+                  <p className="text-sm text-blue-600 font-medium mt-1">{ev.category || ev.type || ev.theme}</p>
                 )}
-
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-4">
-                  {ev.description}
-                </p>
-
+                {ev.description && <p className="text-sm text-muted-foreground mt-2 line-clamp-4">{ev.description}</p>}
                 <p className="text-sm mt-2">{ev.dateFormatted}</p>
-
-                {ev.fullAddress && (
-                  <p className="text-sm text-muted-foreground">{ev.fullAddress}</p>
-                )}
-
-                <p className="text-xs text-muted-foreground italic mt-1">
-                  Source : Toulouse Métropole
-                </p>
-
+                {ev.fullAddress && <p className="text-sm text-muted-foreground">{ev.fullAddress}</p>}
+                <p className="text-xs text-muted-foreground italic mt-1">Source : Toulouse Métropole</p>
                 {ev.url && (
                   <a
                     href={ev.url}
@@ -167,35 +178,18 @@ export default function ToulouseEventsPage() {
         </div>
       )}
 
-      {/* ========================================================== */}
       {/* MODE LISTE (VIGNETTE) */}
-      {/* ========================================================== */}
       {viewMode === "list" && (
         <div className="space-y-4">
-          {events.map(ev => (
+          {filteredEvents.map(ev => (
             <div key={ev.id} className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm">
-              {ev.image && (
-                <img
-                  src={ev.image}
-                  alt={ev.title}
-                  className="w-24 h-24 rounded object-cover flex-shrink-0"
-                />
-              )}
+              {ev.image && <img src={ev.image} alt={ev.title} className="w-24 h-24 rounded object-cover flex-shrink-0" />}
               <div className="flex flex-col flex-1 gap-1">
                 <h2 className="text-lg font-semibold line-clamp-2">{ev.title}</h2>
                 {ev.dateFormatted && <p className="text-sm text-blue-600">{ev.dateFormatted}</p>}
                 {ev.fullAddress && <p className="text-sm text-muted-foreground">{ev.fullAddress}</p>}
                 {ev.description && <p className="text-sm text-muted-foreground line-clamp-3">{ev.description}</p>}
-                {ev.url && (
-                  <a
-                    href={ev.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-500 underline mt-1"
-                  >
-                    Voir l’événement
-                  </a>
-                )}
+                {ev.url && <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 underline mt-1">Voir l’événement</a>}
                 <p className="text-xs text-muted-foreground mt-1 italic">Source : Toulouse Métropole</p>
               </div>
             </div>
