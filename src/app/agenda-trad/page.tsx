@@ -1,20 +1,18 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import parse from "html-react-parser";
 
 const MAX_EVENTS = 50;
-const PLACEHOLDER_IMAGE =
-  "https://via.placeholder.com/400x200?text=Événement";
+const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
 export default function AgendaTradHauteGaronnePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
-
-  // 🟦 Mode d’affichage — par défaut: plein écran
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchTerm, setSearchTerm] = useState(""); // Barre de recherche
 
   async function fetchEvents() {
     setLoading(true);
@@ -56,6 +54,24 @@ export default function AgendaTradHauteGaronnePage() {
     fetchEvents();
   }, []);
 
+  // Filtrage des événements selon la recherche
+  const filteredEvents = events.filter((ev) => {
+    const search = searchTerm.toLowerCase();
+    const dateStr = ev.dateFormatted?.toLowerCase() || "";
+    const categoryStr = ev.category?.toLowerCase() || "";
+    const locationStr = ev.fullAddress?.toLowerCase() || "";
+    const titleStr = ev.title?.toLowerCase() || "";
+    const descriptionStr = ev.description ? ev.description.toLowerCase() : "";
+
+    return (
+      titleStr.includes(search) ||
+      descriptionStr.includes(search) ||
+      categoryStr.includes(search) ||
+      dateStr.includes(search) ||
+      locationStr.includes(search)
+    );
+  });
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">
@@ -64,6 +80,20 @@ export default function AgendaTradHauteGaronnePage() {
       <p className="text-muted-foreground mb-6">
         Cette page affiche les prochains événements de la Haute-Garonne.
       </p>
+
+      {/* Barre de recherche et compteur */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <input
+          type="text"
+          placeholder="Rechercher par titre, description, catégorie, date ou lieu..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-3 border rounded focus:outline-none focus:ring focus:border-blue-300"
+        />
+        <p className="text-sm text-gray-600 mt-2 sm:mt-0">
+          {filteredEvents.length} événements trouvés
+        </p>
+      </div>
 
       {/* 🔘 Boutons Plein écran / Vignette */}
       <div className="flex gap-4 mb-6">
@@ -91,7 +121,7 @@ export default function AgendaTradHauteGaronnePage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="text-muted-foreground">Aucun événement à venir.</p>
       )}
 
@@ -100,7 +130,7 @@ export default function AgendaTradHauteGaronnePage() {
       {/* ========================================================== */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((ev, i) => (
+          {filteredEvents.map((ev, i) => (
             <div
               key={ev.id || i}
               className="bg-white shadow rounded overflow-hidden flex flex-col h-[520px]"
@@ -158,7 +188,7 @@ export default function AgendaTradHauteGaronnePage() {
       {/* ========================================================== */}
       {viewMode === "list" && (
         <div className="space-y-4">
-          {events.map((ev, i) => (
+          {filteredEvents.map((ev, i) => (
             <div
               key={ev.id || i}
               className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
