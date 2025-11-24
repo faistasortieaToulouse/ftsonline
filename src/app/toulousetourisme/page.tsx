@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, MapPin, Calendar, ExternalLink, Loader2, AlertTriangle } from "lucide-react";
 
-// Type pour correspondre à votre route.ts iCal
 type EventItem = {
   id: string;
   title: string;
@@ -44,8 +43,10 @@ const EventCard: React.FC<{ event: EventItem }> = ({ event }) => (
 
 const App: React.FC = () => {
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -57,6 +58,7 @@ const App: React.FC = () => {
         if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
         const data: EventItem[] = await res.json();
         setEvents(data);
+        setFilteredEvents(data);
       } catch (err: any) {
         setError(err.message || "Erreur lors du chargement des événements.");
       } finally {
@@ -67,6 +69,25 @@ const App: React.FC = () => {
     loadEvents();
   }, []);
 
+  // Filtrage multi-critères : titre, description, location, date
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    setFilteredEvents(
+      events.filter(
+        (ev) =>
+          ev.title.toLowerCase().includes(q) ||
+          (ev.description?.toLowerCase().includes(q) ?? false) ||
+          (ev.location?.toLowerCase().includes(q) ?? false) ||
+          (ev.start?.toLowerCase().includes(q) ?? false)
+      )
+    );
+  }, [searchQuery, events]);
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans antialiased">
       <header className="max-w-7xl mx-auto py-6">
@@ -75,7 +96,21 @@ const App: React.FC = () => {
             <Search className="w-7 h-7 text-indigo-600 mr-3" />
             Événements à Toulouse
           </h1>
+
+          {/* Barre de recherche */}
+          <input
+            type="text"
+            placeholder="Rechercher par titre, description, lieu ou date..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="mt-4 sm:mt-0 w-full sm:w-64 p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+          />
         </div>
+
+        {/* Compteur d'événements filtrés */}
+        <p className="mt-4 text-sm text-gray-600">
+          Événements affichés : {filteredEvents.length}
+        </p>
       </header>
 
       <main className="max-w-7xl mx-auto mt-8">
@@ -94,7 +129,7 @@ const App: React.FC = () => {
         )}
 
         <div className="grid gap-6 mt-8 sm:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>
