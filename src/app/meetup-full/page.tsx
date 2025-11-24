@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const PLACEHOLDER_IMAGE =
   "https://via.placeholder.com/400x200?text=Événement+Meetup";
@@ -23,7 +22,11 @@ export default function MeetupFullPage() {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<MeetupEvent[]>([]);
 
-  // 🟦 Mode par défaut : plein écran (cartes)
+  // Recherche
+  const [search, setSearch] = useState("");
+  const [filteredEvents, setFilteredEvents] = useState<MeetupEvent[]>([]);
+
+  // Vue (plein écran / liste)
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   async function fetchAllEvents() {
@@ -80,6 +83,7 @@ export default function MeetupFullPage() {
       );
 
       setEvents(cleanEvents);
+      setFilteredEvents(cleanEvents);
     } catch (err: any) {
       setError(err.message || "Erreur lors du chargement.");
     } finally {
@@ -87,9 +91,28 @@ export default function MeetupFullPage() {
     }
   }
 
+  // Chargement initial
   useEffect(() => {
     fetchAllEvents();
   }, []);
+
+  // 🔎 Filtrage des évènements
+  useEffect(() => {
+    if (!search.trim()) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const query = search.toLowerCase();
+
+    const result = events.filter((ev) => {
+      const text = `${ev.title} ${ev.description} ${ev.fullAddress}`.toLowerCase();
+      const dateText = ev.dateFormatted.toLowerCase();
+      return text.includes(query) || dateText.includes(query);
+    });
+
+    setFilteredEvents(result);
+  }, [search, events]);
 
   return (
     <div className="container mx-auto py-10 px-4">
@@ -98,9 +121,21 @@ export default function MeetupFullPage() {
       </h1>
 
       <p className="text-muted-foreground mb-6">
-        Fusion de 4 groupes Meetup.
+        Fusion de 4 groupes Meetup — {filteredEvents.length} évènement(s)
       </p>
 
+      {/* 🔍 Barre de recherche */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Rechercher un évènement (titre, lieu, description, date...)"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
+        />
+      </div>
+
+      {/* 🔄 Bouton refresh */}
       <Button
         onClick={fetchAllEvents}
         disabled={loading}
@@ -109,30 +144,30 @@ export default function MeetupFullPage() {
         {loading ? "Chargement..." : "🔄 Rafraîchir les événements"}
       </Button>
 
-{/* 🔵 Choix du mode d’affichage (nouvelle version boutons simples) */}
-<div className="flex gap-4 mb-6">
-  <button
-    onClick={() => setViewMode("card")}
-    className={`px-4 py-2 rounded transition ${
-      viewMode === "card"
-        ? "bg-red-600 text-white shadow"
-        : "bg-gray-200 hover:bg-gray-300"
-    }`}
-  >
-    🗂️ Plein écran
-  </button>
+      {/* 🟦 Choix du mode d’affichage */}
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => setViewMode("card")}
+          className={`px-4 py-2 rounded transition ${
+            viewMode === "card"
+              ? "bg-red-600 text-white shadow"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          🗂️ Plein écran
+        </button>
 
-  <button
-    onClick={() => setViewMode("list")}
-    className={`px-4 py-2 rounded transition ${
-      viewMode === "list"
-        ? "bg-red-600 text-white shadow"
-        : "bg-gray-200 hover:bg-gray-300"
-    }`}
-  >
-    📋 Vignette
-  </button>
-</div>
+        <button
+          onClick={() => setViewMode("list")}
+          className={`px-4 py-2 rounded transition ${
+            viewMode === "list"
+              ? "bg-red-600 text-white shadow"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          📋 Vignette
+        </button>
+      </div>
 
       {error && (
         <div className="p-4 mb-4 border border-red-500 bg-red-50 text-red-700 rounded">
@@ -140,10 +175,10 @@ export default function MeetupFullPage() {
         </div>
       )}
 
-      {/* 🟥 MODE PLEIN ÉCRAN PAR DÉFAUT */}
+      {/* 🟥 MODE PLEIN ÉCRAN */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((ev, index) => (
+          {filteredEvents.map((ev, index) => (
             <div
               key={ev.link || index}
               className="bg-white rounded-xl shadow overflow-hidden border"
@@ -181,10 +216,10 @@ export default function MeetupFullPage() {
         </div>
       )}
 
-      {/* 🟨 MODE LISTE COMPACTE (VIGNETTE) */}
+      {/* 🟨 MODE LISTE */}
       {viewMode === "list" && (
         <div className="space-y-4">
-          {events.map((ev, index) => (
+          {filteredEvents.map((ev, index) => (
             <div
               key={ev.link || index}
               className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
@@ -216,7 +251,7 @@ export default function MeetupFullPage() {
         </div>
       )}
 
-      {!loading && events.length === 0 && (
+      {!loading && filteredEvents.length === 0 && (
         <p className="mt-6 text-xl text-gray-500 text-center p-8 border border-dashed rounded">
           Aucun événement trouvé.
         </p>
