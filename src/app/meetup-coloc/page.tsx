@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; 
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Meetup";
 
@@ -118,20 +118,24 @@ export default function MeetupEventsPage() {
       {/* Compteur d'événements */}
       <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
-      {/* 🔘 Boutons Plein écran / Vignette */}
+      {/* Boutons Plein écran / Vignette (anciens Meetup-coloc) */}
       <div className="flex gap-4 mb-6">
-        <Button
+        <button
           onClick={() => setViewMode("card")}
-          variant={viewMode === "card" ? "default" : "secondary"}
+          className={`px-4 py-2 rounded ${
+            viewMode === "card" ? "bg-red-600 text-white" : "bg-gray-200"
+          }`}
         >
-          📺 Plein écran
-        </Button>
-        <Button
+          🗂️ Plein écran
+        </button>
+        <button
           onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "default" : "secondary"}
+          className={`px-4 py-2 rounded ${
+            viewMode === "list" ? "bg-red-600 text-white" : "bg-gray-200"
+          }`}
         >
-          🔲 Vignette
-        </Button>
+          📋 Vignette
+        </button>
       </div>
 
       <Button onClick={fetchEvents} disabled={loading} className="mb-6 bg-red-600 hover:bg-red-700">
