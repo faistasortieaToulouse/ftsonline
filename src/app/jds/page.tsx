@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button"; // ✅ import du composant Button
 
 type JDSEvent = {
   title: string;
@@ -47,7 +48,6 @@ export default function JDSPage() {
     fetchEvents();
   }, []);
 
-  // Filtrage dynamique
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -81,7 +81,6 @@ export default function JDSPage() {
       {/* Compteur d'événements */}
       <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
-      {/* Boutons de mode d'affichage */}
       {/* 🔘 Boutons Plein écran / Vignette */}
       <div className="flex gap-4 mb-6">
         <Button
