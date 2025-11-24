@@ -109,21 +109,30 @@ export default function MeetupFullPage() {
         {loading ? "Chargement..." : "🔄 Rafraîchir les événements"}
       </Button>
 
-      {/* 🔵 Choix du mode d’affichage */}
-      <ToggleGroup
-        type="single"
-        value={viewMode}
-        onValueChange={(v: any) => v && setViewMode(v)}
-        className="mb-6"
-      >
-        <ToggleGroupItem value="card" className="px-4 py-2">
-          🗂️ Plein écran
-        </ToggleGroupItem>
+{/* 🔵 Choix du mode d’affichage (nouvelle version boutons simples) */}
+<div className="flex gap-4 mb-6">
+  <button
+    onClick={() => setViewMode("card")}
+    className={`px-4 py-2 rounded transition ${
+      viewMode === "card"
+        ? "bg-red-600 text-white shadow"
+        : "bg-gray-200 hover:bg-gray-300"
+    }`}
+  >
+    🗂️ Plein écran
+  </button>
 
-        <ToggleGroupItem value="list" className="px-4 py-2">
-          📋 Vignette
-        </ToggleGroupItem>
-      </ToggleGroup>
+  <button
+    onClick={() => setViewMode("list")}
+    className={`px-4 py-2 rounded transition ${
+      viewMode === "list"
+        ? "bg-red-600 text-white shadow"
+        : "bg-gray-200 hover:bg-gray-300"
+    }`}
+  >
+    📋 Vignette
+  </button>
+</div>
 
       {error && (
         <div className="p-4 mb-4 border border-red-500 bg-red-50 text-red-700 rounded">
