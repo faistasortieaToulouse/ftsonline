@@ -28,7 +28,6 @@ export default function UT3MinPage() {
     }
   }
 
-  // Filtrage multi-critères
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -56,7 +55,6 @@ export default function UT3MinPage() {
         Événements filtrés depuis le flux officiel de l’Université Toulouse III.
       </p>
 
-      {/* Boutons Plein écran / Vignette et Actualiser */}
       <div className="flex flex-wrap gap-3 mb-4 items-center">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
@@ -74,7 +72,6 @@ export default function UT3MinPage() {
           🔲 Vignette
         </Button>
 
-        {/* Barre de recherche */}
         <input
           type="text"
           placeholder="Rechercher par titre, description, lieu ou date..."
@@ -84,7 +81,6 @@ export default function UT3MinPage() {
         />
       </div>
 
-      {/* Compteur */}
       <p className="mb-4 text-sm text-gray-600">
         Événements affichés : {filteredEvents.length}
       </p>
@@ -99,7 +95,6 @@ export default function UT3MinPage() {
         <p className="text-muted-foreground">Aucun événement trouvé.</p>
       )}
 
-      {/* Affichage */}
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
