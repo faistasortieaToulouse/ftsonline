@@ -7,7 +7,8 @@ export default function UT3AgendaPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
-  const [viewMode, setViewMode] = useState<"card" | "list">("card"); // Nouveau
+  const [viewMode, setViewMode] = useState<"card" | "list">("card"); // Mode affichage
+  const [searchTerm, setSearchTerm] = useState(""); // Barre de recherche
 
   async function fetchEvents() {
     setLoading(true);
@@ -17,7 +18,6 @@ export default function UT3AgendaPage() {
     try {
       const res = await fetch("/api/ut3-agenda");
       if (!res.ok) throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
-
       const data = await res.json();
       setEvents(data);
     } catch (err: any) {
@@ -31,6 +31,18 @@ export default function UT3AgendaPage() {
     fetchEvents();
   }, []);
 
+  // Filtrage par recherche
+  const filteredEvents = events.filter(ev => {
+    const search = searchTerm.toLowerCase();
+    const dateStr = ev.start ? new Date(ev.start).toLocaleDateString() : "";
+    return (
+      ev.title.toLowerCase().includes(search) ||
+      (ev.description && ev.description.toLowerCase().includes(search)) ||
+      (ev.location && ev.location.toLowerCase().includes(search)) ||
+      dateStr.includes(search)
+    );
+  });
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Agenda UT3 - Paul Sabatier</h1>
@@ -39,7 +51,7 @@ export default function UT3AgendaPage() {
       </p>
 
       {/* Boutons d'action et mode */}
-      <div className="flex flex-wrap gap-3 mb-6">
+      <div className="flex flex-wrap gap-3 mb-4">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
@@ -57,24 +69,35 @@ export default function UT3AgendaPage() {
         </Button>
       </div>
 
+      {/* Barre de recherche + compteur */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <input
+          type="text"
+          placeholder="Rechercher par titre, description, lieu, date..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-3 border rounded focus:outline-none focus:ring focus:border-blue-300"
+        />
+        <p className="text-sm text-gray-600 mt-2 sm:mt-0">
+          {filteredEvents.length} événements trouvés
+        </p>
+      </div>
+
       {error && (
         <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">
           {error}
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="text-muted-foreground">Aucun événement trouvé.</p>
       )}
 
       {/* Affichage des événements */}
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map(ev => (
-            <div
-              key={ev.id}
-              className="bg-white shadow rounded overflow-hidden flex flex-col h-[360px]"
-            >
+          {filteredEvents.map(ev => (
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[360px]">
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 <p className="text-sm text-blue-600 font-medium mb-2">
@@ -109,7 +132,7 @@ export default function UT3AgendaPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {events.map(ev => (
+          {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
               <div className="flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
