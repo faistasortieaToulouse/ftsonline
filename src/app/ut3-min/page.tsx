@@ -3,6 +3,18 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
+/* ------------------------------------------------------------------
+   Image automatique selon titre : ciné / conf / expo / default
+------------------------------------------------------------------- */
+const getEventImage = (title: string | undefined) => {
+  if (!title) return "/images/ut3/ut3default.jpg";
+  const lower = title.toLowerCase();
+  if (lower.includes("ciné") || lower.includes("cine")) return "/images/ut3/ut3cine.jpg";
+  if (lower.includes("conf")) return "/images/ut3/ut3conf.jpg";
+  if (lower.includes("expo")) return "/images/ut3/ut3expo.jpg";
+  return "/images/ut3/ut3default.jpg";
+};
+
 export default function UT3MinPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -11,11 +23,12 @@ export default function UT3MinPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
-  // Récupération des événements
+  /* --------------------- Récupération des événements --------------------- */
   async function fetchEvents() {
     setLoading(true);
     setError(null);
     setEvents([]);
+
     try {
       const res = await fetch("/api/ut3-min");
       if (!res.ok) throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
@@ -29,7 +42,7 @@ export default function UT3MinPage() {
     }
   }
 
-  // Filtrage multi-critères : titre, description, lieu, date
+  /* --------------------- Filtrage texte multi-champs --------------------- */
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -37,6 +50,7 @@ export default function UT3MinPage() {
     }
 
     const q = searchQuery.toLowerCase();
+
     setFilteredEvents(
       events.filter(ev =>
         ev.title.toLowerCase().includes(q) ||
@@ -58,7 +72,7 @@ export default function UT3MinPage() {
         Événements filtrés depuis le flux officiel de l’Université Toulouse III.
       </p>
 
-      {/* Boutons d'action et mode */}
+      {/* Boutons + Recherche */}
       <div className="flex flex-wrap gap-3 mb-6 items-center">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
@@ -76,7 +90,6 @@ export default function UT3MinPage() {
           🔲 Vignette
         </Button>
 
-        {/* Barre de recherche pleine largeur */}
         <input
           type="text"
           placeholder="Rechercher par titre, description, lieu ou date..."
@@ -86,41 +99,57 @@ export default function UT3MinPage() {
         />
       </div>
 
-      {/* Compteur d'événements */}
+      {/* Compteur */}
       <p className="mb-4 text-sm text-gray-600">
         Événements affichés : {filteredEvents.length}
       </p>
 
+      {/* Erreur */}
       {error && (
         <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">
           {error}
         </div>
       )}
 
+      {/* Aucun résultat */}
       {filteredEvents.length === 0 && !loading && (
         <p className="text-muted-foreground">Aucun événement trouvé.</p>
       )}
 
-      {/* Affichage des événements */}
+      {/* --------------------------------------------------------------------
+         MODE CARTE (grand format)
+      --------------------------------------------------------------------- */}
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[360px]">
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[420px]">
+              
+              {/* Image */}
+              <img
+                src={getEventImage(ev.title)}
+                alt={ev.title}
+                className="w-full h-40 object-cover"
+              />
+
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+
                 {ev.start && (
                   <p className="text-sm text-blue-600 font-medium mb-2">
                     {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
                   </p>
                 )}
+
                 {ev.location && (
                   <p className="text-sm text-muted-foreground mb-2">📍 {ev.location}</p>
                 )}
+
                 {ev.description && (
-                  <div className="text-sm text-muted-foreground overflow-y-auto h-24 mb-2 pr-1 scrollable">
+                  <div className="text-sm text-muted-foreground overflow-y-auto h-20 mb-2 pr-1 scrollable">
                     {ev.description}
                   </div>
                 )}
+
                 {ev.url && (
                   <p className="text-sm mb-2">
                     <a
@@ -133,38 +162,60 @@ export default function UT3MinPage() {
                     </a>
                   </p>
                 )}
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+
+                <p className="text-xs text-muted-foreground mt-auto">
+                  Source : {ev.source}
+                </p>
               </div>
             </div>
           ))}
         </div>
+
+      /* --------------------------------------------------------------------
+         MODE LISTE (vignettes)
+      --------------------------------------------------------------------- */
       ) : (
         <div className="flex flex-col gap-4">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
+
+              {/* Image */}
+              <img
+                src={getEventImage(ev.title)}
+                alt={ev.title}
+                className="w-full sm:w-48 h-32 object-cover rounded"
+              />
+
               <div className="flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+
                 {ev.start && (
                   <p className="text-sm text-blue-600 font-medium mb-1">
                     {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
                   </p>
                 )}
+
                 {ev.location && (
                   <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>
                 )}
+
                 {ev.description && (
-                  <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>
+                  <p className="text-sm text-muted-foreground mb-2 line-clamp-4">
+                    {ev.description}
+                  </p>
                 )}
+
                 {ev.url && (
                   <a
                     href={ev.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600 hover:underline text-sm"
                   >
                     🔗 Plus d’informations
                   </a>
                 )}
+
                 <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
               </div>
             </div>
