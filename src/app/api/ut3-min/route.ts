@@ -2,39 +2,50 @@
 import { NextResponse } from "next/server";
 import * as ical from "node-ical";
 
+const keywords = ["ciné", "cine", "conf", "expo"];
+
+// Images auto selon titre
+const getEventImage = (title: string | undefined) => {
+  if (!title) return "/images/ut3/ut3default.jpg";
+  const lower = title.toLowerCase();
+  if (lower.includes("ciné") || lower.includes("cine")) return "/images/ut3/ut3cine.jpg";
+  if (lower.includes("conf")) return "/images/ut3/ut3conf.jpg";
+  if (lower.includes("expo")) return "/images/ut3/ut3expo.jpg";
+  return "/images/ut3/ut3default.jpg";
+};
+
 export async function GET() {
   try {
-    const url =
+    // iCal source UT3
+    const icalUrl =
       "https://www.univ-tlse3.fr/servlet/com.jsbsoft.jtf.core.SG?EXT=agenda&PROC=RECHERCHE_AGENDA&ACTION=EXPORT_DIRECT&THEMATIQUE=0000&DTSTART=01/11/2025&AFFICHAGE=mensuel&CODE_RUBRIQUE=WEB&CATEGORIE=0000&LIEU=0000&DTEND=31/12/2025";
 
-    const res = await fetch(url);
+    const res = await fetch(icalUrl);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const icsText = await res.text();
+    const icalData = ical.parseICS(icsText);
 
-    const data = ical.parseICS(icsText);
-
-    const keywords = ["ciné", "conf", "expo"];
-
-    const events = Object.values(data)
-      .filter(ev => ev.type === "VEVENT")
-      .map(ev => ({
+    // Convertir les événements
+    let events = Object.values(icalData)
+      .filter((ev: any) => ev.type === "VEVENT")
+      .map((ev: any) => ({
         id: ev.uid,
         title: ev.summary,
         start: ev.start,
         end: ev.end,
         location: ev.location || null,
-        description: ev.description || null,
-        url: ev.url || null,
-        attachments: ev.attach || null,
+        description: "évènement ouvert à tout type de public extérieur à l'université",
+        url: "https://www.univ-tlse3.fr/actualites/agenda",
+        image: getEventImage(ev.summary),
         source: "Université Toulouse III - Paul Sabatier",
       }))
-      // Filtrer par mots-clés dans le titre
       .filter(ev =>
-        ev.title &&
-        keywords.some(k => ev.title.toLowerCase().includes(k))
+        ev.title && keywords.some(k => ev.title.toLowerCase().includes(k))
       );
 
     return NextResponse.json(events, { status: 200 });
+
   } catch (err: any) {
     console.error("UT3 Agenda error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
