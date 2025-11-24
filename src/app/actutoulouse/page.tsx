@@ -20,12 +20,18 @@ const PLACEHOLDER_IMAGE =
 
 export default function BilletwebPage() {
   const [events, setEvents] = useState<BilletwebEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<BilletwebEvent[]>([]);
+  const [search, setSearch] = useState(""); // 🔍 recherche
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // 🟦 Mode d’affichage : plein écran par défaut
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
+  // ======================
+  // 📥 Chargement API
+  // ======================
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
@@ -37,8 +43,10 @@ export default function BilletwebPage() {
         if (data.error) {
           setError(data.details || "Erreur API Billetweb");
           setEvents([]);
+          setFilteredEvents([]);
         } else {
           setEvents(data.events || []);
+          setFilteredEvents(data.events || []);
         }
       } catch (err) {
         console.error("Erreur chargement Billetweb", err);
@@ -50,14 +58,62 @@ export default function BilletwebPage() {
     fetchEvents();
   }, []);
 
+  // ======================
+  // 🔍 Filtrage dynamique
+  // ======================
+  useEffect(() => {
+    if (!search.trim()) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = search.toLowerCase();
+
+    const result = events.filter((ev) => {
+      const text =
+        `${ev.name} ${ev.description || ""} ${ev.place || ""}`.toLowerCase();
+
+      const formattedDate = new Date(ev.start)
+        .toLocaleString("fr-FR", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+        .toLowerCase();
+
+      return text.includes(q) || formattedDate.includes(q);
+    });
+
+    setFilteredEvents(result);
+  }, [search, events]);
+
   return (
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-4">
         Évènements Billetweb (Haute-Garonne)
       </h1>
 
+      {/* 🔢 compteur */}
+      <p className="text-muted-foreground mb-4">
+        {filteredEvents.length} évènement(s) trouvé(s)
+      </p>
+
+      {/* 🔍 Barre de recherche */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Rechercher (titre, lieu, description, date, catégorie...)"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
       {/* 🟦 Toggle plein écran / vignette */}
-      {events.length > 0 && (
+      {filteredEvents.length > 0 && (
         <ToggleGroup
           type="single"
           value={viewMode}
@@ -75,7 +131,7 @@ export default function BilletwebPage() {
 
       {loading && <p>Chargement...</p>}
       {error && <p className="text-red-600">{error}</p>}
-      {events.length === 0 && !loading && !error && (
+      {filteredEvents.length === 0 && !loading && !error && (
         <p>Aucun évènement trouvé.</p>
       )}
 
@@ -84,7 +140,7 @@ export default function BilletwebPage() {
       {/* ====================================================== */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <div
               key={event.id}
               className="bg-white rounded shadow flex flex-col overflow-hidden"
@@ -149,7 +205,7 @@ export default function BilletwebPage() {
       {/* ====================================================== */}
       {viewMode === "list" && (
         <div className="space-y-4">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <div
               key={event.id}
               className="flex items-start gap-4 p-4 bg-white rounded shadow"
@@ -171,9 +227,7 @@ export default function BilletwebPage() {
                 </p>
 
                 {event.place && (
-                  <p className="text-sm text-muted-foreground">
-                    📍 {event.place}
-                  </p>
+                  <p className="text-sm text-muted-foreground">📍 {event.place}</p>
                 )}
 
                 {event.shop && (
