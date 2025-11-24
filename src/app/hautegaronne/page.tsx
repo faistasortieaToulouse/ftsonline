@@ -10,9 +10,8 @@ export default function HauteGaronnePage() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
 
   async function fetchEvents() {
     setLoading(true);
@@ -33,12 +32,38 @@ export default function HauteGaronnePage() {
     fetchEvents();
   }, []);
 
+  // 🌟 Filtrage + tri chronologique
+  const filteredEvents = events
+    .filter((event) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        event.title?.toLowerCase().includes(query) ||
+        event.description?.toLowerCase().includes(query) ||
+        event.fullAddress?.toLowerCase().includes(query) ||
+        event.dateFormatted?.toLowerCase().includes(query) ||
+        event.category?.toLowerCase().includes(query)
+      );
+    })
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Événements Haute-Garonne</h1>
       <p className="text-muted-foreground mb-6">
         Cette page affiche les événements à venir dans les 31 prochains jours pour la Haute-Garonne.
       </p>
+
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu, date, catégorie..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
       {/* BOUTONS MODE PLEIN ÉCRAN / VIGNETTE */}
       <div className="flex gap-4 mb-6">
@@ -68,10 +93,13 @@ export default function HauteGaronnePage() {
       )}
 
       {/* 🟥 Mode plein écran */}
-      {viewMode === "card" && events.length > 0 && (
+      {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {events.map(event => (
-            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[480px]">
+          {filteredEvents.map((event) => (
+            <div
+              key={event.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[480px]"
+            >
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
                 alt={event.title}
@@ -79,10 +107,18 @@ export default function HauteGaronnePage() {
               />
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-xl font-semibold mb-2">{event.title}</h2>
-                <p className="text-sm text-muted-foreground mb-2 flex-1 line-clamp-4">{event.description}</p>
+
+                {/* Description avec barre de défilement */}
+                <div className="text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto">
+                  {event.description}
+                </div>
+
                 <p className="text-sm font-medium mb-1">{event.dateFormatted}</p>
                 <p className="text-sm text-muted-foreground mb-1">{event.fullAddress}</p>
-                <p className="text-xs text-muted-foreground italic mb-3">Source : {event.source}</p>
+                <p className="text-xs text-muted-foreground italic mb-3">
+                  Source : {event.source}
+                </p>
+
                 {event.url && (
                   <a
                     href={event.url}
@@ -100,10 +136,13 @@ export default function HauteGaronnePage() {
       )}
 
       {/* 🟨 Mode vignette */}
-      {viewMode === "list" && events.length > 0 && (
+      {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
-          {events.map(event => (
-            <div key={event.id} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
+          {filteredEvents.map((event) => (
+            <div
+              key={event.id}
+              className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white"
+            >
               <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs overflow-hidden">
                 <img
                   src={event.image || PLACEHOLDER_IMAGE}
@@ -131,7 +170,7 @@ export default function HauteGaronnePage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="mt-6 text-muted-foreground">Aucun événement à venir trouvé.</p>
       )}
     </div>
