@@ -82,23 +82,20 @@ export default function JDSPage() {
       <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
       {/* Boutons de mode d'affichage */}
+      {/* 🔘 Boutons Plein écran / Vignette */}
       <div className="flex gap-4 mb-6">
-        <button
+        <Button
           onClick={() => setViewMode("card")}
-          className={`px-4 py-2 rounded ${
-            viewMode === "card" ? "bg-blue-600 text-white" : "bg-gray-200"
-          }`}
+          variant={viewMode === "card" ? "default" : "secondary"}
         >
-          🗂️ Plein écran
-        </button>
-        <button
+          📺 Plein écran
+        </Button>
+        <Button
           onClick={() => setViewMode("list")}
-          className={`px-4 py-2 rounded ${
-            viewMode === "list" ? "bg-blue-600 text-white" : "bg-gray-200"
-          }`}
+          variant={viewMode === "list" ? "default" : "secondary"}
         >
-          📋 Vignette
-        </button>
+          🔲 Vignette
+        </Button>
       </div>
 
       {loading ? (
