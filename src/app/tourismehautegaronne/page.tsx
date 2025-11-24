@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-// Mappage thématique → image
 const THEME_IMAGES: Record<string, string> = {
   "Culture": "/images/tourismehg31/themeculture.jpg",
   "Education / Formation / Métiers / Emploi": "/images/tourismehg31/themeeducation.jpg",
@@ -35,34 +34,32 @@ export default function TourismeHGPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // 🟦 Nouveau : mode d'affichage (card = plein écran, list = vignette)
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   async function fetchUpcomingEvents() {
     setLoading(true);
     setError(null);
     setEvents([]);
+    setFilteredEvents([]);
 
     try {
       const res = await fetch('/api/tourismehautegaronne');
       if (!res.ok) throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
 
       const data = await res.json();
-      if (!data.events || data.events.length === 0) {
-        setEvents([]);
-        return;
-      }
+      if (!data.events || data.events.length === 0) return;
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       const maxDate = new Date(today);
       maxDate.setDate(today.getDate() + 31);
       maxDate.setHours(23, 59, 59, 999);
 
       const mapped = data.events
-        .filter((ev: Event) => ev.code_insee && ev.code_insee.startsWith("31"))
+        .filter((ev: Event) => ev.code_insee?.startsWith("31"))
         .map((ev: Event, index: number) => {
           const date = ev.date_debut ? new Date(ev.date_debut) : null;
           if (!ev.titre || !ev.description || !date || isNaN(date.getTime())) return null;
@@ -97,6 +94,8 @@ export default function TourismeHGPage() {
         .slice(0, PAGE_LIMIT);
 
       setEvents(mapped);
+      setFilteredEvents(mapped);
+
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
     } finally {
@@ -108,12 +107,43 @@ export default function TourismeHGPage() {
     fetchUpcomingEvents();
   }, []);
 
+  // Filtrage multi-critères
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    setFilteredEvents(
+      events.filter(ev =>
+        ev.title.toLowerCase().includes(q) ||
+        ev.description.toLowerCase().includes(q) ||
+        ev.fullAddress.toLowerCase().includes(q) ||
+        ev.dateFormatted.toLowerCase().includes(q) ||
+        ev.thematique.toLowerCase().includes(q)
+      )
+    );
+  }, [searchQuery, events]);
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Événements en Haute-Garonne</h1>
       <p className="text-muted-foreground mb-6">
         Cette page affiche les événements à venir dans les 31 prochains jours pour la Haute-Garonne (31) depuis le dataset OpenData de la Région Occitanie.
       </p>
+
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu, date ou thématique..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full sm:w-96 p-2 mb-4 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur */}
+      <p className="mb-4 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
 
       {/* Boutons d'action et mode */}
       <div className="flex flex-wrap gap-3 mb-6">
@@ -140,23 +170,19 @@ export default function TourismeHGPage() {
         </div>
       )}
 
-      {!loading && events.length === 0 && (
+      {!loading && filteredEvents.length === 0 && (
         <p className="mt-6 text-muted-foreground">
-          Aucun événement à venir dans les 31 prochains jours pour la Haute-Garonne.
+          Aucun événement correspondant aux critères de recherche.
         </p>
       )}
 
-      {!loading && events.length > 0 && (
+      {!loading && filteredEvents.length > 0 && (
         <>
           {viewMode === "card" ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-              {events.map(event => (
+              {filteredEvents.map(event => (
                 <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full aspect-[16/9] object-cover"
-                  />
+                  <img src={event.image} alt={event.title} className="w-full aspect-[16/9] object-cover" />
                   <div className="p-4 flex flex-col flex-1">
                     <h2 className="text-xl font-semibold mb-2">{event.title}</h2>
                     <p className="text-sm text-muted-foreground mb-2 flex-1 line-clamp-4">{event.description}</p>
@@ -180,13 +206,9 @@ export default function TourismeHGPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-4 mt-6">
-              {events.map(event => (
+              {filteredEvents.map(event => (
                 <div key={event.id} className="flex flex-col sm:flex-row bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full sm:w-48 h-32 object-cover flex-shrink-0"
-                  />
+                  <img src={event.image} alt={event.title} className="w-full sm:w-48 h-32 object-cover flex-shrink-0" />
                   <div className="p-4 flex flex-col flex-1">
                     <h2 className="text-lg font-semibold mb-1">{event.title}</h2>
                     <p className="text-sm text-muted-foreground mb-1 line-clamp-3">{event.description}</p>
