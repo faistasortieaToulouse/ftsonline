@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import Parser from "rss-parser";
+import fetch from "node-fetch";
+import * as cheerio from "cheerio";
 
 const keywords = ["ciné", "conf", "expo"];
 
@@ -14,29 +15,41 @@ const getEventImage = (title: string | undefined) => {
 
 export async function GET() {
   try {
-    const rssUrl = "https://www.ut-capitole.fr/adminsite/webservices/export_rss.jsp?NOMBRE=50&CODE_RUBRIQUE=1315555643369&LANGUE=0";
-    const parser = new Parser();
-    const feed = await parser.parseURL(rssUrl);
+    const url = "https://www.ut-capitole.fr/accueil/campus/espace-media/actualites/agenda-colloque-conference-seminaire";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const html = await res.text();
 
-    const events = feed.items
-      .filter(item =>
-        item.title && keywords.some(k => item.title.toLowerCase().includes(k))
-      )
-      .map(item => ({
-        id: item.guid || item.link || item.title,
-        title: item.title,
-        description: "évènement ouvert à tout type de public extérieur à l'université",
-        url: item.link,
-        image: getEventImage(item.title),
-        start: item.pubDate ? new Date(item.pubDate).toISOString() : null,
-        end: null,
-        location: null, // le flux ne fournit pas le lieu
-        source: "Université Toulouse Capitole"
-      }));
+    const $ = cheerio.load(html);
+
+    const events: any[] = [];
+
+    // Modifier le sélecteur selon la structure HTML réelle des événements
+    $(".actualite-list .actualite-item").each((_, el) => {
+      const title = $(el).find(".actualite-title").text().trim();
+      const link = $(el).find("a").attr("href");
+      const description = $(el).find(".actualite-excerpt").text().trim() || "évènement ouvert à tout type de public extérieur à l'université";
+      const date = $(el).find(".actualite-date").text().trim();
+      const location = $(el).find(".actualite-location").text().trim() || "Toulouse";
+
+      if (title && keywords.some(k => title.toLowerCase().includes(k))) {
+        events.push({
+          id: title + date,
+          title,
+          description,
+          url: link ? (link.startsWith("http") ? link : "https://www.ut-capitole.fr" + link) : url,
+          start: date,
+          end: null,
+          location,
+          image: getEventImage(title),
+          source: "Université Toulouse Capitole"
+        });
+      }
+    });
 
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
-    console.error("Flux UT Capitole inaccessible :", err);
-    return NextResponse.json({ error: "Impossible de récupérer les événements." }, { status: 500 });
+    console.error("UT Capitole Agenda error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
