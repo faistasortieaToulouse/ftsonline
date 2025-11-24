@@ -32,7 +32,7 @@ export default function HauteGaronnePage() {
     fetchEvents();
   }, []);
 
-  // 🌟 Filtrage + tri chronologique
+  // Filtrage + tri chronologique
   const filteredEvents = events
     .filter((event) => {
       const query = searchQuery.toLowerCase();
@@ -65,7 +65,7 @@ export default function HauteGaronnePage() {
       {/* Compteur */}
       <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
-      {/* BOUTONS MODE PLEIN ÉCRAN / VIGNETTE */}
+      {/* Mode plein écran / vignette */}
       <div className="flex gap-4 mb-6">
         <Button
           onClick={() => setViewMode("card")}
@@ -81,7 +81,7 @@ export default function HauteGaronnePage() {
         </Button>
       </div>
 
-      {/* BOUTON ACTUALISER */}
+      {/* Actualiser */}
       <Button onClick={fetchEvents} disabled={loading} className="mb-6">
         {loading ? "Chargement..." : "📡 Actualiser les événements"}
       </Button>
@@ -92,7 +92,7 @@ export default function HauteGaronnePage() {
         </div>
       )}
 
-      {/* 🟥 Mode plein écran */}
+      {/* Mode plein écran */}
       {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredEvents.map((event) => (
@@ -105,19 +105,20 @@ export default function HauteGaronnePage() {
                 alt={event.title}
                 className="w-full aspect-[16/9] object-cover"
               />
-              <div className="p-4 flex flex-col flex-1">
-                <h2 className="text-xl font-semibold mb-2">{event.title}</h2>
+              <div className="p-4 flex flex-col flex-1 min-h-0">
+                <h2 className="text-xl font-semibold mb-2 line-clamp-2">{event.title}</h2>
 
                 {/* Description avec barre de défilement */}
-                <div className="text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto">
+                <div
+                  className="text-sm text-muted-foreground mb-2 overflow-y-auto"
+                  style={{ flex: 1, minHeight: 0 }}
+                >
                   {event.description}
                 </div>
 
                 <p className="text-sm font-medium mb-1">{event.dateFormatted}</p>
                 <p className="text-sm text-muted-foreground mb-1">{event.fullAddress}</p>
-                <p className="text-xs text-muted-foreground italic mb-3">
-                  Source : {event.source}
-                </p>
+                <p className="text-xs text-muted-foreground italic mb-3">Source : {event.source}</p>
 
                 {event.url && (
                   <a
@@ -135,7 +136,7 @@ export default function HauteGaronnePage() {
         </div>
       )}
 
-      {/* 🟨 Mode vignette */}
+      {/* Mode vignette */}
       {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
           {filteredEvents.map((event) => (
