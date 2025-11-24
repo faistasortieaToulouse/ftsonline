@@ -20,25 +20,23 @@ export default function MeetupEventsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<MeetupEvent[]>([]);
-  const [viewMode, setViewMode] = useState<"card" | "list">("card"); // état pour le mode affichage
+  const [filteredEvents, setFilteredEvents] = useState<MeetupEvent[]>([]);
+
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
 
   async function fetchEvents() {
     setLoading(true);
     setError(null);
     setEvents([]);
+    setFilteredEvents([]);
 
     try {
       const res = await fetch("/api/meetup-sorties");
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || `Erreur API HTTP: ${res.status} ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`Erreur API HTTP: ${res.status}`);
 
       const data = await res.json();
-      if (!data.events || data.events.length === 0) {
-        setEvents([]);
-        return;
-      }
+      if (!data.events || data.events.length === 0) return;
 
       const mapped: MeetupEvent[] = data.events.map((ev: any) => {
         const dateRaw = ev.startDate ? new Date(ev.startDate) : null;
@@ -66,12 +64,28 @@ export default function MeetupEventsPage() {
       });
 
       setEvents(mapped);
+      setFilteredEvents(mapped);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue lors du chargement des événements.");
     } finally {
       setLoading(false);
     }
   }
+
+  // Filtrage multi-critères
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+    const q = searchQuery.toLowerCase();
+    setFilteredEvents(events.filter(ev =>
+      ev.title.toLowerCase().includes(q) ||
+      ev.description.toLowerCase().includes(q) ||
+      ev.location.toLowerCase().includes(q) ||
+      ev.dateFormatted.toLowerCase().includes(q)
+    ));
+  }, [searchQuery, events]);
 
   useEffect(() => {
     fetchEvents();
@@ -85,6 +99,18 @@ export default function MeetupEventsPage() {
       <p className="text-muted-foreground mb-6">
         Prochains événements du groupe Meetup Toulouse sorties évènements soirées balades visites randos, sur 31 jours.
       </p>
+
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu ou date..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-red-300"
+      />
+
+      {/* Compteur */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
       {/* Boutons de mode */}
       <div className="flex gap-4 mb-6">
@@ -106,38 +132,26 @@ export default function MeetupEventsPage() {
         {loading ? "Chargement..." : "🔄 Rafraîchir les événements"}
       </Button>
 
-      {error && (
-        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
-          <strong>Erreur :</strong> {error}
-        </div>
-      )}
+      {error && <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
+        <strong>Erreur :</strong> {error}
+      </div>}
 
       {/* Mode plein écran */}
-      {viewMode === "card" && events.length > 0 && (
+      {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <div key={event.link || index} className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col border border-gray-100">
-              <img
-                src={event.image || PLACEHOLDER_IMAGE}
-                alt={event.title}
-                className="w-full aspect-[16/9] object-cover"
-              />
+              <img src={event.image || PLACEHOLDER_IMAGE} alt={event.title} className="w-full aspect-[16/9] object-cover"/>
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-xl font-semibold mb-2 text-red-700">{event.title}</h2>
                 <p className="text-sm font-medium mb-1">📍 {event.fullAddress}</p>
                 <p className="text-sm text-gray-600 mb-3 font-semibold">{event.dateFormatted}</p>
                 <p className="text-sm text-gray-700 mb-2 flex-1 line-clamp-4 whitespace-pre-wrap">{event.description}</p>
                 <p className="text-xs text-muted-foreground italic mb-3 mt-auto">Source : Meetup</p>
-                {event.link && (
-                  <a
-                    href={event.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto inline-block bg-red-600 text-white text-center py-2 px-3 rounded hover:bg-red-700 transition"
-                  >
-                    🔗 Voir l’événement Meetup
-                  </a>
-                )}
+                {event.link && <a href={event.link} target="_blank" rel="noopener noreferrer"
+                  className="mt-auto inline-block bg-red-600 text-white text-center py-2 px-3 rounded hover:bg-red-700 transition">
+                  🔗 Voir l’événement Meetup
+                </a>}
               </div>
             </div>
           ))}
@@ -145,28 +159,19 @@ export default function MeetupEventsPage() {
       )}
 
       {/* Mode vignette */}
-      {viewMode === "list" && events.length > 0 && (
+      {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
-          {events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <div key={event.link || index} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
               <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden flex items-center justify-center">
-                <img
-                  src={event.image || PLACEHOLDER_IMAGE}
-                  alt={event.title}
-                  className="w-full h-full object-cover"
-                />
+                <img src={event.image || PLACEHOLDER_IMAGE} alt={event.title} className="w-full h-full object-cover"/>
               </div>
               <div className="flex-1">
                 <h2 className="text-lg font-semibold line-clamp-2">{event.title}</h2>
                 {event.description && <p className="text-sm text-gray-600 line-clamp-2">{event.description}</p>}
                 <p className="text-sm mt-1">📍 {event.fullAddress}</p>
                 <p className="text-sm mt-1">{event.dateFormatted}</p>
-                <a
-                  href={event.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-red-600 underline text-sm mt-1 block"
-                >
+                <a href={event.link} target="_blank" rel="noopener noreferrer" className="text-red-600 underline text-sm mt-1 block">
                   Voir →
                 </a>
               </div>
@@ -175,9 +180,9 @@ export default function MeetupEventsPage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="mt-6 text-xl text-gray-500 p-8 border border-dashed rounded-lg text-center">
-          Aucun événement à venir trouvé. Le tri et le filtrage ont été effectués par iCalendar.
+          Aucun événement à venir trouvé.
         </p>
       )}
     </div>
