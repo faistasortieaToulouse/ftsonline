@@ -86,7 +86,7 @@ export default function DemospherePage() {
 
       {/* Compteur */}
       <p className="mb-4 font-semibold">
-        Événements affichés : {filteredEvents.length} / {events.length}
+        Événements affichés : {filteredEvents.length}
       </p>
 
       {/* Mode d'affichage */}
