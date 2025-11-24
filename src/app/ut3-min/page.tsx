@@ -67,6 +67,7 @@ export default function UT3MinPage() {
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      
       <h1 className="text-3xl font-bold mb-4">Événements UT3 – Ciné, Conf & Expo</h1>
       <p className="text-muted-foreground mb-6">
         Événements filtrés depuis le flux officiel de l’Université Toulouse III.
@@ -122,7 +123,7 @@ export default function UT3MinPage() {
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[420px]">
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[430px]">
               
               {/* Image */}
               <img
@@ -132,26 +133,34 @@ export default function UT3MinPage() {
               />
 
               <div className="p-4 flex flex-col flex-1">
+
+                {/* Titre */}
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
 
+                {/* Dates */}
                 {ev.start && (
-                  <p className="text-sm text-blue-600 font-medium mb-2">
+                  <p className="text-sm text-blue-600 font-medium mb-1">
                     {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
                   </p>
                 )}
 
+                {/* Lieu */}
                 {ev.location && (
-                  <p className="text-sm text-muted-foreground mb-2">📍 {ev.location}</p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    📍 {ev.location}
+                  </p>
                 )}
 
+                {/* Description */}
                 {ev.description && (
                   <div className="text-sm text-muted-foreground overflow-y-auto h-20 mb-2 pr-1 scrollable">
                     {ev.description}
                   </div>
                 )}
 
+                {/* Lien */}
                 {ev.url && (
-                  <p className="text-sm mb-2">
+                  <p className="text-sm mb-1">
                     <a
                       href={ev.url}
                       target="_blank"
@@ -163,7 +172,8 @@ export default function UT3MinPage() {
                   </p>
                 )}
 
-                <p className="text-xs text-muted-foreground mt-auto">
+                {/* Source — corrigé */}
+                <p className="text-xs text-muted-foreground mt-3 mb-2 break-words">
                   Source : {ev.source}
                 </p>
               </div>
@@ -187,6 +197,7 @@ export default function UT3MinPage() {
               />
 
               <div className="flex-1">
+                
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
 
                 {ev.start && (
@@ -216,7 +227,11 @@ export default function UT3MinPage() {
                   </a>
                 )}
 
-                <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
+                {/* Source — corrigé */}
+                <p className="text-xs text-muted-foreground mt-3 mb-1 break-words">
+                  Source : {ev.source}
+                </p>
+
               </div>
             </div>
           ))}
