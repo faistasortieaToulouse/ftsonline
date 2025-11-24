@@ -139,7 +139,7 @@ export default function TourismeHGPage() {
         placeholder="Rechercher par titre, description, lieu, date ou thématique..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="w-full sm:w-96 p-2 mb-4 border rounded focus:outline-none focus:ring focus:border-blue-300"
+        className="w-full p-3 mb-4 border rounded focus:outline-none focus:ring focus:border-blue-300"
       />
 
       {/* Compteur */}
