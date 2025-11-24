@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-// Images par défaut selon le type
 const getEventImage = (title: string | undefined) => {
   if (!title) return "/images/ut3/ut3default.jpg";
   const lower = title.toLowerCase();
@@ -29,15 +28,8 @@ export default function UT3MinPage() {
       const res = await fetch("/api/ut3-min");
       if (!res.ok) throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
       const data = await res.json();
-
-      // Correction : s'assurer que l'URL est bien une string
-      const eventsWithUrl = data.map((ev: any) => ({
-        ...ev,
-        url: typeof ev.url === "string" ? ev.url : ev.url?.href || "",
-      }));
-
-      setEvents(eventsWithUrl);
-      setFilteredEvents(eventsWithUrl);
+      setEvents(data);
+      setFilteredEvents(data);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
     } finally {
@@ -45,6 +37,7 @@ export default function UT3MinPage() {
     }
   }
 
+  // Filtrage multi-critères : titre, description, lieu, date
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -73,7 +66,7 @@ export default function UT3MinPage() {
       </p>
 
       {/* 🔘 Boutons d'action et mode */}
-      <div className="flex flex-wrap gap-3 mb-4 items-center">
+      <div className="flex flex-wrap gap-3 mb-4">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
@@ -115,13 +108,13 @@ export default function UT3MinPage() {
         <p className="text-muted-foreground">Aucun événement trouvé.</p>
       )}
 
-      {/* Affichage */}
+      {/* Affichage des événements */}
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[520px]">
               <img
-                src={ev.attachments || getEventImage(ev.title)}
+                src={getEventImage(ev.title)}
                 alt={ev.title}
                 className="w-full h-48 object-cover"
               />
@@ -148,7 +141,7 @@ export default function UT3MinPage() {
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline"
                     >
-                      🔗 Plus d’informations
+                      🔗 Voir l'événement officiel
                     </a>
                   </p>
                 )}
@@ -162,7 +155,7 @@ export default function UT3MinPage() {
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
               <img
-                src={ev.attachments || getEventImage(ev.title)}
+                src={getEventImage(ev.title)}
                 alt={ev.title}
                 className="w-24 h-24 rounded object-cover flex-shrink-0"
               />
@@ -186,7 +179,7 @@ export default function UT3MinPage() {
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline"
                   >
-                    🔗 Plus d’informations
+                    🔗 Voir l'événement officiel
                   </a>
                 )}
                 <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
