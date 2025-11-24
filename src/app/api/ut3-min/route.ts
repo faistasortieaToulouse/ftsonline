@@ -1,3 +1,4 @@
+// src/app/api/ut3-min/route.ts
 import { NextResponse } from "next/server";
 import * as ical from "node-ical";
 
@@ -17,33 +18,21 @@ export async function GET() {
     const events = Object.values(data)
       .filter(ev => ev.type === "VEVENT")
       .map(ev => {
-        // URL correct
-        let urlField = ev.url;
-        if (!urlField && ev['URL;VALUE=URI']) urlField = ev['URL;VALUE=URI'];
-
-        // ATTACH : peut être un tableau ou un objet
-        let attachField: string | null = null;
-        if (Array.isArray(ev.attach)) {
-          attachField = ev.attach[0]?.url ?? null;
-        } else if (ev.attach && typeof ev.attach === "object" && 'params' in ev.attach && ev.attach?.uri) {
-          attachField = ev.attach.uri;
-        }
-
         return {
           id: ev.uid,
-          title: ev.summary,
-          start: ev.start,
-          end: ev.end,
+          title: ev.summary || "Événement UT3",
+          start: ev.start || null,
+          end: ev.end || null,
           location: ev.location || null,
           description: ev.description || null,
-          url: urlField || null,
-          attachments: attachField,
+          url: ev.url || null, // lien officiel
+          attachments: ev.attach || null, // image si fournie dans le flux iCal
           source: "Université Toulouse III - Paul Sabatier",
         };
       })
-      .filter(ev =>
-        ev.title &&
-        keywords.some(k => ev.title.toLowerCase().includes(k))
+      // Filtrage par mots-clés dans le titre
+      .filter(ev => 
+        ev.title && keywords.some(k => ev.title.toLowerCase().includes(k))
       );
 
     return NextResponse.json(events, { status: 200 });
