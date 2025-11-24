@@ -83,7 +83,7 @@ export default function CultureEnMouvementsPage() {
 
       {/* Compteur d'événements */}
       <p className="mb-4 font-semibold">
-        Événements affichés : {filteredEvents.length} / {events.length}
+        Événements affichés : {filteredEvents.length}
       </p>
 
       {/* Boutons mode d'affichage */}
