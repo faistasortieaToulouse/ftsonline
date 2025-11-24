@@ -98,13 +98,13 @@ const App: React.FC = () => {
           </h1>
 
           {/* Barre de recherche */}
-          <input
-            type="text"
-            placeholder="Rechercher par titre, description, lieu ou date..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="mt-4 sm:mt-0 w-full sm:w-64 p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
-          />
+<input
+  type="text"
+  placeholder="Rechercher par titre, description, lieu ou date..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  className="mt-4 sm:mt-0 w-full p-3 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+/>
         </div>
 
         {/* Compteur d'événements filtrés */}
