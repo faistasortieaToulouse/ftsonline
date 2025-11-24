@@ -15,11 +15,12 @@ type TicketmasterEvent = {
 
 export default function TicketmasterPage() {
   const [events, setEvents] = useState<TicketmasterEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<TicketmasterEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 🟦 Nouveau : mode d'affichage
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -32,8 +33,10 @@ export default function TicketmasterPage() {
         if (data.error) {
           setError(data.error);
           setEvents([]);
+          setFilteredEvents([]);
         } else {
           setEvents(data.events || []);
+          setFilteredEvents(data.events || []);
         }
       } catch (err) {
         setError("Impossible de charger les évènements Ticketmaster.");
@@ -44,9 +47,39 @@ export default function TicketmasterPage() {
     fetchEvents();
   }, []);
 
+  // Filtrage multi-critères
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+    const q = searchQuery.toLowerCase();
+    setFilteredEvents(
+      events.filter(ev =>
+        (ev.name?.toLowerCase().includes(q) ?? false) ||
+        (ev.description?.toLowerCase().includes(q) ?? false) ||
+        (ev.venue?.toLowerCase().includes(q) ?? false) ||
+        (ev.city?.toLowerCase().includes(q) ?? false) ||
+        (ev.date?.toLowerCase().includes(q) ?? false)
+      )
+    );
+  }, [searchQuery, events]);
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-6">Évènements Ticketmaster en France</h1>
+
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu, ville, date..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
       {/* BOUTONS DE MODE */}
       <div className="flex gap-4 mb-6">
@@ -68,14 +101,14 @@ export default function TicketmasterPage() {
         <p>Chargement...</p>
       ) : error ? (
         <p className="text-red-600">{error}</p>
-      ) : events.length === 0 ? (
+      ) : filteredEvents.length === 0 ? (
         <p>Aucun évènement trouvé.</p>
       ) : (
         <>
           {/* MODE PLEIN ÉCRAN (CARD) */}
           {viewMode === "card" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {events.map((ev) => (
+              {filteredEvents.map((ev) => (
                 <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col">
                   {ev.image && (
                     <img src={ev.image} alt={ev.name} className="w-full h-48 object-cover" />
@@ -85,9 +118,7 @@ export default function TicketmasterPage() {
                     {ev.date && <p className="text-sm text-blue-600">Date : {ev.date}</p>}
                     {ev.venue && <p className="text-sm text-muted-foreground">Lieu : {ev.venue}</p>}
                     {ev.city && <p className="text-sm text-muted-foreground">Ville : {ev.city}</p>}
-                    {ev.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-4">{ev.description}</p>
-                    )}
+                    {ev.description && <p className="text-sm text-muted-foreground line-clamp-4">{ev.description}</p>}
                     <a
                       href={ev.url}
                       target="_blank"
@@ -105,7 +136,7 @@ export default function TicketmasterPage() {
           {/* MODE LISTE (VIGNETTE) */}
           {viewMode === "list" && (
             <ul className="space-y-4">
-              {events.map((ev) => (
+              {filteredEvents.map((ev) => (
                 <li
                   key={ev.id}
                   className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
