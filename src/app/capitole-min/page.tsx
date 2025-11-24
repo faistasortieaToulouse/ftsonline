@@ -36,7 +36,6 @@ export default function CapitoleMinPage() {
     }
   }
 
-  // Filtrage texte multi-champs
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -62,24 +61,17 @@ export default function CapitoleMinPage() {
         Événements filtrés depuis le flux officiel de l’Université Toulouse Capitole.
       </p>
 
-      {/* 🔘 Boutons d'action et mode + barre de recherche */}
+      {/* Boutons et recherche */}
       <div className="flex flex-wrap gap-3 mb-6 items-center">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
-        <Button
-          onClick={() => setViewMode("card")}
-          variant={viewMode === "card" ? "default" : "secondary"}
-        >
+        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
           📺 Plein écran
         </Button>
-        <Button
-          onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "default" : "secondary"}
-        >
+        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
           🔲 Vignette
         </Button>
-
         <input
           type="text"
           placeholder="Rechercher par titre, description, lieu ou date..."
@@ -89,17 +81,11 @@ export default function CapitoleMinPage() {
         />
       </div>
 
-      {/* Compteur */}
-      <p className="mb-4 text-sm text-gray-600">
-        Événements affichés : {filteredEvents.length}
-      </p>
-
+      <p className="mb-4 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
       {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
       {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement trouvé.</p>}
 
-      {/* --------------------------------------------------------------------
-         MODE CARTE (grand format)
-      --------------------------------------------------------------------- */}
+      {/* Affichage en fonction du mode */}
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
@@ -126,10 +112,6 @@ export default function CapitoleMinPage() {
             </div>
           ))}
         </div>
-
-      {/* --------------------------------------------------------------------
-         MODE LISTE (vignettes)
-      --------------------------------------------------------------------- */}
       ) : (
         <div className="flex flex-col gap-4">
           {filteredEvents.map(ev => (
