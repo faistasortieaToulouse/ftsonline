@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-// Configuration pour le format de date français
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
   weekday: 'long',
   year: 'numeric',
@@ -15,8 +14,9 @@ export default function CultureEnMouvementsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   async function fetchEvents() {
@@ -32,6 +32,7 @@ export default function CultureEnMouvementsPage() {
       }
       const data = await res.json();
       setEvents(data);
+      setFilteredEvents(data);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue lors de la récupération des événements.");
     } finally {
@@ -43,6 +44,25 @@ export default function CultureEnMouvementsPage() {
     fetchEvents();
   }, []);
 
+  // Filtrage dynamique
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = events.filter(ev =>
+      (ev.title?.toLowerCase().includes(query) ?? false) ||
+      (ev.description?.toLowerCase().includes(query) ?? false) ||
+      (ev.location?.toLowerCase().includes(query) ?? false) ||
+      (ev.category?.toLowerCase().includes(query) ?? false) ||
+      (ev.start?.toLowerCase().includes(query) ?? false)
+    );
+
+    setFilteredEvents(filtered);
+  }, [searchQuery, events]);
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">
@@ -52,7 +72,21 @@ export default function CultureEnMouvementsPage() {
         Récupération des événements du site officiel, filtrés sur le département 31.
       </p>
 
-      {/* 🔘 Boutons pour changer le mode d'affichage */}
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu, date ou catégorie..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-6 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur d'événements */}
+      <p className="mb-4 font-semibold">
+        Événements affichés : {filteredEvents.length} / {events.length}
+      </p>
+
+      {/* Boutons mode d'affichage */}
       <div className="flex gap-4 mb-6">
         <Button
           onClick={() => setViewMode("card")}
@@ -78,26 +112,21 @@ export default function CultureEnMouvementsPage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="text-gray-500 italic">
-          Aucun événement trouvé en Haute-Garonne (31) ou l'API n'a pas encore renvoyé de données.
+          Aucun événement correspondant à votre recherche.
         </p>
       )}
 
-      {/* ============================================ */}
-      {/* 🟥 Mode Plein écran */}
-      {/* ============================================ */}
+      {/* Mode plein écran */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map(ev => (
-            <div
-              key={ev.id}
-              className="bg-white shadow-xl rounded-xl overflow-hidden flex flex-col transition duration-300 hover:shadow-2xl border border-gray-100"
-            >
+          {filteredEvents.map(ev => (
+            <div key={ev.id} className="bg-white shadow-xl rounded-xl overflow-hidden flex flex-col transition duration-300 hover:shadow-2xl border border-gray-100">
               <div className="h-48 overflow-hidden">
                 <img 
                   src={ev.image.startsWith('/') ? `https://www.cultureenmouvements.org${ev.image}` : ev.image} 
-                  alt={`Illustration pour ${ev.title}`}
+                  alt={ev.title}
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                   onError={(e) => { 
                     const target = e.target as HTMLImageElement;
@@ -106,46 +135,27 @@ export default function CultureEnMouvementsPage() {
                   }}
                 />
               </div>
-
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-xl font-bold mb-1 text-gray-800 line-clamp-2">{ev.title}</h2>
-
-                {ev.start && (
-                  <p className="text-sm text-indigo-600 font-semibold mb-2 flex items-center">
-                    {new Date(ev.start).toLocaleDateString('fr-FR', dateFormatOptions)}
-                  </p>
-                )}
-
-                {ev.location && (
-                  <p className="text-sm text-gray-600 mb-2 flex items-center">{ev.location}</p>
-                )}
-
-                {ev.link && (
-                  <a href={ev.link} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:text-blue-700 mt-auto pt-2 transition duration-200 font-medium flex items-center">
-                    Voir les détails
-                  </a>
-                )}
-
-                <p className="text-xs text-gray-400 mt-1">
-                  Source : {ev.source}
-                </p>
+                {ev.start && <p className="text-sm text-indigo-600 font-semibold mb-2 flex items-center">{new Date(ev.start).toLocaleDateString('fr-FR', dateFormatOptions)}</p>}
+                {ev.location && <p className="text-sm text-gray-600 mb-2 flex items-center">{ev.location}</p>}
+                {ev.link && <a href={ev.link} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:text-blue-700 mt-auto pt-2 transition duration-200 font-medium flex items-center">Voir les détails</a>}
+                <p className="text-xs text-gray-400 mt-1">Source : {ev.source}</p>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* ============================================ */}
-      {/* 🟨 Mode Vignette */}
-      {/* ============================================ */}
+      {/* Mode vignette */}
       {viewMode === "list" && (
         <div className="space-y-4">
-          {events.map(ev => (
+          {filteredEvents.map(ev => (
             <div key={ev.id} className="flex gap-4 p-4 border rounded-lg shadow bg-white">
               <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs">
                 <img 
                   src={ev.image.startsWith('/') ? `https://www.cultureenmouvements.org${ev.image}` : ev.image} 
-                  alt={`Illustration pour ${ev.title}`}
+                  alt={ev.title}
                   className="w-full h-full object-cover rounded"
                   onError={(e) => { 
                     const target = e.target as HTMLImageElement;
@@ -156,19 +166,9 @@ export default function CultureEnMouvementsPage() {
               </div>
               <div className="flex-1">
                 <h2 className="text-lg font-semibold line-clamp-2">{ev.title}</h2>
-                {ev.start && (
-                  <p className="text-sm text-indigo-600">
-                    {new Date(ev.start).toLocaleDateString('fr-FR', dateFormatOptions)}
-                  </p>
-                )}
-                {ev.location && (
-                  <p className="text-sm text-gray-600">{ev.location}</p>
-                )}
-                {ev.link && (
-                  <a href={ev.link} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:text-blue-700 mt-1 block">
-                    Voir les détails
-                  </a>
-                )}
+                {ev.start && <p className="text-sm text-indigo-600">{new Date(ev.start).toLocaleDateString('fr-FR', dateFormatOptions)}</p>}
+                {ev.location && <p className="text-sm text-gray-600">{ev.location}</p>}
+                {ev.link && <a href={ev.link} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:text-blue-700 mt-1 block">Voir les détails</a>}
                 <p className="text-xs text-gray-400 mt-1">Source : {ev.source}</p>
               </div>
             </div>
