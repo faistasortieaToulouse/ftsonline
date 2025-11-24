@@ -14,18 +14,23 @@ type MeetupEvent = {
   dateFormatted: string;
   fullAddress: string;
   image?: string;
+  categories?: string[];
 };
 
 export default function MeetupEventsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<MeetupEvent[]>([]);
-  const [viewMode, setViewMode] = useState<"card" | "list">("card"); // nouveau état pour le mode d'affichage
+  const [filteredEvents, setFilteredEvents] = useState<MeetupEvent[]>([]);
+
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
 
   async function fetchEvents() {
     setLoading(true);
     setError(null);
     setEvents([]);
+    setFilteredEvents([]);
 
     try {
       const res = await fetch("/api/meetup-expats");
@@ -36,10 +41,7 @@ export default function MeetupEventsPage() {
       }
 
       const data = await res.json();
-      if (!data.events || data.events.length === 0) {
-        setEvents([]);
-        return;
-      }
+      if (!data.events || data.events.length === 0) return;
 
       const mapped: MeetupEvent[] = data.events.map((ev: any) => {
         const dateRaw = ev.startDate ? new Date(ev.startDate) : null;
@@ -57,22 +59,43 @@ export default function MeetupEventsPage() {
         return {
           title: ev.title || "Événement sans titre",
           link: ev.link || "#",
-          startDate: dateRaw,
+          startDate: dateRaw!,
           location: ev.location || "Lieu non spécifié",
           description: ev.description || "",
           dateFormatted,
           fullAddress: ev.location || "Lieu non spécifié",
           image: ev.coverImage || PLACEHOLDER_IMAGE,
+          categories: ev.categories || [],
         };
       });
 
       setEvents(mapped);
+      setFilteredEvents(mapped);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue lors du chargement des événements.");
     } finally {
       setLoading(false);
     }
   }
+
+  // Filtrage multi-critères
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    const filtered = events.filter(ev =>
+      ev.title.toLowerCase().includes(q) ||
+      ev.description.toLowerCase().includes(q) ||
+      ev.location.toLowerCase().includes(q) ||
+      (ev.categories?.some(cat => cat.toLowerCase().includes(q)) ?? false) ||
+      ev.dateFormatted.toLowerCase().includes(q)
+    );
+
+    setFilteredEvents(filtered);
+  }, [searchQuery, events]);
 
   useEffect(() => {
     fetchEvents();
@@ -84,6 +107,18 @@ export default function MeetupEventsPage() {
       <p className="text-muted-foreground mb-6">
         Prochains événements du groupe Meetup Expats in Toulouse, sur 31 jours.
       </p>
+
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, catégorie, lieu, date..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-red-300"
+      />
+
+      {/* Compteur d'événements */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
       {/* Boutons de mode */}
       <div className="flex gap-4 mb-6">
@@ -111,16 +146,16 @@ export default function MeetupEventsPage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="mt-6 text-xl text-gray-500 p-8 border border-dashed rounded-lg text-center">
           Aucun événement à venir trouvé.
         </p>
       )}
 
       {/* Mode plein écran */}
-      {viewMode === "card" && events.length > 0 && (
+      {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <div key={event.link || index} className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col border border-gray-100">
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
@@ -132,6 +167,7 @@ export default function MeetupEventsPage() {
                 <p className="text-sm font-medium mb-1">📍 {event.fullAddress}</p>
                 <p className="text-sm text-gray-600 mb-3 font-semibold">{event.dateFormatted}</p>
                 <p className="text-sm text-gray-700 mb-2 flex-1 line-clamp-4 whitespace-pre-wrap">{event.description}</p>
+                {event.categories && <p className="text-sm mb-2">Rubriques: {event.categories.join(", ")}</p>}
                 <p className="text-xs text-muted-foreground italic mb-3 mt-auto">Source : Meetup</p>
                 {event.link && (
                   <a
@@ -150,9 +186,9 @@ export default function MeetupEventsPage() {
       )}
 
       {/* Mode vignette */}
-      {viewMode === "list" && events.length > 0 && (
+      {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
-          {events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <div key={event.link || index} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
               <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden flex items-center justify-center">
                 <img
@@ -164,6 +200,7 @@ export default function MeetupEventsPage() {
               <div className="flex-1">
                 <h2 className="text-lg font-semibold line-clamp-2">{event.title}</h2>
                 {event.description && <p className="text-sm text-gray-600 line-clamp-2">{event.description}</p>}
+                {event.categories && <p className="text-sm mt-1">Rubriques: {event.categories.join(", ")}</p>}
                 <p className="text-sm mt-1">📍 {event.fullAddress}</p>
                 <p className="text-sm mt-1">{event.dateFormatted}</p>
                 <a
