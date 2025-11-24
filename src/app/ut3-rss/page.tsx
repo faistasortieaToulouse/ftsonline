@@ -7,7 +7,8 @@ export default function UT3RSSPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
-  const [viewMode, setViewMode] = useState<"card" | "list">("card"); // Nouveau
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchTerm, setSearchTerm] = useState(""); // Barre de recherche
 
   async function fetchEvents() {
     setLoading(true);
@@ -30,6 +31,22 @@ export default function UT3RSSPage() {
     fetchEvents();
   }, []);
 
+  // Filtrage des événements selon la recherche
+  const filteredEvents = events.filter(ev => {
+    const search = searchTerm.toLowerCase();
+    const dateStr = ev.date ? new Date(ev.date).toLocaleDateString() : "";
+    const locationStr = ev.location ? ev.location.toLowerCase() : "";
+    const categoryStr = ev.category ? ev.category.toLowerCase() : "";
+
+    return (
+      ev.title.toLowerCase().includes(search) ||
+      (ev.description && ev.description.toLowerCase().includes(search)) ||
+      dateStr.includes(search) ||
+      locationStr.includes(search) ||
+      categoryStr.includes(search)
+    );
+  });
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Actualités UT3 - Flux RSS</h1>
@@ -38,7 +55,7 @@ export default function UT3RSSPage() {
       </p>
 
       {/* Boutons d'action et mode */}
-      <div className="flex flex-wrap gap-3 mb-6">
+      <div className="flex flex-wrap gap-3 mb-4">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
@@ -56,20 +73,34 @@ export default function UT3RSSPage() {
         </Button>
       </div>
 
+      {/* Barre de recherche et compteur */}
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <input
+          type="text"
+          placeholder="Rechercher par titre, description, date, lieu, catégorie..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-3 border rounded focus:outline-none focus:ring focus:border-blue-300"
+        />
+        <p className="text-sm text-gray-600 mt-2 sm:mt-0">
+          {filteredEvents.length} éléments trouvés
+        </p>
+      </div>
+
       {error && (
         <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">
           {error}
         </div>
       )}
 
-      {events.length === 0 && !loading && (
+      {filteredEvents.length === 0 && !loading && (
         <p className="text-muted-foreground">Aucune actualité trouvée.</p>
       )}
 
       {/* Affichage des événements */}
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map(ev => (
+          {filteredEvents.map(ev => (
             <div
               key={ev.id}
               className="bg-white shadow rounded overflow-hidden flex flex-col h-[360px]"
@@ -80,6 +111,9 @@ export default function UT3RSSPage() {
                   <p className="text-sm text-blue-600 font-medium mb-2">
                     {new Date(ev.date).toLocaleString()}
                   </p>
+                )}
+                {ev.location && (
+                  <p className="text-sm text-muted-foreground mb-2">📍 {ev.location}</p>
                 )}
                 {ev.description && (
                   <div className="text-sm text-muted-foreground overflow-y-auto h-24 mb-2 pr-1">
@@ -107,7 +141,7 @@ export default function UT3RSSPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {events.map(ev => (
+          {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
               <div className="flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
@@ -115,6 +149,9 @@ export default function UT3RSSPage() {
                   <p className="text-sm text-blue-600 font-medium mb-1">
                     {new Date(ev.date).toLocaleString()}
                   </p>
+                )}
+                {ev.location && (
+                  <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>
                 )}
                 {ev.description && (
                   <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>
