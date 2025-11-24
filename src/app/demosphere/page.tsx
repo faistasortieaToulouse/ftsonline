@@ -8,6 +8,8 @@ export default function DemospherePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
@@ -28,13 +30,16 @@ export default function DemospherePage() {
         console.warn("⚠️ Réponse API invalide:", data);
         setError("Réponse invalide du serveur.");
         setEvents([]);
+        setFilteredEvents([]);
         return;
       }
 
       setEvents(data);
+      setFilteredEvents(data);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
-      setEvents([]); // Sécurité anti-crash
+      setEvents([]);
+      setFilteredEvents([]);
     } finally {
       setLoading(false);
     }
@@ -44,11 +49,44 @@ export default function DemospherePage() {
     fetchEvents();
   }, []);
 
+  // Filtrage dynamique
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = events.filter(ev =>
+      (ev.title?.toLowerCase().includes(query) ?? false) ||
+      (ev.description?.toLowerCase().includes(query) ?? false) ||
+      (ev.location?.toLowerCase().includes(query) ?? false) ||
+      (ev.category?.toLowerCase().includes(query) ?? false) ||
+      (ev.start?.toLowerCase().includes(query) ?? false)
+    );
+
+    setFilteredEvents(filtered);
+  }, [searchQuery, events]);
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Événements Demosphere Toulouse</h1>
       <p className="text-muted-foreground mb-6">
         Récupération des événements via le flux iCal de Demosphere Toulouse.
+      </p>
+
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, lieu, date ou catégorie..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur */}
+      <p className="mb-4 font-semibold">
+        Événements affichés : {filteredEvents.length} / {events.length}
       </p>
 
       {/* Mode d'affichage */}
@@ -77,12 +115,14 @@ export default function DemospherePage() {
         </div>
       )}
 
-      {events.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement trouvé.</p>}
+      {filteredEvents.length === 0 && !loading && (
+        <p className="text-muted-foreground">Aucun événement trouvé.</p>
+      )}
 
       {/* Mode carte */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map(ev => (
+          {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[400px]">
               <div className="relative w-full h-24 bg-gray-100 flex items-center justify-center">
                 <Image src="/logo/demosphereoriginal.png" alt="Logo Demosphere" width={350} height={90} className="object-contain" />
@@ -92,15 +132,8 @@ export default function DemospherePage() {
                 <p className="text-sm text-blue-600 font-medium mb-2">
                   {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
                 </p>
-
                 {ev.location && <p className="text-sm text-muted-foreground mb-2">📍 {ev.location}</p>}
-
-                {ev.description && (
-                  <div className="text-sm text-muted-foreground overflow-y-auto h-24 mb-2 pr-1">
-                    {ev.description}
-                  </div>
-                )}
-
+                {ev.description && <div className="text-sm text-muted-foreground overflow-y-auto h-24 mb-2 pr-1">{ev.description}</div>}
                 <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
               </div>
             </div>
@@ -111,7 +144,7 @@ export default function DemospherePage() {
       {/* Mode liste / vignette */}
       {viewMode === "list" && (
         <div className="space-y-4">
-          {events.map(ev => (
+          {filteredEvents.map(ev => (
             <div key={ev.id} className="flex gap-4 p-4 border rounded-lg shadow bg-white">
               <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs">
                 <Image src="/logo/demosphereoriginal.png" alt="Logo Demosphere" width={96} height={96} className="object-contain" />
