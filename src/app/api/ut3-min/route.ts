@@ -1,36 +1,21 @@
 // src/app/api/ut3-min/route.ts
 import { NextResponse } from "next/server";
 import * as ical from "node-ical";
-import Parser from "rss-parser";
-
-const keywords = ["ciné", "conf", "expo"];
-
-const getEventImage = (title: string | undefined) => {
-  if (!title) return "/images/ut3/ut3default.jpg";
-  const lower = title.toLowerCase();
-  if (lower.includes("ciné") || lower.includes("cine")) return "/images/ut3/ut3cine.jpg";
-  if (lower.includes("conf")) return "/images/ut3/ut3conf.jpg";
-  if (lower.includes("expo")) return "/images/ut3/ut3expo.jpg";
-  return "/images/ut3/ut3default.jpg";
-};
 
 export async function GET() {
   try {
-    // 1️⃣ Charger iCal
-    const icalUrl =
+    const url =
       "https://www.univ-tlse3.fr/servlet/com.jsbsoft.jtf.core.SG?EXT=agenda&PROC=RECHERCHE_AGENDA&ACTION=EXPORT_DIRECT&THEMATIQUE=0000&DTSTART=01/11/2025&AFFICHAGE=mensuel&CODE_RUBRIQUE=WEB&CATEGORIE=0000&LIEU=0000&DTEND=31/12/2025";
-    const res = await fetch(icalUrl);
+
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const icsText = await res.text();
-    const icalData = ical.parseICS(icsText);
 
-    // 2️⃣ Charger RSS
-    const rssUrl = "https://www.univ-tlse3.fr/actualites/flux-rss";
-    const parser = new Parser();
-    const rssFeed = await parser.parseURL(rssUrl);
+    const data = ical.parseICS(icsText);
 
-    // 3️⃣ Construire les événements iCal
-    const icalEvents = Object.values(icalData)
+    const keywords = ["ciné", "conf", "expo"];
+
+    const events = Object.values(data)
       .filter(ev => ev.type === "VEVENT")
       .map(ev => ({
         id: ev.uid,
@@ -39,27 +24,15 @@ export async function GET() {
         end: ev.end,
         location: ev.location || null,
         description: ev.description || null,
-        url: null, // à remplir via RSS
-        image: getEventImage(ev.summary),
+        url: ev.url || null,
+        attachments: ev.attach || null,
         source: "Université Toulouse III - Paul Sabatier",
       }))
-      // filtrer par mots-clés
+      // Filtrer par mots-clés dans le titre
       .filter(ev =>
-        ev.title && keywords.some(k => ev.title.toLowerCase().includes(k))
-      );
-
-    // 4️⃣ Associer URL depuis RSS via titre (approx)
-    const events = icalEvents.map(ev => {
-      const rssItem = rssFeed.items.find(item =>
         ev.title &&
-        item.title &&
-        item.title.toLowerCase().includes(ev.title.toLowerCase().substring(0, 20))
+        keywords.some(k => ev.title.toLowerCase().includes(k))
       );
-      return {
-        ...ev,
-        url: rssItem?.link || null,
-      };
-    });
 
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
