@@ -37,7 +37,7 @@ export default function BilletwebPage() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("/api/billetweb");
+        const res = await fetch("/api/actutoulouse");
         const data = await res.json();
 
         if (data.error) {
@@ -49,8 +49,8 @@ export default function BilletwebPage() {
           setFilteredEvents(data.events || []);
         }
       } catch (err) {
-        console.error("Erreur chargement Billetweb", err);
-        setError("Impossible de charger les évènements Billetweb.");
+        console.error("Erreur chargement Actu Toulouse BilletWeb", err);
+        setError("Impossible de charger les évènements Actu Toulouse Billetweb.");
       }
       setLoading(false);
     };
@@ -93,7 +93,7 @@ export default function BilletwebPage() {
   return (
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-4">
-        Évènements Billetweb (Haute-Garonne)
+        Évènements Actu Toulouse Billetweb (Haute-Garonne)
       </h1>
 
       {/* 🔢 compteur */}
