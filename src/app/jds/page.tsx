@@ -8,17 +8,18 @@ type JDSEvent = {
   url: string;
   image?: string;
   categories?: string[];
+  location?: string;
 };
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
 export default function JDSPage() {
   const [events, setEvents] = useState<JDSEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<JDSEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // 🟦 Mode d'affichage : "card" = plein écran, "list" = vignette
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -31,8 +32,10 @@ export default function JDSPage() {
         if (data.error) {
           setError(data.details || "Erreur API JDS");
           setEvents([]);
+          setFilteredEvents([]);
         } else {
           setEvents(data.events || []);
+          setFilteredEvents(data.events || []);
         }
       } catch (err) {
         console.error("Erreur chargement JDS", err);
@@ -44,11 +47,41 @@ export default function JDSPage() {
     fetchEvents();
   }, []);
 
+  // Filtrage dynamique
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    const filtered = events.filter(
+      (ev) =>
+        ev.title.toLowerCase().includes(q) ||
+        (ev.description?.toLowerCase().includes(q) ?? false) ||
+        (ev.location?.toLowerCase().includes(q) ?? false) ||
+        (ev.categories?.some((cat) => cat.toLowerCase().includes(q)) ?? false)
+    );
+    setFilteredEvents(filtered);
+  }, [searchQuery, events]);
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Évènements JDS à Toulouse</h1>
 
-      {/* 🟦 Boutons pour changer le mode d'affichage */}
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, catégorie, lieu..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+      />
+
+      {/* Compteur d'événements */}
+      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
+
+      {/* Boutons de mode d'affichage */}
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => setViewMode("card")}
@@ -72,14 +105,14 @@ export default function JDSPage() {
         <p>Chargement...</p>
       ) : error ? (
         <p className="text-red-600">{error}</p>
-      ) : events.length === 0 ? (
+      ) : filteredEvents.length === 0 ? (
         <p>Aucun évènement trouvé.</p>
       ) : (
         <>
-          {/* 🟥 Mode plein écran */}
+          {/* Mode plein écran */}
           {viewMode === "card" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {events.map((event, idx) => (
+              {filteredEvents.map((event, idx) => (
                 <div
                   key={idx}
                   className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
@@ -97,10 +130,9 @@ export default function JDSPage() {
                       </p>
                     )}
                     {event.categories && (
-                      <p className="text-sm mb-2">
-                        Rubriques: {event.categories.join(", ")}
-                      </p>
+                      <p className="text-sm mb-2">Rubriques: {event.categories.join(", ")}</p>
                     )}
+                    {event.location && <p className="text-sm mb-2">Lieu: {event.location}</p>}
                     <a
                       href={event.url}
                       target="_blank"
@@ -115,10 +147,10 @@ export default function JDSPage() {
             </div>
           )}
 
-          {/* 🟨 Mode vignette */}
+          {/* Mode vignette */}
           {viewMode === "list" && (
             <div className="space-y-4">
-              {events.map((event, idx) => (
+              {filteredEvents.map((event, idx) => (
                 <div
                   key={idx}
                   className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white"
@@ -138,6 +170,7 @@ export default function JDSPage() {
                     {event.categories && (
                       <p className="text-sm mt-1">Rubriques: {event.categories.join(", ")}</p>
                     )}
+                    {event.location && <p className="text-sm mt-1">Lieu: {event.location}</p>}
                     <a
                       href={event.url}
                       target="_blank"
