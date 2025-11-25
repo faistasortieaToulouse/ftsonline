@@ -13,15 +13,21 @@ interface PodcastEpisode {
 const parser = new Parser();
 
 async function fetchPodcast(librairie: string, rssUrl: string): Promise<PodcastEpisode[]> {
-  const feed = await parser.parseURL(rssUrl);
+  try {
+    const feed = await parser.parseURL(rssUrl);
 
-  return feed.items.map(item => ({
-    librairie,
-    titre: item.title ?? "",
-    date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
-    audioUrl: item.enclosure?.url ?? "",
-    description: item.contentSnippet ?? item.content ?? "",
-  }));
+    return feed.items.map(item => ({
+      librairie,
+      titre: item.title ?? "",
+      date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
+      audioUrl: item.enclosure?.url ?? "",
+      description: item.contentSnippet ?? item.content ?? "",
+    }));
+  } catch (error) {
+    console.error(`⚠️ Erreur lors du fetch du flux ${librairie}:`, error);
+    // Fallback : on retourne un tableau vide pour ce flux
+    return [];
+  }
 }
 
 export async function GET(req: Request) {
@@ -72,9 +78,9 @@ export async function GET(req: Request) {
       },
     });
   } catch (error) {
-    console.error("Erreur lors du parsing RSS:", error);
+    console.error("Erreur globale API podcasts:", error);
     return NextResponse.json(
-      { success: false, message: "Erreur lors du parsing RSS." },
+      { success: false, message: "Erreur lors du traitement des flux RSS." },
       { status: 500 }
     );
   }
