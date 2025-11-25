@@ -1,3 +1,4 @@
+// src/app/api/podcasts/route.ts
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 import fetch from "node-fetch";
@@ -14,6 +15,7 @@ interface PodcastEpisode {
 const rssParser = new Parser();
 const xmlParser = new XMLParser({ ignoreAttributes: false, allowBooleanAttributes: true });
 
+// --- Ombres Blanches avec rss-parser ---
 async function fetchOmbresBlanches(): Promise<PodcastEpisode[]> {
   try {
     const feed = await rssParser.parseURL("https://feed.ausha.co/les-podcasts-d-ombres-blanches");
@@ -26,10 +28,17 @@ async function fetchOmbresBlanches(): Promise<PodcastEpisode[]> {
     }));
   } catch (err) {
     console.error("⚠️ Erreur Ombres Blanches:", err);
-    return [];
+    return [{
+      librairie: "Ombres Blanches",
+      titre: "Flux indisponible",
+      date: new Date().toISOString(),
+      audioUrl: "",
+      description: "Le flux RSS d’Ombres Blanches est protégé (403). Consultez directement Ausha."
+    }];
   }
 }
 
+// --- Terra Nova avec fast-xml-parser ---
 async function fetchTerraNova(): Promise<PodcastEpisode[]> {
   try {
     const res = await fetch("https://www.vodio.fr/rss/terranova");
@@ -46,7 +55,13 @@ async function fetchTerraNova(): Promise<PodcastEpisode[]> {
     }));
   } catch (err) {
     console.error("⚠️ Erreur Terra Nova:", err);
-    return [];
+    return [{
+      librairie: "Terra Nova",
+      titre: "Flux indisponible",
+      date: new Date().toISOString(),
+      audioUrl: "",
+      description: "Le flux RSS de Terra Nova est invalide ou inaccessible."
+    }];
   }
 }
 
@@ -63,8 +78,10 @@ export async function GET(req: Request) {
 
     let allEpisodes = [...obEpisodes, ...tnEpisodes];
 
+    // Tri par date
     allEpisodes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+    // Pagination
     const startIndex = (page - 1) * limit;
     const paginatedEpisodes = allEpisodes.slice(startIndex, startIndex + limit);
 
