@@ -1,62 +1,36 @@
-// en-tête inchangé
 'use client';
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-// getEventImage (inchangé)
+// Retourne l'image en fonction du titre
 const getEventImage = (title: string | undefined) => {
-  if (!title) return "/images/capitole/capidefaut.jpg";
+  if (!title) return "/images/capidefaut.jpg";
   const lower = title.toLowerCase();
-  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capitole/capicine.jpg";
-  if (lower.includes("conf")) return "/images/capitole/capiconf.jpg";
-  if (lower.includes("expo")) return "/images/capitole/capiexpo.jpg";
-  return "/images/capitole/capidefaut.jpg";
+  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capicine.jpg";
+  if (lower.includes("conf")) return "/images/capiconf.jpg";
+  if (lower.includes("expo")) return "/images/capiexpo.jpg";
+  return "/images/capidefaut.jpg";
 };
 
-// --- NOUVEAU : helper de formatage des dates ---
-const formatDate = (iso?: string | null) => {
-  if (!iso) return "";
-
-  // try parse
+// Formatage de la date en texte lisible
+const formatDate = (dateStr: string | null) => {
+  if (!dateStr) return "Date non précisée";
   try {
-    // Some feeds give plain "YYYY-MM-DD" or "YYYY-MM-DDT00:00:00Z".
-    // Normalize: if it looks like a plain date without time, add "T00:00:00Z"
-    let normalized = iso;
-    // If iso is like "2025-11-14" -> turn into "2025-11-14T00:00:00Z"
-    if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) normalized = iso + "T00:00:00Z";
-
-    const d = new Date(normalized);
-    if (isNaN(d.getTime())) return iso;
-
-    // If the source provided time as exactly midnight UTC (i.e. no real time),
-    // we display only the date (no time) to avoid showing 00:00:00.
-    const isMidnightUTC = /T00:00:00(?:\.000)?Z?$/.test(normalized);
-
-    const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
-      dateStyle: "long",
-      timeZone: "Europe/Paris",
-    });
-
-    if (isMidnightUTC) {
-      return dateFormatter.format(d); // e.g. "14 novembre 2025"
-    }
-
-    const dateTimeFormatter = new Intl.DateTimeFormat("fr-FR", {
-      dateStyle: "long",
-      timeStyle: "short",
-      timeZone: "Europe/Paris",
-    });
-
-    return dateTimeFormatter.format(d); // e.g. "14 novembre 2025 à 20:30"
-  } catch (e) {
-    return iso;
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat("fr-FR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(date);
+  } catch {
+    return dateStr;
   }
 };
 
 export default function CapitoleMinPage() {
-  // ... tout ton état et fetchEvents identiques ...
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -64,7 +38,7 @@ export default function CapitoleMinPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
-  async function fetchEvents() {
+  const fetchEvents = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -78,8 +52,9 @@ export default function CapitoleMinPage() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
+  // Filtrage dynamique
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -99,72 +74,85 @@ export default function CapitoleMinPage() {
   useEffect(() => { fetchEvents(); }, []);
 
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      {/* en-tête & recherche inchangés */}
-      <h1 className="text-3xl font-bold mb-4">Événements UT Capitole – Ciné, Conf & Expo</h1>
-      <p className="text-muted-foreground mb-6">
+    <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold mb-2">Événements UT Capitole – Ciné, Conf & Expo</h1>
+      <p className="text-muted-foreground mb-4 text-sm">
         Événements filtrés depuis le flux officiel de l’Université Toulouse Capitole.
       </p>
 
-      {/* ... boutons et éléments de recherche ... */}
+      {/* Boutons et recherche */}
+      <div className="flex flex-wrap gap-3 mb-4 items-center">
+        <Button onClick={fetchEvents} disabled={loading}>
+          {loading ? "Chargement..." : "📡 Actualiser"}
+        </Button>
+        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
+          📺 Plein écran
+        </Button>
+        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
+          🔲 Vignette
+        </Button>
+        <input
+          type="text"
+          placeholder="Rechercher par titre, description, lieu ou date..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="mt-2 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+        />
+      </div>
 
-      {/* Extrait du rendu où on affichait la date */}
+      <p className="mb-2 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
+      {error && <div className="p-3 bg-red-50 text-red-700 border border-red-400 rounded mb-4">{error}</div>}
+      {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement trouvé.</p>}
+
+      {/* Affichage des events */}
       {viewMode === "card" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-56 object-cover" />
-              <div className="p-4 flex flex-col flex-1 overflow-hidden">
-                <h2 className="text-lg font-semibold mb-1 line-clamp-2">{ev.title}</h2>
-
-                {/* <-- ici on utilise formatDate */}
-                {ev.start && (
-                  <p className="text-sm text-blue-600 font-medium mb-1">
-                    {formatDate(ev.start)}
-                    {ev.end ? ` → ${formatDate(ev.end)}` : ""}
-                  </p>
-                )}
-
-                {ev.location && <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>}
-
-                {ev.description && (
-                  <div className="text-sm text-muted-foreground overflow-y-auto max-h-20 mb-2 pr-1">
-                    {ev.description}
-                  </div>
-                )}
-
-                {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
-                    🔗 Plus d’informations
-                  </a>
-                )}
-
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[450px]">
+              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-40 object-cover" />
+              <div className="p-3 flex flex-col flex-1 justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+                  {ev.start && (
+                    <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>
+                  )}
+                  {ev.location && <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>}
+                  {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-3">{ev.description}</p>}
+                </div>
+                <div>
+                  {ev.url && (
+                    <p className="text-sm mb-1">
+                      <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        🔗 Plus d’informations
+                      </a>
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
+                </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        /* mode list (même principe) */
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4 h-40">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold mb-1 line-clamp-2">{ev.title}</h2>
-
-                {ev.start && (
-                  <p className="text-sm text-blue-600 font-medium mb-1">
-                    {formatDate(ev.start)}
-                    {ev.end ? ` → ${formatDate(ev.end)}` : ""}
-                  </p>
-                )}
-
-                {/* reste inchangé */}
-                {ev.location && <p className="text-sm mb-1 text-muted-foreground">📍 {ev.location}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-2 line-clamp-3">{ev.description}</p>}
-                {ev.url && <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">🔗 Plus d’informations</a>}
-                <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
+            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
+              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-40 h-32 object-cover rounded" />
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+                  {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
+                  {ev.location && <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>}
+                  {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-3">{ev.description}</p>}
+                </div>
+                <div>
+                  {ev.url && (
+                    <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                      🔗 Plus d’informations
+                    </a>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
+                </div>
               </div>
             </div>
           ))}
