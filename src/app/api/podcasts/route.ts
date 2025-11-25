@@ -1,6 +1,7 @@
-// src/app/api/podcasts/route.ts
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
+import fetch from "node-fetch";
+import { parseStringPromise } from "xml2js";
 
 interface PodcastEpisode {
   librairie: string;
@@ -12,20 +13,40 @@ interface PodcastEpisode {
 
 const parser = new Parser();
 
-async function fetchPodcast(librairie: string, rssUrl: string): Promise<PodcastEpisode[]> {
+// --- Ombres Blanches avec rss-parser ---
+async function fetchOmbresBlanches(): Promise<PodcastEpisode[]> {
   try {
-    const feed = await parser.parseURL(rssUrl);
-
+    const feed = await parser.parseURL("https://feed.ausha.co/les-podcasts-d-ombres-blanches");
     return feed.items.map(item => ({
-      librairie,
+      librairie: "Ombres Blanches",
       titre: item.title ?? "",
       date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
       audioUrl: item.enclosure?.url ?? "",
       description: item.contentSnippet ?? item.content ?? "",
     }));
-  } catch (error) {
-    console.error(`⚠️ Erreur lors du fetch du flux ${librairie}:`, error);
-    // Fallback : on retourne un tableau vide pour ce flux
+  } catch (err) {
+    console.error("⚠️ Erreur Ombres Blanches:", err);
+    return [];
+  }
+}
+
+// --- Terra Nova avec xml2js (plus tolérant) ---
+async function fetchTerraNova(): Promise<PodcastEpisode[]> {
+  try {
+    const res = await fetch("https://www.vodio.fr/rss/terranova");
+    const xml = await res.text();
+    const parsed = await parseStringPromise(xml, { explicitArray: false });
+
+    const items = parsed?.rss?.channel?.item ?? [];
+    return (Array.isArray(items) ? items : [items]).map((item: any) => ({
+      librairie: "Terra Nova",
+      titre: item.title ?? "",
+      date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
+      audioUrl: item.enclosure?.$.url ?? "",
+      description: item.description ?? "",
+    }));
+  } catch (err) {
+    console.error("⚠️ Erreur Terra Nova:", err);
     return [];
   }
 }
@@ -40,12 +61,13 @@ export async function GET(req: Request) {
     const dateMin = searchParams.get("dateMin");
 
     const [obEpisodes, tnEpisodes] = await Promise.all([
-      fetchPodcast("Ombres Blanches", "https://feed.ausha.co/les-podcasts-d-ombres-blanches"),
-      fetchPodcast("Terra Nova", "https://www.vodio.fr/rss/terranova"),
+      fetchOmbresBlanches(),
+      fetchTerraNova(),
     ]);
 
     let allEpisodes = [...obEpisodes, ...tnEpisodes];
 
+    // 🔎 Filtrage
     if (query) {
       allEpisodes = allEpisodes.filter(
         ep =>
@@ -61,8 +83,10 @@ export async function GET(req: Request) {
       allEpisodes = allEpisodes.filter(ep => new Date(ep.date) >= minDate);
     }
 
+    // Tri par date
     allEpisodes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+    // Pagination
     const startIndex = (page - 1) * limit;
     const paginatedEpisodes = allEpisodes.slice(startIndex, startIndex + limit);
 
