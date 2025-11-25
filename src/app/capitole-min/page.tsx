@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
+// Fonction pour retourner l'image en fonction du titre
 const getEventImage = (title: string | undefined) => {
-  if (!title) return "/images/capitole/capitole-default.jpg";
+  if (!title) return "/images/capidefaut.jpg";
   const lower = title.toLowerCase();
-  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capitole/capicine.jpg";
-  if (lower.includes("conf")) return "/images/capitole/capiconf.jpg";
-  if (lower.includes("expo")) return "/images/capitole/capiexpo.jpg";
-  return "/images/capitole/capidefaut.jpg";
+  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capicine.jpg";
+  if (lower.includes("conf")) return "/images/capiconf.jpg";
+  if (lower.includes("expo")) return "/images/capiexpo.jpg";
+  return "/images/capidefaut.jpg";
 };
 
 export default function CapitoleMinPage() {
@@ -37,6 +37,7 @@ export default function CapitoleMinPage() {
     }
   }
 
+  // Filtrage en fonction de la recherche
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -87,61 +88,57 @@ export default function CapitoleMinPage() {
       {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement trouvé.</p>}
 
       {/* Affichage en fonction du mode */}
-{viewMode === "card" ? (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    {filteredEvents.map(ev => (
-      <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[550px]">
-        {/* Image plus grande */}
-        <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-64 object-cover" />
-        <div className="p-4 flex flex-col flex-1">
-          <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-          {ev.start && (
-            <p className="text-sm text-blue-600 font-medium mb-2">
-              {new Date(ev.start).toLocaleString()} {ev.end ? `→ ${new Date(ev.end).toLocaleString()}` : ""}
-            </p>
-          )}
-          {ev.location && <p className="text-sm text-muted-foreground mb-2">📍 {ev.location}</p>}
-          {/* Description flexible */}
-          {ev.description && (
-            <div className="text-sm text-muted-foreground mb-2 flex-1 overflow-auto pr-1 scrollable">
-              {ev.description}
+      {viewMode === "card" ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredEvents.map(ev => (
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
+              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-56 object-cover" />
+              <div className="p-4 flex flex-col flex-1">
+                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+                {ev.start && (
+                  <p className="text-sm text-blue-600 font-medium mb-2">
+                    {new Date(ev.start).toLocaleString()} {ev.end ? `→ ${new Date(ev.end).toLocaleString()}` : ""}
+                  </p>
+                )}
+                {ev.location && <p className="text-sm text-muted-foreground mb-2">📍 {ev.location}</p>}
+                {ev.description && <div className="text-sm text-muted-foreground overflow-y-auto h-28 mb-2 pr-1 scrollable">{ev.description}</div>}
+                {ev.url && (
+                  <p className="text-sm mb-2">
+                    <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      🔗 Plus d’informations
+                    </a>
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground mt-2">Source : {ev.source}</p>
+              </div>
             </div>
-          )}
-          {ev.url && (
-            <p className="text-sm mb-2">
-              <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                🔗 Plus d’informations
-              </a>
-            </p>
-          )}
-          <p className="text-xs text-muted-foreground mt-2">Source : {ev.source}</p>
+          ))}
         </div>
-      </div>
-    ))}
-  </div>
-) : (
-  <div className="flex flex-col gap-4">
-    {filteredEvents.map(ev => (
-      <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
-        <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-56 h-48 object-cover rounded" />
-        <div className="flex-1 flex flex-col">
-          <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-          {ev.start && (
-            <p className="text-sm text-blue-600 font-medium mb-1">
-              {new Date(ev.start).toLocaleString()} {ev.end ? `→ ${new Date(ev.end).toLocaleString()}` : ""}
-            </p>
-          )}
-          {ev.location && <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>}
-          {ev.description && <p className="text-sm text-muted-foreground mb-2 line-clamp-4">{ev.description}</p>}
-          {ev.url && (
-            <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
-              🔗 Plus d’informations
-            </a>
-          )}
-          <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {filteredEvents.map(ev => (
+            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4 h-40">
+              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-56 h-40 object-cover rounded" />
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+                {ev.start && (
+                  <p className="text-sm text-blue-600 font-medium mb-1">
+                    {new Date(ev.start).toLocaleString()} {ev.end ? `→ ${new Date(ev.end).toLocaleString()}` : ""}
+                  </p>
+                )}
+                {ev.location && <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>}
+                {ev.description && <p className="text-sm text-muted-foreground mb-2 line-clamp-4">{ev.description}</p>}
+                {ev.url && (
+                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                    🔗 Plus d’informations
+                  </a>
+                )}
+                <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
-    ))}
-  </div>
-)}
-
+      )}
+    </div>
+  );
+}
