@@ -116,7 +116,7 @@ export default function CapitoleMinPage() {
         <div className="flex flex-col gap-4">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-48 h-42 object-cover rounded" />
+              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-56 h-42 object-cover rounded" />
               <div className="flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && (
