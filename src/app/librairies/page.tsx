@@ -4,6 +4,8 @@
  * Elle appelle la route API /api/podcasts pour récupérer les données agrégées.
  */
 
+"use client"; // <--- AJOUT DE LA DIRECTIVE CLIENT
+
 import React, { useState, useEffect } from 'react';
 import { Play, Mic, Calendar, BookOpen } from 'lucide-react'; // Icônes pour l'interface
 
