@@ -3,7 +3,6 @@ import Parser from "rss-parser";
 
 const keywords = ["ciné", "cine", "conf", "expo"];
 
-// Retourne l'image en fonction du titre
 const getEventImage = (title: string | undefined) => {
   if (!title) return "/images/capidefaut.jpg";
   const lower = title.toLowerCase();
@@ -26,27 +25,18 @@ export async function GET() {
     });
 
     if (!res.ok) {
-      console.error("Flux UT Capitole inaccessible :", res.status);
+      // Renvoie un JSON vide si le flux est inaccessible
       return NextResponse.json({ events: [] }, { status: 200 });
     }
 
     const xml = await res.text();
-
-    // Parser en incluant le champ dc:date
-    const parser = new Parser({
-      customFields: {
-        item: [["dc:date", "dc:date"]], // on mappe dc:date vers item["dc:date"]
-      },
-    });
-
+    const parser = new Parser();
     const feed = await parser.parseString(xml);
 
     const events = feed.items
       .filter(item => item.title && keywords.some(k => item.title.toLowerCase().includes(k)))
       .map(item => {
-        const dateStr = item["dc:date"] || item.pubDate;
-        const date = dateStr ? new Date(dateStr) : null;
-
+        const date = item.pubDate ? new Date(item.pubDate) : item["dc:date"] ? new Date(item["dc:date"]) : null;
         return {
           id: item.guid || item.link || item.title,
           title: item.title?.trim(),
