@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 const getEventImage = (title: string | undefined) => {
   if (!title) return "/images/capidefaut.jpg";
   const lower = title.toLowerCase();
-  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capicine.jpg";
-  if (lower.includes("conf")) return "/images/capiconf.jpg";
-  if (lower.includes("expo")) return "/images/capiexpo.jpg";
-  return "/images/capidefaut.jpg";
+  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capitole/capicine.jpg";
+  if (lower.includes("conf")) return "/images/capitole/capiconf.jpg";
+  if (lower.includes("expo")) return "/images/capitole/capiexpo.jpg";
+  return "/images/capitole/capidefaut.jpg";
 };
 
 // Formatage des dates en français avec heure
