@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 import fetch from "node-fetch";
-import { parseStringPromise } from "xml2js";
+import { XMLParser } from "fast-xml-parser";
 
 interface PodcastEpisode {
   librairie: string;
@@ -11,12 +11,12 @@ interface PodcastEpisode {
   description: string;
 }
 
-const parser = new Parser();
+const rssParser = new Parser();
+const xmlParser = new XMLParser({ ignoreAttributes: false, allowBooleanAttributes: true });
 
-// --- Ombres Blanches avec rss-parser ---
 async function fetchOmbresBlanches(): Promise<PodcastEpisode[]> {
   try {
-    const feed = await parser.parseURL("https://feed.ausha.co/les-podcasts-d-ombres-blanches");
+    const feed = await rssParser.parseURL("https://feed.ausha.co/les-podcasts-d-ombres-blanches");
     return feed.items.map(item => ({
       librairie: "Ombres Blanches",
       titre: item.title ?? "",
@@ -30,19 +30,18 @@ async function fetchOmbresBlanches(): Promise<PodcastEpisode[]> {
   }
 }
 
-// --- Terra Nova avec xml2js (plus tolérant) ---
 async function fetchTerraNova(): Promise<PodcastEpisode[]> {
   try {
     const res = await fetch("https://www.vodio.fr/rss/terranova");
     const xml = await res.text();
-    const parsed = await parseStringPromise(xml, { explicitArray: false });
+    const parsed = xmlParser.parse(xml);
 
     const items = parsed?.rss?.channel?.item ?? [];
     return (Array.isArray(items) ? items : [items]).map((item: any) => ({
       librairie: "Terra Nova",
       titre: item.title ?? "",
       date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
-      audioUrl: item.enclosure?.$.url ?? "",
+      audioUrl: item.enclosure?.["@_url"] ?? "",
       description: item.description ?? "",
     }));
   } catch (err) {
@@ -56,9 +55,6 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
-    const query = searchParams.get("q")?.toLowerCase() || "";
-    const librairieFilter = searchParams.get("librairie") || "";
-    const dateMin = searchParams.get("dateMin");
 
     const [obEpisodes, tnEpisodes] = await Promise.all([
       fetchOmbresBlanches(),
@@ -67,26 +63,8 @@ export async function GET(req: Request) {
 
     let allEpisodes = [...obEpisodes, ...tnEpisodes];
 
-    // 🔎 Filtrage
-    if (query) {
-      allEpisodes = allEpisodes.filter(
-        ep =>
-          ep.titre.toLowerCase().includes(query) ||
-          ep.description.toLowerCase().includes(query)
-      );
-    }
-    if (librairieFilter) {
-      allEpisodes = allEpisodes.filter(ep => ep.librairie === librairieFilter);
-    }
-    if (dateMin) {
-      const minDate = new Date(dateMin);
-      allEpisodes = allEpisodes.filter(ep => new Date(ep.date) >= minDate);
-    }
-
-    // Tri par date
     allEpisodes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    // Pagination
     const startIndex = (page - 1) * limit;
     const paginatedEpisodes = allEpisodes.slice(startIndex, startIndex + limit);
 
