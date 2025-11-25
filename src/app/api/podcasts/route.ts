@@ -35,7 +35,7 @@ async function fetchOmbresBlanches(baseUrl: string): Promise<PodcastEpisode[]> {
       titre: "Flux indisponible",
       date: new Date().toISOString(),
       audioUrl: "",
-      description: "Le flux RSS d’Ombres Blanches est protégé (403). Consultez directement Ausha."
+      description: "Le flux RSS d’Ombres Blanches est protégé (403/404). Consultez directement Ausha."
     }];
   }
 }
@@ -43,7 +43,7 @@ async function fetchOmbresBlanches(baseUrl: string): Promise<PodcastEpisode[]> {
 // --- Terra Nova via fast-xml-parser ---
 async function fetchTerraNova(): Promise<PodcastEpisode[]> {
   try {
-    const res = await fetch("https://www.vodio.fr/rss/terranova");
+    const res = await fetch("https://www.vodio.fr/rssmedias.php?valeur=636");
     const xml = await res.text();
     const parsed = xmlParser.parse(xml);
 
