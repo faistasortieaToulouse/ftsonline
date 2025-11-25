@@ -12,15 +12,37 @@ const getEventImage = (title: string | undefined) => {
   return "/images/capidefaut.jpg";
 };
 
+// extrait la vraie date depuis item.content
+function extractRealDate(html: string | undefined) {
+  if (!html) return null;
+
+  // Cas 1 : "14 novembre 2025 à 18:00"
+  let match = html.match(/(\d{1,2} \w+ \d{4})(?: à (\d{2}:\d{2}))?/i);
+  if (match) {
+    const [_, dateStr, timeStr] = match;
+
+    const final = timeStr ? `${dateStr} ${timeStr}` : dateStr;
+
+    return final.trim();
+  }
+
+  // Cas 2 : "Du 14 novembre 2025 au 15 novembre 2025"
+  match = html.match(/du (.*?) au (.*?)(<|$)/i);
+  if (match) {
+    return match[1].trim();
+  }
+
+  return null;
+}
+
 export async function GET() {
   try {
     const rssUrl =
       "https://www.ut-capitole.fr/adminsite/webservices/export_rss.jsp?NOMBRE=50&CODE_RUBRIQUE=1315555643369&LANGUE=0";
 
-    // 1. Fetch manuel → contourne le 404 Vercel
     const xml = await fetch(rssUrl, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible)",
+        "User-Agent": "Mozilla/5.0",
         "Accept": "application/rss+xml, application/xml"
       }
     }).then(res => {
@@ -28,27 +50,29 @@ export async function GET() {
       return res.text();
     });
 
-    // 2. Parse RSS localement
-    const parser = new Parser();
+    const parser = new Parser({ customFields: { item: ["content"] } });
     const feed = await parser.parseString(xml);
 
-    // 3. Extraction des events
     const events = feed.items
       .filter(item =>
         item.title &&
         keywords.some(k => item.title.toLowerCase().includes(k))
       )
-      .map(item => ({
-        id: item.guid || item.link || item.title,
-        title: item.title?.trim(),
-        description: item.contentSnippet || "Événement ouvert à tous",
-        url: item.link,
-        image: getEventImage(item.title),
-        start: item.pubDate ? new Date(item.pubDate).toISOString() : null,
-        end: null,
-        location: null,
-        source: "Université Toulouse Capitole"
-      }));
+      .map(item => {
+        const realDate = extractRealDate(item.content);
+
+        return {
+          id: item.guid || item.link || item.title,
+          title: item.title?.trim(),
+          description: item.contentSnippet || "Événement ouvert à tous",
+          url: item.link,
+          image: getEventImage(item.title),
+          start: realDate,
+          end: null,
+          location: null,
+          source: "Université Toulouse Capitole"
+        };
+      });
 
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
