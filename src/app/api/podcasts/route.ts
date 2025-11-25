@@ -15,10 +15,12 @@ interface PodcastEpisode {
 const rssParser = new Parser();
 const xmlParser = new XMLParser({ ignoreAttributes: false, allowBooleanAttributes: true });
 
-// --- Ombres Blanches avec rss-parser ---
-async function fetchOmbresBlanches(): Promise<PodcastEpisode[]> {
+// --- Ombres Blanches via proxy ---
+async function fetchOmbresBlanches(baseUrl: string): Promise<PodcastEpisode[]> {
   try {
-    const feed = await rssParser.parseURL("https://feed.ausha.co/les-podcasts-d-ombres-blanches");
+    const proxyUrl = `${baseUrl}/api/proxy?url=${encodeURIComponent("https://feed.ausha.co/kk2J1iKdlOXE")}`;
+    const feed = await rssParser.parseURL(proxyUrl);
+
     return feed.items.map(item => ({
       librairie: "Ombres Blanches",
       titre: item.title ?? "",
@@ -38,7 +40,7 @@ async function fetchOmbresBlanches(): Promise<PodcastEpisode[]> {
   }
 }
 
-// --- Terra Nova avec fast-xml-parser ---
+// --- Terra Nova via fast-xml-parser ---
 async function fetchTerraNova(): Promise<PodcastEpisode[]> {
   try {
     const res = await fetch("https://www.vodio.fr/rss/terranova");
@@ -71,8 +73,11 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
+    // ⚠️ Base URL pour proxy (ex: https://ftsonline.vercel.app)
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
     const [obEpisodes, tnEpisodes] = await Promise.all([
-      fetchOmbresBlanches(),
+      fetchOmbresBlanches(baseUrl),
       fetchTerraNova(),
     ]);
 
