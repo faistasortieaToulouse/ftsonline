@@ -12,29 +12,6 @@ const getEventImage = (title: string | undefined) => {
   return "/images/capidefaut.jpg";
 };
 
-// extrait la vraie date depuis item.content
-function extractRealDate(html: string | undefined) {
-  if (!html) return null;
-
-  // Cas 1 : "14 novembre 2025 à 18:00"
-  let match = html.match(/(\d{1,2} \w+ \d{4})(?: à (\d{2}:\d{2}))?/i);
-  if (match) {
-    const [_, dateStr, timeStr] = match;
-
-    const final = timeStr ? `${dateStr} ${timeStr}` : dateStr;
-
-    return final.trim();
-  }
-
-  // Cas 2 : "Du 14 novembre 2025 au 15 novembre 2025"
-  match = html.match(/du (.*?) au (.*?)(<|$)/i);
-  if (match) {
-    return match[1].trim();
-  }
-
-  return null;
-}
-
 export async function GET() {
   try {
     const rssUrl =
@@ -50,7 +27,7 @@ export async function GET() {
       return res.text();
     });
 
-    const parser = new Parser({ customFields: { item: ["content"] } });
+    const parser = new Parser({ customFields: { item: ["content", "dc:date"] } });
     const feed = await parser.parseString(xml);
 
     const events = feed.items
@@ -58,21 +35,17 @@ export async function GET() {
         item.title &&
         keywords.some(k => item.title.toLowerCase().includes(k))
       )
-      .map(item => {
-        const realDate = extractRealDate(item.content);
-
-        return {
-          id: item.guid || item.link || item.title,
-          title: item.title?.trim(),
-          description: item.contentSnippet || "Événement ouvert à tous",
-          url: item.link,
-          image: getEventImage(item.title),
-          start: realDate,
-          end: null,
-          location: null,
-          source: "Université Toulouse Capitole"
-        };
-      });
+      .map(item => ({
+        id: item.guid || item.link || item.title,
+        title: item.title?.trim(),
+        description: item.contentSnippet || "Événement ouvert à tous",
+        url: item.link,
+        image: getEventImage(item.title),
+        start: item["dc:date"] || item.pubDate || "Date non précisée",
+        end: null,
+        location: null,
+        source: "Université Toulouse Capitole"
+      }));
 
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
