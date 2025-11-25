@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 const getEventImage = (title: string | undefined) => {
   if (!title) return "/images/capitole/capitole-default.jpg";
   const lower = title.toLowerCase();
-  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capitole/capitole-cine.jpg";
-  if (lower.includes("conf")) return "/images/capitole/capitole-conf.jpg";
-  if (lower.includes("expo")) return "/images/capitole/capitole-expo.jpg";
-  return "/images/capitole/capitole-default.jpg";
+  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capitole/capicine.jpg";
+  if (lower.includes("conf")) return "/images/capitole/capiconf.jpg";
+  if (lower.includes("expo")) return "/images/capitole/capiexpo.jpg";
+  return "/images/capitole/capidefaut.jpg";
 };
 
 export default function CapitoleMinPage() {
