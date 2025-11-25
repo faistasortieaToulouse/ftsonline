@@ -69,6 +69,31 @@ async function fetchTerraNova(): Promise<PodcastEpisode[]> {
   }
 }
 
+// --- Marathon des mots via proxy ---
+async function fetchMDM(baseUrl: string): Promise<PodcastEpisode[]> {
+  try {
+    const proxyUrl = `${baseUrl}/api/proxy?url=${encodeURIComponent("https://feed.ausha.co/BnYn5Uw5W3WO")}`;
+    const feed = await rssParser.parseURL(proxyUrl);
+
+    return feed.items.map(item => ({
+      librairie: "Marathon des mots",
+      titre: item.title ?? "",
+      date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
+      audioUrl: item.enclosure?.url ?? "",
+      description: item.contentSnippet ?? item.content ?? "",
+    }));
+  } catch (err) {
+    console.error("⚠️ Erreur Marathon des mots:", err);
+    return [{
+      librairie: "Marathon des mots",
+      titre: "Flux indisponible",
+      date: new Date().toISOString(),
+      audioUrl: "",
+      description: "Le flux RSS du Marathon des mots est inaccessible. Consultez directement Ausha."
+    }];
+  }
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -80,12 +105,13 @@ export async function GET(req: Request) {
     // ⚠️ Base URL pour proxy (ex: https://ftsonline.vercel.app)
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-    const [obEpisodes, tnEpisodes] = await Promise.all([
+    const [obEpisodes, tnEpisodes, mdmEpisodes] = await Promise.all([
       fetchOmbresBlanches(baseUrl),
       fetchTerraNova(),
+      fetchMDM(baseUrl),
     ]);
 
-    let allEpisodes = [...obEpisodes, ...tnEpisodes];
+    let allEpisodes = [...obEpisodes, ...tnEpisodes, ...mdmEpisodes];
 
     // 🔎 Filtrage
     if (query) {
