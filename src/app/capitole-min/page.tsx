@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from "react";
 
 const getEventImage = (title: string | undefined) => {
   if (!title) return "/images/capitole/capitole-default.jpg";
