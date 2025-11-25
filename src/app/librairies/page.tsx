@@ -1,29 +1,13 @@
-Parfait, je vais modifier ta `page.tsx` pour intégrer :  
-- ✅ Une **barre de recherche multicritère** (texte, librairie, date).  
-- ✅ Un **compteur dynamique** du nombre de podcasts filtrés.  
-- ✅ Un **bouton “Rafraîchir”** pour recharger les flux.  
-- ✅ La pagination (si tu veux l’activer ensuite).  
-
-Voici une version adaptée :
-
-```tsx
-/**
- * src/app/librairies/page.tsx
- * Page d'affichage des podcasts des librairies (Ombres Blanches et Terra Nova).
- * Elle appelle la route API /api/podcasts pour récupérer les données agrégées.
- */
-
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Mic, Calendar, BookOpen, Pause, RefreshCcw } from 'lucide-react';
 
-// --- Types ---
 interface PodcastEpisode {
   librairie: string;
   titre: string;
   date: string;
-  audioUrl: string; // ⚠️ renommé pour correspondre à l'API corrigée
+  audioUrl: string;
   description: string;
 }
 
@@ -39,7 +23,6 @@ interface ApiData {
   message?: string;
 }
 
-// --- Composants ---
 const PodcastCard: React.FC<{ episode: PodcastEpisode }> = ({ episode }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -115,14 +98,12 @@ const PodcastCard: React.FC<{ episode: PodcastEpisode }> = ({ episode }) => {
   );
 };
 
-// --- Page Principale ---
 const App = () => {
   const [episodes, setEpisodes] = useState<PodcastEpisode[]>([]);
   const [metadata, setMetadata] = useState<{ totalEpisodes: number; page: number; limit: number; totalPages: number }>({ totalEpisodes: 0, page: 1, limit: 10, totalPages: 1 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 🔎 filtres
   const [query, setQuery] = useState("");
   const [librairie, setLibrairie] = useState("");
   const [dateMin, setDateMin] = useState("");
@@ -160,7 +141,6 @@ const App = () => {
           {loading ? <span className="animate-pulse">Chargement...</span> : <span>{metadata.totalEpisodes} épisodes disponibles</span>}
         </div>
 
-        {/* 🔎 Barre de recherche */}
         <div className="mt-6 flex flex-wrap gap-3 items-center">
           <input
             type="text"
