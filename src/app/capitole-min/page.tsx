@@ -92,7 +92,7 @@ export default function CapitoleMinPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-56 object-cover" />
+              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-32 object-cover" />
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && (
@@ -118,7 +118,7 @@ export default function CapitoleMinPage() {
         <div className="flex flex-col gap-4">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4 h-40">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-56 h-40 object-cover rounded" />
+              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
               <div className="flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && (
