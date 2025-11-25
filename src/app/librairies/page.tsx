@@ -4,10 +4,10 @@
  * Elle appelle la route API /api/podcasts pour récupérer les données agrégées.
  */
 
-"use client"; // <--- AJOUT DE LA DIRECTIVE CLIENT
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Play, Mic, Calendar, BookOpen } from 'lucide-react'; // Icônes pour l'interface
+import React, { useState, useEffect, useRef } from 'react'; // AJOUT DE useRef
+import { Play, Mic, Calendar, BookOpen, Pause } from 'lucide-react'; // AJOUT DE Pause
 
 // --- Types ---
 
@@ -32,18 +32,49 @@ interface ApiData {
  */
 const PodcastCard: React.FC<{ episode: PodcastEpisode }> = ({ episode }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null); // Référence pour l'élément audio
+
+  // Initialisation de l'élément audio une seule fois
+  useEffect(() => {
+    // Si la référence audio n'existe pas, nous la créons.
+    if (!audioRef.current) {
+      const audio = new Audio(episode.lienAudio);
+      audio.onplay = () => setIsPlaying(true);
+      audio.onpause = () => setIsPlaying(false);
+      audio.onended = () => setIsPlaying(false);
+      audioRef.current = audio;
+    }
+    
+    // Nettoyage : s'assurer que l'audio s'arrête si le composant est démonté
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, [episode.lienAudio]);
+
+
   const dateFormatted = new Date(episode.date).toLocaleDateString('fr-FR', {
     year: 'numeric', month: 'long', day: 'numeric'
   });
 
-  // Simuler la lecture audio (dans un environnement réel, on utiliserait un élément <audio>)
-  const handlePlay = () => {
-    setIsPlaying(true);
-    // Dans une vraie application, vous feriez :
-    // const audio = new Audio(episode.lienAudio);
-    // audio.play();
-    console.log(`Lecture de : ${episode.titre} (${episode.lienAudio})`);
-    setTimeout(() => setIsPlaying(false), 3000); // Arrêt simulé après 3s
+  // Gestionnaire de lecture/pause réel
+  const handlePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return; // Sécurité
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      // Pour éviter les erreurs de "Promise-rejection" dans certains navigateurs
+      audio.play().catch(error => {
+        console.error("Erreur de lecture audio:", error);
+        // Afficher un message à l'utilisateur si la lecture échoue (ex: autoplay bloqué)
+        alert("La lecture audio a échoué. Certains navigateurs bloquent l'autoplay sans interaction préalable.");
+        setIsPlaying(false);
+      });
+    }
   };
 
   const librairieColor = episode.librairie === 'Ombres Blanches' 
@@ -61,16 +92,20 @@ const PodcastCard: React.FC<{ episode: PodcastEpisode }> = ({ episode }) => {
           <BookOpen className="inline w-4 h-4 mr-1"/> {episode.librairie}
         </span>
         <button 
-          onClick={handlePlay}
-          disabled={isPlaying}
+          onClick={handlePlayPause} // Utilisation du nouveau gestionnaire
           className={`p-3 rounded-full shadow-md transition-all duration-300 
             ${isPlaying 
-              ? 'bg-red-500 text-white animate-pulse' 
+              ? 'bg-red-500 text-white' 
               : 'bg-indigo-600 text-white hover:bg-indigo-700'
             }`}
-          title={isPlaying ? "Lecture en cours..." : `Écouter ${episode.titre}`}
+          title={isPlaying ? "Mettre en pause" : `Écouter ${episode.titre}`}
         >
-          <Play className={`w-5 h-5 ${isPlaying ? 'opacity-80' : ''}`} fill="currentColor" />
+          {/* Changement d'icône en fonction de l'état */}
+          {isPlaying ? (
+            <Pause className="w-5 h-5" fill="currentColor" />
+          ) : (
+            <Play className="w-5 h-5" fill="currentColor" />
+          )}
         </button>
       </div>
 
