@@ -18,79 +18,62 @@ const THEME_IMAGES: Record<string, string> = {
 const DEFAULT_IMAGE = "/images/tourismehg31/placeholder.jpg";
 const PAGE_LIMIT = 100;
 
-interface Event {
-  titre: string;
+interface EventItem {
+  id: string;
+  title: string;
   description: string;
-  date_debut: string;
-  date_fin?: string;
-  commune?: string;
-  adresse?: string;
+  date: string;
+  dateFormatted: string;
+  location: string;
+  fullAddress: string;
+  image: string;
   url?: string;
-  code_insee?: string;
+  source: string;
   thematique?: string;
 }
 
-export default function TourismeHGPage() {
+export default function TourismeHauteGaronnePage() {
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState<any[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
-  async function fetchUpcomingEvents() {
+  const apiUrl =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:9002/api/tourismehautegaronne"
+      : "https://ftsonline.vercel.app/api/tourismehautegaronne";
+
+  async function fetchEvents() {
     setLoading(true);
     setError(null);
     setEvents([]);
     setFilteredEvents([]);
 
     try {
-      const res = await fetch('/api/tourismehautegaronne');
-      if (!res.ok) throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
 
       const data = await res.json();
-      if (!data.events || data.events.length === 0) return;
+      if (!data.events) return;
 
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const maxDate = new Date(today);
+      const maxDate = new Date();
       maxDate.setDate(today.getDate() + 31);
-      maxDate.setHours(23, 59, 59, 999);
 
-      const mapped = data.events
-        .filter((ev: Event) => ev.code_insee?.startsWith("31"))
-        .map((ev: Event, index: number) => {
-          const date = ev.date_debut ? new Date(ev.date_debut) : null;
-          if (!ev.titre || !ev.description || !date || isNaN(date.getTime())) return null;
-          if (date < today || date > maxDate) return null;
-
-          const themeKey = ev.thematique?.trim().replace(/\s+/g, ' ') || "Autres";
+      const mapped: EventItem[] = data.events
+        .filter((ev: any) => ev.date && new Date(ev.date) >= today && new Date(ev.date) <= maxDate)
+        .map((ev: any, idx: number) => {
+          const themeKey = ev.thematique || "Autres";
           const image = THEME_IMAGES[themeKey] || DEFAULT_IMAGE;
 
           return {
-            id: `${ev.titre}-${ev.date_debut}-${ev.commune || ''}-${index}`,
-            title: ev.titre,
-            description: ev.description,
-            date,
-            dateFormatted: date.toLocaleString("fr-FR", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-            commune: ev.commune || "",
-            fullAddress: [ev.adresse, ev.commune].filter(Boolean).join(", "),
+            ...ev,
+            id: ev.id || `event-${idx}`,
             image,
-            url: ev.url || null,
-            thematique: themeKey,
-            source: "Agenda participatif Occitanie",
           };
         })
-        .filter(Boolean)
-        .sort((a, b) => a.date.getTime() - b.date.getTime())
         .slice(0, PAGE_LIMIT);
 
       setEvents(mapped);
@@ -104,7 +87,7 @@ export default function TourismeHGPage() {
   }
 
   useEffect(() => {
-    fetchUpcomingEvents();
+    fetchEvents();
   }, []);
 
   // Filtrage multi-critères
@@ -121,7 +104,7 @@ export default function TourismeHGPage() {
         ev.description.toLowerCase().includes(q) ||
         ev.fullAddress.toLowerCase().includes(q) ||
         ev.dateFormatted.toLowerCase().includes(q) ||
-        ev.thematique.toLowerCase().includes(q)
+        (ev.thematique?.toLowerCase().includes(q) ?? false)
       )
     );
   }, [searchQuery, events]);
@@ -130,10 +113,9 @@ export default function TourismeHGPage() {
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Événements en Haute-Garonne</h1>
       <p className="text-muted-foreground mb-6">
-        Cette page affiche les événements à venir dans les 31 prochains jours pour la Haute-Garonne (31) depuis le dataset OpenData de la Région Occitanie.
+        Événements à venir dans les 31 prochains jours pour le département 31, depuis le dataset OpenData de la Région Occitanie.
       </p>
 
-      {/* Barre de recherche */}
       <input
         type="text"
         placeholder="Rechercher par titre, description, lieu, date ou thématique..."
@@ -142,12 +124,10 @@ export default function TourismeHGPage() {
         className="w-full p-3 mb-4 border rounded focus:outline-none focus:ring focus:border-blue-300"
       />
 
-      {/* Compteur */}
       <p className="mb-4 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
 
-      {/* Boutons d'action et mode */}
       <div className="flex flex-wrap gap-3 mb-6">
-        <Button onClick={fetchUpcomingEvents} disabled={loading}>
+        <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Charger les événements"}
         </Button>
         <Button
@@ -171,9 +151,7 @@ export default function TourismeHGPage() {
       )}
 
       {!loading && filteredEvents.length === 0 && (
-        <p className="mt-6 text-muted-foreground">
-          Aucun événement correspondant aux critères de recherche.
-        </p>
+        <p className="mt-6 text-muted-foreground">Aucun événement correspondant aux critères de recherche.</p>
       )}
 
       {!loading && filteredEvents.length > 0 && (
