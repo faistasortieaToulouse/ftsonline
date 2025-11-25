@@ -17,42 +17,42 @@ export async function GET() {
     const rssUrl =
       "https://www.ut-capitole.fr/adminsite/webservices/export_rss.jsp?NOMBRE=50&CODE_RUBRIQUE=1315555643369&LANGUE=0";
 
-    const xml = await fetch(rssUrl, {
+    const res = await fetch(rssUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0",
-        "Accept": "application/rss+xml, application/xml"
-      }
-    }).then(res => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.text();
+        Accept: "application/rss+xml, application/xml",
+      },
     });
 
-    const parser = new Parser({ customFields: { item: ["content", "dc:date"] } });
+    if (!res.ok) {
+      // Renvoie un JSON vide si le flux est inaccessible
+      return NextResponse.json({ events: [] }, { status: 200 });
+    }
+
+    const xml = await res.text();
+    const parser = new Parser();
     const feed = await parser.parseString(xml);
 
     const events = feed.items
-      .filter(item =>
-        item.title &&
-        keywords.some(k => item.title.toLowerCase().includes(k))
-      )
-      .map(item => ({
-        id: item.guid || item.link || item.title,
-        title: item.title?.trim(),
-        description: item.contentSnippet || "Événement ouvert à tous",
-        url: item.link,
-        image: getEventImage(item.title),
-        start: item["dc:date"] || item.pubDate || "Date non précisée",
-        end: null,
-        location: null,
-        source: "Université Toulouse Capitole"
-      }));
+      .filter(item => item.title && keywords.some(k => item.title.toLowerCase().includes(k)))
+      .map(item => {
+        const date = item.pubDate ? new Date(item.pubDate) : item["dc:date"] ? new Date(item["dc:date"]) : null;
+        return {
+          id: item.guid || item.link || item.title,
+          title: item.title?.trim(),
+          description: item.contentSnippet || "Événement ouvert à tous",
+          url: item.link,
+          image: getEventImage(item.title),
+          start: date ? date.toISOString() : null,
+          end: null,
+          location: null,
+          source: "Université Toulouse Capitole",
+        };
+      });
 
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
     console.error("Flux UT Capitole inaccessible :", err);
-    return NextResponse.json(
-      { error: "Impossible de récupérer les événements." },
-      { status: 500 }
-    );
+    return NextResponse.json({ events: [] }, { status: 200 });
   }
 }
