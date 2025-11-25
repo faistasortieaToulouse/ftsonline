@@ -48,6 +48,8 @@ async function fetchTerraNova(): Promise<PodcastEpisode[]> {
     const parsed = xmlParser.parse(xml);
 
     const items = parsed?.rss?.channel?.item ?? [];
+    console.log("Terra Nova items:", items); // 🔎 Debug log
+
     return (Array.isArray(items) ? items : [items]).map((item: any) => ({
       librairie: "Terra Nova",
       titre: item.title ?? "",
@@ -72,6 +74,8 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const query = searchParams.get("q")?.toLowerCase() || "";
+    const librairieFilter = searchParams.get("librairie") || "";
 
     // ⚠️ Base URL pour proxy (ex: https://ftsonline.vercel.app)
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -82,6 +86,18 @@ export async function GET(req: Request) {
     ]);
 
     let allEpisodes = [...obEpisodes, ...tnEpisodes];
+
+    // 🔎 Filtrage
+    if (query) {
+      allEpisodes = allEpisodes.filter(
+        ep =>
+          ep.titre.toLowerCase().includes(query) ||
+          ep.description.toLowerCase().includes(query)
+      );
+    }
+    if (librairieFilter) {
+      allEpisodes = allEpisodes.filter(ep => ep.librairie === librairieFilter);
+    }
 
     // Tri par date
     allEpisodes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
