@@ -33,22 +33,25 @@ export async function GET() {
     const parser = new Parser();
     const feed = await parser.parseString(xml);
 
-    const events = feed.items
-      .filter(item => item.title && keywords.some(k => item.title.toLowerCase().includes(k)))
-      .map(item => {
-        const date = item.pubDate ? new Date(item.pubDate) : item["dc:date"] ? new Date(item["dc:date"]) : null;
-        return {
-          id: item.guid || item.link || item.title,
-          title: item.title?.trim(),
-          description: item.contentSnippet || "Événement ouvert à tous",
-          url: item.link,
-          image: getEventImage(item.title),
-          start: date ? date.toISOString() : null,
-          end: null,
-          location: null,
-          source: "Université Toulouse Capitole",
-        };
-      });
+const events = feed.items
+  .filter(item => item.title && keywords.some(k => item.title.toLowerCase().includes(k)))
+  .map(item => {
+    // Priorité à dc:date, sinon pubDate
+    const dateStr = item["dc:date"] || item.pubDate;
+    const date = dateStr ? new Date(dateStr) : null;
+
+    return {
+      id: item.guid || item.link || item.title,
+      title: item.title?.trim(),
+      description: item.contentSnippet || "Événement ouvert à tous",
+      url: item.link,
+      image: getEventImage(item.title),
+      start: date ? date.toISOString() : null,
+      end: null,
+      location: null,
+      source: "Université Toulouse Capitole",
+    };
+  });
 
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
