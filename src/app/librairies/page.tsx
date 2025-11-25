@@ -151,8 +151,11 @@ const App = () => {
     fetchPodcasts();
   }, [metadata.page, query, librairie, dateMin]);
 
-  // 🔎 Librairies uniques extraites des épisodes
-  const librairiesDisponibles = Array.from(new Set(episodes.map((ep) => ep.librairie)));
+  // 🔎 Librairies connues + dynamiques
+  const librairiesConnues = ["Ombres Blanches", "Terra Nova", "Marathon des mots"];
+  const librairiesDisponibles = Array.from(
+    new Set([...librairiesConnues, ...episodes.map((ep) => ep.librairie)])
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
@@ -222,7 +225,9 @@ const App = () => {
         {!loading && episodes.length === 0 && !error && (
           <div className="text-center py-10 bg-white rounded-xl shadow-md">
             <Mic className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700">Aucun podcast trouvé</h3>
+            <h3 className="text-xl font-semibold text-gray-700">
+              Aucun podcast trouvé
+            </h3>
           </div>
         )}
       </main>
