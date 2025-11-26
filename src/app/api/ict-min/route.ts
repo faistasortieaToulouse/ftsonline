@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 
-const getEventImage = () => "/images/ict-default.jpg";
+const getEventImage = () => "/images/ict/ictphotoEglise.jpg";
 
 export async function GET() {
 try {

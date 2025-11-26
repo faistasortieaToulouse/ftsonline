@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// -------------------------------------------------------------------------
+// 🔵 Liste des routes API à agréger
+// -------------------------------------------------------------------------
 const API_ROUTES = [
   "agenda-trad-haute-garonne",
   "cultureenmouvements",
@@ -11,13 +14,17 @@ const API_ROUTES = [
   "meetup-full",
   "ut3-min",
   "capitole-min",
+  "theatredupave",
 ];
 
-// 📌 Placeholder par défaut
+// -------------------------------------------------------------------------
+// 📌 Placeholder et images par défaut
+// -------------------------------------------------------------------------
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
+const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
 
 // -------------------------------------------------------------------------
-// 🔵 TABLE DES IMAGES DE THÈMES TOURISME 31
+// 🔵 Images par thématique Tourisme 31
 // -------------------------------------------------------------------------
 const THEME_IMAGES: Record<string, string> = {
   "Culture": "/images/tourismehg31/themeculture.jpg",
@@ -31,15 +38,11 @@ const THEME_IMAGES: Record<string, string> = {
   "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
 };
 
-// Image générique locale
-const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
-
-// Normalisation simple
+// -------------------------------------------------------------------------
+// 🔵 Normalisation de chaînes pour les thématiques
+// -------------------------------------------------------------------------
 function normalize(str?: string) {
-  return (str || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+  return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 // -------------------------------------------------------------------------
@@ -50,21 +53,14 @@ function getThemeImage(thematique?: string): string {
 
   const t = normalize(thematique.trim());
 
-  // Match simplifié Education
-  if (t.startsWith("education")) {
-    return THEME_IMAGES["Education Emploi"];
-  }
-
-  // Correspondance exacte
-  if (THEME_IMAGES[thematique]) {
-    return THEME_IMAGES[thematique];
-  }
+  if (t.startsWith("education")) return THEME_IMAGES["Education Emploi"];
+  if (THEME_IMAGES[thematique]) return THEME_IMAGES[thematique];
 
   return DEFAULT_THEME_IMAGE;
 }
 
 // -------------------------------------------------------------------------
-// 🔵 Normalisation d'un événement
+// 🔵 Normalisation d’un événement
 // -------------------------------------------------------------------------
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
@@ -109,26 +105,25 @@ function normalizeEvent(ev: any, sourceName: string) {
   // ---------------------------------------------------------------------
   // 🟣 PRIORITÉ DES IMAGES (selon source)
   // ---------------------------------------------------------------------
-
   let image;
 
   if (sourceName === "tourismehautegaronne") {
-    // 🔥 Utilisation de ton image thématique si aucune image fournie par l’API
-    image =
-      ev.image ||
-      ev.coverImage ||
-      getThemeImage(ev.thematique) || // 🎯 Ajout ici
-      DEFAULT_THEME_IMAGE;
+    image = ev.image || ev.coverImage || getThemeImage(ev.thematique) || DEFAULT_THEME_IMAGE;
   } else if (sourceName === "demosphere") {
-    image =
-      ev.image ||
-      ev.coverImage ||
-      "/logo/demosphereoriginal.png";
+    image = ev.image || ev.coverImage || "/logo/demosphereoriginal.png";
+  } else if (sourceName === "ut3-min" || sourceName === "capitole-min") {
+    const titleLower = (ev.title || "").toLowerCase();
+    if (titleLower.includes("ciné") || titleLower.includes("cine")) {
+      image = "/images/capitole/capicine.jpg";
+    } else if (titleLower.includes("conf")) {
+      image = "/images/capitole/capiconf.jpg";
+    } else if (titleLower.includes("expo")) {
+      image = "/images/capitole/capiexpo.jpg";
+    } else {
+      image = "/images/capitole/capidefaut.jpg";
+    }
   } else {
-    image =
-      ev.image ||
-      ev.coverImage ||
-      PLACEHOLDER_IMAGE;
+    image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
   }
 
   const url = ev.url || ev.link || "";
@@ -174,6 +169,7 @@ export async function GET(request: NextRequest) {
       return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
+    // Filtre : today → today + 31 jours
     const now = new Date();
     const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const limitDate = new Date(nowDate);
