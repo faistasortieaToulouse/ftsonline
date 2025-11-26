@@ -10,6 +10,7 @@ const API_ROUTES = [
   "tourismehautegaronne",
   "meetup-full",
   "ut3-min",
+  "capitole-min",
 ];
 
 // 📌 Placeholder par défaut
