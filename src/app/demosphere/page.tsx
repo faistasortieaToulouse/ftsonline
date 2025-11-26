@@ -118,15 +118,17 @@ export default function DemospherePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[400px]">
-              <div className="relative w-full h-24 bg-gray-100 flex items-center justify-center">
+              
+              {/* 🔵 IMAGE CORRIGÉE */}
+              <div className="relative w-full h-24 bg-gray-100 flex items-center justify-center overflow-hidden">
                 <Image
                   src="/logo/demosphereoriginal.png"
                   alt="Logo Demosphere"
-                  width={350}
-                  height={90}
-                  className="object-contain"
+                  fill
+                  className="object-contain p-2"
                 />
               </div>
+
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 <p className="text-sm text-blue-600 font-medium mb-2">
@@ -161,15 +163,17 @@ export default function DemospherePage() {
         <div className="space-y-4">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex gap-4 p-4 border rounded-lg shadow bg-white">
-              <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs">
+              
+              {/* 🔵 IMAGE CORRIGÉE */}
+              <div className="relative w-24 h-24 bg-gray-200 rounded overflow-hidden">
                 <Image
                   src="/logo/demosphereoriginal.png"
                   alt="Logo Demosphere"
-                  width={96}
-                  height={96}
-                  className="object-contain"
+                  fill
+                  className="object-contain p-1"
                 />
               </div>
+
               <div className="flex-1 flex flex-col">
                 <h2 className="text-lg font-semibold line-clamp-2">{ev.title}</h2>
                 <p className="text-sm text-blue-600">
