@@ -5,7 +5,7 @@ const getEventImage = () => "/images/ict-default.jpg";
 
 export async function GET() {
 try {
-const rssUrl = "[https://hieronyma.ict-toulouse.fr/items/browse?output=rss2](https://hieronyma.ict-toulouse.fr/items/browse?output=rss2)";
+const rssUrl = "https://hieronyma.ict-toulouse.fr/items/browse?output=rss2";
 const xml = await fetch(rssUrl).then(res => {
 if (!res.ok) throw new Error(`HTTP ${res.status}`);
 return res.text();
