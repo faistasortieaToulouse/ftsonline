@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const THEME_IMAGES: Record<string, string> = {
   "Culture": "/images/tourismehg31/themeculture.jpg",
-  "Education / Formation / Métiers / Emploi": "/images/tourismehg31/themeeducation.jpg",
+  "Education": "/images/tourismehg31/themeeducation.jpg", // ✔️ Nouvelle version simplifiée
   "Autres": "/images/tourismehg31/themeautres.jpg",
   "Sport": "/images/tourismehg31/themesport.jpg",
   "Environnement": "/images/tourismehg31/themeenvironnement.jpg",
@@ -30,6 +30,32 @@ interface EventItem {
   url?: string;
   source: string;
   thematique?: string;
+}
+
+// 🔥 Fonction améliorée pour détecter les thématiques (accents, variations, etc.)
+function normalize(str: string) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function getThemeImage(thematique?: string): string {
+  if (!thematique) return DEFAULT_IMAGE;
+
+  const t = normalize(thematique.trim());
+
+  // Match large "education"
+  if (t.startsWith("education")) {
+    return THEME_IMAGES["Education"];
+  }
+
+  // Matching exact existant
+  if (THEME_IMAGES[thematique]) {
+    return THEME_IMAGES[thematique];
+  }
+
+  return DEFAULT_IMAGE;
 }
 
 export default function TourismeHauteGaronnePage() {
@@ -64,16 +90,11 @@ export default function TourismeHauteGaronnePage() {
 
       const mapped: EventItem[] = data.events
         .filter((ev: any) => ev.date && new Date(ev.date) >= today && new Date(ev.date) <= maxDate)
-        .map((ev: any, idx: number) => {
-          const themeKey = ev.thematique || "Autres";
-          const image = THEME_IMAGES[themeKey] || DEFAULT_IMAGE;
-
-          return {
-            ...ev,
-            id: ev.id || `event-${idx}`,
-            image,
-          };
-        })
+        .map((ev: any, idx: number) => ({
+          ...ev,
+          id: ev.id || `event-${idx}`,
+          image: getThemeImage(ev.thematique), // 🔥 Utilisation du match intelligent
+        }))
         .slice(0, PAGE_LIMIT);
 
       setEvents(mapped);
