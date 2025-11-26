@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const API_ROUTES = [
-  "agenda-trad",
+  "agenda-trad-haute-garonne",
   "cultureenmouvements",
   "demosphere",
   "hautegaronne",
