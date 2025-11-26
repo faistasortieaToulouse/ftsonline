@@ -9,6 +9,7 @@ const API_ROUTES = [
   "toulousemetropole",
   "tourismehautegaronne",
   "meetup-full",
+  "ut3-min",
 ];
 
 // 📌 Placeholder par défaut
