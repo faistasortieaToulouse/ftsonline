@@ -1,37 +1,41 @@
+"use client";
+
 import { useEffect, useState } from "react";
 
 interface Event {
 id: string;
 title: string;
 description: string;
-date: string;
-image: string | null;
 url: string;
+image: string;
+start: string | null;
+end: string | null;
+location: string | null;
 source: string;
 }
 
-export default function IctPage() {
+export default function ICTEventsPage() {
 const [events, setEvents] = useState<Event[]>([]);
 const [loading, setLoading] = useState(true);
 
 useEffect(() => {
 fetch("/api/ict-min")
-.then((res) => res.json())
-.then((data) => setEvents(data))
-.finally(() => setLoading(false));
+.then(res => res.json())
+.then(data => {
+setEvents(data);
+setLoading(false);
+})
+.catch(err => {
+console.error(err);
+setLoading(false);
+});
 }, []);
 
-if (loading) return <p>Chargement des événements…</p>;
+if (loading) return <p>Chargement...</p>;
+if (!events.length) return <p>Aucun événement trouvé.</p>;
 
-return (
-<div style={{ padding: "2rem" }}> <h1>Événements ICT - Hieronyma</h1>
-{events.length === 0 && <p>Aucun événement trouvé.</p>}
-<ul style={{ listStyle: "none", padding: 0 }}>
-{events.map((event) => (
-<li key={event.id} style={{ marginBottom: "2rem", borderBottom: "1px solid #ccc", paddingBottom: "1rem" }}> <h2>{event.title}</h2>
-{event.image && <img src={event.image} alt={event.title} style={{ maxWidth: "150px", marginRight: "1rem", float: "left" }} />}
-<p dangerouslySetInnerHTML={{ __html: event.description }}></p> <p><strong>Date :</strong> {new Date(event.date).toLocaleDateString()}</p> <p><a href={event.url} target="_blank" rel="noopener noreferrer">Voir l'événement</a></p>
-<div style={{ clear: "both" }}></div> </li>
+return ( <div> <h1>Événements ICT Toulouse</h1> <ul>
+{events.map(event => ( <li key={event.id}> <a href={event.url} target="_blank" rel="noopener noreferrer"> <img src={event.image} alt={event.title} width={100} /> <h3>{event.title}</h3> <p>{event.description}</p> </a> </li>
 ))} </ul> </div>
 );
 }
