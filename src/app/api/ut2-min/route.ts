@@ -1,53 +1,77 @@
 import { NextRequest, NextResponse } from "next/server";
-import Parser from "rss-parser";
-
-type RawItem = Parser.Item;
+import fetch from "node-fetch";
+import cheerio from "cheerio";
 
 interface Event {
-  id: string;
-  title: string;
-  description: string;
-  start: string;        // date ISO (publication date)
-  end: string | null;   // pas d’heure de fin pour un flux RSS
-  location: string | null;
-  image: string | null;
-  url: string;
-  source: string;
-  // tu peux ajouter d’autres champs selon besoin  
+id: string;
+title: string;
+description: string;
+start: string;        // date ISO (publication date)
+end: string | null;
+location: string | null;
+image: string | null;
+url: string;
+source: string;
 }
 
-const RSS_URL = "https://www.canal-u.tv/chaines/ut2j/rss";
+const BASE_URL = "[https://www.canal-u.tv/recherche?f[0]=chaine:375&sort_by=field_date_publication_1](https://www.canal-u.tv/recherche?f[0]=chaine:375&sort_by=field_date_publication_1)";
+
+async function fetchAllPages(): Promise<Event[]> {
+let page = 0;
+const events: Event[] = [];
+let hasNextPage = true;
+
+while (hasNextPage) {
+page++;
+const url = `${BASE_URL}&page=${page}`;
+const res = await fetch(url);
+if (!res.ok) break;
+
+const html = await res.text();
+const $ = cheerio.load(html);
+
+const videos = $(".view-content .views-row");
+if (videos.length === 0) {
+  hasNextPage = false;
+  break;
+}
+
+videos.each((_, el) => {
+  const title = $(el).find(".views-field-title a").text().trim() || "Untitled";
+  const urlPath = $(el).find(".views-field-title a").attr("href") || "";
+  const imageSrc = $(el).find(".field-name-field-image img").attr("src") || "/default-cover.jpg";
+  const description = $(el).find(".views-field-field-description").text().trim() || "";
+
+  // extraire la date de publication si disponible
+  const pubDateText = $(el).find(".views-field-created span").attr("content") || "";
+  const start = pubDateText ? new Date(pubDateText).toISOString() : "";
+
+  events.push({
+    id: `${urlPath}-${page}`,
+    title,
+    description,
+    start,
+    end: null,
+    location: null,
+    image: imageSrc.startsWith("http") ? imageSrc : `https://www.canal-u.tv${imageSrc}`,
+    url: urlPath ? `https://www.canal-u.tv${urlPath}` : "",
+    source: "UT2J‑Canal‑U",
+  });
+});
+}
+
+return events;
+}
 
 export async function GET(req: NextRequest) {
-  const parser = new Parser();
-
-  try {
-    const feed = await parser.parseURL(RSS_URL);
-
-    const events: Event[] = (feed.items || [])
-      .map((item: RawItem) => {
-        const pubDate = item.pubDate ? new Date(item.pubDate) : null;
-        return {
-          id: item.guid || item.link || item.title || Math.random().toString(),
-          title: item.title || "Untitled",
-          description: item.contentSnippet || item.content || item.summary || "",
-          start: pubDate ? pubDate.toISOString() : "",
-          end: null,
-          location: null,      // le flux RSS ne fournit pas de lieu — tu peux adapter si tu as ce champ
-          image: null,         // si le flux ne fournit pas d’image, tu peux mettre une image par défaut
-          url: item.link || "",
-          source: "UT2J‑Canal‑U",
-        };
-      })
-      // Optionnel : filtrer selon date, validité, etc.
-      .filter(ev => ev.start); // ici on ne garde que ceux ayant une date valide
-
-    return NextResponse.json(events);
-  } catch (err: any) {
-    console.error("Erreur lors de la récupération du RSS UT2J :", err);
-    return NextResponse.json(
-      { error: "Impossible de récupérer les événements UT2J" },
-      { status: 500 }
-    );
-  }
+try {
+const events = await fetchAllPages();
+return NextResponse.json(events);
+} catch (err: any) {
+console.error("Erreur lors de la récupération des événements UT2J :", err);
+return NextResponse.json(
+{ error: "Impossible de récupérer les événements UT2J" },
+{ status: 500 }
+);
+}
 }
