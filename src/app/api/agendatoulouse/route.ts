@@ -14,9 +14,56 @@ const API_ROUTES = [
 // 📌 Placeholder par défaut
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
-/**
- * Normalisation d'un événement
- */
+// -------------------------------------------------------------------------
+// 🔵 TABLE DES IMAGES DE THÈMES TOURISME 31
+// -------------------------------------------------------------------------
+const THEME_IMAGES: Record<string, string> = {
+  "Culture": "/images/tourismehg31/themeculture.jpg",
+  "Education Emploi": "/images/tourismehg31/themeeducation.jpg",
+  "Autres": "/images/tourismehg31/themeautres.jpg",
+  "Sport": "/images/tourismehg31/themesport.jpg",
+  "Environnement": "/images/tourismehg31/themeenvironnement.jpg",
+  "Économie / vie des entreprises": "/images/tourismehg31/themeentreprises.jpg",
+  "Vides Grenier / Brocantes / Foires et salons": "/images/tourismehg31/themebrocantes.jpg",
+  "Culture scientifique": "/images/tourismehg31/themesciences.jpg",
+  "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
+};
+
+// Image générique locale
+const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
+
+// Normalisation simple
+function normalize(str?: string) {
+  return (str || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+// -------------------------------------------------------------------------
+// 🔵 Retourne l’image correspondant à la thématique Tourisme HG31
+// -------------------------------------------------------------------------
+function getThemeImage(thematique?: string): string {
+  if (!thematique) return DEFAULT_THEME_IMAGE;
+
+  const t = normalize(thematique.trim());
+
+  // Match simplifié Education
+  if (t.startsWith("education")) {
+    return THEME_IMAGES["Education Emploi"];
+  }
+
+  // Correspondance exacte
+  if (THEME_IMAGES[thematique]) {
+    return THEME_IMAGES[thematique];
+  }
+
+  return DEFAULT_THEME_IMAGE;
+}
+
+// -------------------------------------------------------------------------
+// 🔵 Normalisation d'un événement
+// -------------------------------------------------------------------------
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
 
@@ -57,14 +104,32 @@ function normalizeEvent(ev: any, sourceName: string) {
     ev.ville ||
     "";
 
-  // 🔵 Gestion spécifique Demosphere
-  const image =
-    ev.image ||
-    ev.coverImage ||
-    (sourceName === "demosphere" ? "/logo/demosphereoriginal.png" : PLACEHOLDER_IMAGE);
+  // ---------------------------------------------------------------------
+  // 🟣 PRIORITÉ DES IMAGES (selon source)
+  // ---------------------------------------------------------------------
+
+  let image;
+
+  if (sourceName === "tourismehautegaronne") {
+    // 🔥 Utilisation de ton image thématique si aucune image fournie par l’API
+    image =
+      ev.image ||
+      ev.coverImage ||
+      getThemeImage(ev.thematique) || // 🎯 Ajout ici
+      DEFAULT_THEME_IMAGE;
+  } else if (sourceName === "demosphere") {
+    image =
+      ev.image ||
+      ev.coverImage ||
+      "/logo/demosphereoriginal.png";
+  } else {
+    image =
+      ev.image ||
+      ev.coverImage ||
+      PLACEHOLDER_IMAGE;
+  }
 
   const url = ev.url || ev.link || "";
-
   const source = ev.source || sourceName;
 
   return {
@@ -81,9 +146,9 @@ function normalizeEvent(ev: any, sourceName: string) {
   };
 }
 
-/**
- * GET : agrégation
- */
+// -------------------------------------------------------------------------
+// 🔵 GET : agrégation des événements
+// -------------------------------------------------------------------------
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
@@ -98,7 +163,12 @@ export async function GET(request: NextRequest) {
     );
 
     const allEvents = results.flatMap(({ route, data }) => {
-      const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
+      const list = Array.isArray(data.events)
+        ? data.events
+        : Array.isArray(data)
+        ? data
+        : [];
+
       return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
