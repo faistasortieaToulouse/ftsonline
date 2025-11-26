@@ -152,17 +152,19 @@ export default function AgendaToulousePage() {
                 </div>
 
                 {/* Description avec barre de défilement si trop longue */}
+{/* Description avec hauteur fixe et barre de défilement pour certaines sources */}
 <div
   className={`text-sm text-muted-foreground mb-2 flex-1 ${
-    event.source === "tourismehautegaronne"
-      ? "overflow-y-auto max-h-20"
-      : event.source === "meetup-full"
+    event.source === "tourismehautegaronne" ||
+    event.source === "meetup-full" ||
+    event.source === "toulousemetropole"
       ? "overflow-y-auto max-h-20"
       : ""
   }`}
 >
   {event.description}
 </div>
+
           <p className="text-sm font-medium mb-1">
                   {event.dateFormatted || event.date || event.start || ""}
                 </p>
