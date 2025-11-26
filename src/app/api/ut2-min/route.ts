@@ -1,77 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
 import Parser from "rss-parser";
-import fetch from "node-fetch";
-import * as cheerio from "cheerio";
 
 type RawItem = Parser.Item;
 
 interface Event {
-id: string;
-title: string;
-description: string;
-start: string;
-end: string | null;
-location: string | null;
-image: string | null;
-url: string;
-source: string;
+  id: string;
+  title: string;
+  description: string;
+  start: string;        // date ISO (publication date)
+  end: string | null;   // pas d’heure de fin pour un flux RSS
+  location: string | null;
+  image: string | null;
+  url: string;
+  source: string;
+  // tu peux ajouter d’autres champs selon besoin  
 }
 
-const RSS_URL = "[https://www.canal-u.tv/chaines/ut2j/rss](https://www.canal-u.tv/chaines/ut2j/rss)";
-const DEFAULT_IMAGE = "[https://www.canal-u.tv/sites/default/files/styles/carre_1400/public/medias/images/chaine/2024/02/logo-Universite-Jean-Jaures.png](https://www.canal-u.tv/sites/default/files/styles/carre_1400/public/medias/images/chaine/2024/02/logo-Universite-Jean-Jaures.png)";
-
-async function fetchImageFromPage(url: string): Promise<string | null> {
-try {
-const res = await fetch(url);
-if (!res.ok) return null;
-const html = await res.text();
-const $ = cheerio.load(html);
-
-const img = $(".field-name-field-image img").first().attr("src");
-return img ? (img.startsWith("http") ? img : `https://www.canal-u.tv${img}`) : null;
-
-} catch (err) {
-console.error("Erreur lors de la récupération de l'image :", err);
-return null;
-}
-}
+const RSS_URL = "https://www.canal-u.tv/chaines/ut2j/rss";
 
 export async function GET(req: NextRequest) {
-const parser = new Parser();
+  const parser = new Parser();
 
-try {
-const feed = await parser.parseURL(RSS_URL);
-const events: Event[] = await Promise.all(
-  (feed.items || []).map(async (item: RawItem) => {
-    const pubDate = item.pubDate ? new Date(item.pubDate) : null;
-    const url = item.link || "";
+  try {
+    const feed = await parser.parseURL(RSS_URL);
 
-    // Récupérer l'image depuis la page, sinon utiliser l'image par défaut
-    let image = await fetchImageFromPage(url);
-    if (!image) image = DEFAULT_IMAGE;
+    const events: Event[] = (feed.items || [])
+      .map((item: RawItem) => {
+        const pubDate = item.pubDate ? new Date(item.pubDate) : null;
+        return {
+          id: item.guid || item.link || item.title || Math.random().toString(),
+          title: item.title || "Untitled",
+          description: item.contentSnippet || item.content || item.summary || "",
+          start: pubDate ? pubDate.toISOString() : "",
+          end: null,
+          location: null,      // le flux RSS ne fournit pas de lieu — tu peux adapter si tu as ce champ
+          image: null,         // si le flux ne fournit pas d’image, tu peux mettre une image par défaut
+          url: item.link || "",
+          source: "UT2J‑Canal‑U",
+        };
+      })
+      // Optionnel : filtrer selon date, validité, etc.
+      .filter(ev => ev.start); // ici on ne garde que ceux ayant une date valide
 
-    return {
-      id: item.guid || url || item.title || Math.random().toString(),
-      title: item.title || "Untitled",
-      description: item.contentSnippet || item.content || item.summary || "",
-      start: pubDate ? pubDate.toISOString() : "",
-      end: null,
-      location: null,
-      image,
-      url,
-      source: "UT2J‑Canal‑U",
-    };
-  })
-);
-
-// On ne garde que les événements avec date valide
-return NextResponse.json(events.filter(ev => ev.start));
-
-} catch (err: any) {
-console.error("Erreur lors de la récupération du RSS UT2J :", err);
-return NextResponse.json(
-{ error: "Impossible de récupérer les événements UT2J" },
-{ status: 500 }
-);
-}
+    return NextResponse.json(events);
+  } catch (err: any) {
+    console.error("Erreur lors de la récupération du RSS UT2J :", err);
+    return NextResponse.json(
+      { error: "Impossible de récupérer les événements UT2J" },
+      { status: 500 }
+    );
+  }
 }
