@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useMemo } from "react";
-import { Calendar, MapPin, Clock, ArrowRight, Video } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, Clock, Video } from "lucide-react";
 
 interface Event {
 id: string;
@@ -22,149 +23,145 @@ if (!res.ok) throw new Error("Impossible de récupérer les événements UT2-Min
 return res.json();
 };
 
-const CategoryPill: React.FC<{ category?: Event["category"] }> = ({ category }) => {
-if (!category) return null;
-let colorClass = "";
-switch (category) {
-case "Culture": colorClass = "bg-blue-100 text-blue-800"; break;
-case "Formation": colorClass = "bg-green-100 text-green-800"; break;
-case "Recherche": colorClass = "bg-purple-100 text-purple-800"; break;
-case "Vie Étudiante": colorClass = "bg-yellow-100 text-yellow-800"; break;
-}
-return (
-<span className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${colorClass}`}>
-{category} </span>
-);
-};
-
-const EventCard: React.FC<{ event: Event }> = ({ event }) => (
-
-  <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 border border-gray-100">
-    <div className="flex justify-between items-start mb-3">
-      <h3 className="text-xl font-bold text-gray-900">{event.title}</h3>
-      <CategoryPill category={event.category} />
-    </div>
-
-{event.image && (
-  <img src={event.image} alt={event.title} className="rounded-lg mb-4 w-full object-cover h-48" />
-)}
-
-<p className="text-gray-600 mb-4 text-sm">{event.description}</p>
-
-<div className="space-y-2 text-sm text-gray-700">
-  <div className="flex items-center space-x-2">
-    <Calendar className="w-4 h-4 text-indigo-500" />
-    <span>{new Date(event.start).toLocaleDateString("fr-FR", { year:"numeric", month:"short", day:"numeric" })}</span>
-  </div>
-  {event.end && (
-    <div className="flex items-center space-x-2">
-      <Clock className="w-4 h-4 text-indigo-500" />
-      <span>Fin : {new Date(event.end).toLocaleTimeString("fr-FR")}</span>
-    </div>
-  )}
-  {event.location && (
-    <div className="flex items-center space-x-2">
-      <MapPin className="w-4 h-4 text-indigo-500" />
-      <span>{event.location}</span>
-    </div>
-  )}
-  <div className="flex items-center space-x-2">
-    <Video className="w-4 h-4 text-indigo-500" />
-    <span>Source : {event.source}</span>
-  </div>
-</div>
-
-<a href={event.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center font-medium text-indigo-600 hover:text-indigo-800 transition duration-150 group">
-  Voir l'événement
-  <ArrowRight className="w-4 h-4 ml-1 transition-transform duration-150 group-hover:translate-x-1" />
-</a>
-
-  </div>
-);
-
-const EventList: React.FC<{ events: Event[] }> = ({ events }) => (
-
-  <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    {events.map(ev => <EventCard key={ev.id} event={ev} />)}
-  </div>
-);
-
-export default function Page() {
-const [events, setEvents] = useState<Event[]>([]);
-const [loading, setLoading] = useState(true);
+export default function UT2MinPage() {
+const [loading, setLoading] = useState(false);
 const [error, setError] = useState<string | null>(null);
-const [filter, setFilter] = useState<"all" | Event["category"]>("all");
+const [events, setEvents] = useState<Event[]>([]);
+const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+const [viewMode, setViewMode] = useState<"card" | "list">("card");
+const [searchQuery, setSearchQuery] = useState("");
 
-useEffect(() => {
-const loadEvents = async () => {
+async function loadEvents() {
 setLoading(true);
+setError(null);
+setEvents([]);
+setFilteredEvents([]);
 try {
 const data = await fetchEvents();
-setEvents(data);
-setError(null);
+const cleaned = data.map((ev, index) => ({
+...ev,
+id: `${ev.id}-${index}`,
+dateFormatted: new Date(ev.start).toLocaleString("fr-FR", {
+weekday: "long",
+year: "numeric",
+month: "long",
+day: "numeric",
+}),
+fullAddress: ev.location || "",
+}));
+setEvents(cleaned);
+setFilteredEvents(cleaned);
 } catch (err: any) {
 setError(err.message);
 } finally {
 setLoading(false);
 }
-};
+}
+
+useEffect(() => {
 loadEvents();
 }, []);
 
-const categories: Event["category"][] = useMemo(() => ["Culture", "Formation", "Recherche", "Vie Étudiante"], []);
+useEffect(() => {
+if (!searchQuery) {
+setFilteredEvents(events);
+return;
+}
+const q = searchQuery.toLowerCase();
+setFilteredEvents(
+events.filter(ev =>
+(ev.title?.toLowerCase().includes(q) ?? false) ||
+(ev.description?.toLowerCase().includes(q) ?? false) ||
+(ev.fullAddress?.toLowerCase().includes(q) ?? false) ||
+(ev.dateFormatted?.toLowerCase().includes(q) ?? false) ||
+(ev.category?.toLowerCase().includes(q) ?? false)
+)
+);
+}, [searchQuery, events]);
 
-const filteredEvents = useMemo(() => {
-if (filter === "all") return events;
-return events.filter(ev => ev.category === filter);
-}, [events, filter]);
+return ( <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8"> <h1 className="text-3xl font-bold mb-4">Événements UT2-Min</h1> <p className="text-muted-foreground mb-6">
+Liste des événements et conférences issus de la chaîne UT2-Min (Canal-U). </p>
 
-return ( <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans"> <div className="max-w-7xl mx-auto">
 
-    <header className="py-6 mb-8 text-center bg-white rounded-xl shadow-md">
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-700 tracking-tight">Événements UT2-Min</h1>
-      <p className="mt-2 text-lg text-gray-500">Liste des événements et conférences issus de la chaîne UT2-Min (Canal-U).</p>
-    </header>
+  <input
+    type="text"
+    placeholder="Rechercher par titre, description, lieu, date, catégorie..."
+    value={searchQuery}
+    onChange={e => setSearchQuery(e.target.value)}
+    className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+  />
 
-    {/* Boutons de filtrage */}
-    <div className="flex flex-wrap justify-center space-x-2 sm:space-x-4 mb-8">
-      <button
-        onClick={() => setFilter("all")}
-        className={`px-4 py-2 rounded-full font-medium transition duration-300 ${filter==="all"?"bg-indigo-600 text-white shadow-lg":"bg-white text-indigo-600 border border-indigo-300 hover:bg-indigo-50"}`}
-      >
-        Tous ({events.length})
-      </button>
-      {categories.map(cat => (
-        <button
-          key={cat}
-          onClick={() => setFilter(cat)}
-          className={`mt-2 sm:mt-0 px-4 py-2 rounded-full font-medium transition duration-300 ${filter===cat?"bg-indigo-600 text-white shadow-lg":"bg-white text-indigo-600 border border-indigo-300 hover:bg-indigo-50"}`}
-        >
-          {cat} ({events.filter(e=>e.category===cat).length})
-        </button>
+  <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
+
+  <div className="flex flex-wrap gap-4 mb-6">
+    <Button onClick={loadEvents} disabled={loading}>
+      {loading ? "Chargement..." : "📡 Actualiser"}
+    </Button>
+    <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
+      📺 Plein écran
+    </Button>
+    <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
+      🔲 Vignette
+    </Button>
+  </div>
+
+  {error && (
+    <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>
+  )}
+
+  {filteredEvents.length === 0 && !loading && (
+    <p className="text-muted-foreground">Aucun événement à afficher.</p>
+  )}
+
+  {/* MODE CARD */}
+  {viewMode === "card" && (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filteredEvents.map(ev => (
+        <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-full">
+          {ev.image && <img src={ev.image} alt={ev.title} className="w-full aspect-[16/9] object-cover" />}
+          <div className="p-4 flex flex-col flex-1 gap-1">
+            <h2 className="text-xl font-semibold">{ev.title}</h2>
+            {ev.category && <p className="text-sm text-blue-600 font-medium mt-1">{ev.category}</p>}
+            {ev.description && <p className="text-sm text-muted-foreground mt-2 line-clamp-4">{ev.description}</p>}
+            <p className="text-sm mt-2">{ev.dateFormatted}</p>
+            {ev.fullAddress && <p className="text-sm text-muted-foreground">{ev.fullAddress}</p>}
+            <p className="text-xs text-muted-foreground italic mt-1">Source : {ev.source}</p>
+            {ev.url && (
+              <a
+                href={ev.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
+              >
+                🔗 Voir l’événement officiel
+              </a>
+            )}
+          </div>
+        </div>
       ))}
     </div>
+  )}
 
-    {loading ? (
-      <div className="flex justify-center items-center h-48">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
-        <span className="ml-4 text-lg text-indigo-600">Chargement des événements...</span>
-      </div>
-    ) : error ? (
-      <div className="text-center p-8 bg-red-100 border-l-4 border-red-500 text-red-700 rounded shadow-md">
-        <p className="font-bold">Erreur :</p>
-        <p>{error}</p>
-      </div>
-    ) : filteredEvents.length === 0 ? (
-      <div className="text-center p-8 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded shadow-md">
-        <p className="font-bold">Aucun événement trouvé</p>
-        <p>La catégorie sélectionnée n’a aucun événement.</p>
-      </div>
-    ) : (
-      <EventList events={filteredEvents} />
-    )}
-
-  </div>
+  {/* MODE LIST */}
+  {viewMode === "list" && (
+    <div className="space-y-4">
+      {filteredEvents.map(ev => (
+        <div key={ev.id} className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm">
+          {ev.image && <img src={ev.image} alt={ev.title} className="w-24 h-24 rounded object-cover flex-shrink-0" />}
+          <div className="flex flex-col flex-1 gap-1">
+            <h2 className="text-lg font-semibold line-clamp-2">{ev.title}</h2>
+            {ev.dateFormatted && <p className="text-sm text-blue-600">{ev.dateFormatted}</p>}
+            {ev.fullAddress && <p className="text-sm text-muted-foreground">{ev.fullAddress}</p>}
+            {ev.description && <p className="text-sm text-muted-foreground line-clamp-3">{ev.description}</p>}
+            {ev.url && <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 underline mt-1">Voir l’événement</a>}
+            <p className="text-xs text-muted-foreground mt-1 italic">Source : {ev.source}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
 </div>
+
 
 );
 }
