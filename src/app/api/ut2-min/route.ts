@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import Parser from "rss-parser";
 import fetch from "node-fetch";
 import * as cheerio from "cheerio";
+
+type RawItem = Parser.Item;
 
 interface Event {
 id: string;
 title: string;
 description: string;
-start: string;        // date ISO (publication date)
+start: string;
 end: string | null;
 location: string | null;
 image: string | null;
@@ -14,61 +17,57 @@ url: string;
 source: string;
 }
 
-const BASE_URL = "https://www.canal-u.tv/recherche?f%5B0%5D=chaine:375&sort_by=field_date_publication_1";
+const RSS_URL = "[https://www.canal-u.tv/chaines/ut2j/rss](https://www.canal-u.tv/chaines/ut2j/rss)";
 
-async function fetchAllPages(): Promise<Event[]> {
-let page = 0;
-const events: Event[] = [];
-let hasNextPage = true;
-
-while (hasNextPage) {
-page++;
-const url = `${BASE_URL}&page=${page}`;
+async function fetchImageFromPage(url: string): Promise<string | null> {
+try {
 const res = await fetch(url);
-if (!res.ok) break;
-
+if (!res.ok) return null;
 const html = await res.text();
 const $ = cheerio.load(html);
 
-const videos = $(".view-content .views-row");
-if (videos.length === 0) {
-  hasNextPage = false;
-  break;
+// Cherche l'image principale : souvent .field-name-field-image img
+const img = $(".field-name-field-image img").first().attr("src");
+return img ? (img.startsWith("http") ? img : `https://www.canal-u.tv${img}`) : null;
+
+} catch {
+return null;
 }
-
-videos.each((_, el) => {
-  const title = $(el).find(".views-field-title a").text().trim() || "Untitled";
-  const urlPath = $(el).find(".views-field-title a").attr("href") || "";
-  const imageSrc = $(el).find(".field-name-field-image img").attr("src") || "/default-cover.jpg";
-  const description = $(el).find(".views-field-field-description").text().trim() || "";
-
-  // extraire la date de publication si disponible
-  const pubDateText = $(el).find(".views-field-created span").attr("content") || "";
-  const start = pubDateText ? new Date(pubDateText).toISOString() : "";
-
-  events.push({
-    id: `${urlPath}-${page}`,
-    title,
-    description,
-    start,
-    end: null,
-    location: null,
-    image: imageSrc.startsWith("http") ? imageSrc : `https://www.canal-u.tv${imageSrc}`,
-    url: urlPath ? `https://www.canal-u.tv${urlPath}` : "",
-    source: "UT2J‑Canal‑U",
-  });
-});
-}
-
-return events;
 }
 
 export async function GET(req: NextRequest) {
+const parser = new Parser();
+
 try {
-const events = await fetchAllPages();
-return NextResponse.json(events);
+const feed = await parser.parseURL(RSS_URL);
+const events: Event[] = await Promise.all(
+  (feed.items || [])
+    .map(async (item: RawItem) => {
+      const pubDate = item.pubDate ? new Date(item.pubDate) : null;
+      const url = item.link || "";
+      let image: string | null = null;
+
+      // Tenter de récupérer l'image depuis la page si le flux ne la fournit pas
+      image = await fetchImageFromPage(url);
+
+      return {
+        id: item.guid || url || item.title || Math.random().toString(),
+        title: item.title || "Untitled",
+        description: item.contentSnippet || item.content || item.summary || "",
+        start: pubDate ? pubDate.toISOString() : "",
+        end: null,
+        location: null,
+        image,
+        url,
+        source: "UT2J‑Canal‑U",
+      };
+    })
+);
+
+return NextResponse.json(events.filter(ev => ev.start));
+
 } catch (err: any) {
-console.error("Erreur lors de la récupération des événements UT2J :", err);
+console.error("Erreur lors de la récupération du RSS UT2J :", err);
 return NextResponse.json(
 { error: "Impossible de récupérer les événements UT2J" },
 { status: 500 }
