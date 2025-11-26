@@ -14,7 +14,7 @@ return "/images/default.jpg";
 
 export async function GET() {
 try {
-const rssUrl = "[https://www.inp-toulouse.fr/rss-events.xml](https://www.inp-toulouse.fr/rss-events.xml)"; // mettre le vrai RSS INP
+const rssUrl = "https://www.inp-toulouse.fr/rss-events.xml"; // mettre le vrai RSS INP
 const xml = await fetch(rssUrl, {
 headers: {
 "User-Agent": "Mozilla/5.0",
