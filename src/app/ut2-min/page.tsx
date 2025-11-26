@@ -1,335 +1,174 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from "react";
-// Les imports pour Shadcn/ui Button ne sont pas disponibles ici, mais j'utilise des équivalents Tailwind.
-// Dans un environnement réel Next.js/Shadcn, cela fonctionnerait.
-// Je simule ici le composant Button avec des classes Tailwind.
+import React, { useState, useEffect, useMemo } from "react";
+import { Calendar, MapPin, Clock, ArrowRight, Video } from "lucide-react";
 
-// Un composant Button simple pour la démo
-const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "default" | "secondary" }> = ({ children, variant = "default", className, ...props }) => {
-    const baseClasses = "px-4 py-2 rounded-lg font-medium transition duration-200 shadow-md";
-    const defaultClasses = "bg-indigo-600 text-white hover:bg-indigo-700";
-    const secondaryClasses = "bg-gray-200 text-gray-800 hover:bg-gray-300";
-
-    return (
-        <button
-            className={`${baseClasses} ${variant === "default" ? defaultClasses : secondaryClasses} ${className || ''}`}
-            {...props}
-        >
-            {children}
-        </button>
-    );
-};
-
-// --- Interfaces pour la structure des données ---
-interface EventData {
-    id: string | number;
-    title: string;
-    description: string;
-    location: string;
-    start: string; // Date ISO string
-    end: string;   // Date ISO string
-    url: string;
-    source: string;
+interface Event {
+id: string;
+title: string;
+description: string;
+start: string;
+end: string | null;
+location: string | null;
+image: string | null;
+url: string;
+source: string;
+category?: "Culture" | "Formation" | "Recherche" | "Vie Étudiante"; // optionnel
 }
 
-/* ------------------------------------------------------------------
-  Image automatique selon titre : ciné / conf / expo / default
-------------------------------------------------------------------- */
-const getEventImage = (title: string | undefined) => {
-  if (!title) return "https://placehold.co/600x400/312e81/ffffff?text=ut2+Default";
-  const lower = title.toLowerCase();
-  if (lower.includes("ciné") || lower.includes("cine")) return "https://placehold.co/600x400/9333ea/ffffff?text=ut2+Cin%C3%A9ma";
-  if (lower.includes("conf")) return "https://placehold.co/600x400/16a34a/ffffff?text=ut2+Conf%C3%A9rence";
-  if (lower.includes("expo")) return "https://placehold.co/600x400/f59e0b/ffffff?text=ut2+Exposition";
-  return "https://placehold.co/600x400/312e81/ffffff?text=ut2+Default";
+const fetchEvents = async (): Promise<Event[]> => {
+const res = await fetch("/api/ut2-min");
+if (!res.ok) throw new Error("Impossible de récupérer les événements UT2-Min.");
+return res.json();
 };
 
-// --- Données simulées pour la démo (remplaçant l'appel API réel) ---
-const MOCK_EVENTS: EventData[] = [
-    { id: 1, title: "Conférence: L'IA et la Santé", description: "Exploration des dernières avancées en intelligence artificielle appliquée au domaine médical.", location: "Amphi 4, Bâtiment B", start: new Date(Date.now() + 86400000).toISOString(), end: new Date(Date.now() + 86400000 + 7200000).toISOString(), url: "#", source: "API ut2 Min" },
-    { id: 2, title: "Ciné-Débat : La Science-Fiction", description: "Projection du film 'Gattaca' suivie d'une discussion avec des chercheurs en génétique.", location: "Maison de la Recherche", start: new Date(Date.now() + 3 * 86400000).toISOString(), end: new Date(Date.now() + 3 * 86400000 + 10800000).toISOString(), url: "#", source: "API ut2 Min" },
-    { id: 3, title: "Exposition : L'Eau dans tous ses états", description: "Une exposition interactive sur le cycle de l'eau et les défis environnementaux.", location: "Hall Principal", start: new Date(Date.now() - 5 * 86400000).toISOString(), end: new Date(Date.now() + 10 * 86400000).toISOString(), url: "#", source: "API ut2 Min" },
-    { id: 4, title: "Conférence : Changement Climatique", description: "Les nouvelles données pour l'Occitanie et les perspectives d'adaptation.", location: "Amphi 1", start: new Date(Date.now() + 5 * 86400000).toISOString(), end: new Date(Date.now() + 5 * 86400000 + 5400000).toISOString(), url: "#", source: "API ut2 Min" },
-    { id: 5, title: "Journée Portes Ouvertes IUT", description: "Découvrez les formations technologiques et rencontrez les étudiants.", location: "IUT de Blagnac", start: new Date(Date.now() + 15 * 86400000).toISOString(), end: new Date(Date.now() + 15 * 86400000 + 28800000).toISOString(), url: "#", source: "API ut2 Min" },
-];
+const CategoryPill: React.FC<{ category?: Event["category"] }> = ({ category }) => {
+if (!category) return null;
+let colorClass = "";
+switch (category) {
+case "Culture": colorClass = "bg-blue-100 text-blue-800"; break;
+case "Formation": colorClass = "bg-green-100 text-green-800"; break;
+case "Recherche": colorClass = "bg-purple-100 text-purple-800"; break;
+case "Vie Étudiante": colorClass = "bg-yellow-100 text-yellow-800"; break;
+}
+return (
+<span className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${colorClass}`}>
+{category} </span>
+);
+};
 
+const EventCard: React.FC<{ event: Event }> = ({ event }) => (
 
-// --- Composant principal ut2MinPage ---
-
-export default function ut2MinPage() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState<EventData[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<EventData[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"card" | "list">("card");
-
-  /* --------------------- Récupération des événements (Simulée) --------------------- */
-  async function fetchEvents() {
-    setLoading(true);
-    setError(null);
-    setEvents([]);
-
-    try {
-      // Dans un environnement réel Next.js, cela appellerait une API route.
-      // Ici, nous simulons la réponse.
-      await new Promise(resolve => setTimeout(resolve, 800)); // Simule le temps de chargement
-      const data = MOCK_EVENTS; 
-      
-      setEvents(data);
-      setFilteredEvents(data);
-    } catch (err: any) {
-      // L'erreur API simulée est désactivée
-      setError("Erreur simulée lors du chargement des données.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  /* --------------------- Filtrage texte multi-champs --------------------- */
-  useEffect(() => {
-    if (!searchQuery) {
-      setFilteredEvents(events);
-      return;
-    }
-
-    const q = searchQuery.toLowerCase();
-
-    setFilteredEvents(
-      events.filter(ev =>
-        ev.title.toLowerCase().includes(q) ||
-        (ev.description?.toLowerCase().includes(q) ?? false) ||
-        (ev.location?.toLowerCase().includes(q) ?? false) ||
-        (new Date(ev.start).toLocaleDateString('fr-FR').includes(q) ?? false) // Recherche par date formatée
-      )
-    );
-  }, [searchQuery, events]);
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  // Class pour le texte muted
-  const mutedTextClass = "text-gray-500"; 
-  // Custom scrollbar for better appearance
-  const scrollableClass = "custom-scrollbar"; 
-
-  return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 font-sans">
-      
-      {/* CSS pour la scrollbar (uniquement pour l'aperçu) */}
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #888;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #555;
-        }
-      `}</style>
-      
-      <h1 className="text-3xl font-bold mb-4 text-gray-900">
-        Événements ut2 – Ciné, Conf & Expo (Simulé)
-      </h1>
-      <p className={`mb-6 ${mutedTextClass}`}>
-        Événements filtrés et affichés avec les options de mise en page souhaitées.
-      </p>
-
-      {/* Boutons + Recherche */}
-      <div className="flex flex-wrap gap-3 mb-6 items-center">
-        <Button onClick={fetchEvents} disabled={loading} variant="default">
-          {loading ? "Chargement..." : "📡 Actualiser"}
-        </Button>
-        <Button
-          onClick={() => setViewMode("card")}
-          variant={viewMode === "card" ? "default" : "secondary"}
-        >
-          📺 Cartes
-        </Button>
-        <Button
-          onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "default" : "secondary"}
-        >
-          🔲 Liste
-        </Button>
-
-        <input
-          type="text"
-          placeholder="Rechercher par titre, description, lieu ou date..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-4 sm:mt-0 flex-1 min-w-[200px] p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 transition duration-150"
-        />
-      </div>
-
-      {/* Compteur */}
-      <p className={`mb-4 text-sm text-gray-600`}>
-        Événements affichés : {filteredEvents.length}
-      </p>
-
-      {/* Chargement/Erreur */}
-      {loading && (
-          <div className="flex justify-center items-center h-40">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
-              <p className="ml-4 text-lg text-indigo-600">Chargement des événements...</p>
-          </div>
-      )}
-      
-      {error && (
-        <div className="p-4 bg-red-100 text-red-800 border-l-4 border-red-500 rounded mb-6">
-          <p className="font-bold">Erreur de connexion :</p>
-          <p>{error}</p>
-        </div>
-      )}
-
-      {/* Aucun résultat */}
-      {filteredEvents.length === 0 && !loading && !error && (
-        <p className={mutedTextClass}>Aucun événement trouvé pour la recherche "{searchQuery}".</p>
-      )}
-
-      {/* --------------------------------------------------------------------
-          MODE CARTE (grand format)
-      --------------------------------------------------------------------- */}
-      {viewMode === "card" && !loading && filteredEvents.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow-xl rounded-xl overflow-hidden flex flex-col h-full min-h-[430px] transition duration-300 hover:scale-[1.01] border border-gray-100">
-              
-              {/* Image */}
-              <img
-                src={getEventImage(ev.title)}
-                alt={ev.title}
-                className="w-full h-40 object-cover"
-                onError={(e) => { (e.target as HTMLImageElement).onerror = null; (e.target as HTMLImageElement).src="https://placehold.co/600x400/312e81/ffffff?text=ut2+Default" }}
-              />
-
-              <div className="p-4 flex flex-col flex-1">
-
-                {/* Titre */}
-                <h2 className="text-lg font-semibold mb-2 text-gray-900 line-clamp-2">{ev.title}</h2>
-
-                {/* Dates */}
-                {ev.start && (
-                  <p className="text-sm text-indigo-600 font-medium mb-2">
-                    {new Date(ev.start).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    {' - '}
-                    {new Date(ev.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                )}
-
-                {/* Lieu */}
-                {ev.location && (
-                  <p className={`text-sm ${mutedTextClass} mb-2 flex items-center`}>
-                    <svg className="w-4 h-4 mr-1 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path></svg>
-                    {ev.location}
-                  </p>
-                )}
-
-                {/* Description */}
-                {ev.description && (
-                  <div className={`text-sm ${mutedTextClass} overflow-y-auto h-20 mb-3 pr-1 ${scrollableClass}`}>
-                    {ev.description}
-                  </div>
-                )}
-
-                {/* Lien */}
-                <div className="mt-auto"> {/* Pousse le lien vers le bas */}
-                    {ev.url && (
-                        <p className="text-sm mb-1">
-                            <a
-                                href={ev.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center transition duration-150"
-                            >
-                                Plus d’infos
-                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </p>
-                    )}
-
-                    {/* Source */}
-                    <p className={`text-xs ${mutedTextClass} mt-2 break-words opacity-70`}>
-                        Source : {ev.source}
-                    </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* --------------------------------------------------------------------
-          MODE LISTE (vignettes)
-      --------------------------------------------------------------------- */}
-      {viewMode === "list" && !loading && filteredEvents.length > 0 && (
-        <div className="flex flex-col gap-4">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow-lg rounded-xl p-4 gap-4 border border-gray-100 transition duration-300 hover:bg-gray-50">
-
-              {/* Image */}
-              <img
-                src={getEventImage(ev.title)}
-                alt={ev.title}
-                className="w-full sm:w-48 h-32 object-cover rounded-lg flex-shrink-0"
-                onError={(e) => { (e.target as HTMLImageElement).onerror = null; (e.target as HTMLImageElement).src="https://placehold.co/600x400/312e81/ffffff?text=ut2+Default" }}
-              />
-
-              <div className="flex-1">
-                
-                <h2 className="text-xl font-semibold mb-1 text-gray-900">{ev.title}</h2>
-
-                {ev.start && (
-                  <p className="text-sm text-indigo-600 font-medium mb-1">
-                    {new Date(ev.start).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    {' - '}
-                    {new Date(ev.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                )}
-
-                {ev.location && (
-                  <p className={`text-sm ${mutedTextClass} mb-2 flex items-center`}>
-                    <svg className="w-3.5 h-3.5 mr-1 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path></svg>
-                    {ev.location}
-                  </p>
-                )}
-
-                {ev.description && (
-                  <p className={`text-sm ${mutedTextClass} mb-2 line-clamp-2`}>
-                    {ev.description}
-                  </p>
-                )}
-
-                <div className="flex justify-between items-end mt-2">
-                    {ev.url && (
-                      <a
-                        href={ev.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-indigo-600 hover:text-indigo-800 font-semibold text-sm transition duration-150"
-                      >
-                        🔗 Plus d’infos
-                      </a>
-                    )}
-
-                    {/* Source */}
-                    <p className={`text-xs ${mutedTextClass} opacity-70`}>
-                        Source : {ev.source}
-                    </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+  <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 border border-gray-100">
+    <div className="flex justify-between items-start mb-3">
+      <h3 className="text-xl font-bold text-gray-900">{event.title}</h3>
+      <CategoryPill category={event.category} />
     </div>
-  );
+
+```
+{event.image && (
+  <img src={event.image} alt={event.title} className="rounded-lg mb-4 w-full object-cover h-48" />
+)}
+
+<p className="text-gray-600 mb-4 text-sm">{event.description}</p>
+
+<div className="space-y-2 text-sm text-gray-700">
+  <div className="flex items-center space-x-2">
+    <Calendar className="w-4 h-4 text-indigo-500" />
+    <span>{new Date(event.start).toLocaleDateString("fr-FR", { year:"numeric", month:"short", day:"numeric" })}</span>
+  </div>
+  {event.end && (
+    <div className="flex items-center space-x-2">
+      <Clock className="w-4 h-4 text-indigo-500" />
+      <span>Fin : {new Date(event.end).toLocaleTimeString("fr-FR")}</span>
+    </div>
+  )}
+  {event.location && (
+    <div className="flex items-center space-x-2">
+      <MapPin className="w-4 h-4 text-indigo-500" />
+      <span>{event.location}</span>
+    </div>
+  )}
+  <div className="flex items-center space-x-2">
+    <Video className="w-4 h-4 text-indigo-500" />
+    <span>Source : {event.source}</span>
+  </div>
+</div>
+
+<a href={event.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center font-medium text-indigo-600 hover:text-indigo-800 transition duration-150 group">
+  Voir l'événement
+  <ArrowRight className="w-4 h-4 ml-1 transition-transform duration-150 group-hover:translate-x-1" />
+</a>
+```
+
+  </div>
+);
+
+const EventList: React.FC<{ events: Event[] }> = ({ events }) => (
+
+  <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {events.map(ev => <EventCard key={ev.id} event={ev} />)}
+  </div>
+);
+
+export default function Page() {
+const [events, setEvents] = useState<Event[]>([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState<string | null>(null);
+const [filter, setFilter] = useState<"all" | Event["category"]>("all");
+
+useEffect(() => {
+const loadEvents = async () => {
+setLoading(true);
+try {
+const data = await fetchEvents();
+setEvents(data);
+setError(null);
+} catch (err: any) {
+setError(err.message);
+} finally {
+setLoading(false);
+}
+};
+loadEvents();
+}, []);
+
+const categories: Event["category"][] = useMemo(() => ["Culture", "Formation", "Recherche", "Vie Étudiante"], []);
+
+const filteredEvents = useMemo(() => {
+if (filter === "all") return events;
+return events.filter(ev => ev.category === filter);
+}, [events, filter]);
+
+return ( <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans"> <div className="max-w-7xl mx-auto">
+
+```
+    <header className="py-6 mb-8 text-center bg-white rounded-xl shadow-md">
+      <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-700 tracking-tight">Événements UT2-Min</h1>
+      <p className="mt-2 text-lg text-gray-500">Liste des événements et conférences issus de la chaîne UT2-Min (Canal-U).</p>
+    </header>
+
+    {/* Boutons de filtrage */}
+    <div className="flex flex-wrap justify-center space-x-2 sm:space-x-4 mb-8">
+      <button
+        onClick={() => setFilter("all")}
+        className={`px-4 py-2 rounded-full font-medium transition duration-300 ${filter==="all"?"bg-indigo-600 text-white shadow-lg":"bg-white text-indigo-600 border border-indigo-300 hover:bg-indigo-50"}`}
+      >
+        Tous ({events.length})
+      </button>
+      {categories.map(cat => (
+        <button
+          key={cat}
+          onClick={() => setFilter(cat)}
+          className={`mt-2 sm:mt-0 px-4 py-2 rounded-full font-medium transition duration-300 ${filter===cat?"bg-indigo-600 text-white shadow-lg":"bg-white text-indigo-600 border border-indigo-300 hover:bg-indigo-50"}`}
+        >
+          {cat} ({events.filter(e=>e.category===cat).length})
+        </button>
+      ))}
+    </div>
+
+    {loading ? (
+      <div className="flex justify-center items-center h-48">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+        <span className="ml-4 text-lg text-indigo-600">Chargement des événements...</span>
+      </div>
+    ) : error ? (
+      <div className="text-center p-8 bg-red-100 border-l-4 border-red-500 text-red-700 rounded shadow-md">
+        <p className="font-bold">Erreur :</p>
+        <p>{error}</p>
+      </div>
+    ) : filteredEvents.length === 0 ? (
+      <div className="text-center p-8 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded shadow-md">
+        <p className="font-bold">Aucun événement trouvé</p>
+        <p>La catégorie sélectionnée n’a aucun événement.</p>
+      </div>
+    ) : (
+      <EventList events={filteredEvents} />
+    )}
+
+  </div>
+</div>
+```
+
+);
 }
