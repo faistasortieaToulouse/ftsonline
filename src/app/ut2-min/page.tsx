@@ -32,20 +32,14 @@ case "Recherche": colorClass = "bg-purple-100 text-purple-800"; break;
 case "Vie Étudiante": colorClass = "bg-yellow-100 text-yellow-800"; break;
 }
 return (
-<span className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${colorClass}`}>
-{category} </span>
+<span className={inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${colorClass}}>
+{category}
+
 );
 };
 
 const EventCard: React.FC<{ event: Event }> = ({ event }) => (
 
-  <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 border border-gray-100">
-    <div className="flex justify-between items-start mb-3">
-      <h3 className="text-xl font-bold text-gray-900">{event.title}</h3>
-      <CategoryPill category={event.category} />
-    </div>
-
-```
 {event.image && (
   <img src={event.image} alt={event.title} className="rounded-lg mb-4 w-full object-cover h-48" />
 )}
@@ -79,17 +73,8 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => (
   Voir l'événement
   <ArrowRight className="w-4 h-4 ml-1 transition-transform duration-150 group-hover:translate-x-1" />
 </a>
-```
-
-  </div>
-);
 
 const EventList: React.FC<{ events: Event[] }> = ({ events }) => (
-
-  <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    {events.map(ev => <EventCard key={ev.id} event={ev} />)}
-  </div>
-);
 
 export default function Page() {
 const [events, setEvents] = useState<Event[]>([]);
@@ -120,9 +105,11 @@ if (filter === "all") return events;
 return events.filter(ev => ev.category === filter);
 }, [events, filter]);
 
-return ( <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans"> <div className="max-w-7xl mx-auto">
+return (
 
-```
+
+
+
     <header className="py-6 mb-8 text-center bg-white rounded-xl shadow-md">
       <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-700 tracking-tight">Événements UT2-Min</h1>
       <p className="mt-2 text-lg text-gray-500">Liste des événements et conférences issus de la chaîne UT2-Min (Canal-U).</p>
@@ -168,7 +155,6 @@ return ( <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans"> <div cla
 
   </div>
 </div>
-```
 
 );
 }
