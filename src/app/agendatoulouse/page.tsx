@@ -154,12 +154,12 @@ export default function AgendaToulousePage() {
                 {/* Description avec barre de défilement si trop longue */}
 {/* Description avec hauteur fixe et barre de défilement pour certaines sources */}
 <div
-  className={`text-sm text-muted-foreground mb-2 flex-1 ${
-    event.source === "tourismehautegaronne" ||
-    event.source === "meetup-full" ||
-    event.source === "toulousemetropole"
-      ? "overflow-y-auto max-h-20"
-      : ""
+  className={`text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto ${
+    event.source === "meetup-full" || event.source === "tourismehautegaronne"
+      ? "max-h-16"
+      : event.source === "toulousemetropole"
+      ? "max-h-20"
+      : "max-h-20"
   }`}
 >
   {event.description}
