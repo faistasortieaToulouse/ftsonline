@@ -117,10 +117,10 @@ export default function DemospherePage() {
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[400px]">
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[500px]">
               
               {/* 🔵 IMAGE CORRIGÉE */}
-              <div className="relative w-full h-24 bg-gray-100 flex items-center justify-center overflow-hidden">
+              <div className="relative w-full h-64 bg-gray-100 flex items-center justify-center overflow-hidden">
                 <Image
                   src="/logo/demosphereoriginal.png"
                   alt="Logo Demosphere"
