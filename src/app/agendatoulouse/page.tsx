@@ -157,7 +157,7 @@ export default function AgendaToulousePage() {
     event.source === "tourismehautegaronne"
       ? "overflow-y-auto max-h-20"
       : event.source === "meetup-full"
-      ? "overflow-y-auto max-h-24"
+      ? "overflow-y-auto max-h-20"
       : ""
   }`}
 >
