@@ -45,7 +45,6 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => (
       <CategoryPill category={event.category} />
     </div>
 
-```
 {event.image && (
   <img src={event.image} alt={event.title} className="rounded-lg mb-4 w-full object-cover h-48" />
 )}
@@ -79,7 +78,6 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => (
   Voir l'événement
   <ArrowRight className="w-4 h-4 ml-1 transition-transform duration-150 group-hover:translate-x-1" />
 </a>
-```
 
   </div>
 );
@@ -122,7 +120,6 @@ return events.filter(ev => ev.category === filter);
 
 return ( <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans"> <div className="max-w-7xl mx-auto">
 
-```
     <header className="py-6 mb-8 text-center bg-white rounded-xl shadow-md">
       <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-700 tracking-tight">Événements UT2-Min</h1>
       <p className="mt-2 text-lg text-gray-500">Liste des événements et conférences issus de la chaîne UT2-Min (Canal-U).</p>
@@ -168,7 +165,6 @@ return ( <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans"> <div cla
 
   </div>
 </div>
-```
 
 );
 }
