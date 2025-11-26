@@ -14,7 +14,7 @@ url: string;
 source: string;
 }
 
-const BASE_URL = "[https://www.canal-u.tv/recherche?f%5B0%5D=chaine:375&sort_by=field_date_publication_1](https://www.canal-u.tv/recherche?f%5B0%5D=chaine:375&sort_by=field_date_publication_1)";
+const BASE_URL = "https://www.canal-u.tv/recherche?f%5B0%5D=chaine:375&sort_by=field_date_publication_1";
 
 async function fetchAllPages(): Promise<Event[]> {
 let page = 0;
