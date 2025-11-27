@@ -1,6 +1,6 @@
 "use client";
 
-import LibrairiesClient from "./components/LibrairiesClient";
+import LibrairiesClient from "@/components/LibrairiesClient";
 
 export default function Page() {
 return ( <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans"> <header className="max-w-4xl mx-auto mb-10"> <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
