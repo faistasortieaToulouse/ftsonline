@@ -1,6 +1,7 @@
 // app/api/abc/route.ts
 import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
+import iconv from 'iconv-lite';
 
 export async function GET(req: Request) {
   const feedUrl = 'https://abc-toulouse.fr/feed/';
@@ -10,14 +11,11 @@ export async function GET(req: Request) {
       headers: { 'User-Agent': 'Next.js – RSS Fetcher' },
     });
 
-    if (!res.ok) {
-      return NextResponse.json({ items: [] }, { status: res.status });
-    }
+    if (!res.ok) return NextResponse.json({ items: [] }, { status: res.status });
 
-    // Lire le body en ArrayBuffer pour forcer UTF-8
-    const buffer = await res.arrayBuffer();
-    const decoder = new TextDecoder('utf-8');
-    const xml = decoder.decode(buffer);
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const xml = iconv.decode(buffer, 'utf-8'); // force UTF-8
 
     const parser = new XMLParser({
       ignoreAttributes: false,
