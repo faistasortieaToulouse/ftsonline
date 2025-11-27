@@ -5,6 +5,7 @@ export const runtime = "nodejs";
 
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID!;
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN!;
+const DISCORD_EVENT_URL = "https://discord.com/channels/1422806103267344416/1423210600036565042";
 
 // Cache en mémoire (serverless-friendly, réinitialisé entre déploiements)
 let cachedData: { widget: any; events: any[]; timestamp: number } | null = null;
@@ -32,7 +33,7 @@ export async function GET() {
 
     const widgetData = widgetRes.ok ? await widgetRes.json() : { members: [], channels: [] };
 
-    // --- Événements ---
+    // --- Événements privés (nécessite BOT TOKEN) ---
     const eventsRes = await fetch(
       `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/scheduled-events?with_user_count=true`,
       {
@@ -48,7 +49,14 @@ export async function GET() {
       console.warn(`Rate limit hit, retry after ${rateLimitBody.retry_after}s`);
       eventsData = [];
     } else if (eventsRes.ok) {
-      eventsData = await eventsRes.json();
+      const rawEvents = await eventsRes.json();
+
+      // On ajoute l'image de couverture et le lien Discord pour chaque événement
+      eventsData = rawEvents.map((ev: any) => ({
+        ...ev,
+        image: ev.cover_image || null,
+        url: DISCORD_EVENT_URL,
+      }));
     }
 
     // Mise en cache
