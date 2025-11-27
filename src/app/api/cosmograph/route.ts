@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 
 export async function GET() {
 try {
-const res = await fetch("https://www.american-cosmograph.fr/?feed=rss2");
+const res = await fetch("https://www.american-cosmograph.fr/");
 const html = await res.text();
 
 const $ = cheerio.load(html);
