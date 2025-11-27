@@ -15,6 +15,7 @@ const API_ROUTES = [
   "ut3-min",
   "capitole-min",
   "theatredupave",
+  "discord",
 ];
 
 // -------------------------------------------------------------------------
