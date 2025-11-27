@@ -75,16 +75,17 @@ export async function GET() {
           coverImage = `https://cdn.discordapp.com/guild-events/${e.id}/${e.image}.png?size=1024`;
         }
 
-        return {
-          id: e.id,
-          name: e.name,
-          description: e.description,
-          scheduled_start_time: e.scheduled_start_time,
-          scheduled_end_time: e.scheduled_end_time,
-          entity_type: e.entity_type,
-          image: coverImage,
-          url: DISCORD_EVENT_URL, // URL fixe pour ton salon événementiel
-        };
+return {
+  id: e.id,
+  title: e.name,
+  description: e.description,
+  date: e.scheduled_start_time,
+  endDate: e.scheduled_end_time,
+  location: "Discord",
+  image: coverImage,
+  url: DISCORD_EVENT_URL,
+  source: "discord",
+};
       });
     }
 
