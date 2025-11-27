@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
-import fetch from "node-fetch";
-import { XMLParser } from "fast-xml-parser";
 
 interface PodcastEpisode {
   librairie: string;
@@ -12,112 +10,28 @@ interface PodcastEpisode {
 }
 
 const rssParser = new Parser();
-const xmlParser = new XMLParser({ ignoreAttributes: false, allowBooleanAttributes: true });
 
-// --- Ombres Blanches via proxy ---
-async function fetchOmbresBlanches(baseUrl: string): Promise<PodcastEpisode[]> {
+// --- Fonction générique via proxy ---
+async function fetchViaProxy(url: string, librairie: string, baseUrl: string): Promise<PodcastEpisode[]> {
   try {
-    const proxyUrl = `${baseUrl}/api/proxy?url=${encodeURIComponent("https://feed.ausha.co/kk2J1iKdlOXE")}`;
+    const proxyUrl = `${baseUrl}/api/proxy?url=${encodeURIComponent(url)}`;
     const feed = await rssParser.parseURL(proxyUrl);
 
     return feed.items.map(item => ({
-      librairie: "Ombres Blanches",
+      librairie,
       titre: item.title ?? "",
       date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
       audioUrl: item.enclosure?.url ?? "",
       description: item.contentSnippet ?? item.content ?? "",
     }));
   } catch (err) {
-    console.error("⚠️ Erreur Ombres Blanches:", err);
+    console.error(`⚠️ Erreur ${librairie}:`, err);
     return [{
-      librairie: "Ombres Blanches",
+      librairie,
       titre: "Flux indisponible",
       date: new Date().toISOString(),
       audioUrl: "",
-      description: "Le flux RSS d’Ombres Blanches est protégé (403/404). Consultez directement Ausha."
-    }];
-  }
-}
-
-// --- Terra Nova via fast-xml-parser ---
-async function fetchTerraNova(): Promise<PodcastEpisode[]> {
-  try {
-    const res = await fetch("https://www.vodio.fr/rssmedias.php?valeur=636");
-    const xml = await res.text();
-    const parsed = xmlParser.parse(xml);
-
-    const items = parsed?.rss?.channel?.item ?? [];
-    console.log("Terra Nova items:", items); // 🔎 Debug log
-
-    return (Array.isArray(items) ? items : [items]).map((item: any) => ({
-      librairie: "Terra Nova",
-      titre: item.title ?? "",
-      date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
-      audioUrl: item.enclosure?.["@_url"] ?? "",
-      description: item.description ?? "",
-    }));
-  } catch (err) {
-    console.error("⚠️ Erreur Terra Nova:", err);
-    return [{
-      librairie: "Terra Nova",
-      titre: "Flux indisponible",
-      date: new Date().toISOString(),
-      audioUrl: "",
-      description: "Le flux RSS de Terra Nova est invalide ou inaccessible."
-    }];
-  }
-}
-
-// --- Marathon des mots via proxy ---
-async function fetchMDM(baseUrl: string): Promise<PodcastEpisode[]> {
-  try {
-    const proxyUrl = `${baseUrl}/api/proxy?url=${encodeURIComponent("https://feed.ausha.co/BnYn5Uw5W3WO")}`;
-    const feed = await rssParser.parseURL(proxyUrl);
-
-    return feed.items.map(item => ({
-      librairie: "Marathon des mots",
-      titre: item.title ?? "",
-      date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
-      audioUrl: item.enclosure?.url ?? "",
-      description: item.contentSnippet ?? item.content ?? "",
-    }));
-  } catch (err) {
-    console.error("⚠️ Erreur Marathon des mots:", err);
-    return [{
-      librairie: "Marathon des mots",
-      titre: "Flux indisponible",
-      date: new Date().toISOString(),
-      audioUrl: "",
-      description: "Le flux RSS du Marathon des mots est inaccessible. Consultez directement Ausha."
-    }];
-  }
-}
-
-// --- Librairie Mollat ("L'Heure des Livres") via proxy ---
-async function fetchMollat(baseUrl: string): Promise<PodcastEpisode[]> {
-  // L'URL RSS pour le podcast Mollat, souvent hébergé sur Ausha, est utilisée ici.
-  // VEUILLEZ VÉRIFIER QUE CETTE URL EST CORRECTE :
-  const MOLLAT_RSS_URL = "https://feed.ausha.co/lheure-des-livres-mollat";
-  
-  try {
-    const proxyUrl = `${baseUrl}/api/proxy?url=${encodeURIComponent(MOLLAT_RSS_URL)}`;
-    const feed = await rssParser.parseURL(proxyUrl);
-
-    return feed.items.map(item => ({
-      librairie: "Librairie Mollat",
-      titre: item.title ?? "",
-      date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
-      audioUrl: item.enclosure?.url ?? "",
-      description: item.contentSnippet ?? item.content ?? "",
-    }));
-  } catch (err) {
-    console.error("⚠️ Erreur Librairie Mollat:", err);
-    return [{
-      librairie: "Librairie Mollat",
-      titre: "Flux indisponible",
-      date: new Date().toISOString(),
-      audioUrl: "",
-      description: "Le flux RSS de la Librairie Mollat est inaccessible. Veuillez vérifier l'URL RSS."
+      description: `Le flux RSS de ${librairie} est inaccessible.`
     }];
   }
 }
@@ -130,32 +44,28 @@ export async function GET(req: Request) {
     const query = searchParams.get("q")?.toLowerCase() || "";
     const librairieFilter = searchParams.get("librairie") || "";
 
-    // ⚠️ Base URL pour proxy (ex: https://ftsonline.vercel.app)
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-    const [obEpisodes, tnEpisodes, mdmEpisodes, mollatEpisodes] = await Promise.all([
-      fetchOmbresBlanches(baseUrl),
-      fetchTerraNova(),
-      fetchMDM(baseUrl),
-      fetchMollat(baseUrl), // <-- NOUVEL APPEL
+    const [ob, tn, mdm, mollat] = await Promise.all([
+      fetchViaProxy("https://feed.ausha.co/kk2J1iKdlOXE", "Ombres Blanches", baseUrl),
+      fetchViaProxy("https://www.vodio.fr/rssmedias.php?valeur=636", "Terra Nova", baseUrl),
+      fetchViaProxy("https://feed.ausha.co/BnYn5Uw5W3WO", "Marathon des mots", baseUrl),
+      fetchViaProxy("https://feed.ausha.co/lheure-des-livres-mollat", "Librairie Mollat", baseUrl),
     ]);
 
-    // Ajout des nouveaux épisodes
-    let allEpisodes = [...obEpisodes, ...tnEpisodes, ...mdmEpisodes, ...mollatEpisodes];
+    let allEpisodes = [...ob, ...tn, ...mdm, ...mollat];
 
-    // 🔎 Filtrage
+    // Filtrage
     if (query) {
       allEpisodes = allEpisodes.filter(
-        ep =>
-          ep.titre.toLowerCase().includes(query) ||
-          ep.description.toLowerCase().includes(query)
+        ep => ep.titre.toLowerCase().includes(query) || ep.description.toLowerCase().includes(query)
       );
     }
     if (librairieFilter) {
       allEpisodes = allEpisodes.filter(ep => ep.librairie === librairieFilter);
     }
 
-    // Tri par date
+    // Tri par date décroissante
     allEpisodes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     // Pagination
@@ -173,8 +83,8 @@ export async function GET(req: Request) {
         lastUpdated: new Date().toISOString(),
       },
     });
-  } catch (error) {
-    console.error("Erreur globale API podcasts:", error);
+  } catch (err) {
+    console.error("Erreur globale API podcasts:", err);
     return NextResponse.json(
       { success: false, message: "Erreur lors du traitement des flux RSS." },
       { status: 500 }
