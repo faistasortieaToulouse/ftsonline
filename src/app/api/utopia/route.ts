@@ -13,9 +13,12 @@ export async function GET(req: Request) {
 
     if (!res.ok) return NextResponse.json({ items: [] }, { status: res.status });
 
+    // Lire le flux en ArrayBuffer
     const arrayBuffer = await res.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const xml = iconv.decode(buffer, 'utf-8'); // force UTF-8
+
+    // Décoder explicitement en UTF-8 pour éviter les caractères > 255
+    const xml = iconv.decode(buffer, 'utf-8');
 
     const parser = new XMLParser({
       ignoreAttributes: false,
