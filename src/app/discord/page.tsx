@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 
 const API_BASE = "/api/discord";
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement Discord";
+const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/discord`, { cache: "no-store" });
+const data = await res.json();
+const eventsData = data.events ?? [];
 
 type DiscordEvent = {
   id: string;
