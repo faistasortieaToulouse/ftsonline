@@ -1,11 +1,11 @@
-// File: app/discord/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 const API_BASE = "/api/discord";
-const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement Discord";
+const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Discord";
+const COVER_IMAGE = "https://cdn.discordapp.com/icons/1422806103267344416/xxxxxxxxxx.webp"; // <-- ton icône ou image de couverture
 
 type DiscordEvent = {
   id: string;
@@ -23,28 +23,26 @@ export default function DiscordEventsPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [searchQuery, setSearchQuery] = useState("");
-  
-async function fetchEvents() {
-  setLoading(true);
-  setError(null);
-  try {
-    const res = await fetch(API_BASE);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    // data.events contient le tableau des événements
-    setEvents(Array.isArray(data.events) ? data.events : []);
-  } catch (err: any) {
-    setError(err.message || "Erreur inconnue");
-  } finally {
-    setLoading(false);
+
+  async function fetchEvents() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(API_BASE);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setEvents(data.events ?? []);
+    } catch (err: any) {
+      setError(err.message || "Erreur inconnue");
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   useEffect(() => {
     fetchEvents();
   }, []);
 
-  // Filtrage + tri
   const filteredEvents = events
     .filter((event) => {
       const query = searchQuery.toLowerCase();
@@ -61,10 +59,30 @@ async function fetchEvents() {
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">Événements Discord</h1>
-      <p className="text-muted-foreground mb-6">
-        Liste des événements Discord du serveur.
-      </p>
+      {/* Image de couverture */}
+      <div className="w-full h-48 mb-6 rounded-lg overflow-hidden">
+        <img
+          src={COVER_IMAGE}
+          alt="Couverture Discord"
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      <h1 className="text-3xl font-bold mb-2">Événements Discord</h1>
+      <p className="text-muted-foreground mb-4">Liste des événements Discord du serveur.</p>
+
+      {/* Bouton pour voir les événements officiels */}
+      <div className="mb-6">
+        <Button
+          as="a"
+          href="https://discord.com/channels/1422806103267344416/1423210600036565042"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-4"
+        >
+          🔗 Voir les événements officiels
+        </Button>
+      </div>
 
       {/* Barre de recherche */}
       <input
@@ -111,11 +129,9 @@ async function fetchEvents() {
               />
               <div className="p-4 flex flex-col flex-1 min-h-0">
                 <h2 className="text-xl font-semibold mb-2 line-clamp-2">{event.name}</h2>
-
                 <div className="text-sm text-muted-foreground mb-2 overflow-y-auto" style={{ flex: 1, minHeight: 0 }}>
                   {event.description || "Aucune description"}
                 </div>
-
                 <p className="text-sm font-medium mb-1">
                   Début : {new Date(event.scheduled_start_time).toLocaleString()}
                 </p>
