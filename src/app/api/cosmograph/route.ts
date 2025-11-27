@@ -1,74 +1,45 @@
 import { NextResponse } from "next/server";
 import fetch from "node-fetch";
-import { XMLParser } from "fast-xml-parser";
+import * as cheerio from "cheerio";
 
 export async function GET() {
-  try {
-    const res = await fetch("https://www.american-cosmograph.fr/?feed=rss2");
-    let xml = await res.text();
+try {
+const res = await fetch("[https://www.american-cosmograph.fr/](https://www.american-cosmograph.fr/)");
+const html = await res.text();
 
-    // Afficher le XML complet pour inspection
-    console.log("Flux RSS brut :", xml.substring(0, 1000)); // on limite l'affichage pour la console
+const $ = cheerio.load(html);
 
-    // Nettoyage minimal pour éviter les erreurs de parsing
-    xml = xml.replace(/&(?!amp;|lt;|gt;|quot;|apos;)/g, "&amp;");
+const events: any[] = [];
 
-    const parser = new XMLParser({
-      ignoreAttributes: false,
-      attributeNamePrefix: "@_",
-      parseTagValue: true,
-      allowBooleanAttributes: true,
-    });
+// Exemple générique : adapter le sélecteur selon la structure réelle du site
+$('.event-item, article, .post').each((i, elem) => {
+  const title = $(elem).find('h2, h3, .title').first().text().trim();
+  const description = $(elem).find('.description, p').first().text().trim();
+  const dateStr = $(elem).find('.date, time').first().attr('datetime') || $(elem).find('.date, time').first().text().trim();
+  const url = $(elem).find('a').first().attr('href');
 
-    const jsonObj = parser.parse(xml);
-
-    // Chercher les événements dans plusieurs balises possibles
-    const items =
-      jsonObj?.rss?.channel?.item ||
-      jsonObj?.feed?.entry ||
-      [];
-
-    console.log("Nombre total d'événements trouvés dans le XML :", items.length);
-
-    // Garder uniquement les événements à partir d'aujourd'hui
-    const today = new Date();
-    const events = items
-      .map((item: any, i: number) => {
-        const dateStr = item.pubDate || item.published || item.date || null;
-        const date = dateStr ? new Date(dateStr) : null;
-
-        return {
-          id: item.guid?.["@_isPermaLink"] || item.id || `cosmo-${i}`,
-          title: item.title || item.name || "Événement Cosmograph",
-          description: item.description || item.summary || "",
-          date: date ? date.toISOString() : null,
-          url: item.link || (item.id ? item.id : "#"),
-          source: "American Cosmograph",
-        };
-      })
-      .filter(ev => ev.date && new Date(ev.date) >= today); // filtrer à partir d'aujourd'hui
-
-    console.log("Dates des événements récupérés :", events.map(ev => ev.date));
-
-    return NextResponse.json({ total: events.length, events });
-  } catch (err: any) {
-    console.error("Erreur Flux American Cosmograph :", err);
-
-    // Retour fallback si le flux RSS échoue complètement
-    const fallbackEvents = [
-      {
-        id: "cosmo-1",
-        title: "Événement test 1",
-        description: "Description d'un événement test",
-        date: new Date().toISOString(),
-        url: "#",
+  if (title && dateStr) {
+    const date = new Date(dateStr).toISOString();
+    if (!isNaN(new Date(date).getTime()) && new Date(date) >= new Date()) {
+      events.push({
+        id: `cosmo-${i}`,
+        title,
+        description,
+        date,
+        url: url?.startsWith('http') ? url : `https://www.american-cosmograph.fr/${url}`,
         source: "American Cosmograph",
-      },
-    ];
-
-    return NextResponse.json(
-      { total: fallbackEvents.length, events: fallbackEvents },
-      { status: 200 }
-    );
+      });
+    }
   }
+});
+
+return NextResponse.json({ total: events.length, events });
+
+} catch (err: any) {
+console.error("Erreur Scraping American Cosmograph :", err);
+return NextResponse.json(
+{ error: "Erreur Scraping American Cosmograph : " + (err.message || err) },
+{ status: 500 }
+);
+}
 }
