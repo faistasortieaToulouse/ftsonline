@@ -26,16 +26,14 @@ export async function GET(req: Request) {
     const parser = new Parser();
     const feed = await parser.parseURL(RSS_URL);
 
-    // Normalisation des épisodes
     const allEpisodes: PodcastEpisode[] = feed.items.map((item) => ({
-      librairie: "Librairie Mollat", // valeur fixe pour ce flux
+      librairie: "Librairie Mollat",
       titre: item.title || "Sans titre",
       date: item.pubDate || "",
       audioUrl: item.enclosure?.url || "",
       description: item.contentSnippet || "",
     }));
 
-    // --------- FILTRES ----------
     let filtered = [...allEpisodes];
 
     if (q) {
@@ -51,12 +49,9 @@ export async function GET(req: Request) {
     }
 
     if (dateMin) {
-      filtered = filtered.filter(
-        (ep) => new Date(ep.date) >= dateMin
-      );
+      filtered = filtered.filter((ep) => new Date(ep.date) >= dateMin);
     }
 
-    // --------- PAGINATION ----------
     const totalEpisodes = filtered.length;
     const totalPages = Math.ceil(totalEpisodes / limit);
     const start = (page - 1) * limit;
