@@ -7,27 +7,28 @@ import Link from "next/link";
 import { Calendar, Map } from "lucide-react";
 import { useDiscordEvents } from "@/hooks/useDiscordEvents";
 
-interface Event {
-  id: string;
-  name: string;
-  date: string;
-  image?: string;
-  location?: string;
-  description?: string;
-  url?: string;
+// --- Fetch côté serveur pour les flux stables ---
+async function getAgendaEvents() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/agendatoulouse`, { cache: "no-store" });
+    if (!res.ok) throw new Error("Impossible de récupérer les événements");
+    const data = await res.json();
+    return data.events || [];
+  } catch (err) {
+    console.error("Erreur fetch agendatoulouse:", err);
+    return [];
+  }
 }
 
-// Fetch côté client pour Agendatoulouse et autres flux
-export default function Home({ initialEvents }: { initialEvents: Event[] }) {
-  const [events, setEvents] = useState<Event[]>(initialEvents || []);
-  
-  // Hook pour Discord
+interface HomeProps {
+  serverEvents: any[];
+}
+
+export default function Home({ serverEvents }: HomeProps) {
   const { events: discordEvents, loading: discordLoading } = useDiscordEvents();
 
-  // Combiner les événements Discord avec les autres événements
-  const allEvents = useMemo(() => {
-    return [...events, ...discordEvents];
-  }, [events, discordEvents]);
+  // Fusionner Discord + serveur
+  const allEvents = useMemo(() => [...serverEvents, ...discordEvents], [serverEvents, discordEvents]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -39,16 +40,13 @@ export default function Home({ initialEvents }: { initialEvents: Event[] }) {
             <GoogleTranslate />
           </div>
 
-          {/* Nombre total d'événements */}
           <p className="mt-4 text-muted-foreground">
             {allEvents.length} événement{allEvents.length > 1 ? "s" : ""}
           </p>
 
-          {/* Barre de recherche */}
           <SearchBar events={allEvents} />
         </div>
 
-        {/* Boutons Calendar / Map */}
         <div className="container mx-auto px-4 mt-4 flex gap-2">
           <Link href="/calendar" className="btn-outline flex items-center gap-1">
             <Calendar /> Voir le calendrier
@@ -58,7 +56,6 @@ export default function Home({ initialEvents }: { initialEvents: Event[] }) {
           </Link>
         </div>
 
-        {/* Liste des événements */}
         <div className="container mx-auto px-4 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {allEvents.length > 0 ? (
             allEvents.map((ev) => (
@@ -77,12 +74,15 @@ export default function Home({ initialEvents }: { initialEvents: Event[] }) {
             ))
           ) : (
             <div className="text-center py-20">
-              <h2 className="text-2xl font-semibold mb-2">Aucun événement pour le moment</h2>
-              <p className="text-muted-foreground">Revenez plus tard pour découvrir de nouveaux événements !</p>
+              <h2 className="text-2xl font-semibold mb-2">Agendatoulouse</h2>
+              <p className="text-muted-foreground">Revenez plus tard pour de nouveaux événements !</p>
             </div>
           )}
-          {discordLoading && <p className="text-center text-muted-foreground col-span-full">Chargement des événements Discord...</p>}
         </div>
+
+        {discordLoading && (
+          <div className="text-center text-muted-foreground">Chargement des événements Discord...</div>
+        )}
       </main>
     </div>
   );
@@ -91,7 +91,7 @@ export default function Home({ initialEvents }: { initialEvents: Event[] }) {
 // ------------------------------------
 // Composant barre de recherche
 // ------------------------------------
-function SearchBar({ events }: { events: Event[] }) {
+function SearchBar({ events }: { events: any[] }) {
   const [term, setTerm] = useState("");
 
   const filtered = useMemo(() => {
@@ -116,4 +116,10 @@ function SearchBar({ events }: { events: Event[] }) {
       <p className="text-sm text-muted-foreground mt-1">{filtered.length} résultat{filtered.length > 1 ? "s" : ""}</p>
     </div>
   );
+}
+
+// --- Préchargement côté serveur (getServerSideProps ou route handler Next 13) ---
+export async function getServerSideProps() {
+  const serverEvents = await getAgendaEvents();
+  return { props: { serverEvents } };
 }
