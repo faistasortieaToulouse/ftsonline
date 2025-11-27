@@ -1,4 +1,3 @@
-// src/app/api/proxy/route.ts
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -12,8 +11,10 @@ export async function GET(req: Request) {
 
     const res = await fetch(targetUrl, {
       headers: {
-        "User-Agent": "Mozilla/5.0", // certains serveurs bloquent sans UA
-        "Accept": "application/rss+xml,application/xml,text/xml;q=0.9,*/*;q=0.8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.118 Safari/537.36",
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+        "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Connection": "keep-alive",
       },
     });
 
@@ -22,6 +23,7 @@ export async function GET(req: Request) {
     }
 
     const text = await res.text();
+
     return new Response(text, {
       status: 200,
       headers: { "Content-Type": "application/rss+xml" },
