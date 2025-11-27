@@ -13,7 +13,7 @@ type DiscordEvent = {
   description?: string;
   scheduled_start_time: string;
   scheduled_end_time?: string;
-  image?: string;
+  image?: string | null; // image de couverture
   entity_type: number;
 };
 
@@ -31,6 +31,7 @@ export default function DiscordEventsPage() {
       const res = await fetch(API_BASE);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
+      // Discord API retourne events dans data.events
       setEvents(data.events ?? []);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
@@ -73,7 +74,6 @@ export default function DiscordEventsPage() {
         className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
       />
 
-      {/* Compteur */}
       <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
 
       {/* Switch d'affichage */}
