@@ -1,168 +1,247 @@
-'use client'; // nécessaire uniquement si tu utilises des hooks côté client
+'use client';
 
-import { useState, useMemo, useEffect } from "react";
-import { GoogleTranslate } from "@/components/GoogleTranslate";
-import { Header } from "@/components/Header";
-import Link from "next/link";
-import { Calendar, Map } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
-// ----------------------------
-// Hook côté client pour Discord
-// ----------------------------
-function useDiscordEvents() {
-  const [discordEvents, setDiscordEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+const PLACEHOLDER_IMAGE =
+  "https://via.placeholder.com/400x200?text=Événement";
 
-  useEffect(() => {
-    async function fetchDiscord() {
-      try {
-        const res = await fetch("/api/discord");
-        if (!res.ok) throw new Error("Impossible de récupérer Discord");
-        const data = await res.json();
-        setDiscordEvents(data.events || []);
-      } catch (err) {
-        console.error("Erreur fetch Discord:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchDiscord();
-  }, []);
+export default function Home() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = useState<any[]>([]);
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [search, setSearch] = useState("");
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
 
-  return { discordEvents, loading };
-}
-
-// ----------------------------
-// Section Discord côté client
-// ----------------------------
-function DiscordSection() {
-  const { discordEvents, loading } = useDiscordEvents();
-
-  if (loading) return <p className="text-center mt-4 text-muted-foreground">Chargement des événements Discord...</p>;
-  if (!discordEvents.length) return null;
-
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-xl font-semibold mb-4">Événements Discord</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {discordEvents.map((ev: any) => (
-          <div key={ev.id} className="border rounded-lg overflow-hidden shadow-sm p-4">
-            <h3 className="font-semibold text-lg mb-2">{ev.name}</h3>
-            <p className="text-sm text-muted-foreground mb-2">{new Date(ev.date).toLocaleString("fr-FR")}</p>
-            <p className="text-sm mb-2">{ev.location}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ----------------------------
-// Barre de recherche
-// ----------------------------
-function SearchBar({ events }: { events: any[] }) {
-  const [term, setTerm] = useState("");
-
-  const filtered = useMemo(() => {
-    if (!term) return events;
-    return events.filter((ev) =>
-      [ev.name, ev.description, ev.location]
-        .join(" ")
-        .toLowerCase()
-        .includes(term.toLowerCase())
+  function getCategory(event: any) {
+    return (
+      event.category ||
+      event.type ||
+      event.tags?.join(", ") ||
+      detectCategory(event.title + " " + event.description)
     );
-  }, [term, events]);
-
-  return (
-    <div className="my-4">
-      <input
-        type="search"
-        placeholder="Rechercher par titre, lieu, description..."
-        className="w-full px-4 py-2 border rounded-lg"
-        value={term}
-        onChange={(e) => setTerm(e.target.value)}
-      />
-      <p className="text-sm text-muted-foreground mt-1">{filtered.length} résultat{filtered.length > 1 ? "s" : ""}</p>
-    </div>
-  );
-}
-
-// ----------------------------
-// Page principale côté serveur
-// ----------------------------
-export default async function Home() {
-  // Récupération des événements côté serveur
-  let events: any[] = [];
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/agendatoulouse`, {
-      cache: "no-store", // données fraîches à chaque build ou request
-    });
-    if (!res.ok) throw new Error("Impossible de récupérer les événements");
-    const data = await res.json();
-    events = data.events || [];
-  } catch (err) {
-    console.error("Erreur fetch agendatoulouse:", err);
   }
 
+  function detectCategory(text: string) {
+    const t = text.toLowerCase();
+    if (t.includes("concert")) return "Concert";
+    if (t.includes("théâtre") || t.includes("theatre")) return "Théâtre";
+    if (t.includes("exposition")) return "Exposition";
+    if (t.includes("festival")) return "Festival";
+    if (t.includes("salon")) return "Salon";
+    if (t.includes("conférence")) return "Conférence";
+    return "Autre";
+  }
+
+  async function fetchEvents() {
+    setLoading(true);
+    setError(null);
+    setEvents([]);
+
+    try {
+      const res = await fetch("/api/agendatoulouse");
+
+      if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
+
+      const data = await res.json();
+
+      setEvents(data.events || []);
+      setFilteredEvents(data.events || []);
+    } catch (err: any) {
+      setError(err.message || "Erreur inconnue");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    if (!search.trim()) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = search.toLowerCase();
+    const result = events.filter((ev) => {
+      const category = getCategory(ev);
+      const combined = `
+        ${ev.title}
+        ${ev.description}
+        ${ev.fullAddress || ev.location}
+        ${ev.dateFormatted || ev.date}
+        ${category}
+      `.toLowerCase().trim();
+
+      return combined.includes(q);
+    });
+
+    setFilteredEvents(result);
+  }, [search, events]);
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1">
-        <div className="container mx-auto px-4 pt-8">
-          <div className="flex justify-between items-center">
-            <p className="text-muted-foreground">Ta sortie à Toulouse</p>
-            <GoogleTranslate />
-          </div>
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold mb-4">
+        Agenda Toulouse – Tous les événements
+      </h1>
 
-          {/* Nombre d'événements */}
-          <p className="mt-4 text-muted-foreground">
-            {events.length} événement{events.length > 1 ? "s" : ""}
-          </p>
+      {/* Barre de recherche */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Rechercher par titre, lieu, date, description, catégorie…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
 
-          {/* Barre de recherche */}
-          <SearchBar events={events} />
+      {/* Compteur */}
+      <p className="text-muted-foreground mb-4">
+        {filteredEvents.length} événement(s) trouvé(s)
+      </p>
+
+      {/* Boutons Plein écran / Vignette */}
+      <div className="flex gap-4 mb-6">
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          📺 Plein écran
+        </Button>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
+          🔲 Vignette
+        </Button>
+      </div>
+
+      <Button onClick={fetchEvents} disabled={loading} className="mb-6">
+        {loading ? "Chargement..." : "📡 Recharger les événements"}
+      </Button>
+
+      {error && (
+        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
+          <strong>Erreur :</strong> {error}
         </div>
+      )}
 
-        {/* Boutons Calendar / Map */}
-        <div className="container mx-auto px-4 mt-4 flex gap-2">
-          <Link href="/calendar" className="btn-outline flex items-center gap-1">
-            <Calendar /> Voir le calendrier
-          </Link>
-          <Link href="/map" className="btn-outline flex items-center gap-1">
-            <Map /> Voir la carte
-          </Link>
-        </div>
+      {/* Mode plein écran */}
+      {viewMode === "card" && filteredEvents.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {filteredEvents.map((event, i) => (
+            <div
+              key={event.id || i}
+              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]"
+            >
+              <img
+                src={event.image || event.coverImage || PLACEHOLDER_IMAGE}
+                alt={event.title}
+                className="w-full h-54 sm:h-56 md:h-60 object-contain"
 
-        {/* Liste des événements */}
-        <div className="container mx-auto px-4 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.length > 0 ? (
-            events.map((ev) => (
-              <div key={ev.id} className="border rounded-lg overflow-hidden shadow-sm p-4">
-                {ev.image && <img src={ev.image} alt={ev.name} className="w-full h-40 object-cover mb-4 rounded" />}
-                <h2 className="font-semibold text-lg mb-2">{ev.name}</h2>
-                <p className="text-sm text-muted-foreground mb-2">
-                  {new Date(ev.date).toLocaleString("fr-FR")}
+              />
+
+              <div className="p-4 flex flex-col flex-1">
+                {/* Titre avec barre de défilement si trop long */}
+                <div className="text-xl font-semibold mb-2 line-clamp-2 overflow-y-auto max-h-14">
+                  {event.title}
+                </div>
+
+                {/* Description avec barre de défilement si trop longue */}
+{/* Description avec hauteur fixe et barre de défilement pour certaines sources */}
+<div
+  className={`text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto ${
+    event.source === "meetup-full" || event.source === "tourismehautegaronne"
+      ? "max-h-16"
+      : event.source === "toulousemetropole"
+      ? "max-h-20"
+      : "max-h-20"
+  }`}
+>
+  {event.description}
+</div>
+
+          <p className="text-sm font-medium mb-1">
+                  {event.dateFormatted || event.date || event.start || ""}
                 </p>
-                <p className="text-sm mb-2">{ev.location}</p>
-                <p className="text-sm">{ev.description}</p>
-                {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-primary mt-2 inline-block font-medium">
-                    En savoir plus
+
+                <p className="text-sm text-muted-foreground mb-1">
+                  {event.fullAddress || event.location}
+                </p>
+
+		<p className="text-xs text-muted-foreground italic mb-3">
+		  Catégorie : {getCategory(event)} • Source : {event.source || "Inconnue"}
+		</p>
+
+                {event.url && (
+                  <a
+                    href={event.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
+                  >
+                    🔗 Voir l’événement officiel
                   </a>
                 )}
               </div>
-            ))
-          ) : (
-            <div className="text-center py-20">
-              <h2 className="text-2xl font-semibold mb-2">Agendatoulouse</h2>
-              <p className="text-muted-foreground">Revenez plus tard pour de nouveaux événements !</p>
             </div>
-          )}
+          ))}
         </div>
+      )}
 
-        {/* Discord events côté client */}
-        <DiscordSection />
-      </main>
+      {/* Mode liste */}
+      {viewMode === "list" && filteredEvents.length > 0 && (
+        <div className="space-y-4 mt-6">
+          {filteredEvents.map((event, i) => (
+            <div
+              key={event.id || i}
+              className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
+            >
+              <img
+                src={event.image || event.coverImage || PLACEHOLDER_IMAGE}
+                alt={event.title}
+                className="w-24 h-24 rounded object-cover flex-shrink-0"
+              />
+
+              <div className="flex flex-col flex-1">
+                <div className="text-lg font-semibold text-blue-700 line-clamp-2 overflow-y-auto max-h-10">
+                  {event.title}
+                </div>
+
+                <div className="text-sm text-muted-foreground line-clamp-2 overflow-y-auto max-h-14">
+                  {event.description}
+                </div>
+
+                <p className="text-sm">{event.dateFormatted}</p>
+
+                <p className="text-xs text-muted-foreground italic">
+                  Catégorie : {getCategory(event)}
+                </p>
+
+                {event.url && (
+                  <a
+                    href={event.url}
+                    target="_blank"
+                    className="mt-1 text-blue-600 underline"
+                  >
+                    Voir →
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!loading && filteredEvents.length === 0 && !error && (
+        <p className="mt-6 text-muted-foreground">
+          Aucun événement ne correspond à la recherche.
+        </p>
+      )}
     </div>
   );
 }

@@ -1,6 +1,17 @@
 import { NextResponse } from "next/server";
 import * as ical from "node-ical";
 
+interface DemosphereEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  location: string | null;
+  description: string | null;
+  source: string;
+  url: string;
+}
+
 export async function GET() {
   const url = "https://toulouse.demosphere.net/events.ics";
 
@@ -15,7 +26,7 @@ export async function GET() {
     const icsText = await res.text();
     const data = ical.parseICS(icsText);
 
-    const events = Object.values(data)
+    const events: DemosphereEvent[] = Object.values(data)
       .filter((ev: any) => ev.type === "VEVENT")
       .map((ev: any) => ({
         id: ev.uid,
@@ -25,8 +36,12 @@ export async function GET() {
         location: ev.location || null,
         description: ev.description || null,
         source: "Demosphere (iCal)",
-        url: ev.url || `https://toulouse.demosphere.net/rv/${ev.uid}`, // ← ajout de l’URL
-      }));
+        url: ev.url || `https://toulouse.demosphere.net/rv/${ev.uid}`,
+      }))
+      // 🔹 Filtrage pour ne garder que les événements futurs
+      .filter(ev => ev.start && new Date(ev.start) >= new Date())
+      // 🔹 Tri chronologique
+      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
     return NextResponse.json(events);
   } catch (err: any) {
