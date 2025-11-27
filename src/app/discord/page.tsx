@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const API_BASE = "/api/discord";
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Discord";
+const DISCORD_EVENT_URL = "https://discord.com/channels/1422806103267344416/1423210600036565042";
 
 type DiscordEvent = {
   id: string;
@@ -126,15 +127,16 @@ export default function DiscordEventsPage() {
 
                 {/* Bouton Discord pour chaque événement */}
                 {event.url && (
-                  <Button
-                    as="a"
-                    href={event.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2"
-                  >
-                    🔗 Voir sur Discord
-                  </Button>
+<Button
+  as="a"
+  href={DISCORD_EVENT_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="mt-2"
+>
+  🔗 Voir sur Discord
+</Button>
+
                 )}
               </div>
             </div>
