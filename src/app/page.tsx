@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo } from "react";
 import { GoogleTranslate } from "@/components/GoogleTranslate";
 import { Header } from "@/components/Header";
