@@ -5,10 +5,16 @@ export const runtime = "nodejs";
 
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID!;
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN!;
-const DISCORD_EVENT_URL = "https://discord.com/channels/1422806103267344416/1423210600036565042";
+const DISCORD_EVENT_URL =
+  "https://discord.com/channels/1422806103267344416/1423210600036565042";
 
-// Cache en mémoire (serverless-friendly, réinitialisé entre déploiements)
-let cachedData: { widget: any; events: any[]; timestamp: number } | null = null;
+// Cache en mémoire (serverless-friendly)
+let cachedData: {
+  widget: any;
+  events: any[];
+  timestamp: number;
+} | null = null;
+
 const CACHE_TTL = 30 * 1000; // 30 secondes
 
 export async function GET() {
@@ -25,14 +31,21 @@ export async function GET() {
   }
 
   try {
-    // --- Widget public ---
+    // ---------------------------------------------------------------------
+    // 🟣 Widget Discord public
+    // ---------------------------------------------------------------------
     const widgetRes = await fetch(
       `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`,
       { cache: "no-store" }
     );
-    const widgetData = widgetRes.ok ? await widgetRes.json() : { members: [], channels: [] };
 
-    // --- Événements ---
+    const widgetData = widgetRes.ok
+      ? await widgetRes.json()
+      : { members: [], channels: [] };
+
+    // ---------------------------------------------------------------------
+    // 🔵 Événements Discord
+    // ---------------------------------------------------------------------
     const eventsRes = await fetch(
       `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/scheduled-events?with_user_count=true`,
       {
@@ -42,19 +55,26 @@ export async function GET() {
     );
 
     let eventsData: any[] = [];
+
     if (eventsRes.status === 429) {
       const rateLimitBody = await eventsRes.json();
-      console.warn(`Rate limit hit, retry after ${rateLimitBody.retry_after}s`);
-      eventsData = [];
+      console.warn(
+        `Rate limit Discord atteint, retry après ${rateLimitBody.retry_after}s`
+      );
     } else if (eventsRes.ok) {
       const rawEvents = await eventsRes.json();
 
-      // Transformation pour ajouter `image` et le lien fixe
+      // -------------------------------------------------------------------
+      // 🔵 Transformation : image + url + structure simplifiée
+      // -------------------------------------------------------------------
       eventsData = rawEvents.map((e: any) => {
         let coverImage: string | null = null;
+
+        // Image haute résolution
         if (e.image) {
-          coverImage = `https://cdn.discordapp.com/guild-events/${e.id}/${e.image}.png`;
+          coverImage = `https://cdn.discordapp.com/guild-events/${e.id}/${e.image}.png?size=1024`;
         }
+
         return {
           id: e.id,
           name: e.name,
@@ -63,17 +83,29 @@ export async function GET() {
           scheduled_end_time: e.scheduled_end_time,
           entity_type: e.entity_type,
           image: coverImage,
-          url: DISCORD_EVENT_URL, // lien fixe pour tous les événements
+          url: DISCORD_EVENT_URL, // URL fixe pour ton salon événementiel
         };
       });
     }
 
-    cachedData = { widget: widgetData, events: eventsData, timestamp: now };
-    return NextResponse.json(cachedData, { headers: { "Cache-Control": "no-store" } });
+    // Mise en cache
+    cachedData = {
+      widget: widgetData,
+      events: eventsData,
+      timestamp: now,
+    };
+
+    return NextResponse.json(cachedData, {
+      headers: { "Cache-Control": "no-store" },
+    });
   } catch (err) {
     console.error("Erreur Discord API :", err);
     return NextResponse.json(
-      { error: "Impossible de charger les données Discord.", events: [], widget: {} },
+      {
+        error: "Impossible de charger les données Discord.",
+        events: [],
+        widget: {},
+      },
       { status: 500 }
     );
   }
