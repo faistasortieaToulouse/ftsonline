@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 const API_BASE = "/api/discord";
-const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Discord";
-const DISCORD_EVENT_URL = "https://discord.com/channels/1422806103267344416/1423210600036565042";
+const PLACEHOLDER_IMAGE =
+  "https://via.placeholder.com/800x450?text=Événement+Discord"; // meilleure résolution
+const DISCORD_EVENT_URL =
+  "https://discord.com/channels/1422806103267344416/1423210600036565042";
 
 type DiscordEvent = {
   id: string;
@@ -24,6 +26,7 @@ export default function DiscordEventsPage() {
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // ---- FETCH EVENTS ----
   async function fetchEvents() {
     setLoading(true);
     setError(null);
@@ -57,6 +60,10 @@ export default function DiscordEventsPage() {
         new Date(b.scheduled_start_time).getTime()
     );
 
+  // -------------------------
+  //           RENDER
+  // -------------------------
+
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Événements Discord</h1>
@@ -64,7 +71,7 @@ export default function DiscordEventsPage() {
         Liste des événements Discord du serveur.
       </p>
 
-      {/* Barre de recherche */}
+      {/* SEARCH BAR */}
       <input
         type="text"
         placeholder="Rechercher par nom ou description..."
@@ -73,19 +80,27 @@ export default function DiscordEventsPage() {
         className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
       />
 
-      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
+      <p className="mb-4 font-semibold">
+        Événements affichés : {filteredEvents.length}
+      </p>
 
-      {/* Switch d'affichage */}
+      {/* DISPLAY SWITCH */}
       <div className="flex gap-4 mb-6">
-        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
           📺 Plein écran
         </Button>
-        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
           🔲 Vignette
         </Button>
       </div>
 
-      {/* Actualiser */}
+      {/* REFRESH */}
       <Button onClick={fetchEvents} disabled={loading} className="mb-6">
         {loading ? "Chargement..." : "📡 Actualiser les événements"}
       </Button>
@@ -96,42 +111,49 @@ export default function DiscordEventsPage() {
         </div>
       )}
 
-      {/* Mode plein écran */}
+      {/* ------------------------ */}
+      {/*       CARD VIEW         */}
+      {/* ------------------------ */}
+
       {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredEvents.map((event) => (
-            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-              
-              {/* Image non pixelisée (hauteur auto, cover) */}
+            <div
+              key={event.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[700px]"
+            >
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
                 alt={event.name}
-                className="w-full h-auto object-cover"
+                className="w-full aspect-[16/9] object-cover"
               />
 
               <div className="p-4 flex flex-col flex-1 min-h-0">
-                <h2 className="text-xl font-semibold mb-2 line-clamp-2">{event.name}</h2>
+                <h2 className="text-xl font-semibold mb-2 line-clamp-2">
+                  {event.name}
+                </h2>
 
-                <div className="text-sm text-muted-foreground mb-2 overflow-y-auto scrollable" style={{ flex: 1, minHeight: 0 }}>
+                {/* DESCRIPTION FIXED HEIGHT + SCROLL */}
+                <div
+                  className="text-sm text-muted-foreground mb-2 overflow-y-auto"
+                  style={{ height: "480px" }}
+                >
                   {event.description || "Aucune description"}
                 </div>
 
                 <p className="text-sm font-medium mb-1">
-                  Début : {new Date(event.scheduled_start_time).toLocaleString()}
+                  Début :{" "}
+                  {new Date(event.scheduled_start_time).toLocaleString()}
                 </p>
                 {event.scheduled_end_time && (
                   <p className="text-sm text-muted-foreground mb-2">
-                    Fin : {new Date(event.scheduled_end_time).toLocaleString()}
+                    Fin :{" "}
+                    {new Date(event.scheduled_end_time).toLocaleString()}
                   </p>
                 )}
 
-                {/* Bouton Discord 100% fonctionnel */}
-                <a
-                  href={DISCORD_EVENT_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block"
-                >
+                {/* DISCORD BUTTON */}
+                <a href={DISCORD_EVENT_URL} target="_blank" rel="noopener noreferrer">
                   <Button className="mt-2 w-full">🔗 Voir sur Discord</Button>
                 </a>
               </div>
@@ -140,12 +162,17 @@ export default function DiscordEventsPage() {
         </div>
       )}
 
-      {/* Mode vignette */}
+      {/* ------------------------ */}
+      {/*       LIST VIEW         */}
+      {/* ------------------------ */}
+
       {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
           {filteredEvents.map((event) => (
-            <div key={event.id} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
-              
+            <div
+              key={event.id}
+              className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white"
+            >
               <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden">
                 <img
                   src={event.image || PLACEHOLDER_IMAGE}
@@ -155,21 +182,20 @@ export default function DiscordEventsPage() {
               </div>
 
               <div className="flex-1">
-                <h2 className="text-lg font-semibold line-clamp-2">{event.name}</h2>
-                <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
+                <h2 className="text-lg font-semibold line-clamp-2">
+                  {event.name}
+                </h2>
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {event.description}
+                </p>
                 <p className="text-sm font-medium mt-1">
                   {new Date(event.scheduled_start_time).toLocaleString()}
                 </p>
 
-                <a
-                  href={DISCORD_EVENT_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href={DISCORD_EVENT_URL} target="_blank" rel="noopener noreferrer">
                   <Button className="mt-2">🔗 Voir sur Discord</Button>
                 </a>
               </div>
-
             </div>
           ))}
         </div>
