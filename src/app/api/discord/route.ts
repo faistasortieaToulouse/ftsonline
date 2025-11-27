@@ -5,6 +5,7 @@ export const runtime = "nodejs";
 
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID!;
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN!;
+const DISCORD_EVENT_URL = "https://discord.com/channels/1422806103267344416/1423210600036565042";
 
 // Cache en mémoire (serverless-friendly, réinitialisé entre déploiements)
 let cachedData: { widget: any; events: any[]; timestamp: number } | null = null;
@@ -48,16 +49,12 @@ export async function GET() {
     } else if (eventsRes.ok) {
       const rawEvents = await eventsRes.json();
 
-      // Transformation pour ajouter `image` et `url` pour chaque événement
+      // Transformation pour ajouter `image` et le lien fixe
       eventsData = rawEvents.map((e: any) => {
         let coverImage: string | null = null;
-
         if (e.image) {
-          // Discord fournit `image` sous forme de hash, il faut construire l'URL
-          const type = e.entity_type === 1 ? "guild_scheduled_event" : "guild_scheduled_event"; // type fixe
           coverImage = `https://cdn.discordapp.com/guild-events/${e.id}/${e.image}.png`;
         }
-
         return {
           id: e.id,
           name: e.name,
@@ -66,7 +63,7 @@ export async function GET() {
           scheduled_end_time: e.scheduled_end_time,
           entity_type: e.entity_type,
           image: coverImage,
-          url: `https://discord.com/channels/${DISCORD_GUILD_ID}/${e.id}`, // lien direct vers l'événement
+          url: DISCORD_EVENT_URL, // lien fixe pour tous les événements
         };
       });
     }
