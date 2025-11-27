@@ -1,27 +1,49 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { GoogleTranslate } from "@/components/GoogleTranslate";
 import { Header } from "@/components/Header";
 import Link from "next/link";
 import { Calendar, Map } from "lucide-react";
 
-async function getAgendaEvents() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/agendatoulouse`, {
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error("Impossible de récupérer les événements");
-    const data = await res.json();
-    return data.events || [];
-  } catch (err) {
-    console.error("Erreur fetch agendatoulouse:", err);
-    return [];
-  }
-}
+// Cache client simple
+let cachedEvents: any[] = [];
+let lastFetch = 0;
+const CACHE_DURATION = 30 * 1000; // 30 secondes
 
-export default async function Home() {
-  const events = await getAgendaEvents();
+export default function Home() {
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      // Vérifie si le cache est encore valide
+      const now = Date.now();
+      if (cachedEvents.length > 0 && now - lastFetch < CACHE_DURATION) {
+        setEvents(cachedEvents);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/agendatoulouse`, {
+          cache: "no-store",
+        });
+        const data = await res.json();
+        cachedEvents = data.events || [];
+        lastFetch = Date.now();
+        setEvents(cachedEvents);
+      } catch (err) {
+        console.error(err);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchEvents();
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -33,16 +55,13 @@ export default async function Home() {
             <GoogleTranslate />
           </div>
 
-          {/* Nombre d'événements */}
           <p className="mt-4 text-muted-foreground">
             {events.length} événement{events.length > 1 ? "s" : ""}
           </p>
 
-          {/* Barre de recherche */}
           <SearchBar events={events} />
         </div>
 
-        {/* Boutons Calendar / Map */}
         <div className="container mx-auto px-4 mt-4 flex gap-2">
           <Link href="/calendar" className="btn-outline flex items-center gap-1">
             <Calendar /> Voir le calendrier
@@ -52,9 +71,10 @@ export default async function Home() {
           </Link>
         </div>
 
-        {/* Liste des événements */}
         <div className="container mx-auto px-4 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.length > 0 ? (
+          {loading ? (
+            <p>Chargement...</p>
+          ) : events.length > 0 ? (
             events.map((ev) => (
               <div key={ev.id} className="border rounded-lg overflow-hidden shadow-sm p-4">
                 <img src={ev.image} alt={ev.name} className="w-full h-40 object-cover mb-4 rounded" />
@@ -83,9 +103,6 @@ export default async function Home() {
   );
 }
 
-// ------------------------------------
-// Composant barre de recherche
-// ------------------------------------
 function SearchBar({ events }: { events: any[] }) {
   const [term, setTerm] = useState("");
 
