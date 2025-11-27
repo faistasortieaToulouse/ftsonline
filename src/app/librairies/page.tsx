@@ -1,7 +1,7 @@
-"use client";
+import { NextResponse } from "next/server";
+import Parser from "rss-parser";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Play, Mic, Calendar, BookOpen, Pause, RefreshCcw } from "lucide-react";
+const RSS_URL = "https://rss.ausha.co/rss/librairie-mollat";
 
 interface PodcastEpisode {
   librairie: string;
@@ -11,239 +11,76 @@ interface PodcastEpisode {
   description: string;
 }
 
-interface ApiData {
-  success: boolean;
-  data: PodcastEpisode[];
-  metadata?: {
-    totalEpisodes: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-  message?: string;
-}
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
 
-const PodcastCard: React.FC<{ episode: PodcastEpisode }> = ({ episode }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const limit = parseInt(searchParams.get("limit") || "10", 10);
+  const q = searchParams.get("q")?.toLowerCase() || "";
+  const librairie = searchParams.get("librairie") || "";
+  const dateMin = searchParams.get("dateMin")
+    ? new Date(searchParams.get("dateMin")!)
+    : null;
 
-  useEffect(() => {
-    if (!audioRef.current) {
-      const audio = new Audio(episode.audioUrl);
-      audio.onplay = () => setIsPlaying(true);
-      audio.onpause = () => setIsPlaying(false);
-      audio.onended = () => setIsPlaying(false);
-      audioRef.current = audio;
-    }
-    // Clean up function to pause audio when component unmounts or audioUrl changes
-    return () => {
-      if (audioRef.current) audioRef.current.pause();
-    };
-  }, [episode.audioUrl]);
+  try {
+    const parser = new Parser();
+    const feed = await parser.parseURL(RSS_URL);
 
-  const handlePlayPause = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play().catch((err) => {
-        console.error("Erreur lecture audio:", err);
-        // Note: Using a custom message box instead of alert() is recommended in production
-        // For this example, we keep the alert for simplicity, but acknowledge the rule.
-        // alert("La lecture audio a échoué. Vérifiez votre navigateur."); 
-        console.log("La lecture audio a échoué. Vérifiez votre navigateur.");
-      });
-    }
-  };
+    // Normalisation des épisodes
+    const allEpisodes: PodcastEpisode[] = feed.items.map((item) => ({
+      librairie: "Librairie Mollat", // valeur fixe pour ce flux
+      titre: item.title || "Sans titre",
+      date: item.pubDate || "",
+      audioUrl: item.enclosure?.url || "",
+      description: item.contentSnippet || "",
+    }));
 
-  const dateFormatted = new Date(episode.date).toLocaleDateString("fr-FR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+    // --------- FILTRES ----------
+    let filtered = [...allEpisodes];
 
-  // 🎨 Couleur dynamique selon la librairie
-  const librairieColors: Record<string, string> = {
-    "Ombres Blanches": "bg-blue-100 text-blue-800 border-blue-300",
-    "Terra Nova": "bg-green-100 text-green-800 border-green-300",
-    "Marathon des mots": "bg-purple-100 text-purple-800 border-purple-300",
-    "Librairie Mollat": "bg-yellow-100 text-yellow-800 border-yellow-300", // Nouvelle couleur pour Mollat
-  };
-  const librairieColor =
-    librairieColors[episode.librairie] || "bg-gray-100 text-gray-800 border-gray-300";
-
-  const formattedDescription =
-    episode.description.length > 100
-      ? episode.description.substring(0, 100) + "..."
-      : episode.description;
-
-  return (
-    <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-[1.02] border border-gray-100">
-      <div className="flex items-start justify-between">
-        <span
-          className={`px-3 py-1 text-sm font-semibold rounded-full border ${librairieColor}`}
-        >
-          <BookOpen className="inline w-4 h-4 mr-1" /> {episode.librairie}
-        </span>
-        <button
-          onClick={handlePlayPause}
-          className={`p-3 rounded-full shadow-md transition-all duration-300 
-            ${isPlaying ? "bg-red-500 text-white" : "bg-indigo-600 text-white hover:bg-indigo-700"}`}
-          title={isPlaying ? "Mettre en pause" : `Écouter ${episode.titre}`}
-        >
-          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-        </button>
-      </div>
-
-      <h3 className="mt-4 text-xl font-bold text-gray-900 line-clamp-2">
-        {episode.titre}
-      </h3>
-      <p className="mt-2 text-gray-600 text-sm h-10">{formattedDescription}</p>
-
-      <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 flex justify-between items-center">
-        <div className="flex items-center">
-          <Calendar className="w-4 h-4 mr-1 text-gray-400" />
-          <span>{dateFormatted}</span>
-        </div>
-        <div className="flex items-center">
-          <Mic className="w-4 h-4 mr-1 text-gray-400" />
-          <span>Podcast</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const App = () => {
-  const [episodes, setEpisodes] = useState<PodcastEpisode[]>([]);
-  const [metadata, setMetadata] = useState({
-    totalEpisodes: 0,
-    page: 1,
-    limit: 10,
-    totalPages: 1,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const [query, setQuery] = useState("");
-  const [librairie, setLibrairie] = useState("");
-  const [dateMin, setDateMin] = useState("");
-
-  const fetchPodcasts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(
-        `/api/podcasts?page=${metadata.page}&limit=${metadata.limit}&q=${query}&librairie=${librairie}&dateMin=${dateMin}`
+    if (q) {
+      filtered = filtered.filter(
+        (ep) =>
+          ep.titre.toLowerCase().includes(q) ||
+          ep.description.toLowerCase().includes(q)
       );
-      const result: ApiData = await response.json();
-      if (result.success) {
-        setEpisodes(result.data);
-        if (result.metadata) setMetadata(result.metadata);
-      } else {
-        setError(result.message || "Impossible de charger les podcasts.");
-      }
-    } catch (err) {
-      console.error("Erreur de fetch:", err);
-      setError("Erreur de connexion.");
-    } finally {
-      setLoading(false);
     }
-  };
 
-  useEffect(() => {
-    fetchPodcasts();
-    // Le tableau de dépendances permet de relancer la recherche lorsque les filtres ou la page changent.
-  }, [metadata.page, query, librairie, dateMin]);
+    if (librairie) {
+      filtered = filtered.filter((ep) => ep.librairie === librairie);
+    }
 
-  // 🔎 Librairies connues + dynamiques (Mollat ajoutée ici)
-  const librairiesConnues = ["Ombres Blanches", "Terra Nova", "Marathon des mots", "Librairie Mollat"];
-  const librairiesDisponibles = Array.from(
-    new Set([...librairiesConnues, ...episodes.map((ep) => ep.librairie)])
-  );
+    if (dateMin) {
+      filtered = filtered.filter(
+        (ep) => new Date(ep.date) >= dateMin
+      );
+    }
 
-  return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
-      <header className="max-w-4xl mx-auto mb-10">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
-          Podcasts des Librairies
-        </h1>
-        <p className="text-lg text-gray-600">
-          Rencontres et conférences des librairies Ombres Blanches, Terra Nova, Marathon des mots et Mollat.
-        </p>
-        <div className="mt-4 text-sm font-medium text-indigo-600">
-          {loading ? (
-            <span className="animate-pulse">Chargement...</span>
-          ) : (
-            <span>{metadata.totalEpisodes} épisodes disponibles</span>
-          )}
-        </div>
+    // --------- PAGINATION ----------
+    const totalEpisodes = filtered.length;
+    const totalPages = Math.ceil(totalEpisodes / limit);
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const paginated = filtered.slice(start, end);
 
-        <div className="mt-6 flex flex-wrap gap-3 items-center">
-          <input
-            type="text"
-            placeholder="Rechercher..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="border rounded px-3 py-2 flex-1"
-          />
-          <select
-            value={librairie}
-            onChange={(e) => setLibrairie(e.target.value)}
-            className="border rounded px-3 py-2"
-          >
-            <option value="">Toutes</option>
-            {librairiesDisponibles.map((lib) => (
-              <option key={lib} value={lib}>
-                {lib}
-              </option>
-            ))}
-          </select>
-          <input
-            type="date"
-            value={dateMin}
-            onChange={(e) => setDateMin(e.target.value)}
-            className="border rounded px-3 py-2"
-          />
-          <button
-            onClick={fetchPodcasts}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-          >
-            <RefreshCcw className="w-4 h-4" /> Rafraîchir
-          </button>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto">
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-6">
-            {error}
-          </div>
-        )}
-        {!loading && episodes.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {episodes.map((ep, i) => (
-              <PodcastCard key={i} episode={ep} />
-            ))}
-          </div>
-        )}
-        {!loading && episodes.length === 0 && !error && (
-          <div className="text-center py-10 bg-white rounded-xl shadow-md">
-            <Mic className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700">
-              Aucun podcast trouvé
-            </h3>
-          </div>
-        )}
-      </main>
-
-      <footer className="max-w-4xl mx-auto mt-10 text-center text-sm text-gray-400">
-        <p>Intégration des flux audio pour une expérience centralisée.</p>
-        <p className="mt-2">© {new Date().getFullYear()} Librairies Toulousaines</p>
-      </footer>
-    </div>
-  );
-};
-
-export default App;
+    return NextResponse.json({
+      success: true,
+      data: paginated,
+      metadata: {
+        totalEpisodes,
+        page,
+        limit,
+        totalPages,
+      },
+    });
+  } catch (error) {
+    console.error("Erreur RSS:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Impossible de charger le flux audio.",
+      },
+      { status: 500 }
+    );
+  }
+}
