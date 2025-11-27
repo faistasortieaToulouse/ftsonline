@@ -14,7 +14,6 @@ type DiscordEvent = {
   scheduled_start_time: string;
   scheduled_end_time?: string;
   image?: string | null; // image de couverture
-  url?: string;           // lien Discord pour l'événement
   entity_type: number;
 };
 
@@ -32,6 +31,7 @@ export default function DiscordEventsPage() {
       const res = await fetch(API_BASE);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
+      // Discord API retourne events dans data.events
       setEvents(data.events ?? []);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
@@ -78,10 +78,16 @@ export default function DiscordEventsPage() {
 
       {/* Switch d'affichage */}
       <div className="flex gap-4 mb-6">
-        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
           📺 Plein écran
         </Button>
-        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
           🔲 Vignette
         </Button>
       </div>
@@ -101,7 +107,10 @@ export default function DiscordEventsPage() {
       {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredEvents.map((event) => (
-            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]">
+            <div
+              key={event.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]"
+            >
               {/* Image de couverture */}
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
@@ -112,7 +121,10 @@ export default function DiscordEventsPage() {
               <div className="p-4 flex flex-col flex-1 min-h-0">
                 <h2 className="text-xl font-semibold mb-2 line-clamp-2">{event.name}</h2>
 
-                <div className="text-sm text-muted-foreground mb-2 overflow-y-auto" style={{ flex: 1, minHeight: 0 }}>
+                <div
+                  className="text-sm text-muted-foreground mb-2 overflow-y-auto"
+                  style={{ flex: 1, minHeight: 0 }}
+                >
                   {event.description || "Aucune description"}
                 </div>
 
@@ -126,18 +138,15 @@ export default function DiscordEventsPage() {
                 )}
 
                 {/* Bouton Discord pour chaque événement */}
-                {event.url && (
-<Button
-  as="a"
-  href={DISCORD_EVENT_URL}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="mt-2"
->
-  🔗 Voir sur Discord
-</Button>
-
-                )}
+                <Button
+                  as="a"
+                  href={DISCORD_EVENT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2"
+                >
+                  🔗 Voir sur Discord
+                </Button>
               </div>
             </div>
           ))}
@@ -148,7 +157,10 @@ export default function DiscordEventsPage() {
       {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
           {filteredEvents.map((event) => (
-            <div key={event.id} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
+            <div
+              key={event.id}
+              className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white"
+            >
               <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden">
                 <img
                   src={event.image || PLACEHOLDER_IMAGE}
@@ -164,17 +176,15 @@ export default function DiscordEventsPage() {
                 </p>
 
                 {/* Bouton Discord */}
-                {event.url && (
-                  <Button
-                    as="a"
-                    href={event.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2"
-                  >
-                    🔗 Voir sur Discord
-                  </Button>
-                )}
+                <Button
+                  as="a"
+                  href={DISCORD_EVENT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2"
+                >
+                  🔗 Voir sur Discord
+                </Button>
               </div>
             </div>
           ))}
