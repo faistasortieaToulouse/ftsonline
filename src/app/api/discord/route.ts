@@ -5,7 +5,6 @@ export const runtime = "nodejs";
 
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID!;
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN!;
-const DISCORD_EVENT_URL = "https://discord.com/channels/1422806103267344416/1423210600036565042";
 
 // Cache en mémoire (serverless-friendly, réinitialisé entre déploiements)
 let cachedData: { widget: any; events: any[]; timestamp: number } | null = null;
@@ -30,10 +29,9 @@ export async function GET() {
       `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`,
       { cache: "no-store" }
     );
-
     const widgetData = widgetRes.ok ? await widgetRes.json() : { members: [], channels: [] };
 
-    // --- Événements privés (nécessite BOT TOKEN) ---
+    // --- Événements ---
     const eventsRes = await fetch(
       `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/scheduled-events?with_user_count=true`,
       {
@@ -44,27 +42,37 @@ export async function GET() {
 
     let eventsData: any[] = [];
     if (eventsRes.status === 429) {
-      // Rate limit
       const rateLimitBody = await eventsRes.json();
       console.warn(`Rate limit hit, retry after ${rateLimitBody.retry_after}s`);
       eventsData = [];
     } else if (eventsRes.ok) {
       const rawEvents = await eventsRes.json();
 
-      // On ajoute l'image de couverture et le lien Discord pour chaque événement
-      eventsData = rawEvents.map((ev: any) => ({
-        ...ev,
-        image: ev.cover_image || null,
-        url: DISCORD_EVENT_URL,
-      }));
+      // Transformation pour ajouter `image` et `url` pour chaque événement
+      eventsData = rawEvents.map((e: any) => {
+        let coverImage: string | null = null;
+
+        if (e.image) {
+          // Discord fournit `image` sous forme de hash, il faut construire l'URL
+          const type = e.entity_type === 1 ? "guild_scheduled_event" : "guild_scheduled_event"; // type fixe
+          coverImage = `https://cdn.discordapp.com/guild-events/${e.id}/${e.image}.png`;
+        }
+
+        return {
+          id: e.id,
+          name: e.name,
+          description: e.description,
+          scheduled_start_time: e.scheduled_start_time,
+          scheduled_end_time: e.scheduled_end_time,
+          entity_type: e.entity_type,
+          image: coverImage,
+          url: `https://discord.com/channels/${DISCORD_GUILD_ID}/${e.id}`, // lien direct vers l'événement
+        };
+      });
     }
 
-    // Mise en cache
     cachedData = { widget: widgetData, events: eventsData, timestamp: now };
-
-    return NextResponse.json(cachedData, {
-      headers: { "Cache-Control": "no-store" },
-    });
+    return NextResponse.json(cachedData, { headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     console.error("Erreur Discord API :", err);
     return NextResponse.json(
