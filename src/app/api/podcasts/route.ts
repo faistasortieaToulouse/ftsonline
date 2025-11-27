@@ -1,4 +1,3 @@
-// src/app/api/podcasts/route.ts
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 import fetch from "node-fetch";
@@ -94,6 +93,35 @@ async function fetchMDM(baseUrl: string): Promise<PodcastEpisode[]> {
   }
 }
 
+// --- Librairie Mollat ("L'Heure des Livres") via proxy ---
+async function fetchMollat(baseUrl: string): Promise<PodcastEpisode[]> {
+  // L'URL RSS pour le podcast Mollat, souvent hébergé sur Ausha, est utilisée ici.
+  // VEUILLEZ VÉRIFIER QUE CETTE URL EST CORRECTE :
+  const MOLLAT_RSS_URL = "https://feed.ausha.co/lheure-des-livres-mollat";
+  
+  try {
+    const proxyUrl = `${baseUrl}/api/proxy?url=${encodeURIComponent(MOLLAT_RSS_URL)}`;
+    const feed = await rssParser.parseURL(proxyUrl);
+
+    return feed.items.map(item => ({
+      librairie: "Librairie Mollat",
+      titre: item.title ?? "",
+      date: item.pubDate ? new Date(item.pubDate).toISOString() : "",
+      audioUrl: item.enclosure?.url ?? "",
+      description: item.contentSnippet ?? item.content ?? "",
+    }));
+  } catch (err) {
+    console.error("⚠️ Erreur Librairie Mollat:", err);
+    return [{
+      librairie: "Librairie Mollat",
+      titre: "Flux indisponible",
+      date: new Date().toISOString(),
+      audioUrl: "",
+      description: "Le flux RSS de la Librairie Mollat est inaccessible. Veuillez vérifier l'URL RSS."
+    }];
+  }
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -105,13 +133,15 @@ export async function GET(req: Request) {
     // ⚠️ Base URL pour proxy (ex: https://ftsonline.vercel.app)
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-    const [obEpisodes, tnEpisodes, mdmEpisodes] = await Promise.all([
+    const [obEpisodes, tnEpisodes, mdmEpisodes, mollatEpisodes] = await Promise.all([
       fetchOmbresBlanches(baseUrl),
       fetchTerraNova(),
       fetchMDM(baseUrl),
+      fetchMollat(baseUrl), // <-- NOUVEL APPEL
     ]);
 
-    let allEpisodes = [...obEpisodes, ...tnEpisodes, ...mdmEpisodes];
+    // Ajout des nouveaux épisodes
+    let allEpisodes = [...obEpisodes, ...tnEpisodes, ...mdmEpisodes, ...mollatEpisodes];
 
     // 🔎 Filtrage
     if (query) {
