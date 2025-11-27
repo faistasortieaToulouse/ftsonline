@@ -12,7 +12,7 @@ interface PodcastEpisode {
 }
 
 const LIBRAIRIES = [
-  "Marathon des mots",
+  "Librairie Mollat",
   "Ombres Blanches",
   "Terra Nova",
 ];
