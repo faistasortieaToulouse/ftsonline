@@ -100,11 +100,12 @@ export default function DiscordEventsPage() {
       {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredEvents.map((event) => (
-            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]">
+            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+              {/* Image de couverture à taille réelle */}
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
                 alt={event.name}
-                className="w-full aspect-[16/9] object-cover"
+                className="w-full h-auto object-contain"
               />
 
               <div className="p-4 flex flex-col flex-1 min-h-0">
@@ -124,13 +125,15 @@ export default function DiscordEventsPage() {
                 )}
 
                 {/* Bouton Discord */}
-                <a
+                <Button
+                  as="a"
                   href={DISCORD_EVENT_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="mt-2"
                 >
-                  <Button className="mt-2">🔗 Voir sur Discord</Button>
-                </a>
+                  🔗 Voir sur Discord
+                </Button>
               </div>
             </div>
           ))}
@@ -146,7 +149,7 @@ export default function DiscordEventsPage() {
                 <img
                   src={event.image || PLACEHOLDER_IMAGE}
                   alt={event.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div className="flex-1">
@@ -156,13 +159,16 @@ export default function DiscordEventsPage() {
                   {new Date(event.scheduled_start_time).toLocaleString()}
                 </p>
 
-                <a
+                {/* Bouton Discord */}
+                <Button
+                  as="a"
                   href={DISCORD_EVENT_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="mt-2"
                 >
-                  <Button className="mt-2">🔗 Voir sur Discord</Button>
-                </a>
+                  🔗 Voir sur Discord
+                </Button>
               </div>
             </div>
           ))}
