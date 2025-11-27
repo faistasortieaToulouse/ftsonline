@@ -1,3 +1,4 @@
+// File: src/app/api/discord/route.ts
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -5,15 +6,9 @@ export const runtime = "nodejs";
 const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID!;
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN!;
 
-type DiscordEvent = {
-  id: string;
-  name: string;
-  description?: string;
-  scheduled_start_time: string;
-  scheduled_end_time?: string;
-  image?: string;
-  entity_type: number;
-};
+// Cache en mémoire (serverless friendly, réinitialisé entre déploiements)
+let cachedData: { widget: any; events: any[]; timestamp: number } | null = null;
+const CACHE_TTL = 30 * 1000; // 30 secondes
 
 export async function GET() {
   if (!DISCORD_GUILD_ID || !DISCORD_BOT_TOKEN) {
@@ -23,8 +18,20 @@ export async function GET() {
     );
   }
 
+  const now = Date.now();
+  if (cachedData && now - cachedData.timestamp < CACHE_TTL) {
+    return NextResponse.json(cachedData);
+  }
+
   try {
-    // --- Scheduled events depuis Discord API v10 ---
+    // --- Widget public ---
+    const widgetRes = await fetch(
+      `https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`,
+      { cache: "no-store" }
+    );
+    const widgetData = widgetRes.ok ? await widgetRes.json() : { members: [], channels: [] };
+
+    // --- Événements ---
     const eventsRes = await fetch(
       `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/scheduled-events?with_user_count=true`,
       {
@@ -33,27 +40,23 @@ export async function GET() {
       }
     );
 
-    if (!eventsRes.ok) {
-      console.error("Erreur Discord API:", await eventsRes.text());
-      return NextResponse.json({ events: [] });
+    let eventsData: any[] = [];
+    if (eventsRes.status === 429) {
+      const rateLimitBody = await eventsRes.json();
+      console.warn(`Rate limit hit, retry after ${rateLimitBody.retry_after}s`);
+      // Retourne un tableau vide côté client pour éviter crash
+      eventsData = [];
+    } else if (eventsRes.ok) {
+      eventsData = await eventsRes.json();
     }
 
-    const rawEvents = await eventsRes.json();
-
-    // --- Normalisation pour le frontend ---
-    const events: DiscordEvent[] = rawEvents.map((e: any) => ({
-      id: e.id,
-      name: e.name,
-      description: e.description ?? undefined,
-      scheduled_start_time: e.scheduled_start_time,
-      scheduled_end_time: e.scheduled_end_time ?? undefined,
-      image: e.entity_metadata?.image ?? undefined,
-      entity_type: e.entity_type,
-    }));
-
-    return NextResponse.json({ events });
+    cachedData = { widget: widgetData, events: eventsData, timestamp: now };
+    return NextResponse.json(cachedData);
   } catch (err) {
-    console.error("Erreur Discord API:", err);
-    return NextResponse.json({ events: [] }, { status: 500 });
+    console.error("Erreur Discord API :", err);
+    return NextResponse.json(
+      { error: "Impossible de charger les données Discord.", events: [], widget: {} },
+      { status: 500 }
+    );
   }
 }
