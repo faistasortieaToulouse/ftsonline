@@ -14,7 +14,11 @@ export async function GET(req: Request) {
       return NextResponse.json({ items: [] }, { status: res.status });
     }
 
-    const xml = await res.text();
+    // Lire le body en ArrayBuffer pour forcer UTF-8
+    const buffer = await res.arrayBuffer();
+    const decoder = new TextDecoder('utf-8');
+    const xml = decoder.decode(buffer);
+
     const parser = new XMLParser({
       ignoreAttributes: false,
       attributeNamePrefix: '',
