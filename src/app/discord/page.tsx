@@ -23,21 +23,22 @@ export default function DiscordEventsPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [searchQuery, setSearchQuery] = useState("");
-
-  async function fetchEvents() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(API_BASE);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      setEvents(data || []);
-    } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
-    } finally {
-      setLoading(false);
-    }
+  
+async function fetchEvents() {
+  setLoading(true);
+  setError(null);
+  try {
+    const res = await fetch(API_BASE);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    // data.events contient le tableau des événements
+    setEvents(Array.isArray(data.events) ? data.events : []);
+  } catch (err: any) {
+    setError(err.message || "Erreur inconnue");
+  } finally {
+    setLoading(false);
   }
+}
 
   useEffect(() => {
     fetchEvents();
