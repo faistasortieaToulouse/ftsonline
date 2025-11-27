@@ -12,7 +12,6 @@ interface PodcastEpisode {
 }
 
 const LIBRAIRIES = [
-  "Librairie Mollat",
   "Marathon des mots",
   "Ombres Blanches",
   "Terra Nova",
