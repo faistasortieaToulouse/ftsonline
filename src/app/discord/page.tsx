@@ -100,18 +100,18 @@ export default function DiscordEventsPage() {
       {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredEvents.map((event) => (
-            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-              {/* Image de couverture à taille réelle */}
+            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]">
+              {/* Image de couverture responsive */}
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
                 alt={event.name}
-                className="w-full h-auto object-contain"
+                className="w-full h-auto max-h-[400px] object-contain"
               />
 
               <div className="p-4 flex flex-col flex-1 min-h-0">
                 <h2 className="text-xl font-semibold mb-2 line-clamp-2">{event.name}</h2>
 
-                <div className="text-sm text-muted-foreground mb-2 overflow-y-auto" style={{ flex: 1, minHeight: 0 }}>
+                <div className="text-sm text-muted-foreground mb-2 overflow-y-auto scrollable" style={{ flex: 1, minHeight: 0 }}>
                   {event.description || "Aucune description"}
                 </div>
 
@@ -124,7 +124,7 @@ export default function DiscordEventsPage() {
                   </p>
                 )}
 
-                {/* Bouton Discord */}
+                {/* Bouton Discord avec lien */}
                 <Button
                   as="a"
                   href={DISCORD_EVENT_URL}
@@ -145,7 +145,7 @@ export default function DiscordEventsPage() {
         <div className="space-y-4 mt-6">
           {filteredEvents.map((event) => (
             <div key={event.id} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
-              <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden">
+              <div className="w-32 h-32 overflow-hidden rounded">
                 <img
                   src={event.image || PLACEHOLDER_IMAGE}
                   alt={event.name}
