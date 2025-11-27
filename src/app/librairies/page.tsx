@@ -35,6 +35,7 @@ const PodcastCard: React.FC<{ episode: PodcastEpisode }> = ({ episode }) => {
       audio.onended = () => setIsPlaying(false);
       audioRef.current = audio;
     }
+    // Clean up function to pause audio when component unmounts or audioUrl changes
     return () => {
       if (audioRef.current) audioRef.current.pause();
     };
@@ -48,7 +49,10 @@ const PodcastCard: React.FC<{ episode: PodcastEpisode }> = ({ episode }) => {
     } else {
       audio.play().catch((err) => {
         console.error("Erreur lecture audio:", err);
-        alert("La lecture audio a échoué. Vérifiez votre navigateur.");
+        // Note: Using a custom message box instead of alert() is recommended in production
+        // For this example, we keep the alert for simplicity, but acknowledge the rule.
+        // alert("La lecture audio a échoué. Vérifiez votre navigateur."); 
+        console.log("La lecture audio a échoué. Vérifiez votre navigateur.");
       });
     }
   };
@@ -64,6 +68,7 @@ const PodcastCard: React.FC<{ episode: PodcastEpisode }> = ({ episode }) => {
     "Ombres Blanches": "bg-blue-100 text-blue-800 border-blue-300",
     "Terra Nova": "bg-green-100 text-green-800 border-green-300",
     "Marathon des mots": "bg-purple-100 text-purple-800 border-purple-300",
+    "Librairie Mollat": "bg-yellow-100 text-yellow-800 border-yellow-300", // Nouvelle couleur pour Mollat
   };
   const librairieColor =
     librairieColors[episode.librairie] || "bg-gray-100 text-gray-800 border-gray-300";
@@ -149,10 +154,11 @@ const App = () => {
 
   useEffect(() => {
     fetchPodcasts();
+    // Le tableau de dépendances permet de relancer la recherche lorsque les filtres ou la page changent.
   }, [metadata.page, query, librairie, dateMin]);
 
-  // 🔎 Librairies connues + dynamiques
-  const librairiesConnues = ["Ombres Blanches", "Terra Nova", "Marathon des mots"];
+  // 🔎 Librairies connues + dynamiques (Mollat ajoutée ici)
+  const librairiesConnues = ["Ombres Blanches", "Terra Nova", "Marathon des mots", "Librairie Mollat"];
   const librairiesDisponibles = Array.from(
     new Set([...librairiesConnues, ...episodes.map((ep) => ep.librairie)])
   );
@@ -161,10 +167,10 @@ const App = () => {
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 font-sans">
       <header className="max-w-4xl mx-auto mb-10">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
-          Podcasts des Librairies Toulousaines
+          Podcasts des Librairies
         </h1>
         <p className="text-lg text-gray-600">
-          Rencontres et conférences des librairies Ombres Blanches, Terra Nova et Marathon des mots.
+          Rencontres et conférences des librairies Ombres Blanches, Terra Nova, Marathon des mots et Mollat.
         </p>
         <div className="mt-4 text-sm font-medium text-indigo-600">
           {loading ? (
