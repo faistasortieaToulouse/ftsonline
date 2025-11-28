@@ -22,8 +22,8 @@ interface PodcastData {
 // Fonction pour récupérer les données côté serveur (SSR)
 async function getPodcasts(): Promise<PodcastData | null> {
   // Ligne 24 du fichier page.tsx
-const API_URL = `${process.env.NEXT_PUBLIC_BASE_URL || '/api/podmat`;
-
+const API_URL = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/podmat`;
+  
   try {
     // Appel à l'API route interne
     // La route doit être accédée via l'URL complète
