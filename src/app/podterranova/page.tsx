@@ -2,136 +2,167 @@
 
 import { useEffect, useState } from "react";
 
-interface Episode {
-  librairie: string;
+type Episode = {
+  guid: string;
   titre: string;
-  date: string;
-  audioUrl: string;
+  date: string; // iso string ou pubDate
   description: string;
-}
+  audioUrl: string;
+  image?: string | null;
+  link?: string | null;
+};
 
-// --- Pagination ---
 const EPISODES_PER_PAGE = 12;
 
 export default function PodTerraNovaPage() {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
 
-  // --- Load cached data ---
   useEffect(() => {
-    async function loadEpisodes() {
+    async function load() {
+      setLoading(true);
+      setError(null);
       try {
-        const res = await fetch("/api/podcasts?limit=200");
+        const res = await fetch("/api/podterranova");
+        if (!res.ok) {
+          const json = await res.json().catch(() => ({}));
+          setError(
+            json?.error ||
+              `Erreur ${res.status} lors de la récupération du cache. Lancez /api/podterranova/update-cache.`
+          );
+          setEpisodes([]);
+          return;
+        }
         const json = await res.json();
-
-        const data: Episode[] = json.data || [];
-
-        // Tri du plus récent au plus ancien
-        data.sort(
-          (a, b) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-
-        // Filtre : uniquement "Terra Nova"
-        const terraEpisodes = data.filter(
-          (ep) => ep.librairie === "Terra Nova"
-        );
-
-        setEpisodes(terraEpisodes);
-      } catch (error) {
-        console.error("Erreur chargement podcasts:", error);
+        // Ton endpoint renvoie { data: episodes } d'après ce que tu avais.
+        const data: Episode[] = json.data || json || [];
+        // Tri décroissant par date
+        const sorted = data.slice().sort((a, b) => {
+          const da = new Date(a.date).getTime();
+          const db = new Date(b.date).getTime();
+          return db - da;
+        });
+        setEpisodes(sorted);
+      } catch (e) {
+        console.error(e);
+        setError("Erreur réseau lors de la récupération des épisodes.");
+        setEpisodes([]);
       } finally {
         setLoading(false);
       }
     }
-
-    loadEpisodes();
+    load();
   }, []);
 
-  // --- Pagination control ---
-  const firstIndex = (currentPage - 1) * EPISODES_PER_PAGE;
-  const currentEpisodes = episodes.slice(
-    firstIndex,
-    firstIndex + EPISODES_PER_PAGE
-  );
-
-  const totalPages = Math.ceil(episodes.length / EPISODES_PER_PAGE);
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(episodes.length / EPISODES_PER_PAGE));
+  const start = (page - 1) * EPISODES_PER_PAGE;
+  const pageEpisodes = episodes.slice(start, start + EPISODES_PER_PAGE);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-4xl font-bold mb-6">
-        🎙️ Podcasts — Terra Nova
-      </h1>
+    <main className="max-w-4xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-6">🎙️ Terra Nova — Podcasts</h1>
 
-      {loading && (
-        <p className="text-gray-500">Chargement des épisodes…</p>
+      {loading && <p className="text-gray-600">Chargement…</p>}
+
+      {!loading && error && (
+        <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded">
+          <p className="font-medium">Erreur</p>
+          <p>{error}</p>
+          <p className="mt-2 text-sm">
+            Si le cache est absent, lancez <code>/api/podterranova/update-cache</code>.
+          </p>
+        </div>
       )}
 
-      {!loading && currentEpisodes.length === 0 && (
-        <p className="text-gray-400">
-          Aucun épisode trouvé. Vérifiez que le cache est à jour.
-        </p>
+      {!loading && !error && pageEpisodes.length === 0 && (
+        <p className="text-gray-600">Aucun épisode disponible.</p>
       )}
 
-      <div className="space-y-8">
-        {currentEpisodes.map((episode, index) => (
-          <article
-            key={index}
-            className="border border-gray-700 rounded-lg p-5 bg-gray-900"
-          >
-            <h2 className="text-xl font-semibold mb-1">
-              {episode.titre}
-            </h2>
+      <div className="space-y-8 mt-6">
+        {pageEpisodes.map((ep) => {
+          const d = new Date(ep.date);
+          // Format date et heure à la française
+          const dateStr = isNaN(d.getTime())
+            ? ep.date
+            : d.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+          const timeStr = isNaN(d.getTime())
+            ? ""
+            : d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
-            <p className="text-gray-400 text-sm mb-4">
-              {new Date(episode.date).toLocaleDateString("fr-FR", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
+          return (
+            <article key={ep.guid} className="border rounded-lg p-5 shadow-sm bg-white">
+              <header className="mb-3">
+                <h2 className="text-xl font-semibold">{ep.titre}</h2>
+                <p className="text-sm text-gray-500">
+                  {dateStr}
+                  {timeStr ? ` — ${timeStr}` : ""}
+                </p>
+              </header>
 
-            <audio
-              controls
-              className="w-full mb-4"
-              src={episode.audioUrl}
-            />
+              {ep.description ? (
+                <div
+                  className="prose mt-3"
+                  dangerouslySetInnerHTML={{ __html: ep.description }}
+                />
+              ) : (
+                <p className="text-gray-600">Pas de description.</p>
+              )}
 
-            <div
-              className="prose prose-invert"
-              dangerouslySetInnerHTML={{
-                __html: episode.description,
-              }}
-            />
-          </article>
-        ))}
+              <div className="mt-4">
+                <audio
+                  controls
+                  className="w-full"
+                  src={ep.audioUrl}
+                  preload="none"
+                >
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+
+              {ep.link && (
+                <p className="mt-3">
+                  <a
+                    href={ep.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    Voir la page de l'épisode
+                  </a>
+                </p>
+              )}
+            </article>
+          );
+        })}
       </div>
 
-      {/* --- Pagination Buttons --- */}
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex gap-3 justify-center mt-10">
+        <nav className="flex items-center justify-center gap-3 mt-8">
           <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-4 py-2 rounded bg-gray-700 disabled:opacity-40"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3 py-2 rounded bg-gray-200 disabled:opacity-50"
           >
             ← Précédent
           </button>
 
-          <span className="px-3 py-2">
-            Page {currentPage} / {totalPages}
+          <span>
+            Page <strong>{page}</strong> / {totalPages}
           </span>
 
           <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-4 py-2 rounded bg-gray-700 disabled:opacity-40"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-3 py-2 rounded bg-gray-200 disabled:opacity-50"
           >
             Suivant →
           </button>
-        </div>
+        </nav>
       )}
-    </div>
+    </main>
   );
 }
