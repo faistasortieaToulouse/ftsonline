@@ -21,7 +21,7 @@ interface PodcastData {
 
 // Fonction pour récupérer les données côté serveur (SSR)
 async function getPodcasts(): Promise<PodcastData | null> {
-  const API_URL = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/podmat`;
+  const API_URL = `${process.env.NEXT_PUBLIC_BASE_URL || '/api/podmat`;
 
   try {
     // Appel à l'API route interne
