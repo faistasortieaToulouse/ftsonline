@@ -9,14 +9,14 @@ interface PodcastEpisode {
   titre: string;
   date: string;
   audioUrl: string; // URL du fichier audio (enclosureUrl)
-  description: string;
+  description: string; // Ce champ peut contenir du HTML
 }
 
 const LIBRAIRIES = [
   "Librairie Mollat",
   "Ombres Blanches",
   "Terra Nova",
-  "Marathon des Mots", // Ajout de votre podcast
+  "Marathon des Mots",
 ];
 
 // Interface de réponse si l'API retourne un objet avec une clé 'data'
@@ -56,7 +56,6 @@ export default function LibrairiesClient() {
       }
       
     } catch (err: any) {
-      // Note : L'erreur du build (ECONNREFUSED) sera visible ici si l'appel API échoue au runtime
       console.error('Erreur de chargement des podcasts:', err);
       setError(err.message || "Erreur inconnue lors du chargement des épisodes.");
     } finally {
@@ -175,11 +174,13 @@ export default function LibrairiesClient() {
                 </p>
               </div>
 
-              {/* Description */}
-              {/* Utilisation de line-clamp pour une description propre */}
-              <p className="text-sm text-gray-700 mb-4 flex-1 overflow-hidden line-clamp-4">
-                {ep.description}
-              </p>
+              {/* Description (Utilisation de dangerouslySetInnerHTML) */}
+              <div 
+                className="text-sm text-gray-700 mb-4 flex-1 overflow-hidden line-clamp-4"
+                // Ceci permet de rendre le HTML provenant du flux RSS.
+                // ATTENTION: C'est une fonction dangereuse, assurez-vous de la fiabilité de vos sources.
+                dangerouslySetInnerHTML={{ __html: ep.description }}
+              />
 
               {/* Lecteur Audio */}
               <div className="mt-auto pt-4 border-t border-gray-100">
