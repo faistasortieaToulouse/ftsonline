@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import debounce from "lodash.debounce";
+// Assurez-vous d'avoir installé lodash.debounce: npm install lodash.debounce
+import debounce from "lodash.debounce"; 
 
 interface PodcastEpisode {
   librairie: string;
   titre: string;
   date: string;
-  audioUrl: string;
+  audioUrl: string; // URL du fichier audio (enclosureUrl)
   description: string;
 }
 
@@ -15,7 +16,13 @@ const LIBRAIRIES = [
   "Librairie Mollat",
   "Ombres Blanches",
   "Terra Nova",
+  "Marathon des Mots", // Ajout de votre podcast
 ];
+
+// Interface de réponse si l'API retourne un objet avec une clé 'data'
+interface ApiResponse {
+    data: PodcastEpisode[];
+}
 
 export default function LibrairiesClient() {
   const [episodes, setEpisodes] = useState<PodcastEpisode[]>([]);
@@ -31,13 +38,27 @@ export default function LibrairiesClient() {
     setError(null);
 
     try {
-      const res = await fetch(`/api/podcasts?limit=50`);
-      if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
-      const data = await res.json();
-      setEpisodes(data.data || []);
-      setFilteredEpisodes(data.data || []);
+      // Appel de votre API qui agrège les flux RSS
+      const res = await fetch(`/api/podcasts?limit=50`); 
+      
+      if (!res.ok) {
+        throw new Error(`Erreur API : ${res.status} - ${res.statusText}`);
+      }
+      
+      const data: ApiResponse = await res.json();
+      
+      if (data.data && Array.isArray(data.data)) {
+        setEpisodes(data.data);
+        // Initialiser les épisodes filtrés
+        setFilteredEpisodes(data.data);
+      } else {
+        throw new Error("Format de données inattendu de l'API.");
+      }
+      
     } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
+      // Note : L'erreur du build (ECONNREFUSED) sera visible ici si l'appel API échoue au runtime
+      console.error('Erreur de chargement des podcasts:', err);
+      setError(err.message || "Erreur inconnue lors du chargement des épisodes.");
     } finally {
       setLoading(false);
     }
@@ -49,10 +70,12 @@ export default function LibrairiesClient() {
       debounce(() => {
         let filtered = episodes;
 
+        // 1. Filtrage par librairie
         if (selectedLibrairie !== "Toutes les librairies") {
           filtered = filtered.filter(ep => ep.librairie === selectedLibrairie);
         }
 
+        // 2. Filtrage par recherche (titre et description)
         if (search.trim() !== "") {
           const s = search.toLowerCase();
           filtered = filtered.filter(
@@ -65,6 +88,7 @@ export default function LibrairiesClient() {
     [episodes, selectedLibrairie, search]
   );
 
+  // Charger les données une seule fois
   useEffect(() => {
     fetchEpisodes();
   }, []);
@@ -72,33 +96,37 @@ export default function LibrairiesClient() {
   // Filtrer chaque fois que search ou librairie change
   useEffect(() => {
     filterEpisodes();
+    return () => {
+      // Nettoyer le debounce lors du démontage ou changement de dépendance
+      filterEpisodes.cancel();
+    };
   }, [selectedLibrairie, search, filterEpisodes]);
 
   return (
-    <div className="container mx-auto py-10 px-4">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Podcasts des Librairies Toulousaines</h1>
-        <p className="text-gray-700">
-          Rencontres et conférences des librairies Ombres Blanches, Terra Nova, Marathon des mots et Librairie Mollat.
+    <div className="container mx-auto py-10 px-4 min-h-screen bg-gray-50">
+      <div className="mb-8">
+        <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Podcasts des Librairies Toulousaines</h1>
+        <p className="text-gray-700 text-lg">
+          Rencontres, conférences et lectures du Marathon des Mots, Ombres Blanches, Terra Nova et Librairie Mollat.
         </p>
-        <p className="mt-2 text-sm text-gray-500">
-          Total de podcasts : {episodes.length}
+        <p className="mt-4 text-base text-gray-500 font-medium">
+          Total d'épisodes chargés : <span className="font-bold text-indigo-600">{episodes.length}</span>
         </p>
       </div>
 
       {/* Barre de recherche et menu déroulant */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10 p-4 bg-white rounded-xl shadow-lg border border-gray-100">
         <input
           type="text"
-          placeholder="Rechercher un podcast..."
+          placeholder="Rechercher un podcast par titre ou description..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="border rounded px-4 py-2 flex-1"
+          className="border border-gray-300 rounded-lg px-4 py-2 flex-1 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
         />
         <select
           value={selectedLibrairie}
           onChange={e => setSelectedLibrairie(e.target.value)}
-          className="border rounded px-4 py-2"
+          className="border border-gray-300 rounded-lg px-4 py-2 appearance-none bg-white pr-8 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
         >
           <option value="Toutes les librairies">Toutes les librairies</option>
           {LIBRAIRIES.map((lib, i) => (
@@ -109,44 +137,62 @@ export default function LibrairiesClient() {
         </select>
         <button
           onClick={fetchEpisodes}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          disabled={loading}
+          className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-150 shadow-md disabled:bg-indigo-400"
         >
-          🔄 Rafraîchir
+          {loading ? 'Chargement...' : '🔄 Rafraîchir'}
         </button>
       </div>
 
       {/* Messages d’état */}
-      {loading && <p className="text-center py-4">Chargement des podcasts…</p>}
-      {error && <p className="text-center py-4 text-red-600">Erreur : {error}</p>}
-      {filteredEpisodes.length === 0 && !loading && !error && (
-        <p className="text-center py-4">Aucun épisode trouvé.</p>
+      {loading && <p className="text-center py-12 text-xl text-indigo-600 font-medium">Chargement des podcasts en cours...</p>}
+      {error && <p className="text-center py-12 text-xl text-red-600 font-bold border-2 border-red-400 bg-red-100 rounded-xl">⚠️ Erreur : {error}</p>}
+      
+      {!loading && !error && filteredEpisodes.length === 0 && (
+        <p className="text-center py-12 text-xl text-gray-500">
+          Aucun épisode trouvé correspondant aux filtres.
+        </p>
       )}
 
       {/* Liste des podcasts */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {filteredEpisodes.map((ep, i) => (
           <div
             key={i}
-            className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full"
+            className="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col h-full border border-gray-200 transform hover:scale-[1.01]"
           >
-            <div className="p-4 flex flex-col flex-1">
-              <h2 className="text-lg font-semibold mb-2 line-clamp-2">{ep.titre}</h2>
-              <p className="text-sm text-gray-600 mb-2 flex-1 line-clamp-4">{ep.description}</p>
-              <p className="text-xs text-gray-400 mb-2">
-                {new Date(ep.date).toLocaleDateString("fr-FR", {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}{" "}
-                — {ep.librairie}
+            <div className="p-5 flex flex-col flex-1">
+              {/* Titre et Librairie */}
+              <div className="mb-3">
+                <h2 className="text-lg font-bold mb-1 line-clamp-2 text-gray-900">{ep.titre}</h2>
+                <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">{ep.librairie}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {new Date(ep.date).toLocaleDateString("fr-FR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+
+              {/* Description */}
+              {/* Utilisation de line-clamp pour une description propre */}
+              <p className="text-sm text-gray-700 mb-4 flex-1 overflow-hidden line-clamp-4">
+                {ep.description}
               </p>
-              {ep.audioUrl && (
-                <audio controls className="w-full mt-auto rounded">
-                  <source src={ep.audioUrl} type="audio/mpeg" />
-                  Votre navigateur ne supporte pas l’élément audio.
-                </audio>
-              )}
+
+              {/* Lecteur Audio */}
+              <div className="mt-auto pt-4 border-t border-gray-100">
+                {ep.audioUrl ? (
+                  // Balise audio stylisée et responsive
+                  <audio controls className="w-full h-10 rounded-full bg-gray-100 shadow-inner">
+                    <source src={ep.audioUrl} type="audio/mpeg" />
+                    Votre navigateur ne supporte pas l’élément audio.
+                  </audio>
+                ) : (
+                  <p className="text-sm text-red-500 font-medium">Fichier audio non disponible.</p>
+                )}
+              </div>
             </div>
           </div>
         ))}
