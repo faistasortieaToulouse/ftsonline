@@ -1,0 +1,119 @@
+// src/app/podmat/page.tsx
+
+'use client'
+
+import React from 'react';
+
+// Définition des types pour les données de l'API
+interface PodcastItem {
+  title: string;
+  link: string;
+  pubDate: string;
+  content: string;
+  enclosureUrl: string;
+}
+
+interface PodcastData {
+  channelTitle: string;
+  description: string;
+  items: PodcastItem[];
+}
+
+// Fonction pour récupérer les données côté serveur (SSR)
+async function getPodcasts(): Promise<PodcastData | null> {
+  const API_URL = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/podmat`;
+
+  try {
+    // Appel à l'API route interne
+    // La route doit être accédée via l'URL complète
+    const res = await fetch(API_URL, {
+      // Configuration pour éviter le cache de Next.js et garantir
+      // que la requête est effectuée à chaque build/requête
+      next: { revalidate: 3600 } // Revalider toutes les heures (3600 secondes)
+    });
+
+    if (!res.ok) {
+      // Afficher un message d'erreur si l'API route échoue
+      console.error(`Erreur: ${res.status} - ${res.statusText}`);
+      return null;
+    }
+
+    const data: PodcastData = await res.json();
+    return data;
+
+  } catch (error) {
+    console.error('Erreur lors de la récupération des données de l\'API:', error);
+    return null;
+  }
+}
+
+// Composant Page
+export default async function PodmatPage() {
+  const data = await getPodcasts();
+
+  if (!data) {
+    return (
+      <main className="p-4 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-4">Marathon des Mots - Podcasts</h1>
+        <p className="text-red-600">
+          Impossible de charger les données des podcasts pour le moment.
+        </p>
+      </main>
+    );
+  }
+
+  const { channelTitle, description, items } = data;
+
+  return (
+    <main className="p-4 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-2 text-indigo-700">{channelTitle}</h1>
+      <p className="text-gray-600 mb-6 italic">{description}</p>
+
+      <section>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Épisodes</h2>
+        
+        {items.length === 0 ? (
+          <p>Aucun épisode trouvé.</p>
+        ) : (
+          <ul className="space-y-6">
+            {items.map((item, index) => (
+              <li key={index} className="border-l-4 border-indigo-400 pl-4 py-2 bg-gray-50 shadow-sm rounded">
+                <h3 className="text-xl font-bold text-gray-800">{item.title}</h3>
+                <p className="text-sm text-gray-500 mb-2">
+                  Publié le: {new Date(item.pubDate).toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+                <div 
+                  className="text-gray-700 text-sm mb-3" 
+                  // ATTENTION: Utiliser dangerouslySetInnerHTML en production
+                  // si 'content' contient du HTML non-sécurisé est risqué.
+                  // Ici, on suppose que le contenu du flux est fiable.
+                  dangerouslySetInnerHTML={{ __html: item.content }}
+                />
+                
+                {item.enclosureUrl && (
+                  <audio controls className="w-full mt-2">
+                    <source src={item.enclosureUrl} type="audio/mpeg" />
+                    Votre navigateur ne supporte pas l'élément audio.
+                  </audio>
+                )}
+                
+                <a 
+                  href={item.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-block mt-3 text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+                >
+                  Voir l'épisode original &rarr;
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </main>
+  );
+}
