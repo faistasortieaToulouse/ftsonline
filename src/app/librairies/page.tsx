@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-// Assurez-vous d'avoir installé lodash.debounce: npm install lodash.debounce
+// Importation de lodash.debounce pour optimiser la recherche
 import debounce from "lodash.debounce"; 
 
 interface PodcastEpisode {
   librairie: string;
   titre: string;
-  date: string;
+  date: string; // Format ISO ou PubDate pour être parsé par new Date()
   audioUrl: string; // URL du fichier audio (enclosureUrl)
-  description: string; // Ce champ peut contenir du HTML
+  description: string; // Contient souvent du HTML
 }
 
+// Liste des librairies pour le filtre
 const LIBRAIRIES = [
   "Librairie Mollat",
   "Ombres Blanches",
@@ -19,7 +20,7 @@ const LIBRAIRIES = [
   "Marathon des Mots",
 ];
 
-// Interface de réponse si l'API retourne un objet avec une clé 'data'
+// Interface de réponse de l'API (assumant { data: [...] })
 interface ApiResponse {
     data: PodcastEpisode[];
 }
@@ -28,53 +29,85 @@ export default function LibrairiesClient() {
   const [episodes, setEpisodes] = useState<PodcastEpisode[]>([]);
   const [filteredEpisodes, setFilteredEpisodes] = useState<PodcastEpisode[]>([]);
   const [loading, setLoading] = useState(false);
+  const [updatingCache, setUpdatingCache] = useState(false); // Nouvel état pour la mise à jour du cache
   const [error, setError] = useState<string | null>(null);
   const [selectedLibrairie, setSelectedLibrairie] = useState("Toutes les librairies");
   const [search, setSearch] = useState("");
 
-  // --- Fetch podcasts depuis l'API ---
+  // --- Fetch podcasts from API ---
   async function fetchEpisodes() {
     setLoading(true);
     setError(null);
 
+    // NOTE: Vérifiez que cette route est bien "/api/podcasts" si vous voyez des logs pour "/api/podmat"
+    const apiPath = `/api/podcasts?limit=50`;
+
     try {
-      // Appel de votre API qui agrège les flux RSS
-      const res = await fetch(`/api/podcasts?limit=50`); 
+      const res = await fetch(apiPath); 
       
       if (!res.ok) {
-        throw new Error(`Erreur API : ${res.status} - ${res.statusText}`);
+        throw new Error(`Erreur API: ${res.status} - ${res.statusText}`);
       }
       
       const data: ApiResponse = await res.json();
       
       if (data.data && Array.isArray(data.data)) {
         setEpisodes(data.data);
-        // Initialiser les épisodes filtrés
         setFilteredEpisodes(data.data);
       } else {
         throw new Error("Format de données inattendu de l'API.");
       }
       
     } catch (err: any) {
-      console.error('Erreur de chargement des podcasts:', err);
-      setError(err.message || "Erreur inconnue lors du chargement des épisodes.");
+      console.error(`Erreur de chargement des podcasts depuis ${apiPath}:`, err);
+      // Indiquer clairement à l'utilisateur que le cache peut être la cause
+      setError(err.message || "Erreur inconnue lors du chargement des épisodes. Essayez de mettre à jour le Cache.");
     } finally {
       setLoading(false);
     }
   }
 
-  // --- Filtrage côté client (debounced pour la recherche) ---
+  // --- New Function: Force Cache Update and then fetch episodes ---
+  async function handleUpdateCache() {
+    setUpdatingCache(true);
+    setError(null);
+    console.log("Tentative de forcer la mise à jour du cache...");
+
+    try {
+      // Appel direct de la route serveur pour générer un nouveau fichier cache
+      const res = await fetch("/api/podcasts/update-cache");
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Échec de la mise à jour du cache. Réponse du serveur : ${errorText.substring(0, 100)}...`);
+      }
+      
+      console.log("Cache mis à jour avec succès. Rechargement des épisodes...");
+      // Recharger les données fraîches après une mise à jour réussie
+      await fetchEpisodes();
+      
+    } catch (err: any) {
+      console.error('Erreur de Mise à Jour du Cache:', err);
+      // Message d'erreur ciblé pour l'utilisateur
+      setError(err.message || "Erreur critique lors de la mise à jour du cache. Vérifiez les logs pour l'erreur 'Connection Refused' (errno: -111) indiquant un problème avec les flux RSS distants.");
+    } finally {
+      setUpdatingCache(false);
+    }
+  }
+
+
+  // --- Client-side filtering (debounced for search) ---
   const filterEpisodes = useMemo(
     () =>
       debounce(() => {
         let filtered = episodes;
 
-        // 1. Filtrage par librairie
+        // 1. Filter by library
         if (selectedLibrairie !== "Toutes les librairies") {
           filtered = filtered.filter(ep => ep.librairie === selectedLibrairie);
         }
 
-        // 2. Filtrage par recherche (titre et description)
+        // 2. Filter by search (title and description)
         if (search.trim() !== "") {
           const s = search.toLowerCase();
           filtered = filtered.filter(
@@ -87,19 +120,40 @@ export default function LibrairiesClient() {
     [episodes, selectedLibrairie, search]
   );
 
-  // Charger les données une seule fois
+  // Load data once on mount
   useEffect(() => {
     fetchEpisodes();
   }, []);
 
-  // Filtrer chaque fois que search ou librairie change
+  // Filter whenever search or library changes
   useEffect(() => {
     filterEpisodes();
     return () => {
-      // Nettoyer le debounce lors du démontage ou changement de dépendance
+      // Clear debounce when unmounting or dependencies change
       filterEpisodes.cancel();
     };
   }, [selectedLibrairie, search, filterEpisodes]);
+
+  // Fonction pour un affichage sécurisé de la date
+  const formatDate = (dateString: string) => {
+    try {
+      // Tente de créer un objet Date avec la chaîne reçue
+      const date = new Date(dateString);
+      // Vérifie si la date est valide
+      if (isNaN(date.getTime())) {
+        return "Date invalide";
+      }
+      // Formate la date
+      return date.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+    } catch {
+      return "Date invalide";
+    }
+  };
+
 
   return (
     <div className="container mx-auto py-10 px-4 min-h-screen bg-gray-50">
@@ -113,7 +167,7 @@ export default function LibrairiesClient() {
         </p>
       </div>
 
-      {/* Barre de recherche et menu déroulant */}
+      {/* Search and dropdown menu bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10 p-4 bg-white rounded-xl shadow-lg border border-gray-100">
         <input
           type="text"
@@ -134,16 +188,27 @@ export default function LibrairiesClient() {
             </option>
           ))}
         </select>
+        
+        {/* Nouveau Bouton : Mise à jour du Cache Serveur */}
         <button
-          onClick={fetchEpisodes}
-          disabled={loading}
+          onClick={handleUpdateCache}
+          disabled={loading || updatingCache}
           className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-150 shadow-md disabled:bg-indigo-400"
         >
-          {loading ? 'Chargement...' : '🔄 Rafraîchir'}
+          {updatingCache ? 'Mise à jour du Cache...' : '⚡ Mettre à jour le Cache'}
+        </button>
+
+        {/* Ancien Bouton : Rafraîchir les données depuis le Cache */}
+        <button
+          onClick={fetchEpisodes}
+          disabled={loading || updatingCache}
+          className="bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-600 transition duration-150 shadow-md disabled:bg-gray-400"
+        >
+          {loading ? 'Chargement...' : '🔄 Rafraîchir les données'}
         </button>
       </div>
 
-      {/* Messages d’état */}
+      {/* Status Messages */}
       {loading && <p className="text-center py-12 text-xl text-indigo-600 font-medium">Chargement des podcasts en cours...</p>}
       {error && <p className="text-center py-12 text-xl text-red-600 font-bold border-2 border-red-400 bg-red-100 rounded-xl">⚠️ Erreur : {error}</p>}
       
@@ -153,7 +218,7 @@ export default function LibrairiesClient() {
         </p>
       )}
 
-      {/* Liste des podcasts */}
+      {/* Podcast List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {filteredEpisodes.map((ep, i) => (
           <div
@@ -163,22 +228,20 @@ export default function LibrairiesClient() {
             <div className="p-5 flex flex-col flex-1">
               {/* Titre et Librairie */}
               <div className="mb-3">
-                <h2 className="text-lg font-bold mb-1 line-clamp-2 text-gray-900">{ep.titre}</h2>
+                {/* Affiche le titre du podcast, avec un fallback au nom de la librairie si le titre est vide */}
+                <h2 className="text-lg font-bold mb-1 line-clamp-2 text-gray-900">
+                  {ep.titre || `Épisode de ${ep.librairie}`}
+                </h2>
                 <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">{ep.librairie}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {new Date(ep.date).toLocaleDateString("fr-FR", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {formatDate(ep.date)}
                 </p>
               </div>
 
-              {/* Description (Utilisation de dangerouslySetInnerHTML) */}
+              {/* Description (Using dangerouslySetInnerHTML) */}
               <div 
                 className="text-sm text-gray-700 mb-4 flex-1 overflow-hidden line-clamp-4"
-                // Ceci permet de rendre le HTML provenant du flux RSS.
-                // ATTENTION: C'est une fonction dangereuse, assurez-vous de la fiabilité de vos sources.
+                // ATTENTION: N'utiliser que des sources de contenu de confiance.
                 dangerouslySetInnerHTML={{ __html: ep.description }}
               />
 
