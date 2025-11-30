@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 
 export async function GET(req: Request) {
-  const feedUrl = 'https://www.cinemas-utopia.org/toulouse/?feed=rss2';
+  const feedUrl = 'https://www.ecluse-prod.com/category/agenda/?utm_source=chatgpt.com';
 
   try {
     const res = await fetch(feedUrl, {

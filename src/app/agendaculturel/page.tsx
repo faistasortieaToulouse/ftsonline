@@ -3,14 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
-const getEventImage = (title: string | undefined) => {
-  if (!title) return 'https://via.placeholder.com/400x200?text=Agenda+Culturel';
-  const lower = title.toLowerCase();
-  if (lower.includes('concert') || lower.includes('musique')) 
-    return 'https://via.placeholder.com/400x200?text=Concert';
-  return 'https://via.placeholder.com/400x200?text=Agenda+Culturel';
-};
-
 const formatDate = (isoDate: string | null) => {
   if (!isoDate) return '';
   const date = new Date(isoDate);
@@ -44,6 +36,7 @@ export default function AgendaCulturelPage() {
         description: it.description,
         start: it.pubDate,
         url: it.link,
+        image: it.image, // utilise directement l’image récupérée par l’API
         source: 'Agenda Culturel',
       }));
       setEvents(formatted);
@@ -100,7 +93,7 @@ export default function AgendaCulturelPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-40 object-cover" />
+              <img src={ev.image} alt={ev.title} className="w-full h-40 object-cover" />
               <div className="p-3 flex flex-col flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
@@ -119,7 +112,7 @@ export default function AgendaCulturelPage() {
         <div className="flex flex-col gap-4">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
+              <img src={ev.image} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
               <div className="flex-1 flex flex-col">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}

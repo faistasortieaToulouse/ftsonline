@@ -10,6 +10,21 @@ function detectEncoding(xmlBuffer: Uint8Array): string {
   return match?.[1]?.toLowerCase() ?? "utf-8";
 }
 
+async function fetchEventImage(url: string): Promise<string> {
+  try {
+    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+    if (!res.ok) return "https://via.placeholder.com/400x200?text=Agenda+Culturel";
+
+    const html = await res.text();
+    const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (match && match[1]) return match[1];
+
+    return "https://via.placeholder.com/400x200?text=Agenda+Culturel";
+  } catch {
+    return "https://via.placeholder.com/400x200?text=Agenda+Culturel";
+  }
+}
+
 export async function GET() {
   const feedUrl = "https://31.agendaculturel.fr/rss/concert/toulouse/";
 
@@ -39,14 +54,15 @@ export async function GET() {
     const items = parsed?.rss?.channel?.item ?? [];
     const arr = Array.isArray(items) ? items : [items];
 
-    return NextResponse.json({
-      items: arr.map((item: any) => ({
-        title: item.title,
-        link: item.link,
-        pubDate: item.pubDate,
-        description: item.description
-      })),
-    });
+    const itemsWithImages = await Promise.all(arr.map(async (item: any) => ({
+      title: item.title,
+      link: item.link,
+      pubDate: item.pubDate,
+      description: item.description,
+      image: await fetchEventImage(item.link),
+    })));
+
+    return NextResponse.json({ items: itemsWithImages });
 
   } catch (err: any) {
     return NextResponse.json(

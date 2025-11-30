@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const getEventImage = (title: string | undefined) => {
   if (!title) return "https://via.placeholder.com/400x200?text=Cinéma+ABC";
   const lower = title.toLowerCase();
-  if (lower.includes("film") || lower.includes("ciné") || lower.includes("cinema")) 
+  if (lower.includes("film") || lower.includes("ciné") || lower.includes("cinema"))
     return "https://via.placeholder.com/400x200?text=Film";
   return "https://via.placeholder.com/400x200?text=Cinéma+ABC";
 };
@@ -30,14 +30,26 @@ export default function AbcCinemaPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
-  async function fetchEvents() {
+  // --- Fetch avec cache local côté client ---
+  const fetchEvents = async () => {
     setLoading(true);
     setError(null);
+
     try {
+      const cached = localStorage.getItem("abcEvents");
+      const cacheTime = localStorage.getItem("abcEventsTime");
+      const now = Date.now();
+
+      if (cached && cacheTime && now - parseInt(cacheTime) < 60 * 60 * 1000) {
+        setEvents(JSON.parse(cached));
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch("/api/abc");
       if (!res.ok) throw new Error(`API HTTP error: ${res.status}`);
       const data = await res.json();
-      // transformer items RSS pour matcher l'interface Cosmograph
+
       const formatted = data.items.map((it: any, idx: number) => ({
         id: idx,
         title: it.title,
@@ -46,15 +58,22 @@ export default function AbcCinemaPage() {
         url: it.link,
         source: "Cinéma ABC",
       }));
+
       setEvents(formatted);
+
+      // Mise en cache
+      localStorage.setItem("abcEvents", JSON.stringify(formatted));
+      localStorage.setItem("abcEventsTime", now.toString());
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  useEffect(() => { fetchEvents(); }, []);
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   const filteredEvents = events.filter(ev => {
     if (!searchQuery) return true;
@@ -77,10 +96,16 @@ export default function AbcCinemaPage() {
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
-        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
           📺 Plein écran
         </Button>
-        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
           🔲 Vignette
         </Button>
         <input
@@ -93,8 +118,16 @@ export default function AbcCinemaPage() {
       </div>
 
       <p className="mb-4 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
-      {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
-      {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement à afficher.</p>}
+
+      {error && (
+        <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">
+          {error}
+        </div>
+      )}
+
+      {filteredEvents.length === 0 && !loading && (
+        <p className="text-muted-foreground">Aucun événement à afficher.</p>
+      )}
 
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
