@@ -1,23 +1,13 @@
-// app/api/agendaculturel/route.ts
 import { NextResponse } from "next/server";
 import { XMLParser } from "fast-xml-parser";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";  // IMPORTANT SUR NETLIFY
 
-/** Détection automatique de l'encodage dans la déclaration XML */
 function detectEncoding(xmlBuffer: Uint8Array): string {
-  // Décodage minimal en ASCII pour lire la balise xml
   const ascii = new TextDecoder("ascii").decode(xmlBuffer.slice(0, 200));
-
-  // Exemple : <?xml version="1.0" encoding="UTF-8"?>
   const match = ascii.match(/encoding=["']([^"']+)["']/i);
-
-  if (match && match[1]) {
-    return match[1].toLowerCase();
-  }
-
-  // Aucun encoding trouvé → UTF-8 par défaut
-  return "utf-8";
+  return match?.[1]?.toLowerCase() ?? "utf-8";
 }
 
 export async function GET() {
@@ -27,48 +17,40 @@ export async function GET() {
     const res = await fetch(feedUrl, {
       cache: "no-store",
       headers: {
-        "User-Agent": "Next.js – RSS Fetcher",
-      },
+        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://google.com/bot.html)",
+        "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+        "Referer": "https://ftsonline.netlify.app/"
+      }
     });
 
     if (!res.ok) {
-      console.error("HTTP error :", res.status);
-      return NextResponse.json({ items: [] }, { status: res.status });
+      return NextResponse.json({ items: [], status: res.status }, { status: res.status });
     }
 
     const arrayBuffer = await res.arrayBuffer();
     const uint8 = new Uint8Array(arrayBuffer);
 
-    // 1️⃣ Détecter automatiquement l'encodage
     const encoding = detectEncoding(uint8);
+    const xml = new TextDecoder(encoding).decode(uint8);
 
-    // 2️⃣ Décoder le flux avec le bon encodage
-    const decoder = new TextDecoder(encoding);
-    const xml = decoder.decode(uint8);
-
-    // 3️⃣ Parser le XML
-    const parser = new XMLParser({
-      ignoreAttributes: false,
-      attributeNamePrefix: "",
-    });
-
+    const parser = new XMLParser({ ignoreAttributes: false });
     const parsed = parser.parse(xml);
 
     const items = parsed?.rss?.channel?.item ?? [];
     const arr = Array.isArray(items) ? items : [items];
 
-    const feedItems = arr.map((item: any) => ({
-      title: item.title ?? "",
-      link: item.link ?? "",
-      pubDate: item.pubDate ?? "",
-      description: item.description ?? "",
-    }));
+    return NextResponse.json({
+      items: arr.map((item: any) => ({
+        title: item.title,
+        link: item.link,
+        pubDate: item.pubDate,
+        description: item.description
+      })),
+    });
 
-    return NextResponse.json({ items: feedItems });
-  } catch (err) {
-    console.error("RSS ERROR :", err);
+  } catch (err: any) {
     return NextResponse.json(
-      { items: [], error: "Impossible de récupérer le flux RSS" },
+      { items: [], error: "Erreur serveur", details: String(err) },
       { status: 500 }
     );
   }
