@@ -1,23 +1,13 @@
-// app/api/agendaculturel/route.ts
 import { NextResponse } from "next/server";
 import { XMLParser } from "fast-xml-parser";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";  // IMPORTANT SUR NETLIFY
 
-// Détection automatique de l'encodage
 function detectEncoding(xmlBuffer: Uint8Array): string {
   const ascii = new TextDecoder("ascii").decode(xmlBuffer.slice(0, 200));
   const match = ascii.match(/encoding=["']([^"']+)["']/i);
   return match?.[1]?.toLowerCase() ?? "utf-8";
-}
-
-// Extraction d’une URL d’image dans la description HTML
-function extractImageFromDescription(desc: string): string | null {
-  if (!desc) return null;
-
-  // match du premier <img src="...">
-  const match = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
-  return match ? match[1] : null;
 }
 
 export async function GET() {
@@ -26,12 +16,15 @@ export async function GET() {
   try {
     const res = await fetch(feedUrl, {
       cache: "no-store",
-      headers: { "User-Agent": "Next.js – RSS Fetcher" },
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://google.com/bot.html)",
+        "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+        "Referer": "https://ftsonline.netlify.app/"
+      }
     });
 
     if (!res.ok) {
-      console.error("HTTP error :", res.status);
-      return NextResponse.json({ items: [] }, { status: res.status });
+      return NextResponse.json({ items: [], status: res.status }, { status: res.status });
     }
 
     const arrayBuffer = await res.arrayBuffer();
@@ -40,33 +33,24 @@ export async function GET() {
     const encoding = detectEncoding(uint8);
     const xml = new TextDecoder(encoding).decode(uint8);
 
-    const parser = new XMLParser({
-      ignoreAttributes: false,
-      attributeNamePrefix: "",
-    });
-
+    const parser = new XMLParser({ ignoreAttributes: false });
     const parsed = parser.parse(xml);
+
     const items = parsed?.rss?.channel?.item ?? [];
     const arr = Array.isArray(items) ? items : [items];
 
-    const feedItems = arr.map((item: any) => {
-      const description = item.description ?? "";
-      const image = extractImageFromDescription(description);
-
-      return {
-        title: item.title ?? "",
-        link: item.link ?? "",
-        pubDate: item.pubDate ?? "",
-        description,
-        image, // <-- ajout
-      };
+    return NextResponse.json({
+      items: arr.map((item: any) => ({
+        title: item.title,
+        link: item.link,
+        pubDate: item.pubDate,
+        description: item.description
+      })),
     });
 
-    return NextResponse.json({ items: feedItems });
-  } catch (err) {
-    console.error("RSS ERROR :", err);
+  } catch (err: any) {
     return NextResponse.json(
-      { items: [], error: "Impossible de récupérer le flux RSS" },
+      { items: [], error: "Erreur serveur", details: String(err) },
       { status: 500 }
     );
   }
