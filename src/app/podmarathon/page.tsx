@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
+import Link from "next/link";
 
 interface PodcastEpisode {
   titre: string;
@@ -120,6 +121,13 @@ export default function PodMarathonPage() {
         >
           {loading ? 'Chargement...' : '🔄 Rafraîchir les données'}
         </button>
+
+        <Link
+          href="/podlibrairies"
+          className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-150 shadow-md flex items-center justify-center"
+        >
+          📚 PodLibrairies
+        </Link>
       </div>
 
       {loading && <p className="text-center py-12 text-xl text-indigo-600 font-medium">Chargement des podcasts en cours...</p>}
