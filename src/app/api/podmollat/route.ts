@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import { GET as updateCache } from "./update-cache/route"; // import direct
 
-const CACHE_PATH = path.join(process.cwd(), "data", "podterranova-cache.json");
+const CACHE_PATH = path.join(process.cwd(), "data", "podmollat-cache.json");
 const CACHE_MAX_AGE = 1000 * 60 * 60 * 6; // 6 heures
 
 export async function GET() {
@@ -26,20 +27,17 @@ export async function GET() {
     const episodes = JSON.parse(fileContent);
     return NextResponse.json({ data: episodes }, { status: 200 });
   } catch (err) {
-    console.error("Erreur API podterranova:", err);
+    console.error("Erreur API podmollat:", err);
     return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
   }
 }
 
-// Fonction pour exécuter /api/podterranova/update-cache et renvoyer le résultat
+// Appel direct de la fonction update-cache
 async function updateCacheAndReturn() {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/podterranova/update-cache`
-    );
-    if (!res.ok) throw new Error("Erreur lors de la mise à jour du cache");
-    const data = await res.json();
-    return NextResponse.json({ data: data.episodes || [] }, { status: 200 });
+    const response = await updateCache(); // Appel interne direct
+    const json = await response.json();
+    return NextResponse.json({ data: json.totalEpisodes ? json : [] }, { status: 200 });
   } catch (err) {
     console.error("Erreur update-cache:", err);
     return NextResponse.json(

@@ -24,6 +24,7 @@ const API_MAP: Record<string, string> = {
   "Librairie Mollat": "/api/podcasts?librairie=Librairie Mollat",
   "Ombres Blanches": "/api/podcasts?librairie=Ombres Blanches",
   "Terra Nova": "/api/podterranova",
+  "Mollat": "/api/podmollat",
   "Marathon des Mots": "/api/podcasts?librairie=Marathon des Mots",
 };
 
@@ -45,41 +46,17 @@ export default function LibrairiesPodcastsPage() {
     try {
       for (const lib of LIBRAIRIES) {
         const res = await fetch(API_MAP[lib]);
-        if (!res.ok) {
-          console.warn(`Échec du fetch pour ${lib}`);
-          continue;
-        }
+        if (!res.ok) continue;
 
         const json = await res.json();
         const data = json.data || [];
-
-        const mappedEpisodes = data.map((ep: any) => {
-          let audioUrl = (ep.audioUrl || ep.audio || "").replace(/["']/g, "").trim();
-
-          // Rediriger Terra Nova vers le proxy audio
-          if (lib === "Terra Nova" && audioUrl) {
-            audioUrl = `/api/proxy-audio?url=${encodeURIComponent(audioUrl)}`;
-          }
-
-          return {
-            librairie: lib,
-            titre: ep.titre || ep.title || "Sans titre",
-            date: ep.date || ep.pubDate || "",
-            audioUrl,
-            description: ep.description || "",
-          } satisfies PodcastEpisode;
-        });
-
-        allEpisodes = allEpisodes.concat(mappedEpisodes);
+        allEpisodes = allEpisodes.concat(
+          data.map((ep: any) => ({ ...ep, librairie: lib }))
+        );
       }
 
-      // Tri par date descendante
-      allEpisodes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-      setEpisodes(allEpisodes);
+      setEpisodes(allEpisodes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
       setFilteredEpisodes(allEpisodes);
-
-      console.log("Episodes chargés:", allEpisodes);
     } catch (err: any) {
       console.error("Erreur fetchEpisodes:", err);
       setError(err.message || "Erreur lors du chargement des épisodes.");
@@ -94,9 +71,9 @@ export default function LibrairiesPodcastsPage() {
     setError(null);
 
     try {
-      // Mise à jour uniquement pour Terra Nova
-      const res = await fetch("/api/podterranova/update-cache");
-      if (!res.ok) throw new Error("Échec de la mise à jour du cache Terra Nova.");
+      // On force la mise à jour uniquement pour Mollat ici, adapter si besoin pour d'autres
+      const res = await fetch("/api/podmollat/update-cache");
+      if (!res.ok) throw new Error("Échec de la mise à jour du cache Mollat.");
 
       await fetchEpisodes();
     } catch (err: any) {
@@ -153,7 +130,7 @@ export default function LibrairiesPodcastsPage() {
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Podcasts des Librairies Toulousaines</h1>
         <p className="text-gray-700 text-lg">
-          Rencontres, conférences et lectures du Marathon des Mots, Ombres Blanches, Terra Nova et Librairie Mollat.
+          Rencontres, conférences et lectures du Marathon des Mots, Ombres Blanches, Mollat et Librairie Mollat.
         </p>
         <p className="mt-4 text-base text-gray-500 font-medium">
           Total d'épisodes chargés : <span className="font-bold text-indigo-600">{episodes.length}</span>

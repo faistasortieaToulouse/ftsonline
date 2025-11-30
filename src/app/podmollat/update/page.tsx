@@ -14,16 +14,8 @@ export default function UpdatePodterranovaCache() {
         if (!res.ok) {
           setStatus("Erreur : " + json.error);
         } else {
-          // On transforme les URLs Terra Nova pour passer par le proxy audio
-          const episodesWithProxy = (json.data || []).map((ep: any) => ({
-            ...ep,
-            audioUrl: ep.audioUrl
-              ? `/api/proxy-audio?url=${encodeURIComponent(ep.audioUrl)}`
-              : "",
-          }));
-
           setStatus(
-            `Cache mis à jour avec succès (${episodesWithProxy.length} épisodes)`
+            `Cache mis à jour avec succès (${json.totalEpisodes} épisodes)`
           );
         }
       } catch (e) {
