@@ -99,7 +99,7 @@ export default function PodLibrairiesPage() {
   return (
     <div className="container mx-auto py-10 px-4 min-h-screen bg-gray-50">
       <div className="mb-8">
-        <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Podcasts Agrégés</h1>
+        <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Podcasts des librairies à Toulouse</h1>
         <p className="text-gray-700 text-lg">Tous les podcasts disponibles depuis le Marathon des Mots, librairies Ombres Blanches, Terra Nova.</p>
         <p className="mt-4 text-base text-gray-500 font-medium">
           Total d'épisodes chargés : <span className="font-bold text-indigo-600">{episodes.length}</span>
