@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
+import Link from "next/link";
 
 interface Episode {
   guid?: string;
@@ -20,6 +21,15 @@ export default function PodTerraPage() {
   const [updatingCache, setUpdatingCache] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [selectedShow, setSelectedShow] = useState("all");
+
+  // ---- Liste des émissions Terra Nova ----
+  const shows = [
+    { id: "all", name: "Toutes les émissions" },
+    { id: "rencontres", name: "Rencontres Terra Nova" },
+    { id: "debat", name: "Débats & Idées" },
+    { id: "societe", name: "Société & Politique" },
+  ];
 
   // --- Fetch episodes ---
   async function fetchEpisodes() {
@@ -29,6 +39,7 @@ export default function PodTerraPage() {
       const res = await fetch("/api/podterra");
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Erreur lors du chargement des épisodes.");
+
       const data: Episode[] = json.data || [];
       setEpisodes(data);
       setFilteredEpisodes(data);
@@ -62,17 +73,26 @@ export default function PodTerraPage() {
     () =>
       debounce(() => {
         let filtered = episodes;
-        if (search.trim() !== "") {
-          const s = search.toLowerCase();
-          filtered = episodes.filter(
-            ep =>
-              ep.titre.toLowerCase().includes(s) ||
-              ep.description.toLowerCase().includes(s)
+
+        // Recherche textuelle
+        const s = search.trim().toLowerCase();
+        if (s !== "") {
+          filtered = filtered.filter(ep =>
+            ep.titre.toLowerCase().includes(s) ||
+            ep.description.toLowerCase().includes(s)
           );
         }
+
+        // Filtre par émission
+        if (selectedShow !== "all") {
+          filtered = filtered.filter(ep =>
+            ep.titre.toLowerCase().includes(selectedShow)
+          );
+        }
+
         setFilteredEpisodes(filtered);
       }, 300),
-    [episodes, search]
+    [episodes, search, selectedShow]
   );
 
   useEffect(() => {
@@ -82,7 +102,7 @@ export default function PodTerraPage() {
   useEffect(() => {
     filterEpisodes();
     return () => filterEpisodes.cancel();
-  }, [search, filterEpisodes]);
+  }, [search, selectedShow, filterEpisodes]);
 
   const formatDate = (dateString: string) => {
     try {
@@ -96,6 +116,7 @@ export default function PodTerraPage() {
 
   return (
     <div className="container mx-auto py-10 px-4 min-h-screen bg-gray-50">
+      
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Podcasts — Terra Nova</h1>
         <p className="text-gray-700 text-lg">Émissions et rencontres Terra Nova.</p>
@@ -104,7 +125,10 @@ export default function PodTerraPage() {
         </p>
       </div>
 
+      {/* FILTRES */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10 p-4 bg-white rounded-xl shadow-lg border border-gray-100">
+        
+        {/* Recherche */}
         <input
           type="text"
           placeholder="Rechercher un podcast..."
@@ -113,6 +137,18 @@ export default function PodTerraPage() {
           className="border border-gray-300 rounded-lg px-4 py-2 flex-1 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
         />
 
+        {/* Sélecteur d'émission */}
+        <select
+          value={selectedShow}
+          onChange={e => setSelectedShow(e.target.value)}
+          className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+        >
+          {shows.map(show => (
+            <option key={show.id} value={show.id}>{show.name}</option>
+          ))}
+        </select>
+
+        {/* Bouton MAJ cache */}
         <button
           onClick={handleUpdateCache}
           disabled={loading || updatingCache}
@@ -121,6 +157,7 @@ export default function PodTerraPage() {
           {updatingCache ? 'Mise à jour du Cache...' : '⚡ Mettre à jour le Cache'}
         </button>
 
+        {/* Bouton rafraîchir */}
         <button
           onClick={fetchEpisodes}
           disabled={loading || updatingCache}
@@ -128,6 +165,15 @@ export default function PodTerraPage() {
         >
           {loading ? 'Chargement...' : '🔄 Rafraîchir les données'}
         </button>
+
+        {/* ⭐ Bouton PodLibrairies ajouté ici */}
+        <Link
+          href="/podlibrairies"
+          className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-150 shadow-md flex items-center justify-center"
+        >
+          📚 PodLibrairies
+        </Link>
+
       </div>
 
       {loading && <p className="text-center py-12 text-xl text-indigo-600 font-medium">Chargement des podcasts en cours...</p>}
@@ -136,15 +182,22 @@ export default function PodTerraPage() {
         <p className="text-center py-12 text-xl text-gray-500">Aucun épisode trouvé correspondant aux filtres.</p>
       )}
 
+      {/* LISTE DES ÉPISODES */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredEpisodes.map((ep, i) => (
           <div key={i} className="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col h-full border border-gray-200 transform hover:scale-[1.01]">
             <div className="p-5 flex flex-col flex-1">
+
               <div className="mb-3">
                 <h2 className="text-lg font-bold mb-1 line-clamp-2 text-gray-900">{ep.titre}</h2>
                 <p className="text-xs text-gray-500 mt-1">{formatDate(ep.date)}</p>
               </div>
-              <div className="text-sm text-gray-700 mb-4 flex-1 overflow-hidden line-clamp-4" dangerouslySetInnerHTML={{ __html: ep.description }} />
+
+              <div
+                className="text-sm text-gray-700 mb-4 flex-1 overflow-hidden line-clamp-4"
+                dangerouslySetInnerHTML={{ __html: ep.description }}
+              />
+
               <div className="mt-auto pt-4 border-t border-gray-100">
                 {ep.audioUrl ? (
                   <audio controls preload="none" className="w-full h-10 rounded-full bg-gray-100 shadow-inner">
@@ -155,6 +208,7 @@ export default function PodTerraPage() {
                   <p className="text-sm text-red-500 font-medium">Fichier audio non disponible.</p>
                 )}
               </div>
+
             </div>
           </div>
         ))}

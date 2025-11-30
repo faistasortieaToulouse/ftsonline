@@ -20,7 +20,7 @@ export default function PodLibrairiesPage() {
   const [search, setSearch] = useState("");
   const [sourceFilter, setSourceFilter] = useState<PodcastEpisode["source"] | "All">("All");
 
-  // --- Récupérer le cache uniquement ---
+  // --- Récupérer le cache ---
   async function fetchCache() {
     setLoading(true);
     setError(null);
@@ -28,6 +28,7 @@ export default function PodLibrairiesPage() {
       const res = await fetch("/api/podlibrairies");
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Erreur lors du chargement du cache.");
+
       setEpisodes(json.data);
       setFilteredEpisodes(json.data);
     } catch (err: any) {
@@ -37,7 +38,7 @@ export default function PodLibrairiesPage() {
     }
   }
 
-  // --- Mettre à jour le cache manuellement ---
+  // --- Mettre à jour le cache ---
   async function handleUpdateCache() {
     setUpdatingCache(true);
     setError(null);
@@ -45,6 +46,7 @@ export default function PodLibrairiesPage() {
       const res = await fetch("/api/podlibrairies/update-cache");
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Échec de la mise à jour du cache.");
+
       await fetchCache();
     } catch (err: any) {
       setError(err.message || "Erreur mise à jour cache.");
@@ -96,17 +98,48 @@ export default function PodLibrairiesPage() {
     }
   };
 
+  // --- Comptages par source ---
+  const countMarathon = episodes.filter(ep => ep.source === "Marathon des Mots").length;
+  const countOmbres = episodes.filter(ep => ep.source === "Ombres Blanches").length;
+  const countTerra = episodes.filter(ep => ep.source === "Terra Nova").length;
+
   return (
     <div className="container mx-auto py-10 px-4 min-h-screen bg-gray-50">
+
+      {/* HEADER */}
       <div className="mb-8">
-        <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Podcasts des librairies à Toulouse</h1>
-        <p className="text-gray-700 text-lg">Tous les podcasts disponibles depuis le Marathon des Mots, librairies Ombres Blanches, Terra Nova.</p>
+        <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">
+          Podcasts des librairies à Toulouse
+        </h1>
+
+        <p className="text-gray-700 text-lg">
+          Tous les podcasts disponibles depuis le Marathon des Mots, Ombres Blanches et Terra Nova.
+        </p>
+
         <p className="mt-4 text-base text-gray-500 font-medium">
-          Total d'épisodes chargés : <span className="font-bold text-indigo-600">{episodes.length}</span>
+          Total d'épisodes chargés :
+          <span className="font-bold text-indigo-600"> {episodes.length} </span>
+        </p>
+
+        <p className="mt-1 text-sm text-gray-600">
+          Podcasts Marathon des Mots :
+          <span className="font-bold text-indigo-600"> {countMarathon} </span>
+        </p>
+
+        <p className="mt-1 text-sm text-gray-600">
+          Podcasts Ombres Blanches :
+          <span className="font-bold text-indigo-600"> {countOmbres} </span>
+        </p>
+
+        <p className="mt-1 text-sm text-gray-600">
+          Podcasts Terra Nova :
+          <span className="font-bold text-indigo-600"> {countTerra} </span>
         </p>
       </div>
 
+      {/* FILTER BAR */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10 p-4 bg-white rounded-xl shadow-lg border border-gray-100">
+        
         <input
           type="text"
           placeholder="Rechercher un podcast..."
@@ -143,22 +176,47 @@ export default function PodLibrairiesPage() {
         </button>
       </div>
 
-      {loading && <p className="text-center py-12 text-xl text-indigo-600 font-medium">Chargement du cache...</p>}
-      {error && <p className="text-center py-12 text-xl text-red-600 font-bold border-2 border-red-400 bg-red-100 rounded-xl">⚠️ Erreur : {error}</p>}
-      {!loading && !error && filteredEpisodes.length === 0 && (
-        <p className="text-center py-12 text-xl text-gray-500">Aucun épisode trouvé.</p>
+      {/* STATES */}
+      {loading && (
+        <p className="text-center py-12 text-xl text-indigo-600 font-medium">
+          Chargement du cache...
+        </p>
       )}
 
+      {error && (
+        <p className="text-center py-12 text-xl text-red-600 font-bold border-2 border-red-400 bg-red-100 rounded-xl">
+          ⚠️ Erreur : {error}
+        </p>
+      )}
+
+      {!loading && !error && filteredEpisodes.length === 0 && (
+        <p className="text-center py-12 text-xl text-gray-500">
+          Aucun épisode trouvé.
+        </p>
+      )}
+
+      {/* LISTE DES PODCASTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredEpisodes.map((ep, i) => (
-          <div key={i} className="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col h-full border border-gray-200 transform hover:scale-[1.01]">
+          <div
+            key={i}
+            className="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col h-full border border-gray-200 transform hover:scale-[1.01]"
+          >
             <div className="p-5 flex flex-col flex-1">
+              
               <div className="mb-3">
-                <h2 className="text-lg font-bold mb-1 line-clamp-2 text-gray-900">{ep.titre}</h2>
+                <h2 className="text-lg font-bold mb-1 line-clamp-2 text-gray-900">
+                  {ep.titre}
+                </h2>
                 <p className="text-xs text-gray-500 mt-1">{formatDate(ep.date)}</p>
                 <p className="text-xs text-gray-400 italic mt-1">{ep.source}</p>
               </div>
-              <div className="text-sm text-gray-700 mb-4 flex-1 overflow-hidden line-clamp-4" dangerouslySetInnerHTML={{ __html: ep.description }} />
+
+              <div
+                className="text-sm text-gray-700 mb-4 flex-1 overflow-hidden line-clamp-4"
+                dangerouslySetInnerHTML={{ __html: ep.description }}
+              />
+
               <div className="mt-auto pt-4 border-t border-gray-100">
                 {ep.audioUrl ? (
                   <audio controls preload="none" className="w-full h-10 rounded-full bg-gray-100 shadow-inner">
@@ -166,9 +224,12 @@ export default function PodLibrairiesPage() {
                     Votre navigateur ne supporte pas l’élément audio.
                   </audio>
                 ) : (
-                  <p className="text-sm text-red-500 font-medium">Fichier audio non disponible.</p>
+                  <p className="text-sm text-red-500 font-medium">
+                    Fichier audio non disponible.
+                  </p>
                 )}
               </div>
+
             </div>
           </div>
         ))}

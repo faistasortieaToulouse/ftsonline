@@ -126,7 +126,7 @@ export default function PodMarathonPage() {
           href="/podlibrairies"
           className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-150 shadow-md flex items-center justify-center"
         >
-          📚 PodLibrairies
+          📚 Tous les Podcasts
         </Link>
       </div>
 
