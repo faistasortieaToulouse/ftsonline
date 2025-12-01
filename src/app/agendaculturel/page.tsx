@@ -3,6 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
+const categoryImages: Record<string, string> = {
+  'Concert': '/images/agenda31/agendconcert.jpg',
+  'Théâtre': '/images/agenda31/agendtheatre.jpg',
+  'Festival': '/images/agenda31/agendfestival.jpg',
+  'Jeune public': '/images/agenda31/agendspectacleenfants.jpg',
+  'Danse': '/images/agenda31/agenddanse.jpg',
+  'Arts du spectacle': '/images/agenda31/agendartspectacle.jpg',
+  'Exposition': '/images/agenda31/agendexpo.jpg',
+  'Défaut': '/images/agenda31/agendgenerique.jpg',
+};
+
 const formatDate = (isoDate: string | null) => {
   if (!isoDate) return '';
   const date = new Date(isoDate);
@@ -13,6 +24,22 @@ const formatDate = (isoDate: string | null) => {
     hour: '2-digit',
     minute: '2-digit',
   });
+};
+
+const getEventImage = (title: string | undefined, category: string | undefined, fallback: string = categoryImages['Défaut']) => {
+  if (category && categoryImages[category]) return categoryImages[category];
+  if (!title) return fallback;
+
+  const lower = title.toLowerCase();
+  if (lower.includes('concert')) return categoryImages['Concert'];
+  if (lower.includes('théâtre')) return categoryImages['Théâtre'];
+  if (lower.includes('festival')) return categoryImages['Festival'];
+  if (lower.includes('jeune')) return categoryImages['Jeune public'];
+  if (lower.includes('danse')) return categoryImages['Danse'];
+  if (lower.includes('spectacle')) return categoryImages['Arts du spectacle'];
+  if (lower.includes('exposition')) return categoryImages['Exposition'];
+
+  return fallback;
 };
 
 export default function AgendaCulturelPage() {
@@ -36,9 +63,14 @@ export default function AgendaCulturelPage() {
         description: it.description,
         start: it.pubDate,
         url: it.link,
-        image: it.image, // utilise directement l’image récupérée par l’API
+        category: it.category ?? '',  // Si l'API renvoie une catégorie
+        image: it.image, // image récupérée ou fallback côté API
         source: 'Agenda Culturel',
+        dateObj: it.pubDate ? new Date(it.pubDate) : new Date(),
       }));
+
+      // Tri chronologique
+      formatted.sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
       setEvents(formatted);
     } catch (err: any) {
       setError(err.message || 'Erreur inconnue');
@@ -93,7 +125,7 @@ export default function AgendaCulturelPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
-              <img src={ev.image} alt={ev.title} className="w-full h-40 object-cover" />
+              <img src={getEventImage(ev.title, ev.category, ev.image)} alt={ev.title} className="w-full h-40 object-cover" />
               <div className="p-3 flex flex-col flex-1">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
@@ -112,7 +144,7 @@ export default function AgendaCulturelPage() {
         <div className="flex flex-col gap-4">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
-              <img src={ev.image} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
+              <img src={getEventImage(ev.title, ev.category, ev.image)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
               <div className="flex-1 flex flex-col">
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
                 {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}

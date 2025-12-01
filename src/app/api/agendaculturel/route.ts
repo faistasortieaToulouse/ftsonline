@@ -10,19 +10,32 @@ function detectEncoding(xmlBuffer: Uint8Array): string {
   return match?.[1]?.toLowerCase() ?? "utf-8";
 }
 
-async function fetchEventImage(url: string): Promise<string> {
-  try {
-    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
-    if (!res.ok) return "https://via.placeholder.com/400x200?text=Agenda+Culturel";
+// ------------------------------
+// Catégories supportées
+// ------------------------------
+const CATEGORY_IMAGES: Record<string, string> = {
+  "Concert": "/images/agenda31/agendconcert.jpg",
+  "Théâtre": "/images/agenda31/agendtheatre.jpg",
+  "Festival": "/images/agenda31/agendfestival.jpg",
+  "Jeune public": "/images/agenda31/agendspectacleenfants.jpg",
+  "Danse": "/images/agenda31/agenddanse.jpg",
+  "Arts du spectacle": "/images/agenda31/agendartspectacle.jpg",
+  "Exposition": "/images/agenda31/agendexpo.jpg",
+  "Défaut": "/images/agenda31/agendgenerique.jpg",
+};
 
-    const html = await res.text();
-    const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
-    if (match && match[1]) return match[1];
+function detectCategory(title: string = "", description: string = ""): string {
+  const text = (title + " " + description).toLowerCase();
 
-    return "https://via.placeholder.com/400x200?text=Agenda+Culturel";
-  } catch {
-    return "https://via.placeholder.com/400x200?text=Agenda+Culturel";
-  }
+  if (text.includes("concert")) return "Concert";
+  if (text.includes("théâtre") || text.includes("theatre")) return "Théâtre";
+  if (text.includes("festival")) return "Festival";
+  if (text.includes("jeune public") || text.includes("enfant")) return "Jeune public";
+  if (text.includes("danse")) return "Danse";
+  if (text.includes("spectacle")) return "Arts du spectacle";
+  if (text.includes("expo") || text.includes("exposition")) return "Exposition";
+
+  return "Défaut";
 }
 
 export async function GET() {
@@ -54,15 +67,22 @@ export async function GET() {
     const items = parsed?.rss?.channel?.item ?? [];
     const arr = Array.isArray(items) ? items : [items];
 
-    const itemsWithImages = await Promise.all(arr.map(async (item: any) => ({
-      title: item.title,
-      link: item.link,
-      pubDate: item.pubDate,
-      description: item.description,
-      image: await fetchEventImage(item.link),
-    })));
+    // Ajout catégorie + image
+    const itemsWithCategories = arr.map((item: any) => {
+      const category = detectCategory(item.title, item.description);
+      const image = CATEGORY_IMAGES[category] ?? CATEGORY_IMAGES["Défaut"];
 
-    return NextResponse.json({ items: itemsWithImages });
+      return {
+        title: item.title,
+        link: item.link,
+        pubDate: item.pubDate,
+        description: item.description,
+        category,
+        image,
+      };
+    });
+
+    return NextResponse.json({ items: itemsWithCategories });
 
   } catch (err: any) {
     return NextResponse.json(
