@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const CACHE_URL = "https://raw.githubusercontent.com/faistasortieaToulouse/ftsdatatoulouse/main/data/podmarathon-cache.json";
+const CACHE_URL = "https://raw.githubusercontent.com/faistasortieaToulouse/ftsonline/main/data/podmarathon-cache";
 
 export async function GET() {
   try {
