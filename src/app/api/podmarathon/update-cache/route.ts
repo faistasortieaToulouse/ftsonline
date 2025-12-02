@@ -32,7 +32,8 @@ const episodes = items.map((item: any) => ({
 }));
 
 // 3️⃣ Récupérer le SHA du fichier existant sur GitHub
-const getRes = await fetch(`${GITHUB_API}/repos/${OWNER}/${REPO}/contents/${PATH}?ref=${BRANCH}`, {
+const getUrl = `${GITHUB_API}/repos/${OWNER}/${REPO}/contents/${PATH}?ref=${BRANCH}`;
+const getRes = await fetch(getUrl, {
   headers: {
     Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
     Accept: "application/vnd.github+json",
@@ -44,7 +45,8 @@ const fileData = await getRes.json();
 const sha = fileData.sha;
 
 // 4️⃣ Mettre à jour le fichier sur GitHub
-const updateRes = await fetch(`${GITHUB_API}/repos/${OWNER}/${REPO}/contents/${PATH}`, {
+const updateUrl = `${GITHUB_API}/repos/${OWNER}/${REPO}/contents/${PATH}`;
+const updateRes = await fetch(updateUrl, {
   method: "PUT",
   headers: {
     Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
