@@ -14,12 +14,10 @@ export default function UpdatePodMarathonCache() {
         if (!res.ok) {
           setStatus("Erreur : " + (json.error || "Erreur inconnue"));
         } else {
-          // Le retour GitHub est inclus dans json.github
-          const total = json.totalEpisodes ?? "?";
-          setStatus(`✅ Cache mis à jour avec succès (${total} épisodes)`);
+          setStatus(`✅ Cache mis à jour avec succès (${json.totalEpisodes ?? "?"} épisodes)`);
         }
       } catch (e: any) {
-        setStatus("Erreur réseau : " + (e.message || e.toString()));
+        setStatus("Erreur réseau : " + e.message || e.toString());
       }
     }
 
