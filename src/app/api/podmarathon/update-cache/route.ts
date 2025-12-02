@@ -3,9 +3,9 @@ import xml2js from "xml2js";
 
 const RSS_URL = "https://feed.ausha.co/BnYn5Uw5W3WO";
 const OWNER = "faistasortieaToulouse";
-const REPO = "ftsdatatoulouse";
+const REPO = "ftsonline"; // <-- ici, c'est le dépôt où tu veux mettre le cache
 const PATH = "data/podmarathon-cache.json";
-const BRANCH = "main"; // branche à mettre à jour
+const BRANCH = "main";
 
 if (!process.env.GITHUB_TOKEN) {
   throw new Error("GITHUB_TOKEN non défini dans les variables d'environnement.");
@@ -31,7 +31,7 @@ export async function GET() {
       audioUrl: item.enclosure?.[0]?.$.url || "",
     }));
 
-    // 3️⃣ Récupérer le SHA du fichier existant sur GitHub (nécessaire pour update)
+    // 3️⃣ Récupérer le SHA actuel
     const getRes = await fetch(`${GITHUB_API}/repos/${OWNER}/${REPO}/contents/${PATH}?ref=${BRANCH}`, {
       headers: {
         Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
@@ -39,7 +39,7 @@ export async function GET() {
       },
     });
 
-    if (!getRes.ok) throw new Error(`Impossible de récupérer le fichier GitHub : ${getRes.statusText}`);
+    if (!getRes.ok) throw new Error(`Impossible de récupérer le fichier GitHub : ${getRes.status} ${getRes.statusText}`);
     const fileData = await getRes.json();
     const sha = fileData.sha;
 
@@ -58,7 +58,7 @@ export async function GET() {
       }),
     });
 
-    if (!updateRes.ok) throw new Error(`Erreur lors de la mise à jour du fichier : ${updateRes.statusText}`);
+    if (!updateRes.ok) throw new Error(`Erreur lors de la mise à jour du fichier : ${updateRes.status} ${updateRes.statusText}`);
     const result = await updateRes.json();
 
     return NextResponse.json({ totalEpisodes: episodes.length, github: result });
