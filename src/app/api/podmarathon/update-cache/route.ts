@@ -1,26 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 import xml2js from "xml2js";
 
+const CACHE_FILE = path.join(process.cwd(), "cache_podmarathon.json");
 const RSS_URL = "https://feed.ausha.co/BnYn5Uw5W3WO";
-const OWNER = "faistasortieaToulouse";
-const REPO = "ftsonline"; // <-- ici, c'est le dépôt où tu veux mettre le cache
-const PATH = "data/podmarathon-cache.json";
-const BRANCH = "main";
-
-if (!process.env.GITHUB_TOKEN) {
-  throw new Error("GITHUB_TOKEN non défini dans les variables d'environnement.");
-}
-
-const GITHUB_API = "https://api.github.com";
 
 export async function GET() {
   try {
-    // 1️⃣ Récupérer le flux RSS
     const res = await fetch(RSS_URL);
     if (!res.ok) throw new Error("Impossible de récupérer le flux RSS.");
     const text = await res.text();
 
-    // 2️⃣ Parser le XML
     const parsed = await xml2js.parseStringPromise(text);
     const items = parsed.rss.channel[0].item || [];
 
@@ -31,39 +22,11 @@ export async function GET() {
       audioUrl: item.enclosure?.[0]?.$.url || "",
     }));
 
-    // 3️⃣ Récupérer le SHA actuel
-    const getRes = await fetch(`${GITHUB_API}/repos/${OWNER}/${REPO}/contents/${PATH}?ref=${BRANCH}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        Accept: "application/vnd.github+json",
-      },
-    });
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(episodes, null, 2), "utf-8");
 
-    if (!getRes.ok) throw new Error(`Impossible de récupérer le fichier GitHub : ${getRes.status} ${getRes.statusText}`);
-    const fileData = await getRes.json();
-    const sha = fileData.sha;
-
-    // 4️⃣ Mettre à jour le fichier sur GitHub
-    const updateRes = await fetch(`${GITHUB_API}/repos/${OWNER}/${REPO}/contents/${PATH}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        Accept: "application/vnd.github+json",
-      },
-      body: JSON.stringify({
-        message: `Mise à jour du cache podmarathon (${new Date().toISOString()})`,
-        content: Buffer.from(JSON.stringify(episodes, null, 2)).toString("base64"),
-        sha,
-        branch: BRANCH,
-      }),
-    });
-
-    if (!updateRes.ok) throw new Error(`Erreur lors de la mise à jour du fichier : ${updateRes.status} ${updateRes.statusText}`);
-    const result = await updateRes.json();
-
-    return NextResponse.json({ totalEpisodes: episodes.length, github: result });
+    return NextResponse.json({ totalEpisodes: episodes.length, data: episodes });
   } catch (err: any) {
-    console.error("Erreur update-cache :", err);
+    console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
