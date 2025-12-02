@@ -5,7 +5,7 @@ const OWNER = "faistasortieaToulouse";
 const REPO = "ftsdatatoulouse";
 const PATH = "data/podmarathon-cache.json";
 const BRANCH = "main";
-const GITHUB_API = "[https://api.github.com](https://api.github.com)";
+const GITHUB_API = "https://api.github.com";
 
 const RSS_URL = "[https://feed.ausha.co/BnYn5Uw5W3WO](https://feed.ausha.co/BnYn5Uw5W3WO)";
 
