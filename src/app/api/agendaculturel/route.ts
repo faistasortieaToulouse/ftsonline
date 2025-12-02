@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const url = "https://www.agendaculturel.fr/api/v1/events?city=toulouse";
+    const url = "https://31.agendaculturel.fr/rss";
     const res = await fetch(url, { cache: "no-store" });
 
     if (!res.ok) {
