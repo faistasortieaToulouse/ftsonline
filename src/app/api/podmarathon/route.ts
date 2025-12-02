@@ -20,7 +20,6 @@ Accept: "application/vnd.github+json",
 },
 });
 
-```
 if (!res.ok) {
   throw new Error(`Impossible de récupérer le cache GitHub : ${res.status} ${res.statusText}`);
 }
@@ -30,7 +29,6 @@ const content = Buffer.from(fileData.content, "base64").toString("utf-8");
 const episodes = JSON.parse(content);
 
 return NextResponse.json({ data: episodes });
-```
 
 } catch (err: any) {
 console.error("Erreur GET /podmarathon :", err);
