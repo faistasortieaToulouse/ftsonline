@@ -27,8 +27,8 @@ try {
 const res = await fetch("/api/podmarathon");
 const json = await res.json();
 if (!res.ok) throw new Error(json.error || "Erreur lors du chargement des épisodes.");
-setEpisodes(json.data);
-setFilteredEpisodes(json.data);
+setEpisodes(json.data || []);
+setFilteredEpisodes(json.data || []);
 } catch (err: any) {
 setError(err.message || "Erreur inconnue");
 setEpisodes([]);
@@ -46,16 +46,14 @@ try {
 const res = await fetch("/api/podmarathon/update-cache");
 const json = await res.json();
 if (!res.ok) throw new Error(json.error || "Échec de la mise à jour du cache.");
-
-  // Afficher le nombre exact d’épisodes mis à jour
+  
+  // Recharger les épisodes depuis GitHub après mise à jour
   await fetchEpisodes();
-  setError(null);
 } catch (err: any) {
   setError(err.message || "Erreur mise à jour cache.");
 } finally {
   setUpdatingCache(false);
 }
-
 }
 
 // --- Debounced filter ---
@@ -66,7 +64,9 @@ let filtered = episodes;
 if (search.trim() !== "") {
 const s = search.toLowerCase();
 filtered = filtered.filter(
-ep => ep.titre.toLowerCase().includes(s) || ep.description.toLowerCase().includes(s)
+(ep) =>
+ep.titre.toLowerCase().includes(s) ||
+ep.description.toLowerCase().includes(s)
 );
 }
 setFilteredEpisodes(filtered);
@@ -93,7 +93,8 @@ return "Date invalide";
 }
 };
 
-return ( <div className="container mx-auto py-10 px-4 min-h-screen bg-gray-50"> <div className="mb-8"> <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">Podcasts — Le Marathon des Mots</h1> <p className="text-gray-700 text-lg">Rencontres et conférences du Marathon des Mots.</p> <p className="mt-4 text-base text-gray-500 font-medium">
+return ( <div className="container mx-auto py-10 px-4 min-h-screen bg-gray-50"> <div className="mb-8"> <h1 className="text-4xl font-extrabold text-indigo-700 mb-2">
+Podcasts — Le Marathon des Mots </h1> <p className="text-gray-700 text-lg">Rencontres et conférences du Marathon des Mots.</p> <p className="mt-4 text-base text-gray-500 font-medium">
 Total d'épisodes chargés : <span className="font-bold text-indigo-600">{episodes.length}</span> </p> </div>
 
   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10 p-4 bg-white rounded-xl shadow-lg border border-gray-100">
@@ -101,7 +102,7 @@ Total d'épisodes chargés : <span className="font-bold text-indigo-600">{episod
       type="text"
       placeholder="Rechercher un podcast par titre ou description..."
       value={search}
-      onChange={e => setSearch(e.target.value)}
+      onChange={(e) => setSearch(e.target.value)}
       className="border border-gray-300 rounded-lg px-4 py-2 flex-1 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
     />
 
