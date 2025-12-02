@@ -1,93 +1,230 @@
-import { NextResponse } from "next/server";
-import { XMLParser } from "fast-xml-parser";
+'use client';
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";  // IMPORTANT SUR NETLIFY
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 
-function detectEncoding(xmlBuffer: Uint8Array): string {
-  const ascii = new TextDecoder("ascii").decode(xmlBuffer.slice(0, 200));
-  const match = ascii.match(/encoding=["']([^"']+)["']/i);
-  return match?.[1]?.toLowerCase() ?? "utf-8";
-}
-
-// ------------------------------
-// Catégories supportées
-// ------------------------------
-const CATEGORY_IMAGES: Record<string, string> = {
-  "Concert": "/images/agenda31/agendconcert.jpg",
-  "Théâtre": "/images/agenda31/agendtheatre.jpg",
-  "Festival": "/images/agenda31/agendfestival.jpg",
-  "Jeune public": "/images/agenda31/agendspectacleenfants.jpg",
-  "Danse": "/images/agenda31/agenddanse.jpg",
-  "Arts du spectacle": "/images/agenda31/agendartspectacle.jpg",
-  "Exposition": "/images/agenda31/agendexpo.jpg",
-  "Défaut": "/images/agenda31/agendgenerique.jpg",
+const categoryImages: Record<string, string> = {
+  'Concert': '/images/agenda31/agendconcert.jpg',
+  'Théâtre': '/images/agenda31/agendtheatre.jpg',
+  'Festival': '/images/agenda31/agendfestival.jpg',
+  'Jeune public': '/images/agenda31/agendspectacleenfants.jpg',
+  'Danse': '/images/agenda31/agenddanse.jpg',
+  'Arts du spectacle': '/images/agenda31/agendartspectacle.jpg',
+  'Exposition': '/images/agenda31/agendexpo.jpg',
+  'Défaut': '/images/agenda31/agendgenerique.jpg',
 };
 
-function detectCategory(title: string = "", description: string = ""): string {
-  const text = (title + " " + description).toLowerCase();
+const formatDate = (isoDate: string | null) => {
+  if (!isoDate) return '';
+  const date = new Date(isoDate);
+  return date.toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
 
-  if (text.includes("concert")) return "Concert";
-  if (text.includes("théâtre") || text.includes("theatre")) return "Théâtre";
-  if (text.includes("festival")) return "Festival";
-  if (text.includes("jeune public") || text.includes("enfant")) return "Jeune public";
-  if (text.includes("danse")) return "Danse";
-  if (text.includes("spectacle")) return "Arts du spectacle";
-  if (text.includes("expo") || text.includes("exposition")) return "Exposition";
+const getEventImage = (title: string | undefined, category: string | undefined, fallback: string = categoryImages['Défaut']) => {
+  if (category && categoryImages[category]) return categoryImages[category];
+  if (!title) return fallback;
 
-  return "Défaut";
-}
+  const lower = title.toLowerCase();
+  if (lower.includes('concert')) return categoryImages['Concert'];
+  if (lower.includes('théâtre')) return categoryImages['Théâtre'];
+  if (lower.includes('festival')) return categoryImages['Festival'];
+  if (lower.includes('jeune')) return categoryImages['Jeune public'];
+  if (lower.includes('danse')) return categoryImages['Danse'];
+  if (lower.includes('spectacle')) return categoryImages['Arts du spectacle'];
+  if (lower.includes('exposition')) return categoryImages['Exposition'];
 
-export async function GET() {
-  const feedUrl = "https://31.agendaculturel.fr/rss/concert/toulouse/";
+  return fallback;
+};
 
-  try {
-    const res = await fetch(feedUrl, {
-      cache: "no-store",
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://google.com/bot.html)",
-        "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
-        "Referer": "https://ftsonline.netlify.app/"
-      }
-    });
+export default function AgendaCulturelPage() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
 
-    if (!res.ok) {
-      return NextResponse.json({ items: [], status: res.status }, { status: res.status });
+  async function fetchEvents() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/agendaculturel');
+      if (!res.ok) throw new Error(`API HTTP error: ${res.status}`);
+      const data = await res.json();
+
+      const formatted = data.items.map((it: any, idx: number) => ({
+        id: idx,
+        title: it.title,
+        description: it.description,
+        start: it.pubDate,
+        url: it.link,
+        category: it.category ?? 'Non spécifié',
+        image: it.image,
+        source: 'Agenda Culturel',
+        dateObj: it.pubDate ? new Date(it.pubDate) : new Date(),
+      }));
+
+      formatted.sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
+      setEvents(formatted);
+    } catch (err: any) {
+      setError(err.message || 'Erreur inconnue');
+    } finally {
+      setLoading(false);
     }
-
-    const arrayBuffer = await res.arrayBuffer();
-    const uint8 = new Uint8Array(arrayBuffer);
-
-    const encoding = detectEncoding(uint8);
-    const xml = new TextDecoder(encoding).decode(uint8);
-
-    const parser = new XMLParser({ ignoreAttributes: false });
-    const parsed = parser.parse(xml);
-
-    const items = parsed?.rss?.channel?.item ?? [];
-    const arr = Array.isArray(items) ? items : [items];
-
-    // Ajout catégorie + image
-    const itemsWithCategories = arr.map((item: any) => {
-      const category = detectCategory(item.title, item.description);
-      const image = CATEGORY_IMAGES[category] ?? CATEGORY_IMAGES["Défaut"];
-
-      return {
-        title: item.title,
-        link: item.link,
-        pubDate: item.pubDate,
-        description: item.description,
-        category,
-        image,
-      };
-    });
-
-    return NextResponse.json({ items: itemsWithCategories });
-
-  } catch (err: any) {
-    return NextResponse.json(
-      { items: [], error: "Erreur serveur", details: String(err) },
-      { status: 500 }
-    );
   }
+
+  useEffect(() => { fetchEvents(); }, []);
+
+  const filteredEvents = events.filter(ev => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      ev.title.toLowerCase().includes(q) ||
+      (ev.description?.toLowerCase().includes(q) ?? false) ||
+      (ev.start?.toLowerCase().includes(q) ?? false) ||
+      ev.category.toLowerCase().includes(q)
+    );
+  });
+
+  return (
+    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold mb-4">Événements Agenda Culturel Toulouse</h1>
+      <p className="text-muted-foreground mb-6">
+        Événements filtrés depuis le flux officiel Agenda Culturel Toulouse.
+      </p>
+
+      <div className="flex flex-wrap gap-3 mb-6 items-center">
+        <Button onClick={fetchEvents} disabled={loading}>
+          {loading ? 'Chargement...' : '📡 Actualiser'}
+        </Button>
+        <Button onClick={() => setViewMode('card')} variant={viewMode === 'card' ? 'default' : 'secondary'}>
+          📺 Plein écran
+        </Button>
+        <Button onClick={() => setViewMode('list')} variant={viewMode === 'list' ? 'default' : 'secondary'}>
+          🔲 Vignette
+        </Button>
+        <input
+          type="text"
+          placeholder="Rechercher par titre, description, date ou catégorie..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="mt-4 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+        />
+      </div>
+
+      <p className="mb-4 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
+      {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
+      {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement à afficher.</p>}
+
+      {/* MODE CARD */}
+      {viewMode === 'card' ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredEvents.map(ev => (
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[510px]">
+              <img src={getEventImage(ev.title, ev.category, ev.image)} alt={ev.title} className="w-full h-40 object-cover" />
+
+              <div className="p-3 flex flex-col flex-1">
+                {/* Catégorie */}
+                <span className="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded mb-2">
+                  {ev.category}
+                </span>
+
+                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+
+                {ev.start && (
+                  <p className="text-sm text-blue-600 font-medium mb-1">
+                    {formatDate(ev.start)}
+                  </p>
+                )}
+
+                {ev.description && (
+                  <p className="text-sm text-muted-foreground mb-1 line-clamp-4">
+                    {ev.description}
+                  </p>
+                )}
+
+                {ev.url && (
+                  <a href={ev.url} target="_blank" rel="noopener noreferrer"
+                     className="text-blue-600 hover:underline text-sm mb-1">
+                    🔗 Plus d’informations
+                  </a>
+                )}
+
+                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        /* MODE LIST */
+        <div className="flex flex-col gap-4">
+          {filteredEvents.map(ev => (
+            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
+              <img src={getEventImage(ev.title, ev.category, ev.image)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
+
+              <div className="flex-1 flex flex-col">
+                {/* Catégorie */}
+                <span className="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded mb-2">
+                  {ev.category}
+                </span>
+
+                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+
+                {ev.start && (
+                  <p className="text-sm text-blue-600 font-medium mb-1">
+                    {formatDate(ev.start)}
+                  </p>
+                )}
+
+                {ev.description && (
+                  <p className="text-sm text-muted-foreground mb-1 line-clamp-4">
+                    {ev.description}
+                  </p>
+                )}
+
+                {ev.url && (
+                  <a href={ev.url} target="_blank" rel="noopener noreferrer"
+                     className="text-blue-600 hover:underline text-sm mb-1">
+                    🔗 Plus d’informations
+                  </a>
+                )}
+
+                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* TABLEAU DES DATES */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-4">📋 Tableau des dates des évènements</h2>
+
+        <table className="w-full border border-gray-300 bg-white">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border px-3 py-2 text-left">Titre</th>
+              <th className="border px-3 py-2 text-left">Catégorie</th>
+              <th className="border px-3 py-2 text-left">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredEvents.map(ev => (
+              <tr key={ev.id}>
+                <td className="border px-3 py-2">{ev.title}</td>
+                <td className="border px-3 py-2">{ev.category}</td>
+                <td className="border px-3 py-2">{formatDate(ev.start)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  );
 }
