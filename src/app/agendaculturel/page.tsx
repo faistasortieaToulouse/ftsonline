@@ -42,16 +42,6 @@ const getEventImage = (title: string | undefined, category: string | undefined, 
   return fallback;
 };
 
-// 🆕 Extraction d'une date dans le titre
-const extractDateFromTitle = (title: string): string => {
-  if (!title) return '';
-
-  const regex = /(\d{1,2}(er)?\s+[A-Za-zéèêëàâîïôöùûç]+(?:\s+\d{4})?)|(\d{1,2}\/\d{1,2}(?:\/\d{4})?)/i;
-
-  const match = title.match(regex);
-  return match ? match[0] : '—';
-};
-
 export default function AgendaCulturelPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -170,22 +160,22 @@ export default function AgendaCulturelPage() {
         </div>
       )}
 
-      {/* 🆕 Tableau des titres + dates extraites */}
+      {/* 🆕 Tableau des titres + dates réelles */}
       <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-4">📋 Tableau des dates extraites des titres</h2>
+        <h2 className="text-2xl font-bold mb-4">📋 Tableau des dates des évènements</h2>
 
         <table className="w-full border border-gray-300 bg-white">
           <thead className="bg-gray-100">
             <tr>
               <th className="border px-3 py-2 text-left">Titre</th>
-              <th className="border px-3 py-2 text-left">Date trouvée</th>
+              <th className="border px-3 py-2 text-left">Date</th>
             </tr>
           </thead>
           <tbody>
             {filteredEvents.map(ev => (
               <tr key={ev.id}>
                 <td className="border px-3 py-2">{ev.title}</td>
-                <td className="border px-3 py-2">{extractDateFromTitle(ev.title)}</td>
+                <td className="border px-3 py-2">{formatDate(ev.start)}</td>
               </tr>
             ))}
           </tbody>
