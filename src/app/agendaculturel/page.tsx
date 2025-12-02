@@ -63,7 +63,7 @@ export default function AgendaCulturelPage() {
         description: it.description,
         start: it.pubDate,
         url: it.link,
-        category: it.category ?? '',
+        category: it.category ?? 'Non spécifié',
         image: it.image,
         source: 'Agenda Culturel',
         dateObj: it.pubDate ? new Date(it.pubDate) : new Date(),
@@ -86,7 +86,8 @@ export default function AgendaCulturelPage() {
     return (
       ev.title.toLowerCase().includes(q) ||
       (ev.description?.toLowerCase().includes(q) ?? false) ||
-      (ev.start?.toLowerCase().includes(q) ?? false)
+      (ev.start?.toLowerCase().includes(q) ?? false) ||
+      ev.category.toLowerCase().includes(q)
     );
   });
 
@@ -109,7 +110,7 @@ export default function AgendaCulturelPage() {
         </Button>
         <input
           type="text"
-          placeholder="Rechercher par titre, description ou date..."
+          placeholder="Rechercher par titre, description, date ou catégorie..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="mt-4 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
@@ -120,39 +121,79 @@ export default function AgendaCulturelPage() {
       {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
       {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement à afficher.</p>}
 
+      {/* MODE CARD */}
       {viewMode === 'card' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[510px]">
               <img src={getEventImage(ev.title, ev.category, ev.image)} alt={ev.title} className="w-full h-40 object-cover" />
+
               <div className="p-3 flex flex-col flex-1">
+                {/* Catégorie */}
+                <span className="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded mb-2">
+                  {ev.category}
+                </span>
+
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
+
+                {ev.start && (
+                  <p className="text-sm text-blue-600 font-medium mb-1">
+                    {formatDate(ev.start)}
+                  </p>
+                )}
+
+                {ev.description && (
+                  <p className="text-sm text-muted-foreground mb-1 line-clamp-4">
+                    {ev.description}
+                  </p>
+                )}
+
                 {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
+                  <a href={ev.url} target="_blank" rel="noopener noreferrer"
+                     className="text-blue-600 hover:underline text-sm mb-1">
                     🔗 Plus d’informations
                   </a>
                 )}
+
                 <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
               </div>
             </div>
           ))}
         </div>
       ) : (
+        /* MODE LIST */
         <div className="flex flex-col gap-4">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
               <img src={getEventImage(ev.title, ev.category, ev.image)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
+
               <div className="flex-1 flex flex-col">
+                {/* Catégorie */}
+                <span className="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded mb-2">
+                  {ev.category}
+                </span>
+
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
+
+                {ev.start && (
+                  <p className="text-sm text-blue-600 font-medium mb-1">
+                    {formatDate(ev.start)}
+                  </p>
+                )}
+
+                {ev.description && (
+                  <p className="text-sm text-muted-foreground mb-1 line-clamp-4">
+                    {ev.description}
+                  </p>
+                )}
+
                 {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
+                  <a href={ev.url} target="_blank" rel="noopener noreferrer"
+                     className="text-blue-600 hover:underline text-sm mb-1">
                     🔗 Plus d’informations
                   </a>
                 )}
+
                 <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
               </div>
             </div>
@@ -160,7 +201,7 @@ export default function AgendaCulturelPage() {
         </div>
       )}
 
-      {/* 🆕 Tableau des titres + dates réelles */}
+      {/* TABLEAU DES DATES */}
       <div className="mt-12">
         <h2 className="text-2xl font-bold mb-4">📋 Tableau des dates des évènements</h2>
 
@@ -168,6 +209,7 @@ export default function AgendaCulturelPage() {
           <thead className="bg-gray-100">
             <tr>
               <th className="border px-3 py-2 text-left">Titre</th>
+              <th className="border px-3 py-2 text-left">Catégorie</th>
               <th className="border px-3 py-2 text-left">Date</th>
             </tr>
           </thead>
@@ -175,6 +217,7 @@ export default function AgendaCulturelPage() {
             {filteredEvents.map(ev => (
               <tr key={ev.id}>
                 <td className="border px-3 py-2">{ev.title}</td>
+                <td className="border px-3 py-2">{ev.category}</td>
                 <td className="border px-3 py-2">{formatDate(ev.start)}</td>
               </tr>
             ))}
