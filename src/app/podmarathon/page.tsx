@@ -47,7 +47,6 @@ const res = await fetch("/api/podmarathon/update-cache");
 const json = await res.json();
 if (!res.ok) throw new Error(json.error || "Échec de la mise à jour du cache.");
 
-```
   // Afficher le nombre exact d’épisodes mis à jour
   await fetchEpisodes();
   setError(null);
