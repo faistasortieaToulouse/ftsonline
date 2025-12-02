@@ -1,34 +1,37 @@
 import { NextResponse } from "next/server";
 
-// Endpoint: /api/agendaculturel
-// Fetch events from Agenda Culturel, normalize them, and return JSON
+export const dynamic = "force-dynamic";
+
+const RSS_URL = "https://31.agendaculturel.fr/rss";
+
+// Very simple RSS parser without regex
+function extract(tag, block) {
+  const a = block.indexOf(`<${tag}>`);
+  const b = block.indexOf(`</${tag}>`);
+  if (a === -1 || b === -1) return null;
+  return block.substring(a + tag.length + 2, b).trim();
+}
 
 export async function GET() {
   try {
-    const url = "https://31.agendaculturel.fr/rss";
-    const res = await fetch(url, { cache: "no-store" });
-
+    const res = await fetch(RSS_URL, { cache: "no-store" });
     if (!res.ok) {
-      return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });
+      return NextResponse.json({ error: "Erreur RSS" }, { status: 500 });
     }
 
-    const data = await res.json();
+    const xml = await res.text();
+    const rawItems = xml.split("<item>").slice(1);
 
-    // Normalisation minimale
-    const events = Array.isArray(data?.events)
-      ? data.events.map((evt: any) => ({
-          id: evt.id,
-          title: evt.title ?? null,
-          description: evt.description ?? null,
-          date: evt.date_start ?? evt.date ?? null,
-          location: evt.location ?? null,
-          image: evt.image ?? null,
-          url: evt.url ?? null,
-        }))
-      : [];
+    const events = rawItems.map((blk) => {
+      const title = extract("title", blk)?.replace("<![CDATA[", "").replace("]]>", "") || null;
+      const description = extract("description", blk)?.replace("<![CDATA[", "").replace("]]>", "") || null;
+      const url = extract("link", blk) || null;
+      const date = extract("pubDate", blk) || null;
+      return { title, description, url, date };
+    });
 
     return NextResponse.json({ count: events.length, events });
-  } catch (err) {
-    return NextResponse.json({ error: "Erreur serveur", details: String(err) }, { status: 500 });
+  } catch (e) {
+    return NextResponse.json({ error: "Erreur serveur", details: String(e) }, { status: 500 });
   }
 }
