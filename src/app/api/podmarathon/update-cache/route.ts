@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
 import xml2js from "xml2js";
 
-const RSS_URL = "[https://feed.ausha.co/BnYn5Uw5W3WO](https://feed.ausha.co/BnYn5Uw5W3WO)";
 const OWNER = "faistasortieaToulouse";
 const REPO = "ftsdatatoulouse";
 const PATH = "data/podmarathon-cache.json";
 const BRANCH = "main";
+const GITHUB_API = "https://api.github.com";
 
 if (!process.env.GITHUB_TOKEN) {
 throw new Error("GITHUB_TOKEN non défini dans les variables d'environnement.");
 }
-
-const GITHUB_API = "[https://api.github.com](https://api.github.com)";
 
 export async function GET() {
 try {
