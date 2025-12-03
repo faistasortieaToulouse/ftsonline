@@ -29,6 +29,14 @@ mjc: "green",
 conservatoire: "purple",
 };
 
+const typeLabels: Record<NonNullable<Establishment["type"]>, string> = {
+library: "bibliothèque",
+centre_culturel: "centre culturel",
+maison_quartier: "maison de quartier",
+mjc: "MJC",
+conservatoire: "conservatoire",
+};
+
 const isDesktop = () => {
 if (typeof window === "undefined") return true;
 return !/Mobi|Android|iPhone|iPad|iPod|Tablet/i.test(navigator.userAgent);
@@ -110,7 +118,7 @@ onLoad={() => setIsReady(true)}
           onChange={() => toggleFilter(type as Establishment["type"])}
         />
         <span style={{ color: typeColors[type as Establishment["type"]] }}>
-          {type.replace("_", " ")}
+          {typeLabels[type as Establishment["type"]]}
         </span>
       </label>
     ))}
@@ -136,7 +144,7 @@ onLoad={() => setIsReady(true)}
         <li key={i} className="p-4 border rounded bg-white shadow">
           <p className="text-lg font-bold">
             {i + 1}. {est.name}{" "}
-            <span style={{ color }}>({type.replace("_", " ")})</span>
+            <span style={{ color }}>({typeLabels[type]})</span>
           </p>
           <p>{est.address}</p>
         </li>
