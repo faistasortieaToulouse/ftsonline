@@ -9,130 +9,79 @@ interface Library {
 
 export default function BibliomapPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<google.maps.Map | null>(null);
   const [libraries, setLibraries] = useState<Library[]>([]);
-  const [ready, setReady] = useState(false);
-  const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
+  const [isReady, setIsReady] = useState(false);
 
-  const geocodeCache = useRef<Record<string, google.maps.LatLngLiteral>>({});
-
-  // Charger les données
+  // 1. Chargement des données
   useEffect(() => {
     fetch("/api/bibliomap")
       .then((res) => res.json())
       .then((data) => setLibraries(data))
       .catch(console.error);
-
-    const stored = localStorage.getItem("geo-cache");
-    if (stored) geocodeCache.current = JSON.parse(stored);
   }, []);
 
-  // Initialisation de la carte
+  // 2. Initialisation de la carte seulement quand Google Maps est prêt
   useEffect(() => {
-    if (!ready || !libraries.length || !mapRef.current) return;
+    if (!isReady || !mapRef.current || !libraries.length) return;
 
-    const map = new google.maps.Map(mapRef.current, {
+    mapInstance.current = new google.maps.Map(mapRef.current, {
       zoom: 12,
       center: { lat: 43.6045, lng: 1.444 },
-      mapId: process.env.NEXT_PUBLIC_GOOGLE_MAP_ID,
     });
 
     const geocoder = new google.maps.Geocoder();
-    markersRef.current = [];
 
-    const geocodeAddress = (address: string): Promise<google.maps.LatLngLiteral> =>
-      new Promise((resolve) => {
-        if (geocodeCache.current[address]) {
-          resolve(geocodeCache.current[address]);
-          return;
-        }
+    libraries.forEach((library, i) => {
+      geocoder.geocode({ address: library.address }, (results, status) => {
+        if (status !== "OK" || !results?.[0]) return;
 
-        geocoder.geocode({ address }, (res, status) => {
-          if (status === "OK" && res?.[0]) {
-            const loc = {
-              lat: res[0].geometry.location.lat(),
-              lng: res[0].geometry.location.lng(),
-            };
-            geocodeCache.current[address] = loc;
-            localStorage.setItem("geo-cache", JSON.stringify(geocodeCache.current));
-            resolve(loc);
-          } else resolve({ lat: 0, lng: 0 });
-        });
-      });
-
-    Promise.all(libraries.map((lib) => geocodeAddress(lib.address))).then((coords) => {
-      coords.forEach((pos, idx) => {
-        const lib = libraries[idx];
-
-        // Marqueur classique avec label pour le numéro
-        const marker = new google.maps.marker.AdvancedMarkerElement({
-          map,
-          position: pos,
-          title: lib.name,
-          label: {
-            text: `${idx + 1}`,
-            color: "white",
-            fontWeight: "bold",
-            fontSize: "16px",
-          },
+        // Marqueur avec numéro
+        const marker = new google.maps.Marker({
+          map: mapInstance.current!,
+          position: results[0].geometry.location,
+          label: `${i + 1}`, // numéro affiché sur le pin
         });
 
         const infowindow = new google.maps.InfoWindow({
-          content: `<strong>${idx + 1}. ${lib.name}</strong><br>${lib.address}`,
+          content: `<strong>${i + 1}. ${library.name}</strong><br>${library.address}`,
         });
 
-        marker.addListener("click", () => infowindow.open({ anchor: marker, map }));
-        markersRef.current.push(marker);
+        marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
       });
-
-      // Clusterer officiel
-      // @ts-ignore
-      new markerClusterer.MarkerClusterer({ map, markers: markersRef.current });
     });
-  }, [ready, libraries]);
-
-  // Recentre la carte sur un marqueur depuis la liste
-  const focusMarker = (index: number) => {
-    const marker = markersRef.current[index];
-    if (marker && mapRef.current) {
-      marker.getMap()?.panTo(marker.getPosition()!);
-      marker.getMap()?.setZoom(15);
-      new google.maps.InfoWindow({
-        content: `<strong>${index + 1}. ${libraries[index].name}</strong><br>${libraries[index].address}`,
-      }).open({ anchor: marker, map: marker.getMap()! });
-    }
-  };
+  }, [isReady, libraries]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
+      {/* Chargement du script Google Maps */}
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=marker&loading=async`}
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         strategy="afterInteractive"
-        onLoad={() => setReady(true)}
-      />
-      <Script
-        src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"
-        strategy="afterInteractive"
+        onLoad={() => setIsReady(true)}
       />
 
       <h1 className="text-3xl font-extrabold mb-6">📍 Carte des Bibliothèques de Toulouse</h1>
 
+      {/* Carte */}
       <div
         ref={mapRef}
         style={{ height: "70vh", width: "100%" }}
-        className="border rounded-lg mb-8 flex items-center justify-center text-gray-500"
+        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
       >
-        {!ready && <p>Chargement de la carte...</p>}
+        {!isReady && <p>Chargement de la carte…</p>}
       </div>
 
-      <h2 className="text-xl font-bold mb-4">Liste des bibliothèques ({libraries.length})</h2>
-      <ul className="list-none pl-0">
-        {libraries.map((lib, idx) => (
-          <li
-            key={idx}
-            className="cursor-pointer hover:text-blue-600 mb-2"
-            onClick={() => focusMarker(idx)}
-          >
-            <strong>{idx + 1}. {lib.name}</strong> — {lib.address}
+      {/* Liste des bibliothèques */}
+      <h2 className="text-2xl font-semibold mb-4">
+        Liste Complète ({libraries.length})
+      </h2>
+
+      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {libraries.map((library, i) => (
+          <li key={i} className="p-4 border rounded bg-white shadow">
+            <p className="text-lg font-bold">{i + 1}. {library.name}</p>
+            <p>{library.address}</p>
           </li>
         ))}
       </ul>
