@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
+// Modification du nom de la source ici
 const API_ROUTES = [
+  "agendaculturel", // Nouvelle source RSS ajoutée
   "agenda-trad-haute-garonne",
   "cultureenmouvements",
   "demosphere",
@@ -55,7 +57,31 @@ function getThemeImage(thematique?: string): string {
 
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
+  
+  // 💡 MODIFIÉ: Logique spécifique pour la source 'agendaculturel'
+  if (sourceName === "agendaculturel") {
+      // Les événements de cette source sont déjà dans le format final (title, date, image, etc.)
+      const dateObj = new Date(ev.pubDate);
+      if (isNaN(dateObj.getTime())) return null;
 
+      return {
+        id: ev.title + ev.pubDate, // Utilise title + pubDate comme ID
+        title: ev.title,
+        description: ev.description,
+        date: dateObj.toISOString(),
+        dateFormatted: dateObj.toLocaleString("fr-FR", {
+             weekday: "long", year: "numeric", month: "long", day: "numeric",
+             hour: "2-digit", minute: "2-digit",
+        }),
+        location: ev.location || "Toulouse", // Le RSS ne fournit pas toujours la localisation détaillée
+        fullAddress: ev.link, // Utilise le lien comme adresse complète pour référence
+        image: ev.image,
+        url: ev.link,
+        source: sourceName,
+      };
+  }
+
+  // LOGIQUE DE NORMALISATION EXISTANTE POUR LES AUTRES SOURCES
   const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || null;
   const dateObj = rawDate ? new Date(rawDate) : null;
   if (!dateObj || isNaN(dateObj.getTime())) return null;
@@ -106,7 +132,10 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(id);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      // La réponse de la route RSS doit être un objet JSON
+      const data = await res.json();
+      // Si la réponse contient un tableau `items`, on le retourne, sinon la réponse complète
+      return Array.isArray(data.items) ? data.items : data; 
     } catch (err) {
       if (i === retries) throw err;
       await new Promise(r => setTimeout(r, 2000));
@@ -147,8 +176,14 @@ export async function GET(request: NextRequest) {
     // -------------------------
     // 2️⃣ Autres routes fetchées en parallèle
     // -------------------------
+    const otherRoutesWithoutMeetup = otherRoutes.filter(r => r !== "agendaculturel");
+    const agendaculturelRoute = otherRoutes.find(r => r === "agendaculturel");
+    
+    // Ajout de la route agendaculturel pour un fetch dédié (même si fetché en parallèle, c'est pour la clarté)
+    const routesToFetch = agendaculturelRoute ? [...otherRoutesWithoutMeetup, agendaculturelRoute] : otherRoutesWithoutMeetup;
+
     const otherResults = await Promise.all(
-      otherRoutes.map(async route => {
+      routesToFetch.map(async route => {
         try {
           const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
           return { route, data };
@@ -164,8 +199,14 @@ export async function GET(request: NextRequest) {
     // 3️⃣ Agrégation et normalisation
     // -------------------------
     const allEvents = results.flatMap(({ route, data }) => {
-      const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
-      return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
+      // 💡 MODIFIÉ: Utilisation du nouveau nom de route pour l'extraction de la liste
+      const list = route === "agendaculturel" ? data : Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
+      
+      // La vérification ci-dessous est cruciale car `fetchWithRetry` peut retourner un tableau
+      // si c'est la route `agendaculturel` (grâce à la vérification `Array.isArray(data.items)`)
+      const listToNormalize = Array.isArray(list) ? list : [];
+      
+      return listToNormalize.map((ev: any) => normalizeEvent(ev, route)).filter(Boolean);
     });
 
     const now = new Date();
