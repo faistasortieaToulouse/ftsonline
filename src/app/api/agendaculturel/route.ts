@@ -45,13 +45,27 @@ function detectCategory(title: string = "", description: string = ""): string {
 }
 
 /**
- * Formate la date actuelle au format des dates de flux RSS (ex: "Wed, 03 Dec 2025 08:00:00 GMT").
+ * Formate la date actuelle au format RSS (RFC 2822) avec l'heure fixée à 00:00:00 GMT.
  */
-function formatTodayDateForRss(): string {
-    // Utilise toUTCString() pour obtenir un format compatible RSS/RFC 2822
-    // Le fuseau horaire sera GMT, ce qui est acceptable pour remplacer une ancienne date.
-    return new Date().toUTCString();
+function formatTodayDateAtMidnight(): string {
+    const now = new Date();
+    // Crée une nouvelle date pour aujourd'hui, mais avec l'heure, minute, seconde, milliseconde
+    // mises à zéro (minuit) dans le fuseau horaire UTC.
+    const todayMidnightUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0));
+    
+    // Utilise toUTCString() pour obtenir le format compatible RSS/RFC 2822
+    return todayMidnightUtc.toUTCString();
 }
+
+/**
+ * Obtient le temps Unix de minuit UTC pour une comparaison précise de la date seule.
+ */
+function getTodayMidnightTimestamp(): number {
+    const now = new Date();
+    const todayMidnightUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0));
+    return todayMidnightUtc.getTime();
+}
+
 
 export async function GET() {
   const feedUrl = "https://31.agendaculturel.fr/rss/concert/toulouse/";
@@ -83,8 +97,8 @@ export async function GET() {
     const arr = Array.isArray(items) ? items : [items];
 
     // --- LOGIQUE DE VÉRIFICATION ET DE REMPLACEMENT DE DATE ---
-    const todayDateRss = formatTodayDateForRss();
-    const todayTimestamp = new Date().getTime();
+    const todayMidnightRss = formatTodayDateAtMidnight();
+    const todayMidnightTimestamp = getTodayMidnightTimestamp();
 
     const itemsWithCategories = arr.map((item: any) => {
       let { pubDate } = item;
@@ -92,11 +106,26 @@ export async function GET() {
       // 1. Convertir la date de l'item en objet Date
       const itemDate = new Date(pubDate);
 
-      // 2. Vérifier si la date est valide et antérieure à aujourd'hui
-      if (itemDate.toString() !== "Invalid Date" && itemDate.getTime() < todayTimestamp) {
-        console.log(`[DATE REMPLACÉE] Ancienne date: ${pubDate} -> Nouvelle date: ${todayDateRss}`);
+      // 2. Créer un timestamp de l'item avec l'heure mise à zéro
+      // Ceci permet une comparaison jour par jour, ignorant l'heure.
+      let itemDateTimestamp = itemDate.getTime();
+      
+      // La comparaison doit être faite contre l'heure de l'événement et non l'heure de publication. 
+      // Si on veut vraiment comparer la date passée par rapport à AUJOURD'HUI.
+      // S'assurer que le champ pubDate du flux RSS est bien la date de l'événement et non la date de publication.
+      
+      if (itemDate.toString() !== "Invalid Date") {
+        // Obtenir le timestamp de la date de l'item à minuit (pour comparaison jour par jour)
+        const itemDateAtMidnight = new Date(Date.UTC(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate(), 0, 0, 0));
+        itemDateTimestamp = itemDateAtMidnight.getTime();
+      }
+      
+
+      // 3. Vérifier si la date de l'item (à minuit) est strictement antérieure à minuit aujourd'hui
+      if (itemDate.toString() !== "Invalid Date" && itemDateTimestamp < todayMidnightTimestamp) {
+        console.log(`[DATE REMPLACÉE] Ancienne date: ${pubDate} (Timestamp: ${itemDateTimestamp}) -> Nouvelle date: ${todayMidnightRss}`);
         // Remplacer la date si elle est dépassée
-        pubDate = todayDateRss;
+        pubDate = todayMidnightRss;
       }
       
       const category = detectCategory(item.title, item.description);
@@ -105,7 +134,7 @@ export async function GET() {
       return {
         title: item.title,
         link: item.link,
-        pubDate, // Utilise la date potentiellement modifiée
+        pubDate, // Utilise la date potentiellement modifiée (avec l'heure fixée)
         description: item.description,
         category,
         image,
