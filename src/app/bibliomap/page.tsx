@@ -15,7 +15,6 @@ export default function BibliomapPage() {
 
   const geocodeCache = useRef<Record<string, google.maps.LatLngLiteral>>({});
 
-  // Palette simple pour les numéros
   const colors = ["#FF4D4F", "#1890FF", "#52C41A", "#FAAD14", "#722ED1", "#13C2C2", "#EB2F96"];
 
   // Charger les données
@@ -65,27 +64,21 @@ export default function BibliomapPage() {
     Promise.all(libraries.map((lib) => geocodeAddress(lib.address))).then((coords) => {
       coords.forEach((pos, idx) => {
         const lib = libraries[idx];
-
-        // Couleur selon la palette
         const color = colors[idx % colors.length];
 
-        // Marqueur personnalisé avec cercle coloré
+        // Marqueur avec SVG
         const marker = new google.maps.marker.AdvancedMarkerElement({
           map,
           position: pos,
           title: lib.name,
           icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            fillColor: color,
-            fillOpacity: 1,
-            strokeWeight: 0,
-            scale: 25, // taille du cercle
-          },
-          label: {
-            text: `${idx + 1}`,
-            color: "white",
-            fontWeight: "bold",
-            fontSize: "16px",
+            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+                <circle cx="20" cy="20" r="20" fill="${color}" />
+                <text x="50%" y="55%" text-anchor="middle" fill="white" font-size="16" font-family="Arial" font-weight="bold">${idx + 1}</text>
+              </svg>
+            `)}`,
+            scaledSize: new google.maps.Size(40, 40),
           },
         });
 
@@ -94,7 +87,6 @@ export default function BibliomapPage() {
         });
 
         marker.addListener("click", () => infowindow.open({ anchor: marker, map }));
-
         markersRef.current.push(marker);
       });
 
@@ -104,7 +96,7 @@ export default function BibliomapPage() {
     });
   }, [ready, libraries]);
 
-  // Fonction pour recentrer la carte sur un marqueur depuis la liste
+  // Recentre la carte sur un marqueur depuis la liste
   const focusMarker = (index: number) => {
     const marker = markersRef.current[index];
     if (marker && mapRef.current) {
