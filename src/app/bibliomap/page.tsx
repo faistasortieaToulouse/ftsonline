@@ -13,7 +13,13 @@ export default function BibliomapPage() {
   const [libraries, setLibraries] = useState<Library[]>([]);
   const [isReady, setIsReady] = useState(false);
 
-  // 1. Chargement des données
+  // 1️⃣ Détecter si l’appareil est un desktop
+  const isDesktop = () => {
+    if (typeof window === "undefined") return true;
+    return !/Mobi|Android|iPhone|iPad|iPod|Tablet/i.test(navigator.userAgent);
+  };
+
+  // 2️⃣ Chargement des données
   useEffect(() => {
     fetch("/api/bibliomap")
       .then((res) => res.json())
@@ -21,13 +27,15 @@ export default function BibliomapPage() {
       .catch(console.error);
   }, []);
 
-  // 2. Initialisation de la carte seulement quand Google Maps est prêt
+  // 3️⃣ Initialisation de la carte quand Google Maps est prêt
   useEffect(() => {
     if (!isReady || !mapRef.current || !libraries.length) return;
 
     mapInstance.current = new google.maps.Map(mapRef.current, {
       zoom: 12,
       center: { lat: 43.6045, lng: 1.444 },
+      scrollwheel: isDesktop(), // molette activée uniquement sur desktop
+      gestureHandling: isDesktop() ? "greedy" : "cooperative", // scroll et drag adaptés
     });
 
     const geocoder = new google.maps.Geocoder();
@@ -40,7 +48,7 @@ export default function BibliomapPage() {
         const marker = new google.maps.Marker({
           map: mapInstance.current!,
           position: results[0].geometry.location,
-          label: `${i + 1}`, // numéro affiché sur le pin
+          label: `${i + 1}`, // numéro visible sur le pin
         });
 
         const infowindow = new google.maps.InfoWindow({
@@ -54,7 +62,7 @@ export default function BibliomapPage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      {/* Chargement du script Google Maps */}
+      {/* Script Google Maps */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         strategy="afterInteractive"
