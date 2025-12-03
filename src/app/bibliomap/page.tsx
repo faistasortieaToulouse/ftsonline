@@ -62,13 +62,13 @@ export default function BibliomapPage() {
       coords.forEach((pos, idx) => {
         const lib = libraries[idx];
 
-        // Création du marqueur avec numéro
+        // Marqueur avec numéro
         const marker = new google.maps.marker.AdvancedMarkerElement({
           map,
           position: pos,
           title: lib.name,
           label: {
-            text: `${idx + 1}`, // numéro de la bibliothèque
+            text: `${idx + 1}`, // numéro sur le marqueur
             color: "white",
             fontWeight: "bold",
           },
@@ -83,7 +83,7 @@ export default function BibliomapPage() {
         markers.push(marker);
       });
 
-      // Clusterer officiel (facultatif)
+      // Clustering (facultatif)
       // @ts-ignore
       new markerClusterer.MarkerClusterer({ map, markers });
     });
@@ -112,7 +112,7 @@ export default function BibliomapPage() {
       </div>
 
       <h2 className="text-xl font-bold mb-4">Liste des bibliothèques ({libraries.length})</h2>
-      <ul className="list-decimal pl-6">
+      <ul className="list-none pl-0">
         {libraries.map((lib, idx) => (
           <li key={idx}>
             <strong>{idx + 1}. {lib.name}</strong> — {lib.address}
