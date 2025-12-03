@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { XMLParser } from "fast-xml-parser";
 
 export const dynamic = "force-dynamic";
-export const runtime = "nodejs";  // IMPORTANT SUR NETLIFY
+export const runtime = "nodejs"; // IMPORTANT SUR NETLIFY
 
+/**
+ * Détecte l'encodage à partir du début du buffer XML.
+ */
 function detectEncoding(xmlBuffer: Uint8Array): string {
   const ascii = new TextDecoder("ascii").decode(xmlBuffer.slice(0, 200));
   const match = ascii.match(/encoding=["']([^"']+)["']/i);
@@ -24,6 +27,9 @@ const CATEGORY_IMAGES: Record<string, string> = {
   "Défaut": "/images/agenda31/agendgenerique.jpg",
 };
 
+/**
+ * Détecte la catégorie basée sur le titre et la description.
+ */
 function detectCategory(title: string = "", description: string = ""): string {
   const text = (title + " " + description).toLowerCase();
 
@@ -36,6 +42,15 @@ function detectCategory(title: string = "", description: string = ""): string {
   if (text.includes("expo") || text.includes("exposition")) return "Exposition";
 
   return "Défaut";
+}
+
+/**
+ * Formate la date actuelle au format des dates de flux RSS (ex: "Wed, 03 Dec 2025 08:00:00 GMT").
+ */
+function formatTodayDateForRss(): string {
+    // Utilise toUTCString() pour obtenir un format compatible RSS/RFC 2822
+    // Le fuseau horaire sera GMT, ce qui est acceptable pour remplacer une ancienne date.
+    return new Date().toUTCString();
 }
 
 export async function GET() {
@@ -67,20 +82,36 @@ export async function GET() {
     const items = parsed?.rss?.channel?.item ?? [];
     const arr = Array.isArray(items) ? items : [items];
 
-    // Ajout catégorie + image
+    // --- LOGIQUE DE VÉRIFICATION ET DE REMPLACEMENT DE DATE ---
+    const todayDateRss = formatTodayDateForRss();
+    const todayTimestamp = new Date().getTime();
+
     const itemsWithCategories = arr.map((item: any) => {
+      let { pubDate } = item;
+      
+      // 1. Convertir la date de l'item en objet Date
+      const itemDate = new Date(pubDate);
+
+      // 2. Vérifier si la date est valide et antérieure à aujourd'hui
+      if (itemDate.toString() !== "Invalid Date" && itemDate.getTime() < todayTimestamp) {
+        console.log(`[DATE REMPLACÉE] Ancienne date: ${pubDate} -> Nouvelle date: ${todayDateRss}`);
+        // Remplacer la date si elle est dépassée
+        pubDate = todayDateRss;
+      }
+      
       const category = detectCategory(item.title, item.description);
       const image = CATEGORY_IMAGES[category] ?? CATEGORY_IMAGES["Défaut"];
 
       return {
         title: item.title,
         link: item.link,
-        pubDate: item.pubDate,
+        pubDate, // Utilise la date potentiellement modifiée
         description: item.description,
         category,
         image,
       };
     });
+    // --- FIN LOGIQUE DE VÉRIFICATION ET DE REMPLACEMENT DE DATE ---
 
     return NextResponse.json({ items: itemsWithCategories });
 
