@@ -57,7 +57,7 @@ const establishments = [
   { name: "INSPÉ - Toulouse Rangueil", address: "118 Route de Narbonne, 31078 Toulouse cedex 4" },
   { name: "INSPÉ - Toulouse Saint-Agne", address: "56 avenue de l'URSS Cedex 4, 31078 Toulouse" },
   { name: "INSPÉ – Toulouse Croix-de-Pierre", address: "181 avenue de Muret, BP 63215, 31027 Toulouse Cedex 3" },
-  { name: "Médiathèque de l'École nationale supérieure d'audiovisuel (ENSAV)", address: "56 rue du Taur, 31000 Toulouse" }
+  { name: "Médiathèque de l'École nationale supérieure d'audiovisuel (ENSAV)", address: "56 rue du Taur, 31000 Toulouse" },
 
 // Centres Culturels
 { name: "Alban-Minville", address: "1 Place Martin Luther King, 31100 Toulouse", type: "centre_culturel" },
@@ -73,7 +73,7 @@ const establishments = [
 { name: "Saint-Simon", address: "10 Chemin de Liffard, 31100 Toulouse", type: "centre_culturel" },
 { name: "Soupetard", address: "63 chemin de Hérédia, 31500 Toulouse", type: "centre_culturel" },
 { name: "Théâtre des Mazades", address: "10 Avenue des Mazades, 31200 Toulouse", type: "centre_culturel" },
-{ name: "Cercle laïque Jean Chaubet", address: "7 Place Marius Pinel, 31500 Toulouse", type: "centre_culturel" }
+{ name: "Cercle laïque Jean Chaubet", address: "7 Place Marius Pinel, 31500 Toulouse", type: "centre_culturel" },
 
 // Maisons de quartier
 { name: "Maison de quartier Rangueil", address: "19 Rue Claude de Forbin", type: "maison_quartier" },
@@ -85,7 +85,7 @@ const establishments = [
 { name: "Maison de Quartier Lafourguette", address: "1 Pl. des Glières", type: "maison_quartier" },
 { name: "Mairie Quartier Sauzelong de Toulouse", address: "80 Av. Albert Bedouce", type: "maison_quartier" },
 { name: "Maison de la Citoyenneté Sud-Est", address: "81 Rue Saint-Roch", type: "maison_quartier" },
-{ name: "Maison de quartier La Vache", address: "7 Rue Marguerite Duras", type: "maison_quartier" }
+{ name: "Maison de quartier La Vache", address: "7 Rue Marguerite Duras", type: "maison_quartier" },
 
 // MJC
 { name: "Maison des Jeunes et de la Culture Jacques Prévert", address: "292 Route de Seysses, 31100 Toulouse", type: "mjc" },
@@ -93,7 +93,7 @@ const establishments = [
 { name: "Maison des Jeunes et de la Culture Croix-Daurade", address: "141 Chemin de Nicol, 31200 Toulouse", type: "mjc" },
 { name: "Maison des Jeunes et de la Culture Ponts-Jumeaux", address: "2 Port de l'Embouchure, 31000 Toulouse", type: "mjc" },
 { name: "Maison des Jeunes et de la Culture Ancely", address: "7 Allée des Causses, 31300 Toulouse", type: "mjc" },
-{ name: "Maison des Jeunes et de la Culture Empalot", address: "9 rue Maria Mombiola, 31400 Toulouse", type: "mjc" }
+{ name: "Maison des Jeunes et de la Culture Empalot", address: "9 rue Maria Mombiola, 31400 Toulouse", type: "mjc" },
 
 // Conservatoires
 { name: "Conservatoire à Rayonnement Régional (CRR) – Site Larrey", address: "17 rue Larrey, 31000 Toulouse", type: "conservatoire" },
