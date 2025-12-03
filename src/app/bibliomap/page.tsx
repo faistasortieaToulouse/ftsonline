@@ -33,6 +33,7 @@ export default function BibliomapPage() {
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ address: library.address }, (results, status) => {
                 if (status === "OK" && results && results[0]) {
+                    // ⚠️ La dépréciation persiste, mais le code fonctionne.
                     const marker = new google.maps.Marker({
                         map,
                         position: results[0].geometry.location,
@@ -45,8 +46,6 @@ export default function BibliomapPage() {
                     marker.addListener("click", () => {
                         infowindow.open(map, marker);
                     });
-                    // Note: Les événements mouseover/mouseout sont souvent problématiques sur mobile/tablette.
-                    // Je les laisse pour la complétude, mais ils ne sont pas essentiels.
                     marker.addListener("mouseover", () => {
                         if (!("ontouchstart" in window)) infowindow.open(map, marker);
                     });
@@ -63,10 +62,9 @@ export default function BibliomapPage() {
 
 
     async function init() {
-        // Vérifie si le script est DÉJÀ là pour éviter de le recharger (utile en mode strict)
+        // Vérifie si le script est DÉJÀ là pour éviter de le recharger
         if (document.getElementById(MAPS_SCRIPT_ID)) {
             // Si le script est là, on essaie d'appeler la logique de la carte immédiatement
-            // car l'API est probablement déjà chargée.
             initMapLogic(); 
             return;
         }
@@ -86,11 +84,10 @@ export default function BibliomapPage() {
 
         // 3. Création et Chargement du script Google Maps
         const mapScript = document.createElement("script");
-        mapScript.id = MAPS_SCRIPT_ID; // 💡 Ajout de l'ID unique
+        mapScript.id = MAPS_SCRIPT_ID;
         
         const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-        // NOTE: Ajout de 'marker' aux libraries pour préparer la migration (si vous la faites)
-        mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&callback=initMap&libraries=places,marker`;
+        mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&callback=initMap&libraries=places`; 
         mapScript.async = true;
 
         mapScript.onerror = () => {
@@ -103,18 +100,11 @@ export default function BibliomapPage() {
 
     init();
     
-    // Nettoyage : retirer le script si le composant est démonté
-    return () => {
-        delete (window as any).initMap;
-        
-        // 💡 CORRECTION : Recherche de l'élément par son ID unique pour garantir la cible
-        const scriptToRemove = document.getElementById(MAPS_SCRIPT_ID);
-        
-        if (scriptToRemove && document.body.contains(scriptToRemove)) {
-            document.body.removeChild(scriptToRemove);
-        }
-    };
-  }, []); // Dépendances vides pour n'exécuter qu'une fois au montage
+    // 🛑 ATTENTION : Suppression de la fonction de nettoyage (return () => { ... })
+    // Cela empêche l'erreur DOMException: Node.removeChild.
+    // Le script reste dans le DOM, ce qui est acceptable pour un script global unique.
+    
+  }, []); 
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
