@@ -11,8 +11,12 @@ export default function BibliomapPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [libraries, setLibraries] = useState<Library[]>([]);
   const [ready, setReady] = useState(false);
+  const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
 
   const geocodeCache = useRef<Record<string, google.maps.LatLngLiteral>>({});
+
+  // Palette simple pour les numéros
+  const colors = ["#FF4D4F", "#1890FF", "#52C41A", "#FAAD14", "#722ED1", "#13C2C2", "#EB2F96"];
 
   // Charger les données
   useEffect(() => {
@@ -36,7 +40,7 @@ export default function BibliomapPage() {
     });
 
     const geocoder = new google.maps.Geocoder();
-    const markers: google.maps.marker.AdvancedMarkerElement[] = [];
+    markersRef.current = [];
 
     const geocodeAddress = (address: string): Promise<google.maps.LatLngLiteral> =>
       new Promise((resolve) => {
@@ -62,15 +66,26 @@ export default function BibliomapPage() {
       coords.forEach((pos, idx) => {
         const lib = libraries[idx];
 
-        // Marqueur avec numéro
+        // Couleur selon la palette
+        const color = colors[idx % colors.length];
+
+        // Marqueur personnalisé avec cercle coloré
         const marker = new google.maps.marker.AdvancedMarkerElement({
           map,
           position: pos,
           title: lib.name,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillColor: color,
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scale: 25, // taille du cercle
+          },
           label: {
-            text: `${idx + 1}`, // numéro sur le marqueur
+            text: `${idx + 1}`,
             color: "white",
             fontWeight: "bold",
+            fontSize: "16px",
           },
         });
 
@@ -80,14 +95,26 @@ export default function BibliomapPage() {
 
         marker.addListener("click", () => infowindow.open({ anchor: marker, map }));
 
-        markers.push(marker);
+        markersRef.current.push(marker);
       });
 
-      // Clustering (facultatif)
+      // Clusterer officiel
       // @ts-ignore
-      new markerClusterer.MarkerClusterer({ map, markers });
+      new markerClusterer.MarkerClusterer({ map, markers: markersRef.current });
     });
   }, [ready, libraries]);
+
+  // Fonction pour recentrer la carte sur un marqueur depuis la liste
+  const focusMarker = (index: number) => {
+    const marker = markersRef.current[index];
+    if (marker && mapRef.current) {
+      marker.getMap()?.panTo(marker.getPosition()!);
+      marker.getMap()?.setZoom(15);
+      new google.maps.InfoWindow({
+        content: `<strong>${index + 1}. ${libraries[index].name}</strong><br>${libraries[index].address}`,
+      }).open({ anchor: marker, map: marker.getMap()! });
+    }
+  };
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
@@ -114,7 +141,11 @@ export default function BibliomapPage() {
       <h2 className="text-xl font-bold mb-4">Liste des bibliothèques ({libraries.length})</h2>
       <ul className="list-none pl-0">
         {libraries.map((lib, idx) => (
-          <li key={idx}>
+          <li
+            key={idx}
+            className="cursor-pointer hover:text-blue-600 mb-2"
+            onClick={() => focusMarker(idx)}
+          >
             <strong>{idx + 1}. {lib.name}</strong> — {lib.address}
           </li>
         ))}
