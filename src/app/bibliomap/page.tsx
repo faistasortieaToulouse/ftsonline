@@ -13,25 +13,34 @@ export default function BibliomapPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Variable pour stocker la référence au script Google Maps
+    let script: HTMLScriptElement | null = null;
+    
     async function init() {
       // 1. Récupération des données depuis l'API interne
       let data: Library[] = [];
       try {
-        // 💡 CORRECTION 1: Ajout du préfixe /api pour pointer vers route.ts
+        // 💡 CORRECTION 1: Utilisation de /api/bibliomap pour la route API
         const res = await fetch("/api/bibliomap"); 
         
-        if (!res.ok) throw new Error("Erreur de récupération des données des bibliothèques.");
+        if (!res.ok) {
+            // Si la réponse n'est pas OK, lever une erreur mais ne pas crash
+            console.error(`Erreur HTTP: ${res.status} lors du fetch de l'API /api/bibliomap`);
+            throw new Error("Erreur de récupération des données des bibliothèques.");
+        }
         
         data = await res.json();
         setLibraries(data);
       } catch (error) {
-        console.error("Erreur de chargement des bibliothèques:", error);
+        console.error("Erreur de chargement des bibliothèques (API):", error);
       }
 
       // 2. Chargement du script Google Maps
-      const script = document.createElement("script");
-      // 💡 CORRECTION 2: Suppression de window.process
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+      script = document.createElement("script");
+      
+      // 💡 CORRECTION 2 & 3: Utilisation de process.env SANS window. et ajout de loading=async
+      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async`;
       script.async = true;
 
       script.onload = () => {
@@ -58,6 +67,7 @@ export default function BibliomapPage() {
                 content: `<strong>${library.name}</strong><br>${library.address}`,
               });
 
+              // Gestion des événements de la souris et du clic pour l'infowindow
               marker.addListener("mouseover", () => {
                 if (!("ontouchstart" in window)) infowindow.open(map, marker);
               });
@@ -69,8 +79,6 @@ export default function BibliomapPage() {
               marker.addListener("click", () => {
                 infowindow.open(map, marker);
               });
-            } else {
-              // console.warn(`Géocodage échoué pour ${library.name}: ${status}`);
             }
           });
         });
@@ -82,15 +90,17 @@ export default function BibliomapPage() {
       };
 
       document.body.appendChild(script);
-      
-      // Nettoyage : retirer le script si le composant est démonté
-      return () => {
-          document.body.removeChild(script);
-      };
-
     }
 
     init();
+    
+    // Nettoyage : retirer le script si le composant est démonté
+    return () => {
+        // 💡 CORRECTION 3: Vérification si le script existe et est toujours un enfant du body avant de le retirer
+        if (script && document.body.contains(script)) {
+            document.body.removeChild(script);
+        }
+    };
   }, []);
 
   return (
