@@ -88,7 +88,17 @@ filtered.forEach((est, i) => {
       content: `<strong>${i + 1}. ${est.name}</strong><br>${est.address}`,
     });
 
-    marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+    if (isDesktop()) {
+      const hoverWindow = new google.maps.InfoWindow({
+        content: `<strong>${i + 1}. ${est.name}</strong>`,
+      });
+      marker.addListener("mouseover", () => hoverWindow.open(mapInstance.current, marker));
+      marker.addListener("mouseout", () => hoverWindow.close());
+
+      marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+    } else {
+      marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+    }
   });
 });
 
