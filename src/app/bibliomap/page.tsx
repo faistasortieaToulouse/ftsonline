@@ -5,14 +5,11 @@ import { useEffect, useRef, useState } from "react";
 interface Library {
   name: string;
   address: string;
-  // Assurez-vous d'ajouter d'autres champs si votre API /bibliomap en renvoie
 }
 
 export default function BibliomapPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  // État pour stocker la liste des bibliothèques affichées sur la page
   const [libraries, setLibraries] = useState<Library[]>([]);
-  // État pour gérer l'état de chargement
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -20,19 +17,21 @@ export default function BibliomapPage() {
       // 1. Récupération des données depuis l'API interne
       let data: Library[] = [];
       try {
-        const res = await fetch("/bibliomap");
+        // 💡 CORRECTION 1: Ajout du préfixe /api pour pointer vers route.ts
+        const res = await fetch("/api/bibliomap"); 
+        
         if (!res.ok) throw new Error("Erreur de récupération des données des bibliothèques.");
+        
         data = await res.json();
         setLibraries(data);
       } catch (error) {
         console.error("Erreur de chargement des bibliothèques:", error);
-        // On continue même en cas d'erreur de données pour essayer de charger la carte
       }
 
       // 2. Chargement du script Google Maps
       const script = document.createElement("script");
-      // Utilisation du window.process.env pour l'accès côté client
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${window.process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+      // 💡 CORRECTION 2: Suppression de window.process
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
       script.async = true;
 
       script.onload = () => {
@@ -48,7 +47,6 @@ export default function BibliomapPage() {
         // 4. Géocodage et ajout des marqueurs
         data.forEach((library: Library) => {
           const geocoder = new google.maps.Geocoder();
-          // Le Geocoder est un appel API, il doit être dans le script.onload
           geocoder.geocode({ address: library.address }, (results, status) => {
             if (status === "OK" && results && results[0]) {
               const marker = new google.maps.Marker({
@@ -60,7 +58,6 @@ export default function BibliomapPage() {
                 content: `<strong>${library.name}</strong><br>${library.address}`,
               });
 
-              // Gestion des événements de la souris et du clic pour l'infowindow
               marker.addListener("mouseover", () => {
                 if (!("ontouchstart" in window)) infowindow.open(map, marker);
               });
@@ -73,7 +70,6 @@ export default function BibliomapPage() {
                 infowindow.open(map, marker);
               });
             } else {
-              // Optionnel: Log des adresses qui ne peuvent pas être géocodées
               // console.warn(`Géocodage échoué pour ${library.name}: ${status}`);
             }
           });
@@ -104,7 +100,6 @@ export default function BibliomapPage() {
       {/* Affichage de la carte */}
       <div 
         ref={mapRef} 
-        // 🚨 IMPORTANT: La carte nécessite une hauteur explicite pour être affichée
         style={{ height: '70vh', width: '100%' }}
         className="mb-8 border border-gray-300 rounded-lg shadow-xl bg-gray-100 flex items-center justify-center text-gray-500"
       >
