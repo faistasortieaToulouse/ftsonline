@@ -14,13 +14,22 @@ export default function BibliomapPage() {
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [isReady, setIsReady] = useState(false);
 
-  // Détecter si desktop
+  // 🔹 Couleurs par type (déclarées en haut du composant)
+  const typeColors: Record<Establishment["type"], string> = {
+    library: "red",
+    centre_culturel: "blue",
+    maison_quartier: "orange",
+    mjc: "green",
+    conservatoire: "purple",
+  };
+
+  // Détecter si l'utilisateur est sur un ordinateur
   const isDesktop = () => {
     if (typeof window === "undefined") return true;
     return !/Mobi|Android|iPhone|iPad|iPod|Tablet/i.test(navigator.userAgent);
   };
 
-  // Chargement des données
+  // 🔹 Chargement des données
   useEffect(() => {
     fetch("/api/bibliomap") // API doit renvoyer toutes les données avec type
       .then((res) => res.json())
@@ -28,7 +37,7 @@ export default function BibliomapPage() {
       .catch(console.error);
   }, []);
 
-  // Initialisation de la carte
+  // 🔹 Initialisation de la carte
   useEffect(() => {
     if (!isReady || !mapRef.current || !establishments.length) return;
 
@@ -40,14 +49,6 @@ export default function BibliomapPage() {
     });
 
     const geocoder = new google.maps.Geocoder();
-
-    const typeColors: Record<Establishment["type"], string> = {
-      library: "red",
-      centre_culturel: "blue",
-      maison_quartier: "orange",
-      mjc: "green",
-      conservatoire: "purple",
-    };
 
     establishments.forEach((est, i) => {
       geocoder.geocode({ address: est.address }, (results, status) => {
@@ -105,7 +106,9 @@ export default function BibliomapPage() {
           <li key={i} className="p-4 border rounded bg-white shadow">
             <p className="text-lg font-bold">
               {i + 1}. {est.name}{" "}
-              <span style={{ color: typeColors[est.type] }}>({est.type.replace("_", " ")})</span>
+              <span style={{ color: typeColors[est.type] }}>
+                ({est.type.replace("_", " ")})
+              </span>
             </p>
             <p>{est.address}</p>
           </li>
