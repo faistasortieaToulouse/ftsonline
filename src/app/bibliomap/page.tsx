@@ -6,25 +6,26 @@ interface Library {
   address: string;
 }
 
+// ID UNIQUE pour le script Google Maps
+const MAPS_SCRIPT_ID = 'google-maps-script-loader';
+
 export default function BibliomapPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [libraries, setLibraries] = useState<Library[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 💡 Déclarez la variable ici pour qu'elle soit dans le scope de la fonction de nettoyage
-    let mapScript: HTMLScriptElement | null = null;
     let data: Library[] = [];
     
+    // 1. Logique d'initialisation de la carte et des marqueurs (appelée par Google Maps)
     const initMapLogic = () => {
         setIsLoading(false);
-        // Si les données sont vides ou la carte n'est pas prête, on s'arrête
         if (!mapRef.current || data.length === 0) return;
 
-        // 3. Initialisation de la carte
+        // Le code d'initialisation de la carte est maintenant garanti d'avoir l'objet 'google'
         const map = new google.maps.Map(mapRef.current, {
             zoom: 12,
-            center: { lat: 43.6045, lng: 1.444 }, // Centré sur Toulouse
+            center: { lat: 43.6045, lng: 1.444 }, 
         });
 
         // 4. Géocodage et ajout des marqueurs
@@ -32,8 +33,7 @@ export default function BibliomapPage() {
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ address: library.address }, (results, status) => {
                 if (status === "OK" && results && results[0]) {
-                    // ⚠️ NOTE: Utilisez AdvancedMarkerElement à l'avenir pour éviter l'avertissement
-                    const marker = new google.maps.Marker({ 
+                    const marker = new google.maps.Marker({
                         map,
                         position: results[0].geometry.location,
                     });
@@ -42,49 +42,60 @@ export default function BibliomapPage() {
                         content: `<strong>${library.name}</strong><br>${library.address}`,
                     });
 
-                    // Événements
+                    marker.addListener("click", () => {
+                        infowindow.open(map, marker);
+                    });
+                    // Note: Les événements mouseover/mouseout sont souvent problématiques sur mobile/tablette.
+                    // Je les laisse pour la complétude, mais ils ne sont pas essentiels.
                     marker.addListener("mouseover", () => {
                         if (!("ontouchstart" in window)) infowindow.open(map, marker);
                     });
                     marker.addListener("mouseout", () => {
                         if (!("ontouchstart" in window)) infowindow.close();
                     });
-                    marker.addListener("click", () => {
-                        infowindow.open(map, marker);
-                    });
                 }
             });
         });
     };
     
-    // Définir la fonction de rappel globale (elle doit être accessible)
+    // 2. Définir la fonction de rappel globale (appelée par le script Google Maps)
     (window as any).initMap = initMapLogic;
 
 
     async function init() {
-        // 1. Récupération des données
+        // Vérifie si le script est DÉJÀ là pour éviter de le recharger (utile en mode strict)
+        if (document.getElementById(MAPS_SCRIPT_ID)) {
+            // Si le script est là, on essaie d'appeler la logique de la carte immédiatement
+            // car l'API est probablement déjà chargée.
+            initMapLogic(); 
+            return;
+        }
+        
+        // Récupération des données AVANT de charger le script
         try {
             const res = await fetch("/api/bibliomap"); 
             if (res.ok) {
                 data = await res.json();
                 setLibraries(data);
             } else {
-                console.error(`Erreur HTTP: ${res.status} lors du fetch de l'API /api/bibliomap`);
+                console.error(`Erreur HTTP: ${res.status}`);
             }
         } catch (error) {
             console.error("Erreur de chargement des bibliothèques (API):", error);
         }
 
-        // 2. Chargement du script Google Maps
-        mapScript = document.createElement("script");
+        // 3. Création et Chargement du script Google Maps
+        const mapScript = document.createElement("script");
+        mapScript.id = MAPS_SCRIPT_ID; // 💡 Ajout de l'ID unique
         
         const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-        mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&callback=initMap`;
+        // NOTE: Ajout de 'marker' aux libraries pour préparer la migration (si vous la faites)
+        mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&callback=initMap&libraries=places,marker`;
         mapScript.async = true;
 
         mapScript.onerror = () => {
             setIsLoading(false);
-            console.error("Erreur lors du chargement du script Google Maps. Vérifiez la clé API.");
+            console.error("Erreur lors du chargement du script Google Maps.");
         };
 
         document.body.appendChild(mapScript);
@@ -96,9 +107,11 @@ export default function BibliomapPage() {
     return () => {
         delete (window as any).initMap;
         
-        // 💡 UTILISER mapScript et la vérification pour résoudre DOMException
-        if (mapScript && document.body.contains(mapScript)) {
-            document.body.removeChild(mapScript);
+        // 💡 CORRECTION : Recherche de l'élément par son ID unique pour garantir la cible
+        const scriptToRemove = document.getElementById(MAPS_SCRIPT_ID);
+        
+        if (scriptToRemove && document.body.contains(scriptToRemove)) {
+            document.body.removeChild(scriptToRemove);
         }
     };
   }, []); // Dépendances vides pour n'exécuter qu'une fois au montage
