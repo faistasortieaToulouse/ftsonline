@@ -9,13 +9,12 @@ interface Library {
 
 export default function BibliomapPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-
-  const [ready, setReady] = useState(false);
   const [libraries, setLibraries] = useState<Library[]>([]);
+  const [ready, setReady] = useState(false);
 
   const geocodeCache = useRef<Record<string, google.maps.LatLngLiteral>>({});
 
-  /** Charger les données */
+  // Charger les données
   useEffect(() => {
     fetch("/api/bibliomap")
       .then((res) => res.json())
@@ -26,14 +25,14 @@ export default function BibliomapPage() {
     if (stored) geocodeCache.current = JSON.parse(stored);
   }, []);
 
-  /** Initialisation de la carte */
+  // Initialisation de la carte
   useEffect(() => {
     if (!ready || !libraries.length || !mapRef.current) return;
 
     const map = new google.maps.Map(mapRef.current, {
       zoom: 12,
       center: { lat: 43.6045, lng: 1.444 },
-      mapId: process.env.NEXT_PUBLIC_GOOGLE_MAP_ID, // ⭐ OBLIGATOIRE pour AdvancedMarker
+      mapId: process.env.NEXT_PUBLIC_GOOGLE_MAP_ID,
     });
 
     const geocoder = new google.maps.Geocoder();
@@ -52,10 +51,8 @@ export default function BibliomapPage() {
               lat: res[0].geometry.location.lat(),
               lng: res[0].geometry.location.lng(),
             };
-
             geocodeCache.current[address] = loc;
             localStorage.setItem("geo-cache", JSON.stringify(geocodeCache.current));
-
             resolve(loc);
           } else resolve({ lat: 0, lng: 0 });
         });
@@ -65,27 +62,28 @@ export default function BibliomapPage() {
       coords.forEach((pos, idx) => {
         const lib = libraries[idx];
 
+        // Création du marqueur avec numéro
         const marker = new google.maps.marker.AdvancedMarkerElement({
           map,
           position: pos,
           title: lib.name,
+          label: {
+            text: `${idx + 1}`, // numéro de la bibliothèque
+            color: "white",
+            fontWeight: "bold",
+          },
         });
 
         const infowindow = new google.maps.InfoWindow({
-          content: `<strong>${lib.name}</strong><br>${lib.address}`,
+          content: `<strong>${idx + 1}. ${lib.name}</strong><br>${lib.address}`,
         });
 
-        marker.addListener("click", () => {
-          infowindow.open({
-            anchor: marker,
-            map,
-          });
-        });
+        marker.addListener("click", () => infowindow.open({ anchor: marker, map }));
 
         markers.push(marker);
       });
 
-      // clusterer officiel
+      // Clusterer officiel (facultatif)
       // @ts-ignore
       new markerClusterer.MarkerClusterer({ map, markers });
     });
@@ -98,27 +96,26 @@ export default function BibliomapPage() {
         strategy="afterInteractive"
         onLoad={() => setReady(true)}
       />
-
       <Script
         src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"
         strategy="afterInteractive"
       />
 
-      <h1 className="text-3xl font-extrabold mb-6">📍 Carte des Bibliothèques</h1>
+      <h1 className="text-3xl font-extrabold mb-6">📍 Carte des Bibliothèques de Toulouse</h1>
 
       <div
         ref={mapRef}
         style={{ height: "70vh", width: "100%" }}
-        className="border rounded-lg mb-8"
+        className="border rounded-lg mb-8 flex items-center justify-center text-gray-500"
       >
-        {!ready && <p>Chargement…</p>}
+        {!ready && <p>Chargement de la carte...</p>}
       </div>
 
-      <h2 className="text-xl font-bold mb-4">Liste ({libraries.length})</h2>
-      <ul>
-        {libraries.map((lib, i) => (
-          <li key={i}>
-            <strong>{lib.name}</strong> — {lib.address}
+      <h2 className="text-xl font-bold mb-4">Liste des bibliothèques ({libraries.length})</h2>
+      <ul className="list-decimal pl-6">
+        {libraries.map((lib, idx) => (
+          <li key={idx}>
+            <strong>{idx + 1}. {lib.name}</strong> — {lib.address}
           </li>
         ))}
       </ul>
