@@ -5,7 +5,7 @@ import Script from "next/script";
 interface Establishment {
   name: string;
   address: string;
-  type: "library" | "centre_culturel" | "maison_quartier" | "mjc" | "conservatoire";
+  type?: "library" | "centre_culturel" | "maison_quartier" | "mjc" | "conservatoire";
 }
 
 export default function BibliomapPage() {
@@ -14,8 +14,8 @@ export default function BibliomapPage() {
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [isReady, setIsReady] = useState(false);
 
-  // 🔹 Couleurs par type (déclarées en haut du composant)
-  const typeColors: Record<Establishment["type"], string> = {
+  // 🔹 Couleurs par type
+  const typeColors: Record<NonNullable<Establishment["type"]>, string> = {
     library: "red",
     centre_culturel: "blue",
     maison_quartier: "orange",
@@ -31,7 +31,7 @@ export default function BibliomapPage() {
 
   // 🔹 Chargement des données
   useEffect(() => {
-    fetch("/api/bibliomap") // API doit renvoyer toutes les données avec type
+    fetch("/api/bibliomap")
       .then((res) => res.json())
       .then((data: Establishment[]) => setEstablishments(data))
       .catch(console.error);
@@ -54,7 +54,8 @@ export default function BibliomapPage() {
       geocoder.geocode({ address: est.address }, (results, status) => {
         if (status !== "OK" || !results?.[0]) return;
 
-        const color = typeColors[est.type];
+        const type = est.type ?? "library"; // valeur par défaut si type manquant
+        const color = typeColors[type as NonNullable<Establishment["type"]>];
 
         const marker = new google.maps.Marker({
           map: mapInstance.current!,
@@ -102,17 +103,21 @@ export default function BibliomapPage() {
       </h2>
 
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {establishments.map((est, i) => (
-          <li key={i} className="p-4 border rounded bg-white shadow">
-            <p className="text-lg font-bold">
-              {i + 1}. {est.name}{" "}
-              <span style={{ color: typeColors[est.type] }}>
-                ({est.type.replace("_", " ")})
-              </span>
-            </p>
-            <p>{est.address}</p>
-          </li>
-        ))}
+        {establishments.map((est, i) => {
+          const type = est.type ?? "library";
+          const color = typeColors[type as NonNullable<Establishment["type"]>];
+          return (
+            <li key={i} className="p-4 border rounded bg-white shadow">
+              <p className="text-lg font-bold">
+                {i + 1}. {est.name}{" "}
+                <span style={{ color }}>
+                  ({type.replace("_", " ")})
+                </span>
+              </p>
+              <p>{est.address}</p>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
