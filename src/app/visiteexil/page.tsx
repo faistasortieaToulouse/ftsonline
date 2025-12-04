@@ -23,7 +23,7 @@ const [isReady, setIsReady] = useState(false);
 
 // Fetch sécurisé de l'API
 useEffect(() => {
-fetch("/api/exilplaces")
+fetch("/api/visiteexil")
 .then(async (res) => {
 const text = await res.text();
 try {
