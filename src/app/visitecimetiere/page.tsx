@@ -3,22 +3,27 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
-interface Establishment {
+interface Person {
 name: string;
-address: string;
+birthDeath?: string;
+role?: string;
+description?: string;
+cemetery?: string;
+division?: string;
+section?: string;
 }
 
 export default function VisiteCimetierePage() {
 const mapRef = useRef<HTMLDivElement | null>(null);
 const mapInstance = useRef<google.maps.Map | null>(null);
-const [establishments, setEstablishments] = useState<Establishment[]>([]);
+const [people, setPeople] = useState<Person[]>([]);
 const [isReady, setIsReady] = useState(false);
 
-// Charger les établissements depuis l'API
+// Charger les données depuis l'API
 useEffect(() => {
 fetch("/api/visitecimetiere")
 .then((res) => res.json())
-.then((data: Establishment[]) => setEstablishments(data))
+.then((data: Person[]) => setPeople(data))
 .catch(console.error);
 }, []);
 
@@ -29,15 +34,16 @@ if (!isReady || !mapRef.current) return;
 ```
 mapInstance.current = new google.maps.Map(mapRef.current, {
   zoom: 14,
-  center: { lat: 43.5875, lng: 1.448 }, // quartier de la Colonne, Toulouse
+  center: { lat: 43.5875, lng: 1.448 }, // quartier de la Colonne
   scrollwheel: true,
   gestureHandling: "greedy",
 });
 
 const geocoder = new google.maps.Geocoder();
 
-establishments.forEach((est, i) => {
-  geocoder.geocode({ address: est.address + ", Toulouse" }, (results, status) => {
+people.forEach((p, i) => {
+  const address = `${p.cemetery}, Toulouse`;
+  geocoder.geocode({ address }, (results, status) => {
     if (status !== "OK" || !results?.[0]) return;
 
     const marker = new google.maps.Marker({
@@ -54,16 +60,23 @@ establishments.forEach((est, i) => {
       },
     });
 
-    const infowindow = new google.maps.InfoWindow({
-      content: `<strong>${i + 1}. ${est.name}</strong><br>${est.address}`,
-    });
+    const content = `
+      <strong>${i + 1}. ${p.name}</strong><br>
+      ${p.birthDeath ? `(${p.birthDeath})<br>` : ""}
+      ${p.role ? `${p.role}<br>` : ""}
+      ${p.description ? `${p.description}<br>` : ""}
+      ${p.cemetery ? `Cimetière: ${p.cemetery}<br>` : ""}
+      ${p.section ? `Section: ${p.section}<br>` : ""}
+      ${p.division ? `Division: ${p.division}` : ""}
+    `;
 
+    const infowindow = new google.maps.InfoWindow({ content });
     marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
   });
 });
 ```
 
-}, [isReady, establishments]);
+}, [isReady, people]);
 
 return ( <div className="p-4 max-w-6xl mx-auto">
 {/* Chargement de l'API Google Maps */}
@@ -75,7 +88,7 @@ onLoad={() => setIsReady(true)}
 
 ```
   <h1 className="text-3xl font-extrabold mb-6">
-    🏛️ Carte : Visite des cimetières de la Colonne (Hérédia, Salonique, Terre-Cabade)
+    🏛️ Carte : Cimetières Hérédia, Salonique et Terre-Cabade
   </h1>
 
   <div
@@ -87,16 +100,19 @@ onLoad={() => setIsReady(true)}
   </div>
 
   <h2 className="text-2xl font-semibold mb-4">
-    Liste des lieux ({establishments.length})
+    Liste des personnalités ({people.length})
   </h2>
 
   <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {establishments.map((est, i) => (
+    {people.map((p, i) => (
       <li key={i} className="p-4 border rounded bg-white shadow">
-        <p className="text-lg font-bold">
-          {i + 1}. {est.name}
-        </p>
-        <p>{est.address}</p>
+        <p className="text-lg font-bold">{i + 1}. {p.name}</p>
+        {p.birthDeath && <p>Date: {p.birthDeath}</p>}
+        {p.role && <p>Rôle: {p.role}</p>}
+        {p.description && <p>Description: {p.description}</p>}
+        {p.cemetery && <p>Cimetière: {p.cemetery}</p>}
+        {p.section && <p>Section: {p.section}</p>}
+        {p.division && <p>Division: {p.division}</p>}
       </li>
     ))}
   </ul>
