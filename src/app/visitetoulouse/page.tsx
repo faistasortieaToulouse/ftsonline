@@ -40,7 +40,7 @@ export default function VisiteToulousePage() {
     const geocoder = new google.maps.Geocoder();
 
     establishments.forEach((est, i) => {
-      geocoder.geocode({ address: `Toulouse ${est.address}` }, (results, status) => {
+      geocoder.geocode({ address: `Toulouse ${est.num} ${est.voie} ${est.adresse}` }, (results, status) => {
         if (status !== "OK" || !results?.[0]) return;
 
         const marker = new google.maps.Marker({
@@ -56,6 +56,13 @@ export default function VisiteToulousePage() {
             strokeColor: "black",
           },
         });
+
+        const infowindow = new google.maps.InfoWindow({
+          content: `<strong>${i + 1}. ${est.bâtiment}</strong><br>${est.num} ${est.voie} ${est.adresse}<br>${est.quartier}`,
+        });
+
+        marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+      });
 
         const infowindow = new google.maps.InfoWindow({
           content: `<strong>${i + 1}. ${est.name}</strong><br>${est.address}`,
@@ -93,7 +100,8 @@ export default function VisiteToulousePage() {
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {establishments.map((est, i) => (
           <li key={i} className="p-4 border rounded bg-white shadow">
-  <p className="text-lg font-bold">{i + 1}. {est.adresse}</p>
+  <p className="text-lg font-bold">{i + 1}. {est.bâtiment}</p>
+  <p className="italic">{est.num} {est.voie} {est.adresse} — {est.quartier}</p>
   <p>Numéro : {est.num}</p>
   <p>Voie : {est.voie}</p>
   <p>Bâtiment : {est.bâtiment}</p>
