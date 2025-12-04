@@ -40,7 +40,6 @@ async function scrapeEventData(url: string) {
         const json = $(el).html();
         if (!json) return;
         const data = JSON.parse(json);
-
         if (data["@type"] === "Event") {
           const addr = data.location?.address;
           if (addr?.streetAddress) {
@@ -99,6 +98,8 @@ async function pushToGitHub(content: any) {
 // --- Route API ---
 export async function GET() {
   try {
+    console.log("Récupération iCal depuis Meetup...");
+
     // 1. Récup iCal
     const calendars = await Promise.all(
       ICAL_URLS.map(async url => {
@@ -113,14 +114,17 @@ export async function GET() {
     for (const calendar of calendars) {
       for (const key in calendar) {
         const e = calendar[key] as VEvent;
-        if (e.type === "VEVENT" && e.start) {
-          const id = e.uid || e.summary + e.start.toISOString();
+
+        // ✅ Correction ici : on utilise dtstart au lieu de e.type
+        if ("dtstart" in e && e.dtstart) {
+          const id = e.uid || e.summary + e.dtstart.toISOString();
           unique.set(id, e);
         }
       }
     }
 
     const rawEvents = Array.from(unique.values());
+    console.log(`Événements extraits depuis iCal : ${rawEvents.length}`);
 
     // 3. Scraping + normalisation
     const processed: MeetupEventItem[] = await Promise.all(
@@ -132,13 +136,12 @@ export async function GET() {
 
         const extra = url ? await scrapeEventData(url) : {};
 
-        const fullAddress =
-          extra.fullAddress || (e.location ?? "Lieu non spécifié");
+        const fullAddress = extra.fullAddress || (e.location ?? "Lieu non spécifié");
 
         return {
           title: e.summary || "Événement sans titre",
           link: url || "",
-          startDate: new Date(e.start),
+          startDate: new Date(e.dtstart),
           location: e.location || "",
           fullAddress,
           description: String(e.description || ""),
@@ -147,7 +150,7 @@ export async function GET() {
       })
     );
 
-    // 4. Conversion → format que tu veux (objet par ligne)
+    // 4. Conversion → format final
     const final = processed.map(ev => ({
       guid: ev.link || ev.title,
       titre: ev.title,
@@ -159,12 +162,14 @@ export async function GET() {
       link: ev.link,
     }));
 
+    console.log(`Événements transformés : ${final.length}`);
+
     // 5. Envoi sur GitHub
     await pushToGitHub(final);
 
     return NextResponse.json({ ok: true, total: final.length });
   } catch (e: any) {
-    console.error(e);
+    console.error("Erreur lors de la mise à jour des événements :", e);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
