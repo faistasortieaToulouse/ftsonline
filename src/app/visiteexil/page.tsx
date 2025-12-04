@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
+import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 
 interface ExilPlace {
 nomLieu: string;
@@ -15,74 +15,107 @@ sigles: string;
 signification: string;
 }
 
-const containerStyle = {
-width: "100%",
-height: "100vh",
-};
-
-// Toulouse center coordinates
-const center = {
-lat: 43.6045,
-lng: 1.444,
-};
-
-export default function MapPage() {
-const { isLoaded } = useJsApiLoader({
-id: 'google-map-script',
-googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-});
-
+export default function ExilPlacesPage() {
+const mapRef = useRef<HTMLDivElement | null>(null);
+const mapInstance = useRef<google.maps.Map | null>(null);
 const [places, setPlaces] = useState<ExilPlace[]>([]);
-const [selectedPlace, setSelectedPlace] = useState<ExilPlace | null>(null);
+const [isReady, setIsReady] = useState(false);
 
 useEffect(() => {
-// Appel à ton endpoint API Next.js
 fetch("/api/exilplaces")
-.then(res => res.json())
-.then(data => setPlaces(data))
-.catch(err => console.error(err));
+.then((res) => res.json())
+.then((data: ExilPlace[]) => setPlaces(data))
+.catch(console.error);
 }, []);
 
-if (!isLoaded) return <div>Chargement de la carte...</div>;
+useEffect(() => {
+if (!isReady || !mapRef.current) return;
 
-return ( <GoogleMap
-   mapContainerStyle={containerStyle}
-   center={center}
-   zoom={13}
- >
-{places.map((place, idx) => {
-// Ici, on fait une approximation : il faudrait idéalement géocoder l'adresse
-const position = {
-lat: center.lat + Math.random() * 0.01, // placeholder pour test
-lng: center.lng + Math.random() * 0.01,
-};
+mapInstance.current = new google.maps.Map(mapRef.current, {
+  zoom: 13.5,
+  center: { lat: 43.6045, lng: 1.444 }, // Toulouse
+  scrollwheel: true,
+  gestureHandling: "greedy",
+});
 
-  return (
-      <Marker
-        key={idx}
-        position={position}
-        onClick={() => setSelectedPlace(place)}
-      />
-    );
-  })}
+const geocoder = new google.maps.Geocoder();
 
-  {selectedPlace && (
-    <InfoWindow
-      position={{
-        lat: center.lat + Math.random() * 0.01,
-        lng: center.lng + Math.random() * 0.01,
-      }}
-      onCloseClick={() => setSelectedPlace(null)}
-    >
-      <div style={{ maxWidth: 200 }}>
-        <h3>{selectedPlace.nomLieu}</h3>
-        <p>{selectedPlace.num} {selectedPlace.typeRue} {selectedPlace.nomRue}</p>
-        <p>{selectedPlace.établissement}</p>
-        {selectedPlace.sigles && <p>{selectedPlace.sigles}: {selectedPlace.signification}</p>}
-      </div>
-    </InfoWindow>
-  )}
-</GoogleMap>
+places.forEach((place, i) => {
+  const adresse = `Toulouse ${place.num} ${place.typeRue} ${place.nomRue}`;
+  
+  // ajout d'un délai pour éviter les quotas trop rapides
+  setTimeout(() => {
+    geocoder.geocode({ address: adresse }, (results, status) => {
+      if (status !== "OK" || !results?.[0]) return;
+
+      const marker = new google.maps.Marker({
+        map: mapInstance.current!,
+        position: results[0].geometry.location,
+        label: `${i + 1}`,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: "red",
+          fillOpacity: 1,
+          strokeWeight: 1,
+          strokeColor: "black",
+        },
+        title: place.établissement,
+      });
+
+      const infowindow = new google.maps.InfoWindow({
+        content: `
+          <strong>${i + 1}. ${place.établissement}</strong><br>
+          ${place.num} ${place.typeRue} ${place.nomRue}<br>
+          Quartier : ${place.quartier}<br>
+          Site : ${place.site}<br>
+          Sigles : ${place.sigles || ""}<br>
+          Signification : ${place.signification || ""}
+        `,
+      });
+
+      marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+    });
+  }, i * 200); // 200ms entre chaque geocode
+});
+
+}, [isReady, places]);
+
+return ( <div className="p-4 max-w-7xl mx-auto">
+<Script
+src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+strategy="afterInteractive"
+onLoad={() => setIsReady(true)}
+/>
+
+  <h1 className="text-3xl font-extrabold mb-6">
+    🗺️ Lieux d’exil à Toulouse
+  </h1>
+
+  <div
+    ref={mapRef}
+    style={{ height: "70vh", width: "100%" }}
+    className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
+  >
+    {!isReady && <p>Chargement de la carte…</p>}
+  </div>
+
+  <h2 className="text-2xl font-semibold mb-4">
+    Liste des lieux ({places.length})
+  </h2>
+
+  <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {places.map((place, i) => (
+      <li key={i} className="p-4 border rounded bg-white shadow">
+        <p className="text-lg font-bold">{i + 1}. {place.établissement}</p>
+        <p className="italic">{place.num} {place.typeRue} {place.nomRue} — {place.quartier}</p>
+        <p>Site : {place.site}</p>
+        {place.sigles && <p>Sigles : {place.sigles}</p>}
+        {place.signification && <p>Signification : {place.signification}</p>}
+      </li>
+    ))}
+  </ul>
+</div>
 
 );
 }
