@@ -20,7 +20,7 @@ const establishments = [
   { num: "0", voie: "all", adresse: "Jean Jaurès", bâtiment: "Hausmanien", quartier: "Jean Jaurès", "équivalent à Paris": "Hausmanien", ressemble: "Paris", localisation: "hypercentre" },
   { num: "27", voie: "all", adresse: "Jean Jaurès", bâtiment: "fontaine Victoire", quartier: "Jean Jaurès", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "hypercentre" },
   { num: "27", voie: "all", adresse: "Jean Jaurès", bâtiment: "Dame des Graces", quartier: "Jean Jaurès", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "hypercentre" },
-  { num: "0", voie: "place", adresse: "Toulouse", bâtiment: "fontaine Wallace", quartier: "Toulouse", "équivalent à Paris": "fontaine Wallace", ressemble: "Paris", localisation: "centre" }
+  { num: "0", voie: "place", adresse: "Toulouse", bâtiment: "fontaine Wallace", quartier: "Toulouse", "équivalent à Paris": "fontaine Wallace", ressemble: "Paris", localisation: "centre" },
 { num: "0", voie: "bd", adresse: "boulevards", bâtiment: "Hausmanien", quartier: "boulevards", "équivalent à Paris": "Hausmanien", ressemble: "Paris", localisation: "centre" },
 { num: "1", voie: "rue", adresse: "Baudis", bâtiment: "théâtre Cité", quartier: "Wilson", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "centre" },
 { num: "0", voie: "place", adresse: "Wilson", bâtiment: "immeuble", quartier: "Wilson", "équivalent à Paris": "série d'arcades", ressemble: "Paris", localisation: "centre" },
