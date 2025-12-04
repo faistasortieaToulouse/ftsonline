@@ -3,39 +3,42 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
-interface Establishment {
+interface Person {
   name: string;
-  address: string;
+  address?: string; // Section + division si disponible
 }
 
-export default function VisiteSaintMichelPage() {
+export default function VisiteCimetierePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
-  const [establishments, setEstablishments] = useState<Establishment[]>([]);
+  const [people, setPeople] = useState<Person[]>([]);
   const [isReady, setIsReady] = useState(false);
 
+  // Charger les données
   useEffect(() => {
-    fetch("/api/visitesaintmichel")
-      .then((res) => res.json())
-      .then((data: Establishment[]) => setEstablishments(data))
+    fetch("/api/visitecimetiere")
+      .then(res => res.json())
+      .then((data: Person[]) => setPeople(data))
       .catch(console.error);
   }, []);
 
+  // Affichage de la carte
   useEffect(() => {
     if (!isReady || !mapRef.current) return;
 
-    // 🔥 anti pixelisation mobile
     mapInstance.current = new google.maps.Map(mapRef.current, {
       zoom: 14,
-      center: { lat: 43.5925, lng: 1.444 }, // Toulouse Saint-Michel
+      center: { lat: 43.592, lng: 1.445 }, // Toulouse cimetière
       scrollwheel: true,
       gestureHandling: "greedy",
     });
 
     const geocoder = new google.maps.Geocoder();
 
-    establishments.forEach((est, i) => {
-      geocoder.geocode({ address: `Toulouse ${est.address}` }, (results, status) => {
+    people.forEach((person, i) => {
+      if (!person.address) return; // Sans section/division → pas sur la carte
+
+      geocoder.geocode({ address: `Toulouse Cimetière ${person.address}` }, (results, status) => {
         if (status !== "OK" || !results?.[0]) return;
 
         const marker = new google.maps.Marker({
@@ -45,7 +48,7 @@ export default function VisiteSaintMichelPage() {
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10,
-            fillColor: "red",
+            fillColor: "green",
             fillOpacity: 1,
             strokeWeight: 1,
             strokeColor: "black",
@@ -53,25 +56,24 @@ export default function VisiteSaintMichelPage() {
         });
 
         const infowindow = new google.maps.InfoWindow({
-          content: `<strong>${i + 1}. ${est.name}</strong><br>${est.address}`,
+          content: `<strong>${i + 1}. ${person.name}</strong><br>${person.address}`,
         });
 
         marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
       });
     });
-  }, [isReady, establishments]);
-
+  }, [isReady, people]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="p-4 max-w-6xl mx-auto">
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         strategy="afterInteractive"
         onLoad={() => setIsReady(true)}
       />
 
       <h1 className="text-3xl font-extrabold mb-6">
-        🏛️ Visite Saint-Michel — Parcours historique
+        ⚰️ Carte : Visite du cimetière
       </h1>
 
       <div
@@ -83,16 +85,16 @@ export default function VisiteSaintMichelPage() {
       </div>
 
       <h2 className="text-2xl font-semibold mb-4">
-        Liste des lieux ({establishments.length})
+        Liste des personnalités ({people.length})
       </h2>
 
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {establishments.map((est, i) => (
+        {people.map((person, i) => (
           <li key={i} className="p-4 border rounded bg-white shadow">
             <p className="text-lg font-bold">
-              {i + 1}. {est.name}
+              {i + 1}. {person.name}
             </p>
-            <p>{est.address}</p>
+            {person.address && <p>{person.address}</p>}
           </li>
         ))}
       </ul>
