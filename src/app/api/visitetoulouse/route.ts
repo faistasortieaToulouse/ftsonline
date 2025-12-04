@@ -156,7 +156,7 @@ const establishments = [
 { num: "3", voie: "rue", adresse: "Maletache", bâtiment: "hôtel", quartier: "Filatiers", "équivalent à Paris": "hôtel parisien", ressemble: "Paris", localisation: "centre" },
 { num: "2", voie: "rue", adresse: "Alsace Lorraine", bâtiment: "palais consulaire", quartier: "Languedoc", "équivalent à Paris": "façade", ressemble: "Paris", localisation: "centre" },
 { num: "8", voie: "rue", adresse: "Régan", bâtiment: "hôtel", quartier: "Languedoc", "équivalent à Paris": "porche en pierre", ressemble: "Paris", localisation: "centre" },
-{ num: "10", voie: "rue", adresse: "Languedoc", bâtiment: "hôtel", quartier: "Languedoc", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "centre" }
+{ num: "10", voie: "rue", adresse: "Languedoc", bâtiment: "hôtel", quartier: "Languedoc", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "centre" },
 { num: "16", voie: "rue", adresse: "Languedoc", bâtiment: "hôtel", quartier: "Languedoc", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "centre" },
 { num: "34", voie: "rue", adresse: "Languedoc", bâtiment: "hôtel", quartier: "Languedoc", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "centre" },
 { num: "36", voie: "rue", adresse: "Languedoc", bâtiment: "hôtel", quartier: "Languedoc", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "centre" },
