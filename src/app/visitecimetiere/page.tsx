@@ -31,7 +31,6 @@ fetch("/api/visitecimetiere")
 useEffect(() => {
 if (!isReady || !mapRef.current) return;
 
-```
 mapInstance.current = new google.maps.Map(mapRef.current, {
   zoom: 14,
   center: { lat: 43.5875, lng: 1.448 }, // quartier de la Colonne
@@ -74,7 +73,6 @@ people.forEach((p, i) => {
     marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
   });
 });
-```
 
 }, [isReady, people]);
 
@@ -86,7 +84,6 @@ strategy="afterInteractive"
 onLoad={() => setIsReady(true)}
 />
 
-```
   <h1 className="text-3xl font-extrabold mb-6">
     🏛️ Carte : Cimetières Hérédia, Salonique et Terre-Cabade
   </h1>
@@ -117,7 +114,6 @@ onLoad={() => setIsReady(true)}
     ))}
   </ul>
 </div>
-```
 
 );
 }
