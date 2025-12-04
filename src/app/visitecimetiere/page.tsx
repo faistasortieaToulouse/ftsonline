@@ -9,6 +9,7 @@ description?: string;
 cemetery?: string;
 section?: string;
 division?: string;
+address?: string; // format "Cimetière, Section, Division"
 }
 
 export default function VisiteCimetierePage() {
@@ -51,38 +52,28 @@ const cemeterySections: Record<string, Record<string, { lat: number; lng: number
 "2-5": { lat: 43.6094, lng: 1.4654 },
 "2-6": { lat: 43.6095, lng: 1.4655 },
 "2-11": { lat: 43.6096, lng: 1.4656 },
-"3-2": { lat: 43.6097, lng: 1.4657 },
-"3-7": { lat: 43.6098, lng: 1.4658 },
-"3-8": { lat: 43.6099, lng: 1.4659 },
-"3-10": { lat: 43.6100, lng: 1.4660 },
-"3-11": { lat: 43.6101, lng: 1.4661 },
-"3-12": { lat: 43.6102, lng: 1.4662 },
-"4-7": { lat: 43.6103, lng: 1.4663 },
-"4-15": { lat: 43.6104, lng: 1.4664 },
-"5-4": { lat: 43.6105, lng: 1.4665 },
-"5-16": { lat: 43.6106, lng: 1.4666 },
-"5-17": { lat: 43.6107, lng: 1.4667 },
-"5-23": { lat: 43.6108, lng: 1.4668 },
-"5-24": { lat: 43.6109, lng: 1.4669 },
-"6-1": { lat: 43.6110, lng: 1.4670 },
-"6-5": { lat: 43.6111, lng: 1.4671 },
-"6-7": { lat: 43.6112, lng: 1.4672 },
-"6-13": { lat: 43.6113, lng: 1.4673 },
-"A-2": { lat: 43.6114, lng: 1.4674 },
-"F-11": { lat: 43.6115, lng: 1.4675 },
-"G-0": { lat: 43.6116, lng: 1.4676 },
-"K-18": { lat: 43.6117, lng: 1.4677 },
-"L-27": { lat: 43.6118, lng: 1.4678 },
 },
 };
 
+// Récupération des personnes depuis l'API
 useEffect(() => {
 fetch("/api/visitecimetiere")
 .then(res => res.json())
-.then((data: Person[]) => setPeople(data))
+.then((data: Person[]) => {
+// Extraire cemetery, section, division depuis address si absent
+const enriched = data.map(p => {
+if (!p.cemetery && p.address) {
+const [cem, sec, div] = p.address.split(",").map(s => s.trim());
+return { ...p, cemetery: cem, section: sec, division: div };
+}
+return p;
+});
+setPeople(enriched);
+})
 .catch(console.error);
 }, []);
 
+// Initialisation de la carte et markers
 useEffect(() => {
 if (!isReady || !mapRef.current) return;
 
