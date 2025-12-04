@@ -40,36 +40,40 @@ export default function VisiteToulousePage() {
     const geocoder = new google.maps.Geocoder();
 
     establishments.forEach((est, i) => {
-      geocoder.geocode({ address: `Toulouse ${est.num} ${est.voie} ${est.adresse}` }, (results, status) => {
-        if (status !== "OK" || !results?.[0]) return;
+      geocoder.geocode(
+        { address: `Toulouse ${est.num} ${est.voie} ${est.adresse}` },
+        (results, status) => {
+          if (status !== "OK" || !results?.[0]) return;
 
-        const marker = new google.maps.Marker({
-          map: mapInstance.current!,
-          position: results[0].geometry.location,
-          label: `${i + 1}`,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: "red",
-            fillOpacity: 1,
-            strokeWeight: 1,
-            strokeColor: "black",
-          },
-        });
+          const marker = new google.maps.Marker({
+            map: mapInstance.current!,
+            position: results[0].geometry.location,
+            label: `${i + 1}`,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              fillColor: "red",
+              fillOpacity: 1,
+              strokeWeight: 1,
+              strokeColor: "black",
+            },
+            title: est.bâtiment,
+          });
 
-        const infowindow = new google.maps.InfoWindow({
-          content: `<strong>${i + 1}. ${est.bâtiment}</strong><br>${est.num} ${est.voie} ${est.adresse}<br>${est.quartier}`,
-        });
+          const infowindow = new google.maps.InfoWindow({
+            content: `
+              <strong>${i + 1}. ${est.bâtiment}</strong><br>
+              ${est.num} ${est.voie} ${est.adresse}<br>
+              Quartier : ${est.quartier}<br>
+              Équivalent à Paris : ${est.equivalentParis}<br>
+              Ressemble : ${est.ressemble}<br>
+              Localisation : ${est.localisation}
+            `,
+          });
 
-        marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
-      });
-
-        const infowindow = new google.maps.InfoWindow({
-          content: `<strong>${i + 1}. ${est.name}</strong><br>${est.address}`,
-        });
-
-        marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
-      });
+          marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+        }
+      );
     });
   }, [isReady, establishments]);
 
@@ -100,16 +104,16 @@ export default function VisiteToulousePage() {
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {establishments.map((est, i) => (
           <li key={i} className="p-4 border rounded bg-white shadow">
-  <p className="text-lg font-bold">{i + 1}. {est.bâtiment}</p>
-  <p className="italic">{est.num} {est.voie} {est.adresse} — {est.quartier}</p>
-  <p>Numéro : {est.num}</p>
-  <p>Voie : {est.voie}</p>
-  <p>Bâtiment : {est.bâtiment}</p>
-  <p>Quartier : {est.quartier}</p>
-  <p>Équivalent à Paris : {est.equivalentParis}</p>
-  <p>Ressemble : {est.ressemble}</p>
-  <p>Localisation : {est.localisation}</p>
-</li>
+            <p className="text-lg font-bold">{i + 1}. {est.bâtiment}</p>
+            <p className="italic">{est.num} {est.voie} {est.adresse} — {est.quartier}</p>
+            <p>Numéro : {est.num}</p>
+            <p>Voie : {est.voie}</p>
+            <p>Bâtiment : {est.bâtiment}</p>
+            <p>Quartier : {est.quartier}</p>
+            <p>Équivalent à Paris : {est.equivalentParis}</p>
+            <p>Ressemble : {est.ressemble}</p>
+            <p>Localisation : {est.localisation}</p>
+          </li>
         ))}
       </ul>
     </div>
