@@ -59,20 +59,10 @@ const cemeterySections: Record<string, Record<string, { lat: number; lng: number
 useEffect(() => {
 fetch("/api/visitecimetiere")
 .then(res => res.json())
-.then((data: Person[]) => {
-const enriched = data.map(p => {
-if (!p.cemetery && p.address) {
-const [cem, sec, div] = p.address.split(",").map(s => s.trim());
-return { ...p, cemetery: cem, section: sec, division: div };
-}
-return p;
-});
-setPeople(enriched);
-})
+.then((data: Person[]) => setPeople(data))
 .catch(console.error);
 }, []);
 
-// Affichage des markers filtrés
 useEffect(() => {
 if (!isReady || !mapRef.current || !mapInstance.current) return;
 
@@ -83,6 +73,8 @@ markersRef.current = [];
 const filteredPeople = selectedCemetery === "Tous"
   ? people
   : people.filter(p => p.cemetery === selectedCemetery);
+
+const bounds = new google.maps.LatLngBounds();
 
 filteredPeople.forEach((p, i) => {
   let position = { lat: 43.6093, lng: 1.4652 }; // fallback
@@ -107,6 +99,8 @@ filteredPeople.forEach((p, i) => {
     },
   });
 
+  bounds.extend(position);
+
   const content = `
     <strong>${i + 1}. ${p.name}</strong><br>
     ${p.description ? `${p.description}<br>` : ""}
@@ -120,6 +114,10 @@ filteredPeople.forEach((p, i) => {
   markersRef.current.push(marker);
 });
 
+if (!bounds.isEmpty()) {
+  mapInstance.current.fitBounds(bounds);
+}
+
 }, [isReady, people, selectedCemetery]);
 
 return ( <div className="p-4 max-w-6xl mx-auto">
@@ -130,11 +128,11 @@ onLoad={() => setIsReady(true)}
 />
 
   <h1 className="text-3xl font-extrabold mb-6">
-    🏛️ Carte : Cimetières Hérédia, Salonique et Terre-Cabade
+    🏛️ Carte des cimetières
   </h1>
 
   <div className="mb-4">
-    <label className="mr-2 font-semibold">Filtrer par cimetière:</label>
+    <label className="mr-2 font-semibold">Filtrer par cimetière sur la carte:</label>
     <select
       value={selectedCemetery}
       onChange={e => setSelectedCemetery(e.target.value)}
@@ -149,18 +147,18 @@ onLoad={() => setIsReady(true)}
 
   <div
     ref={mapRef}
-    style={{ height: "70vh", width: "100%" }}
+    style={{ height: "60vh", width: "100%" }}
     className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
   >
     {!isReady && <p>Chargement de la carte…</p>}
   </div>
 
   <h2 className="text-2xl font-semibold mb-4">
-    Liste des personnalités ({selectedCemetery === "Tous" ? people.length : people.filter(p => p.cemetery === selectedCemetery).length})
+    Liste complète des personnalités ({people.length})
   </h2>
 
   <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {(selectedCemetery === "Tous" ? people : people.filter(p => p.cemetery === selectedCemetery)).map((p, i) => (
+    {people.map((p, i) => (
       <li key={i} className="p-4 border rounded bg-white shadow">
         <p className="text-lg font-bold">{i + 1}. {p.name}</p>
         {p.description && <p>Description: {p.description}</p>}
