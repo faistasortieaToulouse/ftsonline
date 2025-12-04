@@ -21,6 +21,7 @@ const mapInstance = useRef<google.maps.Map | null>(null);
 const [places, setPlaces] = useState<ExilPlace[]>([]);
 const [isReady, setIsReady] = useState(false);
 
+// Récupération des données depuis l'API
 useEffect(() => {
 fetch("/api/exilplaces")
 .then((res) => res.json())
@@ -28,8 +29,9 @@ fetch("/api/exilplaces")
 .catch(console.error);
 }, []);
 
+// Initialisation de la carte et des markers
 useEffect(() => {
-if (!isReady || !mapRef.current) return;
+if (!isReady || !mapRef.current || places.length === 0) return;
 
 mapInstance.current = new google.maps.Map(mapRef.current, {
   zoom: 13.5,
@@ -41,12 +43,17 @@ mapInstance.current = new google.maps.Map(mapRef.current, {
 const geocoder = new google.maps.Geocoder();
 
 places.forEach((place, i) => {
-  const adresse = `Toulouse ${place.num} ${place.typeRue} ${place.nomRue}`;
-  
-  // ajout d'un délai pour éviter les quotas trop rapides
+  if (!place.nomRue) return; // ignorer les lieux sans nom de rue
+
+  const numero = place.num && place.num !== "0" ? `${place.num} ` : "";
+  const adresse = `Toulouse, ${numero}${place.typeRue} ${place.nomRue}`;
+
   setTimeout(() => {
     geocoder.geocode({ address: adresse }, (results, status) => {
-      if (status !== "OK" || !results?.[0]) return;
+      if (status !== "OK" || !results?.[0]) {
+        console.warn(`Adresse non trouvée: "${adresse}" — status: ${status}`);
+        return;
+      }
 
       const marker = new google.maps.Marker({
         map: mapInstance.current!,
@@ -66,7 +73,7 @@ places.forEach((place, i) => {
       const infowindow = new google.maps.InfoWindow({
         content: `
           <strong>${i + 1}. ${place.établissement}</strong><br>
-          ${place.num} ${place.typeRue} ${place.nomRue}<br>
+          ${numero}${place.typeRue} ${place.nomRue}<br>
           Quartier : ${place.quartier}<br>
           Site : ${place.site}<br>
           Sigles : ${place.sigles || ""}<br>
