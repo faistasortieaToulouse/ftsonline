@@ -9,7 +9,7 @@ description?: string;
 cemetery?: string;
 section?: string;
 division?: string;
-address?: string;
+address?: string; // format "Cimetière, Section, Division"
 }
 
 export default function VisiteCimetierePage() {
@@ -56,17 +56,39 @@ const cemeterySections: Record<string, Record<string, { lat: number; lng: number
 },
 };
 
+// Récupération des personnes depuis l'API
 useEffect(() => {
 fetch("/api/visitecimetiere")
 .then(res => res.json())
-.then((data: Person[]) => setPeople(data))
+.then((data: Person[]) => {
+// Extraire cemetery, section, division depuis address si absent
+const enriched = data.map(p => {
+if (!p.cemetery && p.address) {
+const [cem, sec, div] = p.address.split(",").map(s => s.trim());
+return { ...p, cemetery: cem, section: sec, division: div };
+}
+return p;
+});
+setPeople(enriched);
+})
 .catch(console.error);
 }, []);
 
+// Initialisation de la carte et des markers
 useEffect(() => {
-if (!isReady || !mapRef.current || !mapInstance.current) return;
+if (!isReady || !mapRef.current) return;
 
-// Supprimer anciens markers
+// Créer la carte si elle n'existe pas encore
+if (!mapInstance.current) {
+  mapInstance.current = new google.maps.Map(mapRef.current, {
+    zoom: 16,
+    center: { lat: 43.6093, lng: 1.4652 },
+    scrollwheel: true,
+    gestureHandling: "greedy",
+  });
+}
+
+// Supprimer les anciens markers
 markersRef.current.forEach(m => m.setMap(null));
 markersRef.current = [];
 
