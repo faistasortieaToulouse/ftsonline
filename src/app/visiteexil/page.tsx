@@ -103,7 +103,7 @@ onLoad={() => setIsReady(true)}
 />
 
   <h1 className="text-3xl font-extrabold mb-6">
-    🗺️ Lieux d’exil à Toulouse
+    🗺️ Lieux d’exil espagnol républicain à Toulouse
   </h1>
 
   <div
