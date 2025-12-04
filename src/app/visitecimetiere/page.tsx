@@ -5,12 +5,10 @@ import Script from "next/script";
 
 interface Person {
 name: string;
-birthDeath?: string;
-role?: string;
 description?: string;
 cemetery?: string;
-division?: string;
 section?: string;
+division?: string;
 }
 
 export default function VisiteCimetierePage() {
@@ -19,7 +17,7 @@ const mapInstance = useRef<google.maps.Map | null>(null);
 const [people, setPeople] = useState<Person[]>([]);
 const [isReady, setIsReady] = useState(false);
 
-// Sections et divisions de la liste avec coordonnées approximatives
+// Sections et divisions avec coordonnées approximatives
 const cemeterySections: Record<string, Record<string, { lat: number; lng: number }>> = {
 "Salonique": {
 "2-11": { lat: 43.6098, lng: 1.4645 },
@@ -76,14 +74,11 @@ const cemeterySections: Record<string, Record<string, { lat: number; lng: number
 "K-18": { lat: 43.6117, lng: 1.4677 },
 "L-27": { lat: 43.6118, lng: 1.4678 },
 },
-"Hérédia": {
-// ajouter si nécessaire
-},
 };
 
 useEffect(() => {
 fetch("/api/visitecimetiere")
-.then((res) => res.json())
+.then(res => res.json())
 .then((data: Person[]) => setPeople(data))
 .catch(console.error);
 }, []);
@@ -100,8 +95,8 @@ mapInstance.current = new google.maps.Map(mapRef.current, {
 
 people.forEach((p, i) => {
   let position = { lat: 43.6093, lng: 1.4652 }; // fallback
-  if (p.cemetery && p.division && p.section) {
-    const key = `${p.division}-${p.section}`;
+  if (p.cemetery && p.section && p.division) {
+    const key = `${p.section}-${p.division}`;
     if (cemeterySections[p.cemetery]?.[key]) {
       position = cemeterySections[p.cemetery][key];
     }
@@ -123,8 +118,6 @@ people.forEach((p, i) => {
 
   const content = `
     <strong>${i + 1}. ${p.name}</strong><br>
-    ${p.birthDeath ? `(${p.birthDeath})<br>` : ""}
-    ${p.role ? `${p.role}<br>` : ""}
     ${p.description ? `${p.description}<br>` : ""}
     ${p.cemetery ? `Cimetière: ${p.cemetery}<br>` : ""}
     ${p.section ? `Section: ${p.section}<br>` : ""}
@@ -164,8 +157,6 @@ onLoad={() => setIsReady(true)}
     {people.map((p, i) => (
       <li key={i} className="p-4 border rounded bg-white shadow">
         <p className="text-lg font-bold">{i + 1}. {p.name}</p>
-        {p.birthDeath && <p>Date: {p.birthDeath}</p>}
-        {p.role && <p>Rôle: {p.role}</p>}
         {p.description && <p>Description: {p.description}</p>}
         {p.cemetery && <p>Cimetière: {p.cemetery}</p>}
         {p.section && <p>Section: {p.section}</p>}
