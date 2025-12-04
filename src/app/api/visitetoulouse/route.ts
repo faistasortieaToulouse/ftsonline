@@ -194,7 +194,7 @@ const establishments = [
 { num: "1", voie: "avenue", adresse: "Gabriel Biénès", bâtiment: "piscine municipale", quartier: "Ramier", "équivalent à Paris": "art déco Sud-Ouest", ressemble: "Toulouse", localisation: "hypercentre" },
 { num: "13", voie: "all", adresse: "pr Soula", bâtiment: "soufflerie Banlève", quartier: "Ramier", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "hypercentre" },
 { num: "31", voie: "rue", adresse: "Fonderie", bâtiment: "monastère Saint-Claire", quartier: "Dalbade", "équivalent à Paris": "toulousain, midi", ressemble: "Toulouse", localisation: "centre" },
-{ num: "0", voie: "avenue", adresse: "Arène Romaine", bâtiment: "arènes romaines", quartier: "Ancely", "équivalent à Paris": "gallo-romain", ressemble: "Antique", localisation: "yextérieur" }
+{ num: "0", voie: "avenue", adresse: "Arène Romaine", bâtiment: "arènes romaines", quartier: "Ancely", "équivalent à Paris": "gallo-romain", ressemble: "Antique", localisation: "yextérieur" },
 { num: "7", voie: "all", adresse: "Causses", bâtiment: "thermes romains", quartier: "Ancely", "équivalent à Paris": "gallo-romain", ressemble: "Antique", localisation: "yextérieur" },
 { num: "4", voie: "place", adresse: "Busca", bâtiment: "maison", quartier: "Busca", "équivalent à Paris": "toit en ardoise", ressemble: "Paris", localisation: "yextérieur" },
 { num: "147", voie: "route", adresse: "Albi", bâtiment: "castelet Ozenne", quartier: "Croix-Daurade", "équivalent à Paris": "poivrière", ressemble: "Paris", localisation: "y'extérieur" },
