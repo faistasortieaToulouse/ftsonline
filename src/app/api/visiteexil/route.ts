@@ -16,7 +16,7 @@ interface ExilPlace {
 export async function GET(req: NextRequest) {
   const data: ExilPlace[] = [
 { nomLieu: "Casa Catala (1980)", num: "14", typeRue: "rue", nomRue: "Arnaud-Bernard", appartient: "exil", site: "centre", quartier: "Arnaud-Bernard", établissement: "immeuble", sigles: "CNT", signification: "Comité national des Travailleurs" },
-{ nomLieu: "place du Capitole", num: "0", typeRue: "place", nomRue: "Capitole", appartient: "exil", site: "centre", quartier: "Capitole", établissement: "\"plaza mayor\" des exilés manifs", sigles: "UGT", signification: "Union générale des travailleurs" },
+{ nomLieu: "place du Capitole", num: "0", typeRue: "place", nomRue: "Capitole", appartient: "exil", site: "centre", quartier: "Capitole", établissement: "\"plaza mayor\" des exilés manifestations", sigles: "UGT", signification: "Union générale des travailleurs" },
 { nomLieu: "arcades", num: "0", typeRue: "place", nomRue: "Capitole", appartient: "zExil", site: "centre", quartier: "Capitole", établissement: "tableau sur l'Exil espagnol", sigles: "AIT", signification: "Association internationale des travailleurs" },
 { nomLieu: "place du Capitole", num: "0", typeRue: "place", nomRue: "Capitole", appartient: "zExil", site: "centre", quartier: "Capitole", établissement: "1946 : 30 mars, réception hôtel de ville du président en exil José Giral", sigles: "SI", signification: "Secrétariat International" },
 { nomLieu: "place du Capitole", num: "0", typeRue: "place", nomRue: "Capitole", appartient: "zExil", site: "centre", quartier: "Capitole", établissement: "1945 : 30 mai, manifestation contre la venue du représentant de Franco", sigles: "GTE", signification: "Groupement de Travail des Etrangers" },
