@@ -21,11 +21,18 @@ const mapInstance = useRef<google.maps.Map | null>(null);
 const [places, setPlaces] = useState<ExilPlace[]>([]);
 const [isReady, setIsReady] = useState(false);
 
-// Récupération des données depuis l'API
+// Fetch sécurisé de l'API
 useEffect(() => {
 fetch("/api/exilplaces")
-.then((res) => res.json())
-.then((data: ExilPlace[]) => setPlaces(data))
+.then(async (res) => {
+const text = await res.text();
+try {
+const data: ExilPlace[] = JSON.parse(text);
+setPlaces(data);
+} catch (err) {
+console.error("Erreur JSON /api/exilplaces :", text, err);
+}
+})
 .catch(console.error);
 }, []);
 
@@ -35,7 +42,7 @@ if (!isReady || !mapRef.current || places.length === 0) return;
 
 mapInstance.current = new google.maps.Map(mapRef.current, {
   zoom: 13.5,
-  center: { lat: 43.6045, lng: 1.444 }, // Toulouse
+  center: { lat: 43.6045, lng: 1.444 },
   scrollwheel: true,
   gestureHandling: "greedy",
 });
@@ -43,7 +50,7 @@ mapInstance.current = new google.maps.Map(mapRef.current, {
 const geocoder = new google.maps.Geocoder();
 
 places.forEach((place, i) => {
-  if (!place.nomRue) return; // ignorer les lieux sans nom de rue
+  if (!place.nomRue) return;
 
   const numero = place.num && place.num !== "0" ? `${place.num} ` : "";
   const adresse = `Toulouse, ${numero}${place.typeRue} ${place.nomRue}`;
@@ -83,14 +90,14 @@ places.forEach((place, i) => {
 
       marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
     });
-  }, i * 200); // 200ms entre chaque geocode
+  }, i * 200);
 });
 
 }, [isReady, places]);
 
 return ( <div className="p-4 max-w-7xl mx-auto">
 <Script
-src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&async=1`}
 strategy="afterInteractive"
 onLoad={() => setIsReady(true)}
 />
