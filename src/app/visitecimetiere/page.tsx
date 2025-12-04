@@ -9,16 +9,17 @@ description?: string;
 cemetery?: string;
 section?: string;
 division?: string;
-address?: string; // format "Cimetière, Section, Division"
+address?: string;
 }
 
 export default function VisiteCimetierePage() {
 const mapRef = useRef<HTMLDivElement | null>(null);
 const mapInstance = useRef<google.maps.Map | null>(null);
+const markersRef = useRef<google.maps.Marker[]>([]);
 const [people, setPeople] = useState<Person[]>([]);
 const [isReady, setIsReady] = useState(false);
+const [selectedCemetery, setSelectedCemetery] = useState<string>("Tous");
 
-// Sections et divisions avec coordonnées approximatives
 const cemeterySections: Record<string, Record<string, { lat: number; lng: number }>> = {
 "Salonique": {
 "2-11": { lat: 43.6098, lng: 1.4645 },
@@ -55,12 +56,10 @@ const cemeterySections: Record<string, Record<string, { lat: number; lng: number
 },
 };
 
-// Récupération des personnes depuis l'API
 useEffect(() => {
 fetch("/api/visitecimetiere")
 .then(res => res.json())
 .then((data: Person[]) => {
-// Extraire cemetery, section, division depuis address si absent
 const enriched = data.map(p => {
 if (!p.cemetery && p.address) {
 const [cem, sec, div] = p.address.split(",").map(s => s.trim());
@@ -73,18 +72,19 @@ setPeople(enriched);
 .catch(console.error);
 }, []);
 
-// Initialisation de la carte et markers
+// Affichage des markers filtrés
 useEffect(() => {
-if (!isReady || !mapRef.current) return;
+if (!isReady || !mapRef.current || !mapInstance.current) return;
 
-mapInstance.current = new google.maps.Map(mapRef.current, {
-  zoom: 16,
-  center: { lat: 43.6093, lng: 1.4652 },
-  scrollwheel: true,
-  gestureHandling: "greedy",
-});
+// Supprimer anciens markers
+markersRef.current.forEach(m => m.setMap(null));
+markersRef.current = [];
 
-people.forEach((p, i) => {
+const filteredPeople = selectedCemetery === "Tous"
+  ? people
+  : people.filter(p => p.cemetery === selectedCemetery);
+
+filteredPeople.forEach((p, i) => {
   let position = { lat: 43.6093, lng: 1.4652 }; // fallback
   if (p.cemetery && p.section && p.division) {
     const key = `${p.section}-${p.division}`;
@@ -114,12 +114,13 @@ people.forEach((p, i) => {
     ${p.section ? `Section: ${p.section}<br>` : ""}
     ${p.division ? `Division: ${p.division}` : ""}
   `;
-
   const infowindow = new google.maps.InfoWindow({ content });
   marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+
+  markersRef.current.push(marker);
 });
 
-}, [isReady, people]);
+}, [isReady, people, selectedCemetery]);
 
 return ( <div className="p-4 max-w-6xl mx-auto">
 <Script
@@ -132,6 +133,20 @@ onLoad={() => setIsReady(true)}
     🏛️ Carte : Cimetières Hérédia, Salonique et Terre-Cabade
   </h1>
 
+  <div className="mb-4">
+    <label className="mr-2 font-semibold">Filtrer par cimetière:</label>
+    <select
+      value={selectedCemetery}
+      onChange={e => setSelectedCemetery(e.target.value)}
+      className="border rounded p-1"
+    >
+      <option value="Tous">Tous</option>
+      {Object.keys(cemeterySections).map(c => (
+        <option key={c} value={c}>{c}</option>
+      ))}
+    </select>
+  </div>
+
   <div
     ref={mapRef}
     style={{ height: "70vh", width: "100%" }}
@@ -141,11 +156,11 @@ onLoad={() => setIsReady(true)}
   </div>
 
   <h2 className="text-2xl font-semibold mb-4">
-    Liste des personnalités ({people.length})
+    Liste des personnalités ({selectedCemetery === "Tous" ? people.length : people.filter(p => p.cemetery === selectedCemetery).length})
   </h2>
 
   <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {people.map((p, i) => (
+    {(selectedCemetery === "Tous" ? people : people.filter(p => p.cemetery === selectedCemetery)).map((p, i) => (
       <li key={i} className="p-4 border rounded bg-white shadow">
         <p className="text-lg font-bold">{i + 1}. {p.name}</p>
         {p.description && <p>Description: {p.description}</p>}
