@@ -80,17 +80,20 @@ export default function VisiteGalerieArtPage() {
                         return;
                     }
                     
-                    // Crée l'icône personnalisée avec le numéro
+                    // Crée l'icône personnalisée avec le numéro DANS UN CERCLE
                     const numberedIcon: google.maps.MarkerOptions['icon'] = {
                         path: google.maps.SymbolPath.CIRCLE,
-                        scale: 0, // Cache le cercle par défaut
+                        scale: 12, // Taille du cercle de fond pour contenir le numéro
+                        fillColor: "#007BFF", // Couleur du cercle (bleu)
+                        fillOpacity: 1, 
+                        strokeWeight: 0, // Pas de bordure
                         labelOrigin: new google.maps.Point(0, 0), // Centre le label
                     };
 
                     const marker = new google.maps.Marker({
                         map: map,
                         position: results[0].geometry.location,
-                        icon: numberedIcon, // Utilisation de l'icône modifiée pour le label
+                        icon: numberedIcon, // Utilisation de l'icône avec le cercle coloré
                         label: {
                             text: markerNumber,
                             color: "#FFFFFF", // Couleur du texte (blanc)
