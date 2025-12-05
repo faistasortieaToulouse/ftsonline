@@ -5,7 +5,6 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
-// On utilise le même type d'interface pour la compatibilité
 interface Establishment {
     name: string;
     address: string;
@@ -19,7 +18,7 @@ export default function VisiteFontainesPage() {
     const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
-        // 1. Récupération des données des fontaines via la nouvelle API
+        // 1. Récupération des données des fontaines via l'API
         fetch("/api/visitefontaines")
             .then((res) => res.json())
             .then((data: Establishment[]) => setEstablishments(data))
@@ -27,16 +26,16 @@ export default function VisiteFontainesPage() {
     }, []);
 
     useEffect(() => {
-        if (!isReady || !mapRef.current) return;
+        if (!isReady || !mapRef.current || establishments.length === 0) return;
 
+        // Empêche la double initialisation de la carte lors du développement (React StrictMode)
         if (mapInstance.current) {
-            // Si la carte existe déjà (pour éviter de la recharger lors d'un hot-reload)
             return;
         }
 
         // 2. Initialisation de la carte Google Maps
         mapInstance.current = new google.maps.Map(mapRef.current, {
-            zoom: 13, // Zoom ajusté pour couvrir un plus grand périmètre (Toulouse)
+            zoom: 13, 
             center: { lat: 43.6047, lng: 1.4442 }, // Centre de Toulouse
             scrollwheel: true,
             gestureHandling: "greedy",
@@ -45,60 +44,61 @@ export default function VisiteFontainesPage() {
         const geocoder = new google.maps.Geocoder();
         const map = mapInstance.current;
 
-        // 3. Ajout des marqueurs pour chaque fontaine
+        // 3. Ajout des marqueurs avec un délai pour le Geocoder
         establishments.forEach((est, i) => {
-            const labelNumber = est.name.split('.')[0]; // Récupère le numéro de l'ID
+            const labelNumber = est.name.split('.')[0]; 
 
-            // Géocodage de l'adresse de la fontaine
-            geocoder.geocode({ address: est.address }, (results, status) => {
-                if (status !== "OK" || !results?.[0]) {
-                    console.error(`Erreur de géocodage pour ${est.name}: ${status}`);
-                    return;
-                }
+            // Délais de 300ms entre les requêtes de géocodage pour éviter les erreurs de quota/vitesse
+            setTimeout(() => {
+                geocoder.geocode({ address: est.address }, (results, status) => {
+                    
+                    if (status !== "OK" || !results?.[0]) {
+                        console.error(`Erreur de géocodage pour ${est.name} (Statut: ${status}). Adresse essayée: ${est.address}`);
+                        return;
+                    }
 
-                const marker = new google.maps.Marker({
-                    map: map,
-                    position: results[0].geometry.location,
-                    label: labelNumber, // Utilise le numéro d'ID comme étiquette
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 10,
-                        fillColor: "#FF6600", // Couleur différente (Orange/Toulouse)
-                        fillOpacity: 1,
-                        strokeWeight: 1.5,
-                        strokeColor: "black",
-                    },
+                    const marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location,
+                        label: labelNumber, 
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 10,
+                            fillColor: "#FF6600", // Orange/Toulouse
+                            fillOpacity: 1,
+                            strokeWeight: 1.5,
+                            strokeColor: "black",
+                        },
+                    });
+
+                    const infowindow = new google.maps.InfoWindow({
+                        content: `
+                            <div style="font-family: Arial, sans-serif;">
+                                <strong>${est.name.replace(`${labelNumber}. `, '')} (${labelNumber})</strong>
+                                <br><small>${est.address}</small>
+                                <hr style="margin: 5px 0;">
+                                <p style="margin: 0;">${est.description}</p>
+                            </div>
+                        `,
+                    });
+
+                    marker.addListener("click", () => infowindow.open(map, marker));
                 });
-
-                // Contenu de la fenêtre d'information
-                const infowindow = new google.maps.InfoWindow({
-                    content: `
-                        <div style="font-family: Arial, sans-serif;">
-                            <strong>${est.name.replace(`${labelNumber}. `, '')} (${labelNumber})</strong>
-                            <br><small>${est.address}</small>
-                            <hr style="margin: 5px 0;">
-                            <p style="margin: 0;">${est.description}</p>
-                        </div>
-                    `,
-                });
-
-                marker.addListener("click", () => infowindow.open(map, marker));
-            });
+            }, i * 300); // Délai de 300 ms entre chaque appel
         });
     }, [isReady, establishments]);
 
 
     return (
         <div className="p-4 max-w-7xl mx-auto">
-            {/* Le script de Google Maps. Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini dans votre .env */}
             <Script
-                src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+                src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
                 strategy="afterInteractive"
                 onLoad={() => setIsReady(true)}
             />
 
             <h1 className="text-3xl font-extrabold mb-6">
-                ⛲ Visite des Fontaines de Toulouse — (${establishments.length} Lieux)
+                ⛲ Visite des Fontaines de Toulouse — ({establishments.length} Lieux)
             </h1>
 
             <div
