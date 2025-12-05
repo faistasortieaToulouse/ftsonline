@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
 interface Proprietaire {
-  name: string;        // propriétaire
-  address: string;     // num + voie + nom voie
+  num: string;         // ex: "1, 3, 5, 7"
+  type_voie: string;   // ex: "rue"
+  nom_voie: string;    // ex: "Renforts"
+  proprietaire: string; // nom du propriétaire -> utilisé comme title
   date: string;
   supplement: string;
   profession: string;
@@ -21,7 +23,9 @@ export default function VisiteProprietairePage() {
     fetch("/api/visiteproprietaire")
       .then((res) => res.json())
       .then((data: Proprietaire[]) => setItems(data))
-      .catch(console.error);
+      .catch((err) => {
+        console.error("Erreur fetch /api/visiteproprietaire:", err);
+      });
   }, []);
 
   useEffect(() => {
@@ -29,16 +33,22 @@ export default function VisiteProprietairePage() {
 
     mapInstance.current = new google.maps.Map(mapRef.current, {
       zoom: 15,
-      center: { lat: 43.6005, lng: 1.4400 }, // quartier Saint-Michel / Palais de justice
+      center: { lat: 43.6005, lng: 1.4400 },
       scrollwheel: true,
       gestureHandling: "greedy",
     });
 
     const geocoder = new google.maps.Geocoder();
 
-    items.forEach((est, i) => {
-      geocoder.geocode({ address: `Toulouse ${est.address}` }, (results, status) => {
-        if (status !== "OK" || !results?.[0]) return;
+    items.forEach((p, i) => {
+      // Construire l'adresse pour le geocoding (num peut être "1, 3, 5, 7")
+      const address = `Toulouse ${p.num} ${p.type_voie} ${p.nom_voie}`;
+
+      geocoder.geocode({ address }, (results, status) => {
+        if (status !== "OK" || !results?.[0]) {
+          // console.warn(`Geocode failed for ${address}: ${status}`);
+          return;
+        }
 
         const marker = new google.maps.Marker({
           map: mapInstance.current!,
@@ -52,18 +62,20 @@ export default function VisiteProprietairePage() {
             strokeWeight: 1,
             strokeColor: "black",
           },
+          title: p.proprietaire,
         });
 
-        const infowindow = new google.maps.InfoWindow({
-          content: `
-            <strong>${i + 1}. ${est.name}</strong><br>
-            ${est.address}<br>
-            <em>${est.profession}</em><br>
-            Date : ${est.date}<br>
-            ${est.supplement ? "Supplément : " + est.supplement : ""}
-          `,
-        });
+        const content = `
+          <div style="font-family: Arial, sans-serif; line-height:1.25">
+            <strong>${i + 1}. ${p.proprietaire}</strong><br/>
+            <em>${p.num} ${p.type_voie} ${p.nom_voie}</em><br/>
+            Profession : ${p.profession || "—"}<br/>
+            Date : ${p.date || "—"}<br/>
+            ${p.supplement ? `Supplément : ${p.supplement}<br/>` : ""}
+          </div>
+        `;
 
+        const infowindow = new google.maps.InfoWindow({ content });
         marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
       });
     });
@@ -94,13 +106,19 @@ export default function VisiteProprietairePage() {
       </h2>
 
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map((est, i) => (
+        {items.map((p, i) => (
           <li key={i} className="p-4 border rounded bg-white shadow">
-            <p className="text-lg font-bold">{i + 1}. {est.name}</p>
-            <p>{est.address}</p>
-            <p className="italic">{est.profession}</p>
-            <p>Date : {est.date}</p>
-            {est.supplement && <p>Supplément : {est.supplement}</p>}
+            <p className="text-lg font-bold">
+              {i + 1}. {p.proprietaire}
+            </p>
+
+            <p className="italic mb-1">
+              {p.num} {p.type_voie} {p.nom_voie}
+            </p>
+
+            <p><strong>Profession :</strong> {p.profession || "—"}</p>
+            <p><strong>Date :</strong> {p.date || "—"}</p>
+            {p.supplement && <p><strong>Supplément :</strong> {p.supplement}</p>}
           </li>
         ))}
       </ul>
