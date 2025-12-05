@@ -1,4 +1,4 @@
-// /src/app/visitefontaines/page.tsx
+// /src/app/visitefontaines/page.tsx - MODIFICATIONS CLÉS
 
 "use client";
 
@@ -9,121 +9,124 @@ interface Establishment {
     name: string;
     address: string;
     description: string;
+    details: string; // Doit être présent dans votre API
 }
 
 export default function VisiteFontainesPage() {
-    const mapRef = useRef<HTMLDivElement | null>(null);
-    const mapInstance = useRef<google.maps.Map | null>(null);
-    const [establishments, setEstablishments] = useState<Establishment[]>([]);
-    const [isReady, setIsReady] = useState(false);
+    // ... (mapRef, mapInstance, establishments, isReady restent inchangés)
+    
+    // NOUVEAU: État pour gérer la fontaine dont les détails sont affichés
+    // On stocke l'ID (ou l'index) de la fontaine sélectionnée
+    const [openDetailsId, setOpenDetailsId] = useState<number | null>(null); 
 
-    useEffect(() => {
-        // 1. Récupération des données des fontaines via l'API
-        fetch("/api/visitefontaines")
-            .then((res) => res.json())
-            .then((data: Establishment[]) => setEstablishments(data))
-            .catch(console.error);
-    }, []);
+    // Fonction pour basculer l'affichage des détails
+    const toggleDetails = (id: number) => {
+        setOpenDetailsId(prevId => (prevId === id ? null : id));
+    };
 
+    // ... (Le useEffect de fetch reste inchangé)
+
+    // ... (Le useEffect de la carte reste inchangé, sauf pour l'InfoWindow)
     useEffect(() => {
         if (!isReady || !mapRef.current || establishments.length === 0) return;
 
-        // Empêche la double initialisation de la carte lors du développement (React StrictMode)
         if (mapInstance.current) {
             return;
         }
 
-        // 2. Initialisation de la carte Google Maps
-        mapInstance.current = new google.maps.Map(mapRef.current, {
-            zoom: 13, 
-            center: { lat: 43.6047, lng: 1.4442 }, // Centre de Toulouse
-            scrollwheel: true,
-            gestureHandling: "greedy",
-        });
+        // ... (Initialisation de la carte)
 
         const geocoder = new google.maps.Geocoder();
         const map = mapInstance.current;
 
-        // 3. Ajout des marqueurs avec un délai pour le Geocoder
         establishments.forEach((est, i) => {
-            const labelNumber = est.name.split('.')[0]; 
+            // ... (code de géocodage inchangé)
 
-            // Délais de 300ms entre les requêtes de géocodage pour éviter les erreurs de quota/vitesse
             setTimeout(() => {
                 geocoder.geocode({ address: est.address }, (results, status) => {
+                    // ... (Vérification du statut)
+
+                    const labelNumber = est.name.split('.')[0]; 
                     
-                    if (status !== "OK" || !results?.[0]) {
-                        console.error(`Erreur de géocodage pour ${est.name} (Statut: ${status}). Adresse essayée: ${est.address}`);
-                        return;
-                    }
-
                     const marker = new google.maps.Marker({
-                        map: map,
-                        position: results[0].geometry.location,
-                        label: labelNumber, 
-                        icon: {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            scale: 10,
-                            fillColor: "#FF6600", // Orange/Toulouse
-                            fillOpacity: 1,
-                            strokeWeight: 1.5,
-                            strokeColor: "black",
-                        },
+                        // ... (Définition du marqueur inchangée)
                     });
 
+                    // MODIFICATION : Au clic sur le marqueur, on change l'état d'ouverture de la liste
+                    marker.addListener("click", () => {
+                        // On trouve l'ID de la fontaine (assumons qu'il est dans le nom)
+                        const id = parseInt(labelNumber);
+                        if (!isNaN(id)) {
+                            toggleDetails(id);
+                            
+                            // Optionnel: Faire défiler la page jusqu'à l'élément
+                            document.getElementById(`fontaine-item-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }); 
+                    
+                    // L'infowindow peut juste afficher un petit texte simple si vous le souhaitez
                     const infowindow = new google.maps.InfoWindow({
-                        content: `
-                            <div style="font-family: Arial, sans-serif;">
-                                <strong>${est.name.replace(`${labelNumber}. `, '')} (${labelNumber})</strong>
-                                <br><small>${est.address}</small>
-                                <hr style="margin: 5px 0;">
-                                <p style="margin: 0;">${est.description}</p>
-                            </div>
-                        `,
+                        content: `<strong>${est.name}</strong><br>Cliquez pour voir les détails en bas.`,
                     });
-
-                    marker.addListener("click", () => infowindow.open(map, marker));
+                    
+                    // ... (Ajout du listener pour l'infowindow)
                 });
-            }, i * 300); // Délai de 300 ms entre chaque appel
+            }, i * 300); 
         });
-    }, [isReady, establishments]);
+    }, [isReady, establishments]); // Note: 'toggleDetails' n'est pas nécessaire dans les dépendances car c'est une fonction de setState
 
+    // ... (Rendu JSX)
 
     return (
         <div className="p-4 max-w-7xl mx-auto">
-            <Script
-                src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-                strategy="afterInteractive"
-                onLoad={() => setIsReady(true)}
-            />
-
-            <h1 className="text-3xl font-extrabold mb-6">
-                ⛲ Visite des Fontaines de Toulouse — ({establishments.length} Lieux)
-            </h1>
-
-            <div
-                ref={mapRef}
-                style={{ height: "70vh", width: "100%" }}
-                className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
-            >
-                {!isReady && <p>Chargement de la carte…</p>}
-            </div>
-
+            {/* ... Script, Titre, Carte ... */}
+            
             <h2 className="text-2xl font-semibold mb-4">
                 Liste des fontaines ({establishments.length})
             </h2>
 
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {establishments.map((est, i) => (
-                    <li key={i} className="p-4 border rounded bg-white shadow">
-                        <p className="text-lg font-bold">
-                            {est.name}
-                        </p>
-                        <p>{est.address}</p>
-                        <p className="text-sm text-gray-600 italic mt-1">{est.description}</p>
-                    </li>
-                ))}
+                {establishments.map((est, i) => {
+                    const id = i + 1; // L'ID est l'index + 1
+                    const isDetailsOpen = openDetailsId === id; // Vérifie si cette fontaine doit être déployée
+
+                    return (
+                        <li 
+                            key={i} 
+                            id={`fontaine-item-${id}`} // ID pour le défilement
+                            className="p-4 border rounded bg-white shadow transition-all duration-300"
+                            onClick={() => toggleDetails(id)} // Clic bascule l'affichage
+                        >
+                            <p className="text-lg font-bold flex justify-between items-center cursor-pointer">
+                                <span>{est.name}</span>
+                                {/* Indicateur de déploiement */}
+                                <span className="text-xl text-red-600">
+                                    {isDetailsOpen ? '▲' : '▼'}
+                                </span>
+                            </p>
+                            <p className="text-sm">{est.address}</p>
+                            <p className="text-sm text-gray-600 italic mt-1">{est.description}</p>
+                            
+                            {/* NOUVEAU: Zone de description détaillée (Déploiement) */}
+                            {isDetailsOpen && est.details && (
+                                <div className="mt-4 pt-4 border-t border-gray-200 text-gray-800 animate-fadeIn">
+                                    <h4 className="font-semibold mb-2">Détails Historiques et Artistiques:</h4>
+                                    {/* Utiliser dangerouslySetInnerHTML pour le formatage du texte (sauts de ligne, etc.) */}
+                                    <div 
+                                        className="prose max-w-none text-sm" 
+                                        dangerouslySetInnerHTML={{ 
+                                            __html: est.details.replace(/\n/g, '<br/>') 
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </li>
+                    );
+                })}
             </ul>
         </div>
     );
 }
+// Ajoutez ces styles à votre fichier CSS global (tailwind.css ou équivalent) si vous utilisez Tailwind CSS
+// @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+// .animate-fadeIn { animation: fadeIn 0.3s ease-in; }
