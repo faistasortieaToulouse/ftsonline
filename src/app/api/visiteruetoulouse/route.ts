@@ -1,22 +1,33 @@
-// app/api/visiteruetoulouse/route.ts
 import { NextResponse } from "next/server";
 
-// Données simplifiées, coordonnées fictives pour exemple
-// Tu peux remplacer par des coordonnées réelles si disponibles
-const lieux = [
-  { id: 1, numero: "1", rue: "Albert Lautman", lieu: "bâtiment remarquable", lat: 43.611, lng: 1.444 },
-  { id: 2, numero: "3", rue: "Albert Lautman", lieu: "bâtiment remarquable", lat: 43.612, lng: 1.444 },
-  { id: 3, numero: "37", rue: "Armand Duportal", lieu: "immeuble", lat: 43.615, lng: 1.445 },
-  { id: 4, numero: "49", rue: "Armand Duportal", lieu: "immeuble", lat: 43.616, lng: 1.446 },
-  { id: 5, numero: "7", rue: "Arts", lieu: "hôtel Baichère, tour", lat: 43.617, lng: 1.447 },
-  { id: 6, numero: "7", rue: "Arts", lieu: "hôtel Nolet disp ?", lat: 43.617, lng: 1.448 },
-  { id: 7, numero: "10", rue: "Arts", lieu: "hôtel Dupuy-Montaut", lat: 43.618, lng: 1.448 },
-  { id: 8, numero: "12", rue: "Arts", lieu: "Collège Boulbonne, couvent, auj, imm. 1910 ?", lat: 43.619, lng: 1.449 },
-  { id: 9, numero: "14", rue: "Arts", lieu: "couvent Dame Andouin : 14-16", lat: 43.619, lng: 1.450 },
-  { id: 10, numero: "16", rue: "Arts", lieu: "bâtiment remarquable", lat: 43.620, lng: 1.450 },
-  // Ajoute tous les autres lieux ici en suivant le même format
+interface Establishment {
+  name: string;
+  address: string;
+}
+
+const establishments: Establishment[] = [
+  { name: "bâtiment remarquable", address: "1 rue Albert Lautman" },
+  { name: "bâtiment remarquable", address: "3 rue Albert Lautman" },
+  { name: "immeuble", address: "37 bd Armand Duportal" },
+  { name: "immeuble", address: "49 bd Armand Duportal" },
+  { name: "hôtel Baichère, tour", address: "7 rue Arts" },
+  { name: "hôtel Nolet disp ?", address: "7 rue Arts" },
+  { name: "hôtel Dupuy-Montaut", address: "10 rue Arts" },
+  { name: "Collège Boulbonne, couvent, auj, imm. 1910 ?", address: "12 rue Arts" },
+  { name: "couvent Dame Andouin : 14-16", address: "14 rue Arts" },
+  { name: "bâtiment remarquable", address: "16 rue Arts" },
+  { name: "hôtel Duranti disp ?", address: "17 rue Arts" },
+  { name: "tours remparts romains : 1-5-11-17", address: "1-5-11-17 rue Bida" },
+  { name: "fontaine Bienfaits de la Garonne", address: "place Boulbonne" },
+  { name: "bâtiment remarquable", address: "13 rue Boulbonne" },
+  { name: "Collège Boulbonne disp", address: "21 rue Boulbonne" },
+  { name: "bâtiment remarquable", address: "42 rue Boulbonne" },
+  { name: "fontaine Labatut (en face)", address: "50 rue Boulbonne" },
+  { name: "mosaïque", address: "52 rue Boulbonne" },
+  { name: "bâtiment remarquable", address: "9 rue Boule" },
+  // Ajoute les autres adresses ici
 ];
 
 export async function GET() {
-  return NextResponse.json({ lieux });
+  return NextResponse.json(establishments);
 }
