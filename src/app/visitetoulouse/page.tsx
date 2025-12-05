@@ -22,7 +22,7 @@ const [places, setPlaces] = useState<ExilPlace[]>([]);
 const [isReady, setIsReady] = useState(false);
 
 useEffect(() => {
-fetch("/api/exilplaces")
+fetch("/api/visitetoulouse")
 .then((res) => res.json())
 .then((data: ExilPlace[]) => setPlaces(data))
 .catch(console.error);
