@@ -67,6 +67,8 @@ export default function VisiteGalerieArtPage() {
         // Ajout des marqueurs pour chaque galerie
         galleries.forEach((gallery, i) => {
             const id = i; // L'ID correspond à l'index du tableau
+            // Le numéro affiché commence à 1
+            const markerNumber = (i + 1).toString(); 
             const addressWithCity = gallery.address.includes('Toulouse') ? gallery.address : `${gallery.address}, Toulouse`;
 
             // Utilise un setTimeout pour espacer les requêtes de géocodage et éviter les limites
@@ -77,27 +79,32 @@ export default function VisiteGalerieArtPage() {
                         console.warn(`Avertissement de géocodage pour ${gallery.name} (Statut: ${status}). L'adresse n'a peut-être pas été trouvée.`);
                         return;
                     }
+                    
+                    // Crée l'icône personnalisée avec le numéro
+                    const numberedIcon: google.maps.MarkerOptions['icon'] = {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 0, // Cache le cercle par défaut
+                        labelOrigin: new google.maps.Point(0, 0), // Centre le label
+                    };
 
                     const marker = new google.maps.Marker({
                         map: map,
                         position: results[0].geometry.location,
-                        // Utilise un icône d'art (peinture) ou un simple cercle stylisé
-                        icon: {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            scale: 8,
-                            fillColor: "#007BFF", // Bleu pour les galeries
-                            fillOpacity: 0.9,
-                            strokeWeight: 1.5,
-                            strokeColor: "white",
+                        icon: numberedIcon, // Utilisation de l'icône modifiée pour le label
+                        label: {
+                            text: markerNumber,
+                            color: "#FFFFFF", // Couleur du texte (blanc)
+                            fontWeight: "bold",
+                            fontSize: "12px",
                         },
-                        title: gallery.name,
+                        title: `${markerNumber}. ${gallery.name}`,
                     });
 
                     // Infowindow (simple affichage d'informations)
                     const infowindow = new google.maps.InfoWindow({
                         content: `
                             <div style="font-family: Arial, sans-serif; max-width: 200px;">
-                                <strong style="color: #007BFF;">${gallery.name}</strong>
+                                <strong style="color: #007BFF;">${markerNumber}. ${gallery.name}</strong>
                                 <br><small>${gallery.address}</small>
                             </div>
                         `,
@@ -168,36 +175,41 @@ export default function VisiteGalerieArtPage() {
                         <li 
                             key={id} 
                             id={`gallery-item-${id}`} // ID pour le défilement
-                            className="p-5 border-2 border-gray-100 rounded-lg bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer"
+                            className="p-5 border-2 border-gray-100 rounded-lg bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex"
                             onClick={() => toggleDetails(id)} // Clic bascule l'affichage
                         >
-                            <p className="text-lg font-bold flex justify-between items-center text-blue-900">
-                                <span>{gallery.name}</span>
-                                {/* Indicateur de déploiement */}
-                                <span className={`text-xl transition-transform duration-300 ${isDetailsOpen ? 'rotate-180' : 'rotate-0'}`}>
-                                    ▼
-                                </span>
-                            </p>
-                            <p className="text-sm mt-1 text-gray-600">
-                                <span className="font-semibold">Adresse:</span> {gallery.address}
-                            </p>
-                            
-                            {/* Zone de l'URL (Déploiement) */}
-                            {isDetailsOpen && (
-                                <div className="mt-3 pt-3 border-t border-blue-100 transition-all duration-500 overflow-hidden">
-                                    <h4 className="font-semibold mb-1 text-blue-700">Lien vers le site web:</h4>
-                                    <a 
-                                        href={gallery.url} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="text-blue-500 hover:text-blue-700 underline text-sm break-all"
-                                        // Empêche la fermeture de l'accordéon si on clique sur le lien
-                                        onClick={(e) => e.stopPropagation()} 
-                                    >
-                                        {gallery.url}
-                                    </a>
-                                </div>
-                            )}
+                            <span className="text-2xl font-extrabold text-blue-500 mr-4 flex-shrink-0">
+                                {i + 1}.
+                            </span>
+                            <div className="flex-grow">
+                                <p className="text-lg font-bold flex justify-between items-center text-blue-900">
+                                    <span>{gallery.name}</span>
+                                    {/* Indicateur de déploiement */}
+                                    <span className={`text-xl transition-transform duration-300 ${isDetailsOpen ? 'rotate-180' : 'rotate-0'}`}>
+                                        ▼
+                                    </span>
+                                </p>
+                                <p className="text-sm mt-1 text-gray-600">
+                                    <span className="font-semibold">Adresse:</span> {gallery.address}
+                                </p>
+                                
+                                {/* Zone de l'URL (Déploiement) */}
+                                {isDetailsOpen && (
+                                    <div className="mt-3 pt-3 border-t border-blue-100 transition-all duration-500 overflow-hidden">
+                                        <h4 className="font-semibold mb-1 text-blue-700">Lien vers le site web:</h4>
+                                        <a 
+                                            href={gallery.url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="text-blue-500 hover:text-blue-700 underline text-sm break-all"
+                                            // Empêche la fermeture de l'accordéon si on clique sur le lien
+                                            onClick={(e) => e.stopPropagation()} 
+                                        >
+                                            {gallery.url}
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
                         </li>
                     );
                 })}
