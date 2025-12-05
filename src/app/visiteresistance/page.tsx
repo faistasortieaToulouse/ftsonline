@@ -58,17 +58,19 @@ export default function VisiteResistancePage() {
             strokeWeight: 1,
             strokeColor: "black",
           },
-          title: place.établissement,
+          title: place.nom, // TITRE = nom
         });
 
         const infowindow = new google.maps.InfoWindow({
           content: `
-            <strong>${i + 1}. ${place.établissement}</strong><br>
-            ${place.num} ${place.type_rue} ${place.nom_rue}<br>
+            <strong>${i + 1}. ${place.nom}</strong><br>
+            Établissement : ${place.établissement}<br>
+            Adresse : ${place.num} ${place.type_rue} ${place.nom_rue}<br>
             Quartier : ${place.quartier}<br>
             Site : ${place.site}<br>
             Sigles : ${place.sigles || ""}<br>
-            Signification : ${place.signification || ""}
+            Signification : ${place.signification || ""}<br>
+            Appartient : ${place.appartient}
           `,
         });
 
@@ -105,14 +107,15 @@ export default function VisiteResistancePage() {
         {places.map((place, i) => (
           <li key={i} className="p-4 border rounded bg-white shadow">
             <p className="text-lg font-bold">
-              {i + 1}. {place.établissement}
+              {i + 1}. {place.nom} {/* NOM affiché en titre */}
             </p>
-            <p className="italic">
-              {place.num} {place.type_rue} {place.nom_rue} — {place.quartier}
-            </p>
+            <p>Établissement : {place.établissement}</p>
+            <p>Adresse : {place.num} {place.type_rue} {place.nom_rue}</p>
+            <p>Quartier : {place.quartier}</p>
             <p>Site : {place.site}</p>
-            {place.sigles && <p>Sigles : {place.sigles}</p>}
-            {place.signification && <p>Signification : {place.signification}</p>}
+            <p>Sigles : {place.sigles || "-"}</p>
+            <p>Signification : {place.signification || "-"}</p>
+            <p>Appartient : {place.appartient}</p>
           </li>
         ))}
       </ul>
