@@ -119,6 +119,51 @@ export default function VisiteResistancePage() {
           </li>
         ))}
       </ul>
+       <h2 className="text-2xl font-semibold mt-10 mb-4">
+    📑 Sigles et significations
+  </h2>
+
+  <table className="table-auto border-collapse border border-gray-400 w-full text-sm">
+    <thead>
+      <tr className="bg-gray-200">
+        <th className="border border-gray-400 px-2 py-1">Sigles</th>
+        <th className="border border-gray-400 px-2 py-1">Signification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td className="border px-2 py-1">CNT</td><td className="border px-2 py-1">Comité national des Travailleurs</td></tr>
+      <tr><td className="border px-2 py-1">UGT</td><td className="border px-2 py-1">Union générale des travailleurs</td></tr>
+      <tr><td className="border px-2 py-1">AIT</td><td className="border px-2 py-1">Association internationale des travailleurs</td></tr>
+      <tr><td className="border px-2 py-1">SI</td><td className="border px-2 py-1">Secrétariat International</td></tr>
+      <tr><td className="border px-2 py-1">CGQJ</td><td className="border px-2 py-1">Commissariat général aux questions juives</td></tr>
+      <tr><td className="border px-2 py-1">CAS</td><td className="border px-2 py-1">Comité Action Socialiste</td></tr>
+      <tr><td className="border px-2 py-1">RA-DCA</td><td className="border px-2 py-1">Régiment d'Artillerie de Défense contre Aéronefs</td></tr>
+      <tr><td className="border px-2 py-1">MMR</td><td className="border px-2 py-1">Mouvement Militaire de la Résistance</td></tr>
+      <tr><td className="border px-2 py-1">SOL</td><td className="border px-2 py-1">Service d'ordre légionnaire</td></tr>
+      <tr><td className="border px-2 py-1">CCA</td><td className="border px-2 py-1">Commission du contrôle de l'Armistice</td></tr>
+      <tr><td className="border px-2 py-1">SS</td><td className="border px-2 py-1">SchutzStaffel</td></tr>
+      <tr><td className="border px-2 py-1">SIPO-SD</td><td className="border px-2 py-1">Kommando der sicherheitspolizei</td></tr>
+      <tr><td className="border px-2 py-1">GTE</td><td className="border px-2 py-1">Groupement de Travail des Etrangers</td></tr>
+      <tr><td className="border px-2 py-1">RFA</td><td className="border px-2 py-1">Allemagne</td></tr>
+      <tr><td className="border px-2 py-1">PSO</td><td className="border px-2 py-1">Parti Social Ouvrier</td></tr>
+      <tr><td className="border px-2 py-1">CGMEA</td><td className="border px-2 py-1">Commissariat Général de la Main d'Œuvre en Allemagne</td></tr>
+      <tr><td className="border px-2 py-1">PSOE</td><td className="border px-2 py-1">Parti socialiste Ouvrier Espagnol</td></tr>
+      <tr><td className="border px-2 py-1">MLE</td><td className="border px-2 py-1">Mouvement Libertaire Espagnol</td></tr>
+      <tr><td className="border px-2 py-1">FIJL</td><td className="border px-2 py-1">Fédération Ibérique de la Jeunesse Libertaire</td></tr>
+      <tr><td className="border px-2 py-1">SIA</td><td className="border px-2 py-1">Solidarité Internationale Antifaciste</td></tr>
+      <tr><td className="border px-2 py-1">FNDIR</td><td className="border px-2 py-1">Fédération Nationale des Déportés et Internés de la Résistance</td></tr>
+      <tr><td className="border px-2 py-1">NAP</td><td className="border px-2 py-1">Noyautage des Administrations Publiques</td></tr>
+      <tr><td className="border px-2 py-1">CDR</td><td className="border px-2 py-1">Conseil Départemental de la Résistance</td></tr>
+      <tr><td className="border px-2 py-1">GIF</td><td className="border px-2 py-1">Groupe International Français</td></tr>
+      <tr><td className="border px-2 py-1">AS</td><td className="border px-2 py-1">Armée Secrète</td></tr>
+      <tr><td className="border px-2 py-1">CDL</td><td className="border px-2 py-1">Comité Départemental de Libération</td></tr>
+      <tr><td className="border px-2 py-1">FFI</td><td className="border px-2 py-1">Forces Françaises de l'Intérieur</td></tr>
+      <tr><td className="border px-2 py-1">ORA</td><td className="border px-2 py-1">Organisation de résistance de l'Armée</td></tr>
+      <tr><td className="border px-2 py-1">FTPF</td><td className="border px-2 py-1">Francs-tireurs et Partisans français</td></tr>
+      <tr><td className="border px-2 py-1">CFL</td><td className="border px-2 py-1">Corps Francs de Libération</td></tr>
+      <tr><td className="border px-2 py-1">AG</td><td className="border px-2 py-1">Assemblée Générale</td></tr>
+    </tbody>
+  </table>
     </div>
   );
 }
