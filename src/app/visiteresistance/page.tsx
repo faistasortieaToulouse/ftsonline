@@ -64,7 +64,7 @@ export default function VisiteResistancePage() {
         const infowindow = new google.maps.InfoWindow({
           content: `
             <strong>${i + 1}. ${place.nom}</strong><br>
-            Établissement : ${place.établissement}<br>
+            Établissement : ${place.etablissement}<br>
             Adresse : ${place.num} ${place.type_rue} ${place.nom_rue}<br>
             Quartier : ${place.quartier}<br>
             Site : ${place.site}<br>
@@ -109,11 +109,11 @@ export default function VisiteResistancePage() {
             <p className="text-lg font-bold">
               {i + 1}. {place.nom} {/* NOM affiché en titre */}
             </p>
-            <p>Établissement : {place.établissement}</p>
+            <p>Établissement : {place.etablissement}</p>
             <p>Adresse : {place.num} {place.type_rue} {place.nom_rue}</p>
             <p>Quartier : {place.quartier}</p>
             <p>Site : {place.site}</p>
-            <p>Sigles : {place.sigles || "-"}</p>
+            <p>État : {place.sigles || "-"}</p>
             <p>Signification : {place.signification || "-"}</p>
             <p>Appartient : {place.appartient}</p>
           </li>
