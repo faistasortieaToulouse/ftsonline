@@ -33,8 +33,7 @@ export default function MeetupEventsPage() {
     setFilteredEvents([]);
 
     try {
-      const res = await fetch("/api/meetup-expats");
-
+      const res = await fetch("/api/meetup-happy");
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || `Erreur API HTTP: ${res.status} ${res.statusText}`);
@@ -103,9 +102,9 @@ export default function MeetupEventsPage() {
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">Évènements de Meetup Expats in Toulouse</h1>
+      <h1 className="text-3xl font-bold mb-4">Évènements de Meetup Happy People 31 à Toulouse</h1>
       <p className="text-muted-foreground mb-6">
-        Prochains événements du groupe Meetup Expats in Toulouse, sur 31 jours.
+        Prochains événements consolidés des groupes Meetup de Happy People 31, sur 31 jours.
       </p>
 
       {/* Barre de recherche */}
