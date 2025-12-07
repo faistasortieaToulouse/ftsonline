@@ -1,6 +1,6 @@
 import type { Event } from './types';
 
-const PLACEHOLDER_IMAGE = '/images/placeholders.jpg';
+export const PLACEHOLDER_IMAGE = '/images/placeholders.jpg';  // <-- export ajouté
 
 // Filtrage sur today + 31 jours
 const filterNext31Days = (events: Event[]) => {
@@ -31,7 +31,7 @@ export const fetchAgendaToulouse = async (): Promise<Event[]> => {
       description: ev.description || '',
       location: ev.location || '',
       date: ev.date || new Date().toISOString(),
-      image: ev.image || PLACEHOLDER_IMAGE,
+      image: ev.image || PLACEHOLDER_IMAGE,  // <-- toujours utilisable ici
       url: ev.url || '',
     }));
 
