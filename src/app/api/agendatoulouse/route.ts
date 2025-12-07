@@ -5,7 +5,11 @@ import { getEvents as getOpenDataEvents } from "@/lib/events"; // OpenData + RSS
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
+// -------------------------
+// Constantes locales
+// -------------------------
 const PLACEHOLDER_IMAGE = "/images/placeholders.jpg";
+
 const THEME_IMAGES: Record<string, string> = {
   "Culture": "/images/tourismehg31/themeculture.jpg",
   "Education Emploi": "/images/tourismehg31/themeeducation.jpg",
@@ -33,6 +37,9 @@ const API_ROUTES = [
   "discord",
 ];
 
+// -------------------------
+// ⚡ Cache interne Meetup
+// -------------------------
 const meetupCache: { timestamp: number; data: any[] } = { timestamp: 0, data: [] };
 const MEETUP_CACHE_TTL = 1000 * 60 * 5; // 5 min
 
@@ -54,6 +61,9 @@ async function fetchMeetup(origin: string): Promise<any[]> {
   }
 }
 
+// -------------------------
+// Normalisation
+// -------------------------
 function normalize(str?: string) {
   return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
@@ -71,7 +81,7 @@ function getThemeImage(thematique?: string) {
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
 
-  const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || null;
+  const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || ev.pubDate || null;
   const dateObj = rawDate ? new Date(rawDate) : null;
   if (!dateObj || isNaN(dateObj.getTime())) return null;
 
@@ -115,6 +125,9 @@ function normalizeEvent(ev: any, sourceName: string) {
   };
 }
 
+// -------------------------
+// Fetch avec retry
+// -------------------------
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -131,6 +144,9 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   }
 }
 
+// -------------------------
+// Endpoint principal
+// -------------------------
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
@@ -161,7 +177,16 @@ export async function GET(request: NextRequest) {
 
     // 4️⃣ Normalisation & agrégation
     const allEvents = results.flatMap(({ route, data }) => {
-      const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
+      let list: any[] = [];
+
+      if (Array.isArray(data.events)) {
+        list = data.events;
+      } else if (Array.isArray(data.items)) { // <- correction ici pour agendaculturel
+        list = data.items;
+      } else if (Array.isArray(data)) {
+        list = data;
+      }
+
       return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
