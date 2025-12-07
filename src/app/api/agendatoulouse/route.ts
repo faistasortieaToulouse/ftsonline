@@ -1,26 +1,14 @@
+// src/app/api/agendatoulouse/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { getEvents as getOpenDataEvents } from "@/lib/events"; // OpenData + RSS + fallback
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
-// Liste de toutes les sources
-const API_ROUTES = [
-  "agenda-trad-haute-garonne",
-  "cultureenmouvements",
-  "demosphere",
-  "hautegaronne",
-  "radarsquat",
-  "toulousemetropole",
-  "tourismehautegaronne",
-  "meetup-full",  // Meetup iCal
-  "ut3-min",
-  "capitole-min",
-  "theatredupave",
-  "discord",
-];
-
-const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
-const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
+// -------------------------
+// Constantes locales
+// -------------------------
+const PLACEHOLDER_IMAGE = "/images/placeholders.jpg";
 
 const THEME_IMAGES: Record<string, string> = {
   "Culture": "/images/tourismehg31/themeculture.jpg",
@@ -34,28 +22,65 @@ const THEME_IMAGES: Record<string, string> = {
   "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
 };
 
+// Routes supplémentaires pour agrégation
+const API_ROUTES = [
+  "agenda-trad-haute-garonne",
+  "cultureenmouvements",
+  "demosphere",
+  "hautegaronne",
+  "radarsquat",
+  "toulousemetropole",
+  "tourismehautegaronne",
+  "ut3-min",
+  "capitole-min",
+  "theatredupave",
+  "discord",
+];
+
 // -------------------------
-// ⚡ Cache in-memory pour Meetup
+// ⚡ Cache interne Meetup
 // -------------------------
-const meetupCache: Record<string, { timestamp: number; data: any }> = {};
+const meetupCache: { timestamp: number; data: any[] } = { timestamp: 0, data: [] };
 const MEETUP_CACHE_TTL = 1000 * 60 * 5; // 5 min
 
+async function fetchMeetup(origin: string): Promise<any[]> {
+  const now = Date.now();
+  if (now - meetupCache.timestamp < MEETUP_CACHE_TTL) return meetupCache.data;
+
+  try {
+    const res = await fetch(`${origin}/api/meetup-full`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const events = Array.isArray(json.events) ? json.events : [];
+    meetupCache.timestamp = now;
+    meetupCache.data = events;
+    return events;
+  } catch (err) {
+    console.warn("⚠️ Meetup fetch failed:", err);
+    return [];
+  }
+}
+
+// -------------------------
+// Normalisation
+// -------------------------
 function normalize(str?: string) {
   return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 function getThemeImage(thematique?: string) {
-  if (!thematique) return DEFAULT_THEME_IMAGE;
+  if (!thematique) return PLACEHOLDER_IMAGE;
   const t = normalize(thematique.trim());
   if (t.startsWith("education")) return THEME_IMAGES["Education Emploi"];
   for (const key of Object.keys(THEME_IMAGES)) {
     if (normalize(key) === t) return THEME_IMAGES[key];
   }
-  return DEFAULT_THEME_IMAGE;
+  return PLACEHOLDER_IMAGE;
 }
 
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
+
   const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || null;
   const dateObj = rawDate ? new Date(rawDate) : null;
   if (!dateObj || isNaN(dateObj.getTime())) return null;
@@ -71,7 +96,7 @@ function normalizeEvent(ev: any, sourceName: string) {
 
   let image;
   if (sourceName === "tourismehautegaronne") {
-    image = ev.image || ev.coverImage || getThemeImage(ev.thematique) || DEFAULT_THEME_IMAGE;
+    image = ev.image || ev.coverImage || getThemeImage(ev.thematique) || PLACEHOLDER_IMAGE;
   } else if (sourceName === "demosphere") {
     image = ev.image || ev.coverImage || "/logo/demosphereoriginal.png";
   } else if (sourceName === "ut3-min" || sourceName === "capitole-min") {
@@ -100,7 +125,9 @@ function normalizeEvent(ev: any, sourceName: string) {
   };
 }
 
-// fetch avec retry
+// -------------------------
+// Fetch avec retry
+// -------------------------
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -117,33 +144,23 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   }
 }
 
+// -------------------------
+// Endpoint principal
+// -------------------------
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
   try {
     const results: { route: string; data: any }[] = [];
 
-    // 🔹 1️⃣ Fetch Meetup directement avec cache
-    const meetupRoute = "meetup-full";
-    const cached = meetupCache[meetupRoute];
-    const now = Date.now();
-    if (cached && now - cached.timestamp < MEETUP_CACHE_TTL) {
-      results.push({ route: meetupRoute, data: cached.data });
-    } else {
-      try {
-        const data = await fetchWithRetry(`${origin}/api/${meetupRoute}`, 2, 10000);
-        meetupCache[meetupRoute] = { timestamp: now, data };
-        results.push({ route: meetupRoute, data });
-      } catch (err) {
-        console.warn(`⚠️ Meetup route ${meetupRoute} failed:`, err);
-        results.push({ route: meetupRoute, data: [] });
-      }
-    }
+    // 1️⃣ Meetup
+    const meetupEvents = await fetchMeetup(origin);
+    results.push({ route: "meetup-full", data: { events: meetupEvents } });
 
-    // 🔹 2️⃣ Fetch autres routes en parallèle
-    const otherRoutes = API_ROUTES.filter(r => r !== meetupRoute);
+    // 2️⃣ Autres routes
     const otherResults = await Promise.all(
-      otherRoutes.map(async (route) => {
+      API_ROUTES.map(async (route) => {
+        if (route === "meetup-full") return null;
         try {
           const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
           return { route, data };
@@ -152,26 +169,30 @@ export async function GET(request: NextRequest) {
         }
       })
     );
+    results.push(...otherResults.filter(Boolean) as any);
 
-    results.push(...otherResults);
+    // 3️⃣ OpenData / RSS fallback
+    const openDataEvents = await getOpenDataEvents();
+    results.push({ route: "opendata", data: openDataEvents });
 
-    // 🔹 3️⃣ Normalisation et agrégation
+    // 4️⃣ Normalisation & agrégation
     const allEvents = results.flatMap(({ route, data }) => {
       const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
       return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
-    const nowDate = new Date();
-    const today = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate());
+    // 5️⃣ Filtrage next 31 jours
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const limitDate = new Date(today);
     limitDate.setDate(limitDate.getDate() + 31);
 
     const filtered = allEvents.filter(ev => {
       const evDate = new Date(ev.date);
-      return evDate >= today && evDate < limitDate;
+      return evDate >= today && evDate <= limitDate;
     });
 
-    // supprimer doublons
+    // 6️⃣ Déduplication
     const uniqMap = new Map<string, any>();
     filtered.forEach(ev => {
       const key = `${ev.title}-${ev.date}`;
