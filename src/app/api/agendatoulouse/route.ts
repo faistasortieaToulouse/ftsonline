@@ -33,12 +33,23 @@ const API_ROUTES = [
   "discord",
 ];
 
-// Routes Meetup individuelles
 const MEETUP_ROUTES = ["meetup-events", "meetup-expats", "meetup-coloc", "meetup-sorties"];
 
 const meetupCache = { timestamp: 0, data: [] as any[] };
 const MEETUP_CACHE_TTL = 1000 * 60 * 5;
 
+// -------------------------
+// Générateur de clé unique
+// -------------------------
+function getUniqueKey(ev: any) {
+  if (ev.id) return ev.id;
+  const str = `${ev.title}-${ev.date}-${ev.location}-${ev.source}`;
+  return Buffer.from(str).toString("base64"); // hash simple en base64
+}
+
+// -------------------------
+// Meetup fetch
+// -------------------------
 async function fetchMeetup(origin: string): Promise<any[]> {
   const now = Date.now();
   if (now - meetupCache.timestamp < MEETUP_CACHE_TTL) return meetupCache.data;
@@ -51,9 +62,9 @@ async function fetchMeetup(origin: string): Promise<any[]> {
     const results = await Promise.all(fetches);
     let events = results.flatMap(r => Array.isArray(r.events) ? r.events : r);
 
-    // Correction dates passées
+    // Correction des dates passées
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     events = events.map(ev => {
       const raw = ev.date || ev.startDate || ev.start;
       const d = raw ? new Date(raw) : null;
@@ -65,10 +76,10 @@ async function fetchMeetup(origin: string): Promise<any[]> {
       return ev;
     });
 
-    // Déduplication
+    // Déduplication Meetup
     const uniqueMap = new Map<string, any>();
     events.forEach(ev => {
-      const key = ev.id || `${ev.title}-${ev.date}-${ev.location || ev.fullAddress}`;
+      const key = getUniqueKey({ ...ev, source: "meetup" });
       if (!uniqueMap.has(key)) uniqueMap.set(key, ev);
     });
 
@@ -80,6 +91,9 @@ async function fetchMeetup(origin: string): Promise<any[]> {
   }
 }
 
+// -------------------------
+// Normalisation
+// -------------------------
 function normalize(str?: string) {
   return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
@@ -120,75 +134,96 @@ function normalizeEvent(ev: any, sourceName: string) {
     }
   }
 
-  return { id: ev.id||`${ev.title}-${dateISO}`, title: ev.title||"Événement", description: ev.description||"", date: dateISO, dateFormatted, location, fullAddress, image, url: ev.url||ev.link||"", source: sourceName };
+  return {
+    id: getUniqueKey({ ...ev, source: sourceName }),
+    title: ev.title || "Événement",
+    description: ev.description || "",
+    date: dateISO,
+    dateFormatted,
+    location,
+    fullAddress,
+    image,
+    url: ev.url || ev.link || "",
+    source: sourceName,
+  };
 }
 
-async function fetchWithRetry(url: string, retries=2, timeout=8000) {
-  for(let i=0;i<=retries;i++){
-    try{
+// -------------------------
+// Retry fetch
+// -------------------------
+async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
+  for (let i = 0; i <= retries; i++) {
+    try {
       const controller = new AbortController();
-      const id = setTimeout(()=>controller.abort(), timeout);
+      const id = setTimeout(() => controller.abort(), timeout);
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(id);
-      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
-    }catch(err){
-      if(i===retries) throw err;
-      await new Promise(r=>setTimeout(r,2000));
+    } catch (err) {
+      if (i === retries) throw err;
+      await new Promise(r => setTimeout(r, 2000));
     }
   }
 }
 
-export async function GET(request: NextRequest){
+// -------------------------
+// GET principal
+// -------------------------
+export async function GET(request: NextRequest) {
   let origin = request.nextUrl.origin;
-  if(origin.includes("localhost")) origin="http://localhost:9002";
+  if (origin.includes("localhost")) origin = "http://localhost:9002";
   else origin = process.env.NEXT_PUBLIC_BASE_URL || origin;
 
-  try{
-    const results: { route:string; data:any }[] = [];
+  try {
+    const results: { route: string; data: any }[] = [];
 
-    // Meetup
+    // 1️⃣ Meetup
     const meetupEvents = await fetchMeetup(origin);
     results.push({ route: "meetup", data: { events: meetupEvents } });
 
-    // Autres routes
-    const otherResults = await Promise.all(API_ROUTES.map(async route=>{
-      try{
-        const data = await fetchWithRetry(`${origin}/api/${route}`,2,10000);
+    // 2️⃣ Autres routes
+    const otherResults = await Promise.all(API_ROUTES.map(async route => {
+      try {
+        const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
         return { route, data };
-      }catch{
+      } catch {
         return { route, data: [] };
       }
     }));
     results.push(...otherResults);
 
-    // OpenData fallback
-    const openData = await getOpenDataEvents();
-    results.push({ route: "opendata", data: openData });
+    // 3️⃣ OpenData
+    const openDataEvents = await getOpenDataEvents();
+    results.push({ route: "opendata", data: openDataEvents });
 
-    // Normalisation et agrégation
-    const allEvents = results.flatMap(({route,data})=>{
-      const list = Array.isArray(data.events)?data.events:Array.isArray(data.items)?data.items:Array.isArray(data)?data:[];
-      return list.map(ev=>normalizeEvent(ev,route)).filter(Boolean);
+    // 4️⃣ Normalisation et agrégation
+    const allEvents = results.flatMap(({ route, data }) => {
+      const list = Array.isArray(data.events) ? data.events : Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+      return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
-    // Filtrage 31 jours
-    const today = new Date(); today.setHours(0,0,0,0);
-    const limit = new Date(today); limit.setDate(today.getDate()+31);
-    const filtered = allEvents.filter(ev=>{
+    // 5️⃣ Fenêtre 31 jours
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const limit = new Date(today); limit.setDate(today.getDate() + 31);
+    const filtered = allEvents.filter(ev => {
       const d = new Date(ev.date);
-      return d>=today && d<=limit;
+      return d >= today && d <= limit;
     });
 
-    // Déduplication
-    const uniq = new Map<string,any>();
-    filtered.forEach(ev=>uniq.set(`${ev.title}-${ev.date}`,ev));
+    // 6️⃣ Déduplication finale
+    const uniq = new Map<string, any>();
+    filtered.forEach(ev => {
+      const key = ev.id; // déjà unique
+      if (!uniq.has(key)) uniq.set(key, ev);
+    });
 
-    const finalEvents = [...uniq.values()].sort((a,b)=>new Date(a.date).getTime()-new Date(b.date).getTime());
+    // 7️⃣ Tri final
+    const finalEvents = [...uniq.values()].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return NextResponse.json({ total: finalEvents.length, events: finalEvents });
-  }catch(err:any){
-    console.error("🔥 Erreur agendatoulouse:",err);
-    return NextResponse.json({ error: err.message||"Erreur interne"},{status:500});
+  } catch (err: any) {
+    console.error("🔥 Erreur agendatoulouse:", err);
+    return NextResponse.json({ error: err.message || "Erreur interne" }, { status: 500 });
   }
 }
