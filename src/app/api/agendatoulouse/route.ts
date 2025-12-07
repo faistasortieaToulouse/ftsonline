@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
+// Liste de toutes les sources
 const API_ROUTES = [
   "agenda-trad-haute-garonne",
   "cultureenmouvements",
@@ -11,7 +12,7 @@ const API_ROUTES = [
   "radarsquat",
   "toulousemetropole",
   "tourismehautegaronne",
-  "meetup-full",
+  "meetup-full",  // Meetup iCal
   "ut3-min",
   "capitole-min",
   "theatredupave",
@@ -37,13 +38,13 @@ const THEME_IMAGES: Record<string, string> = {
 // ⚡ Cache in-memory pour Meetup
 // -------------------------
 const meetupCache: Record<string, { timestamp: number; data: any }> = {};
-const MEETUP_CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+const MEETUP_CACHE_TTL = 1000 * 60 * 5; // 5 min
 
 function normalize(str?: string) {
   return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-function getThemeImage(thematique?: string): string {
+function getThemeImage(thematique?: string) {
   if (!thematique) return DEFAULT_THEME_IMAGE;
   const t = normalize(thematique.trim());
   if (t.startsWith("education")) return THEME_IMAGES["Education Emploi"];
@@ -55,7 +56,6 @@ function getThemeImage(thematique?: string): string {
 
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
-
   const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || null;
   const dateObj = rawDate ? new Date(rawDate) : null;
   if (!dateObj || isNaN(dateObj.getTime())) return null;
@@ -80,6 +80,8 @@ function normalizeEvent(ev: any, sourceName: string) {
     else if (titleLower.includes("conf")) image = "/images/capitole/capiconf.jpg";
     else if (titleLower.includes("expo")) image = "/images/capitole/capiexpo.jpg";
     else image = "/images/capitole/capidefaut.jpg";
+  } else if (sourceName === "meetup-full") {
+    image = ev.image || PLACEHOLDER_IMAGE;
   } else {
     image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
   }
@@ -98,6 +100,7 @@ function normalizeEvent(ev: any, sourceName: string) {
   };
 }
 
+// fetch avec retry
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -118,37 +121,29 @@ export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
   try {
-    const meetupRoutes = API_ROUTES.filter(r => r.startsWith("meetup"));
-    const otherRoutes = API_ROUTES.filter(r => !r.startsWith("meetup"));
+    const results: { route: string; data: any }[] = [];
 
-    // -------------------------
-    // 1️⃣ Routes Meetup avec cache
-    // -------------------------
-    const meetupResults: { route: string; data: any }[] = [];
-    for (const route of meetupRoutes) {
-      const cached = meetupCache[route];
-      const now = Date.now();
-      if (cached && now - cached.timestamp < MEETUP_CACHE_TTL) {
-        meetupResults.push({ route, data: cached.data });
-        continue;
-      }
-
+    // 🔹 1️⃣ Fetch Meetup directement avec cache
+    const meetupRoute = "meetup-full";
+    const cached = meetupCache[meetupRoute];
+    const now = Date.now();
+    if (cached && now - cached.timestamp < MEETUP_CACHE_TTL) {
+      results.push({ route: meetupRoute, data: cached.data });
+    } else {
       try {
-        const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
-        meetupCache[route] = { timestamp: Date.now(), data };
-        meetupResults.push({ route, data });
-        await new Promise(r => setTimeout(r, 1000));
+        const data = await fetchWithRetry(`${origin}/api/${meetupRoute}`, 2, 10000);
+        meetupCache[meetupRoute] = { timestamp: now, data };
+        results.push({ route: meetupRoute, data });
       } catch (err) {
-        console.warn(`⚠️ Meetup route ${route} failed:`, err);
-        meetupResults.push({ route, data: [] });
+        console.warn(`⚠️ Meetup route ${meetupRoute} failed:`, err);
+        results.push({ route: meetupRoute, data: [] });
       }
     }
 
-    // -------------------------
-    // 2️⃣ Autres routes fetchées en parallèle
-    // -------------------------
+    // 🔹 2️⃣ Fetch autres routes en parallèle
+    const otherRoutes = API_ROUTES.filter(r => r !== meetupRoute);
     const otherResults = await Promise.all(
-      otherRoutes.map(async route => {
+      otherRoutes.map(async (route) => {
         try {
           const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
           return { route, data };
@@ -158,18 +153,16 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    const results = [...otherResults, ...meetupResults];
+    results.push(...otherResults);
 
-    // -------------------------
-    // 3️⃣ Agrégation et normalisation
-    // -------------------------
+    // 🔹 3️⃣ Normalisation et agrégation
     const allEvents = results.flatMap(({ route, data }) => {
       const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
       return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const nowDate = new Date();
+    const today = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate());
     const limitDate = new Date(today);
     limitDate.setDate(limitDate.getDate() + 31);
 
@@ -178,6 +171,7 @@ export async function GET(request: NextRequest) {
       return evDate >= today && evDate < limitDate;
     });
 
+    // supprimer doublons
     const uniqMap = new Map<string, any>();
     filtered.forEach(ev => {
       const key = `${ev.title}-${ev.date}`;
@@ -190,7 +184,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ total: finalEvents.length, events: finalEvents });
   } catch (err: any) {
-    console.error("Erreur agrégation agendatoulouse:", err);
+    console.error("Erreur agendatoulouse:", err);
     return NextResponse.json({ error: err.message || "Erreur lors de l'agrégation" }, { status: 500 });
   }
 }
