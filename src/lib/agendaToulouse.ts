@@ -1,6 +1,6 @@
 import type { Event } from './types';
 
-const PLACEHOLDER_IMAGE = '/images/tourismehg31/placeholder.jpg';
+const PLACEHOLDER_IMAGE = '/images/placeholders.jpg';
 
 // Filtrage sur today + 31 jours
 const filterNext31Days = (events: Event[]) => {
