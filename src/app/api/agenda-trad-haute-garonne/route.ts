@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { XMLParser } from "fast-xml-parser";
 
 const RSS_URL =
-  "https://agendatrad.org/rss/events/next/France/Occitanie/Haute-Garonne.xml?lang=fr";
+  "https://agendatrad.org/rss/events/next/France/Occitanie/Haute-Garonne.xml?lang=fr&key=Zbt4p07ZfICSdyqfRzT5b8BSVmyb3izfR2lLvAUYp6SjIZaEX3qtCXiavgrfvFy2";
 
 const xmlParser = new XMLParser({ ignoreAttributes: false });
 
