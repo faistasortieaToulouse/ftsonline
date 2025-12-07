@@ -53,11 +53,20 @@ async function fetchHauteGaronneEvents() {
       'https://data.haute-garonne.fr/api/explore/v2.1/catalog/datasets/evenements-publics/records?limit=100'
     );
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Référence à minuit
+
     const events = res.data.results
       .map(normalizeHauteGaronne)
       .filter(Boolean);
+    
+    // NOUVELLE ÉTAPE: Filtrer uniquement les événements à venir (ou ceux d'aujourd'hui)
+    const futureEvents = events.filter(ev => {
+        const eventDate = new Date(ev.date);
+        return eventDate >= today;
+    });
 
-    const deduped = deduplicate(events);
+    const deduped = deduplicate(futureEvents); // Appliquer la déduplication sur les événements futurs
 
     // Tri par date
     deduped.sort((a, b) => new Date(a.date) - new Date(b.date));
