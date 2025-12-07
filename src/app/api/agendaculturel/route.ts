@@ -4,17 +4,32 @@ import { XMLParser } from "fast-xml-parser";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs"; // IMPORTANT SUR NETLIFY
 
-/**
- * Détecte l'encodage à partir du début du buffer XML.
- */
+// ------------------------------
+// UTILITAIRES DE DÉTECTION ET DE DATE
+// ------------------------------
 function detectEncoding(xmlBuffer: Uint8Array): string {
   const ascii = new TextDecoder("ascii").decode(xmlBuffer.slice(0, 200));
   const match = ascii.match(/encoding=["']([^"']+)["']/i);
   return match?.[1]?.toLowerCase() ?? "utf-8";
 }
 
+// Retourne la date UTC de minuit pour un jour donné
+function getMidnightUtc(date: Date): Date {
+  return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0));
+}
+
+// Retourne le timestamp de minuit UTC pour un jour donné
+function getMidnightTimestamp(date: Date): number {
+  return getMidnightUtc(date).getTime();
+}
+
+// Retourne la date UTC formatée en RFC 2822 (compatible RSS)
+function formatRfc2822(date: Date): string {
+  return date.toUTCString();
+}
+
 // ------------------------------
-// Catégories supportées
+// CATÉGORIES ET IMAGES
 // ------------------------------
 const CATEGORY_IMAGES: Record<string, string> = {
   "Concert": "/images/agenda31/agendconcert.jpg",
@@ -27,9 +42,6 @@ const CATEGORY_IMAGES: Record<string, string> = {
   "Défaut": "/images/agenda31/agendgenerique.jpg",
 };
 
-/**
- * Détecte la catégorie basée sur le titre et la description.
- */
 function detectCategory(title: string = "", description: string = ""): string {
   const text = (title + " " + description).toLowerCase();
 
@@ -44,29 +56,9 @@ function detectCategory(title: string = "", description: string = ""): string {
   return "Défaut";
 }
 
-/**
- * Formate la date actuelle au format RSS (RFC 2822) avec l'heure fixée à 00:00:00 GMT.
- */
-function formatTodayDateAtMidnight(): string {
-    const now = new Date();
-    // Crée une nouvelle date pour aujourd'hui, mais avec l'heure, minute, seconde, milliseconde
-    // mises à zéro (minuit) dans le fuseau horaire UTC.
-    const todayMidnightUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0));
-    
-    // Utilise toUTCString() pour obtenir le format compatible RSS/RFC 2822
-    return todayMidnightUtc.toUTCString();
-}
-
-/**
- * Obtient le temps Unix de minuit UTC pour une comparaison précise de la date seule.
- */
-function getTodayMidnightTimestamp(): number {
-    const now = new Date();
-    const todayMidnightUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0));
-    return todayMidnightUtc.getTime();
-}
-
-
+// ------------------------------
+// ROUTE API
+// ------------------------------
 export async function GET() {
   const feedUrl = "https://31.agendaculturel.fr/rss/concert/toulouse/";
 
@@ -96,54 +88,39 @@ export async function GET() {
     const items = parsed?.rss?.channel?.item ?? [];
     const arr = Array.isArray(items) ? items : [items];
 
-    // --- LOGIQUE DE VÉRIFICATION ET DE REMPLACEMENT DE DATE ---
-    const todayMidnightRss = formatTodayDateAtMidnight();
-    const todayMidnightTimestamp = getTodayMidnightTimestamp();
+    const todayMidnightTimestamp = getMidnightTimestamp(new Date());
 
     const itemsWithCategories = arr.map((item: any) => {
       let { pubDate } = item;
-      
-      // 1. Convertir la date de l'item en objet Date
-      const itemDate = new Date(pubDate);
+      let itemDate = new Date(pubDate);
 
-      // 2. Créer un timestamp de l'item avec l'heure mise à zéro
-      // Ceci permet une comparaison jour par jour, ignorant l'heure.
-      let itemDateTimestamp = itemDate.getTime();
-      
-      // La comparaison doit être faite contre l'heure de l'événement et non l'heure de publication. 
-      // Si on veut vraiment comparer la date passée par rapport à AUJOURD'HUI.
-      // S'assurer que le champ pubDate du flux RSS est bien la date de l'événement et non la date de publication.
-      
       if (itemDate.toString() !== "Invalid Date") {
-        // Obtenir le timestamp de la date de l'item à minuit (pour comparaison jour par jour)
-        const itemDateAtMidnight = new Date(Date.UTC(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate(), 0, 0, 0));
-        itemDateTimestamp = itemDateAtMidnight.getTime();
-      }
-      
+        const itemDateTimestamp = getMidnightTimestamp(itemDate);
 
-      // 3. Vérifier si la date de l'item (à minuit) est strictement antérieure à minuit aujourd'hui
-      if (itemDate.toString() !== "Invalid Date" && itemDateTimestamp < todayMidnightTimestamp) {
-        console.log(`[DATE REMPLACÉE] Ancienne date: ${pubDate} (Timestamp: ${itemDateTimestamp}) -> Nouvelle date: ${todayMidnightRss}`);
-        // Remplacer la date si elle est dépassée
-        pubDate = todayMidnightRss;
+        // Si la date est passée, on remplace par demain à minuit
+        if (itemDateTimestamp < todayMidnightTimestamp) {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const tomorrowMidnight = getMidnightUtc(tomorrow);
+          console.log(`[DATE REMPLACÉE] Ancienne date: ${pubDate} -> Nouvelle date: ${tomorrowMidnight.toUTCString()}`);
+          pubDate = formatRfc2822(tomorrowMidnight);
+        }
       }
-      
+
       const category = detectCategory(item.title, item.description);
       const image = CATEGORY_IMAGES[category] ?? CATEGORY_IMAGES["Défaut"];
 
       return {
         title: item.title,
         link: item.link,
-        pubDate, // Utilise la date potentiellement modifiée (avec l'heure fixée)
+        pubDate,
         description: item.description,
         category,
         image,
       };
     });
-    // --- FIN LOGIQUE DE VÉRIFICATION ET DE REMPLACEMENT DE DATE ---
 
     return NextResponse.json({ items: itemsWithCategories });
-
   } catch (err: any) {
     return NextResponse.json(
       { items: [], error: "Erreur serveur", details: String(err) },

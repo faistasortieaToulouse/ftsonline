@@ -5,11 +5,7 @@ import { getEvents as getOpenDataEvents } from "@/lib/events"; // OpenData + RSS
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
-// -------------------------
-// Constantes locales
-// -------------------------
 const PLACEHOLDER_IMAGE = "/images/placeholders.jpg";
-
 const THEME_IMAGES: Record<string, string> = {
   "Culture": "/images/tourismehg31/themeculture.jpg",
   "Education Emploi": "/images/tourismehg31/themeeducation.jpg",
@@ -22,9 +18,9 @@ const THEME_IMAGES: Record<string, string> = {
   "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
 };
 
-// Routes supplémentaires pour agrégation
 const API_ROUTES = [
   "agenda-trad-haute-garonne",
+  "agendaculturel",
   "cultureenmouvements",
   "demosphere",
   "hautegaronne",
@@ -37,9 +33,6 @@ const API_ROUTES = [
   "discord",
 ];
 
-// -------------------------
-// ⚡ Cache interne Meetup
-// -------------------------
 const meetupCache: { timestamp: number; data: any[] } = { timestamp: 0, data: [] };
 const MEETUP_CACHE_TTL = 1000 * 60 * 5; // 5 min
 
@@ -61,9 +54,6 @@ async function fetchMeetup(origin: string): Promise<any[]> {
   }
 }
 
-// -------------------------
-// Normalisation
-// -------------------------
 function normalize(str?: string) {
   return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
@@ -125,9 +115,6 @@ function normalizeEvent(ev: any, sourceName: string) {
   };
 }
 
-// -------------------------
-// Fetch avec retry
-// -------------------------
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -144,9 +131,6 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   }
 }
 
-// -------------------------
-// Endpoint principal
-// -------------------------
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
@@ -199,11 +183,13 @@ export async function GET(request: NextRequest) {
       if (!uniqMap.has(key)) uniqMap.set(key, ev);
     });
 
+    // 7️⃣ Tri final
     const finalEvents = Array.from(uniqMap.values()).sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
     return NextResponse.json({ total: finalEvents.length, events: finalEvents });
+
   } catch (err: any) {
     console.error("Erreur agendatoulouse:", err);
     return NextResponse.json({ error: err.message || "Erreur lors de l'agrégation" }, { status: 500 });
