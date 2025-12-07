@@ -1,4 +1,3 @@
-// src/app/api/agendatoulouse/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getEvents as getOpenDataEvents } from "@/lib/events";
 
@@ -38,10 +37,15 @@ const API_ROUTES = [
 ];
 
 // -------------------------
-// Cache interne Meetup
+// Cache Meetup
 // -------------------------
-const meetupCache: { timestamp: number; data: any[] } = { timestamp: 0, data: [] };
+const meetupCache = { timestamp: 0, data: [] as any[] };
 const MEETUP_CACHE_TTL = 1000 * 60 * 5;
+
+// 🔥 Fallback Meetup minimal en cas de 401
+function meetupFallback() {
+  return [];
+}
 
 async function fetchMeetup(origin: string): Promise<any[]> {
   const now = Date.now();
@@ -49,20 +53,27 @@ async function fetchMeetup(origin: string): Promise<any[]> {
 
   try {
     const res = await fetch(`${origin}/api/meetup-full`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    if (!res.ok) {
+      console.warn("⚠️ Meetup fetch failed:", res.status);
+      return meetupFallback();
+    }
+
     const json = await res.json();
     const events = Array.isArray(json.events) ? json.events : [];
+
     meetupCache.timestamp = now;
     meetupCache.data = events;
+
     return events;
   } catch (err) {
-    console.warn("⚠️ Meetup fetch failed:", err);
-    return [];
+    console.warn("⚠️ Meetup fetch crashed:", err);
+    return meetupFallback();
   }
 }
 
 // -------------------------
-// Normalisation
+// Outils normalisation
 // -------------------------
 function normalize(str?: string) {
   return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -72,6 +83,7 @@ function getThemeImage(thematique?: string) {
   if (!thematique) return PLACEHOLDER_IMAGE;
   const t = normalize(thematique.trim());
   if (t.startsWith("education")) return THEME_IMAGES["Education Emploi"];
+
   for (const key of Object.keys(THEME_IMAGES)) {
     if (normalize(key) === t) return THEME_IMAGES[key];
   }
@@ -82,13 +94,20 @@ function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
 
   const rawDate =
-    ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || ev.pubDate || null;
+    ev.date ||
+    ev.start ||
+    ev.startDate ||
+    ev.date_debut ||
+    ev.dateDebut ||
+    ev.pubDate ||
+    null;
 
-  const dateObj = rawDate ? new Date(rawDate) : null;
-  if (!dateObj || isNaN(dateObj.getTime())) return null;
+  const d = rawDate ? new Date(rawDate) : null;
+  if (!d || isNaN(d.getTime())) return null;
 
-  const dateISO = dateObj.toISOString();
-  const dateFormatted = dateObj.toLocaleString("fr-FR", {
+  const dateISO = d.toISOString();
+
+  const dateFormatted = d.toLocaleString("fr-FR", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -99,25 +118,29 @@ function normalizeEvent(ev: any, sourceName: string) {
 
   const fullAddress =
     ev.fullAddress || ev.location || ev.commune || ev.lieu_nom || ev.adresse || "";
+
   const location = ev.location || ev.commune || ev.lieu_nom || ev.ville || "";
 
-  let image;
+  let image = PLACEHOLDER_IMAGE;
 
-  if (sourceName === "tourismehautegaronne") {
-    image = ev.image || ev.coverImage || getThemeImage(ev.thematique);
-  } else if (sourceName === "demosphere") {
-    image = ev.image || "/logo/demosphereoriginal.png";
-  } else if (["ut3-min", "capitole-min"].includes(sourceName)) {
-    const titleLower = (ev.title || "").toLowerCase();
-    if (titleLower.includes("ciné") || titleLower.includes("cine"))
-      image = "/images/capitole/capicine.jpg";
-    else if (titleLower.includes("conf"))
-      image = "/images/capitole/capiconf.jpg";
-    else if (titleLower.includes("expo"))
-      image = "/images/capitole/capiexpo.jpg";
-    else image = "/images/capitole/capidefaut.jpg";
-  } else {
-    image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
+  switch (sourceName) {
+    case "tourismehautegaronne":
+      image = ev.image || ev.coverImage || getThemeImage(ev.thematique);
+      break;
+
+    case "demosphere":
+      image = ev.image || "/logo/demosphereoriginal.png";
+      break;
+
+    case "ut3-min":
+    case "capitole-min": {
+      const t = (ev.title || "").toLowerCase();
+      if (t.includes("ciné") || t.includes("cine")) image = "/images/capitole/capicine.jpg";
+      else if (t.includes("conf")) image = "/images/capitole/capiconf.jpg";
+      else if (t.includes("expo")) image = "/images/capitole/capiexpo.jpg";
+      else image = "/images/capitole/capidefaut.jpg";
+      break;
+    }
   }
 
   return {
@@ -135,7 +158,7 @@ function normalizeEvent(ev: any, sourceName: string) {
 }
 
 // -------------------------
-// Fetch avec retry
+// Retry universel
 // -------------------------
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
@@ -145,6 +168,7 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
 
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(id);
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       return await res.json();
@@ -159,27 +183,40 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
 // GET principal
 // -------------------------
 export async function GET(request: NextRequest) {
-  let origin = request.nextUrl.origin;
+  const previewOrigin = request.nextUrl.origin;
 
-  // 🔥 Correction automatique en localhost & vercel
-  if (origin.includes("localhost")) {
+  // 🔥 Détection de preview Vercel
+  const isPreview = previewOrigin.includes("vercel.app") &&
+                    !previewOrigin.includes("ftstoulouse.vercel.app");
+
+  let origin = previewOrigin;
+
+  if (previewOrigin.includes("localhost")) {
     origin = "http://localhost:9002";
+  } else if (isPreview) {
+    origin = process.env.NEXT_PUBLIC_BASE_URL || "https://ftstoulouse.vercel.app";
   }
 
+  console.log("🌐 Origin utilisé pour les routes internes:", origin);
+
+  // -------------------------
+  // Pipelines
+  // -------------------------
   try {
     const results: { route: string; data: any }[] = [];
 
-    // Meetup
+    // 1. Meetup
     const meetupEvents = await fetchMeetup(origin);
     results.push({ route: "meetup-full", data: { events: meetupEvents } });
 
-    // Autres routes
+    // 2. Autres routes
     const otherResults = await Promise.all(
       API_ROUTES.map(async (route) => {
         try {
           const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
           return { route, data };
         } catch {
+          console.warn(`⚠️ Route ${route} indisponible`);
           return { route, data: [] };
         }
       })
@@ -187,11 +224,11 @@ export async function GET(request: NextRequest) {
 
     results.push(...otherResults);
 
-    // OpenData
-    const openDataEvents = await getOpenDataEvents();
-    results.push({ route: "opendata", data: openDataEvents });
+    // 3. OpenData Fallback
+    const openData = await getOpenDataEvents();
+    results.push({ route: "opendata", data: openData });
 
-    // Normalisation
+    // 4. Agrégation + normalisation
     const allEvents = results.flatMap(({ route, data }) => {
       const list =
         Array.isArray(data.events)
@@ -202,34 +239,38 @@ export async function GET(request: NextRequest) {
           ? data
           : [];
 
-      return list.map((ev) => normalizeEvent(ev, route)).filter(Boolean);
+      return list.map((e) => normalizeEvent(e, route)).filter(Boolean);
     });
 
-    // Filtrage 31 jours
+    // 5. Fenêtre 31 jours
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const limit = new Date(today);
-    limit.setDate(today.getDate() + 31);
 
-    const filtered = allEvents.filter((e) => {
-      const d = new Date(e.date);
+    const limit = new Date(today);
+    limit.setDate(limit.getDate() + 31);
+
+    const filtered = allEvents.filter((ev) => {
+      const d = new Date(ev.date);
       return d >= today && d <= limit;
     });
 
-    // Déduplication
+    // 6. Déduplication
     const uniq = new Map();
     filtered.forEach((ev) => uniq.set(`${ev.title}-${ev.date}`, ev));
 
-    // Tri final
+    // 7. Tri final
     const finalEvents = [...uniq.values()].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
-    return NextResponse.json({ total: finalEvents.length, events: finalEvents });
+    return NextResponse.json({
+      total: finalEvents.length,
+      events: finalEvents,
+    });
   } catch (err: any) {
-    console.error("Erreur agendatoulouse:", err);
+    console.error("🔥 Erreur agendatoulouse:", err);
     return NextResponse.json(
-      { error: err.message || "Erreur lors de l'agrégation" },
+      { error: err.message || "Erreur interne" },
       { status: 500 }
     );
   }
