@@ -782,9 +782,7 @@ const data = [
   { nom: 'église Trinité dispe', numero: '8 & 12', voie: 'rue', rue: 'Trinité', type: 'ancien monument', note: 'disparu' },
   { nom: 'couvent des trinitaires', numero: '8 & 12', voie: 'rue', rue: 'Trinité', type: 'ancien monument', note: 'disparu' },
   { nom: 'collège Secondat', numero: 42, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' },
-  { nom: 'collège Verdale', numero: 57, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' },
-  { nom: 'couvent des Capucins', numero: 57, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' },
-  { nom: 'bis ancien couvent', numero: '32bis', voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' }
+  { nom: 'collège Verdale', numero: 57, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' }
 ];
 
 export function GET() {
