@@ -121,7 +121,7 @@ export default function VisiteMonumentPage() {
       />
 
       <h1 className="text-3xl font-extrabold mb-6">
-        🗺️ Monuments militaires & civils par quartier
+        🗺️ Monuments militaires, religieux & civils par quartier
       </h1>
 
       {/* Carte */}
