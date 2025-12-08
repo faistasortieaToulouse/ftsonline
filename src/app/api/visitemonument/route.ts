@@ -53,7 +53,7 @@ const data = [
   { "nom": "Narbonais", "numero": 2, "voie": "allées", "rue": "Jules Guesde", "type": "château", "note": "disparu" },
   { "nom": "Lanusse", "numero": 102, "voie": "chem", "rue": "Lanusse", "type": "château", "note": "résidence" },
   { "nom": "Lapujade", "numero": 129, "voie": "chem", "rue": "Lapujade", "type": "château", "note": "résidence" },
-  { "nom": "Petit Capitole", "numero": 153, "voie": "avenue", "rue": "Lardenne", "type": "château", "note": "colonie },
+  { nom: "Petit Capitole", numero: 153, voie: "avenue", rue: "Lardenne", type: "château", note: "colonie" },
   { "nom": "Corail", "numero": 425, "voie": "rte", "rue": "Launaguet", "type": "château", "note": "disparu" },
   { "nom": "Le Calquet", "numero": 100, "voie": "chem", "rue": "le Goff", "type": "château", "note": "cadastres" },
   { "nom": "Monlon", "numero": 25, "voie": "chem", "rue": "Lestang", "type": "château", "note": "pépinière" },
