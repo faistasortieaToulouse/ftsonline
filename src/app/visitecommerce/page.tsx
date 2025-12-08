@@ -1,131 +1,157 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
+import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 
-// Interface pour les données brutes (depuis l'API)
+// Interface basée sur la structure des données de votre API /api/visitecommerce
 interface CommercePlace {
   nomLieu: string;
-  num: string;
-  typeRue: string;
-  nomRue: string;
+  num: string; // Numéro de la rue
+  typeRue: string; // "rue", "place", "quai", etc.
+  nomRue: string; // Nom de la voie
   quartier: string;
-  établissement: string;
-  commentaire: string;
+  établissement: string; // Type de commerce/lieu
+  commentaire: string; // Commentaire/Description (e.g., "ancien", "persan", "Galerie")
 }
 
-// Interface pour les données avec coordonnées (prêtes pour la carte)
-interface MappedPlace extends CommercePlace {
-    lat: number;
-    lng: number;
-}
-
-// Configuration de la carte
-const containerStyle = {
-  width: '100%',
-  height: '700px'
-};
-
-const TOULOUSE_CENTER = {
-  lat: 43.6047, // Coordonnées approximatives de Toulouse
-  lng: 1.4442
-};
-
-// --- Composant principal ---
-const VisiteCommercePage: React.FC = () => {
-  const [places, setPlaces] = useState<MappedPlace[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function CommercePlacesPage() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<google.maps.Map | null>(null);
+  const [places, setPlaces] = useState<CommercePlace[]>([]);
+  const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const API_KEY = useMemo(() => process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'VOTRE_CLE_API_GOOGLE_MAPS', []);
-
+  // --- 1. Récupération des données de l'API ---
   useEffect(() => {
-    const fetchAndGeocodePlaces = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        // 1. Récupérer les données depuis l'API locale
-        const response = await fetch('/api/visitecommerce');
-        if (!response.ok) {
-          throw new Error(`Erreur lors de la récupération des données: ${response.statusText}`);
+    fetch("/api/visitecommerce")
+      .then(async (res) => {
+        const text = await res.text();
+        try {
+          const data: CommercePlace[] = JSON.parse(text);
+          setPlaces(data);
+        } catch (err) {
+          console.error("Erreur JSON /api/visitecommerce :", text, err);
+          setError("Erreur lors de la lecture des données de l'API.");
         }
-        const rawPlaces: CommercePlace[] = await response.json();
+      })
+      .catch((err) => {
+        console.error("Erreur Fetch /api/visitecommerce :", err);
+        setError("Erreur de connexion à l'API des commerces.");
+      });
+  }, []);
 
-        // On utilise l'API de géocodage pour convertir les adresses en lat/lng
-        const geocoder = new google.maps.Geocoder();
-        const geocodePromises = rawPlaces.map(async (place) => {
-          const address = `${place.num} ${place.typeRue} ${place.nomRue}, Toulouse`;
-          
-          try {
-            const result = await geocoder.geocode({ address });
-            if (result.results.length > 0) {
-              const location = result.results[0].geometry.location;
-              return {
-                ...place,
-                lat: location.lat(),
-                lng: location.lng(),
-              } as MappedPlace;
-            } else {
-              console.warn(`Adresse non trouvée pour: ${address}`);
-              return null; // Ignore les lieux qui ne peuvent pas être géocodés
-            }
-          } catch (e) {
-            console.error(`Erreur de géocodage pour ${address}:`, e);
-            return null;
+  // --- 2. Initialisation de la carte et des marqueurs ---
+  useEffect(() => {
+    // S'assurer que le script Maps est chargé, le conteneur existe et les données sont disponibles
+    if (!isReady || !mapRef.current || places.length === 0) return;
+
+    if (error) return; // Ne pas continuer s'il y a une erreur
+
+    // Initialisation de la carte, centrée sur Toulouse
+    mapInstance.current = new google.maps.Map(mapRef.current, {
+      zoom: 14,
+      center: { lat: 43.6045, lng: 1.444 }, // Centre de Toulouse
+      scrollwheel: true,
+      gestureHandling: "greedy",
+    });
+
+    const geocoder = new google.maps.Geocoder();
+
+    places.forEach((place, i) => {
+      if (!place.nomRue) return;
+
+      // Construction de l'adresse complète pour le géocodage
+      const numero = place.num && place.num !== "0" ? `${place.num} ` : "";
+      const adresse = `Toulouse, ${numero}${place.typeRue} ${place.nomRue}`;
+
+      // Utilisation de setTimeout pour espacer les requêtes de géocodage 
+      // et éviter de dépasser les limites de l'API (200ms par requête ici)
+      setTimeout(() => {
+        geocoder.geocode({ address: adresse }, (results, status) => {
+          if (status !== "OK" || !results?.[0]) {
+            console.warn(`Adresse non trouvée pour le commerce: "${adresse}" — status: ${status}`);
+            return;
           }
+
+          const marker = new google.maps.Marker({
+            map: mapInstance.current!,
+            position: results[0].geometry.location,
+            label: `${i + 1}`, // Numéroter les marqueurs
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 8, // Taille plus petite pour les commerces
+              fillColor: "#007bff", // Couleur bleue pour distinguer
+              fillOpacity: 1,
+              strokeWeight: 1,
+              strokeColor: "#000000",
+            },
+            title: place.nomLieu,
+          });
+
+          // Contenu de la fenêtre d'information
+          const infowindow = new google.maps.InfoWindow({
+            content: `
+              <strong>${i + 1}. ${place.nomLieu}</strong><br>
+              ${numero}${place.typeRue} ${place.nomRue}<br>
+              Quartier : ${place.quartier}<br>
+              Type : ${place.établissement}<br>
+              Commentaire : ${place.commentaire || "N/A"}
+            `,
+          });
+
+          marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
         });
+      }, i * 250); // Délai de 250ms entre chaque requête
+    });
 
-        const mappedPlaces = (await Promise.all(geocodePromises)).filter((p): p is MappedPlace => p !== null);
-        setPlaces(mappedPlaces);
-        
-      } catch (e) {
-        console.error("Erreur complète:", e);
-        setError(e instanceof Error ? e.message : "Une erreur inconnue s'est produite.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  }, [isReady, places, error]);
 
-    // Assurez-vous que l'API de géocodage est chargée avant de l'utiliser
-    if (typeof window !== 'undefined' && API_KEY && API_KEY !== 'VOTRE_CLE_API_GOOGLE_MAPS') {
-        // On exécute le fetch et géocodage uniquement si l'API est chargée ou que c'est un client
-        fetchAndGeocodePlaces();
-    } else if (API_KEY === 'VOTRE_CLE_API_GOOGLE_MAPS') {
-        setError("Veuillez remplacer 'VOTRE_CLE_API_GOOGLE_MAPS' par votre clé API Google Maps.");
-        setLoading(false);
-    }
-  }, [API_KEY]);
 
-  if (loading) return <p>Chargement des données et géocodage des adresses...</p>;
-  if (error) return <p>Erreur: {error}</p>;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-  // Le composant Map ne doit être rendu que si les données sont prêtes
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Carte des Commerces et Lieux</h1>
-      <p>Affichage de {places.length} lieu(x) sur la carte.</p>
+    <div className="p-4 max-w-7xl mx-auto">
+      {/* Chargement asynchrone du script Google Maps */}
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&async=1`}
+        strategy="afterInteractive"
+        onLoad={() => setIsReady(true)}
+      />
 
-      <LoadScript googleMapsApiKey={API_KEY}>
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={TOULOUSE_CENTER}
-          zoom={14}
-        >
-          {places.map((place, index) => (
-            <MarkerF
-              key={index}
-              position={{ lat: place.lat, lng: place.lng }}
-              title={place.nomLieu}
-              onClick={() => {
-                alert(`Lieu: ${place.nomLieu}\nAdresse: ${place.num} ${place.typeRue} ${place.nomRue}\nType: ${place.établissement} (${place.commentaire})`);
-              }}
-            />
-          ))}
-        </GoogleMap>
-      </LoadScript>
+      <h1 className="text-3xl font-extrabold mb-6">
+        🛍️ Visite des Commerces et Lieux Historiques
+      </h1>
+
+      {/* Conteneur de la carte */}
+      <div
+        ref={mapRef}
+        style={{ height: "70vh", width: "100%" }}
+        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
+      >
+        {error && <p className="text-red-600">Erreur : {error}</p>}
+        {!isReady && !error && <p>Chargement de la carte…</p>}
+        {isReady && !error && places.length === 0 && <p>Données des commerces en cours de chargement...</p>}
+      </div>
+
+      <h2 className="text-2xl font-semibold mb-4">
+        Liste des Commerces ({places.length})
+      </h2>
+
+      {/* Liste des lieux en bas de page */}
+      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {places.map((place, i) => (
+          <li key={i} className="p-4 border rounded bg-white shadow">
+            <p className="text-lg font-bold">{i + 1}. {place.nomLieu}</p>
+            <p className="italic">{place.num} {place.typeRue} {place.nomRue} — {place.quartier}</p>
+            <p>Type : {place.établissement}</p>
+            {place.commentaire && <p>Commentaire : {place.commentaire}</p>}
+          </li>
+        ))}
+      </ul>
+
+      <p className="mt-6 text-center font-semibold text-gray-500">
+        Informations géolocalisées via Google Maps.
+      </p>
     </div>
   );
-};
-
-export default VisiteCommercePage;
+}
