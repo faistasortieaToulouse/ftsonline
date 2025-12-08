@@ -90,7 +90,7 @@ export default function VisiteProprietairePage() {
       />
 
       <h1 className="text-3xl font-extrabold mb-6">
-        🏛️ Propriétaires historiques — Rue des Renforts
+        🏛️ Propriétaires historiques — quartier des Carmes
       </h1>
 
       <div
