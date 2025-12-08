@@ -1,11 +1,17 @@
-// src/app/visitemonument/page.tsx
-import React from 'react';
+'use client';
 
-export default async function Page() {
-  const res = await fetch('http://localhost:3000/api/visitemonument', {
-    cache: 'no-store'
-  });
-  const items = await res.json();
+import React, { useEffect, useState } from 'react';
+
+export default function Page() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/visitemonument', {
+      cache: 'no-store'
+    })
+      .then(res => res.json())
+      .then(data => setItems(data));
+  }, []);
 
   return (
     <div className="p-6">
