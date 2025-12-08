@@ -15,9 +15,11 @@ interface Monument {
 export default function VisiteMonumentPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
+
   const [places, setPlaces] = useState<Monument[]>([]);
   const [isReady, setIsReady] = useState(false);
 
+  // --- charger les données ---
   useEffect(() => {
     fetch("/api/visitemonument")
       .then(async (res) => {
@@ -26,17 +28,18 @@ export default function VisiteMonumentPage() {
           const data: Monument[] = JSON.parse(text);
           setPlaces(data);
         } catch (err) {
-          console.error("Erreur JSON /api/visitemonument :", text, err);
+          console.error("❌ Erreur JSON /api/visitemonument :", text, err);
         }
       })
       .catch(console.error);
   }, []);
 
+  // --- Carte Google Maps ---
   useEffect(() => {
     if (!isReady || !mapRef.current || places.length === 0) return;
 
     mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 13.5,
+      zoom: 13,
       center: { lat: 43.6045, lng: 1.444 },
       scrollwheel: true,
       gestureHandling: "greedy",
@@ -53,7 +56,7 @@ export default function VisiteMonumentPage() {
       setTimeout(() => {
         geocoder.geocode({ address: adresse }, (results, status) => {
           if (status !== "OK" || !results?.[0]) {
-            console.warn(`Adresse non trouvée: "${adresse}" — status: ${status}`);
+            console.warn(`⚠ Adresse introuvable: "${adresse}" — status: ${status}`);
             return;
           }
 
@@ -89,14 +92,16 @@ export default function VisiteMonumentPage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
+      {/* --- Script Google Maps --- */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&async=1`}
         strategy="afterInteractive"
         onLoad={() => setIsReady(true)}
       />
 
-      <h1 className="text-3xl font-extrabold mb-6">🗺️ Monuments militaires & quartiers</h1>
+      <h1 className="text-3xl font-extrabold mb-6">🗺️ Visite — Monuments militaires & quartiers</h1>
 
+      {/* --- Carte --- */}
       <div
         ref={mapRef}
         style={{ height: "70vh", width: "100%" }}
@@ -105,17 +110,27 @@ export default function VisiteMonumentPage() {
         {!isReady && <p>Chargement de la carte…</p>}
       </div>
 
+      {/* --- Liste des lieux --- */}
       <h2 className="text-2xl font-semibold mb-4">Liste des lieux ({places.length})</h2>
 
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {places.map((place, i) => (
-          <li key={i} className="p-4 border rounded bg-white shadow">
-            <p className="text-lg font-bold">{i + 1}. {place.nom}</p>
-            <p className="italic">{place.numero} {place.voie} {place.rue}</p>
-            <p>Type : {place.type}</p>
-            {place.note && <p>Note : {place.note}</p>}
-          </li>
-        ))}
+        {places.map((place, i) => {
+          const numero =
+            place.numero && place.numero !== 0 ? `${place.numero} ` : "";
+
+          return (
+            <li key={i} className="p-4 border rounded bg-white shadow">
+              <p className="text-lg font-bold">
+                {i + 1}. {place.nom}
+              </p>
+              <p className="italic">
+                {numero}{place.voie} {place.rue}
+              </p>
+              <p>Type : {place.type}</p>
+              {place.note && <p>Note : {place.note}</p>}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
