@@ -91,7 +91,7 @@ const data = [
   { "nom": "Petit Niquet", "numero": 49, "voie": "chem", "rue": "Vallon", "type": "château", "note": "résidence" },
   { "nom": "château des Potiers", "numero": 14, "voie": "rue", "rue": "Vases", "type": "château", "note": "école" },
   { "nom": "Doujat", "numero": 35, "voie": "rue", "rue": "Velasquez", "type": "château", "note": "résidence" },
-    { "nom": "Ecole Privée Notre Dame", "numero": 42, "voie": "rue", "rue": "36 Ponts", "type": "église", "note": "école" },
+  { "nom": "Ecole Privée Notre Dame", "numero": 42, "voie": "rue", "rue": "36 Ponts", "type": "église", "note": "école" },
   { "nom": "Sainte-Famille des Minimes", "numero": 1, "voie": "rue", "rue": "Abbé Sicard", "type": "église", "note": "collège" },
   { "nom": "Patte D'oie", "numero": 57, "voie": "rue", "rue": "Adolphe Coll", "type": "église", "note": "" },
   { "nom": "Croix-Daurade", "numero": 122, "voie": "rte", "rue": "Albi", "type": "église", "note": "" },
@@ -266,7 +266,6 @@ const data = [
   { "nom": "ferme rue Velasquez", "numero": 86, "voie": "rue", "rue": "Velasquez", "type": "ferme", "note": "" },
   { "nom": "Notre Dame de la Présentation", "numero": 47, "voie": "rue", "rue": "Trentre-six Ponts", "type": "foyer", "note": "" },
   { "nom": "halle Arnaud-Bernard", "numero": 0, "voie": "place", "rue": "Arnaud-Bernard", "type": "halle", "note": "" },
-  [
   { "nom": "Ozenne", "numero": 147, "voie": "rte", "rue": "Albi", "type": "château", "note": "mairie" },
   { "nom": "h. Porte Arnaud Bernard", "numero": 0, "voie": "rue", "rue": "Arnaud Bernard", "type": "hôpital", "note": "A. Bernard" },
   { "nom": "h. Saint-Jacques Bout du Pont", "numero": 0, "voie": "chaussée", "rue": "Bazacle", "type": "hôpital", "note": "Bazacle" },
@@ -503,7 +502,7 @@ const data = [
   { nom: 'monument aux morts', numero: 0, voie: 'place', rue: 'Vigneau', type: 'morts', note: '' },
   { nom: 'monument aux morts', numero: 2, voie: 'rue', rue: 'Viguerie', type: 'morts', note: 'hôpital' },
   { nom: 'monument aux morts', numero: 2, voie: 'rue', rue: 'Viguerie', type: 'morts', note: 'hôpital' },
-    { nom: 'Mosquée Mirail', numero: 1, voie: 'place', rue: 'E. Bouillères', type: 'mosquée', note: '' },
+  { nom: 'Mosquée Mirail', numero: 1, voie: 'place', rue: 'E. Bouillères', type: 'mosquée', note: '' },
   { nom: 'Masjid Omar Ibn Al-Khattab', numero: 3, voie: 'chem', rue: 'Edgard Varèse', type: 'mosquée', note: '' },
   { nom: 'Mosquée Turque', numero: 4, voie: 'rue', rue: 'Emile Baudot', type: 'mosquée', note: '' },
   { nom: 'Mosquée Rahma', numero: 59, voie: 'rue', rue: 'Faourette', type: 'mosquée', note: '' },
@@ -587,7 +586,7 @@ const data = [
   { nom: 'Église orthodoxe russe', numero: 108, voie: 'avenue', rue: 'Lavaur', type: 'orthodoxe', note: '' },
   { nom: 'La Nativité de la Mère de Dieu', numero: 162, voie: 'avenue', rue: 'Pic du Ger', type: 'orthodoxe', note: 'Muret' },
   { nom: 'église orthodoxe ukrainienne', numero: 8, voie: 'rue', rue: 'Ukraine', type: 'orthodoxe', note: 'Lourdes' },
-    { nom: 'Kadampa Vajravarahi', numero: 6, voie: 'rue', rue: 'A. Fourtanier', type: 'pagode', note: '' },
+  { nom: 'Kadampa Vajravarahi', numero: 6, voie: 'rue', rue: 'A. Fourtanier', type: 'pagode', note: '' },
   { nom: 'Sambacademia', numero: 110, voie: 'rue', rue: 'A. Viadieu', type: 'pagode', note: '' },
   { nom: 'Quang Duc', numero: 43, voie: 'rte', rue: 'Aussonne', type: 'pagode', note: 'Cornebarrieu' },
   { nom: 'Chùa Quảng Đức', numero: 43, voie: 'rte', rue: 'Aussonne', type: 'pagode', note: 'Cornebarrieu' },
@@ -712,7 +711,7 @@ const data = [
   { nom: 'syna, entrée juifs', numero: 3, voie: 'rue', rue: 'Joutx Aigues', type: 'ancien monument', note: 'disparu' },
   { nom: 'temple', numero: 35, voie: 'rue', rue: 'Lafayette', type: 'ancien monument', note: 'disparu' },
   { nom: 'Bénédictines de Notre-Dame du Sac', numero: 17, voie: 'rue', rue: 'Larrey', type: 'ancien monument', note: 'disparu' },
-    { nom: 'église Saint-Jérôme', numero: '2 bis', voie: 'rue', rue: 'Lieutenant-Pélissier', type: 'ancien monument', note: 'disparu' },
+  { nom: 'église Saint-Jérôme', numero: '2 bis', voie: 'rue', rue: 'Lieutenant-Pélissier', type: 'ancien monument', note: 'disparu' },
   { nom: 'commanderie Saint-Antoine de Vienne', numero: '4 & 10', voie: 'rue', rue: 'Lieutenant-Pélissier', type: 'ancien monument', note: 'disparu' },
   { nom: 'collège de Foix', numero: 9, voie: 'rue', rue: 'Lois', type: 'ancien monument', note: 'disparu' },
   { nom: 'Emplacement de la chapelle de Rieux', numero: 13, voie: 'rue', rue: 'Lois', type: 'ancien monument', note: 'disparu' },
@@ -782,7 +781,11 @@ const data = [
   { nom: 'église Trinité dispe', numero: '8 & 12', voie: 'rue', rue: 'Trinité', type: 'ancien monument', note: 'disparu' },
   { nom: 'couvent des trinitaires', numero: '8 & 12', voie: 'rue', rue: 'Trinité', type: 'ancien monument', note: 'disparu' },
   { nom: 'collège Secondat', numero: 42, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' },
-  { nom: 'collège Verdale', numero: 57, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' }
+  { nom: 'collège Verdale', numero: 57, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' },
+  { nom: 'couvent des Capucins', numero: 57, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' },
+  { nom: 'bis ancien couvent', numero: '32bis', voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' },
+  { nom: 'couvent des Capucins', numero: 57, voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' },
+  { nom: 'bis ancien couvent', numero: '32bis', voie: 'rue', rue: 'Valade', type: 'ancien monument', note: 'disparu' }
 ];
 
 export function GET() {
