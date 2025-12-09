@@ -4,11 +4,10 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
-// 💡 IMPORTER DIRECTEMENT LES DONNÉES DU FICHIER ROUTE.TS 
-// (Ceci résout l'erreur ECONNREFUSED pendant le build)
+// 💡 IMPORTEZ DIRECTEMENT LES DONNÉES DU FICHIER ROUTE.TS 
+// (Ceci garantit que le build Next.js fonctionne sans erreur ECONNREFUSED)
+// Assurez-vous que le chemin d'importation est correct dans votre structure de projet :
 import { ecrivainsData, Ecrivain } from '@/app/api/ecrivainsaude/route'; 
-// Ajustez le chemin d'import si nécessaire (ex: '../../../app/api/ecrivainsaude/route')
-
 
 export default function EcrivainsAudePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -16,49 +15,58 @@ export default function EcrivainsAudePage() {
   const [isReady, setIsReady] = useState(false);
   const [markersCount, setMarkersCount] = useState(0);
 
-  // Les données sont chargées statiquement via l'importation directe
   const establishments = ecrivainsData;
 
   useEffect(() => {
-    if (!isReady || !mapRef.current || establishments.length === 0) return;
-
-    // --- INITIALISATION DE LA CARTE ---
-    const centerLatLng = { lat: 43.15, lng: 2.3 }; // Centre de l'Aude (Carcassonne/Narbonne)
+    // 1. Vérifications initiales
+    if (!isReady || !mapRef.current) return;
     
-    mapInstance.current = new google.maps.Map(mapRef.current, {
+    // 2. Empêcher la réinitialisation de la carte. L'effet doit s'exécuter UNE SEULE FOIS.
+    if (mapInstance.current) return; 
+
+    const centerLatLng = { lat: 43.15, lng: 2.3 }; 
+    
+    // --- INITIALISATION DE LA CARTE ---
+    const newMap = new google.maps.Map(mapRef.current, {
       zoom: 9,
       center: centerLatLng,
       scrollwheel: true,
       gestureHandling: "greedy",
     });
+    mapInstance.current = newMap;
+
 
     const geocoder = new google.maps.Geocoder();
-    let count = 0; // Compteur pour le label
-    let markersPlaced = 0; // Compteur des marqueurs placés
+    let count = 0;
+    let markersPlaced = 0;
+    const allMarkers: google.maps.Marker[] = []; // Liste pour le nettoyage
 
     // --- PLACEMENT DES MARQUEURS ---
     establishments.forEach((ecrivain) => {
-      // Utilisez la commune complète (Nom, Département) pour le géocodage
       const address = ecrivain.commune; 
       
+      // Le géocodage est asynchrone, nous devons être prêts pour le nettoyage
       geocoder.geocode({ address: address, region: 'fr' }, (results, status) => {
-        if (status === "OK" && results?.[0]) {
+        // Double-check: S'assurer que le résultat est OK ET que la carte existe encore
+        if (status === "OK" && results?.[0] && mapInstance.current) {
           count++;
           
           const marker = new google.maps.Marker({
-            map: mapInstance.current!,
+            map: mapInstance.current, 
             position: results[0].geometry.location,
             label: `${count}`,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
               scale: 8,
-              fillColor: "#007BFF", // Bleu pour les écrivains
+              fillColor: "#007BFF",
               fillOpacity: 1,
               strokeWeight: 1,
               strokeColor: "#333333",
             },
             title: ecrivain.nom,
           });
+
+          allMarkers.push(marker); // Ajouter le marqueur à la liste
 
           const infowindow = new google.maps.InfoWindow({
             content: `
@@ -75,20 +83,21 @@ export default function EcrivainsAudePage() {
           
           markersPlaced++;
           setMarkersCount(markersPlaced);
-
-        } else if (status === "ZERO_RESULTS") {
-            // console.warn(`Géocodage échoué pour: ${address} - ZERO_RESULTS`);
-        } else {
-            // console.error(`Géocodage échoué pour: ${address} - Status: ${status}`);
         }
       });
     });
 
-  }, [isReady, establishments]);
+    // 3. Fonction de nettoyage (CLEANUP) : CRUCIALE
+    // Supprime tous les marqueurs si le composant est démonté (résout le DOMException)
+    return () => {
+        allMarkers.forEach(marker => marker.setMap(null));
+        mapInstance.current = null; // Optionnel, mais bonne pratique
+    };
+
+  }, [isReady]); // DÉPENDANCE CORRECTE : l'effet se lance uniquement quand l'API est prête
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      {/* ⚠️ Assurez-vous d'avoir bien défini NEXT_PUBLIC_GOOGLE_MAPS_API_KEY dans votre environnement Vercel */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         strategy="afterInteractive"
