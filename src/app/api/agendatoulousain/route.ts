@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     const baseUrl = getBaseUrl(req);
 
     const [tradRes, cultRes] = await Promise.all([
-      fetch(`${baseUrl}/api/agenda-trad`, { cache: "no-store" }),
+      fetch(`${baseUrl}/api/agenda-trad-haute-garonne`, { cache: "no-store" }),
       fetch(`${baseUrl}/api/agendaculturel`, { cache: "no-store" })
     ]);
 
