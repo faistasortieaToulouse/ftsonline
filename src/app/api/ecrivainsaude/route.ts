@@ -1,17 +1,7 @@
-// app/api/ecrivainsaude/route.ts
-
 import { NextResponse } from 'next/server';
 
-// Définition de l'interface pour la cohérence
-export interface Ecrivain {
-  nom: string;
-  commune: string;
-  dates: string | null;
-  description: string | null;
-}
-
 // Liste exportée pour l'importation directe dans page.tsx (résoud l'erreur ECONNREFUSED)
-export const ecrivainsData: Ecrivain[] = [
+const ecrivainsData: Ecrivain[] = [
   { "nom": "Louis Bousquet", "commune": "Armissan, Aude", "dates": null, "description": null },
   { "nom": "Gaston Bonheur", "commune": "Belvianes, Aude", "dates": "1913-1980", "description": "journaliste et romancier" },
   { "nom": "Leon de belvis", "commune": "Belvis, Aude", "dates": null, "description": null },
