@@ -12,24 +12,28 @@ interface Ecrivain {
   lng: number;
 }
 
-// Exemple de données avec coordonnées
+// Données avec coordonnées lat/lng
 import { ecrivainsData } from "@/app/api/ecrivainsaude/route";
 
 export default function EcrivainsAudePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
   const [markersCount, setMarkersCount] = useState(0);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    if (!window.google?.maps || !mapRef.current) return;
+    if (!isReady || !mapRef.current) return;
 
-    const map = new google.maps.Map(mapRef.current, {
-      zoom: 9,
-      center: { lat: 43.15, lng: 2.3 },
-      gestureHandling: "greedy",
-    });
-    mapInstance.current = map;
+    // Crée la carte UNE SEULE FOIS
+    if (!mapInstance.current) {
+      mapInstance.current = new google.maps.Map(mapRef.current, {
+        zoom: 9,
+        center: { lat: 43.15, lng: 2.3 },
+        gestureHandling: "greedy",
+      });
+    }
 
+    const map = mapInstance.current;
     let count = 0;
 
     ecrivainsData.forEach((e) => {
@@ -55,19 +59,19 @@ export default function EcrivainsAudePage() {
         `,
       });
 
-      marker.addListener("click", () => {
-        info.open({ anchor: marker, map });
-      });
+      marker.addListener("click", () => info.open({ anchor: marker, map }));
     });
 
     setMarkersCount(count);
-  }, []);
+  }, [isReady]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
+      {/* Chargement du script Google Maps */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         strategy="afterInteractive"
+        onLoad={() => setIsReady(true)}
       />
 
       <h1 className="text-3xl font-extrabold mb-6">🖋️ Écrivains de l'Aude sur la carte</h1>
@@ -79,8 +83,10 @@ export default function EcrivainsAudePage() {
       <div
         ref={mapRef}
         style={{ height: "70vh", width: "100%" }}
-        className="mb-8 border rounded-lg bg-gray-100"
-      />
+        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
+      >
+        {!isReady && <p>Chargement de la carte…</p>}
+      </div>
 
       <h2 className="text-2xl font-semibold mb-4">Liste complète des écrivains</h2>
 
