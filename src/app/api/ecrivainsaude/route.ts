@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
 
 // Liste exportée pour l'importation directe dans page.tsx (résoud l'erreur ECONNREFUSED)
-const ecrivainsData: Ecrivain[] = [
+export interface Ecrivain {
+  nom: string;
+  commune: string;
+  dates?: string;
+  description?: string;
+}
+
+export const ecrivainsData: Ecrivain[] = [
   { "nom": "Louis Bousquet", "commune": "Armissan, Aude", "dates": null, "description": null },
   { "nom": "Gaston Bonheur", "commune": "Belvianes, Aude", "dates": "1913-1980", "description": "journaliste et romancier" },
   { "nom": "Leon de belvis", "commune": "Belvis, Aude", "dates": null, "description": null },
