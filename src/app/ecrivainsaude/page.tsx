@@ -5,9 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
 // 💡 IMPORTEZ DIRECTEMENT LES DONNÉES DU FICHIER ROUTE.TS 
-// (Ceci garantit que le build Next.js fonctionne sans erreur ECONNREFUSED)
-// Assurez-vous que le chemin d'importation est correct dans votre structure de projet :
 import { ecrivainsData, Ecrivain } from '@/app/api/ecrivainsaude/route'; 
+
+// Définir le type pour le marqueur avancé pour la liste de nettoyage
+type AdvancedMarker = google.maps.marker.AdvancedMarkerElement;
 
 export default function EcrivainsAudePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -32,6 +33,7 @@ export default function EcrivainsAudePage() {
       center: centerLatLng,
       scrollwheel: true,
       gestureHandling: "greedy",
+      mapId: "DEMO_MAP_ID", // Ajout d'un Map ID requis pour Advanced Markers
     });
     mapInstance.current = newMap;
 
@@ -39,31 +41,42 @@ export default function EcrivainsAudePage() {
     const geocoder = new google.maps.Geocoder();
     let count = 0;
     let markersPlaced = 0;
-    const allMarkers: google.maps.Marker[] = []; // Liste pour le nettoyage
+    const allMarkers: AdvancedMarker[] = []; // Liste pour le nettoyage (type mis à jour)
 
     // --- PLACEMENT DES MARQUEURS ---
     establishments.forEach((ecrivain) => {
       const address = ecrivain.commune; 
       
-      // Le géocodage est asynchrone, nous devons être prêts pour le nettoyage
+      // Le géocodage est asynchrone
       geocoder.geocode({ address: address, region: 'fr' }, (results, status) => {
-        // Double-check: S'assurer que le résultat est OK ET que la carte existe encore
         if (status === "OK" && results?.[0] && mapInstance.current) {
           count++;
           
-          const marker = new google.maps.Marker({
+          // Création du DOM personnalisé pour le marqueur (pour le numéro)
+          const markerContent = document.createElement("div");
+          markerContent.className = "marker-pin";
+          markerContent.style.cssText = `
+            width: 25px;
+            height: 25px;
+            background-color: #007BFF;
+            border: 2px solid #333333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+          `;
+          markerContent.textContent = `${count}`;
+
+          // Utilisation de google.maps.marker.AdvancedMarkerElement
+          const marker = new google.maps.marker.AdvancedMarkerElement({
             map: mapInstance.current, 
             position: results[0].geometry.location,
-            label: `${count}`,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 8,
-              fillColor: "#007BFF",
-              fillOpacity: 1,
-              strokeWeight: 1,
-              strokeColor: "#333333",
-            },
             title: ecrivain.nom,
+            content: markerContent, // Utilisation du contenu DOM personnalisé
           });
 
           allMarkers.push(marker); // Ajouter le marqueur à la liste
@@ -79,7 +92,11 @@ export default function EcrivainsAudePage() {
             `,
           });
 
-          marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+          // Le marqueur avancé utilise un listener 'click' différent
+          marker.addListener("click", () => infowindow.open({
+            anchor: marker,
+            map: mapInstance.current!,
+          }));
           
           markersPlaced++;
           setMarkersCount(markersPlaced);
@@ -88,18 +105,19 @@ export default function EcrivainsAudePage() {
     });
 
     // 3. Fonction de nettoyage (CLEANUP) : CRUCIALE
-    // Supprime tous les marqueurs si le composant est démonté (résout le DOMException)
     return () => {
-        allMarkers.forEach(marker => marker.setMap(null));
-        mapInstance.current = null; // Optionnel, mais bonne pratique
+        // Pour les Advanced Markers, il suffit de retirer la carte
+        allMarkers.forEach(marker => marker.map = null); 
+        mapInstance.current = null;
     };
 
   }, [isReady]); // DÉPENDANCE CORRECTE : l'effet se lance uniquement quand l'API est prête
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
+      {/* 🛑 NOUVEAU : Ajout de la bibliothèque 'marker' */}
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker`}
         strategy="afterInteractive"
         onLoad={() => setIsReady(true)}
       />
