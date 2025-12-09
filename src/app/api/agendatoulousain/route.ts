@@ -1,61 +1,47 @@
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
+function normalizeApiResult(data: any): any[] {
+  if (!data) return [];
 
-// Fonction pour récupérer l’URL d’origine
-function getBaseUrl(req: Request) {
-  const host = req.headers.get("host");
-  const protocol = host?.startsWith("localhost") ? "http" : "https";
-  return `${protocol}://${host}`;
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.items)) return data.items;
+  if (Array.isArray(data.events)) return data.events;
+  if (Array.isArray(data.data)) return data.data;
+
+  const firstArray = Object.values(data).find((v) => Array.isArray(v));
+  if (firstArray) return firstArray;
+
+  return [];
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const baseUrl = getBaseUrl(req);
+    const sources = [
+      "https://ftstoulouse.vercel.app/api/agenda-trad-haute-garonne",
+      "https://ftstoulouse.vercel.app/api/agendaculturel",
+      // tu pourras en ajouter d’autres ici
+    ];
 
-    const [tradRes, cultRes] = await Promise.all([
-      fetch(`${baseUrl}/api/agenda-trad-haute-garonne`, { cache: "no-store" }),
-      fetch(`${baseUrl}/api/agendaculturel`, { cache: "no-store" })
-    ]);
-
-    if (!tradRes.ok || !cultRes.ok) {
-      throw new Error("Erreur lors du fetch des APIs sources");
-    }
-
-    const tradJson = await tradRes.json();
-    const cultJson = await cultRes.json();
-
-    const eventsTrad = tradJson.events || [];
-    const eventsCult = (cultJson.items || []).map((item: any) => ({
-      id: item.link,
-      title: item.title,
-      description: item.description,
-      date: item.pubDate,
-      dateFormatted: new Date(item.pubDate).toLocaleString("fr-FR", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      fullAddress: "Toulouse (31)",
-      category: item.category,
-      image: item.image,
-      url: item.link,
-      source: "AgendaCulturel",
-    }));
-
-    const merged = [...eventsTrad, ...eventsCult].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    const results = await Promise.all(
+      sources.map(async (url) => {
+        try {
+          const res = await fetch(url, { cache: "no-store" });
+          const json = await res.json();
+          return normalizeApiResult(json);
+        } catch (e) {
+          console.error("Erreur API:", url, e);
+          return [];
+        }
+      })
     );
 
-    return NextResponse.json({ events: merged });
+    // Fusion de toutes les sources
+    const merged = results.flat();
 
+    return NextResponse.json(merged);
   } catch (err: any) {
     return NextResponse.json(
-      { events: [], error: String(err) },
+      { error: err.message || "Erreur serveur" },
       { status: 500 }
     );
   }
