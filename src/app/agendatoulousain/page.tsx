@@ -182,6 +182,6 @@ export default function AgendaToulousainPage() {
                   rel="noopener noreferrer"
                   className="mt-auto bg-blue-600 text-white py-2 px-3 rounded hover:bg-blue-700 transition text-center"
                 >
-                  🔗 Plus d’infos
+                  "🔗 Plus d'infos"
                 </a>
                 <p className="text-xs text-muted-foregrou
