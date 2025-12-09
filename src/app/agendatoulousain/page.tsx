@@ -168,11 +168,12 @@ export default function AgendaToulousainPage() {
                   </p>
                 )}
 
-                {ev.description && (
-                  <p className="text-sm text-muted-foreground mb-1 line-clamp-4">
-                    {ev.description}
-                  </p>
-                )}
+{ev.description && (
+  <div 
+    className="text-sm text-muted-foreground mb-1 line-clamp-4"
+    dangerouslySetInnerHTML={{ __html: ev.description }}
+  />
+)}
 
                 {ev.url && (
                   <a
