@@ -11,7 +11,6 @@ const API_ROUTES = [
   "radarsquat",
   "toulousemetropole",
   "tourismehautegaronne",
-  "meetup-full",
   "ut3-min",
   "capitole-min",
   "theatredupave",
