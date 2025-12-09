@@ -19,7 +19,7 @@ export default function EcrivainsAudePage() {
       zoom: 9,
       center: centerLatLng,
       gestureHandling: "greedy",
-      mapId: "DEMO_MAP_ID",
+      mapId: "DEMO_MAP_ID", // remplacer par ton Map ID réel
     });
 
     mapInstance.current = map;
@@ -28,18 +28,20 @@ export default function EcrivainsAudePage() {
     const allMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
     let count = 0;
 
-    ecrivainsData.forEach((ecrivain) => {
+    // Fonction pour géocoder un écrivain et ajouter un marqueur
+    const addMarker = (ecrivain: Ecrivain) => {
       geocoder.geocode({ address: ecrivain.commune, region: "fr" }, (results, status) => {
         if (status === "OK" && results?.[0] && mapInstance.current) {
           count++;
 
+          // Création du DOM pour le marqueur
           const markerContent = document.createElement("div");
           markerContent.className = "marker-pin";
           markerContent.style.cssText = `
             width: 25px;
             height: 25px;
             background-color: #007BFF;
-            border: 2px solid #333333;
+            border: 2px solid #333;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -51,6 +53,7 @@ export default function EcrivainsAudePage() {
           `;
           markerContent.textContent = `${count}`;
 
+          // Création du AdvancedMarkerElement
           const marker = new google.maps.marker.AdvancedMarkerElement({
             map: mapInstance.current,
             position: results[0].geometry.location,
@@ -60,6 +63,7 @@ export default function EcrivainsAudePage() {
 
           allMarkers.push(marker);
 
+          // InfoWindow
           const infowindow = new google.maps.InfoWindow({
             content: `
               <div style="font-family: Arial, sans-serif;">
@@ -76,19 +80,27 @@ export default function EcrivainsAudePage() {
             map: mapInstance.current!,
           }));
 
+          // Met à jour le compteur de marqueurs affichés
           setMarkersCount(allMarkers.length);
         }
       });
-    });
+    };
 
+    // Boucle sur tous les écrivains
+    ecrivainsData.forEach(addMarker);
+
+    // Nettoyage sécurisé au démontage
     return () => {
-      allMarkers.forEach((marker) => (marker.map = null));
+      allMarkers.forEach(marker => {
+        if (marker.map) marker.map = null;
+      });
       mapInstance.current = null;
     };
   }, [isReady]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
+      {/* Chargement de l'API Google Maps */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker`}
         strategy="afterInteractive"
