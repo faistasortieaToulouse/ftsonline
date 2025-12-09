@@ -33,7 +33,8 @@ export default function EcrivainsAudePage() {
       center: centerLatLng,
       scrollwheel: true,
       gestureHandling: "greedy",
-      mapId: "DEMO_MAP_ID", // Ajout d'un Map ID requis pour Advanced Markers
+      // CRITIQUE : Map ID est requis pour les Advanced Markers
+      mapId: "DEMO_MAP_ID", 
     });
     mapInstance.current = newMap;
 
@@ -41,18 +42,17 @@ export default function EcrivainsAudePage() {
     const geocoder = new google.maps.Geocoder();
     let count = 0;
     let markersPlaced = 0;
-    const allMarkers: AdvancedMarker[] = []; // Liste pour le nettoyage (type mis à jour)
+    const allMarkers: AdvancedMarker[] = []; // Liste pour le nettoyage
 
     // --- PLACEMENT DES MARQUEURS ---
     establishments.forEach((ecrivain) => {
       const address = ecrivain.commune; 
       
-      // Le géocodage est asynchrone
       geocoder.geocode({ address: address, region: 'fr' }, (results, status) => {
         if (status === "OK" && results?.[0] && mapInstance.current) {
           count++;
           
-          // Création du DOM personnalisé pour le marqueur (pour le numéro)
+          // Création du DOM personnalisé pour le marqueur numéroté
           const markerContent = document.createElement("div");
           markerContent.className = "marker-pin";
           markerContent.style.cssText = `
@@ -71,12 +71,12 @@ export default function EcrivainsAudePage() {
           `;
           markerContent.textContent = `${count}`;
 
-          // Utilisation de google.maps.marker.AdvancedMarkerElement
+          // CRITIQUE : Utilisation de google.maps.marker.AdvancedMarkerElement
           const marker = new google.maps.marker.AdvancedMarkerElement({
             map: mapInstance.current, 
             position: results[0].geometry.location,
             title: ecrivain.nom,
-            content: markerContent, // Utilisation du contenu DOM personnalisé
+            content: markerContent, 
           });
 
           allMarkers.push(marker); // Ajouter le marqueur à la liste
@@ -92,7 +92,6 @@ export default function EcrivainsAudePage() {
             `,
           });
 
-          // Le marqueur avancé utilise un listener 'click' différent
           marker.addListener("click", () => infowindow.open({
             anchor: marker,
             map: mapInstance.current!,
@@ -104,18 +103,17 @@ export default function EcrivainsAudePage() {
       });
     });
 
-    // 3. Fonction de nettoyage (CLEANUP) : CRUCIALE
+    // CRITIQUE : Fonction de nettoyage pour retirer les marqueurs avant le re-rendu/démontage
     return () => {
-        // Pour les Advanced Markers, il suffit de retirer la carte
         allMarkers.forEach(marker => marker.map = null); 
         mapInstance.current = null;
     };
 
-  }, [isReady]); // DÉPENDANCE CORRECTE : l'effet se lance uniquement quand l'API est prête
+  }, [isReady]); // Dépendance uniquement sur isReady
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      {/* 🛑 NOUVEAU : Ajout de la bibliothèque 'marker' */}
+      {/* CRITIQUE : Ajout de la bibliothèque 'marker' */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker`}
         strategy="afterInteractive"
