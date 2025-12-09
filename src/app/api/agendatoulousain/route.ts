@@ -1,12 +1,27 @@
 import { NextResponse } from "next/server";
 
-// Agrégation des flux AgendaTrad et AgendaCulturel
-export async function GET() {
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+// Fonction pour récupérer l’URL d’origine
+function getBaseUrl(req: Request) {
+  const host = req.headers.get("host");
+  const protocol = host?.startsWith("localhost") ? "http" : "https";
+  return `${protocol}://${host}`;
+}
+
+export async function GET(req: Request) {
   try {
+    const baseUrl = getBaseUrl(req);
+
     const [tradRes, cultRes] = await Promise.all([
-      fetch("/api/agenda-trad", { cache: "no-store" }),
-      fetch("/api/agendaculturel", { cache: "no-store" })
+      fetch(`${baseUrl}/api/agenda-trad`, { cache: "no-store" }),
+      fetch(`${baseUrl}/api/agendaculturel`, { cache: "no-store" })
     ]);
+
+    if (!tradRes.ok || !cultRes.ok) {
+      throw new Error("Erreur lors du fetch des APIs sources");
+    }
 
     const tradJson = await tradRes.json();
     const cultJson = await cultRes.json();
@@ -32,13 +47,16 @@ export async function GET() {
       source: "AgendaCulturel",
     }));
 
-    // Fusion et tri chronologique
     const merged = [...eventsTrad, ...eventsCult].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
     return NextResponse.json({ events: merged });
+
   } catch (err: any) {
-    return NextResponse.json({ events: [], error: String(err) }, { status: 500 });
+    return NextResponse.json(
+      { events: [], error: String(err) },
+      { status: 500 }
+    );
   }
 }
