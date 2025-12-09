@@ -8,11 +8,9 @@ interface Ecrivain {
   commune: string;
   dates?: string;
   description?: string;
-  lat: number;
-  lng: number;
 }
 
-// Données avec coordonnées lat/lng
+// Données importées (liste avec communes)
 import { ecrivainsData } from "@/app/api/ecrivainsaude/route";
 
 export default function EcrivainsAudePage() {
@@ -22,52 +20,51 @@ export default function EcrivainsAudePage() {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    if (!isReady || !mapRef.current) return;
+    if (!isReady || !mapRef.current || !window.google?.maps) return;
 
-    // Crée la carte UNE SEULE FOIS
-    if (!mapInstance.current) {
-      mapInstance.current = new google.maps.Map(mapRef.current, {
-        zoom: 9,
-        center: { lat: 43.15, lng: 2.3 },
-        gestureHandling: "greedy",
-      });
-    }
+    const map = new google.maps.Map(mapRef.current, {
+      zoom: 9,
+      center: { lat: 43.15, lng: 2.3 }, // centre de l'Aude
+      gestureHandling: "greedy",
+    });
+    mapInstance.current = map;
 
-    const map = mapInstance.current;
+    const geocoder = new google.maps.Geocoder();
     let count = 0;
 
     ecrivainsData.forEach((e) => {
-      if (!e.lat || !e.lng) return;
+      geocoder.geocode({ address: e.commune + ", France" }, (results, status) => {
+        if (status !== "OK" || !results?.[0] || !mapInstance.current) return;
 
-      count++;
+        count++;
+        const marker = new google.maps.Marker({
+          map: mapInstance.current,
+          position: results[0].geometry.location,
+          title: e.nom,
+          label: String(count),
+        });
 
-      const marker = new google.maps.Marker({
-        position: { lat: e.lat, lng: e.lng },
-        map,
-        title: e.nom,
-        label: String(count),
+        const info = new google.maps.InfoWindow({
+          content: `
+            <div style="font-family: Arial; font-size: 14px;">
+              <strong>${count}. ${e.nom}</strong><br/>
+              <b>Commune :</b> ${e.commune}<br/>
+              <b>Dates :</b> ${e.dates || "N/A"}<br/>
+              <b>Description :</b> ${e.description || "Écrivain"}
+            </div>
+          `,
+        });
+
+        marker.addListener("click", () => info.open({ anchor: marker, map: mapInstance.current! }));
+
+        setMarkersCount(count);
       });
-
-      const info = new google.maps.InfoWindow({
-        content: `
-          <div style="font-family: Arial; font-size: 14px;">
-            <strong>${count}. ${e.nom}</strong><br/>
-            <b>Commune :</b> ${e.commune}<br/>
-            <b>Dates :</b> ${e.dates || "N/A"}<br/>
-            <b>Description :</b> ${e.description || "Écrivain"}
-          </div>
-        `,
-      });
-
-      marker.addListener("click", () => info.open({ anchor: marker, map }));
     });
-
-    setMarkersCount(count);
   }, [isReady]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      {/* Chargement du script Google Maps */}
+      {/* Chargement de l'API Google Maps */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
         strategy="afterInteractive"
