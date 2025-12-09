@@ -71,7 +71,7 @@ export default function EcrivainsAudePage() {
           `;
           markerContent.textContent = `${count}`;
 
-          // CRITIQUE : Utilisation de google.maps.marker.AdvancedMarkerElement
+          // Utilisation de google.maps.marker.AdvancedMarkerElement
           const marker = new google.maps.marker.AdvancedMarkerElement({
             map: mapInstance.current, 
             position: results[0].geometry.location,
@@ -113,9 +113,9 @@ export default function EcrivainsAudePage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      {/* CRITIQUE : Ajout de la bibliothèque 'marker' */}
+      {/* 🛑 CORRECTION : Ajout de loading=async pour résoudre les problèmes de timing/DOMException */}
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker`}
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&loading=async&libraries=places,marker`}
         strategy="afterInteractive"
         onLoad={() => setIsReady(true)}
       />
