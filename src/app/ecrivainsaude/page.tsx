@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
-import { ecrivainsData, Ecrivain } from "@/app/api/ecrivainsaude/route";
+import { ecrivainsData, Ecrivain } from "@/data/ecrivainsAude"; // <-- changement ici
 
 export default function EcrivainsAudePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -28,13 +28,11 @@ export default function EcrivainsAudePage() {
     const allMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
     let count = 0;
 
-    // Fonction pour géocoder un écrivain et ajouter un marqueur
     const addMarker = (ecrivain: Ecrivain) => {
       geocoder.geocode({ address: ecrivain.commune, region: "fr" }, (results, status) => {
         if (status === "OK" && results?.[0] && mapInstance.current) {
           count++;
 
-          // Création du DOM pour le marqueur
           const markerContent = document.createElement("div");
           markerContent.className = "marker-pin";
           markerContent.style.cssText = `
@@ -53,7 +51,6 @@ export default function EcrivainsAudePage() {
           `;
           markerContent.textContent = `${count}`;
 
-          // Création du AdvancedMarkerElement
           const marker = new google.maps.marker.AdvancedMarkerElement({
             map: mapInstance.current,
             position: results[0].geometry.location,
@@ -63,7 +60,6 @@ export default function EcrivainsAudePage() {
 
           allMarkers.push(marker);
 
-          // InfoWindow
           const infowindow = new google.maps.InfoWindow({
             content: `
               <div style="font-family: Arial, sans-serif;">
@@ -80,27 +76,21 @@ export default function EcrivainsAudePage() {
             map: mapInstance.current!,
           }));
 
-          // Met à jour le compteur de marqueurs affichés
           setMarkersCount(allMarkers.length);
         }
       });
     };
 
-    // Boucle sur tous les écrivains
     ecrivainsData.forEach(addMarker);
 
-    // Nettoyage sécurisé au démontage
     return () => {
-      allMarkers.forEach(marker => {
-        if (marker.map) marker.map = null;
-      });
+      allMarkers.forEach(marker => { if (marker.map) marker.map = null; });
       mapInstance.current = null;
     };
   }, [isReady]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      {/* Chargement de l'API Google Maps */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker`}
         strategy="afterInteractive"
@@ -113,11 +103,7 @@ export default function EcrivainsAudePage() {
         {markersCount} lieux affichés sur {ecrivainsData.length} entrées.
       </p>
 
-      <div
-        ref={mapRef}
-        style={{ height: "70vh", width: "100%" }}
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
-      >
+      <div ref={mapRef} style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center">
         {!isReady && <p>Chargement de l'API Google Maps…</p>}
         {isReady && markersCount === 0 && <p>Recherche des coordonnées…</p>}
       </div>
