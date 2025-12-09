@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
-import { ecrivainsData, Ecrivain } from "@/data/ecrivainsAude"; // <-- changement ici
+import { ecrivainsData, Ecrivain } from "@/app/api/ecrivainsaude/route";
 
 export default function EcrivainsAudePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
