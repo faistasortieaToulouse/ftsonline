@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
-const categoryImages: Record<string, string> = {
+const CATEGORY_IMAGES: Record<string, string> = {
   'Concert': '/images/agenda31/agendconcert.jpg',
   'Théâtre': '/images/agenda31/agendtheatre.jpg',
   'Festival': '/images/agenda31/agendfestival.jpg',
@@ -27,23 +27,23 @@ const formatDate = (isoDate: string | null) => {
   });
 };
 
-const getEventImage = (title: string | undefined, category: string | undefined, fallback: string = categoryImages['Défaut']) => {
-  if (category && categoryImages[category]) return categoryImages[category];
+const getEventImage = (title: string | undefined, category: string | undefined, fallback: string = CATEGORY_IMAGES['Défaut']) => {
+  if (category && CATEGORY_IMAGES[category]) return CATEGORY_IMAGES[category];
   if (!title) return fallback;
 
   const lower = title.toLowerCase();
-  if (lower.includes('concert')) return categoryImages['Concert'];
-  if (lower.includes('théâtre')) return categoryImages['Théâtre'];
-  if (lower.includes('festival')) return categoryImages['Festival'];
-  if (lower.includes('jeune')) return categoryImages['Jeune public'];
-  if (lower.includes('danse')) return categoryImages['Danse'];
-  if (lower.includes('spectacle')) return categoryImages['Arts du spectacle'];
-  if (lower.includes('exposition')) return categoryImages['Exposition'];
+  if (lower.includes('concert')) return CATEGORY_IMAGES['Concert'];
+  if (lower.includes('théâtre')) return CATEGORY_IMAGES['Théâtre'];
+  if (lower.includes('festival')) return CATEGORY_IMAGES['Festival'];
+  if (lower.includes('jeune')) return CATEGORY_IMAGES['Jeune public'];
+  if (lower.includes('danse')) return CATEGORY_IMAGES['Danse'];
+  if (lower.includes('spectacle')) return CATEGORY_IMAGES['Arts du spectacle'];
+  if (lower.includes('exposition')) return CATEGORY_IMAGES['Exposition'];
 
   return fallback;
 };
 
-export default function AgendaCulturelPage() {
+export default function AgendaToulousainPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -53,24 +53,43 @@ export default function AgendaCulturelPage() {
   async function fetchEvents() {
     setLoading(true);
     setError(null);
+
     try {
-      const res = await fetch('/api/agendaculturel');
-      if (!res.ok) throw new Error(`API HTTP error: ${res.status}`);
-      const data = await res.json();
+      // ---------------- Agenda Culturel ----------------
+      const resCulturel = await fetch('/api/agendaculturel');
+      const dataCulturel = (await resCulturel.json()).items || [];
 
-      const formatted = (data.items || []).map((it: any, idx: number) => ({
-        id: idx,
-        title: it.title,
-        description: it.description,
-        start: it.pubDate,
-        url: it.link, // <-- bouton bleu
-        category: it.category ?? 'Non spécifié',
-        image: it.image || getEventImage(it.title, it.category),
-        source: 'Agenda Culturel',
-      }));
+      // ---------------- Agenda Trad ----------------
+      const resTrad = await fetch('/api/agenda-trad-haute-garonne');
+      const dataTrad = (await resTrad.json()) || [];
 
-      formatted.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
-      setEvents(formatted);
+      // ---------------- Fusionner les deux flux ----------------
+      const combined = [
+        ...dataCulturel.map((it: any, idx: number) => ({
+          id: `c-${idx}`,
+          title: it.title,
+          description: it.description,
+          start: it.pubDate,
+          url: it.link,
+          category: it.category ?? 'Non spécifié',
+          image: it.image || getEventImage(it.title, it.category),
+          source: 'Agenda Culturel',
+        })),
+        ...dataTrad.map((it: any, idx: number) => ({
+          id: `t-${idx}`,
+          title: it.title,
+          description: it.description,
+          start: it.date,
+          url: it.url,
+          category: it.category ?? 'Non spécifié',
+          image: it.image || getEventImage(it.title, it.category),
+          source: 'Agenda Trad',
+        })),
+      ];
+
+      combined.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+      setEvents(combined);
+
     } catch (err: any) {
       setError(err.message || 'Erreur inconnue');
     } finally {
@@ -93,11 +112,12 @@ export default function AgendaCulturelPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">Événements Agenda Culturel Toulouse</h1>
+      <h1 className="text-3xl font-bold mb-4">Événements Toulousains</h1>
       <p className="text-muted-foreground mb-6">
-        Événements filtrés depuis le flux officiel Agenda Culturel Toulouse.
+        Événements combinés depuis Agenda Culturel Toulouse et Agenda Trad Haute-Garonne.
       </p>
 
+      {/* Barre de recherche et boutons */}
       <div className="flex flex-wrap gap-3 mb-6 items-center">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? 'Chargement...' : '📡 Actualiser'}
@@ -121,23 +141,39 @@ export default function AgendaCulturelPage() {
       {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
       {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement à afficher.</p>}
 
-      {/* MODE CARD */}
+      {/* Mode carte */}
       {viewMode === 'card' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map(ev => (
             <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[510px]">
-              <img src={ev.image} alt={ev.title} className="w-full h-40 object-cover" />
+              <div className="relative w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
+                <Image
+                  src={ev.image || '/images/agenda31/agendgenerique.jpg'}
+                  alt={ev.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
               <div className="p-3 flex flex-col flex-1">
                 <span className="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded mb-2">
                   {ev.category}
                 </span>
+
                 <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+
                 {ev.start && (
-                  <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>
+                  <p className="text-sm text-blue-600 font-medium mb-1">
+                    {formatDate(ev.start)}
+                  </p>
                 )}
+
                 {ev.description && (
-                  <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>
+                  <p className="text-sm text-muted-foreground mb-1 line-clamp-4">
+                    {ev.description}
+                  </p>
                 )}
+
                 {ev.url && (
                   <a
                     href={ev.url}
@@ -148,22 +184,41 @@ export default function AgendaCulturelPage() {
                     🔗 Plus d’infos
                   </a>
                 )}
+
                 <p className="text-xs text-muted-foreground mt-2">Source : {ev.source}</p>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        /* MODE LIST */
-        <div className="flex flex-col gap-4">
+        /* Mode liste / vignette */
+        <div className="space-y-4">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
-              <img src={ev.image} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
+            <div key={ev.id} className="flex gap-4 p-4 border rounded-lg shadow bg-white">
+              <div className="relative w-24 h-24 bg-gray-200 rounded overflow-hidden">
+                <Image
+                  src={ev.image || '/images/agenda31/agendgenerique.jpg'}
+                  alt={ev.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
               <div className="flex-1 flex flex-col">
-                <span className="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded mb-2">{ev.category}</span>
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
+                <span className="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded mb-2">
+                  {ev.category}
+                </span>
+
+                <h2 className="text-lg font-semibold line-clamp-2">{ev.title}</h2>
+                {ev.start && (
+                  <p className="text-sm text-blue-600">
+                    {formatDate(ev.start)}
+                  </p>
+                )}
+                {ev.description && (
+                  <div className="text-sm text-muted-foreground line-clamp-3">{ev.description}</div>
+                )}
+
                 {ev.url && (
                   <a
                     href={ev.url}
@@ -174,7 +229,8 @@ export default function AgendaCulturelPage() {
                     🔗 Plus d’infos
                   </a>
                 )}
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+
+                <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
               </div>
             </div>
           ))}
