@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getEvents as getOpenDataEvents } from "@/lib/events";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 export const revalidate = 3600;
 
-const PLACEHOLDER_IMAGE = "/images/placeholders.jpg";
+const API_ROUTES = [
+  "agenda-trad-haute-garonne",
+  "cultureenmouvements",
+  "demosphere",
+  "hautegaronne",
+  "radarsquat",
+  "toulousemetropole",
+  "tourismehautegaronne",
+  "meetup-full",
+  "ut3-min",
+  "capitole-min",
+  "theatredupave",
+  "discord",
+];
+
+const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
+const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
 
 const THEME_IMAGES: Record<string, string> = {
   "Culture": "/images/tourismehg31/themeculture.jpg",
@@ -18,124 +33,59 @@ const THEME_IMAGES: Record<string, string> = {
   "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
 };
 
-const API_ROUTES = [
-  "agenda-trad-haute-garonne",
-  "agendaculturel",
-  "cultureenmouvements",
-  "demosphere",
-  "hautegaronne",
-  "radarsquat",
-  "toulousemetropole",
-  "tourismehautegaronne",
-  "ut3-min",
-  "capitole-min",
-  "theatredupave",
-  "discord",
-];
-
-const MEETUP_ROUTES = ["meetup-events", "meetup-expats", "meetup-coloc", "meetup-sorties"];
-
-const meetupCache = { timestamp: 0, data: [] as any[] };
-const MEETUP_CACHE_TTL = 1000 * 60 * 5;
-
 // -------------------------
-// Générateur de clé unique
+// ⚡ Cache in-memory pour Meetup
 // -------------------------
-function getUniqueKey(ev: any) {
-  if (ev.id) return ev.id;
-  const str = `${ev.title}-${ev.date}-${ev.location}-${ev.source}`;
-  return Buffer.from(str).toString("base64"); // hash simple en base64
-}
+const meetupCache: Record<string, { timestamp: number; data: any }> = {};
+const MEETUP_CACHE_TTL = 1000 * 60 * 5; // 5 minutes
 
-// -------------------------
-// Meetup fetch
-// -------------------------
-async function fetchMeetup(origin: string): Promise<any[]> {
-  const now = Date.now();
-  if (now - meetupCache.timestamp < MEETUP_CACHE_TTL) return meetupCache.data;
-
-  try {
-    const fetches = MEETUP_ROUTES.map(r =>
-      fetch(`${origin}/api/${r}`).then(res => res.json()).catch(() => [])
-    );
-
-    const results = await Promise.all(fetches);
-    let events = results.flatMap(r => Array.isArray(r.events) ? r.events : r);
-
-    // Correction des dates passées
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    events = events.map(ev => {
-      const raw = ev.date || ev.startDate || ev.start;
-      const d = raw ? new Date(raw) : null;
-      if (!d || isNaN(d.getTime())) return ev;
-      if (d < today) {
-        const corrected = new Date(today.getFullYear(), today.getMonth(), today.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
-        return { ...ev, date: corrected.toISOString() };
-      }
-      return ev;
-    });
-
-    // Déduplication Meetup
-    const uniqueMap = new Map<string, any>();
-    events.forEach(ev => {
-      const key = getUniqueKey({ ...ev, source: "meetup" });
-      if (!uniqueMap.has(key)) uniqueMap.set(key, ev);
-    });
-
-    meetupCache.timestamp = now;
-    meetupCache.data = Array.from(uniqueMap.values());
-    return meetupCache.data;
-  } catch {
-    return [];
-  }
-}
-
-// -------------------------
-// Normalisation
-// -------------------------
 function normalize(str?: string) {
   return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-function getThemeImage(thematique?: string) {
-  if (!thematique) return PLACEHOLDER_IMAGE;
+function getThemeImage(thematique?: string): string {
+  if (!thematique) return DEFAULT_THEME_IMAGE;
   const t = normalize(thematique.trim());
   if (t.startsWith("education")) return THEME_IMAGES["Education Emploi"];
   for (const key of Object.keys(THEME_IMAGES)) {
     if (normalize(key) === t) return THEME_IMAGES[key];
   }
-  return PLACEHOLDER_IMAGE;
+  return DEFAULT_THEME_IMAGE;
 }
 
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
-  const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || ev.pubDate || null;
+
+  const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || null;
   const dateObj = rawDate ? new Date(rawDate) : null;
   if (!dateObj || isNaN(dateObj.getTime())) return null;
 
   const dateISO = dateObj.toISOString();
-  const dateFormatted = dateObj.toLocaleString("fr-FR", { weekday:"long", year:"numeric", month:"long", day:"numeric", hour:"2-digit", minute:"2-digit" });
+  const dateFormatted = dateObj.toLocaleString("fr-FR", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
+
   const fullAddress = ev.fullAddress || ev.location || ev.commune || ev.lieu_nom || ev.adresse || "";
   const location = ev.location || ev.commune || ev.lieu_nom || ev.ville || "";
 
-  let image = PLACEHOLDER_IMAGE;
-  switch(sourceName){
-    case "tourismehautegaronne": image = ev.image || ev.coverImage || getThemeImage(ev.thematique); break;
-    case "demosphere": image = ev.image || "/logo/demosphereoriginal.png"; break;
-    case "ut3-min":
-    case "capitole-min": {
-      const t = (ev.title||"").toLowerCase();
-      if(t.includes("ciné")||t.includes("cine")) image="/images/capitole/capicine.jpg";
-      else if(t.includes("conf")) image="/images/capitole/capiconf.jpg";
-      else if(t.includes("expo")) image="/images/capitole/capiexpo.jpg";
-      else image="/images/capitole/capidefaut.jpg";
-      break;
-    }
+  let image;
+  if (sourceName === "tourismehautegaronne") {
+    image = ev.image || ev.coverImage || getThemeImage(ev.thematique) || DEFAULT_THEME_IMAGE;
+  } else if (sourceName === "demosphere") {
+    image = ev.image || ev.coverImage || "/logo/demosphereoriginal.png";
+  } else if (sourceName === "ut3-min" || sourceName === "capitole-min") {
+    const titleLower = (ev.title || "").toLowerCase();
+    if (titleLower.includes("ciné") || titleLower.includes("cine")) image = "/images/capitole/capicine.jpg";
+    else if (titleLower.includes("conf")) image = "/images/capitole/capiconf.jpg";
+    else if (titleLower.includes("expo")) image = "/images/capitole/capiexpo.jpg";
+    else image = "/images/capitole/capidefaut.jpg";
+  } else {
+    image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
   }
 
   return {
-    id: getUniqueKey({ ...ev, source: sourceName }),
+    id: ev.id || `${ev.title}-${dateISO}`,
     title: ev.title || "Événement",
     description: ev.description || "",
     date: dateISO,
@@ -144,13 +94,10 @@ function normalizeEvent(ev: any, sourceName: string) {
     fullAddress,
     image,
     url: ev.url || ev.link || "",
-    source: sourceName,
+    source: ev.source || sourceName,
   };
 }
 
-// -------------------------
-// Retry fetch
-// -------------------------
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -167,63 +114,83 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   }
 }
 
-// -------------------------
-// GET principal
-// -------------------------
 export async function GET(request: NextRequest) {
-  let origin = request.nextUrl.origin;
-  if (origin.includes("localhost")) origin = "http://localhost:9002";
-  else origin = process.env.NEXT_PUBLIC_BASE_URL || origin;
+  const origin = request.nextUrl.origin;
 
   try {
-    const results: { route: string; data: any }[] = [];
+    const meetupRoutes = API_ROUTES.filter(r => r.startsWith("meetup"));
+    const otherRoutes = API_ROUTES.filter(r => !r.startsWith("meetup"));
 
-    // 1️⃣ Meetup
-    const meetupEvents = await fetchMeetup(origin);
-    results.push({ route: "meetup", data: { events: meetupEvents } });
+    // -------------------------
+    // 1️⃣ Routes Meetup avec cache
+    // -------------------------
+    const meetupResults: { route: string; data: any }[] = [];
+    for (const route of meetupRoutes) {
+      const cached = meetupCache[route];
+      const now = Date.now();
+      if (cached && now - cached.timestamp < MEETUP_CACHE_TTL) {
+        meetupResults.push({ route, data: cached.data });
+        continue;
+      }
 
-    // 2️⃣ Autres routes
-    const otherResults = await Promise.all(API_ROUTES.map(async route => {
       try {
         const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
-        return { route, data };
-      } catch {
-        return { route, data: [] };
+        meetupCache[route] = { timestamp: Date.now(), data };
+        meetupResults.push({ route, data });
+        await new Promise(r => setTimeout(r, 1000));
+      } catch (err) {
+        console.warn(`⚠️ Meetup route ${route} failed:`, err);
+        meetupResults.push({ route, data: [] });
       }
-    }));
-    results.push(...otherResults);
+    }
 
-    // 3️⃣ OpenData
-    const openDataEvents = await getOpenDataEvents();
-    results.push({ route: "opendata", data: openDataEvents });
+    // -------------------------
+    // 2️⃣ Autres routes fetchées en parallèle
+    // -------------------------
+    const otherResults = await Promise.all(
+      otherRoutes.map(async route => {
+        try {
+          const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
+          return { route, data };
+        } catch {
+          return { route, data: [] };
+        }
+      })
+    );
 
-    // 4️⃣ Normalisation et agrégation
+    const results = [...otherResults, ...meetupResults];
+
+    // -------------------------
+    // 3️⃣ Agrégation et normalisation
+    // -------------------------
     const allEvents = results.flatMap(({ route, data }) => {
-      const list = Array.isArray(data.events) ? data.events : Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+      const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
       return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
-    // 5️⃣ Fenêtre 31 jours
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const limit = new Date(today); limit.setDate(today.getDate() + 31);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const limitDate = new Date(today);
+    limitDate.setDate(limitDate.getDate() + 31);
+
     const filtered = allEvents.filter(ev => {
-      const d = new Date(ev.date);
-      return d >= today && d <= limit;
+      const evDate = new Date(ev.date);
+      return evDate >= today && evDate < limitDate;
     });
 
-    // 6️⃣ Déduplication finale
-    const uniq = new Map<string, any>();
+    const uniqMap = new Map<string, any>();
     filtered.forEach(ev => {
-      const key = ev.id; // déjà unique
-      if (!uniq.has(key)) uniq.set(key, ev);
+      const key = `${ev.title}-${ev.date}`;
+      if (!uniqMap.has(key)) uniqMap.set(key, ev);
     });
 
-    // 7️⃣ Tri final
-    const finalEvents = [...uniq.values()].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const finalEvents = Array.from(uniqMap.values()).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
 
     return NextResponse.json({ total: finalEvents.length, events: finalEvents });
   } catch (err: any) {
-    console.error("🔥 Erreur agendatoulouse:", err);
-    return NextResponse.json({ error: err.message || "Erreur interne" }, { status: 500 });
+    console.error("Erreur agrégation agendatoulouse:", err);
+    return NextResponse.json({ error: err.message || "Erreur lors de l'agrégation" }, { status: 500 });
   }
 }
