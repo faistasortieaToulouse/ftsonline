@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
+// ---------------------------------------------------------
+// ✅ Option A : meetup-full REMPLACE toutes les routes Meetup
+// ---------------------------------------------------------
 const API_ROUTES = [
   "agenda-trad-haute-garonne",
   "cultureenmouvements",
@@ -15,8 +18,12 @@ const API_ROUTES = [
   "capitole-min",
   "theatredupave",
   "discord",
+
+  // 🔥 Uniquement la route agrégée Meetup
+  "meetup-full",
 ];
 
+// ---------------------------------------------------------
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
 
@@ -32,14 +39,12 @@ const THEME_IMAGES: Record<string, string> = {
   "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
 };
 
-// -------------------------
-// ⚡ Cache in-memory pour Meetup
-// -------------------------
-const meetupCache: Record<string, { timestamp: number; data: any }> = {};
-const MEETUP_CACHE_TTL = 1000 * 60 * 5; // 5 minutes
-
+// ---------------------------------------------------------
 function normalize(str?: string) {
-  return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return (str || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 function getThemeImage(thematique?: string): string {
@@ -52,32 +57,63 @@ function getThemeImage(thematique?: string): string {
   return DEFAULT_THEME_IMAGE;
 }
 
+// ---------------------------------------------------------
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
 
-  const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || null;
+  const rawDate =
+    ev.date ||
+    ev.start ||
+    ev.startDate ||
+    ev.date_debut ||
+    ev.dateDebut ||
+    null;
+
   const dateObj = rawDate ? new Date(rawDate) : null;
   if (!dateObj || isNaN(dateObj.getTime())) return null;
 
   const dateISO = dateObj.toISOString();
   const dateFormatted = dateObj.toLocaleString("fr-FR", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
-    hour: "2-digit", minute: "2-digit",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
-  const fullAddress = ev.fullAddress || ev.location || ev.commune || ev.lieu_nom || ev.adresse || "";
-  const location = ev.location || ev.commune || ev.lieu_nom || ev.ville || "";
+  const fullAddress =
+    ev.fullAddress ||
+    ev.location ||
+    ev.commune ||
+    ev.lieu_nom ||
+    ev.adresse ||
+    "";
+
+  const location =
+    ev.location ||
+    ev.commune ||
+    ev.lieu_nom ||
+    ev.ville ||
+    "";
 
   let image;
   if (sourceName === "tourismehautegaronne") {
-    image = ev.image || ev.coverImage || getThemeImage(ev.thematique) || DEFAULT_THEME_IMAGE;
+    image =
+      ev.image ||
+      ev.coverImage ||
+      getThemeImage(ev.thematique) ||
+      DEFAULT_THEME_IMAGE;
   } else if (sourceName === "demosphere") {
     image = ev.image || ev.coverImage || "/logo/demosphereoriginal.png";
   } else if (sourceName === "ut3-min" || sourceName === "capitole-min") {
     const titleLower = (ev.title || "").toLowerCase();
-    if (titleLower.includes("ciné") || titleLower.includes("cine")) image = "/images/capitole/capicine.jpg";
-    else if (titleLower.includes("conf")) image = "/images/capitole/capiconf.jpg";
-    else if (titleLower.includes("expo")) image = "/images/capitole/capiexpo.jpg";
+    if (titleLower.includes("ciné") || titleLower.includes("cine"))
+      image = "/images/capitole/capicine.jpg";
+    else if (titleLower.includes("conf"))
+      image = "/images/capitole/capiconf.jpg";
+    else if (titleLower.includes("expo"))
+      image = "/images/capitole/capiexpo.jpg";
     else image = "/images/capitole/capidefaut.jpg";
   } else {
     image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
@@ -97,6 +133,7 @@ function normalizeEvent(ev: any, sourceName: string) {
   };
 }
 
+// ---------------------------------------------------------
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -108,46 +145,21 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
       return await res.json();
     } catch (err) {
       if (i === retries) throw err;
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2000));
     }
   }
 }
 
+// ---------------------------------------------------------
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
   try {
-    const meetupRoutes = API_ROUTES.filter(r => r.startsWith("meetup"));
-    const otherRoutes = API_ROUTES.filter(r => !r.startsWith("meetup"));
-
     // -------------------------
-    // 1️⃣ Routes Meetup avec cache
+    // 1️⃣   Fetch simple de toutes les sources
     // -------------------------
-    const meetupResults: { route: string; data: any }[] = [];
-    for (const route of meetupRoutes) {
-      const cached = meetupCache[route];
-      const now = Date.now();
-      if (cached && now - cached.timestamp < MEETUP_CACHE_TTL) {
-        meetupResults.push({ route, data: cached.data });
-        continue;
-      }
-
-      try {
-        const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
-        meetupCache[route] = { timestamp: Date.now(), data };
-        meetupResults.push({ route, data });
-        await new Promise(r => setTimeout(r, 1000));
-      } catch (err) {
-        console.warn(`⚠️ Meetup route ${route} failed:`, err);
-        meetupResults.push({ route, data: [] });
-      }
-    }
-
-    // -------------------------
-    // 2️⃣ Autres routes fetchées en parallèle
-    // -------------------------
-    const otherResults = await Promise.all(
-      otherRoutes.map(async route => {
+    const results = await Promise.all(
+      API_ROUTES.map(async (route) => {
         try {
           const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
           return { route, data };
@@ -157,39 +169,52 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    const results = [...otherResults, ...meetupResults];
-
     // -------------------------
-    // 3️⃣ Agrégation et normalisation
+    // 2️⃣   Normalisation
     // -------------------------
     const allEvents = results.flatMap(({ route, data }) => {
-      const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
-      return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
+      const list =
+        Array.isArray(data.events)
+          ? data.events // meetup-full + d'autres routes
+          : Array.isArray(data)
+          ? data // anciennes routes JSON
+          : [];
+
+      return list.map((ev) => normalizeEvent(ev, route)).filter(Boolean);
     });
 
+    // -------------------------
+    // 3️⃣   Filtre sur 31 jours
+    // -------------------------
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const limitDate = new Date(today);
-    limitDate.setDate(limitDate.getDate() + 31);
+    const limit = new Date(today);
+    limit.setDate(limit.getDate() + 31);
 
-    const filtered = allEvents.filter(ev => {
-      const evDate = new Date(ev.date);
-      return evDate >= today && evDate < limitDate;
+    const filtered = allEvents.filter((ev) => {
+      const d = new Date(ev.date);
+      return d >= today && d < limit;
     });
 
-    const uniqMap = new Map<string, any>();
-    filtered.forEach(ev => {
+    // -------------------------
+    // 4️⃣   Unicité
+    // -------------------------
+    const uniq = new Map<string, any>();
+    filtered.forEach((ev) => {
       const key = `${ev.title}-${ev.date}`;
-      if (!uniqMap.has(key)) uniqMap.set(key, ev);
+      if (!uniq.has(key)) uniq.set(key, ev);
     });
 
-    const finalEvents = Array.from(uniqMap.values()).sort(
+    const finalEvents = Array.from(uniq.values()).sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
     return NextResponse.json({ total: finalEvents.length, events: finalEvents });
   } catch (err: any) {
     console.error("Erreur agrégation agendatoulouse:", err);
-    return NextResponse.json({ error: err.message || "Erreur lors de l'agrégation" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || "Erreur lors de l'agrégation" },
+      { status: 500 }
+    );
   }
 }
