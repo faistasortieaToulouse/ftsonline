@@ -1,278 +1,104 @@
-'use client';
+import { NextRequest, NextResponse } from "next/server";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+// Liste de TOUTES les routes API à agréger
+const API_ROUTES = [
+  "meetup-events",
+  "meetup-expats",
+  "meetup-coloc",
+  "meetup-sorties",
+];
 
-const PLACEHOLDER_IMAGE =
-  "https://via.placeholder.com/400x200?text=Événement";
+// Meetup renvoie parfois du HTML → route dynamique
+export const dynamic = "force-dynamic";
+export const revalidate = 3600; // 1h
 
-export default function AgendaToulousePage() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState<any[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [viewMode, setViewMode] = useState<"card" | "list">("card");
-  const [search, setSearch] = useState("");
+export async function GET(request: NextRequest) {
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://ftstoulouse.vercel.app";
 
-  /** ─────────────────────────────────────────────
-   *  Catégorie + sécurité sur les champs
-   *  ─────────────────────────────────────────────
-   */
-  function getCategory(event: any) {
-    return (
-      event.category ||
-      event.type ||
-      event.tags?.join(", ") ||
-      detectCategory((event.title || "") + " " + (event.description || ""))
-    );
-  }
-
-  function detectCategory(text: string) {
-    const t = text.toLowerCase();
-    if (t.includes("concert")) return "Concert";
-    if (t.includes("théâtre") || t.includes("theatre")) return "Théâtre";
-    if (t.includes("exposition")) return "Exposition";
-    if (t.includes("festival")) return "Festival";
-    if (t.includes("salon")) return "Salon";
-    if (t.includes("conférence")) return "Conférence";
-    return "Autre";
-  }
-
-  /** ─────────────────────────────────────────────
-   *  Fetch principal → /api/agendatoulouse
-   *  ─────────────────────────────────────────────
-   */
-  async function fetchEvents() {
-    setLoading(true);
-    setError(null);
-    setEvents([]);
-
+  const fetchPromises = API_ROUTES.map(async (route) => {
     try {
-      const res = await fetch("/api/agendatoulouse");
+      const res = await fetch(`${BASE_URL}/api/${route}`, {
+        next: { revalidate: 3600 },
+      });
 
-      if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
+      if (!res.ok) {
+        console.error(`Erreur ${res.status} sur /api/${route}`);
+        return [];
+      }
 
       const data = await res.json();
-
-      const evts = data.events || [];
-      setEvents(evts);
-      setFilteredEvents(evts);
+      // On normalise : certains endpoints renvoient { events: [...] }, d'autres directement un tableau
+      if (Array.isArray(data.events)) return data.events;
+      if (Array.isArray(data)) return data;
+      return [];
     } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
-    } finally {
-      setLoading(false);
+      console.error(`Erreur de fetch pour /api/${route}:`, err.message || err);
+      return [];
     }
-  }
+  });
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+  try {
+    const results = await Promise.all(fetchPromises);
+    console.log("Résultats bruts des API internes :", results);
 
-  /** ─────────────────────────────────────────────
-   *  Filtrage intelligent
-   *  ─────────────────────────────────────────────
-   */
-  useEffect(() => {
-    if (!search.trim()) {
-      setFilteredEvents(events);
-      return;
-    }
+    // Agrégation et normalisation
+    let events: any[] = results.flat();
 
-    const q = search.toLowerCase();
+    // Correction des dates passées
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const result = events.filter((ev) => {
-      const category = getCategory(ev);
+    events = events.map((ev) => {
+      const raw = ev.date || ev.startDate || ev.start;
+      const d = raw ? new Date(raw) : null;
 
-      const combined = `
-        ${ev.title || ""}
-        ${ev.description || ""}
-        ${ev.fullAddress || ev.location || ""}
-        ${ev.dateFormatted || ev.date || ""}
-        ${category}
-      `.toLowerCase();
+      if (!d || isNaN(d.getTime())) return ev;
 
-      return combined.includes(q);
+      if (d < today) {
+        const corrected = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          d.getHours(),
+          d.getMinutes(),
+          d.getSeconds()
+        );
+        return { ...ev, date: corrected.toISOString() };
+      }
+
+      return ev;
     });
 
-    setFilteredEvents(result);
-  }, [search, events]);
+    // Supprimer doublons
+    const uniqueMap = new Map<string, any>();
+    events.forEach((ev) => {
+      const rawDate = ev.date || ev.startDate || ev.start;
+      const rawTitle = ev.title || "No Title";
+      const rawLocation = ev.location || ev.fullAddress || "No Location";
 
-  /** ─────────────────────────────────────────────
-   *  Rendu
-   *  ─────────────────────────────────────────────
-   */
-  return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">
-        Agenda Toulouse – Tous les événements
-      </h1>
+      const key =
+        ev.id ||
+        `${rawTitle}-${new Date(rawDate).toISOString().split("T")[0]}-${rawLocation}`;
 
-      {/* Recherche */}
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Rechercher par titre, lieu, date, description, catégorie…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+      if (!uniqueMap.has(key)) uniqueMap.set(key, ev);
+    });
 
-      {/* Compteur */}
-      <p className="text-muted-foreground mb-4">
-        {filteredEvents.length} événement(s) trouvé(s)
-      </p>
+    // Trier par date croissante
+    const unifiedEvents = Array.from(uniqueMap.values()).sort((a, b) => {
+      const da = new Date(a.date || a.startDate || a.start);
+      const db = new Date(b.date || b.startDate || b.start);
+      return da.getTime() - db.getTime();
+    });
 
-      {/* Modes d'affichage */}
-      <div className="flex gap-4 mb-6">
-        <Button
-          onClick={() => setViewMode("card")}
-          variant={viewMode === "card" ? "default" : "secondary"}
-        >
-          📺 Plein écran
-        </Button>
+    console.log("Nombre total d'événements :", unifiedEvents.length);
 
-        <Button
-          onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "default" : "secondary"}
-        >
-          🔲 Vignette
-        </Button>
-      </div>
-
-      {/* Bouton Refresh */}
-      <Button onClick={fetchEvents} disabled={loading} className="mb-6">
-        {loading ? "Chargement..." : "📡 Recharger les événements"}
-      </Button>
-
-      {error && (
-        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
-          <strong>Erreur :</strong> {error}
-        </div>
-      )}
-
-      {/* MODE CARTE (plein écran) */}
-      {viewMode === "card" && filteredEvents.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {filteredEvents.map((event, i) => (
-            <div
-              key={event.id || i}
-              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]"
-            >
-              <img
-                src={event.image?.trim() ? event.image : PLACEHOLDER_IMAGE}
-                alt={event.title}
-                className="w-full h-54 sm:h-56 md:h-60 object-contain"
-              />
-
-              <div className="p-4 flex flex-col flex-1">
-                {/* Titre */}
-                <div className="text-xl font-semibold mb-2 line-clamp-2 overflow-y-auto max-h-14">
-                  {event.title}
-                </div>
-
-                {/* Description */}
-                <div
-                  className={`text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto ${
-                    event.source === "meetup-full" ||
-                    event.source === "tourismehautegaronne"
-                      ? "max-h-16"
-                      : "max-h-20"
-                  }`}
-                >
-                  {event.description}
-                </div>
-
-                {/* Date */}
-                <p className="text-sm font-medium mb-1">
-                  {event.dateFormatted ||
-                    event.date ||
-                    event.start ||
-                    "Date non renseignée"}
-                </p>
-
-                {/* Adresse */}
-                <p className="text-sm text-muted-foreground mb-1">
-                  {event.fullAddress || event.location}
-                </p>
-
-                {/* Source + catégorie */}
-                <p className="text-xs text-muted-foreground italic mb-3">
-                  Catégorie : {getCategory(event)} • Source :{" "}
-                  {event.source || "Inconnue"}
-                </p>
-
-                {/* Lien */}
-                {event.url && (
-                  <a
-                    href={event.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
-                  >
-                    🔗 Voir l’événement officiel
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* MODE LISTE */}
-      {viewMode === "list" && filteredEvents.length > 0 && (
-        <div className="space-y-4 mt-6">
-          {filteredEvents.map((event, i) => (
-            <div
-              key={event.id || i}
-              className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
-            >
-              <img
-                src={event.image?.trim() ? event.image : PLACEHOLDER_IMAGE}
-                alt={event.title}
-                className="w-24 h-24 rounded object-cover flex-shrink-0"
-              />
-
-              <div className="flex flex-col flex-1">
-                <div className="text-lg font-semibold text-blue-700 line-clamp-2 overflow-y-auto max-h-10">
-                  {event.title}
-                </div>
-
-                <div className="text-sm text-muted-foreground line-clamp-2 overflow-y-auto max-h-14">
-                  {event.description}
-                </div>
-
-                <p className="text-sm">
-                  {event.dateFormatted ||
-                    event.date ||
-                    event.start ||
-                    "Date non renseignée"}
-                </p>
-
-                <p className="text-xs text-muted-foreground italic">
-                  Catégorie : {getCategory(event)}
-                </p>
-
-                {event.url && (
-                  <a
-                    href={event.url}
-                    target="_blank"
-                    className="mt-1 text-blue-600 underline"
-                  >
-                    Voir →
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {!loading && filteredEvents.length === 0 && !error && (
-        <p className="mt-6 text-muted-foreground">
-          Aucun événement ne correspond à la recherche.
-        </p>
-      )}
-    </div>
-  );
+    return NextResponse.json({ total: unifiedEvents.length, events: unifiedEvents });
+  } catch (err: any) {
+    console.error("Erreur lors de l'agrégation :", err.message || err);
+    return NextResponse.json(
+      { total: 0, events: [], error: err.message || "Erreur interne" },
+      { status: 500 }
+    );
+  }
 }
