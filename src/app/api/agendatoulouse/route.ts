@@ -1,7 +1,8 @@
 // src/app/api/agendatoulouse/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic"; // 🔹 forcer le rendu dynamique
+// ⚡ La route est dynamique pour fetch côté serveur
+export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 // ---------------------------------------------------------
@@ -19,9 +20,10 @@ const API_ROUTES = [
   "capitole-min",
   "theatredupave",
   "discord",
-  "meetup-full",
+  "meetup-full", // ⚡ Agrégation Meetup
 ];
 
+// ---------------------------------------------------------
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
 
@@ -56,20 +58,26 @@ function getThemeImage(thematique?: string): string {
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
 
+  // Dates
   const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || null;
   const dateObj = rawDate ? new Date(rawDate) : null;
   const dateISO = dateObj && !isNaN(dateObj.getTime()) ? dateObj.toISOString() : null;
   const dateFormatted = dateObj
-    ? dateObj.toLocaleString("fr-FR", { 
-        weekday: "long", year: "numeric", month: "long", day: "numeric", 
-        hour: "2-digit", minute: "2-digit" 
+    ? dateObj.toLocaleString("fr-FR", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       })
     : null;
 
   const fullAddress = ev.fullAddress || ev.location || ev.commune || ev.lieu_nom || ev.adresse || "";
   const location = ev.location || ev.commune || ev.lieu_nom || ev.ville || "";
 
-  let image;
+  // Images
+  let image: string;
   switch (sourceName) {
     case "tourismehautegaronne":
       image = ev.image || ev.coverImage || getThemeImage(ev.thematique) || DEFAULT_THEME_IMAGE;
@@ -89,9 +97,8 @@ function normalizeEvent(ev: any, sourceName: string) {
       image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
   }
 
-  // 🔹 Retourner uniquement des données JSON sérialisables
   return {
-    id: ev.id || `${ev.title}-${dateISO}`,
+    id: ev.id || `${ev.title || "event"}-${dateISO || ""}`,
     title: ev.title || "Événement",
     description: ev.description || "",
     date: dateISO,
@@ -100,7 +107,7 @@ function normalizeEvent(ev: any, sourceName: string) {
     fullAddress,
     image,
     url: ev.url || ev.link || "",
-    source: ev.source || sourceName,
+    source: sourceName,
   };
 }
 
@@ -126,29 +133,24 @@ export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
   try {
-    // 1️⃣ Récupérer toutes les sources
+    // 1️⃣ Récupération des données
     const results = await Promise.all(
       API_ROUTES.map(async (route) => {
         try {
-          const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
-          return { route, data };
+          const data = await fetchWithRetry(`${origin}/api/${route}`);
+          return Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
         } catch {
-          return { route, data: [] };
+          return [];
         }
       })
     );
 
-    // 2️⃣ Normalisation et sérialisation JSON
-    const allEvents = results.flatMap(({ route, data }) => {
-      const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
-      return list
-        .map(ev => normalizeEvent(ev, route))
-        .filter(ev => ev !== null);
-    });
+    // 2️⃣ Normalisation
+    const allEvents = results.flat().map(ev => normalizeEvent(ev, ev.source || "unknown")).filter(Boolean);
 
-    // 3️⃣ Filtrer événements sur 31 jours, inclure ceux sans date
+    // 3️⃣ Filtrer sur 31 jours (ou garder sans date)
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     const limit = new Date(today);
     limit.setDate(limit.getDate() + 31);
 
@@ -159,24 +161,22 @@ export async function GET(request: NextRequest) {
     });
 
     // 4️⃣ Unicité
-    const uniq = new Map<string, any>();
-    filtered.forEach(ev => {
+    const seen = new Set<string>();
+    const uniqueEvents = filtered.filter(ev => {
       const key = `${ev.title}-${ev.date}`;
-      if (!uniq.has(key)) uniq.set(key, ev);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
 
-    // 5️⃣ Tri par date
-    const finalEvents = Array.from(uniq.values()).sort(
+    // 5️⃣ Tri
+    const sortedEvents = uniqueEvents.sort(
       (a, b) => new Date(a.date || "").getTime() - new Date(b.date || "").getTime()
     );
 
-    return NextResponse.json({ total: finalEvents.length, events: finalEvents });
-
+    return NextResponse.json({ total: sortedEvents.length, events: sortedEvents });
   } catch (err: any) {
-    console.error("Erreur agrégation agendatoulouse:", err);
-    return NextResponse.json(
-      { total: 0, events: [], error: err.message || "Erreur lors de l'agrégation" },
-      { status: 500 }
-    );
+    console.error("Erreur agendatoulouse:", err);
+    return NextResponse.json({ total: 0, events: [], error: err.message || "Erreur serveur" }, { status: 500 });
   }
 }
