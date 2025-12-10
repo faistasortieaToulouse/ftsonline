@@ -3,9 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
-// ---------------------------------------------------------
-// ✅ Option A : meetup-full REMPLACE toutes les routes Meetup
-// ---------------------------------------------------------
 const API_ROUTES = [
   "agenda-trad-haute-garonne",
   "cultureenmouvements",
@@ -18,12 +15,9 @@ const API_ROUTES = [
   "capitole-min",
   "theatredupave",
   "discord",
-
-  // 🔥 Uniquement la route agrégée Meetup
   "meetup-full",
 ];
 
-// ---------------------------------------------------------
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
 
@@ -39,7 +33,6 @@ const THEME_IMAGES: Record<string, string> = {
   "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
 };
 
-// ---------------------------------------------------------
 function normalize(str?: string) {
   return (str || "")
     .toLowerCase()
@@ -57,10 +50,10 @@ function getThemeImage(thematique?: string): string {
   return DEFAULT_THEME_IMAGE;
 }
 
-// ---------------------------------------------------------
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
 
+  // Lecture des dates possibles
   const rawDate =
     ev.date ||
     ev.start ||
@@ -69,18 +62,19 @@ function normalizeEvent(ev: any, sourceName: string) {
     ev.dateDebut ||
     null;
 
-  const dateObj = rawDate ? new Date(rawDate) : null;
-  if (!dateObj || isNaN(dateObj.getTime())) return null;
-
-  const dateISO = dateObj.toISOString();
-  const dateFormatted = dateObj.toLocaleString("fr-FR", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  let dateObj = rawDate ? new Date(rawDate) : null;
+  let dateISO = dateObj && !isNaN(dateObj.getTime()) ? dateObj.toISOString() : new Date().toISOString();
+  let dateFormatted =
+    dateObj && !isNaN(dateObj.getTime())
+      ? dateObj.toLocaleString("fr-FR", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : rawDate || "Date inconnue";
 
   const fullAddress =
     ev.fullAddress ||
@@ -129,11 +123,10 @@ function normalizeEvent(ev: any, sourceName: string) {
     fullAddress,
     image,
     url: ev.url || ev.link || "",
-    source: ev.source || sourceName,
+    source: sourceName,
   };
 }
 
-// ---------------------------------------------------------
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -150,48 +143,33 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   }
 }
 
-// ---------------------------------------------------------
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
   try {
-    // -------------------------
-    // 1️⃣   Fetch de toutes les sources
-    // -------------------------
     const results = await Promise.all(
       API_ROUTES.map(async (route) => {
         try {
           const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
           return { route, data };
         } catch {
-          return { route, data: { events: [] } };
+          return { route, data: [] };
         }
       })
     );
 
-    // -------------------------
-    // 2️⃣   Normalisation
-    // -------------------------
+    // Normalisation de tous les événements
     const allEvents = results.flatMap(({ route, data }) => {
-      let list: any[] = [];
-
-      if (route === "meetup-full") {
-        // ✅ Récupère events même si total = 0
-        list = Array.isArray(data.events) ? data.events : [];
-      } else {
-        list = Array.isArray(data?.events)
-          ? data.events
-          : Array.isArray(data)
-          ? data
-          : [];
-      }
+      const list = Array.isArray(data.events)
+        ? data.events
+        : Array.isArray(data)
+        ? data
+        : [];
 
       return list.map((ev) => normalizeEvent(ev, route)).filter(Boolean);
     });
 
-    // -------------------------
-    // 3️⃣   Filtre sur 31 jours
-    // -------------------------
+    // Filtre sur 31 jours
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const limit = new Date(today);
@@ -202,9 +180,7 @@ export async function GET(request: NextRequest) {
       return d >= today && d < limit;
     });
 
-    // -------------------------
-    // 4️⃣   Unicité
-    // -------------------------
+    // Unicité
     const uniq = new Map<string, any>();
     filtered.forEach((ev) => {
       const key = `${ev.title}-${ev.date}`;
