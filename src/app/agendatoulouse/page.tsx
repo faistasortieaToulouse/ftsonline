@@ -10,16 +10,20 @@ export default function AgendaToulousePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [search, setSearch] = useState("");
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
 
+  /** ─────────────────────────────────────────────
+   *  Catégorie + sécurité sur les champs
+   *  ─────────────────────────────────────────────
+   */
   function getCategory(event: any) {
     return (
       event.category ||
       event.type ||
       event.tags?.join(", ") ||
-      detectCategory(event.title + " " + event.description)
+      detectCategory((event.title || "") + " " + (event.description || ""))
     );
   }
 
@@ -34,6 +38,10 @@ export default function AgendaToulousePage() {
     return "Autre";
   }
 
+  /** ─────────────────────────────────────────────
+   *  Fetch principal → /api/agendatoulouse
+   *  ─────────────────────────────────────────────
+   */
   async function fetchEvents() {
     setLoading(true);
     setError(null);
@@ -46,8 +54,9 @@ export default function AgendaToulousePage() {
 
       const data = await res.json();
 
-      setEvents(data.events || []);
-      setFilteredEvents(data.events || []);
+      const evts = data.events || [];
+      setEvents(evts);
+      setFilteredEvents(evts);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
     } finally {
@@ -59,6 +68,10 @@ export default function AgendaToulousePage() {
     fetchEvents();
   }, []);
 
+  /** ─────────────────────────────────────────────
+   *  Filtrage intelligent
+   *  ─────────────────────────────────────────────
+   */
   useEffect(() => {
     if (!search.trim()) {
       setFilteredEvents(events);
@@ -66,15 +79,17 @@ export default function AgendaToulousePage() {
     }
 
     const q = search.toLowerCase();
+
     const result = events.filter((ev) => {
       const category = getCategory(ev);
+
       const combined = `
-        ${ev.title}
-        ${ev.description}
-        ${ev.fullAddress || ev.location}
-        ${ev.dateFormatted || ev.date}
+        ${ev.title || ""}
+        ${ev.description || ""}
+        ${ev.fullAddress || ev.location || ""}
+        ${ev.dateFormatted || ev.date || ""}
         ${category}
-      `.toLowerCase().trim();
+      `.toLowerCase();
 
       return combined.includes(q);
     });
@@ -82,13 +97,17 @@ export default function AgendaToulousePage() {
     setFilteredEvents(result);
   }, [search, events]);
 
+  /** ─────────────────────────────────────────────
+   *  Rendu
+   *  ─────────────────────────────────────────────
+   */
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">
         Agenda Toulouse – Tous les événements
       </h1>
 
-      {/* Barre de recherche */}
+      {/* Recherche */}
       <div className="mb-4">
         <input
           type="text"
@@ -104,7 +123,7 @@ export default function AgendaToulousePage() {
         {filteredEvents.length} événement(s) trouvé(s)
       </p>
 
-      {/* Boutons Plein écran / Vignette */}
+      {/* Modes d'affichage */}
       <div className="flex gap-4 mb-6">
         <Button
           onClick={() => setViewMode("card")}
@@ -112,6 +131,7 @@ export default function AgendaToulousePage() {
         >
           📺 Plein écran
         </Button>
+
         <Button
           onClick={() => setViewMode("list")}
           variant={viewMode === "list" ? "default" : "secondary"}
@@ -120,6 +140,7 @@ export default function AgendaToulousePage() {
         </Button>
       </div>
 
+      {/* Bouton Refresh */}
       <Button onClick={fetchEvents} disabled={loading} className="mb-6">
         {loading ? "Chargement..." : "📡 Recharger les événements"}
       </Button>
@@ -130,7 +151,7 @@ export default function AgendaToulousePage() {
         </div>
       )}
 
-      {/* Mode plein écran */}
+      {/* MODE CARTE (plein écran) */}
       {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredEvents.map((event, i) => (
@@ -139,44 +160,49 @@ export default function AgendaToulousePage() {
               className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]"
             >
               <img
-                src={event.image || event.coverImage || PLACEHOLDER_IMAGE}
+                src={event.image?.trim() ? event.image : PLACEHOLDER_IMAGE}
                 alt={event.title}
                 className="w-full h-54 sm:h-56 md:h-60 object-contain"
-
               />
 
               <div className="p-4 flex flex-col flex-1">
-                {/* Titre avec barre de défilement si trop long */}
+                {/* Titre */}
                 <div className="text-xl font-semibold mb-2 line-clamp-2 overflow-y-auto max-h-14">
                   {event.title}
                 </div>
 
-                {/* Description avec barre de défilement si trop longue */}
-{/* Description avec hauteur fixe et barre de défilement pour certaines sources */}
-<div
-  className={`text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto ${
-    event.source === "meetup-full" || event.source === "tourismehautegaronne"
-      ? "max-h-16"
-      : event.source === "toulousemetropole"
-      ? "max-h-20"
-      : "max-h-20"
-  }`}
->
-  {event.description}
-</div>
+                {/* Description */}
+                <div
+                  className={`text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto ${
+                    event.source === "meetup-full" ||
+                    event.source === "tourismehautegaronne"
+                      ? "max-h-16"
+                      : "max-h-20"
+                  }`}
+                >
+                  {event.description}
+                </div>
 
-          <p className="text-sm font-medium mb-1">
-                  {event.dateFormatted || event.date || event.start || ""}
+                {/* Date */}
+                <p className="text-sm font-medium mb-1">
+                  {event.dateFormatted ||
+                    event.date ||
+                    event.start ||
+                    "Date non renseignée"}
                 </p>
 
+                {/* Adresse */}
                 <p className="text-sm text-muted-foreground mb-1">
                   {event.fullAddress || event.location}
                 </p>
 
-		<p className="text-xs text-muted-foreground italic mb-3">
-		  Catégorie : {getCategory(event)} • Source : {event.source || "Inconnue"}
-		</p>
+                {/* Source + catégorie */}
+                <p className="text-xs text-muted-foreground italic mb-3">
+                  Catégorie : {getCategory(event)} • Source :{" "}
+                  {event.source || "Inconnue"}
+                </p>
 
+                {/* Lien */}
                 {event.url && (
                   <a
                     href={event.url}
@@ -193,7 +219,7 @@ export default function AgendaToulousePage() {
         </div>
       )}
 
-      {/* Mode liste */}
+      {/* MODE LISTE */}
       {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
           {filteredEvents.map((event, i) => (
@@ -202,7 +228,7 @@ export default function AgendaToulousePage() {
               className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
             >
               <img
-                src={event.image || event.coverImage || PLACEHOLDER_IMAGE}
+                src={event.image?.trim() ? event.image : PLACEHOLDER_IMAGE}
                 alt={event.title}
                 className="w-24 h-24 rounded object-cover flex-shrink-0"
               />
@@ -216,7 +242,12 @@ export default function AgendaToulousePage() {
                   {event.description}
                 </div>
 
-                <p className="text-sm">{event.dateFormatted}</p>
+                <p className="text-sm">
+                  {event.dateFormatted ||
+                    event.date ||
+                    event.start ||
+                    "Date non renseignée"}
+                </p>
 
                 <p className="text-xs text-muted-foreground italic">
                   Catégorie : {getCategory(event)}
