@@ -28,15 +28,16 @@ const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement"
 const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
 
 const THEME_IMAGES: Record<string, string> = {
-  "Culture": "/images/tourismehg31/themeculture.jpg",
+  Culture: "/images/tourismehg31/themeculture.jpg",
   "Education Emploi": "/images/tourismehg31/themeeducation.jpg",
-  "Autres": "/images/tourismehg31/themeautres.jpg",
-  "Sport": "/images/tourismehg31/themesport.jpg",
-  "Environnement": "/images/tourismehg31/themeenvironnement.jpg",
+  Autres: "/images/tourismehg31/themeautres.jpg",
+  Sport: "/images/tourismehg31/themesport.jpg",
+  Environnement: "/images/tourismehg31/themeenvironnement.jpg",
   "Économie / vie des entreprises": "/images/tourismehg31/themeentreprises.jpg",
-  "Vides Grenier / Brocantes / Foires et salons": "/images/tourismehg31/themebrocantes.jpg",
+  "Vides Grenier / Brocantes / Foires et salons":
+    "/images/tourismehg31/themebrocantes.jpg",
   "Culture scientifique": "/images/tourismehg31/themesciences.jpg",
-  "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
+  Agritourisme: "/images/tourismehg31/themeagritourisme.jpg",
 };
 
 // ---------------------------------------------------------
@@ -156,7 +157,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // -------------------------
-    // 1️⃣   Fetch simple de toutes les sources
+    // 1️⃣ Fetch de TOUTES les sources
     // -------------------------
     const results = await Promise.all(
       API_ROUTES.map(async (route) => {
@@ -170,21 +171,30 @@ export async function GET(request: NextRequest) {
     );
 
     // -------------------------
-    // 2️⃣   Normalisation
+    // 2️⃣ Normalisation (⚡ version corrigée Meetup-FULL)
     // -------------------------
     const allEvents = results.flatMap(({ route, data }) => {
-      const list =
-        Array.isArray(data.events)
-          ? data.events // meetup-full + d'autres routes
+      let list: any[] = [];
+
+      if (route === "meetup-full") {
+        // Meetup-full agrège plusieurs catégories
+        const keys = ["events", "meetup", "expats", "coloc", "sorties"];
+        list = keys.flatMap((k) =>
+          Array.isArray(data?.[k]) ? data[k] : []
+        );
+      } else {
+        list = Array.isArray(data?.events)
+          ? data.events
           : Array.isArray(data)
-          ? data // anciennes routes JSON
+          ? data
           : [];
+      }
 
       return list.map((ev) => normalizeEvent(ev, route)).filter(Boolean);
     });
 
     // -------------------------
-    // 3️⃣   Filtre sur 31 jours
+    // 3️⃣ Filtre sur 31 jours
     // -------------------------
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -197,7 +207,7 @@ export async function GET(request: NextRequest) {
     });
 
     // -------------------------
-    // 4️⃣   Unicité
+    // 4️⃣ Unicité
     // -------------------------
     const uniq = new Map<string, any>();
     filtered.forEach((ev) => {
