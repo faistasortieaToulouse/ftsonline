@@ -1,8 +1,12 @@
+// src/app/api/agendatoulouse/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
+// ---------------------------------------------------------
+// Toutes les routes API à agréger
+// ---------------------------------------------------------
 const API_ROUTES = [
   "agenda-trad-haute-garonne",
   "cultureenmouvements",
@@ -15,9 +19,10 @@ const API_ROUTES = [
   "capitole-min",
   "theatredupave",
   "discord",
-  "meetup-full",
+  "meetup-full", // ⚡ Agrégation Meetup
 ];
 
+// ---------------------------------------------------------
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
 
@@ -33,11 +38,9 @@ const THEME_IMAGES: Record<string, string> = {
   "Agritourisme": "/images/tourismehg31/themeagritourisme.jpg",
 };
 
+// ---------------------------------------------------------
 function normalize(str?: string) {
-  return (str || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+  return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 function getThemeImage(thematique?: string): string {
@@ -50,67 +53,38 @@ function getThemeImage(thematique?: string): string {
   return DEFAULT_THEME_IMAGE;
 }
 
+// ---------------------------------------------------------
 function normalizeEvent(ev: any, sourceName: string) {
   if (!ev) return null;
 
-  // Lecture des dates possibles
-  const rawDate =
-    ev.date ||
-    ev.start ||
-    ev.startDate ||
-    ev.date_debut ||
-    ev.dateDebut ||
-    null;
+  const rawDate = ev.date || ev.start || ev.startDate || ev.date_debut || ev.dateDebut || null;
+  const dateObj = rawDate ? new Date(rawDate) : null;
+  const dateISO = dateObj && !isNaN(dateObj.getTime()) ? dateObj.toISOString() : null;
+  const dateFormatted = dateObj
+    ? dateObj.toLocaleString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })
+    : null;
 
-  let dateObj = rawDate ? new Date(rawDate) : null;
-  let dateISO = dateObj && !isNaN(dateObj.getTime()) ? dateObj.toISOString() : new Date().toISOString();
-  let dateFormatted =
-    dateObj && !isNaN(dateObj.getTime())
-      ? dateObj.toLocaleString("fr-FR", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : rawDate || "Date inconnue";
-
-  const fullAddress =
-    ev.fullAddress ||
-    ev.location ||
-    ev.commune ||
-    ev.lieu_nom ||
-    ev.adresse ||
-    "";
-
-  const location =
-    ev.location ||
-    ev.commune ||
-    ev.lieu_nom ||
-    ev.ville ||
-    "";
+  const fullAddress = ev.fullAddress || ev.location || ev.commune || ev.lieu_nom || ev.adresse || "";
+  const location = ev.location || ev.commune || ev.lieu_nom || ev.ville || "";
 
   let image;
-  if (sourceName === "tourismehautegaronne") {
-    image =
-      ev.image ||
-      ev.coverImage ||
-      getThemeImage(ev.thematique) ||
-      DEFAULT_THEME_IMAGE;
-  } else if (sourceName === "demosphere") {
-    image = ev.image || ev.coverImage || "/logo/demosphereoriginal.png";
-  } else if (sourceName === "ut3-min" || sourceName === "capitole-min") {
-    const titleLower = (ev.title || "").toLowerCase();
-    if (titleLower.includes("ciné") || titleLower.includes("cine"))
-      image = "/images/capitole/capicine.jpg";
-    else if (titleLower.includes("conf"))
-      image = "/images/capitole/capiconf.jpg";
-    else if (titleLower.includes("expo"))
-      image = "/images/capitole/capiexpo.jpg";
-    else image = "/images/capitole/capidefaut.jpg";
-  } else {
-    image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
+  switch (sourceName) {
+    case "tourismehautegaronne":
+      image = ev.image || ev.coverImage || getThemeImage(ev.thematique) || DEFAULT_THEME_IMAGE;
+      break;
+    case "demosphere":
+      image = ev.image || ev.coverImage || "/logo/demosphereoriginal.png";
+      break;
+    case "ut3-min":
+    case "capitole-min":
+      const titleLower = (ev.title || "").toLowerCase();
+      if (titleLower.includes("ciné") || titleLower.includes("cine")) image = "/images/capitole/capicine.jpg";
+      else if (titleLower.includes("conf")) image = "/images/capitole/capiconf.jpg";
+      else if (titleLower.includes("expo")) image = "/images/capitole/capiexpo.jpg";
+      else image = "/images/capitole/capidefaut.jpg";
+      break;
+    default:
+      image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
   }
 
   return {
@@ -123,10 +97,11 @@ function normalizeEvent(ev: any, sourceName: string) {
     fullAddress,
     image,
     url: ev.url || ev.link || "",
-    source: sourceName,
+    source: ev.source || sourceName,
   };
 }
 
+// ---------------------------------------------------------
 async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
   for (let i = 0; i <= retries; i++) {
     try {
@@ -138,15 +113,17 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 8000) {
       return await res.json();
     } catch (err) {
       if (i === retries) throw err;
-      await new Promise((r) => setTimeout(r, 2000));
+      await new Promise(r => setTimeout(r, 2000));
     }
   }
 }
 
+// ---------------------------------------------------------
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
 
   try {
+    // 1️⃣ Récupérer toutes les sources
     const results = await Promise.all(
       API_ROUTES.map(async (route) => {
         try {
@@ -158,40 +135,38 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    // Normalisation de tous les événements
+    // 2️⃣ Normalisation
     const allEvents = results.flatMap(({ route, data }) => {
-      const list = Array.isArray(data.events)
-        ? data.events
-        : Array.isArray(data)
-        ? data
-        : [];
-
-      return list.map((ev) => normalizeEvent(ev, route)).filter(Boolean);
+      const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
+      return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
     });
 
-    // Filtre sur 31 jours
+    // 3️⃣ Filtrer sur 31 jours mais inclure événements sans date valide
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const limit = new Date(today);
     limit.setDate(limit.getDate() + 31);
 
-    const filtered = allEvents.filter((ev) => {
+    const filtered = allEvents.filter(ev => {
+      if (!ev.date) return true; // inclure si date manquante
       const d = new Date(ev.date);
-      return d >= today && d < limit;
+      return !isNaN(d.getTime()) && d >= today && d < limit;
     });
 
-    // Unicité
+    // 4️⃣ Unicité
     const uniq = new Map<string, any>();
-    filtered.forEach((ev) => {
+    filtered.forEach(ev => {
       const key = `${ev.title}-${ev.date}`;
       if (!uniq.has(key)) uniq.set(key, ev);
     });
 
+    // 5️⃣ Tri par date
     const finalEvents = Array.from(uniq.values()).sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      (a, b) => new Date(a.date || "").getTime() - new Date(b.date || "").getTime()
     );
 
     return NextResponse.json({ total: finalEvents.length, events: finalEvents });
+
   } catch (err: any) {
     console.error("Erreur agrégation agendatoulouse:", err);
     return NextResponse.json(
