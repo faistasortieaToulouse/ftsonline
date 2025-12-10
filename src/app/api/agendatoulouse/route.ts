@@ -164,20 +164,20 @@ export async function GET(request: NextRequest) {
           const data = await fetchWithRetry(`${origin}/api/${route}`, 2, 10000);
           return { route, data };
         } catch {
-          return { route, data: [] };
+          return { route, data: { events: [] } };
         }
       })
     );
 
     // -------------------------
-    // 2️⃣   Normalisation avec Meetup-full corrigé
+    // 2️⃣   Normalisation
     // -------------------------
     const allEvents = results.flatMap(({ route, data }) => {
       let list: any[] = [];
 
       if (route === "meetup-full") {
-        // Prend toutes les clés qui sont des tableaux dans meetup-full
-        list = Object.values(data || {}).filter(Array.isArray).flat();
+        // ✅ Récupère events même si total = 0
+        list = Array.isArray(data.events) ? data.events : [];
       } else {
         list = Array.isArray(data?.events)
           ? data.events
