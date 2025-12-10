@@ -1,7 +1,7 @@
 // src/app/api/agendatoulouse/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic"; // 🔹 forcer le rendu dynamique
 export const revalidate = 3600;
 
 // ---------------------------------------------------------
@@ -19,10 +19,9 @@ const API_ROUTES = [
   "capitole-min",
   "theatredupave",
   "discord",
-  "meetup-full", // ⚡ Agrégation Meetup
+  "meetup-full",
 ];
 
-// ---------------------------------------------------------
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 const DEFAULT_THEME_IMAGE = "/images/tourismehg31/placeholder.jpg";
 
@@ -61,7 +60,10 @@ function normalizeEvent(ev: any, sourceName: string) {
   const dateObj = rawDate ? new Date(rawDate) : null;
   const dateISO = dateObj && !isNaN(dateObj.getTime()) ? dateObj.toISOString() : null;
   const dateFormatted = dateObj
-    ? dateObj.toLocaleString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" })
+    ? dateObj.toLocaleString("fr-FR", { 
+        weekday: "long", year: "numeric", month: "long", day: "numeric", 
+        hour: "2-digit", minute: "2-digit" 
+      })
     : null;
 
   const fullAddress = ev.fullAddress || ev.location || ev.commune || ev.lieu_nom || ev.adresse || "";
@@ -87,6 +89,7 @@ function normalizeEvent(ev: any, sourceName: string) {
       image = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
   }
 
+  // 🔹 Retourner uniquement des données JSON sérialisables
   return {
     id: ev.id || `${ev.title}-${dateISO}`,
     title: ev.title || "Événement",
@@ -135,20 +138,22 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    // 2️⃣ Normalisation
+    // 2️⃣ Normalisation et sérialisation JSON
     const allEvents = results.flatMap(({ route, data }) => {
       const list = Array.isArray(data.events) ? data.events : Array.isArray(data) ? data : [];
-      return list.map(ev => normalizeEvent(ev, route)).filter(Boolean);
+      return list
+        .map(ev => normalizeEvent(ev, route))
+        .filter(ev => ev !== null);
     });
 
-    // 3️⃣ Filtrer sur 31 jours mais inclure événements sans date valide
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    // 3️⃣ Filtrer événements sur 31 jours, inclure ceux sans date
+    const today = new Date();
+    today.setHours(0,0,0,0);
     const limit = new Date(today);
     limit.setDate(limit.getDate() + 31);
 
     const filtered = allEvents.filter(ev => {
-      if (!ev.date) return true; // inclure si date manquante
+      if (!ev.date) return true;
       const d = new Date(ev.date);
       return !isNaN(d.getTime()) && d >= today && d < limit;
     });
@@ -170,7 +175,7 @@ export async function GET(request: NextRequest) {
   } catch (err: any) {
     console.error("Erreur agrégation agendatoulouse:", err);
     return NextResponse.json(
-      { error: err.message || "Erreur lors de l'agrégation" },
+      { total: 0, events: [], error: err.message || "Erreur lors de l'agrégation" },
       { status: 500 }
     );
   }
