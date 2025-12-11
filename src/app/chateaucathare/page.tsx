@@ -71,17 +71,24 @@ const CatharMapComponent: React.FC<{ chateaux: ChateauType[]; filters: { emblema
 
     // Crée les nouveaux marqueurs
     filteredChateaux.forEach(chateau => {
+      // UTILISATION DE L'ID POUR LE LABEL DU MARQUEUR
       const marker = new google.maps.Marker({
         position: { lat: chateau.lat, lng: chateau.lng },
         map: map,
-        title: `${chateau.name} (${chateau.type})`,
+        title: `${chateau.id}. ${chateau.name} (${chateau.type})`,
         icon: PIN_STYLE[chateau.type], 
+        label: {
+            text: String(chateau.id), // Affiche l'ID comme numéro
+            color: '#ffffff', // Couleur du texte (blanc pour contraste)
+            fontWeight: 'bold',
+            fontSize: '12px',
+        },
       });
       
       const infowindow = new google.maps.InfoWindow({
         content: `
           <div>
-            <strong>${chateau.name}</strong> (${chateau.city})<br/>
+            <strong>${chateau.id}. ${chateau.name}</strong> (${chateau.city})<br/>
             Département: ${chateau.department}<br/>
             Type: ${chateau.type === 'Emblematic' ? 'Emblématique' : 'Secondaire'}
           </div>`
@@ -109,9 +116,10 @@ const CatharMapComponent: React.FC<{ chateaux: ChateauType[]; filters: { emblema
 // --- Composant Principal de la Page ---
 export default function ChateauxCatharesPage() {
   
+  // MODIFICATION ICI : État initial réglé sur TRUE/TRUE pour afficher tous les marqueurs au départ.
   const [filters, setFilters] = useState({
     emblematic: true,
-    secondary: false,
+    secondary: true,
   });
   // Suit si le script Google Maps a été chargé
   const [isScriptLoaded, setIsScriptLoaded] = useState(false); 
@@ -122,6 +130,7 @@ export default function ChateauxCatharesPage() {
   
   const handleToggleAll = () => {
       const allActive = filters.emblematic && filters.secondary;
+      // Si tout est actif, on désactive tout. Sinon, on active tout.
       setFilters({ 
           emblematic: !allActive, 
           secondary: !allActive 
@@ -136,7 +145,6 @@ export default function ChateauxCatharesPage() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
       
       {/* 1. Chargement de l'API Google Maps */}
-      {/* libraries=marker est nécessaire pour google.maps.SymbolPath.CIRCLE */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=marker`}
         strategy="afterInteractive"
@@ -178,7 +186,7 @@ export default function ChateauxCatharesPage() {
       </div>
       
       <p className="font-semibold text-lg mb-4">
-        {totalMarkers} lieux au total.
+        {chateauxData.filter(c => (c.type === 'Emblematic' && filters.emblematic) || (c.type === 'Secondary' && filters.secondary)).length} lieux affichés sur {totalMarkers} au total.
       </p>
 
       {/* 2. Affichage conditionnel de la Carte */}
@@ -192,10 +200,12 @@ export default function ChateauxCatharesPage() {
       
       {/* 3. Liste des châteaux */}
       <h2 className="text-2xl font-semibold mb-4 mt-8">Liste complète des châteaux ({totalMarkers})</h2>
-      {/* ... (Reste du tableau) ... */}
+      
+      {/* Tableau mis à jour pour afficher l'ID dans la première colonne pour correspondre au marqueur */}
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
         <thead style={{ backgroundColor: "#f0f0f0" }}>
           <tr>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left", width: "5%" }}>#ID</th>
             <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Nom</th>
             <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Commune</th>
             <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Département</th>
@@ -205,6 +215,7 @@ export default function ChateauxCatharesPage() {
         <tbody>
           {chateauxData.map((c, i) => (
             <tr key={c.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}>
+              <td style={{ padding: "8px", border: "1px solid #ddd", fontWeight: 'bold' }}>{c.id}</td>
               <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.name}</td>
               <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.city}</td>
               <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.department}</td>
