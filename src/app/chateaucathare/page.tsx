@@ -21,14 +21,16 @@ const CatharMapComponent: React.FC<{ chateaux: ChateauType[]; filters: { emblema
           fillColor: '#b30000',
           fillOpacity: 0.9,
           strokeWeight: 1,
-          scale: 8,
+          // TAILLE AUGMENTÉE : 8 -> 12
+          scale: 12, 
       },
       Secondary: {
           path: google.maps.SymbolPath.CIRCLE,
           fillColor: '#0066b3',
           fillOpacity: 0.8,
           strokeWeight: 0.5,
-          scale: 6,
+          // TAILLE AUGMENTÉE : 6 -> 9
+          scale: 9, 
       },
   }), []);
 
@@ -81,7 +83,8 @@ const CatharMapComponent: React.FC<{ chateaux: ChateauType[]; filters: { emblema
             text: String(chateau.id), // Affiche l'ID comme numéro
             color: '#ffffff', // Couleur du texte (blanc pour contraste)
             fontWeight: 'bold',
-            fontSize: '12px',
+            // AUGMENTATION DE LA TAILLE DE LA POLICE pour s'adapter au plus grand cercle
+            fontSize: '14px', 
         },
       });
       
@@ -113,7 +116,7 @@ const CatharMapComponent: React.FC<{ chateaux: ChateauType[]; filters: { emblema
 };
 
 
-// --- Composant Principal de la Page ---
+// --- Composant Principal de la Page (Aucun changement dans cette partie) ---
 export default function ChateauxCatharesPage() {
   
   // MODIFICATION ICI : État initial réglé sur TRUE/TRUE pour afficher tous les marqueurs au départ.
