@@ -3,19 +3,21 @@
 import { NextResponse } from 'next/server';
 
 // --- Interface pour les données des châteaux ---
-interface Chateau {
+// 'export' rend l'interface utilisable dans les composants clients.
+export interface Chateau {
   id: number;
   name: string;
   city: string;
   department: 'Aude' | 'Ariège' | 'Other';
-  type: 'Emblematic' | 'Secondary'; // Pour le filtrage
+  type: 'Emblematic' | 'Secondary'; // 'Emblematic' pour Principal, 'Secondary' pour Secondaire
   lat: number; // Latitude (À REMPLACER)
   lng: number; // Longitude (À REMPLACER)
 }
 
-// --- Données des châteaux (Mise en page des données que vous avez fournies) ---
+// --- Données des châteaux Cathares ---
+// L'exportation 'export const' permet d'importer directement ces données dans page.tsx.
 // **ATTENTION : Les coordonnées (lat/lng) ci-dessous sont FICTIVES et doivent être remplacées par les coordonnées GPS réelles.**
-const chateauxData: Chateau[] = [
+export const chateauxData: Chateau[] = [
   // I. Les Sites Emblématiques (Citadelles du Vertige)
   { id: 1, name: "Aguilar", city: "Aguilar", department: "Aude", type: "Emblematic", lat: 43.0841, lng: 2.5701 },
   { id: 2, name: "Arques", city: "Arques", department: "Aude", type: "Emblematic", lat: 42.9515, lng: 2.3789 },
@@ -38,7 +40,6 @@ const chateauxData: Chateau[] = [
   { id: 17, name: "Bézu", city: "Bézu", department: "Aude", type: "Secondary", lat: 42.9400, lng: 2.2280 },
   { id: 18, name: "Capendu", city: "Capendu", department: "Aude", type: "Secondary", lat: 43.1550, lng: 2.4900 },
   { id: 19, name: "Chalabre", city: "Chalabre", department: "Aude", type: "Secondary", lat: 43.0560, lng: 2.0100 },
-  // ... (Ajouter ici tous les autres châteaux secondaires avec leurs coordonnées)
   { id: 20, name: "Coustaussa", city: "Coustaussa", department: "Aude", type: "Secondary", lat: 42.9800, lng: 2.2900 },
   { id: 21, name: "Durban-Corbières", city: "Durban-Corbières", department: "Aude", type: "Secondary", lat: 42.9600, lng: 2.8000 },
   { id: 22, name: "Durban-sur-Arize", city: "Durban-sur-Arize", department: "Ariège", type: "Secondary", lat: 43.0200, lng: 1.3400 },
@@ -53,11 +54,8 @@ const chateauxData: Chateau[] = [
   // NOTE: Veuillez ajouter toutes les autres lignes ici avec leurs coordonnées réelles.
 ];
 
+// Fonction GET pour la route API /api/chateaucathare
 export async function GET() {
-  // Simule une petite latence réseau
-  // await new Promise(resolve => setTimeout(resolve, 500)); 
-  
+  // Cette route peut être appelée par un fetch, mais les données sont aussi importables directement.
   return NextResponse.json(chateauxData);
 }
-
-export type ChateauType = Chateau; // Exporte l'interface pour le composant client
