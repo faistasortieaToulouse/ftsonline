@@ -1,15 +1,17 @@
 // src/app/chateaucathare/page.tsx
-
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
-import { ChateauType } from '../api/chateaucathare/route'; // Importe le type créé dans l'API
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import Script from "next/script";
 
-// --- Style pour les différents types de châteaux ---
+// --- Importation des données et du type depuis l'API des Châteaux ---
+import { chateauxData, Chateau } from '../api/chateaucathare/route'; 
+type ChateauType = Chateau;
+
+// --- Styles pour les différents types de marqueurs ---
 const PIN_STYLE: Record<ChateauType['type'], google.maps.MarkerOptions['icon']> = {
   Emblematic: {
-    // Les principaux, en rouge vif (ou une icône spécifique)
+    // Les principaux, en rouge vif
     path: google.maps.SymbolPath.CIRCLE,
     fillColor: '#b30000',
     fillOpacity: 0.9,
@@ -26,11 +28,12 @@ const PIN_STYLE: Record<ChateauType['type'], google.maps.MarkerOptions['icon']> 
   },
 };
 
-// --- Composant Carte (Map) ---
+// --- Composant Carte Interne pour gérer les marqueurs ---
 const CatharMap: React.FC<{ chateaux: ChateauType[]; filters: { emblematic: boolean; secondary: boolean } }> = ({ chateaux, filters }) => {
-  const mapRef = React.useRef<HTMLDivElement>(null);
-  const mapInstanceRef = React.useRef<google.maps.Map | null>(null);
-  const markersRef = React.useRef<google.maps.Marker[]>([]);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   // Filtre les châteaux à afficher en fonction des options sélectionnées
   const filteredChateaux = useMemo(() => {
@@ -41,41 +44,32 @@ const CatharMap: React.FC<{ chateaux: ChateauType[]; filters: { emblematic: bool
     });
   }, [chateaux, filters]);
 
-  // Initialisation de la carte
+  // 1. Initialisation de la carte (après chargement du script)
   useEffect(() => {
-    if (!mapRef.current) return;
-
-    const loader = new Loader({
-      apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-      version: "weekly",
-      libraries: ["marker"], // Assure que la bibliothèque de marqueurs est chargée
-    });
-
-    loader.load().then(() => {
-      // Centre initial (Ariège/Aude)
+    if (!mapRef.current || !window.google?.maps) return;
+    
+    // Si la carte n'est pas encore initialisée
+    if (!mapInstanceRef.current) {
+      // Centre initial (Aude/Ariège)
       const center = { lat: 43.05, lng: 2.0 };
       
       const mapOptions: google.maps.MapOptions = {
         center: center,
         zoom: 9,
-        mapId: "CATHAR_CASTLES_MAP", // Peut être utilisé pour personnaliser le style de carte
+        gestureHandling: "greedy",
+        mapId: "CATHAR_CASTLES_MAP", 
       };
 
       mapInstanceRef.current = new google.maps.Map(mapRef.current!, mapOptions);
-    }).catch(e => console.error("Erreur de chargement de Google Maps:", e));
+      setIsMapLoaded(true);
+    }
+    
+  }, [isMapLoaded]); // Dépend de son propre état pour s'assurer que l'initialisation ne se fait qu'une fois.
 
-    // Nettoyage au démontage
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current = null;
-      }
-    };
-  }, []); // Exécuté une seule fois à la première charge
-
-  // Mise à jour des marqueurs quand les filtres changent
+  // 2. Mise à jour des marqueurs quand les filtres changent
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map) return;
+    if (!map || !isMapLoaded) return; // N'exécute que si la carte est chargée
 
     // Supprime les anciens marqueurs
     markersRef.current.forEach(marker => marker.setMap(null));
@@ -90,9 +84,13 @@ const CatharMap: React.FC<{ chateaux: ChateauType[]; filters: { emblematic: bool
         icon: PIN_STYLE[chateau.type], // Utilise l'icône définie
       });
       
-      // Ajoute une fenêtre d'information (InfoWindow)
       const infowindow = new google.maps.InfoWindow({
-        content: `<div><strong>${chateau.name}</strong> (${chateau.city})<br/>Type: ${chateau.type}</div>`
+        content: `
+          <div>
+            <strong>${chateau.name}</strong> (${chateau.city})<br/>
+            Département: ${chateau.department}<br/>
+            Type: ${chateau.type === 'Emblematic' ? 'Emblématique' : 'Secondaire'}
+          </div>`
       });
 
       marker.addListener("click", () => {
@@ -102,36 +100,28 @@ const CatharMap: React.FC<{ chateaux: ChateauType[]; filters: { emblematic: bool
       markersRef.current.push(marker);
     });
 
-  }, [filteredChateaux]); // Dépend de la liste filtrée
+  }, [filteredChateaux, isMapLoaded]); 
 
-  return <div ref={mapRef} style={{ height: '700px', width: '100%' }} aria-label="Carte des Châteaux Cathares" />;
+  return (
+      <div 
+        ref={mapRef} 
+        style={{ height: '70vh', width: '100%' }} 
+        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
+      >
+        {!isMapLoaded && <p>Chargement de la carte Google Maps...</p>}
+      </div>
+  );
 };
 
 
 // --- Composant Principal de la Page ---
 export default function ChateauxCatharesPage() {
-  const [chateaux, setChateaux] = useState<ChateauType[]>([]);
-  const [loading, setLoading] = useState(true);
+  
   const [filters, setFilters] = useState({
     emblematic: true,
     secondary: false,
   });
-
-  // 1. Chargement des données via l'API locale
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch('/api/chateaucathare');
-        const data: ChateauType[] = await response.json();
-        setChateaux(data);
-      } catch (error) {
-        console.error("Erreur lors du chargement des données des châteaux:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   const handleFilterChange = (type: 'emblematic' | 'secondary') => {
     setFilters(prev => ({ ...prev, [type]: !prev[type] }));
@@ -139,44 +129,50 @@ export default function ChateauxCatharesPage() {
   
   const handleToggleAll = () => {
       const allActive = filters.emblematic && filters.secondary;
-      if (allActive) {
-          setFilters({ emblematic: false, secondary: false }); // Désactive tout si tout est actif
-      } else {
-          setFilters({ emblematic: true, secondary: true }); // Active tout
-      }
+      setFilters({ 
+          emblematic: !allActive, 
+          secondary: !allActive 
+      });
   };
 
-
-  if (loading) {
-    return <div className="p-8">Chargement des données des châteaux...</div>;
-  }
+  const totalEmblematic = chateauxData.filter(c => c.type === 'Emblematic').length;
+  const totalSecondary = chateauxData.filter(c => c.type === 'Secondary').length;
+  const totalMarkers = chateauxData.length;
 
   return (
-    <div className="p-4 md:p-8">
-      <h1 className="text-3xl font-bold mb-4">🗺️ Les Châteaux Cathares</h1>
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      
+      {/* 1. Chargement de l'API Google Maps */}
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=marker`}
+        strategy="afterInteractive"
+        onLoad={() => setIsScriptLoaded(true)}
+      />
+
+      <h1 className="text-3xl font-extrabold mb-6">🗺️ Châteaux Cathares : Citadelles et Forteresses</h1>
       
       {/* Contrôles de filtrage */}
       <div className="flex flex-wrap gap-4 mb-6 items-center">
         <span className="font-semibold">Afficher :</span>
         
-        <label className="flex items-center space-x-2">
+        <label className="flex items-center space-x-2 cursor-pointer">
           <input
             type="checkbox"
             checked={filters.emblematic}
             onChange={() => handleFilterChange('emblematic')}
             className="form-checkbox text-red-600 h-5 w-5"
           />
-          <span>Sites Emblématiques (Citadelles du Vertige)</span>
+          <span>Sites Emblématiques ({totalEmblematic})</span>
         </label>
         
-        <label className="flex items-center space-x-2">
+        <label className="flex items-center space-x-2 cursor-pointer">
           <input
             type="checkbox"
             checked={filters.secondary}
             onChange={() => handleFilterChange('secondary')}
             className="form-checkbox text-blue-600 h-5 w-5"
           />
-          <span>Autres Forteresses Médiévales</span>
+          <span>Autres Forteresses ({totalSecondary})</span>
         </label>
 
         <button
@@ -186,16 +182,45 @@ export default function ChateauxCatharesPage() {
             {filters.emblematic && filters.secondary ? 'Désactiver tout' : 'Afficher tout'}
         </button>
       </div>
-
-      {/* Affichage de la Carte */}
-      <CatharMap chateaux={chateaux} filters={filters} />
       
-      <p className="mt-4 text-sm text-gray-600">
-        **NOTE :** Les coordonnées de cette carte sont fictives et doivent être remplacées par les coordonnées GPS précises pour chaque site. Les marqueurs rouges représentent les sites emblématiques, les bleus les secondaires.
+      <p className="font-semibold text-lg mb-4">
+        {chateauxData.length} lieux au total.
       </p>
+
+      {/* 2. Affichage de la Carte */}
+      {isScriptLoaded ? (
+         <CatharMap chateaux={chateauxData} filters={filters} />
+      ) : (
+         <div style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center">
+            <p>Chargement du script Google Maps...</p>
+         </div>
+      )}
+      
+      {/* 3. Liste des châteaux */}
+      <h2 className="text-2xl font-semibold mb-4 mt-8">Liste complète des châteaux ({totalMarkers})</h2>
+
+      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+        <thead style={{ backgroundColor: "#f0f0f0" }}>
+          <tr>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Nom</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Commune</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Département</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {chateauxData.map((c, i) => (
+            <tr key={c.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}>
+              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.name}</td>
+              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.city}</td>
+              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.department}</td>
+              <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                {c.type === 'Emblematic' ? 'Emblématique (Principal)' : 'Secondaire'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
-
-// NOTE: Pour que les classes Tailwind CSS (form-checkbox, text-red-600, etc.) fonctionnent, 
-// assurez-vous que Tailwind CSS est configuré dans votre projet Next.js.
