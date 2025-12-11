@@ -1,108 +1,238 @@
+// src/app/chateaucathare/page.tsx
 'use client';
 
-import { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Script from "next/script";
 
-interface Ecrivain {
-  nom: string;
-  commune: string;
-  dates?: string;
-  description?: string;
-}
+// --- Importation des données et du type depuis l'API des Châteaux ---
+import { chateauxData, Chateau } from '../api/chateaucathare/route'; 
+type ChateauType = Chateau;
 
-// Données importées (liste avec communes)
-import { ecrivainsData } from "@/app/api/ecrivainsaude/route";
+// --- DÉFINITION DE LA CARTE (Contient toute la logique qui dépend de 'google') ---
+const CatharMapComponent: React.FC<{ chateaux: ChateauType[]; filters: { emblematic: boolean; secondary: boolean } }> = ({ chateaux, filters }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
 
-export default function EcrivainsAudePage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const [markersCount, setMarkersCount] = useState(0);
-  const [isReady, setIsReady] = useState(false);
+  // Définition des styles DES PIN NUMÉROTÉS (CERCLES)
+  const PIN_STYLE = useMemo(() => ({
+      Emblematic: {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: '#b30000', // Rouge foncé
+          fillOpacity: 0.9,
+          strokeWeight: 1,
+          scale: 12, // Taille du cercle
+      },
+      Secondary: {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: '#0066b3', // Bleu marine
+          fillOpacity: 0.8,
+          strokeWeight: 0.5,
+          scale: 9, // Taille du cercle légèrement plus petit
+      },
+  }), []);
 
-  useEffect(() => {
-    if (!isReady || !mapRef.current || !window.google?.maps) return;
 
-    const map = new google.maps.Map(mapRef.current, {
-      zoom: 9,
-      center: { lat: 43.15, lng: 2.3 }, // centre de l'Aude
-      gestureHandling: "greedy",
-    });
-    mapInstance.current = map;
-
-    const geocoder = new google.maps.Geocoder();
-    let count = 0;
-
-    ecrivainsData.forEach((e) => {
-      geocoder.geocode({ address: e.commune + ", France" }, (results, status) => {
-        if (status !== "OK" || !results?.[0] || !mapInstance.current) return;
-
-        count++;
-        const marker = new google.maps.Marker({
-          map: mapInstance.current,
-          position: results[0].geometry.location,
-          title: e.nom,
-          label: String(count),
-        });
-
-        const info = new google.maps.InfoWindow({
-          content: `
-            <div style="font-family: Arial; font-size: 14px;">
-              <strong>${count}. ${e.nom}</strong><br/>
-              <b>Commune :</b> ${e.commune}<br/>
-              <b>Dates :</b> ${e.dates || "N/A"}<br/>
-              <b>Description :</b> ${e.description || "Écrivain"}
-            </div>
-          `,
-        });
-
-        marker.addListener("click", () => info.open({ anchor: marker, map: mapInstance.current! }));
-
-        setMarkersCount(count);
+  // Filtre les châteaux à afficher
+  const filteredChateaux = useMemo(() => {
+      return chateaux.filter(chateau => {
+          if (chateau.type === 'Emblematic' && filters.emblematic) return true;
+          if (chateau.type === 'Secondary' && filters.secondary) return true;
+          return false;
       });
+  }, [chateaux, filters]);
+
+
+  // 1. Initialisation de la carte (après chargement du script)
+  useEffect(() => {
+    if (!mapRef.current || !window.google?.maps) return;
+    
+    // Initialisation si ce n'est pas déjà fait
+    if (!mapInstanceRef.current) {
+        const center = { lat: 43.05, lng: 2.0 }; // Centre Aude/Ariège
+        
+        mapInstanceRef.current = new google.maps.Map(mapRef.current!, {
+            center: center,
+            zoom: 9,
+            gestureHandling: "greedy",
+            mapId: "CATHAR_CASTLES_MAP", 
+            // Contrôles pour agrandir les boutons
+            zoomControl: true,
+            zoomControlOptions: {
+                style: google.maps.ZoomControlStyle.LARGE 
+            },
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+            },
+            scaleControl: true,
+        });
+    }
+  }, []); 
+
+  // 2. Mise à jour des marqueurs quand les filtres changent
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    // Supprime les anciens marqueurs
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+
+    // Crée les nouveaux marqueurs
+    filteredChateaux.forEach(chateau => {
+      // CRÉATION DU MARQUEUR AVEC LE STYLE CERCLE ET LE LABEL NUMÉROTÉ
+      const marker = new google.maps.Marker({
+        position: { lat: chateau.lat, lng: chateau.lng },
+        map: map,
+        title: `${chateau.id}. ${chateau.name} (${chateau.type})`,
+        icon: PIN_STYLE[chateau.type], // Applique le style cercle coloré
+        label: {
+            text: String(chateau.id), // Affiche l'ID comme numéro
+            color: '#ffffff', // Texte blanc
+            fontWeight: 'bold',
+            fontSize: '14px', // Taille de la police pour le numéro
+        },
+      });
+      
+      const infowindow = new google.maps.InfoWindow({
+        content: `
+          <div>
+            <strong>${chateau.id}. ${chateau.name}</strong> (${chateau.city})<br/>
+            Département: ${chateau.department}<br/>
+            Type: ${chateau.type === 'Emblematic' ? 'Emblématique' : 'Secondaire'}
+          </div>`
+      });
+
+      marker.addListener("click", () => {
+        infowindow.open(map, marker);
+      });
+
+      markersRef.current.push(marker);
     });
-  }, [isReady]);
+
+  }, [filteredChateaux, PIN_STYLE]); 
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      {/* Chargement de l'API Google Maps */}
+      <div 
+        ref={mapRef} 
+        style={{ height: '70vh', width: '100%' }} 
+        className="mb-8 border rounded-lg bg-gray-100"
+      />
+  );
+};
+
+
+// --- Composant Principal de la Page ---
+export default function ChateauxCatharesPage() {
+  
+  // État initial réglé sur TRUE/TRUE pour afficher tous les marqueurs au départ.
+  const [filters, setFilters] = useState({
+    emblematic: true,
+    secondary: true,
+  });
+  // Suit si le script Google Maps a été chargé
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false); 
+
+  const handleFilterChange = (type: 'emblematic' | 'secondary') => {
+    setFilters(prev => ({ ...prev, [type]: !prev[type] }));
+  };
+  
+  const handleToggleAll = () => {
+      const allActive = filters.emblematic && filters.secondary;
+      // Si tout est actif, on désactive tout. Sinon, on active tout.
+      setFilters({ 
+          emblematic: !allActive, 
+          secondary: !allActive 
+      });
+  };
+
+  const totalEmblematic = chateauxData.filter(c => c.type === 'Emblematic').length;
+  const totalSecondary = chateauxData.filter(c => c.type === 'Secondary').length;
+  const totalMarkers = chateauxData.length;
+
+  return (
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      
+      {/* 1. Chargement de l'API Google Maps */}
+      {/* Nous incluons 'marker' pour les icônes personnalisées (SymbolPath.CIRCLE) */}
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=marker`}
         strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
+        onLoad={() => setIsScriptLoaded(true)}
       />
 
-      <h1 className="text-3xl font-extrabold mb-6">🖋️ Écrivains de l'Aude sur la carte</h1>
+      <h1 className="text-3xl font-extrabold mb-6">🗺️ Châteaux Cathares : Citadelles et Forteresses</h1>
+      
+      {/* Contrôles de filtrage */}
+      <div className="flex flex-wrap gap-4 mb-6 items-center">
+        <span className="font-semibold">Afficher :</span>
+        
+        <label className="flex items-center space-x-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={filters.emblematic}
+            onChange={() => handleFilterChange('emblematic')}
+            className="form-checkbox text-red-600 h-5 w-5"
+          />
+          <span>Sites Emblématiques ({totalEmblematic})</span>
+        </label>
+        
+        <label className="flex items-center space-x-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={filters.secondary}
+            onChange={() => handleFilterChange('secondary')}
+            className="form-checkbox text-blue-600 h-5 w-5"
+          />
+          <span>Autres Forteresses ({totalSecondary})</span>
+        </label>
 
+        <button
+            onClick={handleToggleAll}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded text-sm"
+        >
+            {filters.emblematic && filters.secondary ? 'Désactiver tout' : 'Afficher tout'}
+        </button>
+      </div>
+      
       <p className="font-semibold text-lg mb-4">
-        {markersCount} lieux affichés sur {ecrivainsData.length} entrées.
+        {chateauxData.filter(c => (c.type === 'Emblematic' && filters.emblematic) || (c.type === 'Secondary' && filters.secondary)).length} lieux affichés sur {totalMarkers} au total.
       </p>
 
-      <div
-        ref={mapRef}
-        style={{ height: "70vh", width: "100%" }}
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
-      >
-        {!isReady && <p>Chargement de la carte…</p>}
-      </div>
-
-      <h2 className="text-2xl font-semibold mb-4">Liste complète des écrivains</h2>
-
+      {/* 2. Affichage conditionnel de la Carte */}
+      {isScriptLoaded ? (
+         <CatharMapComponent chateaux={chateauxData} filters={filters} />
+      ) : (
+         <div style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center">
+            <p>Chargement du script Google Maps...</p>
+         </div>
+      )}
+      
+      {/* 3. Liste des châteaux */}
+      <h2 className="text-2xl font-semibold mb-4 mt-8">Liste complète des châteaux ({totalMarkers})</h2>
+      
+      {/* Tableau mis à jour pour afficher l'ID dans la première colonne pour correspondre au marqueur */}
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
         <thead style={{ backgroundColor: "#f0f0f0" }}>
           <tr>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Nom</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Commune</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Dates</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Description</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left", width: "5%" }}>#ID</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Nom</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Commune</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Département</th>
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Type</th>
           </tr>
         </thead>
         <tbody>
-          {ecrivainsData.map((ev, i) => (
-            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.nom}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.commune}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.dates || "N/A"}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.description || "-"}</td>
+          {chateauxData.map((c, i) => (
+            <tr key={c.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}>
+              <td style={{ padding: "8px", border: "1px solid #ddd", fontWeight: 'bold' }}>{c.id}</td>
+              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.name}</td>
+              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.city}</td>
+              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{c.department}</td>
+              <td style={{ padding: "8px", border: "1px solid #ddd" }}>
+                {c.type === 'Emblematic' ? 'Emblématique (Principal)' : 'Secondaire'}
+              </td>
             </tr>
           ))}
         </tbody>
