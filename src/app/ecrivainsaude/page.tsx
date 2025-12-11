@@ -91,15 +91,17 @@ export default function EcrivainsAudePage() {
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}> 
         <thead style={{ backgroundColor: "#f0f0f0" }}> 
           <tr> 
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Nom</th> 
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Commune</th> 
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Dates</th> 
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Description</th> 
+            <th style={{ padding: "8px", border: "1px solid #ddd", width: "5%", textAlign: "left" }}>#</th> {/* Nouvelle colonne pour le numéro */}
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Nom</th> 
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Commune</th> 
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Dates</th> 
+            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Description</th> 
           </tr> 
         </thead> 
         <tbody> 
           {ecrivainsData.map((ev, i) => ( 
             <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
+              <td style={{ padding: "8px", border: "1px solid #ddd", fontWeight: 'bold' }}>{i + 1}</td> {/* Affichage du numéro de ligne */}
               <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.nom}</td> 
               <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.commune}</td> 
               <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.dates || "N/A"}</td> 
