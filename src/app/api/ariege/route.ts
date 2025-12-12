@@ -104,6 +104,8 @@ const ariegeSites: SiteAriege[] = [
   { id: 88, commune: "Moulis", description: "Cascade d’Aubert, église", niveau: 3, categorie: "suggéré", lat: 42.9859, lng: 1.1130 },
   { id: 89, commune: "Oust", description: "Vallée, château de Mirabat", niveau: 3, categorie: "suggéré", lat: 42.8596, lng: 1.3533 },
   { id: 90, commune: "Aulus-les-Bains", description: "Cascade d’Ars, étang du Garbet", niveau: 1, categorie: "incontournable", lat: 42.7758, lng: 1.3361 },
+    { id: 91, commune: "Daumazan-sur-Arize", description: "Mairie et centre-ville", niveau: 2, categorie: "remarquable", lat: 43.1906, lng: 1.3653 },
+  { id: 92, commune: "Vic-d'Oust", description: "Village et église", niveau: 3, categorie: "suggéré", lat: 42.8680, lng: 1.3533 },
 ];
 
 export async function GET() {
