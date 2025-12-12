@@ -161,7 +161,7 @@ export default function AriegeMapPage() {
           <tr> 
             <th style={tableHeaderStyle}>#</th>
             <th style={tableHeaderStyle}>Commune</th> 
-            <th style={tableHeaderStyle}>Monument emblématique</th> 
+            <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
             <th style={tableHeaderStyle}>Niveau</th> 
             <th style={tableHeaderStyle}>Catégorie</th> 
           </tr> 
