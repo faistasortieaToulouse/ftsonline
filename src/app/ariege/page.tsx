@@ -90,7 +90,7 @@ export default function AriegeMapPage() {
           // Utiliser l'ID ou le numéro dans la liste comme label
           label: {
             text: String(count),
-            color: 'white',
+            color: 'black',
             fontWeight: 'bold' as const
           }, 
           icon: getMarkerColor(site.categorie) // Utilise l'icône colorée
@@ -100,7 +100,7 @@ export default function AriegeMapPage() {
           content: ` 
             <div style="font-family: Arial; font-size: 14px;"> 
               <strong>${count}. ${site.commune}</strong> (${site.categorie})<br/> 
-              <b>Description :</b> ${site.description}<br/>
+              <b>Monument emblématique :</b> ${site.description}<br/>
               <b>Niveau :</b> ${site.niveau}
             </div> 
           `, 
