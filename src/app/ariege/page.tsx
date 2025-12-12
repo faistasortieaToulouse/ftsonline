@@ -105,7 +105,7 @@ export default function AriegeMapPage() {
         content: `
           <div style="font-family: Arial; font-size: 14px;"> 
             <strong>${count}. ${site.commune}</strong> (${site.categorie})<br/> 
-            <b>Monument emblématique :</b> ${site.description}<br/>
+            <b>Description :</b> ${site.description}<br/>
             <b>Niveau :</b> ${site.niveau}
           </div>
         `,
@@ -161,7 +161,7 @@ export default function AriegeMapPage() {
           <tr> 
             <th style={tableHeaderStyle}>#</th>
             <th style={tableHeaderStyle}>Commune</th> 
-            <th style={tableHeaderStyle}>Description</th> 
+            <th style={tableHeaderStyle}>Monument emblématique</th> 
             <th style={tableHeaderStyle}>Niveau</th> 
             <th style={tableHeaderStyle}>Catégorie</th> 
           </tr> 
