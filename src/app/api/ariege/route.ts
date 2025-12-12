@@ -1,0 +1,111 @@
+// src/app/api/ariege/route.ts
+import { NextResponse } from 'next/server';
+
+// Définition de type pour les données
+interface SiteAriege {
+  id: number;
+  commune: string;
+  description: string;
+  niveau: number;
+  categorie: 'incontournable' | 'remarquable' | 'suggéré';
+  lat: number;
+  lng: number;
+}
+
+// Les données complètes des 90 sites, avec coordonnées géographiques
+const ariegeSites: SiteAriege[] = [
+  { id: 1, commune: "Pamiers", description: "Cathédrale Saint-Antonin", niveau: 1, categorie: "incontournable", lat: 43.1197, lng: 1.6095 },
+  { id: 2, commune: "Foix", description: "Château, abbaye Saint-Volusien", niveau: 1, categorie: "incontournable", lat: 42.9667, lng: 1.6000 },
+  { id: 3, commune: "Saint-Girons", description: "Château, berges du Salat", niveau: 1, categorie: "incontournable", lat: 42.9859, lng: 1.1444 },
+  { id: 4, commune: "Lavelanet", description: "Musée du textile et du peigne en corne", niveau: 2, categorie: "remarquable", lat: 42.9356, lng: 1.8497 },
+  { id: 5, commune: "Saverdun", description: "Aqua Play Park", niveau: 2, categorie: "remarquable", lat: 43.2384, lng: 1.5543 },
+  { id: 6, commune: "Mazères", description: "Musée et hôtel de ville", niveau: 2, categorie: "remarquable", lat: 43.2500, lng: 1.6667 },
+  { id: 7, commune: "Varilhes", description: "—", niveau: 2, categorie: "remarquable", lat: 43.0560, lng: 1.6083 },
+  { id: 8, commune: "La Tour-du-Crieu", description: "Église et château", niveau: 3, categorie: "suggéré", lat: 43.1000, lng: 1.6490 },
+  { id: 9, commune: "Mirepoix", description: "Vergé de Gaillaidé, maisons à colombages", niveau: 1, categorie: "incontournable", lat: 43.1903, lng: 1.8681 },
+  { id: 10, commune: "Tarascon-sur-Ariège", description: "Parc de la Préhistoire, musée train miniature, église ND de la Daurade", niveau: 1, categorie: "incontournable", lat: 42.8770, lng: 1.6053 },
+  { id: 11, commune: "Baulou", description: "Monastère du Carol", niveau: 1, categorie: "incontournable", lat: 42.9734, lng: 1.5034 },
+  { id: 12, commune: "Rimont", description: "Abbaye de Combelongue, jardin de l’abbaye", niveau: 1, categorie: "incontournable", lat: 43.0040, lng: 1.2589 },
+  { id: 13, commune: "Carcanières", description: "Abbaye ND du Donezan", niveau: 1, categorie: "incontournable", lat: 42.7937, lng: 2.1003 },
+  { id: 14, commune: "Le Mas-d’Azil", description: "Grottes, abbaye", niveau: 1, categorie: "incontournable", lat: 43.0718, lng: 1.3533 },
+  { id: 15, commune: "Lézat-sur-Lèze", description: "Abbaye Saint-Antoine-et-Saint-Pierre", niveau: 1, categorie: "incontournable", lat: 43.3283, lng: 1.4081 },
+  { id: 16, commune: "Les Bordes-sur-Arize", description: "Abbaye des Salenques", niveau: 1, categorie: "incontournable", lat: 43.0906, lng: 1.4550 },
+  { id: 17, commune: "Serres-sur-Arget", description: "Abbaye ND du Pesquié", niveau: 1, categorie: "incontournable", lat: 42.9367, lng: 1.5173 },
+  { id: 18, commune: "Saurat", description: "Grottes, atelier de la pierre à aiguiser", niveau: 1, categorie: "incontournable", lat: 42.8718, lng: 1.5540 },
+  { id: 19, commune: "Montaillou", description: "Château, centre historique", niveau: 3, categorie: "suggéré", lat: 42.8021, lng: 1.9068 },
+  { id: 20, commune: "Bédeilhac-et-Aynat", description: "Grotte, tour de Montorgueil", niveau: 1, categorie: "incontournable", lat: 42.9090, lng: 1.5794 },
+  { id: 21, commune: "Alliat", description: "Grotte de la Vache", niveau: 1, categorie: "incontournable", lat: 42.8596, lng: 1.6056 },
+  { id: 22, commune: "Saint-Martin-Lys", description: "Vallée", niveau: 2, categorie: "remarquable", lat: 42.8465, lng: 2.3025 },
+  { id: 23, commune: "Castillon-en-Couserans", description: "Église", niveau: 3, categorie: "suggéré", lat: 42.9352, lng: 1.0967 },
+  { id: 24, commune: "Camon", description: "Cabanes", niveau: 2, categorie: "remarquable", lat: 43.0232, lng: 1.9546 },
+  { id: 25, commune: "Bélesta", description: "Gouffre des corbeaux, fontaines, château, gorges", niveau: 2, categorie: "remarquable", lat: 42.9392, lng: 1.9965 },
+  { id: 26, commune: "Saint-Lizier", description: "Palais des évêques et pharmacie", niveau: 1, categorie: "incontournable", lat: 43.0034, lng: 1.1309 },
+  { id: 27, commune: "Lapenne", description: "Parc à bambous", niveau: 1, categorie: "incontournable", lat: 43.1539, lng: 1.6830 },
+  { id: 28, commune: "Fougax-et-Barrineuf", description: "—", niveau: 1, categorie: "incontournable", lat: 42.8943, lng: 1.9515 },
+  { id: 29, commune: "Niaux", description: "Grotte, musée pyrénéen", niveau: 1, categorie: "incontournable", lat: 42.8360, lng: 1.6072 },
+  { id: 30, commune: "Le Vernet", description: "Mémorial", niveau: 2, categorie: "remarquable", lat: 43.2505, lng: 1.5033 },
+  { id: 31, commune: "Ustou", description: "Cirque de Cagateille", niveau: 1, categorie: "incontournable", lat: 42.8080, lng: 1.3090 },
+  { id: 32, commune: "Roquefort-les-Cascades", description: "Cascades", niveau: 1, categorie: "incontournable", lat: 42.9859, lng: 1.7761 },
+  { id: 33, commune: "Massat", description: "Musée vieux moulin", niveau: 3, categorie: "suggéré", lat: 42.9238, lng: 1.4243 },
+  { id: 34, commune: "Audressein", description: "Notre-Dame de Tramesaygues, église, pont", niveau: 3, categorie: "suggéré", lat: 42.9379, lng: 1.0716 },
+  { id: 35, commune: "Vals", description: "Église rupestre", niveau: 2, categorie: "remarquable", lat: 43.1167, lng: 1.5200 },
+  { id: 36, commune: "Luzenac", description: "Église, Talcaneô", niveau: 2, categorie: "remarquable", lat: 42.7989, lng: 1.7161 },
+  { id: 37, commune: "Eycheil", description: "Église", niveau: 3, categorie: "suggéré", lat: 42.9833, lng: 1.1278 },
+  { id: 38, commune: "Auzat", description: "Vallée de Soulcem, maison des patrimoines, animaux, sentier industriel, château de Montréal-de-Sos", niveau: 1, categorie: "incontournable", lat: 42.7303, lng: 1.5458 },
+  { id: 39, commune: "Orlu", description: "Réserve, Maison des Loups, muséographie, site naturel", niveau: 1, categorie: "incontournable", lat: 42.7381, lng: 1.8392 },
+  { id: 40, commune: "Val-de-Sos", description: "Vallées et montagnes, mines, exposition", niveau: 1, categorie: "incontournable", lat: 42.8122, lng: 1.5543 },
+  { id: 41, commune: "Ornolac-Ussat-les-Bains", description: "Grottes", niveau: 1, categorie: "incontournable", lat: 42.8529, lng: 1.6217 },
+  { id: 42, commune: "Aston", description: "Vallée, massif", niveau: 1, categorie: "incontournable", lat: 42.8277, lng: 1.6896 },
+  { id: 43, commune: "Artigues", description: "Mouillères", niveau: 1, categorie: "incontournable", lat: 42.7831, lng: 1.9565 },
+  { id: 44, commune: "Saurat", description: "Grotte", niveau: 1, categorie: "incontournable", lat: 42.8718, lng: 1.5540 },
+  { id: 45, commune: "Unac", description: "Église Saint-Martin, ferme aux ânes", niveau: 3, categorie: "suggéré", lat: 42.7844, lng: 1.7003 },
+  { id: 46, commune: "Auzat", description: "Ferme des lamas (niveau 2), sites naturels (1) —→ niveau retenu : 1", niveau: 1, categorie: "incontournable", lat: 42.7303, lng: 1.5458 },
+  { id: 47, commune: "Orgeix", description: "Jardin botanique, sentier hydroélectrique", niveau: 2, categorie: "remarquable", lat: 42.7961, lng: 1.7947 },
+  { id: 48, commune: "Vicdessos (Val-de-Sos)", description: "Vallée, mine", niveau: 2, categorie: "remarquable", lat: 42.7844, lng: 1.5593 },
+  { id: 49, commune: "Lordat", description: "Aire d’observation", niveau: 2, categorie: "remarquable", lat: 42.8143, lng: 1.7770 },
+  { id: 50, commune: "Rouze", description: "Château d’Usson, ponts Vauban", niveau: 1, categorie: "incontournable", lat: 42.7758, lng: 2.1030 },
+  { id: 51, commune: "Prades", description: "Fort", niveau: 2, categorie: "remarquable", lat: 42.7765, lng: 1.7820 },
+  { id: 52, commune: "Les Cabannes", description: "Église, grotte de Lombrives, plateau de Beille", niveau: 1, categorie: "incontournable", lat: 42.8130, lng: 1.6565 },
+  { id: 53, commune: "Vernaux", description: "Église", niveau: 3, categorie: "suggéré", lat: 42.8123, lng: 1.7061 },
+  { id: 54, commune: "Bédeilhac-et-Aynat", description: "Grotte, tour", niveau: 1, categorie: "incontournable", lat: 42.9090, lng: 1.5794 },
+  { id: 55, commune: "Ax-les-Thermes", description: "Thermes (plusieurs bassins), sentier du Teich", niveau: 3, categorie: "suggéré", lat: 42.7196, lng: 1.8351 },
+  { id: 56, commune: "Mérens-les-Vals", description: "Église Saint-Pierre, lac", niveau: 1, categorie: "incontournable", lat: 42.6961, lng: 1.8351 },
+  { id: 57, commune: "Verdun", description: "Château, église, roc", niveau: 2, categorie: "remarquable", lat: 42.8725, lng: 1.6377 },
+  { id: 58, commune: "Axiat", description: "Église", niveau: 3, categorie: "suggéré", lat: 42.8091, lng: 1.7601 },
+  { id: 59, commune: "Montoulieu", description: "Pont du diable", niveau: 3, categorie: "suggéré", lat: 42.9567, lng: 1.6444 },
+  { id: 60, commune: "Rieucros", description: "Église", niveau: 3, categorie: "suggéré", lat: 43.1492, lng: 1.7618 },
+  { id: 61, commune: "Rabat-les-Trois-Seigneurs", description: "Cascades du Ressec, roche ronde", niveau: 1, categorie: "incontournable", lat: 42.8986, lng: 1.5034 },
+  { id: 62, commune: "Laroque-d’Olmes", description: "Église", niveau: 3, categorie: "suggéré", lat: 43.0076, lng: 1.8845 },
+  { id: 63, commune: "Sem", description: "Dolmen", niveau: 3, categorie: "suggéré", lat: 42.7483, lng: 1.5422 },
+  { id: 64, commune: "Olbier", description: "Ruines du château de Montréal", niveau: 3, categorie: "suggéré", lat: 42.9782, lng: 1.7770 },
+  { id: 65, commune: "Marc", description: "Cascade", niveau: 1, categorie: "incontournable", lat: 42.7594, lng: 1.4883 },
+  { id: 66, commune: "Mijanès", description: "Étang", niveau: 1, categorie: "incontournable", lat: 42.7844, lng: 1.9965 },
+  { id: 67, commune: "Bonac-Irazein", description: "Lac", niveau: 1, categorie: "incontournable", lat: 42.8710, lng: 1.0189 },
+  { id: 68, commune: "Montjoie-en-Couserans", description: "Église, remparts", niveau: 2, categorie: "remarquable", lat: 42.9833, lng: 1.2500 },
+  { id: 69, commune: "Cazavet", description: "Église", niveau: 3, categorie: "suggéré", lat: 43.0167, lng: 1.0667 },
+  { id: 70, commune: "Montesquieu-Avantès", description: "Alignement de menhirs", niveau: 2, categorie: "remarquable", lat: 43.0642, lng: 1.2003 },
+  { id: 71, commune: "Montégut-en-Couserans", description: "Château féodal", niveau: 2, categorie: "remarquable", lat: 42.9806, lng: 1.1894 },
+  { id: 72, commune: "Taurignan-Castet", description: "Château, église", niveau: 3, categorie: "suggéré", lat: 43.0194, lng: 1.1853 },
+  { id: 73, commune: "Durban-sur-Arize", description: "Château féodal", niveau: 2, categorie: "remarquable", lat: 43.0906, lng: 1.4367 },
+  { id: 74, commune: "Saint-Ybars", description: "Cité médiévale, église", niveau: 1, categorie: "incontournable", lat: 43.2677, lng: 1.3533 },
+  { id: 75, commune: "Artigat", description: "Deux églises", niveau: 3, categorie: "suggéré", lat: 43.2386, lng: 1.4819 },
+  { id: 76, commune: "Rieux-de-Pelleport", description: "Ruines du château", niveau: 3, categorie: "suggéré", lat: 43.0569, lng: 1.6169 },
+  { id: 77, commune: "Verniolle", description: "Château de Fiches, pont romain", niveau: 3, categorie: "suggéré", lat: 43.0768, lng: 1.6377 },
+  { id: 78, commune: "La Bastide-de-Sérou", description: "Lac de Mondely, château, mine gallo-romaine", niveau: 1, categorie: "incontournable", lat: 43.0336, lng: 1.4367 },
+  { id: 79, commune: "Pailhès", description: "Château", niveau: 3, categorie: "suggéré", lat: 43.1802, lng: 1.5034 },
+  { id: 80, commune: "Appy", description: "Étang", niveau: 1, categorie: "incontournable", lat: 42.7937, lng: 1.7337 },
+  { id: 81, commune: "Carla-Bayle", description: "Maison natale de Pierre Bayle", niveau: 3, categorie: "suggéré", lat: 43.1706, lng: 1.4722 },
+  { id: 82, commune: "Seix", description: "Château", niveau: 3, categorie: "suggéré", lat: 42.8680, lng: 1.3090 },
+  { id: 83, commune: "Tourtouse", description: "Grotte et château", niveau: 3, categorie: "suggéré", lat: 43.0642, lng: 1.2589 },
+  { id: 84, commune: "Saint-Martin-d’Oydes", description: "Circulade", niveau: 3, categorie: "suggéré", lat: 43.2104, lng: 1.6318 },
+  { id: 85, commune: "Sentein", description: "Grotte et gouffre", niveau: 2, categorie: "remarquable", lat: 42.8277, lng: 1.0543 },
+  { id: 86, commune: "Ayet (Bethmale)", description: "Lac", niveau: 1, categorie: "incontournable", lat: 42.8710, lng: 1.0716 },
+  { id: 87, commune: "Le Fossat", description: "Cité médiévale", niveau: 1, categorie: "incontournable", lat: 43.2384, lng: 1.4550 },
+  { id: 88, commune: "Moulis", description: "Cascade d’Aubert, église", niveau: 3, categorie: "suggéré", lat: 42.9859, lng: 1.1130 },
+  { id: 89, commune: "Oust", description: "Vallée, château de Mirabat", niveau: 3, categorie: "suggéré", lat: 42.8596, lng: 1.3533 },
+  { id: 90, commune: "Aulus-les-Bains", description: "Cascade d’Ars, étang du Garbet", niveau: 1, categorie: "incontournable", lat: 42.7758, lng: 1.3361 },
+];
+
+export async function GET() {
+  return NextResponse.json(ariegeSites);
+}
