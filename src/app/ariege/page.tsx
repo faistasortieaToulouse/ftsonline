@@ -90,7 +90,7 @@ export default function AriegeMapPage() {
           // Utiliser l'ID ou le numéro dans la liste comme label
           label: {
             text: String(count),
-            color: 'yellow',
+            color: 'red',
             fontWeight: 'bold' as const
           }, 
           icon: getMarkerColor(site.categorie) // Utilise l'icône colorée
