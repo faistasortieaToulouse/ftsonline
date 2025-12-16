@@ -153,7 +153,12 @@ export default function MuseePOPage() {
               <td style={tableCellStyle}>{musee.categorie}</td>
               <td style={tableCellStyle}>{musee.adresse}</td>
               <td style={tableCellStyle}>
-                <a href={musee.url} target="_blank" rel="noopener noreferrer">
+                <a 
+                  href={musee.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={{ color: 'blue', textDecoration: 'underline' }} // AJOUTER CE STYLE
+                >
                   Voir le site
                 </a>
               </td>
