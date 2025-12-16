@@ -9,11 +9,7 @@ import React, { useState, useEffect } from "react";
 
 // --- Fonctions d'aide et Types ---
 
-const extractFirstImageUrl = (htmlContent: string | undefined): string | undefined => {
-  if (!htmlContent) return undefined;
-  const match = htmlContent.match(/<img[^>]+src="([^"]+)"/);
-  return match ? match[1] : undefined;
-};
+// 🔴 Suppression de extractFirstImageUrl (plus nécessaire)
 
 const formatDate = (isoDate: string | undefined) => {
   if (!isoDate) return "Date non spécifiée";
@@ -37,8 +33,8 @@ interface RssItem {
   pubDate: string;
   snippet: string;
   creator: string;
-  content: string; // Nécessaire pour l'image
-  category: string; // 🟢 NOUVEAU
+  // 🔴 Suppression de content (plus nécessaire)
+  category: string; 
 }
 
 interface ApiResponse {
@@ -62,7 +58,7 @@ export default function JeuPlateauPage() {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterCategory, setFilterCategory] = useState<string>("Tous"); // 🟢 NOUVEAU
+  const [filterCategory, setFilterCategory] = useState<string>("Tous"); 
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   
   // Catégories possibles pour les boutons de filtre
@@ -88,8 +84,8 @@ export default function JeuPlateauPage() {
         pubDate: it.pubDate,
         snippet: it.snippet,
         creator: it.creator,
-        content: it.content,
-        category: it.category, // 🟢 Récupération de la catégorie
+        // 🔴 Suppression de content dans le mapping
+        category: it.category, 
         url: it.link,
         source: data.source,
       }));
@@ -105,10 +101,8 @@ export default function JeuPlateauPage() {
 
   // Logique de filtrage (par recherche ET par catégorie)
   const filteredEvents = events.filter(ev => {
-    // 1. Filtrage par catégorie
     const categoryMatch = filterCategory === "Tous" || ev.category === filterCategory;
       
-    // 2. Filtrage par mot-clé (si recherche)
     if (!searchQuery) return categoryMatch;
       
     const q = searchQuery.toLowerCase();
@@ -149,10 +143,10 @@ export default function JeuPlateauPage() {
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
         <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
-          📺 Vignette
+          📺 Vignette (Compacte)
         </Button>
         <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
-          🔲 Liste
+          🔲 Liste (Détaillée)
         </Button>
       </div>
       
@@ -185,16 +179,11 @@ export default function JeuPlateauPage() {
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredEvents.map(ev => {
-            const imageUrl = extractFirstImageUrl(ev.content);
             return (
-              <a key={ev.id} href={ev.url} target="_blank" rel="noopener noreferrer" className="bg-white shadow rounded overflow-hidden flex flex-col h-[400px] hover:shadow-lg transition">
-                <img 
-                  src={imageUrl || "https://via.placeholder.com/400x200?text=JeuxOnline"} 
-                  alt={ev.title} 
-                  className="w-full h-40 object-cover" 
-                />
-                <div className="p-3 flex flex-col flex-1">
-                  <span className={`text-xs font-semibold px-2 py-1 rounded w-fit mb-1 ${ev.category === 'Actualites' ? 'bg-green-100 text-green-700' : ev.category === 'Critiques' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`}>{ev.category}</span>
+              <a key={ev.id} href={ev.url} target="_blank" rel="noopener noreferrer" className="bg-white shadow rounded overflow-hidden flex flex-col h-[280px] hover:shadow-lg transition p-3">
+                {/* 🔴 Suppression de l'image */}
+                <div className="p-1 flex flex-col flex-1">
+                  <span className={`text-xs font-semibold px-2 py-1 rounded w-fit mb-2 ${ev.category === 'Actualites' ? 'bg-green-100 text-green-700' : ev.category === 'Critiques' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`}>{ev.category}</span>
                   <h2 className="text-lg font-semibold mb-1 line-clamp-2">{ev.title}</h2>
                   <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.pubDate)}</p>
                   <p className="text-sm text-gray-700 mb-1 line-clamp-4 flex-1">{ev.snippet}</p>
@@ -208,14 +197,9 @@ export default function JeuPlateauPage() {
         /* Rendu en mode LISTE */
         <div className="flex flex-col gap-4">
           {filteredEvents.map(ev => {
-            const imageUrl = extractFirstImageUrl(ev.content);
             return (
               <a key={ev.id} href={ev.url} target="_blank" rel="noopener noreferrer" className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3 hover:shadow-lg transition">
-                <img 
-                  src={imageUrl || "https://via.placeholder.com/150x100?text=JO"} 
-                  alt={ev.title} 
-                  className="w-full sm:w-40 h-24 object-cover rounded flex-shrink-0" 
-                />
+                {/* 🔴 Suppression de l'image */}
                 <div className="flex-1 flex flex-col">
                   <span className={`text-xs font-semibold px-2 py-1 rounded w-fit mb-1 ${ev.category === 'Actualites' ? 'bg-green-100 text-green-700' : ev.category === 'Critiques' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`}>{ev.category}</span>
                   <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
