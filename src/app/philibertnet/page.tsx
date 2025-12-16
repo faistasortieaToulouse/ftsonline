@@ -49,9 +49,7 @@ export default function PhilibertnetPage() {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"card" | "list">("card"); // 🔹 ajout du mode de vue
-
-  const categories = ["Actualites"];
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   async function fetchEvents() {
     setLoading(true);
@@ -70,7 +68,7 @@ export default function PhilibertnetPage() {
         link: it.link,
         pubDate: it.pubDate,
         snippet: it.snippet,
-        category: 'Actualites', // Forcer Actualités
+        category: 'Actualites',
         url: it.link,
         source: data.source,
       }));
@@ -84,14 +82,12 @@ export default function PhilibertnetPage() {
 
   useEffect(() => { fetchEvents(); }, []);
 
-  // Filtrage par recherche uniquement (catégorie fixe)
   const filteredEvents = events.filter(ev => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
     return ev.title.toLowerCase().includes(q) || (ev.snippet?.toLowerCase().includes(q) ?? false);
   });
 
-  // Utilitaire de bouton
   const Button = ({ children, onClick, disabled, variant = "default" }: any) => (
       <button 
           onClick={onClick} 
@@ -107,7 +103,9 @@ export default function PhilibertnetPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">📰 {events.length > 0 ? events[0].source : 'Actualités Philibert'}</h1>
+      <h1 className="text-3xl font-bold mb-4">
+        📰 {events.length > 0 ? events[0].source : 'Actualités Philibert'}
+      </h1>
       <p className="text-muted-foreground mb-6">
         Articles récents de Philibert (Actualités uniquement).
       </p>
@@ -117,8 +115,73 @@ export default function PhilibertnetPage() {
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
-        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
-        📺 Vignette
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          📺 Vignette
         </Button>
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
+          🔲 Liste
+        </Button>
+      </div>
 
-        </
+      {/* Recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre ou mot-clé..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="mt-4 flex-1 min-w-40 p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+      />
+
+      <p className="mb-4 text-sm text-gray-600">Articles affichés : {filteredEvents.length}</p>
+      {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
+      {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun article à afficher.</p>}
+
+      {/* Rendu des articles */}
+      {viewMode === "card" ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredEvents.map(ev => (
+            <a
+              key={ev.id}
+              href={ev.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white shadow rounded overflow-hidden flex flex-col h-[280px] hover:shadow-lg transition p-3"
+            >
+              <div className="p-1 flex flex-col flex-1">
+                <span className="text-xs font-semibold px-2 py-1 rounded w-fit mb-2 bg-green-100 text-green-700">{ev.category}</span>
+                <h2 className="text-lg font-semibold mb-1 line-clamp-2">{ev.title}</h2>
+                <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.pubDate)}</p>
+                <p className="text-sm text-gray-700 mb-1 line-clamp-4 flex-1">{ev.snippet}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {filteredEvents.map(ev => (
+            <a
+              key={ev.id}
+              href={ev.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3 hover:shadow-lg transition"
+            >
+              <div className="flex-1 flex flex-col">
+                <span className="text-xs font-semibold px-2 py-1 rounded w-fit mb-1 bg-green-100 text-green-700">{ev.category}</span>
+                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+                <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.pubDate)}</p>
+                <p className="text-sm text-gray-700 line-clamp-2">{ev.snippet}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
