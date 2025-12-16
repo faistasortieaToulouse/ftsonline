@@ -22,7 +22,6 @@ const parser = new Parser({
  * Endpoint pour récupérer et fusionner les trois flux RSS de JeuxOnline.
  */
 export async function GET() {
-  // Utilisez Promise.allSettled pour vous assurer que l'API ne plante pas si UN flux échoue
   const promises = Object.entries(RSS_URLS).map(async ([category, url]) => {
     try {
       // 1. Appel et parsing de chaque flux
@@ -35,27 +34,23 @@ export async function GET() {
         pubDate: item.pubDate,
         snippet: item.contentSnippet || item.content || '', // Assurez-vous d'avoir un snippet
         creator: item.creator || 'Auteur Inconnu',
-        category: category, // Catégorie (Actualites, Critiques, Videos)
-        // Champ 'content' omis pour alléger la réponse
+        category: category, 
       }));
     } catch (error) {
       // 🟢 Gestion d'erreur locale : Log l'erreur mais permet aux autres flux de continuer
       console.warn(`[JEUXONLINE] Erreur lors du traitement du flux ${category} (${url}):`, error);
-      return []; // Retourne un tableau vide pour que 'flat()' puisse l'ignorer
+      return []; 
     }
   });
 
   try {
-    // 3. Attendre que TOUS les appels soient terminés (même s'ils ont échoué en interne)
     const results = await Promise.all(promises);
     
-    // 4. Aplatir les résultats (cela ignore les tableaux vides retournés en cas d'erreur)
+    // 4. Aplatir les résultats
     const allItems = results.flat().sort((a, b) => {
-        // Trier par date du plus récent au plus ancien
         return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
     });
 
-    // 5. Retourner les données fusionnées
     if (allItems.length === 0) {
        console.warn("Aucun item n'a pu être récupéré de JeuxOnline.");
     }
@@ -68,7 +63,6 @@ export async function GET() {
     });
     
   } catch (error) {
-    // Ce catch ne devrait plus être atteint à moins d'une erreur de JS critique.
     console.error("Erreur critique lors de la fusion finale des flux RSS:", error);
     return NextResponse.json({
       error: 'Erreur de traitement interne lors de la fusion des flux.',
