@@ -18,27 +18,53 @@ const parser = new Parser({
     },
 });
 
+// Fonction pour ajouter un timeout à la requête fetch
+async function fetchWithTimeout(resource: string, options = { timeout: 10000 }) {
+    const { timeout } = options;
+    
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    const response = await fetch(resource, {
+        ...options,
+        signal: controller.signal  // Connecte l'AbortController à la requête
+    });
+
+    clearTimeout(id);
+    return response;
+}
+
 /**
  * Endpoint pour récupérer et fusionner les trois flux RSS de JeuxOnline.
  */
 export async function GET() {
   const promises = Object.entries(RSS_URLS).map(async ([category, url]) => {
     try {
-      // 1. Appel et parsing de chaque flux
-      const feed = await parser.parseURL(url);
+      // 1. Fetcher le XML nous-mêmes avec un timeout de 10 secondes
+      const response = await fetchWithTimeout(url, { timeout: 10000 });
+      
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
+      }
+      
+      const xmlText = await response.text();
 
-      // 2. Formatage des items
+      // 2. Parser le contenu XML (maintenant local)
+      const feed = await parser.parseString(xmlText);
+
+      // 3. Formatage des items
       return feed.items.map(item => ({
         title: item.title,
         link: item.link,
         pubDate: item.pubDate,
-        snippet: item.contentSnippet || item.content || '', // Assurez-vous d'avoir un snippet
+        snippet: item.contentSnippet || item.content || '', 
         creator: item.creator || 'Auteur Inconnu',
         category: category, 
       }));
     } catch (error) {
-      // 🟢 Gestion d'erreur locale : Log l'erreur mais permet aux autres flux de continuer
-      console.warn(`[JEUXONLINE] Erreur lors du traitement du flux ${category} (${url}):`, error);
+      // 🟢 Gestion d'erreur locale
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue de parsing.';
+      console.warn(`[JEUXONLINE] Erreur critique (ignorable) sur le flux ${category}: ${errorMessage}`);
       return []; 
     }
   });
@@ -46,15 +72,10 @@ export async function GET() {
   try {
     const results = await Promise.all(promises);
     
-    // 4. Aplatir les résultats
     const allItems = results.flat().sort((a, b) => {
         return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
     });
 
-    if (allItems.length === 0) {
-       console.warn("Aucun item n'a pu être récupéré de JeuxOnline.");
-    }
-    
     return NextResponse.json({
       title: "JeuxOnline - Flux Fusionné",
       description: "Actualités, critiques et vidéos de JeuxOnline.",
@@ -63,7 +84,7 @@ export async function GET() {
     });
     
   } catch (error) {
-    console.error("Erreur critique lors de la fusion finale des flux RSS:", error);
+    // Ce catch ne devrait jamais être atteint
     return NextResponse.json({
       error: 'Erreur de traitement interne lors de la fusion des flux.',
       details: error instanceof Error ? error.message : 'Problème de connexion général.',
