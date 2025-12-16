@@ -37,7 +37,13 @@ const GoogleMap = ({ musees }: { musees: MuseeHerault[] }) => {
       const marker = new window.google.maps.Marker({
         position: { lat: musee.lat, lng: musee.lng },
         map,
-        title: `${numero}. ${musee.nom}`, // Afficher le numéro dans le titre du marqueur
+        title: `${numero}. ${musee.nom}`, // Afficher le numéro dans le titre du marqueur (au survol)
+        // Correction : Ajout du label pour afficher le numéro sur le marqueur
+        label: {
+          text: String(numero),
+          color: 'white',
+          fontWeight: 'bold',
+        }
       });
 
       const infowindow = new window.google.maps.InfoWindow({
