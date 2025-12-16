@@ -17,7 +17,7 @@ declare global {
 const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
 const tableCellStyle = { padding: '12px' };
 
-// Composant de la carte
+// Composant de la carte (non modifié, car le tri se fait sur les données avant l'envoi)
 const GoogleMap = ({ musees }: { musees: Musee[] }) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -108,7 +108,14 @@ export default function MuseeHPPage() {
           throw new Error("Erreur lors de la récupération des données de l'API des Hautes-Pyrénées.");
         }
         const data: Musee[] = await response.json();
-        setMusees(data);
+        
+        // --- LOGIQUE DE TRI PAR COMMUNE ---
+        const sortedData = data.sort((a, b) => {
+          return a.commune.localeCompare(b.commune);
+        });
+        // ---------------------------------
+        
+        setMusees(sortedData);
       } catch (err) {
         if (err instanceof Error) {
             setError(err.message);
@@ -151,7 +158,7 @@ export default function MuseeHPPage() {
       <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>
         Total de Sites listés : {totalMusees}
       </p>
-      <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des lieux culturels et historiques du département.</p>
+      <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des lieux culturels et historiques du département, triée par commune.</p>
 
       {/* Carte Google Maps */}
       <GoogleMap musees={musees} />
@@ -172,7 +179,7 @@ export default function MuseeHPPage() {
           {musees.map((musee, index) => (
             <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
               <td style={tableCellStyle}><strong>{index + 1}</strong></td> 
-              <td style={tableCellStyle}>{musee.commune}</td>
+              <td style={tableCellStyle}>**{musee.commune}**</td> {/* Mise en gras pour accentuer le tri */}
               <td style={tableCellStyle}>{musee.nom}</td>
               <td style={tableCellStyle}>{musee.categorie}</td>
               <td style={tableCellStyle}>{musee.adresse}</td>
