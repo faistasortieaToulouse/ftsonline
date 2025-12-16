@@ -12,6 +12,10 @@ declare global {
   }
 }
 
+// Styles pour le tableau
+const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
+const tableCellStyle = { padding: '12px' };
+
 // Composant de la carte (Basé sur la méthode simple de chargement de script)
 const GoogleMap = ({ musees }: { musees: Musee[] }) => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -20,7 +24,6 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
     if (!mapRef.current || !window.google) return;
 
     // Calculer le centre de la carte (Moyenne des coordonnées)
-    // S'assurer qu'il y a des musées pour éviter une division par zéro
     if (musees.length === 0) return;
 
     const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
@@ -39,7 +42,13 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
       const marker = new window.google.maps.Marker({
         position: { lat: musee.lat, lng: musee.lng },
         map,
-        title: `${numero}. ${musee.nom}`, // Ajout du numéro dans le titre du marqueur
+        title: `${numero}. ${musee.nom}`, // Ajout du numéro dans le titre (au survol)
+        // Ajout de l'option 'label' pour afficher le numéro sur le marqueur lui-même
+        label: {
+          text: String(numero),
+          color: 'white', 
+          fontWeight: 'bold', 
+        }
       });
 
       const infowindow = new window.google.maps.InfoWindow({
@@ -67,6 +76,7 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
 
     // Charge dynamiquement le script de l'API Google Maps
     const script = document.createElement('script');
+    // Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini dans .env.local
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
     script.async = true;
     script.defer = true;
@@ -78,16 +88,12 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
     // Nettoyage lors du démontage du composant
     return () => {
       script.remove();
-      // On peut aussi enlever window.initMap mais c'est moins critique
     };
   }, [initMap]);
 
   return <div ref={mapRef} style={{ height: '500px', width: '100%', borderRadius: '8px', marginBottom: '32px' }} />;
 };
 
-// Styles pour le tableau (déplacé ici pour la portée)
-const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
-const tableCellStyle = { padding: '12px' };
 
 // Composant principal de la page
 export default function MuseePOPage() {
@@ -155,7 +161,7 @@ export default function MuseePOPage() {
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
         <thead>
           <tr style={{ backgroundColor: '#f4f4f4' }}>
-            <th style={tableHeaderStyle}>N°</th> {/* Ajout de la colonne Numéro */}
+            <th style={tableHeaderStyle}>N°</th> {/* Colonne Numéro */}
             <th style={tableHeaderStyle}>Commune</th>
             <th style={tableHeaderStyle}>Nom du Musée</th>
             <th style={tableHeaderStyle}>Catégorie</th>
@@ -176,7 +182,7 @@ export default function MuseePOPage() {
                   href={musee.url} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  style={{ color: 'blue', textDecoration: 'underline' }} // Style en bleu
+                  style={{ color: 'blue', textDecoration: 'underline' }} 
                 >
                   Voir le site
                 </a>
