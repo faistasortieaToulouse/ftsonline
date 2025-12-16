@@ -23,18 +23,15 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
   const initMap = useCallback(() => {
     if (!mapRef.current || !window.google || musees.length === 0) return;
 
-    // Calculer le centre de la carte (Occitanie - estimation par moyenne)
     const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
     const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
     
-    // Zoom plus faible pour couvrir toute la région Occitanie (zoom: 7 ou 8)
     const map = new window.google.maps.Map(mapRef.current, {
-      center: { lat: 43.8, lng: 2.5 }, // Centre plus stable pour l'Occitanie
+      center: { lat: 43.8, lng: 2.5 }, 
       zoom: 8, 
       scrollwheel: true,
     });
 
-    // Ajouter des marqueurs (logique simplifiée comme précédemment)
     musees.forEach((musee, index) => {
       const numero = index + 1;
       
@@ -72,7 +69,6 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
     }
 
     const script = document.createElement('script');
-    // Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
     script.async = true;
     script.defer = true;
@@ -95,14 +91,12 @@ export default function MuseeOccitaniePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // État pour le tri
   const [sortKey, setSortKey] = useState<keyof Musee>('departement');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     async function fetchMusees() {
       try {
-        // Cible l'API d'agrégation Occitanie locale
         const response = await fetch('/api/museeoccitanie'); 
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération des données de l'API Occitanie.");
@@ -123,7 +117,6 @@ export default function MuseeOccitaniePage() {
     fetchMusees();
   }, []);
 
-  // Fonction pour gérer le tri côté client
   const handleSort = (key: keyof Musee) => {
     const direction = key === sortKey && sortDirection === 'asc' ? 'desc' : 'asc';
     
@@ -205,8 +198,8 @@ export default function MuseeOccitaniePage() {
         <tbody>
           {musees.map((musee, index) => (
             <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={tableCellStyle}>**{musee.departement}**</td>
-              <td style={tableCellStyle}>{musee.commune}</td>
+              <td style={tableCellStyle}>{musee.departement}</td> {/* Suppression des `**` */}
+              <td style={tableCellStyle}>{musee.commune}</td> {/* Suppression des `**` */}
               <td style={tableCellStyle}>{musee.nom}</td>
               <td style={tableCellStyle}>{musee.categorie}</td>
               <td style={tableCellStyle}>{musee.adresse}</td>
