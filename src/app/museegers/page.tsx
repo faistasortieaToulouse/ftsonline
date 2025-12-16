@@ -1,167 +1,195 @@
 // src/app/museegers/page.tsx
-
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { GoogleMap, useLoadScript, MarkerF, InfoWindowF } from '@react-google-maps/api';
+import { useEffect, useState, useRef, useCallback } from 'react';
+// Importe le type depuis l'API du Gers
+import { Musee } from '../api/museegers/route'; 
 
-// Définition de type pour le musée (doit correspondre à l'interface de l'API)
-interface MuseeGers {
-  commune: string;
-  nom: string;
-  categorie: string;
-  adresse: string;
-  url: string;
-  lat: number;
-  lng: number;
+// Déclaration pour que TypeScript reconnaisse google.maps
+declare global {
+  interface Window {
+    initMap: () => void;
+    google: typeof google;
+  }
 }
 
-// Options de la carte pour le centre (Auch, la préfecture)
-const mapContainerStyle = {
-  width: '100%',
-  height: '600px',
-  borderRadius: '8px',
-  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-};
+// Styles pour le tableau
+const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
+const tableCellStyle = { padding: '12px' };
 
-const center = {
-  lat: 43.6450, // Latitude d'Auch
-  lng: 0.5850,  // Longitude d'Auch
-};
+// Composant de la carte
+const GoogleMap = ({ musees }: { musees: Musee[] }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
 
-const defaultZoom = 9; // Zoom pour couvrir la majeure partie du département
+  const initMap = useCallback(() => {
+    // Vérification pour s'assurer que l'API Google Maps et les données sont disponibles
+    if (!mapRef.current || !window.google || musees.length === 0) return;
 
-// Fonction principale du composant de la page
-const MuseeGersPage: React.FC = () => {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string, // Assurez-vous que cette clé est définie
-  });
+    // Calculer le centre de la carte (Gers - estimation basée sur la moyenne des coordonnées)
+    const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
+    const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
 
-  const [musees, setMusees] = useState<MuseeGers[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedMusee, setSelectedMusee] = useState<MuseeGers | null>(null);
+    const map = new window.google.maps.Map(mapRef.current, {
+      center: { lat: centerLat, lng: centerLng },
+      zoom: 9, // Zoom initial pour le Gers
+      scrollwheel: true,
+    });
 
-  // Chargement des données des musées depuis l'API locale
-  useEffect(() => {
-    const fetchMusees = async () => {
-      try {
-        const response = await fetch('/api/museegers');
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`);
+    // Ajouter des marqueurs pour chaque musée
+    musees.forEach((musee, index) => {
+      const numero = index + 1;
+      
+      const marker = new window.google.maps.Marker({
+        position: { lat: musee.lat, lng: musee.lng },
+        map,
+        title: `${numero}. ${musee.nom}`,
+        label: {
+          text: String(numero),
+          color: 'white',
+          fontWeight: 'bold',
         }
-        const data = await response.json();
-        setMusees(data);
-      } catch (error) {
-        console.error('Erreur lors du chargement des musées du Gers :', error);
-      } finally {
-        setLoading(false);
-      }
+      });
+
+      const infowindow = new window.google.maps.InfoWindow({
+        content: `
+          <h3>${numero}. ${musee.nom}</h3>
+          <p><strong>Commune :</strong> ${musee.commune}</p>
+          <p><strong>Catégorie :</strong> ${musee.categorie}</p>
+          <p><strong>Adresse :</strong> ${musee.adresse}</p>
+          <p><a href="${musee.url}" target="_blank">Site web</a></p>
+        `,
+      });
+
+      marker.addListener('click', () => {
+        infowindow.open(map, marker);
+      });
+    });
+  }, [musees]);
+
+  useEffect(() => {
+    // Vérifie si l'API Google Maps est déjà chargée
+    if (window.google && window.google.maps) {
+      initMap();
+      return;
+    }
+
+    // Charge dynamiquement le script de l'API Google Maps
+    const script = document.createElement('script');
+    // Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    
+    // Attache la fonction initMap à la fenêtre globale
+    window.initMap = initMap;
+    document.head.appendChild(script);
+
+    return () => {
+      script.remove();
     };
+  }, [initMap]);
+
+  return <div ref={mapRef} style={{ height: '500px', width: '100%', borderRadius: '8px', marginBottom: '32px' }} />;
+};
+
+
+// Composant principal de la page
+export default function MuseeGersPage() {
+  const [musees, setMusees] = useState<Musee[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchMusees() {
+      try {
+        // Appel à l'API du Gers
+        const response = await fetch('/api/museegers'); 
+        if (!response.ok) {
+          throw new Error("Erreur lors de la récupération des données de l'API du Gers.");
+        }
+        const data: Musee[] = await response.json();
+        setMusees(data);
+      } catch (err) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError("Une erreur inattendue est survenue.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
     fetchMusees();
   }, []);
 
-  if (loadError) {
-    return <div>Erreur lors du chargement de Google Maps.</div>;
+  if (isLoading) {
+    return (
+      <div style={{ padding: '20px' }}>
+        <h1>Musées et Patrimoine du Gers (32)</h1>
+        <p>Chargement des données...</p>
+      </div>
+    );
   }
 
-  if (loading) {
-    return <div>Chargement des données...</div>;
+  if (error) {
+    return (
+      <div style={{ padding: '20px', color: 'red' }}>
+        <h1>Musées et Patrimoine du Gers (32)</h1>
+        <p>Erreur : {error}</p>
+        <p>Vérifiez que vous avez bien une clé Google Maps définie dans .env.local.</p>
+      </div>
+    );
   }
 
-  const handleMarkerClick = (musee: MuseeGers) => {
-    setSelectedMusee(musee);
-  };
-
-  const handleListClick = (musee: MuseeGers) => {
-    // Centre la carte sur le musée sélectionné (non implémenté ici pour simplicité, mais peut être fait avec une référence à la carte)
-    setSelectedMusee(musee);
-  };
-
-  const mapOptions = {
-    disableDefaultUI: true,
-    zoomControl: true,
-  };
+  const totalMusees = musees.length; 
 
   return (
-    <div className="container mx-auto p-4">
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold text-indigo-800">🏛️ Musées et Patrimoine du Gers (32)</h1>
-        <p className="text-xl text-indigo-600 mt-2">Découvrez les sites culturels, historiques et artistiques du département.</p>
-      </header>
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <h1>🍷 Musées et Patrimoine du Gers (32)</h1>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Colonne de la Carte */}
-        <div className="lg:col-span-2">
-          <h2 className="text-2xl font-semibold mb-4 text-indigo-700">Carte des Musées</h2>
-          {isLoaded ? (
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={center}
-              zoom={defaultZoom}
-              options={mapOptions}
-            >
-              {musees.map((musee, index) => (
-                <MarkerF
-                  key={index}
-                  position={{ lat: musee.lat, lng: musee.lng }}
-                  onClick={() => handleMarkerClick(musee)}
-                />
-              ))}
+      <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>
+        Total de Sites listés : {totalMusees}
+      </p>
+      <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des lieux culturels et historiques du département.</p>
 
-              {selectedMusee && (
-                <InfoWindowF
-                  position={{ lat: selectedMusee.lat, lng: selectedMusee.lng }}
-                  onCloseClick={() => setSelectedMusee(null)}
+      {/* Carte Google Maps */}
+      <GoogleMap musees={musees} />
+
+      <h2>Liste Détaillée des Sites</h2>
+      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <thead>
+          <tr style={{ backgroundColor: '#f4f4f4' }}>
+            <th style={tableHeaderStyle}>N°</th> 
+            <th style={tableHeaderStyle}>Commune</th>
+            <th style={tableHeaderStyle}>Nom du Site</th>
+            <th style={tableHeaderStyle}>Catégorie</th>
+            <th style={tableHeaderStyle}>Adresse</th>
+            <th style={tableHeaderStyle}>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {musees.map((musee, index) => (
+            <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+              <td style={tableCellStyle}><strong>{index + 1}</strong></td> 
+              <td style={tableCellStyle}>{musee.commune}</td>
+              <td style={tableCellStyle}>{musee.nom}</td>
+              <td style={tableCellStyle}>{musee.categorie}</td>
+              <td style={tableCellStyle}>{musee.adresse}</td>
+              <td style={tableCellStyle}>
+                <a 
+                  href={musee.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={{ color: 'blue', textDecoration: 'underline' }} 
                 >
-                  <div className="p-2">
-                    <h3 className="font-bold text-md text-indigo-800">{selectedMusee.nom}</h3>
-                    <p className="text-sm">{selectedMusee.commune} ({selectedMusee.categorie})</p>
-                    {selectedMusee.url && (
-                      <a 
-                        href={selectedMusee.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="text-indigo-500 hover:text-indigo-700 text-sm mt-1 inline-block"
-                      >
-                        Voir le site
-                      </a>
-                    )}
-                  </div>
-                </InfoWindowF>
-              )}
-            </GoogleMap>
-          ) : (
-            <div>Chargement de la carte...</div>
-          )}
-        </div>
-
-        {/* Colonne de la Liste */}
-        <div className="lg:col-span-1">
-          <h2 className="text-2xl font-semibold mb-4 text-indigo-700">Liste des Sites ({musees.length})</h2>
-          <div className="max-h-[600px] overflow-y-auto pr-2">
-            <ul className="space-y-3">
-              {musees
-                .sort((a, b) => a.commune.localeCompare(b.commune))
-                .map((musee, index) => (
-                  <li 
-                    key={index} 
-                    className={`p-3 border rounded-lg shadow-sm cursor-pointer transition-all ${
-                      selectedMusee?.nom === musee.nom ? 'bg-indigo-100 border-indigo-500' : 'bg-white hover:bg-gray-50'
-                    }`}
-                    onClick={() => handleListClick(musee)}
-                  >
-                    <div className="font-semibold text-indigo-800">{musee.nom}</div>
-                    <div className="text-sm text-gray-600">{musee.commune}</div>
-                    <div className="text-xs text-gray-400">Catégorie: {musee.categorie}</div>
-                  </li>
-                ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+                  Voir le site
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-};
-
-export default MuseeGersPage;
+}
