@@ -111,13 +111,14 @@ export default function PhilibertnetPage() {
         Articles récents de Philibert (Actualités uniquement).
       </p>
 
-      {/* Boutons de Vue et Actualisation */}
+      {/* Boutons Actualiser */}
       <div className="flex flex-wrap gap-3 mb-4 items-center">
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
       </div>
 
+      {/* Recherche */}
       <input
         type="text"
         placeholder="Rechercher par titre ou mot-clé..."
