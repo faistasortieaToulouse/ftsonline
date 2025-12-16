@@ -20,12 +20,16 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
     if (!mapRef.current || !window.google) return;
 
     // Calculer le centre de la carte (Moyenne des coordonnées)
+    // S'assurer qu'il y a des musées pour éviter une division par zéro
+    if (musees.length === 0) return;
+
     const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
     const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
 
     const map = new window.google.maps.Map(mapRef.current, {
       center: { lat: centerLat, lng: centerLng },
       zoom: 9, // Zoom pour couvrir les Pyrénées-Orientales
+      scrollwheel: true, // Permet le zoom avec la molette de la souris
     });
 
     // Ajouter des marqueurs pour chaque musée
@@ -126,16 +130,14 @@ export default function MuseePOPage() {
     );
   }
 
-  // --- NOUVELLE LOGIQUE AJOUTÉE ICI ---
   const totalMusees = musees.length; 
-  // ------------------------------------
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>🗺️ Musées des Pyrénées-Orientales (66)</h1>
       {/* AFFICHAGE DU COMPTEUR TOTAL */}
-      <p style={{ marginBottom: '20px', color: '#555' }}>
-        **Total de Musées listés : {totalMusees}**
+      <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>
+        Total de Musées listés : {totalMusees}
       </p>
       <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des lieux culturels.</p>
 
