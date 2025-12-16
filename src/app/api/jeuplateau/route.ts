@@ -1,81 +1,117 @@
-// src/app/api/philibertnet/route.ts
-
-// ✅ OBLIGATOIRE : rss-parser ne fonctionne PAS en Edge Runtime
-export const runtime = 'nodejs';
+// src/app/api/jeuplateau/route.ts
 
 import { NextResponse } from 'next/server';
 import Parser from 'rss-parser';
 
-const RSS_FEED_URL =
-  'https://www.philibertnet.com/modules/feeder/rss.php?id_category=8051';
+// URLs des flux RSS JeuxOnline
+const RSS_URLS = {
+  Actualites: 'https://jeux-plateau-societe.jeuxonline.info/rss/actualites/rss.xml',
+  Critiques: 'https://jeux-plateau-societe.jeuxonline.info/rss/critiques/rss.xml',
+  Videos: 'https://jeux-plateau-societe.jeuxonline.info/rss/videos/rss.xml',
+};
 
-const parser = new Parser();
+// Parser RSS
+const parser = new Parser({
+  customFields: {
+    item: [['dc:creator', 'creator']],
+  },
+});
 
-// Fetch sécurisé (OBLIGATOIRE pour Philibert)
-async function fetchRss(url: string) {
-  const response = await fetch(url, {
+// Fetch avec timeout + User-Agent (OBLIGATOIRE pour Critiques & Vidéos)
+async function fetchWithTimeout(
+  resource: string,
+  options: { timeout?: number } = {}
+) {
+  const { timeout = 10000 } = options;
+
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  const response = await fetch(resource, {
+    signal: controller.signal,
     headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; NextJS-RSS-Bot/1.0)',
-      'Accept': 'application/rss+xml, application/xml;q=0.9,*/*;q=0.8',
+      'User-Agent': 'Mozilla/5.0 (compatible; JeuxPlateauBot/1.0)',
+      'Accept': 'application/rss+xml, application/xml;q=0.9, */*;q=0.8',
     },
-    cache: 'no-store',
   });
 
-  if (!response.ok) {
-    throw new Error(
-      `HTTP ${response.status} ${response.statusText}`
-    );
-  }
-
-  return response.text();
+  clearTimeout(id);
+  return response;
 }
 
+/**
+ * Endpoint GET : fusion des flux RSS JeuxOnline
+ */
 export async function GET() {
+  const promises = Object.entries(RSS_URLS).map(
+    async ([category, url]) => {
+      try {
+        // 1. Fetch RSS
+        const response = await fetchWithTimeout(url, { timeout: 10000 });
+
+        if (!response.ok) {
+          throw new Error(
+            `Erreur HTTP ${response.status} : ${response.statusText}`
+          );
+        }
+
+        // 2. Lecture XML
+        const xmlText = await response.text();
+
+        // 3. Parsing RSS
+        const feed = await parser.parseString(xmlText);
+
+        // Debug utile (facultatif)
+        console.log(
+          `[JEUXONLINE] ${category} : ${feed.items.length} items`
+        );
+
+        // 4. Normalisation des items
+        return feed.items.map((item) => ({
+          title: item.title ?? '',
+          link: item.link ?? '',
+          pubDate: item.pubDate ?? '',
+          snippet: item.contentSnippet || item.content || '',
+          creator: item.creator || 'Auteur inconnu',
+          category,
+        }));
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : 'Erreur inconnue';
+
+        console.warn(
+          `[JEUXONLINE] Flux ${category} ignoré : ${message}`
+        );
+        return [];
+      }
+    }
+  );
+
   try {
-    // 1️⃣ Fetch XML
-    const xml = await fetchRss(RSS_FEED_URL);
+    const results = await Promise.all(promises);
 
-    // 2️⃣ Parse XML
-    const feed = await parser.parseString(xml);
-
-    // 3️⃣ Normalisation
-    const items = feed.items.map((item) => ({
-      title: item.title ?? '',
-      link: item.link ?? '',
-      pubDate: item.pubDate ?? '',
-      snippet:
-        item.contentSnippet ||
-        item.content ||
-        '',
-    }));
+    const allItems = results
+      .flat()
+      .sort(
+        (a, b) =>
+          new Date(b.pubDate).getTime() -
+          new Date(a.pubDate).getTime()
+      );
 
     return NextResponse.json({
-      title: feed.title || 'Philibert – Nouveautés',
-      description:
-        feed.description ||
-        'Flux RSS Philibert',
-      source: 'Philibert.net RSS',
-      category_id: 8051,
-      count: items.length,
-      items,
+      title: 'JeuxOnline - Flux Fusionné',
+      description: 'Actualités, critiques et vidéos de JeuxOnline',
+      source: 'JeuxOnline',
+      items: allItems,
     });
   } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : 'Erreur inconnue';
-
-    console.error(
-      '[PHILIBERT RSS ERROR]',
-      message
-    );
-
     return NextResponse.json(
       {
-        error:
-          'Erreur lors de la récupération du flux RSS Philibert',
-        details: message,
-        source: 'Philibert.net RSS',
+        error: 'Erreur interne lors de la fusion des flux',
+        details:
+          error instanceof Error
+            ? error.message
+            : 'Erreur inconnue',
       },
       { status: 500 }
     );
