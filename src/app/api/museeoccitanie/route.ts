@@ -12,7 +12,7 @@ export interface MuseeOccitanie {
   departement: string; 
 }
 
-// URL de base de l'agrégation externe
+// URL de base de l'agrégation externe (ftstoulouse.vercel.app)
 const EXTERNAL_API_BASE = 'https://ftstoulouse.vercel.app/api'; 
 
 // Liste des départements, triée par Nom du département (ordre alphabétique)
@@ -24,9 +24,10 @@ const DEPARTEMENTS_API_URLS: { code: string; name: string; isLocal: boolean; end
     { code: '31', name: 'Haute-Garonne', isLocal: false, endpoint: 'museehg' },
     { code: '65', name: 'Hautes-Pyrénées', isLocal: false, endpoint: 'museehp' },
     { code: '34', name: 'Hérault', isLocal: false, endpoint: 'museeherault' },
-    { code: '46', name: 'Lot', isLocal: false, endpoint: 'museelot' }, 
+    { code: '46', name: 'Lot', isLocal: false, endpoint: 'museelot' }, // Inclus car vous avez confirmé qu'il est déjà là
     { code: '66', name: 'Pyrénées-Orientales', isLocal: false, endpoint: 'museepo' },
     { code: '81', name: 'Tarn', isLocal: false, endpoint: 'museetarn' },
+    // C'est le seul qui doit être marqué local, car son API est dans ce même projet Next.js
     { code: '82', name: 'Tarn-et-Garonne', isLocal: true, endpoint: 'museetarngaronne' }, 
 ];
 
@@ -43,7 +44,6 @@ async function fetchMuseesFromApi(fullUrl: string, code: string, name: string): 
     
     const data = await response.json() as Omit<MuseeOccitanie, 'departement'>[];
 
-    // Le format du département est maintenant sans le gras, selon la demande.
     return data.map(item => ({
       ...item,
       departement: `${name} (${code})`,
@@ -60,11 +60,14 @@ export async function GET() {
         let fullUrl: string;
 
         if (dept.isLocal) {
-            // Logique pour l'URL de base locale (localhost ou Vercel)
-            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-            fullUrl = `${baseUrl}/api/${dept.endpoint}`;
+            // CORRECTION CLÉ : Utiliser VERCEL_URL en production ou NEXT_PUBLIC_BASE_URL en local.
+            const domain = process.env.VERCEL_URL 
+                ? `https://${process.env.VERCEL_URL}` 
+                : process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+                
+            fullUrl = `${domain}/api/${dept.endpoint}`;
         } else {
-            // Logique pour l'URL de base externe
+            // Utilise l'URL externe pour les autres API.
             fullUrl = `${EXTERNAL_API_BASE}/${dept.endpoint}`;
         }
 
@@ -75,7 +78,7 @@ export async function GET() {
   
   const museesAgreges = results.flat();
 
-  // Tri final par département, puis par commune
+  // Tri final par département (qui sont maintenant triés par nom dans la liste), puis par commune
   const sortedMusees = museesAgreges.sort((a, b) => {
     if (a.departement !== b.departement) {
       return a.departement.localeCompare(b.departement);
