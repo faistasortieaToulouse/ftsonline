@@ -126,9 +126,17 @@ export default function MuseePOPage() {
     );
   }
 
+  // --- NOUVELLE LOGIQUE AJOUTÉE ICI ---
+  const totalMusees = musees.length; 
+  // ------------------------------------
+
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>🗺️ Musées des Pyrénées-Orientales (66)</h1>
+      {/* AFFICHAGE DU COMPTEUR TOTAL */}
+      <p style={{ marginBottom: '20px', color: '#555' }}>
+        **Total de Musées listés : {totalMusees}**
+      </p>
       <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des lieux culturels.</p>
 
       {/* Carte Google Maps */}
@@ -157,7 +165,7 @@ export default function MuseePOPage() {
                   href={musee.url} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  style={{ color: 'blue', textDecoration: 'underline' }} // AJOUTER CE STYLE
+                  style={{ color: 'blue', textDecoration: 'underline' }} // Style en bleu
                 >
                   Voir le site
                 </a>
