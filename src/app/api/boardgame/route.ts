@@ -1,62 +1,47 @@
-// src/app/api/boardgame/route.ts
+// src/app/api/boardgame/route.ts (Proxy BGA - JSON API)
 
 import { NextResponse } from 'next/server';
 
-const BGG_CATAN_ID = 92;
-// L'URL de l'API BGG XML2 est souvent juste 'https://boardgamegeek.com/xmlapi2/'
-const BGG_API_URL = `https://boardgamegeek.com/xmlapi2/thing?id=${BGG_CATAN_ID}&stats=1`;
+// ⚠️ REMPLACEZ PAR VOTRE VRAIE CLÉ BGA !
+const BGA_CLIENT_ID = 'VOTRE_CLIENT_ID_BGA'; 
+// Recherche de 'Ticket to Ride' pour l'exemple
+const BGA_SEARCH_URL = `https://api.boardgameatlas.com/api/search?name=Ticket to Ride&client_id=${BGA_CLIENT_ID}`;
 
 /**
- * Fonction GET pour récupérer les données d'un jeu de société depuis BGG.
+ * Endpoint pour BGA (JSON API).
  */
 export async function GET() {
+  if (BGA_CLIENT_ID === 'VOTRE_CLIENT_ID_BGA') {
+    return NextResponse.json({
+        error: "Erreur de configuration: Clé API Board Game Atlas manquante ou invalide.",
+        details: "Veuillez remplacer 'VOTRE_CLIENT_ID_BGA' dans route.ts par votre client_id BGA réel."
+    }, { status: 500 });
+  }
+
   try {
-    // 1. Appel à l'API externe (Board Game Geek)
-    const response = await fetch(BGG_API_URL, {
-      // Configuration de la requête pour la rendre plus "amicale"
-      // L'API BGG est sensible à la fréquence de requêtes
-      // En l'absence d'User-Agent, certains serveurs peuvent le refuser.
-      // Nous ajoutons un User-Agent simple.
-      headers: {
-         'User-Agent': 'BoardGameApp-PersonalProject/1.0',
-         'Accept': 'application/xml', // Optionnel, mais explicite
-      },
-      // Pas besoin de revalidate ici, BGG API est lente et on veut les données
-      cache: 'no-store', // S'assurer qu'il ne s'agit pas d'une vieille requête mise en cache
-    });
-    
-    // NOTE TRÈS IMPORTANTE POUR BGG : L'API peut renvoyer 200 OK avec un corps vide
-    // si elle est surchargée. Nous vérifions si la réponse est OK.
+    const response = await fetch(BGA_SEARCH_URL, { cache: 'no-store' });
+
     if (!response.ok) {
-        // Si l'erreur est un 404, 500, etc.
-        const errorText = await response.text(); 
-        console.error(`Erreur BGG: ${response.status} - ${errorText}`);
-        return NextResponse.json({ 
-            error: `Erreur lors de la récupération des données de BGG: Code ${response.status} ${response.statusText}`
-        }, { status: 500 });
-    }
-
-    // 2. Traitement des données XML (Retourne du XML non parsé)
-    const xmlText = await response.text();
-
-    // 3. Vérification du corps de la réponse
-    // Si la réponse est vide (le cas de surcharge de BGG)
-    if (!xmlText || xmlText.includes('Not found')) {
+        const errorDetails = await response.text();
         return NextResponse.json({
-            error: 'L\'API BGG a retourné une réponse vide ou non trouvée. Réessayez plus tard.',
-        }, { status: 503 }); // 503 Service Unavailable est plus approprié pour une surcharge
+            error: `Erreur BGA: Code ${response.status} ${response.statusText}`,
+            details: errorDetails
+        }, { status: response.status });
     }
 
-    // 4. Retourner le résultat
+    // BGA renvoie du JSON, que nous traitons directement
+    const jsonData = await response.json();
+    
     return NextResponse.json({ 
-      data: xmlText, 
-      source: 'Board Game Geek (XML non parsé)' 
+      data: jsonData, 
+      source: 'Board Game Atlas (JSON parsé)',
+      search_term: 'Ticket to Ride'
     });
 
   } catch (error) {
-    console.error("Erreur serveur :", error);
+    console.error("Erreur serveur BGA:", error);
     return NextResponse.json({ 
-      error: `Erreur interne du serveur lors de l'appel API.`,
+      error: `Erreur interne du serveur lors de l'appel BGA.`,
       details: error instanceof Error ? error.message : 'Détails non disponibles'
     }, { status: 500 });
   }
