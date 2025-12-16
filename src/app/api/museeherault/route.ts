@@ -28,7 +28,6 @@ const museesHerault: MuseeHerault[] = [
   { commune: 'Béziers', nom: 'Espace jean moulin - MAM', categorie: 'Mémoire / Exposition d\'Art Moderne', adresse: 'Place Jean Moulin, 34500 Béziers', url: 'https://www.beziers.fr/equipement/espace-jean-moulin-mam', lat: 43.3423, lng: 3.2199 },
   { commune: 'Béziers', nom: 'Les ostals', categorie: 'Patrimoine / Centre d\'Interprétation', adresse: '2, Place des Albigeois, 34500 Béziers', url: 'https://www.beziers.fr/equipement/les-ostals', lat: 43.3411, lng: 3.2193 },
   { commune: 'Boujan-sur-Libron', nom: 'Musée Chapy Père et Fils (Musée Chapy)', categorie: 'Musée thématique (Moto / Cycle)', adresse: '14 rue du Muscat, 34760 Boujan-sur-Libron', url: 'https://www.herault-tourisme.com/fiche/musee-chapy-boujan-sur-libron/', lat: 43.3768, lng: 3.2087 },
-  { commune: 'Bouzigues', nom: 'Musée de l\'Étang de Thau', categorie: 'Musée thématique (Conchyliculture)', adresse: '7 Quai du Port de Pêche, 34140 Bouzigues', url: 'https://patrimoine.agglopole.fr/musee-de-letang-de-thau/', lat: 43.4475, lng: 3.6558 },
   { commune: 'Cabrières', nom: 'Caveau museographique des vignerons', categorie: 'Musée thématique (Vigne et Vin)', adresse: '15 Avenue du 8 Mai 1945, 34800 Cabrières', url: 'https://www.languedoc-coeur-herault.fr/caveau-museographique-des-vignerons', lat: 43.6067, lng: 3.4259 },
   { commune: 'Capestang', nom: 'Château des archevêques de capestang', categorie: 'Patrimoine / Histoire', adresse: 'Place Jean Jaurès, 34310 Capestang', url: 'https://capestang-tourisme.fr/fiche/chateau-des-archeveques-de-capestang-capestang/', lat: 43.3323, lng: 3.0905 },
   { commune: 'Caux', nom: 'Espace patrimoine', categorie: 'Patrimoine Local / Histoire', adresse: '38, Avenue de Pézenas, 34720 Caux', url: 'https://www.herault-tourisme.com/fiche/espace-patrimoine-caux/', lat: 43.4795, lng: 3.4222 },
@@ -37,10 +36,8 @@ const museesHerault: MuseeHerault[] = [
   { commune: 'Colombiers', nom: 'Cave du chateau de colombiers', categorie: 'Musée thématique (Vigne et Vin) / Patrimoine', adresse: '1, Avenue de Béziers, 34440 Colombiers', url: 'https://www.chateaudecolombiers.fr', lat: 43.3275, lng: 3.1495 },
   { commune: 'Courniou', nom: 'Musée de la speleologie de la grotte la fileuse de verre', categorie: 'Spéléologie / Nature', adresse: 'La Fileuse de Verre, 34220 Courniou', url: 'https://www.fileusedeverre.fr', lat: 43.4357, lng: 2.8055 },
   { commune: 'Cruzy', nom: 'Musée de cruzy', categorie: 'Archéologie / Paléontologie', adresse: 'Rue du Pont de l\'Abbé, 34310 Cruzy', url: 'https://www.cruzy.fr/patrimoine/musee-de-cruzy/', lat: 43.3448, lng: 2.9535 },
-  { commune: 'Frontignan-la-Peyrade', nom: 'Musée de Frontignan-la-Peyrade (Musée municipal)', categorie: 'Musée Archéologie / Ethnologie', adresse: '4 rue Lucien Salette, 34110 Frontignan', url: 'https://www.frontignan.fr/mes-loisirs/culture-patrimoine-festivites/equipements-culturels/musee-municipal/', lat: 43.4350, lng: 3.7663 },
   { commune: 'Hérépian', nom: 'Musée de la cloche et de la sonnaille', categorie: 'Musée thématique (Artisanat)', adresse: '4, Rue des Jardins, 34600 Hérépian', url: 'https://www.herault-tourisme.com/fiche/musee-de-la-cloche-et-de-la-sonnaille-herepian/', lat: 43.5828, lng: 3.1090 },
   { commune: 'La tamarissière', nom: 'Bunkers 638 et 610', categorie: 'Lieu Historique (WWII)', adresse: 'Plage de la Tamarissière, 34300 Agde', url: 'https://www.capdagde.com/fiche/bunkers-la-tamarissiere/', lat: 43.2925, lng: 3.4770 },
-  { commune: 'Lattes', nom: 'Site Archéologique Lattara - Musée Henri Prades', categorie: 'Musée Archéologique', adresse: '390, route de Pérols, 34970 Lattes', url: 'https://museearcheo.montpellier3m.fr', lat: 43.5701, lng: 3.9056 },
   { commune: 'Minerve', nom: 'Musée d\'archeologie et de paleontologie de minerve', categorie: 'Archéologie / Paléontologie', adresse: 'Rue des remparts, 34210 Minerve', url: 'https://www.minerve-tourisme.com/musee-darcheologie-et-de-paleontologie/', lat: 43.3496, lng: 2.7479 },
   { commune: 'Montouliers', nom: 'L\'atelier - cathédrale de dentelle de bois', categorie: 'Artisanat / Sculpture sur Bois', adresse: 'Place du Temple, 34310 Montouliers', url: 'https://www.ot-minervois.com/fiche/latelier-cathedrale-de-dentelle-de-bois-montouliers/', lat: 43.3101, lng: 2.9123 },
   { commune: 'Olargues', nom: 'Musée d\'arts et traditions populaires d\'olargues', categorie: 'Arts & Traditions Populaires', adresse: 'Pont du Diable, 34390 Olargues', url: 'https://www.parc-haut-languedoc.fr/equipement/musee-darts-et-traditions-populaires-dolargues/', lat: 43.6060, lng: 2.9304 },
@@ -60,8 +57,7 @@ const museesHerault: MuseeHerault[] = [
   { commune: 'Valras-plage', nom: 'Le palais de la maquette - musée du jouet', categorie: 'Musée thématique (Maquettes / Jouets)', adresse: 'Avenue de l\'Épargne, 34350 Valras-Plage', url: 'http://www.palaisdelamaquette.fr', lat: 43.2505, lng: 3.2858 },
   { commune: 'Vias', nom: 'Maison du patrimoine', categorie: 'Patrimoine Local', adresse: 'Rue de la Promenade, 34450 Vias', url: 'https://www.vias-mediterranee.fr/maison-du-patrimoine/', lat: 43.3240, lng: 3.4168 },
   { commune: 'Villemagne-l\'argentière', nom: 'Musée saint-grégoire', categorie: 'Art Sacré / Histoire Locale', adresse: 'Rue du Prieuré, 34600 Villemagne-l\'Argentière', url: 'https://www.herault-tourisme.com/fiche/musee-saint-gregoire-villemagne-largentiere/', lat: 43.5960, lng: 3.1250 },
-  { commune: 'Villetelle', nom: 'Musée d\'Ambrussum', categorie: 'Musée Archéologique', adresse: 'Chemin d\'Ambrussum, 34400 Villetelle', url: 'https://www.ambrussum.fr', lat: 43.7314, lng: 4.1924 },
-];
+  ];
 
 export async function GET() {
   return NextResponse.json(museesHerault);
