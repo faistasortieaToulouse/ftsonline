@@ -3,91 +3,117 @@
 import { NextResponse } from 'next/server';
 import Parser from 'rss-parser';
 
-// Les trois URLs de flux
+// URLs des flux RSS JeuxOnline
 const RSS_URLS = {
   Actualites: 'https://jeux-plateau-societe.jeuxonline.info/rss/actualites/rss.xml',
   Critiques: 'https://jeux-plateau-societe.jeuxonline.info/rss/critiques/rss.xml',
   Videos: 'https://jeux-plateau-societe.jeuxonline.info/rss/videos/rss.xml',
 };
 
+// Parser RSS
 const parser = new Parser({
-    customFields: {
-        item: [
-            ['dc:creator', 'creator'],
-        ],
-    },
+  customFields: {
+    item: [['dc:creator', 'creator']],
+  },
 });
 
-// Fonction pour ajouter un timeout à la requête fetch
-async function fetchWithTimeout(resource: string, options = { timeout: 10000 }) {
-    const { timeout } = options;
-    
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
+// Fetch avec timeout + User-Agent (OBLIGATOIRE pour Critiques & Vidéos)
+async function fetchWithTimeout(
+  resource: string,
+  options: { timeout?: number } = {}
+) {
+  const { timeout = 10000 } = options;
 
-    const response = await fetch(resource, {
-        ...options,
-        signal: controller.signal  // Connecte l'AbortController à la requête
-    });
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
 
-    clearTimeout(id);
-    return response;
+  const response = await fetch(resource, {
+    signal: controller.signal,
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; JeuxPlateauBot/1.0)',
+      'Accept': 'application/rss+xml, application/xml;q=0.9, */*;q=0.8',
+    },
+  });
+
+  clearTimeout(id);
+  return response;
 }
 
 /**
- * Endpoint pour récupérer et fusionner les trois flux RSS de JeuxOnline.
+ * Endpoint GET : fusion des flux RSS JeuxOnline
  */
 export async function GET() {
-  const promises = Object.entries(RSS_URLS).map(async ([category, url]) => {
-    try {
-      // 1. Fetcher le XML nous-mêmes avec un timeout de 10 secondes
-      const response = await fetchWithTimeout(url, { timeout: 10000 });
-      
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
+  const promises = Object.entries(RSS_URLS).map(
+    async ([category, url]) => {
+      try {
+        // 1. Fetch RSS
+        const response = await fetchWithTimeout(url, { timeout: 10000 });
+
+        if (!response.ok) {
+          throw new Error(
+            `Erreur HTTP ${response.status} : ${response.statusText}`
+          );
+        }
+
+        // 2. Lecture XML
+        const xmlText = await response.text();
+
+        // 3. Parsing RSS
+        const feed = await parser.parseString(xmlText);
+
+        // Debug utile (facultatif)
+        console.log(
+          `[JEUXONLINE] ${category} : ${feed.items.length} items`
+        );
+
+        // 4. Normalisation des items
+        return feed.items.map((item) => ({
+          title: item.title ?? '',
+          link: item.link ?? '',
+          pubDate: item.pubDate ?? '',
+          snippet: item.contentSnippet || item.content || '',
+          creator: item.creator || 'Auteur inconnu',
+          category,
+        }));
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : 'Erreur inconnue';
+
+        console.warn(
+          `[JEUXONLINE] Flux ${category} ignoré : ${message}`
+        );
+        return [];
       }
-      
-      const xmlText = await response.text();
-
-      // 2. Parser le contenu XML (maintenant local)
-      const feed = await parser.parseString(xmlText);
-
-      // 3. Formatage des items
-      return feed.items.map(item => ({
-        title: item.title,
-        link: item.link,
-        pubDate: item.pubDate,
-        snippet: item.contentSnippet || item.content || '', 
-        creator: item.creator || 'Auteur Inconnu',
-        category: category, 
-      }));
-    } catch (error) {
-      // 🟢 Gestion d'erreur locale
-      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue de parsing.';
-      console.warn(`[JEUXONLINE] Erreur critique (ignorable) sur le flux ${category}: ${errorMessage}`);
-      return []; 
     }
-  });
+  );
 
   try {
     const results = await Promise.all(promises);
-    
-    const allItems = results.flat().sort((a, b) => {
-        return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
-    });
+
+    const allItems = results
+      .flat()
+      .sort(
+        (a, b) =>
+          new Date(b.pubDate).getTime() -
+          new Date(a.pubDate).getTime()
+      );
 
     return NextResponse.json({
-      title: "JeuxOnline - Flux Fusionné",
-      description: "Actualités, critiques et vidéos de JeuxOnline.",
+      title: 'JeuxOnline - Flux Fusionné',
+      description: 'Actualités, critiques et vidéos de JeuxOnline',
+      source: 'JeuxOnline',
       items: allItems,
-      source: 'JeuxOnline Flux Fusionné',
     });
-    
   } catch (error) {
-    // Ce catch ne devrait jamais être atteint
-    return NextResponse.json({
-      error: 'Erreur de traitement interne lors de la fusion des flux.',
-      details: error instanceof Error ? error.message : 'Problème de connexion général.',
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Erreur interne lors de la fusion des flux',
+        details:
+          error instanceof Error
+            ? error.message
+            : 'Erreur inconnue',
+      },
+      { status: 500 }
+    );
   }
 }
