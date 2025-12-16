@@ -118,5 +118,7 @@ export default function PhilibertnetPage() {
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
         <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
-          📺 Vignette
+        📺 Vignette
+        </Button>
+
         </
