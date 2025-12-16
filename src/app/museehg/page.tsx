@@ -31,16 +31,23 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
     });
 
     // Ajouter des marqueurs pour chaque musée
-    musees.forEach((musee) => {
+    musees.forEach((musee, index) => {
+      // Le numéro du musée dans la liste (index + 1)
+      const numero = index + 1;
+      
       const marker = new window.google.maps.Marker({
         position: { lat: musee.lat, lng: musee.lng },
         map,
-        title: musee.nom,
+        title: `${numero}. ${musee.nom}`, // Afficher le numéro dans le titre du marqueur
+        // Utiliser une icône personnalisée pour afficher le numéro (nécessite une URL d'icône)
+        // Pour des raisons de simplicité, on utilise l'icône par défaut de Google Maps,
+        // mais on numérote le titre et l'InfoWindow.
       });
 
       const infowindow = new window.google.maps.InfoWindow({
         content: `
-          <h3>${musee.nom}</h3>
+          <h3>${numero}. ${musee.nom}</h3>
+          <p><strong>Commune :</strong> ${musee.commune}</p>
           <p><strong>Catégorie :</strong> ${musee.categorie}</p>
           <p><strong>Adresse :</strong> ${musee.adresse}</p>
           <p><a href="${musee.url}" target="_blank">Site web</a></p>
@@ -151,6 +158,8 @@ export default function MuseeHGPage() {
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
         <thead>
           <tr style={{ backgroundColor: '#f4f4f4' }}>
+            {/* Nouvelle colonne pour le Numéro */}
+            <th style={tableHeaderStyle}>N°</th> 
             <th style={tableHeaderStyle}>Commune</th>
             <th style={tableHeaderStyle}>Nom du Musée</th>
             <th style={tableHeaderStyle}>Catégorie</th>
@@ -161,6 +170,8 @@ export default function MuseeHGPage() {
         <tbody>
           {musees.map((musee, index) => (
             <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+              {/* Affichage du numéro (index + 1) */}
+              <td style={tableCellStyle}><strong>{index + 1}</strong></td> 
               <td style={tableCellStyle}>{musee.commune}</td>
               <td style={tableCellStyle}>{musee.nom}</td>
               <td style={tableCellStyle}>{musee.categorie}</td>
