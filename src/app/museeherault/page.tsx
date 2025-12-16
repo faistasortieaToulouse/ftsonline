@@ -2,8 +2,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-// Importe le type depuis la nouvelle API
-import { MuseeHerault as Musee } from '../api/museeherault/route'; 
+import { Musee as MuseeHerault } from '../api/museeherault/route'; // Assurez-vous d'importer le bon type
 
 // Déclaration pour que TypeScript reconnaisse google.maps
 declare global {
@@ -14,33 +13,37 @@ declare global {
 }
 
 // Composant de la carte
-const GoogleMap = ({ musees }: { musees: Musee[] }) => {
+const GoogleMap = ({ musees }: { musees: MuseeHerault[] }) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const initMap = useCallback(() => {
     if (!mapRef.current || !window.google || musees.length === 0) return;
 
-    // Calculer le centre de la carte
+    // Calculer le centre de la carte (pour l'Hérault)
     const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
     const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
 
     const map = new window.google.maps.Map(mapRef.current, {
       center: { lat: centerLat, lng: centerLng },
       zoom: 9, // Zoom initial pour l'Hérault
-      scrollwheel: true, // Permet le zoom avec la molette de la souris
+      scrollwheel: true, // Zoom avec la molette de la souris
     });
 
     // Ajouter des marqueurs pour chaque musée
-    musees.forEach((musee) => {
+    musees.forEach((musee, index) => {
+      // Le numéro du musée dans la liste (index + 1)
+      const numero = index + 1;
+
       const marker = new window.google.maps.Marker({
         position: { lat: musee.lat, lng: musee.lng },
         map,
-        title: musee.nom,
+        title: `${numero}. ${musee.nom}`, // Afficher le numéro dans le titre du marqueur
       });
 
       const infowindow = new window.google.maps.InfoWindow({
         content: `
-          <h3>${musee.nom}</h3>
+          <h3>${numero}. ${musee.nom}</h3>
+          <p><strong>Commune :</strong> ${musee.commune}</p>
           <p><strong>Catégorie :</strong> ${musee.categorie}</p>
           <p><strong>Adresse :</strong> ${musee.adresse}</p>
           <p><a href="${musee.url}" target="_blank">Site web</a></p>
@@ -62,6 +65,7 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
 
     // Charge dynamiquement le script de l'API Google Maps
     const script = document.createElement('script');
+    // Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
     script.async = true;
     script.defer = true;
@@ -85,19 +89,19 @@ const tableCellStyle = { padding: '12px' };
 
 // Composant principal de la page
 export default function MuseeHeraultPage() {
-  const [musees, setMusees] = useState<Musee[]>([]);
+  const [musees, setMusees] = useState<MuseeHerault[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchMusees() {
       try {
-        // Changement de l'URL d'appel API
+        // Changement de l'URL d'appel API pour l'Hérault
         const response = await fetch('/api/museeherault'); 
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération des données de l'API.");
         }
-        const data: Musee[] = await response.json();
+        const data: MuseeHerault[] = await response.json();
         setMusees(data);
       } catch (err) {
         if (err instanceof Error) {
@@ -136,7 +140,7 @@ export default function MuseeHeraultPage() {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>🏛️ Musées de l'Hérault (34)</h1>
+      <h1>🏖️ Musées de l'Hérault (34)</h1>
       
       <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>
         Total de Musées listés : {totalMusees}
@@ -150,6 +154,8 @@ export default function MuseeHeraultPage() {
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
         <thead>
           <tr style={{ backgroundColor: '#f4f4f4' }}>
+            {/* Nouvelle colonne pour le Numéro */}
+            <th style={tableHeaderStyle}>N°</th> 
             <th style={tableHeaderStyle}>Commune</th>
             <th style={tableHeaderStyle}>Nom du Musée</th>
             <th style={tableHeaderStyle}>Catégorie</th>
@@ -160,6 +166,8 @@ export default function MuseeHeraultPage() {
         <tbody>
           {musees.map((musee, index) => (
             <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+              {/* Affichage du numéro (index + 1) */}
+              <td style={tableCellStyle}><strong>{index + 1}</strong></td> 
               <td style={tableCellStyle}>{musee.commune}</td>
               <td style={tableCellStyle}>{musee.nom}</td>
               <td style={tableCellStyle}>{musee.categorie}</td>
