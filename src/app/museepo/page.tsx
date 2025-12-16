@@ -33,16 +33,19 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
     });
 
     // Ajouter des marqueurs pour chaque musée
-    musees.forEach((musee) => {
+    musees.forEach((musee, index) => {
+      const numero = index + 1; // Numéro du musée
+      
       const marker = new window.google.maps.Marker({
         position: { lat: musee.lat, lng: musee.lng },
         map,
-        title: musee.nom,
+        title: `${numero}. ${musee.nom}`, // Ajout du numéro dans le titre du marqueur
       });
 
       const infowindow = new window.google.maps.InfoWindow({
         content: `
-          <h3>${musee.nom}</h3>
+          <h3>${numero}. ${musee.nom}</h3>
+          <p><strong>Commune :</strong> ${musee.commune}</p>
           <p><strong>Catégorie :</strong> ${musee.categorie}</p>
           <p><strong>Adresse :</strong> ${musee.adresse}</p>
           <p><a href="${musee.url}" target="_blank">Site web</a></p>
@@ -81,6 +84,10 @@ const GoogleMap = ({ musees }: { musees: Musee[] }) => {
 
   return <div ref={mapRef} style={{ height: '500px', width: '100%', borderRadius: '8px', marginBottom: '32px' }} />;
 };
+
+// Styles pour le tableau (déplacé ici pour la portée)
+const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
+const tableCellStyle = { padding: '12px' };
 
 // Composant principal de la page
 export default function MuseePOPage() {
@@ -148,6 +155,7 @@ export default function MuseePOPage() {
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
         <thead>
           <tr style={{ backgroundColor: '#f4f4f4' }}>
+            <th style={tableHeaderStyle}>N°</th> {/* Ajout de la colonne Numéro */}
             <th style={tableHeaderStyle}>Commune</th>
             <th style={tableHeaderStyle}>Nom du Musée</th>
             <th style={tableHeaderStyle}>Catégorie</th>
@@ -158,6 +166,7 @@ export default function MuseePOPage() {
         <tbody>
           {musees.map((musee, index) => (
             <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+              <td style={tableCellStyle}><strong>{index + 1}</strong></td> {/* Affichage du numéro */}
               <td style={tableCellStyle}>{musee.commune}</td>
               <td style={tableCellStyle}>{musee.nom}</td>
               <td style={tableCellStyle}>{musee.categorie}</td>
@@ -179,6 +188,3 @@ export default function MuseePOPage() {
     </div>
   );
 }
-
-const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
-const tableCellStyle = { padding: '12px' };
