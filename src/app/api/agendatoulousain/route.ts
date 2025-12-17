@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 // 🔹 Sources externes agrégées
 const EXTERNAL_SOURCES = [
-  "https://ftstoulouse.vercel.app/api/agenda-trad-haute-garonne",
-  "https://ftstoulouse.vercel.app/api/agendaculturel",
-  "https://ftstoulouse.vercel.app/api/capitole-min", // UT Capitole
+  { url: "https://ftstoulouse.vercel.app/api/agenda-trad-haute-garonne", defaultSource: "Agenda Trad Haute-Garonne" },
+  { url: "https://ftstoulouse.vercel.app/api/agendaculturel", defaultSource: "Agenda Culturel" },
+  { url: "https://ftstoulouse.vercel.app/api/capitole-min", defaultSource: "Université Toulouse Capitole" },
 ];
 
 export const dynamic = "force-dynamic";
@@ -32,16 +32,25 @@ function normalizeApiResult(data: any): any[] {
   return Array.isArray(firstArray) ? firstArray : [];
 }
 
+// 🔹 Nettoyer HTML basique dans la description
+function cleanDescription(desc?: string) {
+  if (!desc) return "";
+  return desc.replace(/<\/?[^>]+(>|$)/g, "").trim();
+}
+
 // 🔹 Route GET
 export async function GET(request: NextRequest) {
   try {
     const results = await Promise.all(
-      EXTERNAL_SOURCES.map(async (url) => {
+      EXTERNAL_SOURCES.map(async ({ url, defaultSource }) => {
         try {
           const res = await fetch(url, { cache: "no-store" });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const json = await res.json();
-          return normalizeApiResult(json);
+          const data = normalizeApiResult(json);
+
+          // Ajouter la source par défaut si manquante
+          return data.map(ev => ({ ...ev, source: ev.source || defaultSource }));
         } catch (err) {
           console.error("Erreur API externe:", url, err);
           return [];
@@ -51,18 +60,27 @@ export async function GET(request: NextRequest) {
 
     let events = results.flat();
 
-    // 🔹 Normalisation des dates
-    events = events.map((ev) => {
-      const raw = ev.date || ev.start || ev.startDate;
-      const d = raw ? new Date(raw) : null;
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    // 🔹 Normalisation des dates + ajout date aujourd'hui si manquante ou passée
+    events = events.map(ev => {
+      let raw = ev.date || ev.start || ev.startDate;
+      let d: Date | null = raw ? new Date(raw) : null;
+
+      if (!d || isNaN(d.getTime()) || d < now) {
+        d = new Date(now); // date du jour
+      }
+
       return {
         ...ev,
-        date: d && !isNaN(d.getTime()) ? d.toISOString() : null,
+        date: d.toISOString(),
+        description: cleanDescription(ev.description),
       };
     });
 
-    // 🔹 Ajouter les images pour UT Capitole si pas déjà présentes
-    events = events.map((ev) => {
+    // 🔹 Ajouter images UT Capitole si nécessaire
+    events = events.map(ev => {
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         return { ...ev, image: getCapitoleImage(ev.title) };
       }
