@@ -1,16 +1,6 @@
 // src/app/api/agendatoulousain/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-// 🔹 Sources externes agrégées avec source par défaut
-const EXTERNAL_SOURCES = [
-  { url: "/api/agenda-trad-haute-garonne", defaultSource: "Agenda Trad Haute-Garonne" },
-  { url: "/api/agendaculturel", defaultSource: "Agenda Culturel" },
-  { url: "/api/capitole-min", defaultSource: "Université Toulouse Capitole" },
-];
-
-export const dynamic = "force-dynamic";
-export const revalidate = 3600;
-
 // 🔹 Fonctions utilitaires pour les images UT Capitole
 const getCapitoleImage = (title?: string) => {
   if (!title) return "/images/capitole/capidefaut.jpg";
@@ -21,7 +11,7 @@ const getCapitoleImage = (title?: string) => {
   return "/images/capitole/capidefaut.jpg";
 };
 
-// 🔹 Normalisation des résultats
+// 🔹 Normalisation des résultats API
 function normalizeApiResult(data: any): any[] {
   if (!data) return [];
   if (Array.isArray(data)) return data;
@@ -32,16 +22,25 @@ function normalizeApiResult(data: any): any[] {
   return Array.isArray(firstArray) ? firstArray : [];
 }
 
-// 🔹 Nettoyage léger description (optionnel) : conserver HTML
+// 🔹 Nettoyer HTML léger (supprime les balises <script> / <style>)
 function cleanDescription(desc?: string) {
   if (!desc) return "";
-  // Remplacer seulement certains caractères HTML mal encodés
-  return desc.replace(/&#([0-9]+);/g, (_, code) => String.fromCharCode(code)).trim();
+  return desc.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+             .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")
+             .trim();
 }
 
 // 🔹 Route GET
 export async function GET(request: NextRequest) {
   try {
+    const baseUrl = request.nextUrl.origin; // localhost ou prod
+    const EXTERNAL_SOURCES = [
+      { url: `${baseUrl}/api/agenda-trad-haute-garonne`, defaultSource: "Agenda Trad Haute-Garonne" },
+      { url: `${baseUrl}/api/agendaculturel`, defaultSource: "Agenda Culturel" },
+      { url: `${baseUrl}/api/capitole-min`, defaultSource: "Université Toulouse Capitole" },
+    ];
+
+    // 🔹 Récupération de toutes les sources
     const results = await Promise.all(
       EXTERNAL_SOURCES.map(async ({ url, defaultSource }) => {
         try {
@@ -70,7 +69,7 @@ export async function GET(request: NextRequest) {
       let d: Date | null = raw ? new Date(raw) : null;
 
       if (!d || isNaN(d.getTime()) || d < now) {
-        d = new Date(now); // date du jour
+        d = new Date(now);
       }
 
       return {
@@ -80,7 +79,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // 🔹 Ajouter images UT Capitole si nécessaire
+    // 🔹 Ajouter image UT Capitole si nécessaire
     events = events.map(ev => {
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         return { ...ev, image: getCapitoleImage(ev.title) };
@@ -102,10 +101,7 @@ export async function GET(request: NextRequest) {
       (a, b) => new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
     );
 
-    return NextResponse.json({
-      total: sorted.length,
-      events: sorted,
-    });
+    return NextResponse.json({ total: sorted.length, events: sorted });
   } catch (err: any) {
     console.error("Erreur /api/agendatoulousain:", err);
     return NextResponse.json(
