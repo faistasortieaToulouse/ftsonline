@@ -6,6 +6,21 @@ import { Button } from "@/components/ui/button";
 const PLACEHOLDER_IMAGE =
   "https://via.placeholder.com/400x200?text=Événement";
 
+// ✅ Images par défaut UT Capitole
+const getCapitoleImage = (title?: string) => {
+  if (!title) return "/images/capitole/capidefaut.jpg";
+
+  const lower = title.toLowerCase();
+  if (lower.includes("ciné") || lower.includes("cine"))
+    return "/images/capitole/capicine.jpg";
+  if (lower.includes("conf"))
+    return "/images/capitole/capiconf.jpg";
+  if (lower.includes("expo"))
+    return "/images/capitole/capiexpo.jpg";
+
+  return "/images/capitole/capidefaut.jpg";
+};
+
 type UnifiedEvent = {
   id?: string;
   title: string;
@@ -30,7 +45,6 @@ export default function AgendaToulousainPage() {
   const [filteredEvents, setFilteredEvents] = useState<UnifiedEvent[]>([]);
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
-  const [selectedSource, setSelectedSource] = useState<string>("all");
 
   async function fetchAgenda() {
     setLoading(true);
@@ -62,7 +76,14 @@ export default function AgendaToulousainPage() {
                   minute: "2-digit",
                 })
               : "Date inconnue",
-          image: ev.image || PLACEHOLDER_IMAGE,
+
+          // ✅ Image UT Capitole intégrée ici
+          image:
+            ev.image ||
+            (ev.source === "Université Toulouse Capitole"
+              ? getCapitoleImage(ev.title)
+              : PLACEHOLDER_IMAGE),
+
           link: ev.link || ev.url || "#",
           fullAddress: ev.fullAddress || ev.location || "",
         };
@@ -87,9 +108,9 @@ export default function AgendaToulousainPage() {
     fetchAgenda();
   }, []);
 
-  // 🔎 Recherche + filtre par source
+  // 🔎 Recherche
   useEffect(() => {
-    if (!search.trim() && selectedSource === "all") {
+    if (!search.trim()) {
       setFilteredEvents(events);
       return;
     }
@@ -98,22 +119,14 @@ export default function AgendaToulousainPage() {
 
     setFilteredEvents(
       events.filter((ev) => {
-        const matchesSource =
-          selectedSource === "all" || ev.source === selectedSource;
-
         const text = `${ev.title} ${ev.description || ""} ${
           ev.fullAddress || ""
         } ${ev.source || ""}`.toLowerCase();
-
         const dateText = ev.dateFormatted?.toLowerCase() || "";
-
-        const matchesSearch =
-          text.includes(query) || dateText.includes(query);
-
-        return matchesSource && matchesSearch;
+        return text.includes(query) || dateText.includes(query);
       })
     );
-  }, [search, selectedSource, events]);
+  }, [search, events]);
 
   return (
     <div className="container mx-auto py-10 px-4">
@@ -123,30 +136,14 @@ export default function AgendaToulousainPage() {
       </p>
 
       {/* Recherche */}
-      <div className="mb-4">
+      <div className="mb-6">
         <input
           type="text"
-          placeholder="Rechercher (titre, lieu, description, date...)"
+          placeholder="Rechercher (titre, lieu, description, date, source...)"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
         />
-      </div>
-
-      {/* Filtre par source */}
-      <div className="mb-6">
-        <select
-          value={selectedSource}
-          onChange={(e) => setSelectedSource(e.target.value)}
-          className="w-full sm:w-64 px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
-        >
-          <option value="all">Toutes les sources</option>
-          <option value="Agenda Culturel">Agenda Culturel</option>
-          <option value="Agenda Trad">Agenda Trad</option>
-          <option value="Université Toulouse Capitole">
-            Université Toulouse Capitole
-          </option>
-        </select>
       </div>
 
       {/* Actions */}
