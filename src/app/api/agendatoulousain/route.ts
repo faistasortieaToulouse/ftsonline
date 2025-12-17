@@ -1,7 +1,17 @@
 // src/app/api/agendatoulousain/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import Parser from "rss-parser";
 
-// 🔹 Fonctions utilitaires pour les images UT Capitole
+// 🔹 Sources externes (hors UT Capitole, avec source par défaut)
+const EXTERNAL_SOURCES = [
+  { url: "https://ftstoulouse.vercel.app/api/agenda-trad-haute-garonne", defaultSource: "Agenda Trad Haute-Garonne" },
+  { url: "https://ftstoulouse.vercel.app/api/agendaculturel", defaultSource: "Agenda Culturel" },
+];
+
+export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+// 🔹 Fonctions utilitaires pour images UT Capitole
 const getCapitoleImage = (title?: string) => {
   if (!title) return "/images/capitole/capidefaut.jpg";
   const lower = title.toLowerCase();
@@ -11,7 +21,10 @@ const getCapitoleImage = (title?: string) => {
   return "/images/capitole/capidefaut.jpg";
 };
 
-// 🔹 Normalisation des résultats API
+// 🔹 Nettoyer description HTML basique
+const cleanDescription = (desc?: string) => desc ? desc.replace(/<\/?[^>]+(>|$)/g, "").trim() : "";
+
+// 🔹 Normalisation résultats API
 function normalizeApiResult(data: any): any[] {
   if (!data) return [];
   if (Array.isArray(data)) return data;
@@ -22,35 +35,58 @@ function normalizeApiResult(data: any): any[] {
   return Array.isArray(firstArray) ? firstArray : [];
 }
 
-// 🔹 Nettoyer HTML léger (supprime les balises <script> / <style>)
-function cleanDescription(desc?: string) {
-  if (!desc) return "";
-  return desc.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
-             .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")
-             .trim();
+// 🔹 Récupération UT Capitole
+async function fetchCapitoleEvents() {
+  const rssUrl =
+    "https://www.ut-capitole.fr/adminsite/webservices/export_rss.jsp?NOMBRE=50&CODE_RUBRIQUE=1315555643369&LANGUE=0";
+
+  try {
+    const res = await fetch(rssUrl, {
+      headers: { "User-Agent": "Mozilla/5.0", Accept: "application/rss+xml" },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const xml = await res.text();
+    const parser = new Parser();
+    const feed = await parser.parseString(xml);
+
+    return (feed.items || []).map(item => {
+      const start = item.pubDate ? new Date(item.pubDate) : new Date();
+      return {
+        id: item.guid || item.link || item.title,
+        title: item.title,
+        description: item.contentSnippet || "Événement ouvert à tous",
+        url: item.link,
+        image: getCapitoleImage(item.title),
+        date: start.toISOString(),
+        source: "Université Toulouse Capitole",
+      };
+    });
+  } catch (err) {
+    console.error("Flux UT Capitole inaccessible :", err);
+    return [];
+  }
 }
 
 // 🔹 Route GET
 export async function GET(request: NextRequest) {
   try {
-    const baseUrl = request.nextUrl.origin; // localhost ou prod
-    const EXTERNAL_SOURCES = [
-      { url: `${baseUrl}/api/agenda-trad-haute-garonne`, defaultSource: "Agenda Trad Haute-Garonne" },
-      { url: `${baseUrl}/api/agendaculturel`, defaultSource: "Agenda Culturel" },
-      { url: `${baseUrl}/api/capitole-min`, defaultSource: "Université Toulouse Capitole" },
-    ];
+    // 🔹 Récupérer les événements UT Capitole
+    const capitoleEvents = await fetchCapitoleEvents();
 
-    // 🔹 Récupération de toutes les sources
-    const results = await Promise.all(
+    // 🔹 Récupérer les autres sources
+    const otherResults = await Promise.all(
       EXTERNAL_SOURCES.map(async ({ url, defaultSource }) => {
         try {
           const res = await fetch(url, { cache: "no-store" });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const json = await res.json();
           const data = normalizeApiResult(json);
-
-          // Ajouter la source par défaut si manquante
-          return data.map(ev => ({ ...ev, source: ev.source || defaultSource }));
+          return data.map(ev => ({
+            ...ev,
+            source: ev.source || defaultSource,
+            description: cleanDescription(ev.description),
+          }));
         } catch (err) {
           console.error("Erreur API externe:", url, err);
           return [];
@@ -58,41 +94,23 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    let events = results.flat();
+    // 🔹 Fusionner toutes les sources
+    let events = [...capitoleEvents, ...otherResults.flat()];
 
+    // 🔹 Normaliser dates et mettre aujourd'hui si manquante ou passée
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-
-    // 🔹 Normalisation des dates + date du jour si manquante ou passée
     events = events.map(ev => {
       let raw = ev.date || ev.start || ev.startDate;
       let d: Date | null = raw ? new Date(raw) : null;
-
-      if (!d || isNaN(d.getTime()) || d < now) {
-        d = new Date(now);
-      }
-
-      return {
-        ...ev,
-        date: d.toISOString(),
-        description: cleanDescription(ev.description),
-      };
+      if (!d || isNaN(d.getTime()) || d < now) d = new Date(now);
+      return { ...ev, date: d.toISOString() };
     });
 
-    // 🔹 Ajouter image UT Capitole si nécessaire
-    events = events.map(ev => {
-      if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
-        return { ...ev, image: getCapitoleImage(ev.title) };
-      }
-      return ev;
-    });
-
-    // 🔹 Suppression des doublons
+    // 🔹 Supprimer doublons
     const uniq = new Map<string, any>();
-    events.forEach((ev) => {
-      const key =
-        ev.id ||
-        `${ev.title || "no-title"}-${ev.date || "no-date"}-${ev.source || "no-source"}`;
+    events.forEach(ev => {
+      const key = ev.id || `${ev.title || "no-title"}-${ev.date || "no-date"}-${ev.source || "no-source"}`;
       if (!uniq.has(key)) uniq.set(key, ev);
     });
 
@@ -101,12 +119,12 @@ export async function GET(request: NextRequest) {
       (a, b) => new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
     );
 
-    return NextResponse.json({ total: sorted.length, events: sorted });
+    return NextResponse.json({
+      total: sorted.length,
+      events: sorted,
+    });
   } catch (err: any) {
     console.error("Erreur /api/agendatoulousain:", err);
-    return NextResponse.json(
-      { total: 0, events: [], error: err.message || "Erreur serveur" },
-      { status: 500 }
-    );
+    return NextResponse.json({ total: 0, events: [], error: err.message || "Erreur serveur" }, { status: 500 });
   }
 }
