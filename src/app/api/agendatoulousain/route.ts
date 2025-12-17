@@ -26,8 +26,10 @@ function normalizeApiResult(data: any): any[] {
 // 🔹 Nettoyage minimal des descriptions HTML
 function cleanDescription(desc?: string) {
   if (!desc) return "";
-  // garder p, br, strong, em ; supprimer le reste
-  return desc.replace(/<(?!\/?(p|br|strong|em)\b)[^>]*>/gi, "").trim();
+  // garder p, br, strong, em, a ; supprimer le reste
+  return desc
+    .replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "")
+    .trim();
 }
 
 export const dynamic = "force-dynamic";
@@ -105,6 +107,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ total: sorted.length, events: sorted });
   } catch (err: any) {
     console.error("Erreur /api/agendatoulousain:", err);
-    return NextResponse.json({ total: 0, events: [], error: err.message || "Erreur serveur" }, { status: 500 });
+    return NextResponse.json(
+      { total: 0, events: [], error: err.message || "Erreur serveur" },
+      { status: 500 }
+    );
   }
 }
