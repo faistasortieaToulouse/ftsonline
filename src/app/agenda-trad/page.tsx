@@ -10,7 +10,7 @@ const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement"
 // 🔹 Fonction pour formater les descriptions
 function formatDescription(desc: string) {
   if (!desc) return "";
-  const html = desc.replace(/\n/g, "<br />"); // convertir les sauts de ligne en <br>
+  const html = desc.replace(/\n/g, "<br />");
   return parse(html);
 }
 
@@ -32,10 +32,7 @@ export default function AgendaTradHauteGaronnePage() {
         throw new Error(`API HTTP error: ${res.status} ${res.statusText}`);
 
       const data = await res.json();
-      if (!data || !Array.isArray(data)) {
-        setEvents([]);
-        return;
-      }
+      if (!Array.isArray(data)) return;
 
       const uniqueEventsMap = new Map<string, any>();
       data.forEach((ev) => {
@@ -63,56 +60,44 @@ export default function AgendaTradHauteGaronnePage() {
 
   const filteredEvents = events.filter((ev) => {
     const search = searchTerm.toLowerCase();
-    const dateStr = ev.dateFormatted?.toLowerCase() || "";
-    const categoryStr = ev.category?.toLowerCase() || "";
-    const locationStr = ev.fullAddress?.toLowerCase() || "";
-    const titleStr = ev.title?.toLowerCase() || "";
-    const descriptionStr = ev.description ? ev.description.toLowerCase() : "";
-
     return (
-      titleStr.includes(search) ||
-      descriptionStr.includes(search) ||
-      categoryStr.includes(search) ||
-      dateStr.includes(search) ||
-      locationStr.includes(search)
+      ev.title?.toLowerCase().includes(search) ||
+      ev.description?.toLowerCase().includes(search) ||
+      ev.category?.toLowerCase().includes(search) ||
+      ev.dateFormatted?.toLowerCase().includes(search) ||
+      ev.fullAddress?.toLowerCase().includes(search)
     );
   });
 
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-10 px-4">
       <h1 className="text-3xl font-bold mb-4">
         AgendaTrad – Haute-Garonne
       </h1>
-      <p className="text-muted-foreground mb-6">
-        Cette page affiche les prochains événements de la Haute-Garonne.
-      </p>
 
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="mb-6 flex flex-col sm:flex-row gap-3">
         <input
           type="text"
-          placeholder="Rechercher par titre, description, catégorie, date ou lieu..."
+          placeholder="Rechercher un événement..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-3 border rounded focus:outline-none focus:ring focus:border-blue-300"
+          className="w-full p-3 border rounded"
         />
-        <p className="text-sm text-gray-600 mt-2 sm:mt-0">
-          {filteredEvents.length} événements trouvés
-        </p>
-      </div>
 
-      <div className="flex gap-4 mb-6">
-        <Button
-          onClick={() => setViewMode("card")}
-          variant={viewMode === "card" ? "default" : "secondary"}
-        >
-          📺 Plein écran
-        </Button>
-        <Button
-          onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "default" : "secondary"}
-        >
-          🔲 Vignette
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setViewMode("card")}
+            variant={viewMode === "card" ? "default" : "secondary"}
+          >
+            📺 Cartes
+          </Button>
+          <Button
+            onClick={() => setViewMode("list")}
+            variant={viewMode === "list" ? "default" : "secondary"}
+          >
+            🔲 Liste
+          </Button>
+        </div>
       </div>
 
       <Button onClick={fetchEvents} disabled={loading} className="mb-6">
@@ -120,7 +105,7 @@ export default function AgendaTradHauteGaronnePage() {
       </Button>
 
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">
+        <div className="p-4 bg-red-50 text-red-700 border rounded mb-6">
           {error}
         </div>
       )}
@@ -135,7 +120,7 @@ export default function AgendaTradHauteGaronnePage() {
           {filteredEvents.map((ev, i) => (
             <div
               key={ev.id || i}
-              className="bg-white shadow rounded overflow-hidden flex flex-col h-[520px]"
+              className="bg-white shadow rounded overflow-hidden flex flex-col h-[560px]"
             >
               <img
                 src={ev.image || PLACEHOLDER_IMAGE}
@@ -144,40 +129,41 @@ export default function AgendaTradHauteGaronnePage() {
               />
 
               <div className="p-4 flex flex-col flex-1">
-                <h2 className="text-xl font-semibold mb-1">{ev.title}</h2>
+                <h2 className="text-xl font-semibold mb-1">
+                  {ev.title}
+                </h2>
+
                 <p className="text-sm text-blue-600 font-medium mb-2">
                   {ev.category}
                 </p>
 
-                {ev.fullAddress && (
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {ev.fullAddress}
-                  </p>
-                )}
-
-                <p className="text-sm font-medium mb-2">{ev.dateFormatted}</p>
-
-                <p className="text-sm text-muted-foreground mb-2">
-                  Source : AgendaTrad
+                <p className="text-sm font-medium mb-2">
+                  {ev.dateFormatted}
                 </p>
 
+                {/* 🔹 DESCRIPTION À HAUTEUR FIXE + SCROLL */}
+                {ev.description && (
+                  <div className="text-sm text-muted-foreground mb-3">
+                    <div className="h-32 overflow-y-auto pr-2 scrollable">
+                      {formatDescription(ev.description)}
+                    </div>
+                  </div>
+                )}
+
+                {/* 🔵 BOUTON TOUJOURS VISIBLE */}
                 {ev.url && (
-                  <p className="text-sm mb-2">
+                  <Button
+                    asChild
+                    className="mt-auto bg-blue-600 hover:bg-blue-700 text-white"
+                  >
                     <a
                       href={ev.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
                     >
-                      🔗 Voir l’événement officiel
+                      🔗 Voir l’événement
                     </a>
-                  </p>
-                )}
-
-                {ev.description && (
-                  <div className="text-sm text-muted-foreground overflow-y-auto h-48 mb-2 pr-1 scrollable">
-                    {formatDescription(ev.description)}
-                  </div>
+                  </Button>
                 )}
               </div>
             </div>
@@ -191,43 +177,47 @@ export default function AgendaTradHauteGaronnePage() {
           {filteredEvents.map((ev, i) => (
             <div
               key={ev.id || i}
-              className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
+              className="flex gap-4 p-4 border rounded bg-white"
             >
               <img
                 src={ev.image || PLACEHOLDER_IMAGE}
                 alt={ev.title}
-                className="w-24 h-24 rounded object-cover flex-shrink-0"
+                className="w-24 h-24 rounded object-cover"
               />
 
               <div className="flex flex-col flex-1">
-                <h2 className="text-lg font-semibold line-clamp-2">
+                <h2 className="text-lg font-semibold">
                   {ev.title}
                 </h2>
 
-                <p className="text-sm font-medium text-blue-600">
+                <p className="text-sm text-blue-600">
                   {ev.category}
                 </p>
 
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {ev.fullAddress}
+                <p className="text-sm">
+                  {ev.dateFormatted}
                 </p>
-
-                <p className="text-sm">{ev.dateFormatted}</p>
-
-                {ev.url && (
-                  <a
-                    href={ev.url}
-                    target="_blank"
-                    className="mt-1 text-blue-600 underline"
-                  >
-                    Voir →
-                  </a>
-                )}
 
                 {ev.description && (
                   <div className="text-sm text-muted-foreground line-clamp-3 mt-1">
                     {formatDescription(ev.description)}
                   </div>
+                )}
+
+                {ev.url && (
+                  <Button
+                    asChild
+                    size="sm"
+                    className="mt-2 w-fit bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <a
+                      href={ev.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Voir l’événement →
+                    </a>
+                  </Button>
                 )}
               </div>
             </div>
