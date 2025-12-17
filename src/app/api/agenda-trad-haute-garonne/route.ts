@@ -52,15 +52,22 @@ function normalizeCategory(cat: string): string {
   return "Danse"; // fallback
 }
 
-// 🔹 Nettoyage des descriptions
+// 🔹 Nettoyage complet des descriptions
 function cleanAgendaTradDescription(desc: string): string {
   if (!desc) return "";
 
   // Supprimer la ligne "source: ... - AgendaTrad"
   desc = desc.replace(/<p>source:.*AgendaTrad.*<\/p>/i, "").trim();
 
-  // Supprimer toutes les balises HTML sauf p, br, strong, em, a
-  desc = desc.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
+  // Remplacer <br> et </p> par des sauts de ligne
+  desc = desc
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<p[^>]*>/gi, "")
+    // Supprimer toutes les balises sauf <a>
+    .replace(/<(?!a\b)[^>]+>/gi, "")
+    .replace(/\n{2,}/g, "\n\n") // nettoyer les sauts de ligne multiples
+    .trim();
 
   return desc;
 }
@@ -75,7 +82,7 @@ export async function GET() {
 
     const events = entries
       .map((entry: any) => {
-        // 🔹 Titre
+        // ✅ Titre
         const rawTitle =
           typeof entry.title === "string"
             ? entry.title
@@ -89,14 +96,14 @@ export async function GET() {
 
         const title = titleMatch[2] || "Événement";
 
-        // 🔹 Description nettoyée
-        const descriptionRaw =
+        // ✅ Description nettoyée
+        const rawDescription =
           typeof entry.summary === "string"
             ? entry.summary
             : entry.summary?.["#text"] || "";
-        const description = cleanAgendaTradDescription(descriptionRaw);
+        const description = cleanAgendaTradDescription(rawDescription);
 
-        // 🔹 Catégorie brute
+        // ✅ Catégorie brute
         let eventCategory = "Danse";
         if (entry.category) {
           if (Array.isArray(entry.category)) {
@@ -106,17 +113,17 @@ export async function GET() {
           }
         }
 
-        // 🔹 Normalisation
+        // ✅ Normalisation
         const normalizedCategory = normalizeCategory(eventCategory);
 
-        // 🔹 Image
-        const imgMatch = descriptionRaw.match(/<img.*?src="(.*?)"/);
+        // ✅ Image
+        const imgMatch = rawDescription.match(/<img.*?src="(.*?)"/);
         let image = imgMatch ? imgMatch[1] : "";
         if (!image) {
           image = defaultImages[normalizedCategory] || defaultImages["Danse"];
         }
 
-        // 🔹 URL
+        // ✅ URL
         const url =
           (Array.isArray(entry.link)
             ? entry.link[0]?.["@_href"]
@@ -138,7 +145,7 @@ export async function GET() {
           fullAddress: "", // à compléter si besoin
           image,
           url,
-          category: normalizedCategory,
+          category: normalizedCategory, // ✅ catégorie canonique
         };
       })
       .filter(Boolean);
