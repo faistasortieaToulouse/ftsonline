@@ -1,5 +1,6 @@
 // src/app/api/agendatoulousain/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { decode } from "he";
 
 // 🔹 UT-Capitole : images par défaut
 const getCapitoleImage = (title?: string) => {
@@ -25,10 +26,8 @@ function normalizeApiResult(data: any): any[] {
 // 🔹 Nettoyage minimal des descriptions HTML
 function cleanDescription(desc?: string) {
   if (!desc) return "";
-  // garder quelques balises basiques (p, br, strong, em)
-  return desc
-    .replace(/<(?!\/?(p|br|strong|em)\b)[^>]*>/gi, "")
-    .trim();
+  // garder p, br, strong, em ; supprimer le reste
+  return desc.replace(/<(?!\/?(p|br|strong|em)\b)[^>]*>/gi, "").trim();
 }
 
 export const dynamic = "force-dynamic";
@@ -79,7 +78,7 @@ export async function GET(request: NextRequest) {
       return {
         ...ev,
         date: d.toISOString(),
-        description: cleanDescription(ev.description),
+        description: cleanDescription(ev.description ? decode(ev.description) : ""),
       };
     });
 
