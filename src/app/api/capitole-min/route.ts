@@ -3,7 +3,7 @@ import Parser from "rss-parser";
 
 const keywords = ["ciné", "cine", "conf", "expo"];
 
-const getEventImage = (title: string | undefined) => {
+const getEventImage = (title?: string) => {
   if (!title) return "/images/capitole/capidefaut.jpg";
   const lower = title.toLowerCase();
   if (lower.includes("ciné") || lower.includes("cine")) return "/images/capitole/capicine.jpg";
@@ -30,6 +30,11 @@ export async function GET() {
     const parser = new Parser();
     const feed = await parser.parseString(xml);
 
+    if (!feed.items || feed.items.length === 0) {
+      console.warn("Flux UT Capitole vide");
+      return NextResponse.json([], { status: 200 });
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -52,11 +57,12 @@ export async function GET() {
         };
       });
 
+    console.log(`Événements UT Capitole filtrés : ${events.length}`);
     return NextResponse.json(events, { status: 200 });
   } catch (err: any) {
     console.error("Flux UT Capitole inaccessible :", err);
 
-    // 🔹 Fallback minimal pour éviter 500
+    // 🔹 Fallback minimal pour ne pas bloquer le front
     const fallback = [
       {
         id: "fallback1",
