@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-const PLACEHOLDER_IMAGE =
-  "https://via.placeholder.com/400x200?text=Événement";
+const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
-// ✅ Images par défaut UT Capitole
+// Images par défaut UT Capitole selon le type d'événement
 const getCapitoleImage = (title?: string) => {
   if (!title) return "/images/capitole/capidefaut.jpg";
 
@@ -55,13 +54,17 @@ export default function AgendaToulousainPage() {
       if (!res.ok) throw new Error(`Erreur ${res.status}`);
 
       const data = await res.json();
-      const evts: UnifiedEvent[] = Array.isArray(data.events)
-        ? data.events
-        : [];
+      const evts: UnifiedEvent[] = Array.isArray(data.events) ? data.events : [];
 
       const normalized = evts.map((ev) => {
         const rawDate = ev.date || ev.startDate || ev.start;
         const dateObj = rawDate ? new Date(rawDate) : null;
+
+        // Détermination de l'image
+        let image = ev.image || PLACEHOLDER_IMAGE;
+        if (!ev.image && ev.source?.toLowerCase().includes("capitole")) {
+          image = getCapitoleImage(ev.title);
+        }
 
         return {
           ...ev,
@@ -76,19 +79,13 @@ export default function AgendaToulousainPage() {
                   minute: "2-digit",
                 })
               : "Date inconnue",
-
-          // ✅ Image UT Capitole intégrée ici
-          image:
-            ev.image ||
-            (ev.source === "Université Toulouse Capitole"
-              ? getCapitoleImage(ev.title)
-              : PLACEHOLDER_IMAGE),
-
+          image,
           link: ev.link || ev.url || "#",
           fullAddress: ev.fullAddress || ev.location || "",
         };
       });
 
+      // Tri par date croissante
       normalized.sort((a, b) => {
         const da = new Date(a.date || a.startDate || a.start || 0).getTime();
         const db = new Date(b.date || b.startDate || b.start || 0).getTime();
@@ -119,9 +116,7 @@ export default function AgendaToulousainPage() {
 
     setFilteredEvents(
       events.filter((ev) => {
-        const text = `${ev.title} ${ev.description || ""} ${
-          ev.fullAddress || ""
-        } ${ev.source || ""}`.toLowerCase();
+        const text = `${ev.title} ${ev.description || ""} ${ev.fullAddress || ""} ${ev.source || ""}`.toLowerCase();
         const dateText = ev.dateFormatted?.toLowerCase() || "";
         return text.includes(query) || dateText.includes(query);
       })
@@ -187,19 +182,11 @@ export default function AgendaToulousainPage() {
                 className="w-full aspect-[16/9] object-cover"
               />
               <div className="p-4 flex flex-col">
-                <h2 className="text-xl font-semibold text-red-700 mb-2">
-                  {ev.title}
-                </h2>
-                <p className="font-medium text-sm mb-1">
-                  📍 {ev.fullAddress}
-                </p>
-                <p className="text-gray-600 text-sm mb-3">
-                  {ev.dateFormatted}
-                </p>
+                <h2 className="text-xl font-semibold text-red-700 mb-2">{ev.title}</h2>
+                <p className="font-medium text-sm mb-1">📍 {ev.fullAddress}</p>
+                <p className="text-gray-600 text-sm mb-3">{ev.dateFormatted}</p>
                 {ev.description && (
-                  <p className="text-sm mb-3 line-clamp-4 whitespace-pre-wrap">
-                    {ev.description}
-                  </p>
+                  <p className="text-sm mb-3 line-clamp-4 whitespace-pre-wrap">{ev.description}</p>
                 )}
                 <a
                   href={ev.link}
@@ -209,9 +196,7 @@ export default function AgendaToulousainPage() {
                   🔗 Voir l’événement
                 </a>
                 {ev.source && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Source : {ev.source}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-2">Source : {ev.source}</p>
                 )}
               </div>
             </div>
@@ -233,19 +218,11 @@ export default function AgendaToulousainPage() {
                 alt={ev.title}
               />
               <div className="flex flex-col flex-1">
-                <h2 className="text-lg font-semibold text-red-700 line-clamp-2">
-                  {ev.title}
-                </h2>
-                <p className="text-sm font-medium">
-                  📍 {ev.fullAddress}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {ev.dateFormatted}
-                </p>
+                <h2 className="text-lg font-semibold text-red-700 line-clamp-2">{ev.title}</h2>
+                <p className="text-sm font-medium">📍 {ev.fullAddress}</p>
+                <p className="text-sm text-gray-600">{ev.dateFormatted}</p>
                 {ev.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {ev.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground line-clamp-3">{ev.description}</p>
                 )}
                 <a
                   href={ev.link}
@@ -255,9 +232,7 @@ export default function AgendaToulousainPage() {
                   Voir →
                 </a>
                 {ev.source && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Source : {ev.source}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
                 )}
               </div>
             </div>
