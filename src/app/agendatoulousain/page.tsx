@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
-const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
+const PLACEHOLDER_IMAGE =
+  "https://via.placeholder.com/400x200?text=Événement";
 
 type UnifiedEvent = {
   id?: string;
   title: string;
   description?: string;
-  start?: string; // ISO string
-  date?: string; // ISO string
-  startDate?: string; // ISO string
+  start?: string;
+  date?: string;
+  startDate?: string;
   url?: string;
   link?: string;
   fullAddress?: string;
@@ -20,33 +20,37 @@ type UnifiedEvent = {
   image?: string;
   category?: string;
   source?: string;
+  dateFormatted?: string;
 };
 
-export default function MeetupFullPage() {
+export default function AgendaToulousainPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<UnifiedEvent[]>([]);
-  const [search, setSearch] = useState("");
   const [filteredEvents, setFilteredEvents] = useState<UnifiedEvent[]>([]);
+  const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
-  async function fetchAllEvents() {
+  async function fetchAgenda() {
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch("/api/meetup-full");
+      const res = await fetch("/api/agendatoulousain");
       if (!res.ok) throw new Error(`Erreur ${res.status}`);
-      const data = await res.json();
-      const evts: UnifiedEvent[] = Array.isArray(data.events) ? data.events : [];
 
-      // 🔹 Normalisation date et image
+      const data = await res.json();
+      const evts: UnifiedEvent[] = Array.isArray(data.events)
+        ? data.events
+        : [];
+
       const normalized = evts.map((ev) => {
-        const dateRaw = ev.date || ev.startDate || ev.start;
-        const dateObj = dateRaw ? new Date(dateRaw) : null;
+        const rawDate = ev.date || ev.startDate || ev.start;
+        const dateObj = rawDate ? new Date(rawDate) : null;
+
         return {
           ...ev,
-          dateFormatted: dateObj
+          dateFormatted: dateObj && !isNaN(dateObj.getTime())
             ? dateObj.toLocaleString("fr-FR", {
                 weekday: "long",
                 year: "numeric",
@@ -62,10 +66,9 @@ export default function MeetupFullPage() {
         };
       });
 
-      // 🔹 Tri par date croissante
       normalized.sort((a, b) => {
-        const da = new Date(a.date || a.startDate || a.start).getTime();
-        const db = new Date(b.date || b.startDate || b.start).getTime();
+        const da = new Date(a.date || a.startDate || a.start || 0).getTime();
+        const db = new Date(b.date || b.startDate || b.start || 0).getTime();
         return da - db;
       });
 
@@ -79,19 +82,23 @@ export default function MeetupFullPage() {
   }
 
   useEffect(() => {
-    fetchAllEvents();
+    fetchAgenda();
   }, []);
 
-  // 🔎 Filtrage
+  // 🔎 Recherche
   useEffect(() => {
     if (!search.trim()) {
       setFilteredEvents(events);
       return;
     }
+
     const query = search.toLowerCase();
+
     setFilteredEvents(
       events.filter((ev) => {
-        const text = `${ev.title} ${ev.description || ""} ${ev.fullAddress || ""} ${ev.source || ""}`.toLowerCase();
+        const text = `${ev.title} ${ev.description || ""} ${
+          ev.fullAddress || ""
+        } ${ev.source || ""}`.toLowerCase();
         const dateText = ev.dateFormatted?.toLowerCase() || "";
         return text.includes(query) || dateText.includes(query);
       })
@@ -100,32 +107,39 @@ export default function MeetupFullPage() {
 
   return (
     <div className="container mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-2">Tous les événements Toulousains</h1>
+      <h1 className="text-3xl font-bold mb-2">Agenda Toulousain</h1>
       <p className="text-muted-foreground mb-6">
-        Fusion Meetup + Agenda Toulousain — {filteredEvents.length} évènement(s)
+        Agenda culturel & institutionnel — {filteredEvents.length} évènement(s)
       </p>
 
       {/* Recherche */}
       <div className="mb-6">
         <input
           type="text"
-          placeholder="Rechercher un évènement (titre, lieu, description, date, source...)"
+          placeholder="Rechercher (titre, lieu, description, date, source...)"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
         />
       </div>
 
-      {/* Boutons */}
+      {/* Actions */}
       <div className="flex flex-wrap gap-4 mb-6">
-        <Button onClick={fetchAllEvents} disabled={loading}>
+        <Button onClick={fetchAgenda} disabled={loading}>
           {loading ? "Chargement..." : "🔄 Rafraîchir"}
         </Button>
 
-        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
-          🗂️ Plein écran
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          🗂️ Cartes
         </Button>
-        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
+
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
           📋 Liste
         </Button>
       </div>
@@ -140,17 +154,42 @@ export default function MeetupFullPage() {
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map((ev, i) => (
-            <div key={ev.id || i} className="bg-white rounded-xl shadow overflow-hidden border">
-              <img src={ev.image} alt={ev.title} className="w-full aspect-[16/9] object-cover" />
-              <div className="p-4 flex flex-col flex-1">
-                <h2 className="text-xl font-semibold text-red-700 mb-2">{ev.title}</h2>
-                <p className="font-medium text-sm mb-1">📍 {ev.fullAddress}</p>
-                <p className="text-gray-600 text-sm mb-3">{ev.dateFormatted}</p>
-                {ev.description && <p className="text-sm mb-3 line-clamp-4 whitespace-pre-wrap">{ev.description}</p>}
-                <a href={ev.link} target="_blank" className="bg-red-600 text-white py-2 px-3 rounded text-center hover:bg-red-700">
+            <div
+              key={ev.id || i}
+              className="bg-white rounded-xl shadow overflow-hidden border"
+            >
+              <img
+                src={ev.image}
+                alt={ev.title}
+                className="w-full aspect-[16/9] object-cover"
+              />
+              <div className="p-4 flex flex-col">
+                <h2 className="text-xl font-semibold text-red-700 mb-2">
+                  {ev.title}
+                </h2>
+                <p className="font-medium text-sm mb-1">
+                  📍 {ev.fullAddress}
+                </p>
+                <p className="text-gray-600 text-sm mb-3">
+                  {ev.dateFormatted}
+                </p>
+                {ev.description && (
+                  <p className="text-sm mb-3 line-clamp-4 whitespace-pre-wrap">
+                    {ev.description}
+                  </p>
+                )}
+                <a
+                  href={ev.link}
+                  target="_blank"
+                  className="bg-red-600 text-white py-2 px-3 rounded text-center hover:bg-red-700"
+                >
                   🔗 Voir l’événement
                 </a>
-                {ev.source && <p className="text-xs text-muted-foreground mt-2">Source : {ev.source}</p>}
+                {ev.source && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Source : {ev.source}
+                  </p>
+                )}
               </div>
             </div>
           ))}
@@ -161,15 +200,42 @@ export default function MeetupFullPage() {
       {viewMode === "list" && (
         <div className="space-y-4">
           {filteredEvents.map((ev, i) => (
-            <div key={ev.id || i} className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm">
-              <img src={ev.image} className="w-24 h-24 rounded object-cover flex-shrink-0" alt={ev.title} />
+            <div
+              key={ev.id || i}
+              className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
+            >
+              <img
+                src={ev.image}
+                className="w-24 h-24 rounded object-cover flex-shrink-0"
+                alt={ev.title}
+              />
               <div className="flex flex-col flex-1">
-                <h2 className="text-lg font-semibold text-red-700 line-clamp-2">{ev.title}</h2>
-                <p className="text-sm font-medium">📍 {ev.fullAddress}</p>
-                <p className="text-sm text-gray-600">{ev.dateFormatted}</p>
-                {ev.description && <p className="text-sm text-muted-foreground line-clamp-3">{ev.description}</p>}
-                <a href={ev.link} target="_blank" className="mt-2 text-red-600 underline">Voir →</a>
-                {ev.source && <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>}
+                <h2 className="text-lg font-semibold text-red-700 line-clamp-2">
+                  {ev.title}
+                </h2>
+                <p className="text-sm font-medium">
+                  📍 {ev.fullAddress}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {ev.dateFormatted}
+                </p>
+                {ev.description && (
+                  <p className="text-sm text-muted-foreground line-clamp-3">
+                    {ev.description}
+                  </p>
+                )}
+                <a
+                  href={ev.link}
+                  target="_blank"
+                  className="mt-2 text-red-600 underline"
+                >
+                  Voir →
+                </a>
+                {ev.source && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Source : {ev.source}
+                  </p>
+                )}
               </div>
             </div>
           ))}
