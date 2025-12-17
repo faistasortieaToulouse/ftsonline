@@ -179,6 +179,7 @@ export default function MuseeOccitaniePage() {
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
         <thead>
           <tr style={{ backgroundColor: '#f4f4f4' }}>
+            <th style={{ ...tableHeaderStyle, cursor: 'default' }}>#</th> {/* Nouvelle colonne Numéro */}
             <th style={tableHeaderStyle} onClick={() => handleSort('departement')}>
               Département {getSortIndicator('departement')}
             </th>
@@ -198,8 +199,9 @@ export default function MuseeOccitaniePage() {
         <tbody>
           {musees.map((musee, index) => (
             <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={tableCellStyle}>{musee.departement}</td> {/* Suppression des `**` */}
-              <td style={tableCellStyle}>{musee.commune}</td> {/* Suppression des `**` */}
+              <td style={{ ...tableCellStyle, fontWeight: 'bold', color: '#666' }}>{index + 1}</td> {/* Affichage du numéro */}
+              <td style={tableCellStyle}>{musee.departement}</td>
+              <td style={tableCellStyle}>{musee.commune}</td>
               <td style={tableCellStyle}>{musee.nom}</td>
               <td style={tableCellStyle}>{musee.categorie}</td>
               <td style={tableCellStyle}>{musee.adresse}</td>
