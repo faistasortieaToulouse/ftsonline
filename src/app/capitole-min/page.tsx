@@ -1,147 +1,274 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-// Retourne l'image selon le type d'événement
-const getEventImage = (title: string | undefined) => {
-  if (!title) return "/images/capidefaut.jpg";
+const PLACEHOLDER_IMAGE =
+  "https://via.placeholder.com/400x200?text=Événement";
+
+// ✅ Images par défaut UT Capitole
+const getCapitoleImage = (title?: string) => {
+  if (!title) return "/images/capitole/capidefaut.jpg";
+
   const lower = title.toLowerCase();
-  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capitole/capicine.jpg";
-  if (lower.includes("conf")) return "/images/capitole/capiconf.jpg";
-  if (lower.includes("expo")) return "/images/capitole/capiexpo.jpg";
+  if (lower.includes("ciné") || lower.includes("cine"))
+    return "/images/capitole/capicine.jpg";
+  if (lower.includes("conf"))
+    return "/images/capitole/capiconf.jpg";
+  if (lower.includes("expo"))
+    return "/images/capitole/capiexpo.jpg";
+
   return "/images/capitole/capidefaut.jpg";
 };
 
-// Formatage des dates en français avec heure
-const formatDate = (isoDate: string | null) => {
-  if (!isoDate) return "";
-  const date = new Date(isoDate);
-  return date.toLocaleString("fr-FR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+type UnifiedEvent = {
+  id?: string;
+  title: string;
+  description?: string;
+  start?: string;
+  date?: string;
+  startDate?: string;
+  url?: string;
+  link?: string;
+  fullAddress?: string;
+  location?: string;
+  image?: string;
+  category?: string;
+  source?: string;
+  dateFormatted?: string;
 };
 
-export default function CapitoleMinPage() {
+export default function AgendaToulousainPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState<any[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [events, setEvents] = useState<UnifiedEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<UnifiedEvent[]>([]);
+  const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
-  async function fetchEvents() {
+  async function fetchAgenda() {
     setLoading(true);
     setError(null);
+
     try {
-      const res = await fetch("/api/capitole-min");
-      if (!res.ok) throw new Error(`API HTTP error: ${res.status}`);
+      const res = await fetch("/api/agendatoulousain");
+      if (!res.ok) throw new Error(`Erreur ${res.status}`);
+
       const data = await res.json();
-      setEvents(data);
-      setFilteredEvents(data);
+      const evts: UnifiedEvent[] = Array.isArray(data.events)
+        ? data.events
+        : [];
+
+      const normalized = evts.map((ev) => {
+        const rawDate = ev.date || ev.startDate || ev.start;
+        const dateObj = rawDate ? new Date(rawDate) : null;
+
+        return {
+          ...ev,
+          dateFormatted:
+            dateObj && !isNaN(dateObj.getTime())
+              ? dateObj.toLocaleString("fr-FR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "Date inconnue",
+
+          // ✅ Image UT Capitole intégrée ici
+          image:
+            ev.image ||
+            (ev.source === "Université Toulouse Capitole"
+              ? getCapitoleImage(ev.title)
+              : PLACEHOLDER_IMAGE),
+
+          link: ev.link || ev.url || "#",
+          fullAddress: ev.fullAddress || ev.location || "",
+        };
+      });
+
+      normalized.sort((a, b) => {
+        const da = new Date(a.date || a.startDate || a.start || 0).getTime();
+        const db = new Date(b.date || b.startDate || b.start || 0).getTime();
+        return da - db;
+      });
+
+      setEvents(normalized);
+      setFilteredEvents(normalized);
     } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
+      setError(err.message || "Erreur lors du chargement.");
     } finally {
       setLoading(false);
     }
   }
 
-  // Filtrage
   useEffect(() => {
-    if (!searchQuery) {
+    fetchAgenda();
+  }, []);
+
+  // 🔎 Recherche
+  useEffect(() => {
+    if (!search.trim()) {
       setFilteredEvents(events);
       return;
     }
-    const q = searchQuery.toLowerCase();
-    setFilteredEvents(
-      events.filter(ev =>
-        ev.title.toLowerCase().includes(q) ||
-        (ev.description?.toLowerCase().includes(q) ?? false) ||
-        (ev.location?.toLowerCase().includes(q) ?? false) ||
-        (ev.start?.toLowerCase().includes(q) ?? false)
-      )
-    );
-  }, [searchQuery, events]);
 
-  useEffect(() => { fetchEvents(); }, []);
+    const query = search.toLowerCase();
+
+    setFilteredEvents(
+      events.filter((ev) => {
+        const text = `${ev.title} ${ev.description || ""} ${
+          ev.fullAddress || ""
+        } ${ev.source || ""}`.toLowerCase();
+        const dateText = ev.dateFormatted?.toLowerCase() || "";
+        return text.includes(query) || dateText.includes(query);
+      })
+    );
+  }, [search, events]);
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">Événements UT Capitole – Ciné, Conf & Expo</h1>
+    <div className="container mx-auto py-10 px-4">
+      <h1 className="text-3xl font-bold mb-2">Agenda Toulousain</h1>
       <p className="text-muted-foreground mb-6">
-        Événements filtrés depuis le flux officiel de l’Université Toulouse Capitole.
+        Agenda culturel & institutionnel — {filteredEvents.length} évènement(s)
       </p>
 
-      {/* Boutons et recherche */}
-      <div className="flex flex-wrap gap-3 mb-6 items-center">
-        <Button onClick={fetchEvents} disabled={loading}>
-          {loading ? "Chargement..." : "📡 Actualiser"}
-        </Button>
-        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
-          📺 Plein écran
-        </Button>
-        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
-          🔲 Vignette
-        </Button>
+      {/* Recherche */}
+      <div className="mb-6">
         <input
           type="text"
-          placeholder="Rechercher par titre, description, lieu ou date..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-4 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+          placeholder="Rechercher (titre, lieu, description, date, source...)"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
         />
       </div>
 
-      <p className="mb-4 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
-      {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
-      {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement trouvé.</p>}
+      {/* Actions */}
+      <div className="flex flex-wrap gap-4 mb-6">
+        <Button onClick={fetchAgenda} disabled={loading}>
+          {loading ? "Chargement..." : "🔄 Rafraîchir"}
+        </Button>
 
-      {/* Mode card */}
-      {viewMode === "card" ? (
+        <Button
+          onClick={() => setViewMode("card")}
+          variant={viewMode === "card" ? "default" : "secondary"}
+        >
+          🗂️ Cartes
+        </Button>
+
+        <Button
+          onClick={() => setViewMode("list")}
+          variant={viewMode === "list" ? "default" : "secondary"}
+        >
+          📋 Liste
+        </Button>
+      </div>
+
+      {error && (
+        <div className="p-4 mb-4 border border-red-500 bg-red-50 text-red-700 rounded">
+          Erreur : {error}
+        </div>
+      )}
+
+      {/* MODE CARTE */}
+      {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-40 object-cover" />
-              <div className="p-3 flex flex-col flex-1">
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.location && <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
-                {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
-                    🔗 Plus d’informations
-                  </a>
+          {filteredEvents.map((ev, i) => (
+            <div
+              key={ev.id || i}
+              className="bg-white rounded-xl shadow overflow-hidden border"
+            >
+              <img
+                src={ev.image}
+                alt={ev.title}
+                className="w-full aspect-[16/9] object-cover"
+              />
+              <div className="p-4 flex flex-col">
+                <h2 className="text-xl font-semibold text-red-700 mb-2">
+                  {ev.title}
+                </h2>
+                <p className="font-medium text-sm mb-1">
+                  📍 {ev.fullAddress}
+                </p>
+                <p className="text-gray-600 text-sm mb-3">
+                  {ev.dateFormatted}
+                </p>
+                {ev.description && (
+                  <p className="text-sm mb-3 line-clamp-4 whitespace-pre-wrap">
+                    {ev.description}
+                  </p>
                 )}
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+                <a
+                  href={ev.link}
+                  target="_blank"
+                  className="bg-red-600 text-white py-2 px-3 rounded text-center hover:bg-red-700"
+                >
+                  🔗 Voir l’événement
+                </a>
+                {ev.source && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Source : {ev.source}
+                  </p>
+                )}
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        // Mode list
-        <div className="flex flex-col gap-4">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
-              <div className="flex-1 flex flex-col">
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.location && <p className="text-sm text-muted-foreground mb-1">📍 {ev.location}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
-                {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
-                    🔗 Plus d’informations
-                  </a>
+      )}
+
+      {/* MODE LISTE */}
+      {viewMode === "list" && (
+        <div className="space-y-4">
+          {filteredEvents.map((ev, i) => (
+            <div
+              key={ev.id || i}
+              className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
+            >
+              <img
+                src={ev.image}
+                className="w-24 h-24 rounded object-cover flex-shrink-0"
+                alt={ev.title}
+              />
+              <div className="flex flex-col flex-1">
+                <h2 className="text-lg font-semibold text-red-700 line-clamp-2">
+                  {ev.title}
+                </h2>
+                <p className="text-sm font-medium">
+                  📍 {ev.fullAddress}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {ev.dateFormatted}
+                </p>
+                {ev.description && (
+                  <p className="text-sm text-muted-foreground line-clamp-3">
+                    {ev.description}
+                  </p>
                 )}
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+                <a
+                  href={ev.link}
+                  target="_blank"
+                  className="mt-2 text-red-600 underline"
+                >
+                  Voir →
+                </a>
+                {ev.source && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Source : {ev.source}
+                  </p>
+                )}
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {!loading && filteredEvents.length === 0 && (
+        <p className="mt-6 text-xl text-gray-500 text-center p-8 border border-dashed rounded">
+          Aucun événement trouvé.
+        </p>
       )}
     </div>
   );
