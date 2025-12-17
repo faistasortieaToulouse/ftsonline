@@ -1,53 +1,27 @@
 // src/app/api/agendatoulousain/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
+// 🔹 Sources externes agrégées avec source par défaut
 const EXTERNAL_SOURCES = [
-  "https://ftstoulouse.vercel.app/api/agenda-trad-haute-garonne",
-  "https://ftstoulouse.vercel.app/api/agendaculturel",
-  "https://ftstoulouse.vercel.app/api/capitole-min",
+  { url: "/api/agenda-trad-haute-garonne", defaultSource: "Agenda Trad Haute-Garonne" },
+  { url: "/api/agendaculturel", defaultSource: "Agenda Culturel" },
+  { url: "/api/capitole-min", defaultSource: "Université Toulouse Capitole" },
 ];
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
-// --------------------------------------------------
-// HTML / texte helpers
-// --------------------------------------------------
-function decodeHtmlEntities(text: string) {
-  if (!text) return "";
-  return text
-    .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(Number(num)))
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .trim();
-}
+// 🔹 Fonctions utilitaires pour les images UT Capitole
+const getCapitoleImage = (title?: string) => {
+  if (!title) return "/images/capitole/capidefaut.jpg";
+  const lower = title.toLowerCase();
+  if (lower.includes("ciné") || lower.includes("cine")) return "/images/capitole/capicine.jpg";
+  if (lower.includes("conf")) return "/images/capitole/capiconf.jpg";
+  if (lower.includes("expo")) return "/images/capitole/capiexpo.jpg";
+  return "/images/capitole/capidefaut.jpg";
+};
 
-function cleanDescription(desc?: string) {
-  if (!desc) return "";
-  const withoutHtml = desc.replace(/<\/?[^>]+(>|$)/g, " ");
-  return decodeHtmlEntities(withoutHtml).replace(/\s+/g, " ");
-}
-
-// Images par défaut UT Capitole
-function getEventImage(title?: string, source?: string) {
-  if (source?.toLowerCase().includes("capitole")) {
-    if (!title) return "/images/capitole/capidefaut.jpg";
-    const lower = title.toLowerCase();
-    if (lower.includes("ciné") || lower.includes("cine"))
-      return "/images/capitole/capicine.jpg";
-    if (lower.includes("conf")) return "/images/capitole/capiconf.jpg";
-    if (lower.includes("expo")) return "/images/capitole/capiexpo.jpg";
-    return "/images/capitole/capidefaut.jpg";
-  }
-  return ""; // autres sources peuvent définir leur image
-}
-
-// --------------------------------------------------
-// Normalisation flux externes
-// --------------------------------------------------
+// 🔹 Normalisation des résultats
 function normalizeApiResult(data: any): any[] {
   if (!data) return [];
   if (Array.isArray(data)) return data;
@@ -58,53 +32,26 @@ function normalizeApiResult(data: any): any[] {
   return Array.isArray(firstArray) ? firstArray : [];
 }
 
-// Extraction approximative de date depuis texte (ex: "31 décembre 2025 à 01:00")
-function extractDateWithTime(text?: string): Date | null {
-  if (!text) return null;
-  const regex = /(\d{1,2})\s+([a-zéû]+)\s+(\d{4})\s*(?:à\s*(\d{1,2}:\d{2}))?/i;
-  const match = text.match(regex);
-  if (!match) return null;
-
-  const [_, day, monthName, year, time] = match;
-  const months: Record<string, number> = {
-    janvier: 0,
-    février: 1,
-    fevrier: 1,
-    mars: 2,
-    avril: 3,
-    mai: 4,
-    juin: 5,
-    juillet: 6,
-    août: 7,
-    aout: 7,
-    septembre: 8,
-    octobre: 9,
-    novembre: 10,
-    décembre: 11,
-    decembre: 11,
-  };
-  const month = months[monthName.toLowerCase()];
-  if (month === undefined) return null;
-
-  const [hour = "0", minute = "0"] = time ? time.split(":") : ["0", "0"];
-  return new Date(Number(year), month, Number(day), Number(hour), Number(minute));
+// 🔹 Nettoyage léger description (optionnel) : conserver HTML
+function cleanDescription(desc?: string) {
+  if (!desc) return "";
+  // Remplacer seulement certains caractères HTML mal encodés
+  return desc.replace(/&#([0-9]+);/g, (_, code) => String.fromCharCode(code)).trim();
 }
 
-// --------------------------------------------------
-// API handler
-// --------------------------------------------------
+// 🔹 Route GET
 export async function GET(request: NextRequest) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
   try {
     const results = await Promise.all(
-      EXTERNAL_SOURCES.map(async (url) => {
+      EXTERNAL_SOURCES.map(async ({ url, defaultSource }) => {
         try {
           const res = await fetch(url, { cache: "no-store" });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const json = await res.json();
-          return normalizeApiResult(json);
+          const data = normalizeApiResult(json);
+
+          // Ajouter la source par défaut si manquante
+          return data.map(ev => ({ ...ev, source: ev.source || defaultSource }));
         } catch (err) {
           console.error("Erreur API externe:", url, err);
           return [];
@@ -114,31 +61,34 @@ export async function GET(request: NextRequest) {
 
     let events = results.flat();
 
-    events = events.map((ev) => {
-      // Date
-      let d: Date | null = null;
-      if (ev.date || ev.start || ev.startDate) {
-        d = new Date(ev.date || ev.start || ev.startDate);
-      }
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
 
-      // Si date manquante ou invalide → extraire depuis description/titre
-      if (!d || isNaN(d.getTime())) {
-        d = extractDateWithTime(ev.description || ev.title) || new Date(today);
-      }
+    // 🔹 Normalisation des dates + date du jour si manquante ou passée
+    events = events.map(ev => {
+      let raw = ev.date || ev.start || ev.startDate;
+      let d: Date | null = raw ? new Date(raw) : null;
 
-      // Si date passée → aujourd’hui minuit
-      if (d < today) d = new Date(today);
+      if (!d || isNaN(d.getTime()) || d < now) {
+        d = new Date(now); // date du jour
+      }
 
       return {
         ...ev,
         date: d.toISOString(),
         description: cleanDescription(ev.description),
-        source: ev.source || ev.title || "Agenda Toulouse",
-        image: getEventImage(ev.title, ev.source),
       };
     });
 
-    // Suppression des doublons
+    // 🔹 Ajouter images UT Capitole si nécessaire
+    events = events.map(ev => {
+      if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
+        return { ...ev, image: getCapitoleImage(ev.title) };
+      }
+      return ev;
+    });
+
+    // 🔹 Suppression des doublons
     const uniq = new Map<string, any>();
     events.forEach((ev) => {
       const key =
@@ -147,6 +97,7 @@ export async function GET(request: NextRequest) {
       if (!uniq.has(key)) uniq.set(key, ev);
     });
 
+    // 🔹 Tri chronologique
     const sorted = Array.from(uniq.values()).sort(
       (a, b) => new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
     );
