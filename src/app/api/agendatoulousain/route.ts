@@ -23,13 +23,6 @@ function normalizeApiResult(data: any): any[] {
   return Array.isArray(firstArray) ? firstArray : [];
 }
 
-// 🔹 Nettoyage minimal des descriptions HTML
-function cleanDescription(desc?: string) {
-  if (!desc) return "";
-  // garder p, br, strong, em, a ; supprimer le reste
-  return desc.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
-}
-
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
@@ -75,13 +68,16 @@ export async function GET(request: NextRequest) {
         d = new Date(now);
       }
 
+      // 🔹 Nettoyage des descriptions
       let description = ev.description ? decode(ev.description) : "";
-      description = cleanDescription(description);
 
-      // 🔹 Supprimer la ligne "source: …" spécifique Agenda Trad Haute-Garonne
+      // Supprimer ligne "source: …" si Agenda Trad Haute-Garonne
       if (ev.source === "Agenda Trad Haute-Garonne") {
         description = description.replace(/source:.*AgendaTrad.*$/i, "").trim();
       }
+
+      // Supprimer les balises HTML indésirables mais garder p, br, strong, em, a
+      description = description.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
 
       return {
         ...ev,
