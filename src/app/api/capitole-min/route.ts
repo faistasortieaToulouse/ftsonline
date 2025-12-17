@@ -17,6 +17,7 @@ export async function GET() {
     const rssUrl =
       "https://www.ut-capitole.fr/adminsite/webservices/export_rss.jsp?NOMBRE=50&CODE_RUBRIQUE=1315555643369&LANGUE=0";
 
+    // 🔹 Requête côté serveur → pas de CORS
     const res = await fetch(rssUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -58,12 +59,29 @@ export async function GET() {
       });
 
     console.log(`Événements UT Capitole filtrés : ${events.length}`);
+    
+    // 🔹 Toujours renvoyer au moins le fallback minimal si aucun événement filtré
+    if (events.length === 0) {
+      return NextResponse.json([
+        {
+          id: "fallback1",
+          title: "Ciné UT Capitole",
+          description: "Événement simulé",
+          url: "#",
+          image: "/images/capitole/capicine.jpg",
+          start: new Date().toISOString(),
+          source: "Université Toulouse Capitole",
+        },
+      ], { status: 200 });
+    }
+
     return NextResponse.json(events, { status: 200 });
+
   } catch (err: any) {
     console.error("Flux UT Capitole inaccessible :", err);
 
-    // 🔹 Fallback minimal pour ne pas bloquer le front
-    const fallback = [
+    // 🔹 Fallback côté serveur
+    return NextResponse.json([
       {
         id: "fallback1",
         title: "Ciné UT Capitole",
@@ -73,7 +91,6 @@ export async function GET() {
         start: new Date().toISOString(),
         source: "Université Toulouse Capitole",
       },
-    ];
-    return NextResponse.json(fallback, { status: 200 });
+    ], { status: 200 });
   }
 }
