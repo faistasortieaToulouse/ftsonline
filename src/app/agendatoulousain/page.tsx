@@ -30,6 +30,7 @@ export default function AgendaToulousainPage() {
   const [filteredEvents, setFilteredEvents] = useState<UnifiedEvent[]>([]);
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [selectedSource, setSelectedSource] = useState<string>("all");
 
   async function fetchAgenda() {
     setLoading(true);
@@ -50,16 +51,17 @@ export default function AgendaToulousainPage() {
 
         return {
           ...ev,
-          dateFormatted: dateObj && !isNaN(dateObj.getTime())
-            ? dateObj.toLocaleString("fr-FR", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : "Date inconnue",
+          dateFormatted:
+            dateObj && !isNaN(dateObj.getTime())
+              ? dateObj.toLocaleString("fr-FR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "Date inconnue",
           image: ev.image || PLACEHOLDER_IMAGE,
           link: ev.link || ev.url || "#",
           fullAddress: ev.fullAddress || ev.location || "",
@@ -85,9 +87,9 @@ export default function AgendaToulousainPage() {
     fetchAgenda();
   }, []);
 
-  // 🔎 Recherche
+  // 🔎 Recherche + filtre par source
   useEffect(() => {
-    if (!search.trim()) {
+    if (!search.trim() && selectedSource === "all") {
       setFilteredEvents(events);
       return;
     }
@@ -96,14 +98,22 @@ export default function AgendaToulousainPage() {
 
     setFilteredEvents(
       events.filter((ev) => {
+        const matchesSource =
+          selectedSource === "all" || ev.source === selectedSource;
+
         const text = `${ev.title} ${ev.description || ""} ${
           ev.fullAddress || ""
         } ${ev.source || ""}`.toLowerCase();
+
         const dateText = ev.dateFormatted?.toLowerCase() || "";
-        return text.includes(query) || dateText.includes(query);
+
+        const matchesSearch =
+          text.includes(query) || dateText.includes(query);
+
+        return matchesSource && matchesSearch;
       })
     );
-  }, [search, events]);
+  }, [search, selectedSource, events]);
 
   return (
     <div className="container mx-auto py-10 px-4">
@@ -113,14 +123,30 @@ export default function AgendaToulousainPage() {
       </p>
 
       {/* Recherche */}
-      <div className="mb-6">
+      <div className="mb-4">
         <input
           type="text"
-          placeholder="Rechercher (titre, lieu, description, date, source...)"
+          placeholder="Rechercher (titre, lieu, description, date...)"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
         />
+      </div>
+
+      {/* Filtre par source */}
+      <div className="mb-6">
+        <select
+          value={selectedSource}
+          onChange={(e) => setSelectedSource(e.target.value)}
+          className="w-full sm:w-64 px-3 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
+        >
+          <option value="all">Toutes les sources</option>
+          <option value="Agenda Culturel">Agenda Culturel</option>
+          <option value="Agenda Trad">Agenda Trad</option>
+          <option value="Université Toulouse Capitole">
+            Université Toulouse Capitole
+          </option>
+        </select>
       </div>
 
       {/* Actions */}
