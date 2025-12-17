@@ -1,10 +1,11 @@
 // src/app/api/agendatoulousain/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-// Sources externes uniquement
+// Sources externes agrégées
 const EXTERNAL_SOURCES = [
   "https://ftstoulouse.vercel.app/api/agenda-trad-haute-garonne",
   "https://ftstoulouse.vercel.app/api/agendaculturel",
+  "https://ftstoulouse.vercel.app/api/capitole-min", // ✅ AJOUT
 ];
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
       EXTERNAL_SOURCES.map(async (url) => {
         try {
           const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const json = await res.json();
           return normalizeApiResult(json);
         } catch (err) {
@@ -38,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     let events = results.flat();
 
-    // 🔹 Normalisation des dates → ISO
+    // 🔹 Normalisation des dates (date | start | startDate → date ISO)
     events = events.map((ev) => {
       const raw = ev.date || ev.start || ev.startDate;
       const d = raw ? new Date(raw) : null;
@@ -52,13 +54,21 @@ export async function GET(request: NextRequest) {
     // 🔹 Suppression des doublons
     const uniq = new Map<string, any>();
     events.forEach((ev) => {
-      const key = ev.id || `${ev.title}-${ev.date}`;
+      const key =
+        ev.id ||
+        `${ev.title || "no-title"}-${ev.date || "no-date"}-${
+          ev.source || "no-source"
+        }`;
+
       if (!uniq.has(key)) uniq.set(key, ev);
     });
 
     // 🔹 Tri chronologique
     const sorted = Array.from(uniq.values()).sort((a, b) => {
-      return new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime();
+      return (
+        new Date(a.date || 0).getTime() -
+        new Date(b.date || 0).getTime()
+      );
     });
 
     return NextResponse.json({
