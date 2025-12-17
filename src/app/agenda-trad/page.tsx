@@ -7,12 +7,19 @@ import parse from "html-react-parser";
 const MAX_EVENTS = 50;
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
+// 🔹 Fonction pour formater les descriptions
+function formatDescription(desc: string) {
+  if (!desc) return "";
+  const html = desc.replace(/\n/g, "<br />"); // convertir les sauts de ligne en <br>
+  return parse(html);
+}
+
 export default function AgendaTradHauteGaronnePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
-  const [searchTerm, setSearchTerm] = useState(""); // Barre de recherche
+  const [searchTerm, setSearchTerm] = useState("");
 
   async function fetchEvents() {
     setLoading(true);
@@ -54,7 +61,6 @@ export default function AgendaTradHauteGaronnePage() {
     fetchEvents();
   }, []);
 
-  // Filtrage des événements selon la recherche
   const filteredEvents = events.filter((ev) => {
     const search = searchTerm.toLowerCase();
     const dateStr = ev.dateFormatted?.toLowerCase() || "";
@@ -81,7 +87,6 @@ export default function AgendaTradHauteGaronnePage() {
         Cette page affiche les prochains événements de la Haute-Garonne.
       </p>
 
-      {/* Barre de recherche et compteur */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <input
           type="text"
@@ -95,7 +100,6 @@ export default function AgendaTradHauteGaronnePage() {
         </p>
       </div>
 
-      {/* 🔘 Boutons Plein écran / Vignette */}
       <div className="flex gap-4 mb-6">
         <Button
           onClick={() => setViewMode("card")}
@@ -125,9 +129,7 @@ export default function AgendaTradHauteGaronnePage() {
         <p className="text-muted-foreground">Aucun événement à venir.</p>
       )}
 
-      {/* ========================================================== */}
-      {/* 🟥 MODE PLEIN ÉCRAN (CARD) */}
-      {/* ========================================================== */}
+      {/* 🔴 MODE CARD */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map((ev, i) => (
@@ -174,7 +176,7 @@ export default function AgendaTradHauteGaronnePage() {
 
                 {ev.description && (
                   <div className="text-sm text-muted-foreground overflow-y-auto h-48 mb-2 pr-1 scrollable">
-                    {parse(ev.description)}
+                    {formatDescription(ev.description)}
                   </div>
                 )}
               </div>
@@ -183,9 +185,7 @@ export default function AgendaTradHauteGaronnePage() {
         </div>
       )}
 
-      {/* ========================================================== */}
-      {/* 🟨 MODE LISTE (VIGNETTE) */}
-      {/* ========================================================== */}
+      {/* 🟨 MODE LISTE */}
       {viewMode === "list" && (
         <div className="space-y-4">
           {filteredEvents.map((ev, i) => (
@@ -222,6 +222,12 @@ export default function AgendaTradHauteGaronnePage() {
                   >
                     Voir →
                   </a>
+                )}
+
+                {ev.description && (
+                  <div className="text-sm text-muted-foreground line-clamp-3 mt-1">
+                    {formatDescription(ev.description)}
+                  </div>
                 )}
               </div>
             </div>
