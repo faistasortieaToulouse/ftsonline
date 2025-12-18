@@ -167,21 +167,37 @@ export async function GET(request: NextRequest) {
             }));
           }
 
-          if (source === "Demosphere") {
-            const res = await fetch(url, { cache: "no-store" });
-            const json = await res.json();
-            return json.map((ev: any) => ({
-              id: ev.id,
-              title: ev.title,
-              date: ev.start,
-              description: ev.description,
-              location: ev.location,
-              link: ev.url,
-              source,
-              categories: ["Demosphere"],
-              image: "/logo/demosphereoriginal.png",
-            }));
-          }
+if (source === "Demosphere") {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) return [];
+
+  const json = await res.json();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const maxDate = new Date(today);
+  maxDate.setDate(maxDate.getDate() + 31);
+
+  return json
+    .map((ev: any) => {
+      const d = new Date(ev.start);
+      if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
+
+      return {
+        id: ev.id,
+        title: ev.title,
+        date: d.toISOString(),
+        description: ev.description,
+        location: ev.location,
+        link: ev.url,
+        source,
+        categories: ["Demosphere"],
+        image: "/logo/demosphereoriginal.png",
+      };
+    })
+    .filter(Boolean);
+}
 
           const res = await fetch(url, { cache: "no-store" });
           const json = await res.json();
