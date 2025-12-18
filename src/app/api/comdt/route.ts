@@ -3,14 +3,21 @@ import { NextResponse } from "next/server";
 
 const ICS_URL = "https://www.comdt.org/events/feed/?ical=1";
 
-// ⚡ Forcer rendu dynamique pour éviter l'erreur Dynamic server usage
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+// 🔹 Cartographie catégorie → image par défaut
+const defaultImages: Record<string, string> = {
+  "Stages": "/images/comdt/catecomdtstage.jpg",
+  "Stages de danse": "/images/comdt/catecomdtdanse.jpg",
+  "Stages de musique": "/images/comdt/catecomdtmusique.jpg",
+  "Saison du COMDT": "/images/comdt/catecomdtcomdt.jpg",
+  "Evénements partenaires": "/images/comdt/catecomdtpartenaire.jpg",
+};
 
 // 🔹 Parse date ICS → Date
 function parseIcsDate(value?: string): Date | null {
   if (!value) return null;
 
-  // VALUE=DATE:20260117
   if (/^\d{8}$/.test(value)) {
     const y = value.slice(0, 4);
     const m = value.slice(4, 6);
@@ -18,7 +25,6 @@ function parseIcsDate(value?: string): Date | null {
     return new Date(`${y}-${m}-${d}T00:00:00`);
   }
 
-  // 20260123T203000
   const d = new Date(value);
   return isNaN(d.getTime()) ? null : d;
 }
@@ -37,6 +43,18 @@ function parseICS(text: string) {
     const date = parseIcsDate(get("DTSTART"));
     if (!date) continue;
 
+    // 📌 Gestion de l'image : ATTACH sinon image par défaut selon catégorie
+    let image = get("ATTACH");
+    if (!image) {
+      const categories = get("CATEGORIES").split(",").map((c) => c.trim());
+      for (const cat of categories) {
+        if (defaultImages[cat]) {
+          image = defaultImages[cat];
+          break;
+        }
+      }
+    }
+
     events.push({
       id: get("UID"),
       title: get("SUMMARY"),
@@ -45,6 +63,8 @@ function parseICS(text: string) {
       location: get("LOCATION"),
       date: date.toISOString(),
       source: "COMDT",
+      categories: get("CATEGORIES").split(",").map((c) => c.trim()),
+      image,
     });
   }
 
@@ -55,7 +75,7 @@ export async function GET() {
   try {
     const res = await fetch(ICS_URL, {
       headers: { Accept: "text/calendar" },
-      cache: "no-store", // 🔹 Toujours frais
+      cache: "no-store",
     });
 
     if (!res.ok) {
