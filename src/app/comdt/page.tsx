@@ -182,7 +182,7 @@ export default function ComdtPage() {
 
                 {ev.description && (
                   <div className="text-sm text-muted-foreground mb-3 flex-1">
-                    <div className="h-32 overflow-y-auto pr-2 scrollable">
+                    <div className="h-24 overflow-y-auto pr-2 scrollable">
                       {formatDescription(ev.description)}
                     </div>
                   </div>
