@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 
 const ICS_URL = "https://www.comdt.org/events/feed/?ical=1";
 
-export const revalidate = 3600;
+// ⚡ Forcer rendu dynamique pour éviter l'erreur Dynamic server usage
+export const dynamic = "force-dynamic";
 
 // 🔹 Parse date ICS → Date
 function parseIcsDate(value?: string): Date | null {
@@ -54,7 +55,7 @@ export async function GET() {
   try {
     const res = await fetch(ICS_URL, {
       headers: { Accept: "text/calendar" },
-      cache: "no-store",
+      cache: "no-store", // 🔹 Toujours frais
     });
 
     if (!res.ok) {
