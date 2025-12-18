@@ -44,7 +44,7 @@ function normalizeCinema(data: any): any[] {
       image: film.poster_path
         ? `https://image.tmdb.org/t/p/w500${film.poster_path}`
         : "/images/cinema-default.jpg",
-      source: "Sorties cinéma",
+      source: "Sorties cinéma themoviedb",
       link: `https://www.themoviedb.org/movie/${film.id}?language=fr-FR`,
     }));
 }
