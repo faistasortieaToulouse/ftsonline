@@ -1,81 +1,85 @@
 // src/app/api/comdt/route.ts
 import { NextResponse } from "next/server";
 
-const RSS_URL = "https://www.comdt.org/events/feed/?post_type=tribe_events";
+const ICS_URL = "https://www.comdt.org/events/feed/?ical=1";
 
 export const revalidate = 3600;
 
-function extract(tag: string, block: string): string {
-  const match = block.match(
-    new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i")
-  );
-  return match ? match[1].trim() : "";
+// 🔹 Parse date ICS → Date
+function parseIcsDate(value?: string): Date | null {
+  if (!value) return null;
+
+  // VALUE=DATE:20260117
+  if (/^\d{8}$/.test(value)) {
+    const y = value.slice(0, 4);
+    const m = value.slice(4, 6);
+    const d = value.slice(6, 8);
+    return new Date(`${y}-${m}-${d}T00:00:00`);
+  }
+
+  // 20260123T203000
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
 }
 
-// 🔹 Conversion date RSS → ISO
-function parseDate(dateStr: string): string | null {
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? null : d.toISOString();
+// 🔹 Parse ICS → événements
+function parseICS(text: string) {
+  const events: any[] = [];
+  const blocks = text.split("BEGIN:VEVENT").slice(1);
+
+  for (const block of blocks) {
+    const get = (key: string) => {
+      const m = block.match(new RegExp(`${key}[^:]*:(.+)`));
+      return m ? m[1].trim() : "";
+    };
+
+    const date = parseIcsDate(get("DTSTART"));
+    if (!date) continue;
+
+    events.push({
+      id: get("UID"),
+      title: get("SUMMARY"),
+      description: get("DESCRIPTION").replace(/\\n/g, "\n"),
+      link: get("URL"),
+      location: get("LOCATION"),
+      date: date.toISOString(),
+      source: "COMDT",
+    });
+  }
+
+  return events;
 }
 
 export async function GET() {
   try {
-    const res = await fetch(RSS_URL, {
-      headers: {
-        Accept: "application/rss+xml, application/xml, text/xml",
-      },
+    const res = await fetch(ICS_URL, {
+      headers: { Accept: "text/calendar" },
       cache: "no-store",
     });
 
     if (!res.ok) {
       return NextResponse.json(
-        { error: `COMDT RSS fetch failed (${res.status})` },
+        { error: `ICS fetch failed (${res.status})` },
         { status: 502 }
       );
     }
 
-    const xml = await res.text();
-
-    // 🔹 Extraction brute des <item>
-    const items = xml.match(/<item>[\s\S]*?<\/item>/gi) || [];
-
+    const text = await res.text();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const records = items
-      .map((item) => {
-        const title = extract("title", item);
-        const link = extract("link", item);
-        const description =
-          extract("content:encoded", item) || extract("description", item);
-        const pubDate = extract("pubDate", item);
-
-        const dateIso = parseDate(pubDate);
-        if (!dateIso) return null;
-
-        return {
-          id: link || title,
-          title,
-          description,
-          link,
-          date: dateIso,
-          source: "COMDT",
-        };
-      })
-      // 🔹 Garder uniquement aujourd’hui et futur
-      .filter((ev): ev is NonNullable<typeof ev> => {
-        const d = new Date(ev.date);
-        return d >= today;
-      });
+    const events = parseICS(text).filter(
+      (e) => new Date(e.date) >= today
+    );
 
     return NextResponse.json({
-      total: records.length,
-      events: records,
+      total: events.length,
+      events,
     });
   } catch (err) {
-    console.error("COMDT RSS error:", err);
+    console.error("COMDT ICS error:", err);
     return NextResponse.json(
-      { total: 0, events: [], error: "Internal Server Error (COMDT RSS)" },
+      { total: 0, events: [], error: "COMDT ICS error" },
       { status: 500 }
     );
   }
