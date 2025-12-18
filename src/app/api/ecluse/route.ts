@@ -1,7 +1,6 @@
-// app/api/ecluse/route.ts
 import { NextResponse } from "next/server";
 import { XMLParser } from "fast-xml-parser";
-import { load } from "cheerio"; // ✅ Corrigé pour ESM
+import { load } from "cheerio";
 
 const MONTHS: Record<string, number> = {
   janv: 0, fév: 1, fev: 1, mars: 2, avr: 3, mai: 4, juin: 5, juil: 6,
@@ -34,7 +33,7 @@ export async function GET() {
     if (!item?.["content:encoded"]) return NextResponse.json({ total: 0, events: [] });
 
     const html = item["content:encoded"];
-    const $ = load(html); // ✅ Utilisation correcte de Cheerio
+    const $ = load(html);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -44,22 +43,25 @@ export async function GET() {
     const events: any[] = [];
 
     $("li").each((_, el) => {
-      const text = $(el).text();
+      const text = $(el).text().trim();
 
       // 🔹 Filtre Haute-Garonne / Toulouse uniquement
       if (!text.includes("(31)") && !text.toUpperCase().includes("TOULOUSE")) return;
 
+      // Date
       const dateText = $(el).find("strong").first().text();
       const date = parseFrenchDate(dateText);
       if (!date || date < today || date > maxDate) return;
 
-      const title = $(el).find("em").first().text().trim() || text.split("–")[0].trim();
-
-      // Récupération de la description entre parenthèses après le titre
+      // Titre & description
+      const emText = $(el).find("em").first().text().trim();
+      let [titlePart, locationPart] = text.split("–").map(s => s.trim());
+      const title = emText || titlePart || "Événement L'Écluse";
       const descriptionMatch = text.match(/\(([^)]+)\)/);
       const description = descriptionMatch ? descriptionMatch[1] : "";
 
-      const location = text.split("–")[1]?.trim() ?? "Théâtre du Grand Rond, Toulouse (31)";
+      // Lieu
+      const location = locationPart || "Théâtre du Grand Rond, Toulouse (31)";
 
       events.push({
         id: `ecluse-${date.toISOString()}-${title}`,
@@ -68,7 +70,7 @@ export async function GET() {
         date: date.toISOString(),
         location,
         source: "L'Écluse",
-        image: "/images/ecluse/ecluse-default.jpg", // tu peux personnaliser par titre si tu veux
+        image: "/images/ecluse/ecluse-default.jpg",
         link: "https://www.ecluse-prod.com/category/agenda/",
       });
     });
