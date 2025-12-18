@@ -1,3 +1,4 @@
+// src/app/comdt/page.tsx
 'use client';
 
 import { useState, useEffect } from "react";
@@ -46,9 +47,14 @@ export default function ComdtPage() {
       const data = await res.json();
       if (!Array.isArray(data.events)) throw new Error("Données invalides");
 
+      const today = new Date();
+      const maxDate = new Date();
+      maxDate.setDate(today.getDate() + 31);
+
       const mappedEvents = data.events.map((ev: any) => {
-        const dateFormatted = ev.date
-          ? new Date(ev.date).toLocaleString("fr-FR", {
+        const dateObj = ev.date ? new Date(ev.date) : null;
+        const dateFormatted = dateObj
+          ? dateObj.toLocaleString("fr-FR", {
               weekday: "long",
               day: "numeric",
               month: "long",
@@ -68,17 +74,22 @@ export default function ComdtPage() {
           url: ev.link || "#",
           image,
           category: ev.category || "COMDT",
-          date: ev.date,
+          date: dateObj,
           dateFormatted,
           fullAddress: ev.location || "Lieu non spécifié",
         };
       });
 
+      // 🔹 Filtrer uniquement événements d’aujourd’hui à +31 jours
+      const filteredByDate = mappedEvents.filter(
+        (ev) => ev.date && ev.date >= today && ev.date <= maxDate
+      );
+
       // 🔹 Tri par date et limitation
       const uniqueEvents = Array.from(
-        new Map(mappedEvents.map((e) => [e.id, e])).values()
+        new Map(filteredByDate.map((e) => [e.id, e])).values()
       )
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .sort((a, b) => a.date.getTime() - b.date.getTime())
         .slice(0, MAX_EVENTS);
 
       setEvents(uniqueEvents);
