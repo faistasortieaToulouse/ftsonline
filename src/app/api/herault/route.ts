@@ -54,6 +54,11 @@ const heraultSites: SiteHerault[] = [
   { id: 41, commune: "Alignan-du-Vent", description: "Circulade médiévale et Tour", niveau: 2, categorie: "remarquable", lat: 43.4700, lng: 3.3411 },
   { id: 42, commune: "Montblanc", description: "Église Sainte-Eulalie fortifiée", niveau: 2, categorie: "remarquable", lat: 43.3964, lng: 3.3669 },
   { id: 43, commune: "Valros", description: "Tour médiévale de guet", niveau: 3, categorie: "suggéré", lat: 43.4197, lng: 3.3683 },
+  { id: 44, commune: "La Salvetat-sur-Agout", description: "Village de montagne, Lac de la Raviège et eaux minérales", niveau: 1, categorie: "incontournable", lat: 43.6008, lng: 2.7036 },
+  { id: 45, commune: "Beaufort", description: "Château de Beaufort (XIIe siècle) et panorama Minervois", niveau: 2, categorie: "remarquable", lat: 43.2986, lng: 2.7578 },
+  { id: 46, commune: "Montouliers", description: "Village de caractère, calades et panorama sur l'Aude", niveau: 2, categorie: "remarquable", lat: 43.3375, lng: 2.9067 },
+  { id: 47, commune: "Douch", description: "Hameau typique du Caroux, départ de randonnée et Mouflons", niveau: 1, categorie: "incontournable", lat: 43.6108, lng: 2.9739 },
+  { id: 48, commune: "Margon", description: "Château de Margon (Monument Historique) et jardins", niveau: 1, categorie: "incontournable", lat: 43.4869, lng: 3.3039 },
 ];
 
 export async function GET() {
