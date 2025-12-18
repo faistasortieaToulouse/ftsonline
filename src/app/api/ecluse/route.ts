@@ -1,6 +1,7 @@
+// app/api/ecluse/route.ts
 import { NextResponse } from "next/server";
 import { XMLParser } from "fast-xml-parser";
-import cheerio from "cheerio";
+import { load } from "cheerio"; // ✅ Corrigé pour ESM
 
 const MONTHS: Record<string, number> = {
   janv: 0, fév: 1, fev: 1, mars: 2, avr: 3, mai: 4, juin: 5, juil: 6,
@@ -33,7 +34,7 @@ export async function GET() {
     if (!item?.["content:encoded"]) return NextResponse.json({ total: 0, events: [] });
 
     const html = item["content:encoded"];
-    const $ = cheerio.load(html);
+    const $ = load(html); // ✅ Utilisation correcte de Cheerio
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -44,6 +45,8 @@ export async function GET() {
 
     $("li").each((_, el) => {
       const text = $(el).text();
+
+      // 🔹 Filtre Haute-Garonne / Toulouse uniquement
       if (!text.includes("(31)") && !text.toUpperCase().includes("TOULOUSE")) return;
 
       const dateText = $(el).find("strong").first().text();
@@ -51,6 +54,8 @@ export async function GET() {
       if (!date || date < today || date > maxDate) return;
 
       const title = $(el).find("em").first().text().trim() || text.split("–")[0].trim();
+
+      // Récupération de la description entre parenthèses après le titre
       const descriptionMatch = text.match(/\(([^)]+)\)/);
       const description = descriptionMatch ? descriptionMatch[1] : "";
 
@@ -63,7 +68,7 @@ export async function GET() {
         date: date.toISOString(),
         location,
         source: "L'Écluse",
-        image: "/images/ecluse/ecluse-default.jpg",
+        image: "/images/ecluse/ecluse-default.jpg", // tu peux personnaliser par titre si tu veux
         link: "https://www.ecluse-prod.com/category/agenda/",
       });
     });
