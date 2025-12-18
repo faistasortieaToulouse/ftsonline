@@ -136,6 +136,7 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/cinematoulouse`, source: "Sorties cinéma" },
       { url: `${origin}/api/cultureenmouvements`, source: "Culture en Mouvements" },
       { url: `${origin}/api/demosphere`, source: "Demosphere" },
+      { url: `${origin}/api/discord`, source: "Discord" }, // ✅ AJOUT
       { url: "COMDT", source: "COMDT" },
     ];
 
@@ -167,37 +168,71 @@ export async function GET(request: NextRequest) {
             }));
           }
 
-if (source === "Demosphere") {
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) return [];
+          if (source === "Demosphere") {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) return [];
 
-  const json = await res.json();
+            const json = await res.json();
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-  const maxDate = new Date(today);
-  maxDate.setDate(maxDate.getDate() + 31);
+            const maxDate = new Date(today);
+            maxDate.setDate(maxDate.getDate() + 31);
 
-  return json
-    .map((ev: any) => {
-      const d = new Date(ev.start);
-      if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
+            return json
+              .map((ev: any) => {
+                const d = new Date(ev.start);
+                if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
 
-      return {
-        id: ev.id,
-        title: ev.title,
-        date: d.toISOString(),
-        description: ev.description,
-        location: ev.location,
-        link: ev.url,
-        source,
-        categories: ["Demosphere"],
-        image: "/logo/demosphereoriginal.png",
-      };
-    })
-    .filter(Boolean);
-}
+                return {
+                  id: ev.id,
+                  title: ev.title,
+                  date: d.toISOString(),
+                  description: ev.description,
+                  location: ev.location,
+                  link: ev.url,
+                  source,
+                  categories: ["Demosphere"],
+                  image: "/logo/demosphereoriginal.png",
+                };
+              })
+              .filter(Boolean);
+          }
+
+          // 🟣 DISCORD
+          if (source === "Discord") {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) return [];
+
+            const json = await res.json();
+            const events = json?.events || [];
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const maxDate = new Date(today);
+            maxDate.setDate(maxDate.getDate() + 31);
+
+            return events
+              .map((ev: any) => {
+                const d = new Date(ev.date);
+                if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
+
+                return {
+                  id: `discord-${ev.id}`,
+                  title: ev.title,
+                  date: d.toISOString(),
+                  description: ev.description,
+                  location: ev.location || "Discord",
+                  link: ev.url,
+                  source,
+                  categories: ["Discord"],
+                  image: ev.image || "/logo/discord.png",
+                };
+              })
+              .filter(Boolean);
+          }
 
           const res = await fetch(url, { cache: "no-store" });
           const json = await res.json();
