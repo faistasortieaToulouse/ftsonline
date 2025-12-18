@@ -12,7 +12,7 @@ const getCapitoleImage = (title?: string) => {
   return "/images/capitole/capidefaut.jpg";
 };
 
-// 🔹 Normalisation des flux externes
+// 🔹 Normalisation générique des flux externes
 function normalizeApiResult(data: any): any[] {
   if (!data) return [];
   if (Array.isArray(data)) return data;
@@ -21,6 +21,32 @@ function normalizeApiResult(data: any): any[] {
   if (Array.isArray(data.data)) return data.data;
   const firstArray = Object.values(data).find((v) => Array.isArray(v));
   return Array.isArray(firstArray) ? firstArray : [];
+}
+
+// 🎬 Normalisation spécifique TMDB (cinéma)
+function normalizeCinema(data: any): any[] {
+  if (!data?.results) return [];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return data.results
+    .filter((film: any) => {
+      if (!film.release_date) return false;
+      const d = new Date(film.release_date);
+      return !isNaN(d.getTime()) && d >= today;
+    })
+    .map((film: any) => ({
+      id: `tmdb-${film.id}`,
+      title: film.title,
+      date: film.release_date,
+      description: film.overview || "Sortie cinéma",
+      image: film.poster_path
+        ? `https://image.tmdb.org/t/p/w500${film.poster_path}`
+        : "/images/cinema-default.jpg",
+      source: "Sorties cinéma",
+      link: `https://www.themoviedb.org/movie/${film.id}?language=fr-FR`,
+    }));
 }
 
 export const dynamic = "force-dynamic";
@@ -35,6 +61,7 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/agenda-trad-haute-garonne`, defaultSource: "Agenda Trad Haute-Garonne" },
       { url: `${origin}/api/agendaculturel`, defaultSource: "Agenda Culturel" },
       { url: `${origin}/api/capitole-min`, defaultSource: "Université Toulouse Capitole" },
+      { url: `${origin}/api/cinematoulouse`, defaultSource: "Sorties cinéma" }, // 🎬
     ];
 
     const results = await Promise.all(
@@ -43,10 +70,18 @@ export async function GET(request: NextRequest) {
           const res = await fetch(url, { cache: "no-store" });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const json = await res.json();
-          const data = normalizeApiResult(json);
 
-          // ajouter la source par défaut si manquante
-          return data.map(ev => ({ ...ev, source: ev.source || defaultSource }));
+          // 🎬 Cas particulier : cinéma
+          if (defaultSource === "Sorties cinéma") {
+            return normalizeCinema(json);
+          }
+
+          // 🔹 Autres APIs
+          const data = normalizeApiResult(json);
+          return data.map((ev) => ({
+            ...ev,
+            source: ev.source || defaultSource,
+          }));
         } catch (err) {
           console.error("Erreur API externe:", url, err);
           return [];
@@ -59,8 +94,8 @@ export async function GET(request: NextRequest) {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
-    // 🔹 Normalisation des dates + date du jour si manquante ou passée
-    events = events.map(ev => {
+    // 🔹 Normalisation des dates + nettoyage description
+    events = events.map((ev) => {
       let raw = ev.date || ev.start || ev.startDate;
       let d: Date | null = raw ? new Date(raw) : null;
 
@@ -68,16 +103,17 @@ export async function GET(request: NextRequest) {
         d = new Date(now);
       }
 
-      // 🔹 Nettoyage des descriptions
       let description = ev.description ? decode(ev.description) : "";
 
-      // Supprimer ligne "source: …" si Agenda Trad Haute-Garonne
+      // Nettoyage spécifique Agenda Trad
       if (ev.source === "Agenda Trad Haute-Garonne") {
         description = description.replace(/source:.*AgendaTrad.*$/i, "").trim();
       }
 
-      // Supprimer les balises HTML indésirables mais garder p, br, strong, em, a
-      description = description.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
+      // Nettoyage HTML (conserver p, br, strong, em, a)
+      description = description
+        .replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "")
+        .trim();
 
       return {
         ...ev,
@@ -86,8 +122,8 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // 🔹 Ajouter images UT-Capitole si nécessaire
-    events = events.map(ev => {
+    // 🔹 Images par défaut UT Capitole
+    events = events.map((ev) => {
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         return { ...ev, image: getCapitoleImage(ev.title) };
       }
@@ -96,8 +132,10 @@ export async function GET(request: NextRequest) {
 
     // 🔹 Suppression des doublons
     const uniq = new Map<string, any>();
-    events.forEach(ev => {
-      const key = ev.id || `${ev.title || "no-title"}-${ev.date || "no-date"}-${ev.source || "no-source"}`;
+    events.forEach((ev) => {
+      const key =
+        ev.id ||
+        `${ev.title || "no-title"}-${ev.date || "no-date"}-${ev.source || "no-source"}`;
       if (!uniq.has(key)) uniq.set(key, ev);
     });
 
