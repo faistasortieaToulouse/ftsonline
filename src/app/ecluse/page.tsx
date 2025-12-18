@@ -38,14 +38,30 @@ export default function EclusePage() {
       if (!res.ok) throw new Error(`API HTTP error: ${res.status}`);
       const data = await res.json();
 
-      const formatted = data.items.map((it: any, idx: number) => ({
+      // Filtrer uniquement les événements en Haute-Garonne (31)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const maxDate = new Date(today);
+      maxDate.setDate(maxDate.getDate() + 31);
+
+      const formatted = (data.events ?? []).map((it: any, idx: number) => ({
         id: idx,
         title: it.title,
-        description: it.description,
-        start: it.pubDate,
+        description: it.description || "",
+        start: it.date || it.pubDate,
         url: it.link,
-        source: "L'Écluse",
-      }));
+        source: it.source || "L'Écluse",
+        location: it.location || "",
+      }))
+      .filter(ev => {
+        if (!ev.start) return false;
+        const d = new Date(ev.start);
+        if (isNaN(d.getTime())) return false;
+        if (d < today || d > maxDate) return false;
+        // Filtrer seulement Haute-Garonne (31)
+        return ev.location?.includes("31") || ev.location?.toUpperCase().includes("TOULOUSE");
+      });
+
       setEvents(formatted);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
@@ -61,8 +77,8 @@ export default function EclusePage() {
     const q = searchQuery.toLowerCase();
     return (
       ev.title.toLowerCase().includes(q) ||
-      (ev.description?.toLowerCase().includes(q) ?? false) ||
-      (ev.start?.toLowerCase().includes(q) ?? false)
+      ev.description?.toLowerCase().includes(q) ||
+      ev.start?.toLowerCase().includes(q)
     );
   });
 
@@ -70,7 +86,7 @@ export default function EclusePage() {
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-4">Événements L'Écluse</h1>
       <p className="text-muted-foreground mb-6">
-        Événements filtrés depuis le flux officiel de L'Écluse.
+        Événements filtrés depuis le flux officiel de L'Écluse (Haute-Garonne, 31, 31 prochains jours).
       </p>
 
       <div className="flex flex-wrap gap-3 mb-6 items-center">
