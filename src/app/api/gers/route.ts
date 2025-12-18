@@ -163,6 +163,12 @@ const gersSites: SiteGers[] = [
   { id: 142, commune: "Riscle", description: "Arènes Jean-Pierre Longepée et église Saint-Pierre", niveau: 1, categorie: "incontournable", lat: 43.6617, lng: -0.0858 },
   { id: 143, commune: "Belmont", description: "Château-Neuf des Peuples et église Saint-Cassin", niveau: 2, categorie: "remarquable", lat: 43.6763, lng: 0.2372 }, 
   { id: 144, commune: "Plaisance", description: "Bastide, église Notre-Dame et ses Arènes", niveau: 1, categorie: "incontournable", lat: 43.6048, lng: 0.0464 },
+  { id: 145, commune: "Aignan", description: "Bastide royale et Église romane Saint-Saturnin", niveau: 2, categorie: "remarquable", lat: 43.6983, lng: 0.0842 },
+  { id: 146, commune: "Barran", description: "Bastide et célèbre Clocher tors de l'Église Saint-Jean-Baptiste", niveau: 2, categorie: "remarquable", lat: 43.6186, lng: 0.4431 },
+  { id: 147, commune: "Bassouës", description: "Donjon médiéval (43m), Halle et Basilique Saint-Fris", niveau: 1, categorie: "incontournable", lat: 43.5786, lng: 0.2458 },
+  { id: 148, commune: "Castéra-Lectourois", description: "Village de caractère dominant la vallée de l'Arratz", niveau: 3, categorie: "suggéré", lat: 43.9753, lng: 0.7100 },
+  { id: 149, commune: "Saint-Orens-Pouy-Petit", description: "Château et église romane au cœur de la Ténarèze", niveau: 3, categorie: "suggéré", lat: 43.9167, lng: 0.4333 },
+  { id: 150, commune: "Saint-Mont", description: "Ancien Monastère bénédictin et vignobles réputés", niveau: 1, categorie: "incontournable", lat: 43.6517, lng: -0.1492 },
 ];
 
 export async function GET() {
