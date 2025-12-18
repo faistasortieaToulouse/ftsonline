@@ -52,25 +52,19 @@ function normalizeCinema(data: any): any[] {
 
 // 🎵 Normalisation COMDT (ICS)
 function normalizeComdt(data: any): any[] {
-  if (!data?.records) return [];
-
+  const events = data?.events || []; // 🔹 ATTENTION : 'events' et non 'records'
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  return data.records
+  return events
     .map((ev: any) => {
-      if (!ev.dtstart) return null;
-      const d = new Date(ev.dtstart);
-      if (isNaN(d.getTime()) || d < today) return null;
+      const d = ev.date ? new Date(ev.date) : null;
+      if (!d || isNaN(d.getTime()) || d < today) return null;
 
       return {
-        id: ev.uid,
-        title: ev.summary,
+        ...ev,
         date: d.toISOString(),
-        description: ev.description || "",
-        location: ev.location,
-        link: ev.url,
-        source: "COMDT",
+        source: ev.source || "COMDT",
       };
     })
     .filter(Boolean);
@@ -89,7 +83,7 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/agendaculturel`, defaultSource: "Agenda Culturel" },
       { url: `${origin}/api/capitole-min`, defaultSource: "Université Toulouse Capitole" },
       { url: `${origin}/api/cinematoulouse`, defaultSource: "Sorties cinéma" },
-      { url: `${origin}/api/comdt`, defaultSource: "COMDT" }, // 🎵 AJOUT
+      { url: `${origin}/api/comdt`, defaultSource: "COMDT" },
     ];
 
     const results = await Promise.all(
