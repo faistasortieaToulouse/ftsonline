@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 const ICS_URL = "https://www.comdt.org/events/feed/?ical=1";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 // 🔹 Cartographie catégorie → image par défaut
