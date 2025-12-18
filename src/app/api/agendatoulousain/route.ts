@@ -12,6 +12,15 @@ const getCapitoleImage = (title?: string) => {
   return "/images/capitole/capidefaut.jpg";
 };
 
+// 🔹 Cartographie catégorie → image par défaut COMDT
+const defaultComdtImages: Record<string, string> = {
+  "Stages": "/images/comdt/catecomdtstage.jpg",
+  "Stages de danse": "/images/comdt/catecomdtdanse.jpg",
+  "Stages de musique": "/images/comdt/catecomdtmusique.jpg",
+  "Saison du COMDT": "/images/comdt/catecomdtcomdt.jpg",
+  "Evénements partenaires": "/images/comdt/catecomdtpartenaire.jpg",
+};
+
 // 🔹 Normalisation générique des flux externes
 function normalizeApiResult(data: any): any[] {
   if (!data) return [];
@@ -61,12 +70,31 @@ function parseICS(text: string) {
       return m ? m[1].trim() : "";
     };
 
-    const dt = get("DTSTART");
-    if (!dt) continue;
-    const date = /^\d{8}$/.test(dt)
-      ? new Date(`${dt.slice(0, 4)}-${dt.slice(4, 6)}-${dt.slice(6, 8)}T00:00:00`)
-      : new Date(dt);
-    if (isNaN(date.getTime())) continue;
+    const date = (() => {
+      const dt = get("DTSTART");
+      if (!dt) return null;
+      if (/^\d{8}$/.test(dt)) {
+        const y = dt.slice(0, 4);
+        const m = dt.slice(4, 6);
+        const d = dt.slice(6, 8);
+        return new Date(`${y}-${m}-${d}T00:00:00`);
+      }
+      const d = new Date(dt);
+      return isNaN(d.getTime()) ? null : d;
+    })();
+    if (!date) continue;
+
+    // 📌 Gestion de l'image : ATTACH sinon image par défaut selon catégorie
+    let image = get("ATTACH");
+    if (!image) {
+      const categories = get("CATEGORIES").split(",").map(c => c.trim());
+      for (const cat of categories) {
+        if (defaultComdtImages[cat]) {
+          image = defaultComdtImages[cat];
+          break;
+        }
+      }
+    }
 
     events.push({
       id: get("UID"),
@@ -76,6 +104,8 @@ function parseICS(text: string) {
       location: get("LOCATION"),
       date: date.toISOString(),
       source: "COMDT",
+      categories: get("CATEGORIES").split(",").map(c => c.trim()),
+      image,
     });
   }
 
