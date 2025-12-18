@@ -1,11 +1,12 @@
 // app/api/ecluse/route.ts
 import { NextResponse } from "next/server";
+import { XMLParser } from "fast-xml-parser";
 import * as cheerio from "cheerio";
 
 const MONTHS: Record<string, number> = {
   janv: 0,
-  févr: 1,
-  fevr: 1,
+  fév: 1,
+  fev: 1,
   mars: 2,
   avr: 3,
   mai: 4,
@@ -21,10 +22,10 @@ const MONTHS: Record<string, number> = {
 };
 
 function parseFrenchDate(text: string): Date | null {
-  const match = text.match(/(\d{1,2})\s([a-zéû]+)/i);
+  const match = text.match(/(\d{1,2}|1er)\s([a-zéû]+)/i);
   if (!match) return null;
 
-  const day = parseInt(match[1], 10);
+  const day = match[1] === "1er" ? 1 : parseInt(match[1], 10);
   const month = MONTHS[match[2].toLowerCase()];
   if (month === undefined) return null;
 
@@ -40,11 +41,11 @@ function parseFrenchDate(text: string): Date | null {
 }
 
 export async function GET() {
-  const url = "https://www.ecluse-prod.com/category/agenda/";
+  const feedUrl = "https://www.ecluse-prod.com/category/agenda/feed/";
 
   try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0" },
+    const res = await fetch(feedUrl, {
+      headers: { "User-Agent": "Next.js" },
       cache: "no-store",
     });
 
@@ -52,7 +53,19 @@ export async function GET() {
       return NextResponse.json({ events: [] });
     }
 
-    const html = await res.text();
+    const xml = await res.text();
+
+    const parser = new XMLParser({
+      ignoreAttributes: false,
+    });
+
+    const parsed = parser.parse(xml);
+    const item = parsed?.rss?.channel?.item;
+    if (!item?.["content:encoded"]) {
+      return NextResponse.json({ events: [] });
+    }
+
+    const html = item["content:encoded"];
     const $ = cheerio.load(html);
 
     const today = new Date();
@@ -66,7 +79,7 @@ export async function GET() {
     $("li").each((_, el) => {
       const text = $(el).text();
 
-      // 🔹 Filtre Haute-Garonne
+      // 🔹 Haute-Garonne uniquement
       if (!text.includes("(31)")) return;
       if (!text.toUpperCase().includes("TOULOUSE")) return;
 
@@ -82,15 +95,17 @@ export async function GET() {
         date: date.toISOString(),
         location: "Théâtre du Grand Rond, Toulouse (31)",
         source: "L'Écluse",
-        categories: ["L'Écluse"],
         image: "/images/ecluse/ecluse-default.jpg",
-        link: url,
+        link: "https://www.ecluse-prod.com/category/agenda/",
       });
     });
 
-    return NextResponse.json({ total: events.length, events });
+    return NextResponse.json({
+      total: events.length,
+      events,
+    });
   } catch (err) {
-    console.error("Erreur L'Écluse :", err);
+    console.error("Erreur Ecluse:", err);
     return NextResponse.json({ events: [] }, { status: 500 });
   }
 }
