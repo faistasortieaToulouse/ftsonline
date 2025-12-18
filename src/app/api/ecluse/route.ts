@@ -43,25 +43,37 @@ export async function GET() {
     const events: any[] = [];
 
     $("li").each((_, el) => {
-      const text = $(el).text().trim();
+      const li = $(el);
+      const text = li.text().trim();
 
-      // 🔹 Filtre Haute-Garonne / Toulouse uniquement
+      // Filtre Haute-Garonne / Toulouse uniquement
       if (!text.includes("(31)") && !text.toUpperCase().includes("TOULOUSE")) return;
 
       // Date
-      const dateText = $(el).find("strong").first().text();
+      const dateText = li.find("strong").first().text().trim();
       const date = parseFrenchDate(dateText);
       if (!date || date < today || date > maxDate) return;
 
-      // Titre & description
-      const emText = $(el).find("em").first().text().trim();
-      let [titlePart, locationPart] = text.split("–").map(s => s.trim());
-      const title = emText || titlePart || "Événement L'Écluse";
-      const descriptionMatch = text.match(/\(([^)]+)\)/);
-      const description = descriptionMatch ? descriptionMatch[1] : "";
+      // Découper le texte en titre / lieu / compagnie
+      let [beforeDash, afterDash] = text.split("–").map(s => s.trim());
+      if (!beforeDash) beforeDash = text;
+
+      // Titre = retirer la date et l’heure
+      const emText = li.find("em").first().text().trim();
+      let title = emText;
+      if (!title) {
+        title = beforeDash.replace(dateText, "").trim();
+      }
+
+      // Description = compagnie entre parenthèses
+      const descMatch = title.match(/\(([^)]+)\)/);
+      const description = descMatch ? descMatch[1] : "";
+
+      // Nettoyer le titre
+      title = title.replace(/\(([^)]+)\)/, "").trim();
 
       // Lieu
-      const location = locationPart || "Théâtre du Grand Rond, Toulouse (31)";
+      const location = afterDash || "Théâtre du Grand Rond, Toulouse (31)";
 
       events.push({
         id: `ecluse-${date.toISOString()}-${title}`,
@@ -75,10 +87,7 @@ export async function GET() {
       });
     });
 
-    return NextResponse.json({
-      total: events.length,
-      events,
-    });
+    return NextResponse.json({ total: events.length, events });
   } catch (err) {
     console.error("Erreur Ecluse:", err);
     return NextResponse.json({ total: 0, events: [] }, { status: 500 });
