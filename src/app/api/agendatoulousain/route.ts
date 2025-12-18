@@ -1,4 +1,3 @@
-// src/app/api/agendatoulousain/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { decode } from "he";
 
@@ -21,7 +20,7 @@ const defaultComdtImages: Record<string, string> = {
   "Evénements partenaires": "/images/comdt/catecomdtpartenaire.jpg",
 };
 
-// 🔹 Normalisation générique des flux externes
+// 🔹 Normalisation générique
 function normalizeApiResult(data: any): any[] {
   if (!data) return [];
   if (Array.isArray(data)) return data;
@@ -33,7 +32,7 @@ function normalizeApiResult(data: any): any[] {
   return Array.isArray(firstArray) ? firstArray : [];
 }
 
-// 🎬 Normalisation spécifique cinéma (TMDB)
+// 🎬 Normalisation TMDB
 function normalizeCinema(data: any): any[] {
   if (!data?.results) return [];
   const today = new Date();
@@ -104,11 +103,9 @@ function parseICS(text: string) {
       image,
     });
   }
-
   return events;
 }
 
-// 🎵 Normalisation COMDT → today + 31 jours
 function normalizeComdtICS(events: any[]): any[] {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -127,8 +124,12 @@ export const revalidate = 3600;
 export async function GET(request: NextRequest) {
   try {
     const origin = request.nextUrl.origin;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 31);
+    maxDate.setHours(23, 59, 59, 999);
 
-    // 🔹 Sources agrégées
     const EXTERNAL_SOURCES = [
       { url: `${origin}/api/agenda-trad-haute-garonne`, source: "Agenda Trad Haute-Garonne" },
       { url: `${origin}/api/agendaculturel`, source: "Agenda Culturel" },
@@ -136,7 +137,8 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/cinematoulouse`, source: "Sorties cinéma" },
       { url: `${origin}/api/cultureenmouvements`, source: "Culture en Mouvements" },
       { url: `${origin}/api/demosphere`, source: "Demosphere" },
-      { url: `${origin}/api/discord`, source: "Discord" }, // ✅ AJOUT
+      { url: `${origin}/api/discord`, source: "Discord" },
+      { url: `${origin}/api/ecluse`, source: "L'Écluse" },
       { url: "COMDT", source: "COMDT" },
     ];
 
@@ -157,86 +159,47 @@ export async function GET(request: NextRequest) {
             return normalizeComdtICS(parseICS(await res.text()));
           }
 
-          if (source === "Culture en Mouvements") {
-            const res = await fetch(url, { cache: "no-store" });
-            const json = await res.json();
-            return json.map((ev: any) => ({
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) return [];
+          const data = await res.json();
+          const items = normalizeApiResult(data);
+
+          // 🟢 TRAITEMENT ÉCLUSE
+          if (source === "L'Écluse") {
+            return items.map((ev: any) => ({
               ...ev,
-              date: ev.start,
+              image: ev.image || "/images/ecluse/cateporteecluse.jpg",
               source,
-              categories: ["Culture en Mouvements"],
+              categories: ["Théâtre"]
             }));
           }
 
+          // 🔵 TRAITEMENT CULTURE EN MOUVEMENTS
+          if (source === "Culture en Mouvements") {
+            return items.map((ev: any) => ({
+              ...ev,
+              date: ev.start,
+              source,
+            }));
+          }
+
+          // 🔴 TRAITEMENT DEMOSPHERE (Filtre Today + 31 jours)
           if (source === "Demosphere") {
-            const res = await fetch(url, { cache: "no-store" });
-            if (!res.ok) return [];
-
-            const json = await res.json();
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const maxDate = new Date(today);
-            maxDate.setDate(maxDate.getDate() + 31);
-
-            return json
+            return items
               .map((ev: any) => {
-                const d = new Date(ev.start);
+                const d = new Date(ev.start || ev.date);
                 if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
-
                 return {
-                  id: ev.id,
-                  title: ev.title,
+                  ...ev,
                   date: d.toISOString(),
-                  description: ev.description,
-                  location: ev.location,
-                  link: ev.url,
-                  source,
-                  categories: ["Demosphere"],
                   image: "/logo/demosphereoriginal.png",
+                  source
                 };
               })
               .filter(Boolean);
           }
 
-          // 🟣 DISCORD
-          if (source === "Discord") {
-            const res = await fetch(url, { cache: "no-store" });
-            if (!res.ok) return [];
-
-            const json = await res.json();
-            const events = json?.events || [];
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const maxDate = new Date(today);
-            maxDate.setDate(maxDate.getDate() + 31);
-
-            return events
-              .map((ev: any) => {
-                const d = new Date(ev.date);
-                if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
-
-                return {
-                  id: `discord-${ev.id}`,
-                  title: ev.title,
-                  date: d.toISOString(),
-                  description: ev.description,
-                  location: ev.location || "Discord",
-                  link: ev.url,
-                  source,
-                  categories: ["Discord"],
-                  image: ev.image || "/logo/discord.png",
-                };
-              })
-              .filter(Boolean);
-          }
-
-          const res = await fetch(url, { cache: "no-store" });
-          const json = await res.json();
-          return normalizeApiResult(json).map(ev => ({ ...ev, source }));
+          return items.map(ev => ({ ...ev, source }));
         } catch {
           return [];
         }
@@ -244,18 +207,18 @@ export async function GET(request: NextRequest) {
     );
 
     let events = results.flat();
-
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-
-    // 🔹 Normalisation finale
+    
+    // Normalisation finale et nettoyage
     events = events.map(ev => {
       let d = new Date(ev.date || ev.start);
-      if (isNaN(d.getTime()) || d < now) d = now;
+      // Sécurité date
+      if (isNaN(d.getTime())) d = today;
 
       let description = ev.description ? decode(ev.description) : "";
+      // Nettoyage HTML sélectif
       description = description.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
 
+      // Images spécifiques UT Capitole
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         ev.image = getCapitoleImage(ev.title);
       }
@@ -263,7 +226,7 @@ export async function GET(request: NextRequest) {
       return { ...ev, date: d.toISOString(), description };
     });
 
-    // 🔹 Dédoublonnage
+    // Dédoublonnage par ID ou combo Titre-Date-Source
     const uniq = new Map<string, any>();
     events.forEach(ev => {
       const key = ev.id || `${ev.title}-${ev.date}-${ev.source}`;

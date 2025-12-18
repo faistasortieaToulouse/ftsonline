@@ -3,13 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-const getEventImage = (title: string | undefined) => {
-  if (!title) return "https://via.placeholder.com/400x200?text=L'Écluse";
-  const lower = title.toLowerCase();
-  if (lower.includes("concert") || lower.includes("spectacle")) 
-    return "https://via.placeholder.com/400x200?text=Spectacle";
-  return "https://via.placeholder.com/400x200?text=L'Écluse";
-};
+// Image par défaut locale
+const DEFAULT_IMAGE = "/images/ecluse/cateporteecluse.jpg";
 
 const formatDate = (isoDate: string | null) => {
   if (!isoDate) return "";
@@ -23,12 +18,23 @@ const formatDate = (isoDate: string | null) => {
   });
 };
 
+// Fonction pour Source : Majuscule puis minuscules
+const formatSource = (text: string) => {
+  if (!text) return "";
+  const lower = text.toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+};
+
 export default function EclusePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = DEFAULT_IMAGE;
+  };
 
   async function fetchEvents() {
     setLoading(true);
@@ -38,7 +44,6 @@ export default function EclusePage() {
       if (!res.ok) throw new Error(`API HTTP error: ${res.status}`);
       const data = await res.json();
 
-      // Filtrer uniquement les événements en Haute-Garonne (31)
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const maxDate = new Date(today);
@@ -52,15 +57,16 @@ export default function EclusePage() {
         url: it.link,
         source: it.source || "L'Écluse",
         location: it.location || "",
+        image: it.image || null,
       }))
-      .filter(ev => {
+      .filter((ev: any) => {
         if (!ev.start) return false;
         const d = new Date(ev.start);
         if (isNaN(d.getTime())) return false;
         if (d < today || d > maxDate) return false;
-        // Filtrer seulement Haute-Garonne (31)
         return ev.location?.includes("31") || ev.location?.toUpperCase().includes("TOULOUSE");
-      });
+      })
+      .sort((a: any, b: any) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
       setEvents(formatted);
     } catch (err: any) {
@@ -77,80 +83,100 @@ export default function EclusePage() {
     const q = searchQuery.toLowerCase();
     return (
       ev.title.toLowerCase().includes(q) ||
-      ev.description?.toLowerCase().includes(q) ||
-      ev.start?.toLowerCase().includes(q)
+      ev.description?.toLowerCase().includes(q)
     );
   });
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">Événements L'Écluse</h1>
-      <p className="text-muted-foreground mb-6">
-        Événements filtrés depuis le flux officiel de L'Écluse (Haute-Garonne, 31, 31 prochains jours).
+      <h1 className="text-3xl font-bold mb-2 text-indigo-900">Événements L'Écluse</h1>
+      
+      <p className="text-sm text-gray-600 mb-6">
+        {filteredEvents.length} événement{filteredEvents.length > 1 ? "s" : ""} à venir (31 prochains jours)
       </p>
 
-      <div className="flex flex-wrap gap-3 mb-6 items-center">
-        <Button onClick={fetchEvents} disabled={loading}>
-          {loading ? "Chargement..." : "📡 Actualiser"}
-        </Button>
-        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
-          📺 Plein écran
-        </Button>
-        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
-          🔲 Vignette
-        </Button>
+      <div className="flex flex-col sm:flex-row gap-3 mb-8">
         <input
           type="text"
-          placeholder="Rechercher par titre, description ou date..."
+          placeholder="Rechercher par titre, description..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-4 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+          className="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-300 outline-none"
         />
+        <div className="flex gap-2">
+          <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
+            📺 Cartes
+          </Button>
+          <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
+            📋 Liste
+          </Button>
+        </div>
       </div>
 
-      <p className="mb-4 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
-      {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
-      {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement à afficher.</p>}
+      <div className="flex items-center justify-between mb-8">
+        <p className="font-semibold text-sm text-gray-600">Résultats : {filteredEvents.length}</p>
+        <Button onClick={fetchEvents} disabled={loading} size="sm">
+          {loading ? "Chargement..." : "📡 Actualiser"}
+        </Button>
+      </div>
 
-      {viewMode === "card" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-40 object-cover" />
-              <div className="p-3 flex flex-col flex-1">
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
+      {error && <div className="p-4 bg-red-50 text-red-700 border rounded-lg mb-6 text-sm italic">{error}</div>}
+
+      <div className={viewMode === "card" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" : "flex flex-col gap-4"}>
+        {filteredEvents.map(ev => (
+          <div key={ev.id} className={`bg-white shadow rounded-xl overflow-hidden flex flex-col border border-gray-100 ${viewMode === "card" ? "h-[540px]" : "sm:flex-row h-auto p-4 gap-6 shadow-sm"}`}>
+            
+            <img 
+              src={ev.image || DEFAULT_IMAGE} 
+              alt={ev.title} 
+              onError={handleImageError}
+              className={`${viewMode === "card" ? "w-full h-44" : "w-full sm:w-40 h-40 rounded-lg"} object-cover shrink-0`}
+            />
+
+            <div className="p-4 flex flex-col flex-1">
+              <div className="mb-1">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                   📍 {ev.location || "Lieu non précisé"}
+                </p>
+              </div>
+
+              {ev.start && (
+                <p className="text-sm text-blue-600 font-bold mb-1">
+                  {formatDate(ev.start)}
+                </p>
+              )}
+
+              <h2 className="text-lg font-bold mb-2 line-clamp-2 text-gray-800 leading-tight">
+                {ev.title}
+              </h2>
+              
+              <p className="text-sm text-muted-foreground mb-4 line-clamp-4 flex-1 text-justify">
+                {ev.description}
+              </p>
+              
+              <div className="mt-auto space-y-3">
                 {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
-                    🔗 Plus d’informations
-                  </a>
+                  <Button
+                    asChild
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-10 shadow-sm transition-all"
+                  >
+                    <a href={ev.url} target="_blank" rel="noopener noreferrer">
+                      🔗 VOIR L’ÉVÉNEMENT
+                    </a>
+                  </Button>
                 )}
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
+                
+                {/* Source à gauche, formatée : Majuscule puis minuscules */}
+                <div className="text-left">
+                  <span className="text-xs text-muted-foreground">
+                    Source : {formatSource(ev.source)}
+                  </span>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col gap-4">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
-              <div className="flex-1 flex flex-col">
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
-                {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
-                    🔗 Plus d’informations
-                  </a>
-                )}
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -10,7 +10,6 @@ export default function DemospherePage() {
   const [events, setEvents] = useState<any[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   async function fetchEvents() {
@@ -23,14 +22,23 @@ export default function DemospherePage() {
 
       const data = await res.json();
       if (!Array.isArray(data)) {
-        setError("Réponse invalide du serveur.");
-        setEvents([]);
-        setFilteredEvents([]);
-        return;
+        throw new Error("Réponse invalide du serveur.");
       }
 
-      setEvents(data);
-      setFilteredEvents(data);
+      // --- LOGIQUE DE FILTRAGE DATE (Today + 31 jours) ---
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const maxDate = new Date();
+      maxDate.setDate(today.getDate() + 31);
+      maxDate.setHours(23, 59, 59, 999);
+
+      const upComingEvents = data.filter((ev: any) => {
+        const eventDate = new Date(ev.start);
+        return eventDate >= today && eventDate <= maxDate;
+      }).sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+
+      setEvents(upComingEvents);
+      setFilteredEvents(upComingEvents);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
       setEvents([]);
@@ -44,7 +52,7 @@ export default function DemospherePage() {
     fetchEvents();
   }, []);
 
-  // Filtrage dynamique
+  // Filtrage dynamique par recherche
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -64,63 +72,90 @@ export default function DemospherePage() {
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">Événements Demosphere Toulouse</h1>
-      <p className="text-muted-foreground mb-6">
-        Récupération des événements via le flux iCal de Demosphere Toulouse.
+      <h1 className="text-3xl font-bold mb-2 text-indigo-900">Événements Demosphere Toulouse</h1>
+      <p className="text-sm text-gray-600 mb-6">
+        {filteredEvents.length} événement{filteredEvents.length > 1 ? "s" : ""} à venir (31 prochains jours)
       </p>
 
-      {/* Barre de recherche */}
-      <input
-        type="text"
-        placeholder="Rechercher par titre, description, lieu, date..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
-      />
+      {/* Barre de recherche et filtres */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-3">
+        <input
+          type="text"
+          placeholder="Rechercher par titre, lieu..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-300 outline-none"
+        />
+        <div className="flex gap-2">
+          <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
+            📺 Cartes
+          </Button>
+          <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
+            📋 Liste
+          </Button>
+        </div>
+      </div>
 
-      {/* Compteur */}
-      <p className="mb-4 font-semibold">
-        Événements affichés : {filteredEvents.length}
-      </p>
-
-      {/* Mode d'affichage */}
-      <div className="flex gap-4 mb-6">
-        <Button
-          onClick={() => setViewMode("card")}
-          variant={viewMode === "card" ? "default" : "secondary"}
-        >
-          📺 Plein écran
-        </Button>
-        <Button
-          onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "default" : "secondary"}
-        >
-          🔲 Vignette
+      <div className="flex items-center justify-between mb-8">
+        <p className="font-semibold text-sm text-gray-600">Résultats : {filteredEvents.length}</p>
+        <Button onClick={fetchEvents} disabled={loading}>
+          {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
       </div>
 
-      <Button onClick={fetchEvents} disabled={loading} className="mb-6">
-        {loading ? "Chargement..." : "📡 Actualiser"}
-      </Button>
-
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">
-          {error}
+        <div className="p-4 bg-red-50 text-red-700 border rounded-lg mb-6 text-sm italic">
+          Erreur: {error}
         </div>
       )}
 
-      {filteredEvents.length === 0 && !loading && (
-        <p className="text-muted-foreground">Aucun événement trouvé.</p>
+      {/* 🔴 MODE CARTES */}
+      {viewMode === "card" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredEvents.map(ev => (
+            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[520px] border border-gray-100">
+              <div className="relative w-full h-40 bg-gray-50 flex items-center justify-center overflow-hidden border-b">
+                <Image
+                  src="/logo/demosphereoriginal.png"
+                  alt="Logo Demosphere"
+                  fill
+                  className="object-contain p-4 opacity-80"
+                />
+              </div>
+
+              <div className="p-4 flex flex-col flex-1">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                   📍 {ev.location || "Lieu non spécifié"}
+                </p>
+                <h2 className="text-lg font-semibold mb-1 leading-tight line-clamp-2">{ev.title}</h2>
+                <p className="text-sm text-blue-600 font-semibold mb-2">
+                  {new Date(ev.start).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                </p>
+                
+                {ev.description && (
+                  <div className="text-sm text-muted-foreground overflow-y-auto h-24 mb-4 pr-1 text-justify leading-relaxed">
+                    {ev.description}
+                  </div>
+                )}
+
+                <div className="mt-auto space-y-3">
+                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-10 shadow-sm">
+                    <a href={ev.url} target="_blank" rel="noopener noreferrer">🔗 PLUS D'INFOS</a>
+                  </Button>
+                  <p className="text-xs text-muted-foreground">Source : {ev.source}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
-      {/* Mode carte */}
-      {viewMode === "card" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* 🟨 MODE LISTE */}
+      {viewMode === "list" && (
+        <div className="space-y-4">
           {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[500px]">
-              
-              {/* 🔵 IMAGE CORRIGÉE */}
-              <div className="relative w-full h-64 bg-gray-100 flex items-center justify-center overflow-hidden">
+            <div key={ev.id} className="flex flex-col sm:flex-row gap-6 p-4 border rounded-xl bg-white shadow-sm items-center">
+              <div className="relative w-24 h-24 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                 <Image
                   src="/logo/demosphereoriginal.png"
                   alt="Logo Demosphere"
@@ -128,73 +163,19 @@ export default function DemospherePage() {
                   className="object-contain p-2"
                 />
               </div>
-
-              <div className="p-4 flex flex-col flex-1">
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                <p className="text-sm text-blue-600 font-medium mb-2">
-                  {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
+              <div className="flex-1">
+                <h2 className="text-lg font-bold text-gray-800 leading-tight">{ev.title}</h2>
+                <p className="text-sm text-blue-600 font-semibold">
+                  {new Date(ev.start).toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                 </p>
-                {ev.location && <p className="text-sm text-muted-foreground mb-2">📍 {ev.location}</p>}
-                {ev.description && (
-                  <div className="text-sm text-muted-foreground overflow-y-auto h-24 mb-2 pr-1">
-                    {ev.description}
-                  </div>
-                )}
-
-                {/* Bouton avec lien */}
-                <a
-                  href={ev.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto bg-blue-600 text-white py-2 px-3 rounded hover:bg-blue-700 transition text-center"
-                >
-                  🔗 Plus d’infos
-                </a>
-
-                <p className="text-xs text-muted-foreground mt-2">Source : {ev.source}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Mode liste / vignette */}
-      {viewMode === "list" && (
-        <div className="space-y-4">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="flex gap-4 p-4 border rounded-lg shadow bg-white">
-              
-              {/* 🔵 IMAGE CORRIGÉE */}
-              <div className="relative w-24 h-24 bg-gray-200 rounded overflow-hidden">
-                <Image
-                  src="/logo/demosphereoriginal.png"
-                  alt="Logo Demosphere"
-                  fill
-                  className="object-contain p-1"
-                />
-              </div>
-
-              <div className="flex-1 flex flex-col">
-                <h2 className="text-lg font-semibold line-clamp-2">{ev.title}</h2>
-                <p className="text-sm text-blue-600">
-                  {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
-                </p>
-                {ev.location && <p className="text-sm text-muted-foreground">{ev.location}</p>}
-                {ev.description && (
-                  <div className="text-sm text-muted-foreground line-clamp-3">{ev.description}</div>
-                )}
-
-                {/* Bouton avec lien */}
-                <a
-                  href={ev.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 bg-blue-600 text-white py-1 px-2 rounded hover:bg-blue-700 transition text-sm w-max text-center"
-                >
-                  🔗 Plus d’infos
-                </a>
-
-                <p className="text-xs text-muted-foreground mt-1">Source : {ev.source}</p>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">📍 {ev.location}</p>
+                
+                <div className="mt-4 flex flex-wrap items-center gap-4">
+                  <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 h-9">
+                    <a href={ev.url} target="_blank" rel="noopener noreferrer">Plus d'infos →</a>
+                  </Button>
+                  <span className="text-xs text-muted-foreground">Source : {ev.source}</span>
+                </div>
               </div>
             </div>
           ))}

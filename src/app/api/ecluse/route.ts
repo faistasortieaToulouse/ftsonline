@@ -82,7 +82,7 @@ export async function GET() {
         date: date.toISOString(),
         location,
         source: "L'Écluse",
-        image: "/images/ecluse/ecluse-default.jpg",
+        image: "/images/ecluse/cateporteecluse.jpg",
         link: "https://www.ecluse-prod.com/category/agenda/",
       });
     });

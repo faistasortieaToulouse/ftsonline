@@ -1,15 +1,13 @@
-// src/app/comdt/page.tsx
 'use client';
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import parse from "html-react-parser";
 
-export const dynamic = "force-dynamic"; // ⚡ Evite le SSG et l'erreur Dynamic server usage
+export const dynamic = "force-dynamic";
 
 const MAX_EVENTS = 50;
 
-// 🔹 Images par défaut selon catégorie
 const DEFAULT_IMAGES: Record<string, string> = {
   "Stages": "/images/comdt/catecomdtstage.jpg",
   "Stages de danse": "/images/comdt/catecomdtdanse.jpg",
@@ -20,7 +18,6 @@ const DEFAULT_IMAGES: Record<string, string> = {
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
-// 🔹 Formater les descriptions avec sauts de ligne
 function formatDescription(desc: string) {
   if (!desc) return "";
   const html = desc.replace(/\n/g, "<br />");
@@ -34,7 +31,6 @@ export default function ComdtPage() {
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // 🔹 Récupération des événements ICS depuis l'API
   async function fetchEvents() {
     setLoading(true);
     setError(null);
@@ -64,8 +60,7 @@ export default function ComdtPage() {
             })
           : "Date non spécifiée";
 
-        const image =
-          ev.image || DEFAULT_IMAGES[ev.category] || PLACEHOLDER_IMAGE;
+        const image = ev.image || DEFAULT_IMAGES[ev.category] || PLACEHOLDER_IMAGE;
 
         return {
           id: ev.id || Math.random().toString(),
@@ -77,15 +72,14 @@ export default function ComdtPage() {
           date: dateObj,
           dateFormatted,
           fullAddress: ev.location || "Lieu non spécifié",
+          source: "COMDT"
         };
       });
 
-      // 🔹 Filtrer uniquement événements d’aujourd’hui à +31 jours
       const filteredByDate = mappedEvents.filter(
         (ev) => ev.date && ev.date >= today && ev.date <= maxDate
       );
 
-      // 🔹 Tri par date et limitation
       const uniqueEvents = Array.from(
         new Map(filteredByDate.map((e) => [e.id, e])).values()
       )
@@ -117,12 +111,19 @@ export default function ComdtPage() {
 
   return (
     <div className="container mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-2">
-        🎶 Agenda du COMDT (Centre des Musiques et Danses Traditionnelles)
+      {/* Style scrollbar personnalisé */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+      `}</style>
+
+      <h1 className="text-3xl font-bold mb-2 text-indigo-900">
+        🎶 Agenda du COMDT
       </h1>
 
       <p className="text-sm text-gray-600 mb-6">
-        {filteredEvents.length} événement{filteredEvents.length > 1 ? "s" : ""} à venir
+        {filteredEvents.length} événement{filteredEvents.length > 1 ? "s" : ""} à venir (31 prochains jours)
       </p>
 
       <div className="mb-6 flex flex-col sm:flex-row gap-3">
@@ -131,7 +132,7 @@ export default function ComdtPage() {
           placeholder="Rechercher un événement..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-3 border rounded"
+          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-300 outline-none"
         />
 
         <div className="flex gap-2">
@@ -145,63 +146,68 @@ export default function ComdtPage() {
             onClick={() => setViewMode("list")}
             variant={viewMode === "list" ? "default" : "secondary"}
           >
-            🔲 Liste
+            📋 Liste
           </Button>
         </div>
       </div>
 
-      <Button onClick={fetchEvents} disabled={loading} className="mb-6">
+      <Button onClick={fetchEvents} disabled={loading} className="mb-8">
         {loading ? "Chargement..." : "📡 Actualiser"}
       </Button>
 
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 border rounded mb-6">
+        <div className="p-4 bg-red-50 text-red-700 border rounded-lg mb-6">
           {error}
         </div>
       )}
 
-      {filteredEvents.length === 0 && !loading && (
-        <p className="text-muted-foreground">Aucun événement à venir.</p>
-      )}
-
       {/* 🔴 MODE CARTES */}
       {viewMode === "card" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredEvents.map((ev, i) => (
             <div
               key={ev.id || i}
-              className="bg-white shadow rounded overflow-hidden flex flex-col h-[560px]"
+              className="bg-white shadow rounded overflow-hidden flex flex-col h-[520px] border border-gray-100"
             >
               <img
                 src={ev.image}
                 alt={ev.title}
-                className="w-full aspect-[16/9] object-cover"
+                className="w-full h-40 object-cover"
               />
               <div className="p-4 flex flex-col flex-1">
-                <h2 className="text-xl font-semibold mb-1">{ev.title}</h2>
-                <p className="text-sm text-blue-600 font-medium mb-2">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                   📍 {ev.fullAddress}
+                </p>
+                <h2 className="text-lg font-semibold mb-1 leading-tight line-clamp-2">{ev.title}</h2>
+                <p className="text-sm text-blue-600 font-semibold mb-1">
                   {ev.category}
                 </p>
-                <p className="text-sm font-medium mb-2">{ev.dateFormatted}</p>
+                <p className="text-sm font-medium text-gray-700 mb-3">{ev.dateFormatted}</p>
 
                 {ev.description && (
-                  <div className="text-sm text-muted-foreground mb-3 flex-1">
-                    <div className="h-24 overflow-y-auto pr-2 scrollable">
+                  <div className="text-sm text-muted-foreground mb-4 flex-1 overflow-hidden">
+                    <div className="h-24 overflow-y-auto pr-2 custom-scrollbar text-justify leading-relaxed">
                       {formatDescription(ev.description)}
                     </div>
                   </div>
                 )}
 
-                {ev.url && (
-                  <Button
-                    asChild
-                    className="mt-auto bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <a href={ev.url} target="_blank" rel="noopener noreferrer">
-                      🔗 Voir l’événement
-                    </a>
-                  </Button>
-                )}
+                <div className="mt-auto space-y-3">
+                  {ev.url && (
+                    <Button
+                      asChild
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-10 transition-all"
+                    >
+                      <a href={ev.url} target="_blank" rel="noopener noreferrer">
+                        🔗 VOIR L'ÉVÉNEMENT
+                      </a>
+                    </Button>
+                  )}
+                  
+                  <p className="text-xs text-muted-foreground">
+                    Source : {ev.source}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
@@ -214,33 +220,35 @@ export default function ComdtPage() {
           {filteredEvents.map((ev, i) => (
             <div
               key={ev.id || i}
-              className="flex gap-4 p-4 border rounded bg-white"
+              className="flex flex-col sm:flex-row gap-6 p-4 border rounded-xl bg-white shadow-sm items-center"
             >
               <img
                 src={ev.image}
                 alt={ev.title}
-                className="w-24 h-24 rounded object-cover"
+                className="w-full sm:w-32 h-32 rounded-lg object-cover"
               />
               <div className="flex flex-col flex-1">
-                <h2 className="text-lg font-semibold">{ev.title}</h2>
-                <p className="text-sm text-blue-600">{ev.category}</p>
-                <p className="text-sm">{ev.dateFormatted}</p>
-                {ev.description && (
-                  <div className="text-sm text-muted-foreground line-clamp-3 mt-1">
-                    {formatDescription(ev.description)}
-                  </div>
-                )}
-                {ev.url && (
-                  <Button
-                    asChild
-                    size="sm"
-                    className="mt-2 w-fit bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <a href={ev.url} target="_blank" rel="noopener noreferrer">
-                      Voir l’événement →
-                    </a>
-                  </Button>
-                )}
+                <h2 className="text-lg font-bold text-gray-800 leading-tight">{ev.title}</h2>
+                <p className="text-sm text-blue-600 font-semibold">{ev.category}</p>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">📍 {ev.fullAddress}</p>
+                <p className="text-sm font-medium mt-1">{ev.dateFormatted}</p>
+                
+                <div className="mt-4 flex flex-wrap items-center gap-4">
+                  {ev.url && (
+                    <Button
+                      asChild
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 h-9"
+                    >
+                      <a href={ev.url} target="_blank" rel="noopener noreferrer">
+                        Voir l’événement →
+                      </a>
+                    </Button>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    Source : {ev.source}
+                  </span>
+                </div>
               </div>
             </div>
           ))}

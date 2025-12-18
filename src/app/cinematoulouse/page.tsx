@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 // Image fallback selon titre
 const getMovieImage = (title: string | undefined, poster: string | null) => {
   if (poster) return `https://image.tmdb.org/t/p/w500${poster}`;
-
-  if (!title) return "/images/capidefaut.jpg";
+  if (!title) return "/images/capitole/capidefaut.jpg";
   const lower = title.toLowerCase();
   if (lower.includes("ciné") || lower.includes("film")) return "/images/capitole/capicine.jpg";
   return "/images/capitole/capidefaut.jpg";
@@ -35,7 +34,6 @@ export default function CinemaToulousePage() {
   async function fetchMovies() {
     setLoading(true);
     setError(null);
-
     try {
       const res = await fetch("/api/cinematoulouse");
       if (!res.ok) throw new Error(`Erreur API ${res.status}`);
@@ -56,7 +54,6 @@ export default function CinemaToulousePage() {
 
   useEffect(() => { fetchMovies(); }, []);
 
-  // Filtrer selon recherche
   useEffect(() => {
     if (!searchQuery) {
       setFiltered(movies);
@@ -74,6 +71,12 @@ export default function CinemaToulousePage() {
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Style pour le scroll discret */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+      `}</style>
       
       <h1 className="text-3xl font-bold mb-4">🎬 Sorties cinéma – Toulouse</h1>
       <p className="text-muted-foreground mb-6">
@@ -88,12 +91,12 @@ export default function CinemaToulousePage() {
 
         <Button onClick={() => setViewMode("card")}
           variant={viewMode === "card" ? "default" : "secondary"}>
-          📺 Vue cartes
+          📺 Cartes
         </Button>
 
         <Button onClick={() => setViewMode("list")}
           variant={viewMode === "list" ? "default" : "secondary"}>
-          🔲 Vue liste
+          📋 Liste
         </Button>
 
         <input
@@ -101,20 +104,16 @@ export default function CinemaToulousePage() {
           placeholder="Rechercher un film..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-4 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+          className="flex-1 p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
         />
       </div>
 
-      <p className="mb-4 text-sm text-gray-600">Films affichés : {filtered.length}</p>
+      <p className="mb-4 text-sm text-gray-600 font-medium">Films affichés : {filtered.length}</p>
 
       {error && (
         <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">
           {error}
         </div>
-      )}
-
-      {filtered.length === 0 && !loading && (
-        <p className="text-muted-foreground">Aucun film trouvé.</p>
       )}
 
       {/* Vue cartes */}
@@ -123,7 +122,7 @@ export default function CinemaToulousePage() {
           {filtered.map((film) => (
             <div
               key={film.id}
-              className="bg-white shadow rounded overflow-hidden flex flex-col h-[500px]"
+              className="bg-white shadow rounded overflow-hidden flex flex-col h-[520px] border border-gray-100"
             >
               <img
                 src={getMovieImage(film.title, film.poster_path)}
@@ -131,29 +130,31 @@ export default function CinemaToulousePage() {
                 className="w-full h-60 object-cover"
               />
 
-              <div className="p-3 flex flex-col flex-1">
-                <h2 className="text-lg font-semibold mb-1">{film.title}</h2>
+              <div className="p-4 flex flex-col flex-1">
+                <h2 className="text-lg font-semibold mb-1 leading-tight line-clamp-2">{film.title}</h2>
 
-                <p className="text-sm text-blue-600 font-medium mb-1">
+                <p className="text-sm text-blue-600 font-medium mb-2">
                   📅 {formatDate(film.release_date)}
                 </p>
 
-                <p className="text-sm text-muted-foreground mb-2 line-clamp-4">
-                  {film.overview || "Pas de synopsis disponible."}
-                </p>
+                {/* Zone synopsis scrollable */}
+                <div className="text-sm text-muted-foreground mb-4 flex-1 overflow-hidden">
+                  <div className="h-24 overflow-y-auto pr-2 custom-scrollbar leading-relaxed">
+                    {film.overview || "Pas de synopsis disponible."}
+                  </div>
+                </div>
 
-                <a
-                  href={`https://www.themoviedb.org/movie/${film.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline text-sm mb-1"
-                >
-                  🔗 Voir sur TMDB
-                </a>
+                <div className="mt-auto space-y-3">
+                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-10">
+                    <a href={`https://www.themoviedb.org/movie/${film.id}`} target="_blank" rel="noopener noreferrer">
+                      🔗 VOIR SUR TMDB
+                    </a>
+                  </Button>
 
-                <p className="text-xs text-muted-foreground mt-auto">
-                  Source : TMDB
-                </p>
+                  <p className="text-xs text-muted-foreground">
+                    Source : TMDB
+                  </p>
+                </div>
               </div>
             </div>
           ))}
@@ -164,7 +165,7 @@ export default function CinemaToulousePage() {
           {filtered.map((film) => (
             <div
               key={film.id}
-              className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3"
+              className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4 items-center"
             >
               <img
                 src={getMovieImage(film.title, film.poster_path)}
@@ -174,27 +175,15 @@ export default function CinemaToulousePage() {
 
               <div className="flex-1 flex flex-col">
                 <h2 className="text-lg font-semibold mb-1">{film.title}</h2>
+                <p className="text-sm text-blue-600 font-medium mb-1">📅 {formatDate(film.release_date)}</p>
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{film.overview}</p>
 
-                <p className="text-sm text-blue-600 font-medium mb-1">
-                  📅 {formatDate(film.release_date)}
-                </p>
-
-                <p className="text-sm text-muted-foreground mb-1 line-clamp-4">
-                  {film.overview}
-                </p>
-
-                <a
-                  href={`https://www.themoviedb.org/movie/${film.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline text-sm mb-1"
-                >
-                  🔗 Voir sur TMDB
-                </a>
-
-                <p className="text-xs text-muted-foreground mt-auto">
-                  Source : TMDB
-                </p>
+                <div className="mt-auto flex flex-wrap items-center gap-4">
+                  <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-9 px-4">
+                    <a href={`https://www.themoviedb.org/movie/${film.id}`} target="_blank" rel="noopener noreferrer">Voir sur TMDB</a>
+                  </Button>
+                  <p className="text-xs text-muted-foreground">Source : TMDB</p>
+                </div>
               </div>
             </div>
           ))}
