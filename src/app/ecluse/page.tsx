@@ -1,156 +1,85 @@
-'use client';
+// src/app/api/ecluse/route.ts
+import { NextResponse } from 'next/server';
+import { XMLParser } from 'fast-xml-parser';
+import { JSDOM } from 'jsdom';
 
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+export async function GET() {
+  const feedUrl = 'https://www.ecluse-prod.com/category/agenda/feed/';
 
-const getEventImage = (title: string | undefined) => {
-  if (!title) return "https://via.placeholder.com/400x200?text=L'Écluse";
-  const lower = title.toLowerCase();
-  if (lower.includes("concert") || lower.includes("spectacle")) 
-    return "https://via.placeholder.com/400x200?text=Spectacle";
-  return "https://via.placeholder.com/400x200?text=L'Écluse";
-};
+  try {
+    const res = await fetch(feedUrl, { headers: { 'User-Agent': 'Next.js – RSS Fetcher' } });
+    if (!res.ok) return NextResponse.json({ events: [] }, { status: res.status });
 
-const formatDate = (isoDate: string | null) => {
-  if (!isoDate) return "";
-  const date = new Date(isoDate);
-  return date.toLocaleString("fr-FR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
+    const xml = await res.text();
+    const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '' });
+    const parsed = parser.parse(xml);
+    const item = parsed?.rss?.channel?.item;
 
-export default function EclusePage() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+    if (!item) return NextResponse.json({ events: [] });
 
-  async function fetchEvents() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/ecluse");
-      if (!res.ok) throw new Error(`API HTTP error: ${res.status}`);
-      const data = await res.json();
+    // Le flux contient tout dans content:encoded
+    const html = item['content:encoded'];
+    if (!html) return NextResponse.json({ events: [] });
 
-      // Filtrer uniquement les événements en Haute-Garonne (31)
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const maxDate = new Date(today);
-      maxDate.setDate(maxDate.getDate() + 31);
+    const dom = new JSDOM(html);
+    const document = dom.window.document;
+    const lis = Array.from(document.querySelectorAll('ul li'));
 
-      const formatted = (data.events ?? []).map((it: any, idx: number) => ({
-        id: idx,
-        title: it.title,
-        description: it.description || "",
-        start: it.date || it.pubDate,
-        url: it.link,
-        source: it.source || "L'Écluse",
-        location: it.location || "",
-      }))
-      .filter(ev => {
-        if (!ev.start) return false;
-        const d = new Date(ev.start);
-        if (isNaN(d.getTime())) return false;
-        if (d < today || d > maxDate) return false;
-        // Filtrer seulement Haute-Garonne (31)
-        return ev.location?.includes("31") || ev.location?.toUpperCase().includes("TOULOUSE");
-      });
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + 31);
 
-      setEvents(formatted);
-    } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
-    } finally {
-      setLoading(false);
-    }
+    const events = lis
+      .map(li => {
+        const text = li.textContent?.trim();
+        if (!text) return null;
+
+        // Ex: "Mer 31 déc à 19h : Le 11/11/11 à 11h11… (Cie 11h11) – Théâtre du Grand Rond, TOULOUSE (31)**"
+        const dateMatch = text.match(/([A-Za-z]+ \d{1,2} [a-z]+) à (\d{1,2}h\d{0,2})/i);
+        if (!dateMatch) return null;
+
+        const [_, dateStr, hourStr] = dateMatch;
+
+        // construire date
+        const yearMatch = html.match(/SAISON (\d{4})/);
+        const year = yearMatch ? parseInt(yearMatch[1], 10) : today.getFullYear();
+        const months: Record<string, number> = {
+          janv:0, fév:1, mars:2, avril:3, mai:4, juin:5,
+          juil:6, août:7, sept:8, oct:9, nov:10, déc:11
+        };
+        const [dayStr, monthStr] = dateStr.split(' ').slice(1); // ex: "31 déc"
+        const day = parseInt(dayStr, 10);
+        const month = months[monthStr.toLowerCase()] ?? 0;
+
+        const [hour, min] = hourStr.split('h').map(n=>parseInt(n,10));
+        const eventDate = new Date(year, month, day, hour, min||0);
+        if (isNaN(eventDate.getTime())) return null;
+        if (eventDate < today || eventDate > maxDate) return null;
+
+        // filtrer Haute-Garonne
+        if (!text.includes('31') && !text.toUpperCase().includes('TOULOUSE')) return null;
+
+        // extraire title et lieu
+        const parts = text.split('–');
+        const title = parts[0]?.split(':').slice(1).join(':').trim() || text;
+        const location = parts[1]?.trim() || '';
+
+        return {
+          title,
+          description: text,
+          date: eventDate.toISOString(),
+          location,
+          link: item.link,
+          image: title.toLowerCase().includes('spectacle') ? 'https://via.placeholder.com/400x200?text=Spectacle' : 'https://via.placeholder.com/400x200?text=L\'Écluse',
+          source: "L'Écluse",
+        };
+      })
+      .filter(Boolean);
+
+    return NextResponse.json({ events });
+  } catch (err: any) {
+    console.error(err);
+    return NextResponse.json({ events: [], error: 'Impossible de récupérer le flux RSS' }, { status: 500 });
   }
-
-  useEffect(() => { fetchEvents(); }, []);
-
-  const filteredEvents = events.filter(ev => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      ev.title.toLowerCase().includes(q) ||
-      ev.description?.toLowerCase().includes(q) ||
-      ev.start?.toLowerCase().includes(q)
-    );
-  });
-
-  return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">Événements L'Écluse</h1>
-      <p className="text-muted-foreground mb-6">
-        Événements filtrés depuis le flux officiel de L'Écluse (Haute-Garonne, 31, 31 prochains jours).
-      </p>
-
-      <div className="flex flex-wrap gap-3 mb-6 items-center">
-        <Button onClick={fetchEvents} disabled={loading}>
-          {loading ? "Chargement..." : "📡 Actualiser"}
-        </Button>
-        <Button onClick={() => setViewMode("card")} variant={viewMode === "card" ? "default" : "secondary"}>
-          📺 Plein écran
-        </Button>
-        <Button onClick={() => setViewMode("list")} variant={viewMode === "list" ? "default" : "secondary"}>
-          🔲 Vignette
-        </Button>
-        <input
-          type="text"
-          placeholder="Rechercher par titre, description ou date..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-4 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
-        />
-      </div>
-
-      <p className="mb-4 text-sm text-gray-600">Événements affichés : {filteredEvents.length}</p>
-      {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
-      {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun événement à afficher.</p>}
-
-      {viewMode === "card" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[480px]">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full h-40 object-cover" />
-              <div className="p-3 flex flex-col flex-1">
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
-                {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
-                    🔗 Plus d’informations
-                  </a>
-                )}
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col gap-4">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-3 gap-3">
-              <img src={getEventImage(ev.title)} alt={ev.title} className="w-full sm:w-40 h-36 object-cover rounded" />
-              <div className="flex-1 flex flex-col">
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
-                {ev.start && <p className="text-sm text-blue-600 font-medium mb-1">{formatDate(ev.start)}</p>}
-                {ev.description && <p className="text-sm text-muted-foreground mb-1 line-clamp-4">{ev.description}</p>}
-                {ev.url && (
-                  <a href={ev.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mb-1">
-                    🔗 Plus d’informations
-                  </a>
-                )}
-                <p className="text-xs text-muted-foreground mt-auto">Source : {ev.source}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
