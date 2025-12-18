@@ -50,22 +50,50 @@ function normalizeCinema(data: any): any[] {
     }));
 }
 
-// 🎵 Normalisation COMDT (ICS)
-function normalizeComdt(data: any): any[] {
-  const events = data?.events || []; // 🔹 ATTENTION : 'events' et non 'records'
+// 🔹 Parse ICS COMDT
+function parseICS(text: string) {
+  const events: any[] = [];
+  const blocks = text.split("BEGIN:VEVENT").slice(1);
+
+  for (const block of blocks) {
+    const get = (key: string) => {
+      const m = block.match(new RegExp(`${key}[^:]*:(.+)`));
+      return m ? m[1].trim() : "";
+    };
+
+    const dt = get("DTSTART");
+    if (!dt) continue;
+    const date = /^\d{8}$/.test(dt)
+      ? new Date(`${dt.slice(0, 4)}-${dt.slice(4, 6)}-${dt.slice(6, 8)}T00:00:00`)
+      : new Date(dt);
+    if (isNaN(date.getTime())) continue;
+
+    events.push({
+      id: get("UID"),
+      title: get("SUMMARY"),
+      description: get("DESCRIPTION").replace(/\\n/g, "\n"),
+      link: get("URL"),
+      location: get("LOCATION"),
+      date: date.toISOString(),
+      source: "COMDT",
+    });
+  }
+
+  return events;
+}
+
+// 🎵 Normalisation COMDT pour today + 31 jours
+function normalizeComdtICS(events: any[]): any[] {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const maxDate = new Date(today);
+  maxDate.setDate(maxDate.getDate() + 31);
 
   return events
-    .map((ev: any) => {
-      const d = ev.date ? new Date(ev.date) : null;
-      if (!d || isNaN(d.getTime()) || d < today) return null;
-
-      return {
-        ...ev,
-        date: d.toISOString(),
-        source: ev.source || "COMDT",
-      };
+    .map(ev => {
+      const d = new Date(ev.date);
+      if (!d || isNaN(d.getTime()) || d < today || d > maxDate) return null;
+      return { ...ev, date: d.toISOString() };
     })
     .filter(Boolean);
 }
@@ -83,29 +111,35 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/agendaculturel`, defaultSource: "Agenda Culturel" },
       { url: `${origin}/api/capitole-min`, defaultSource: "Université Toulouse Capitole" },
       { url: `${origin}/api/cinematoulouse`, defaultSource: "Sorties cinéma" },
-      { url: `${origin}/api/comdt`, defaultSource: "COMDT" },
+      { url: "COMDT", defaultSource: "COMDT" }, // signal spécial pour ICS
     ];
 
     const results = await Promise.all(
       EXTERNAL_SOURCES.map(async ({ url, defaultSource }) => {
         try {
-          const res = await fetch(url, { cache: "no-store" });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const json = await res.json();
-
           if (defaultSource === "Sorties cinéma") {
+            const res = await fetch(`${origin}/api/cinematoulouse`, { cache: "no-store" });
+            const json = await res.json();
             return normalizeCinema(json);
           }
 
           if (defaultSource === "COMDT") {
-            return normalizeComdt(json);
+            const res = await fetch("https://www.comdt.org/events/feed/?ical=1", {
+              headers: { Accept: "text/calendar" },
+              cache: "no-store",
+            });
+            if (!res.ok) return [];
+            const text = await res.text();
+            const events = parseICS(text);
+            return normalizeComdtICS(events);
           }
 
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const json = await res.json();
+
           const data = normalizeApiResult(json);
-          return data.map(ev => ({
-            ...ev,
-            source: ev.source || defaultSource,
-          }));
+          return data.map(ev => ({ ...ev, source: ev.source || defaultSource }));
         } catch (err) {
           console.error("Erreur API externe:", url, err);
           return [];
