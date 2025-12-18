@@ -19,7 +19,8 @@ function normalizeApiResult(data: any): any[] {
   if (Array.isArray(data.items)) return data.items;
   if (Array.isArray(data.events)) return data.events;
   if (Array.isArray(data.data)) return data.data;
-  const firstArray = Object.values(data).find((v) => Array.isArray(v));
+  if (Array.isArray(data.records)) return data.records;
+  const firstArray = Object.values(data).find(v => Array.isArray(v));
   return Array.isArray(firstArray) ? firstArray : [];
 }
 
@@ -49,6 +50,32 @@ function normalizeCinema(data: any): any[] {
     }));
 }
 
+// 🎵 Normalisation COMDT (ICS)
+function normalizeComdt(data: any): any[] {
+  if (!data?.records) return [];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return data.records
+    .map((ev: any) => {
+      if (!ev.dtstart) return null;
+      const d = new Date(ev.dtstart);
+      if (isNaN(d.getTime()) || d < today) return null;
+
+      return {
+        id: ev.uid,
+        title: ev.summary,
+        date: d.toISOString(),
+        description: ev.description || "",
+        location: ev.location,
+        link: ev.url,
+        source: "COMDT",
+      };
+    })
+    .filter(Boolean);
+}
+
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
@@ -61,7 +88,8 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/agenda-trad-haute-garonne`, defaultSource: "Agenda Trad Haute-Garonne" },
       { url: `${origin}/api/agendaculturel`, defaultSource: "Agenda Culturel" },
       { url: `${origin}/api/capitole-min`, defaultSource: "Université Toulouse Capitole" },
-      { url: `${origin}/api/cinematoulouse`, defaultSource: "Sorties cinéma" }, // 🎬
+      { url: `${origin}/api/cinematoulouse`, defaultSource: "Sorties cinéma" },
+      { url: `${origin}/api/comdt`, defaultSource: "COMDT" }, // 🎵 AJOUT
     ];
 
     const results = await Promise.all(
@@ -71,14 +99,16 @@ export async function GET(request: NextRequest) {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const json = await res.json();
 
-          // 🎬 Cas particulier : cinéma
           if (defaultSource === "Sorties cinéma") {
             return normalizeCinema(json);
           }
 
-          // 🔹 Autres APIs
+          if (defaultSource === "COMDT") {
+            return normalizeComdt(json);
+          }
+
           const data = normalizeApiResult(json);
-          return data.map((ev) => ({
+          return data.map(ev => ({
             ...ev,
             source: ev.source || defaultSource,
           }));
@@ -95,7 +125,7 @@ export async function GET(request: NextRequest) {
     now.setHours(0, 0, 0, 0);
 
     // 🔹 Normalisation des dates + nettoyage description
-    events = events.map((ev) => {
+    events = events.map(ev => {
       let raw = ev.date || ev.start || ev.startDate;
       let d: Date | null = raw ? new Date(raw) : null;
 
@@ -105,12 +135,10 @@ export async function GET(request: NextRequest) {
 
       let description = ev.description ? decode(ev.description) : "";
 
-      // Nettoyage spécifique Agenda Trad
       if (ev.source === "Agenda Trad Haute-Garonne") {
         description = description.replace(/source:.*AgendaTrad.*$/i, "").trim();
       }
 
-      // Nettoyage HTML (conserver p, br, strong, em, a)
       description = description
         .replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "")
         .trim();
@@ -122,17 +150,17 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // 🔹 Images par défaut UT Capitole
-    events = events.map((ev) => {
+    // 🔹 Images UT Capitole
+    events = events.map(ev => {
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         return { ...ev, image: getCapitoleImage(ev.title) };
       }
       return ev;
     });
 
-    // 🔹 Suppression des doublons
+    // 🔹 Dédoublonnage
     const uniq = new Map<string, any>();
-    events.forEach((ev) => {
+    events.forEach(ev => {
       const key =
         ev.id ||
         `${ev.title || "no-title"}-${ev.date || "no-date"}-${ev.source || "no-source"}`;
