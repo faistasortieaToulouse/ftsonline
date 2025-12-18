@@ -36,10 +36,8 @@ function normalizeApiResult(data: any): any[] {
 // 🎬 Normalisation spécifique TMDB (cinéma)
 function normalizeCinema(data: any): any[] {
   if (!data?.results) return [];
-
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
   return data.results
     .filter((film: any) => {
       if (!film.release_date) return false;
@@ -84,7 +82,6 @@ function parseICS(text: string) {
     })();
     if (!date) continue;
 
-    // 📌 Gestion de l'image : ATTACH sinon image par défaut selon catégorie
     let image = get("ATTACH");
     if (!image) {
       const categories = get("CATEGORIES").split(",").map(c => c.trim());
@@ -141,6 +138,7 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/agendaculturel`, defaultSource: "Agenda Culturel" },
       { url: `${origin}/api/capitole-min`, defaultSource: "Université Toulouse Capitole" },
       { url: `${origin}/api/cinematoulouse`, defaultSource: "Sorties cinéma" },
+      { url: `${origin}/api/cultureenmouvements`, defaultSource: "Culture en Mouvements" },
       { url: "COMDT", defaultSource: "COMDT" }, // signal spécial pour ICS
     ];
 
@@ -162,6 +160,20 @@ export async function GET(request: NextRequest) {
             const text = await res.text();
             const events = parseICS(text);
             return normalizeComdtICS(events);
+          }
+
+          if (defaultSource === "Culture en Mouvements") {
+            const res = await fetch(`${origin}/api/cultureenmouvements`, { cache: "no-store" });
+            if (!res.ok) return [];
+            const json = await res.json();
+            return json.map((ev: any) => ({
+              ...ev,
+              date: ev.start,
+              source: defaultSource,
+              description: ev.title,
+              categories: ["Culture en Mouvements"],
+              image: ev.image,
+            }));
           }
 
           const res = await fetch(url, { cache: "no-store" });
