@@ -117,9 +117,13 @@ export default function ComdtPage() {
 
   return (
     <div className="container mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold mb-4">
+      <h1 className="text-3xl font-bold mb-2">
         🎶 Agenda du COMDT (Centre des Musiques et Danses Traditionnelles)
       </h1>
+
+      <p className="text-sm text-gray-600 mb-6">
+        {filteredEvents.length} événement{filteredEvents.length > 1 ? "s" : ""} à venir
+      </p>
 
       <div className="mb-6 flex flex-col sm:flex-row gap-3">
         <input
