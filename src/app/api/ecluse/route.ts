@@ -1,111 +1,55 @@
-// app/api/ecluse/route.ts
-import { NextResponse } from "next/server";
-import { XMLParser } from "fast-xml-parser";
-import * as cheerio from "cheerio";
-
-const MONTHS: Record<string, number> = {
-  janv: 0,
-  fév: 1,
-  fev: 1,
-  mars: 2,
-  avr: 3,
-  mai: 4,
-  juin: 5,
-  juil: 6,
-  août: 7,
-  aout: 7,
-  sept: 8,
-  oct: 9,
-  nov: 10,
-  déc: 11,
-  dec: 11,
-};
-
-function parseFrenchDate(text: string): Date | null {
-  const match = text.match(/(\d{1,2}|1er)\s([a-zéû]+)/i);
-  if (!match) return null;
-
-  const day = match[1] === "1er" ? 1 : parseInt(match[1], 10);
-  const month = MONTHS[match[2].toLowerCase()];
-  if (month === undefined) return null;
-
-  const now = new Date();
-  let year = now.getFullYear();
-
-  let date = new Date(year, month, day);
-  if (date < now) {
-    date = new Date(year + 1, month, day);
-  }
-
-  return date;
-}
+import { NextResponse } from 'next/server';
+import { XMLParser } from 'fast-xml-parser';
+import { JSDOM } from 'jsdom';
 
 export async function GET() {
-  const feedUrl = "https://www.ecluse-prod.com/category/agenda/feed/";
-
+  const feedUrl = 'https://www.ecluse-prod.com/category/agenda/feed/';
   try {
-    const res = await fetch(feedUrl, {
-      headers: { "User-Agent": "Next.js" },
-      cache: "no-store",
-    });
+    const res = await fetch(feedUrl, { headers: { 'User-Agent': 'Next.js – RSS Fetcher' } });
+    if (!res.ok) return NextResponse.json({ items: [] }, { status: res.status });
 
-    if (!res.ok) {
-      return NextResponse.json({ events: [] });
-    }
+    const text = await res.text();
+    const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '' });
+    const parsed = parser.parse(text);
+    const items = parsed?.rss?.channel?.item;
+    if (!items) return NextResponse.json({ items: [] });
 
-    const xml = await res.text();
-
-    const parser = new XMLParser({
-      ignoreAttributes: false,
-    });
-
-    const parsed = parser.parse(xml);
-    const item = parsed?.rss?.channel?.item;
-    if (!item?.["content:encoded"]) {
-      return NextResponse.json({ events: [] });
-    }
-
-    const html = item["content:encoded"];
-    const $ = cheerio.load(html);
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const maxDate = new Date(today);
-    maxDate.setDate(maxDate.getDate() + 31);
+    // On prend le premier item (tout le calendrier)
+    const content = items[0]['content:encoded'] ?? '';
+    const dom = new JSDOM(content);
+    const document = dom.window.document;
 
     const events: any[] = [];
+    document.querySelectorAll('ul li').forEach((li) => {
+      const text = li.textContent?.trim() ?? '';
+      // Filtre uniquement Haute-Garonne (31) ou Toulouse
+      if (!text.includes('(31)') && !text.toLowerCase().includes('toulouse')) return;
 
-    $("li").each((_, el) => {
-      const text = $(el).text();
+      // Exemple : "Mer 31 déc à 19h : Le 11/11/11 à 11h11… (Cie 11h11) – Théâtre du Grand Rond, TOULOUSE (31)**"
+      const [datePart, rest] = text.split(' : ');
+      if (!rest) return;
 
-      // 🔹 Haute-Garonne uniquement
-      if (!text.includes("(31)")) return;
-      if (!text.toUpperCase().includes("TOULOUSE")) return;
+      const [titlePart, locationPart] = rest.split(' – ');
+      const title = titlePart.replace(/^\s*<em>|<\/em>\s*$/g, '').trim() || titlePart.trim();
+      const description = titlePart.includes('(') ? titlePart.match(/\((.+)\)/)?.[1] ?? '' : '';
+      const location = locationPart?.trim() ?? '';
 
-      const dateText = $(el).find("strong").first().text();
-      const date = parseFrenchDate(dateText);
-      if (!date || date < today || date > maxDate) return;
-
-      const title = $(el).find("em").first().text().trim();
+      // Date (approximation, pour build ISO)
+      const isoDate = new Date(`${datePart} 2025`).toISOString(); // année fixe car non fournie
 
       events.push({
-        id: `ecluse-${date.toISOString()}-${title}`,
         title,
-        date: date.toISOString(),
-        location: "Théâtre du Grand Rond, Toulouse (31)",
-        source: "L'Écluse",
-        image: "/images/ecluse/ecluse-default.jpg",
-        link: "https://www.ecluse-prod.com/category/agenda/",
+        description,
+        location,
+        date: isoDate,
+        image: 'https://via.placeholder.com/400x200?text=L\'Écluse',
+        url: '', // pas de lien direct vers l'événement
       });
     });
 
-    return NextResponse.json({
-      total: events.length,
-      events,
-    });
+    return NextResponse.json({ items: events });
   } catch (err) {
-    console.error("Erreur Ecluse:", err);
-    return NextResponse.json({ events: [] }, { status: 500 });
+    console.error(err);
+    return NextResponse.json({ items: [], error: 'Impossible de récupérer le flux RSS' }, { status: 500 });
   }
 }
