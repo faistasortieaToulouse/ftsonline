@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import parse from "html-react-parser";
 
+export const dynamic = "force-dynamic"; // ⚡ Evite le SSG et l'erreur Dynamic server usage
+
 const MAX_EVENTS = 50;
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
@@ -22,6 +24,7 @@ export default function ComdtPage() {
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // 🔹 Récupération des événements ICS depuis l'API
   async function fetchEvents() {
     setLoading(true);
     setError(null);
@@ -34,7 +37,6 @@ export default function ComdtPage() {
       const data = await res.json();
       if (!Array.isArray(data.events)) throw new Error("Données invalides");
 
-      // Normalisation ICS → JSON
       const mappedEvents = data.events.map((ev: any) => {
         const dateFormatted = ev.date
           ? new Date(ev.date).toLocaleString("fr-FR", {
@@ -60,7 +62,7 @@ export default function ComdtPage() {
         };
       });
 
-      // Tri par date et limitation
+      // 🔹 Tri par date et limitation
       const uniqueEvents = Array.from(
         new Map(mappedEvents.map((e) => [e.id, e])).values()
       )
