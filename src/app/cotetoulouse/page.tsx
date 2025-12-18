@@ -15,7 +15,7 @@ async function getCategories(): Promise<CategorieItem[]> {
     const baseUrl =
       process.env.NODE_ENV === "development"
         ? "http://localhost:9002"
-        : "https://ftsonline.vercel.app";
+        : "https://ftstoulouse.vercel.app";
 
     const res = await fetch(`${baseUrl}/api/cotetoulouse`, { cache: "no-store" });
     if (!res.ok) return [];
