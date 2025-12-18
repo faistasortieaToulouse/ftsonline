@@ -11,7 +11,7 @@ const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement"
 // 🔹 Formater les descriptions avec sauts de ligne
 function formatDescription(desc: string) {
   if (!desc) return "";
-  const html = desc.replace(/\\n/g, "<br />");
+  const html = desc.replace(/\n/g, "<br />");
   return parse(html);
 }
 
@@ -32,15 +32,12 @@ export default function ComdtPage() {
       if (!res.ok) throw new Error(`API HTTP error: ${res.status}`);
 
       const data = await res.json();
-      if (!Array.isArray(data.records)) throw new Error("Données invalides");
+      if (!Array.isArray(data.events)) throw new Error("Données invalides");
 
       // Normalisation ICS → JSON
-      const mappedEvents = data.records.map((ev: any) => {
-        const start = ev.dtstart?.replace(/;VALUE=DATE:/, "") || null;
-        const end = ev.dtend?.replace(/;VALUE=DATE:/, "") || null;
-
-        const dateFormatted = start
-          ? new Date(start).toLocaleString("fr-FR", {
+      const mappedEvents = data.events.map((ev: any) => {
+        const dateFormatted = ev.date
+          ? new Date(ev.date).toLocaleString("fr-FR", {
               weekday: "long",
               day: "numeric",
               month: "long",
@@ -51,19 +48,19 @@ export default function ComdtPage() {
           : "Date non spécifiée";
 
         return {
-          id: ev.uid || ev.link || Math.random().toString(),
-          title: ev.summary || "Événement COMDT",
+          id: ev.id || Math.random().toString(),
+          title: ev.title || "Événement COMDT",
           description: ev.description || "",
-          url: ev.url || ev.link || "#",
-          image: ev.attach || null,
-          category: "COMDT",
-          date: start,
+          url: ev.link || "#",
+          image: ev.image || null,
+          category: ev.source || "COMDT",
+          date: ev.date,
           dateFormatted,
           fullAddress: ev.location || "Lieu non spécifié",
         };
       });
 
-      // Tri et limitation
+      // Tri par date et limitation
       const uniqueEvents = Array.from(
         new Map(mappedEvents.map((e) => [e.id, e])).values()
       )
@@ -138,7 +135,7 @@ export default function ComdtPage() {
         <p className="text-muted-foreground">Aucun événement à venir.</p>
       )}
 
-      {/* 🔴 MODE CARD */}
+      {/* 🔴 MODE CARTES */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map((ev, i) => (
@@ -151,7 +148,6 @@ export default function ComdtPage() {
                 alt={ev.title}
                 className="w-full aspect-[16/9] object-cover"
               />
-
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="text-xl font-semibold mb-1">{ev.title}</h2>
                 <p className="text-sm text-blue-600 font-medium mb-2">
