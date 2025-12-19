@@ -169,7 +169,30 @@ export default function LotMapPage() {
               <td style={td}>{i + 1}</td>
               <td style={td}>{site.commune}</td>
               <td style={td}>{site.description}</td>
-              <td style={tdCenter}>{site.niveau}</td>
+              <td style={tdCenter}>
+  <span
+    style={{
+      padding: '4px 10px',
+      borderRadius: '12px',
+      fontWeight: 'bold',
+      fontSize: '0.9em',
+      backgroundColor:
+        site.niveau === 1
+          ? '#fee2e2'   // rouge clair
+          : site.niveau === 2
+          ? '#ffedd5'   // orange clair
+          : '#dbeafe',  // bleu clair
+      color:
+        site.niveau === 1
+          ? '#dc2626'   // rouge
+          : site.niveau === 2
+          ? '#ea580c'   // orange
+          : '#2563eb',  // bleu
+    }}
+  >
+    {site.niveau}
+  </span>
+</td>
               <td style={td}>{site.categorie}</td>
             </tr>
           ))}
