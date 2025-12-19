@@ -78,31 +78,33 @@ export default function UT3MinPage() {
         <Button onClick={fetchEvents} disabled={loading}>
           {loading ? "Chargement..." : "📡 Actualiser"}
         </Button>
-        <Button
-          onClick={() => setViewMode("card")}
-          variant={viewMode === "card" ? "default" : "secondary"}
-        >
-          📺 Plein écran
-        </Button>
-        <Button
-          onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "default" : "secondary"}
-        >
-          🔲 Vignette
-        </Button>
+        <div className="flex gap-2">
+            <Button
+            onClick={() => setViewMode("card")}
+            variant={viewMode === "card" ? "default" : "secondary"}
+            >
+            📺 Plein écran
+            </Button>
+            <Button
+            onClick={() => setViewMode("list")}
+            variant={viewMode === "list" ? "default" : "secondary"}
+            >
+            🔲 Vignette
+            </Button>
+        </div>
 
         <input
           type="text"
           placeholder="Rechercher par titre, description, lieu ou date..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-4 sm:mt-0 w-full p-2 border rounded focus:outline-none focus:ring focus:border-indigo-300"
+          className="flex-1 min-w-[300px] p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
         />
       </div>
 
       {/* Compteur */}
-      <p className="mb-4 text-sm text-gray-600">
-        Événements affichés : {filteredEvents.length}
+      <p className="mb-4 text-sm text-gray-600 font-medium">
+        {filteredEvents.length} événement(s) affiché(s)
       </p>
 
       {/* Erreur */}
@@ -114,67 +116,65 @@ export default function UT3MinPage() {
 
       {/* Aucun résultat */}
       {filteredEvents.length === 0 && !loading && (
-        <p className="text-muted-foreground">Aucun événement trouvé.</p>
+        <p className="text-muted-foreground italic py-10 text-center bg-gray-50 rounded-lg">Aucun événement trouvé.</p>
       )}
 
       {/* --------------------------------------------------------------------
-         MODE CARTE (grand format)
+          MODE CARTE (grand format)
       --------------------------------------------------------------------- */}
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="bg-white shadow rounded overflow-hidden flex flex-col h-[430px]">
+          {filteredEvents.map((ev, idx) => (
+            <div key={ev.id || idx} className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col h-[520px] border border-gray-100">
               
               {/* Image */}
               <img
                 src={getEventImage(ev.title)}
                 alt={ev.title}
-                className="w-full h-40 object-cover"
+                className="w-full h-44 object-cover"
               />
 
               <div className="p-4 flex flex-col flex-1">
 
                 {/* Titre */}
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+                <h2 className="text-lg font-bold mb-2 line-clamp-2 min-h-[3.5rem]">{ev.title}</h2>
 
                 {/* Dates */}
                 {ev.start && (
-                  <p className="text-sm text-blue-600 font-medium mb-1">
-                    {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
+                  <p className="text-sm text-blue-600 font-semibold mb-1">
+                    🗓️ {new Date(ev.start).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}
 
                 {/* Lieu */}
                 {ev.location && (
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className="text-sm text-muted-foreground mb-3 truncate">
                     📍 {ev.location}
                   </p>
                 )}
 
-                {/* Description */}
+                {/* Description scrollable */}
                 {ev.description && (
-                  <div className="text-sm text-muted-foreground overflow-y-auto h-20 mb-2 pr-1 scrollable">
+                  <div className="text-sm text-muted-foreground overflow-y-auto flex-1 mb-4 pr-1 leading-relaxed">
                     {ev.description}
                   </div>
                 )}
 
-                {/* Lien */}
+                {/* Bouton Bleu */}
                 {ev.url && (
-                  <p className="text-sm mb-1">
-                    <a
-                      href={ev.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      🔗 Plus d’informations
-                    </a>
-                  </p>
+                  <a
+                    href={ev.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-blue-600 text-white text-center py-2.5 rounded hover:bg-blue-700 transition-colors font-bold text-sm shadow-sm"
+                  >
+                    🔗 Voir l’événement officiel
+                  </a>
                 )}
 
-                {/* Source — corrigé */}
-                <p className="text-xs text-muted-foreground mt-3 mb-2 break-words">
-                  Source : {ev.source}
+                {/* Source */}
+                <p className="text-[10px] text-muted-foreground mt-3 uppercase tracking-wider">
+                  Source : {ev.source || "Université Paul Sabatier"}
                 </p>
               </div>
             </div>
@@ -182,27 +182,26 @@ export default function UT3MinPage() {
         </div>
 
       /* --------------------------------------------------------------------
-         MODE LISTE (vignettes)
+          MODE LISTE (vignettes)
       --------------------------------------------------------------------- */
       ) : (
         <div className="flex flex-col gap-4">
-          {filteredEvents.map(ev => (
-            <div key={ev.id} className="flex flex-col sm:flex-row bg-white shadow rounded p-4 gap-4">
+          {filteredEvents.map((ev, idx) => (
+            <div key={ev.id || idx} className="flex flex-col sm:flex-row bg-white shadow rounded-lg p-4 gap-4 items-center sm:items-start border border-gray-50">
 
               {/* Image */}
               <img
                 src={getEventImage(ev.title)}
                 alt={ev.title}
-                className="w-full sm:w-48 h-32 object-cover rounded"
+                className="w-full sm:w-40 h-32 object-cover rounded shadow-sm"
               />
 
-              <div className="flex-1">
-                
-                <h2 className="text-lg font-semibold mb-1">{ev.title}</h2>
+              <div className="flex-1 w-full">
+                <h2 className="text-lg font-bold mb-1">{ev.title}</h2>
 
                 {ev.start && (
-                  <p className="text-sm text-blue-600 font-medium mb-1">
-                    {new Date(ev.start).toLocaleString()} → {new Date(ev.end).toLocaleString()}
+                  <p className="text-sm text-blue-600 font-semibold mb-1">
+                    {new Date(ev.start).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}
 
@@ -211,27 +210,26 @@ export default function UT3MinPage() {
                 )}
 
                 {ev.description && (
-                  <p className="text-sm text-muted-foreground mb-2 line-clamp-4">
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                     {ev.description}
                   </p>
                 )}
 
-                {ev.url && (
-                  <a
-                    href={ev.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm"
-                  >
-                    🔗 Plus d’informations
-                  </a>
-                )}
-
-                {/* Source — corrigé */}
-                <p className="text-xs text-muted-foreground mt-3 mb-1 break-words">
-                  Source : {ev.source}
-                </p>
-
+                <div className="flex flex-wrap items-center justify-between gap-4 mt-auto">
+                    {ev.url && (
+                    <a
+                        href={ev.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition font-bold text-sm"
+                    >
+                        Voir →
+                    </a>
+                    )}
+                    <p className="text-[10px] text-muted-foreground italic">
+                        Source : {ev.source || "UT3"}
+                    </p>
+                </div>
               </div>
             </div>
           ))}
