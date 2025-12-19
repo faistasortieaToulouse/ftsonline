@@ -1,74 +1,196 @@
 // src/app/lot/page.tsx
 'use client';
 
-import { useEffect, useState, CSSProperties } from 'react';
+import { useEffect, useRef, useState, CSSProperties } from "react";
+import Script from "next/script";
 
+// --- Interface de type ---
 interface SiteLot {
   id: number;
   commune: string;
-  site: string;
+  description: string;
   niveau: number;
   categorie: 'incontournable' | 'remarquable' | 'suggéré';
+  lat: number;
+  lng: number;
 }
 
-export default function LotPage() {
-  const [sites, setSites] = useState<SiteLot[]>([]);
-  const [loading, setLoading] = useState(true);
+// --- Fonctions utilitaires pour les marqueurs ---
+const getMarkerIcon = (categorie: SiteLot['categorie']): string => {
+  switch (categorie) {
+    case 'incontournable':
+      return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+    case 'remarquable':
+      return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
+    case 'suggéré':
+    default:
+      return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+  }
+};
 
-  // --- Récupération des données ---
+const getLabelColor = (categorie: SiteLot['categorie']): string => {
+  return categorie === 'remarquable' ? 'white' : 'yellow';
+};
+
+// --- Centre de la carte : Lot (Cahors) ---
+const LOT_CENTER = { lat: 44.4475, lng: 1.4419 };
+
+export default function LotMapPage() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<google.maps.Map | null>(null);
+
+  const [sitesData, setSitesData] = useState<SiteLot[]>([]);
+  const [markersCount, setMarkersCount] = useState(0);
+  const [isReady, setIsReady] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  // ---- 1. Récupération des données ----
   useEffect(() => {
     async function fetchSites() {
       try {
-        const res = await fetch('/api/lot');
-        if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
-        const data = await res.json();
-        setSites(data);
-      } catch (err) {
-        console.error('Erreur chargement Lot :', err);
+        const response = await fetch('/api/lot');
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP : ${response.status}`);
+        }
+
+        const data: SiteLot[] = await response.json();
+        setSitesData(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des sites du Lot :", error);
       } finally {
-        setLoading(false);
+        setIsLoadingData(false);
       }
     }
+
     fetchSites();
   }, []);
 
+  // ---- 2. Initialisation carte & marqueurs ----
+  useEffect(() => {
+    if (!isReady || !mapRef.current || !window.google?.maps || sitesData.length === 0) return;
+
+    const map = new google.maps.Map(mapRef.current, {
+      zoom: 9,
+      center: LOT_CENTER,
+      gestureHandling: "greedy",
+    });
+
+    mapInstance.current = map;
+    let count = 0;
+
+    sitesData.forEach(site => {
+      count++;
+      const position = new google.maps.LatLng(site.lat, site.lng);
+
+      const marker = new google.maps.Marker({
+        map,
+        position,
+        title: `${site.commune} - ${site.description}`,
+        label: {
+          text: String(count),
+          color: getLabelColor(site.categorie),
+          fontWeight: 'bold',
+        },
+        icon: getMarkerIcon(site.categorie),
+      });
+
+      const info = new google.maps.InfoWindow({
+        content: `
+          <div style="font-family: Arial; font-size: 14px;">
+            <strong>${count}. ${site.commune}</strong> (${site.categorie})<br/>
+            <b>Description :</b> ${site.description}<br/>
+            <b>Niveau :</b> ${site.niveau}
+          </div>
+        `,
+      });
+
+      marker.addListener("click", () =>
+        info.open({ anchor: marker, map })
+      );
+    });
+
+    setMarkersCount(count);
+  }, [isReady, sitesData]);
+
   return (
-    <main className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">
-        🪨 Communes et sites emblématiques du Lot
+    <div className="p-4 max-w-7xl mx-auto">
+
+      {/* Google Maps API */}
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+        strategy="afterInteractive"
+        onLoad={() => setIsReady(true)}
+      />
+
+      <h1 className="text-3xl font-extrabold mb-6">
+        🪨 Sites touristiques du Lot sur la carte
       </h1>
 
-      <p className="mb-4 font-semibold">
-        {loading ? 'Chargement…' : `${sites.length} sites chargés`}
+      <p className="font-semibold text-lg mb-4">
+        Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead style={{ backgroundColor: '#e5e5e5' }}>
+      {/* Légende */}
+      <div style={legendStyle}>
+        <strong>Légende :</strong>
+        <span style={{ color: 'red', fontWeight: 'bold' }}>🔴 Incontournable (Niveau 1)</span>
+        <span style={{ color: 'orange', fontWeight: 'bold' }}>🟠 Remarquable (Niveau 2)</span>
+        <span style={{ color: 'blue', fontWeight: 'bold' }}>🔵 Suggéré (Niveau 3)</span>
+      </div>
+
+      {/* Carte */}
+      <div
+        ref={mapRef}
+        style={{ height: "70vh", width: "100%" }}
+        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center shadow-inner"
+      >
+        {(!isReady || isLoadingData) && <p>Chargement de la carte et des données…</p>}
+        {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher.</p>}
+      </div>
+
+      {/* Tableau */}
+      <h2 className="text-2xl font-semibold mb-4">
+        Liste complète des sites ({markersCount} marqueurs)
+      </h2>
+
+      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+        <thead style={{ backgroundColor: "#e0e0e0" }}>
           <tr>
             <th style={th}>#</th>
             <th style={th}>Commune</th>
-            <th style={th}>Site emblématique</th>
+            <th style={th}>Monument ou site emblématique</th>
             <th style={th}>Niveau</th>
             <th style={th}>Catégorie</th>
           </tr>
         </thead>
         <tbody>
-          {sites.map((site, i) => (
-            <tr key={site.id} style={{ backgroundColor: i % 2 ? '#fafafa' : '#fff' }}>
-              <td style={tdCenter}>{i + 1}</td>
+          {sitesData.map((site, i) => (
+            <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}>
+              <td style={td}>{i + 1}</td>
               <td style={td}>{site.commune}</td>
-              <td style={td}>{site.site}</td>
+              <td style={td}>{site.description}</td>
               <td style={tdCenter}>{site.niveau}</td>
               <td style={td}>{site.categorie}</td>
             </tr>
           ))}
         </tbody>
       </table>
-    </main>
+    </div>
   );
 }
 
-// Styles
-const th: CSSProperties = { border: '1px solid #ccc', padding: '10px', textAlign: 'left' };
-const td: CSSProperties = { border: '1px solid #ddd', padding: '8px' };
-const tdCenter: CSSProperties = { ...td, textAlign: 'center' };
+// --- Styles ---
+const legendStyle: CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '20px',
+  marginBottom: '15px',
+  padding: '10px',
+  border: '1px solid #ccc',
+  borderRadius: '5px',
+  backgroundColor: '#fdfdfd',
+};
+
+const th: CSSProperties = { padding: "10px", border: "1px solid #ccc", textAlign: "left" };
+const td: CSSProperties = { padding: "8px", border: "1px solid #ddd" };
+const tdCenter: CSSProperties = { padding: "8px", border: "1px solid #ddd", textAlign: "center" };
