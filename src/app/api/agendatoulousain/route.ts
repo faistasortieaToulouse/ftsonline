@@ -140,8 +140,8 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/demosphere`, source: "Demosphere" },
       { url: `${origin}/api/discord`, source: "Discord" },
       { url: `${origin}/api/ecluse`, source: "L'Écluse" },
-      { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" }, // Flux 31
-      { url: `${origin}/api/museetarngaronne`, source: "Patrimoine Tarn-et-Garonne" }, // Flux 82
+      { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" }, 
+      { url: `${origin}/api/museetarngaronne`, source: "Patrimoine Tarn-et-Garonne" }, 
       { url: "COMDT", source: "COMDT" },
     ];
 
@@ -167,14 +167,20 @@ export async function GET(request: NextRequest) {
           const data = await res.json();
           const items = normalizeApiResult(data);
 
-          // 🔵 TRAITEMENT CULTURE HAUTE-GARONNE (31)
+          // 🔵 TRAITEMENT CULTURE HAUTE-GARONNE (31) avec Filtre J+31
           if (source === "Culture Haute-Garonne") {
-            return items.map((ev: any) => ({
-              ...ev,
-              link: ev.url || ev.link,
-              location: ev.fullAddress || ev.location,
-              source
-            }));
+            return items
+              .map((ev: any) => {
+                const d = new Date(ev.date);
+                if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
+                return {
+                  ...ev,
+                  link: ev.url || ev.link,
+                  location: ev.fullAddress || ev.location,
+                  source
+                };
+              })
+              .filter(Boolean);
           }
 
           // 🟡 TRAITEMENT PATRIMOINE TARN-ET-GARONNE (82)
@@ -183,7 +189,7 @@ export async function GET(request: NextRequest) {
               id: `tg82-${ev.nom}`,
               title: ev.nom,
               description: `${ev.categorie} à ${ev.commune}.`,
-              date: today.toISOString(), // Permanent
+              date: today.toISOString(), 
               image: "/images/patrimoine-default.jpg", 
               link: ev.url,
               location: `${ev.adresse}, ${ev.commune}`,
@@ -235,7 +241,6 @@ export async function GET(request: NextRequest) {
 
     let events = results.flat();
     
-    // Normalisation finale et nettoyage
     events = events.map(ev => {
       let d = new Date(ev.date || ev.start);
       if (isNaN(d.getTime())) d = today;
