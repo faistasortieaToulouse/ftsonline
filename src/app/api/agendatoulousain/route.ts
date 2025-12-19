@@ -141,7 +141,6 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/discord`, source: "Discord" },
       { url: `${origin}/api/ecluse`, source: "L'Écluse" },
       { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" }, 
-      { url: `${origin}/api/museetarngaronne`, source: "Patrimoine Tarn-et-Garonne" }, 
       { url: "COMDT", source: "COMDT" },
     ];
 
@@ -181,20 +180,6 @@ export async function GET(request: NextRequest) {
                 };
               })
               .filter(Boolean);
-          }
-
-          // 🟡 TRAITEMENT PATRIMOINE TARN-ET-GARONNE (82)
-          if (source === "Patrimoine Tarn-et-Garonne") {
-            return items.map((ev: any) => ({
-              id: `tg82-${ev.nom}`,
-              title: ev.nom,
-              description: `${ev.categorie} à ${ev.commune}.`,
-              date: today.toISOString(), 
-              image: "/images/patrimoine-default.jpg", 
-              link: ev.url,
-              location: `${ev.adresse}, ${ev.commune}`,
-              source
-            }));
           }
 
           // 🟢 TRAITEMENT ÉCLUSE
