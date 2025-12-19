@@ -120,26 +120,22 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/ecluse`, source: "L'Écluse" },
       { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" },
       { url: `${origin}/api/radarsquat`, source: "Radar Squat" },
-      { url: `${origin}/api/theatredupave`, source: "Théâtre du Pavé" }, // 🆕 Ajout Pavé
+      { url: `${origin}/api/theatredupave`, source: "Théâtre du Pavé" },
+      { url: `${origin}/api/toulousemetropole`, source: "Toulouse Métropole" }, // 🆕 Ajout Métropole
     ];
 
     const results = await Promise.all(
       EXTERNAL_SOURCES.map(async ({ url, source }) => {
         try {
-          // Gestion COMDT (ICS direct)
           if (source === "COMDT") {
             const res = await fetch("https://www.comdt.org/events/feed/?ical=1", {
               headers: { Accept: "text/calendar" },
               cache: "no-store",
             });
             if (!res.ok) return [];
-            return parseICS(await res.text()).filter(ev => {
-              const d = new Date(ev.date);
-              return d >= today && d <= maxDate;
-            });
+            return parseICS(await res.text());
           }
 
-          // Fetch API standard
           const res = await fetch(url, { cache: "no-store" });
           if (!res.ok) return [];
           const data = await res.json();
@@ -148,13 +144,31 @@ export async function GET(request: NextRequest) {
           
           const items = normalizeApiResult(data);
 
+          // 🎭 TRAITEMENT TOULOUSE MÉTROPOLE
+          if (source === "Toulouse Métropole") {
+            return items.map((ev: any) => {
+              // Reconstruction de l'adresse à partir des multiples champs
+              const fullAddr = [
+                ev.lieu_nom,
+                ev.lieu_adresse_1,
+                ev.code_postal,
+                ev.commune
+              ].filter(Boolean).join(", ");
+
+              return {
+                ...ev,
+                fullAddress: fullAddr,
+                source
+              };
+            });
+          }
+
           // 🎭 TRAITEMENT THÉÂTRE DU PAVÉ
           if (source === "Théâtre du Pavé") {
             return items.map((ev: any) => ({
               ...ev,
-              date: ev.start, // On harmonise 'start' vers 'date'
+              date: ev.start,
               link: ev.url,
-              image: ev.image || "/images/theatre-pave-default.jpg",
               source
             }));
           }
@@ -168,15 +182,6 @@ export async function GET(request: NextRequest) {
             }));
           }
 
-          // 🟢 ÉCLUSE
-          if (source === "L'Écluse") {
-            return items.map((ev: any) => ({
-              ...ev,
-              image: ev.image || "/images/ecluse/cateporteecluse.jpg",
-              source,
-            }));
-          }
-
           // 🔴 DEMOSPHERE
           if (source === "Demosphere") {
             return items.map((ev: any) => ({
@@ -184,10 +189,7 @@ export async function GET(request: NextRequest) {
               date: ev.start || ev.date,
               image: "/logo/demosphereoriginal.png",
               source
-            })).filter(ev => {
-              const d = new Date(ev.date);
-              return d >= today && d <= maxDate;
-            });
+            }));
           }
 
           return items.map(ev => ({ ...ev, source }));
@@ -201,19 +203,22 @@ export async function GET(request: NextRequest) {
     let events = results.flat();
     
     const processedEvents = events.map(ev => {
-      let d = new Date(ev.date || ev.start || ev.startDate || ev.scheduled_start_time);
+      // Priorité aux clés de date divergentes
+      let d = new Date(ev.date || ev.start || ev.startDate || ev.scheduled_start_time || ev.date_debut);
       if (isNaN(d.getTime())) d = today;
 
       let description = ev.description ? decode(ev.description) : "";
+      // Nettoyage HTML
       description = description.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
 
+      // Images spécifiques Capitole
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         ev.image = getCapitoleImage(ev.title);
       }
 
       return { 
         ...ev, 
-        title: ev.title || ev.name || "Événement",
+        title: ev.title || ev.name || ev.nom_de_la_manifestation || "Événement",
         date: d.toISOString(), 
         description,
         link: ev.link || ev.url || ev.href || "#",
@@ -222,7 +227,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Suppression doublons
+    // Suppression doublons et filtrage temporel final
     const uniq = new Map<string, any>();
     processedEvents.forEach(ev => {
       const key = ev.id || `${ev.title}-${ev.date}-${ev.source}`;
