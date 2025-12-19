@@ -1,3 +1,4 @@
+// src/app/api/agendatoulousain/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { decode } from "he";
 
@@ -139,6 +140,8 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/demosphere`, source: "Demosphere" },
       { url: `${origin}/api/discord`, source: "Discord" },
       { url: `${origin}/api/ecluse`, source: "L'Écluse" },
+      { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" }, // Flux 31
+      { url: `${origin}/api/museetarngaronne`, source: "Patrimoine Tarn-et-Garonne" }, // Flux 82
       { url: "COMDT", source: "COMDT" },
     ];
 
@@ -164,6 +167,30 @@ export async function GET(request: NextRequest) {
           const data = await res.json();
           const items = normalizeApiResult(data);
 
+          // 🔵 TRAITEMENT CULTURE HAUTE-GARONNE (31)
+          if (source === "Culture Haute-Garonne") {
+            return items.map((ev: any) => ({
+              ...ev,
+              link: ev.url || ev.link,
+              location: ev.fullAddress || ev.location,
+              source
+            }));
+          }
+
+          // 🟡 TRAITEMENT PATRIMOINE TARN-ET-GARONNE (82)
+          if (source === "Patrimoine Tarn-et-Garonne") {
+            return items.map((ev: any) => ({
+              id: `tg82-${ev.nom}`,
+              title: ev.nom,
+              description: `${ev.categorie} à ${ev.commune}.`,
+              date: today.toISOString(), // Permanent
+              image: "/images/patrimoine-default.jpg", 
+              link: ev.url,
+              location: `${ev.adresse}, ${ev.commune}`,
+              source
+            }));
+          }
+
           // 🟢 TRAITEMENT ÉCLUSE
           if (source === "L'Écluse") {
             return items.map((ev: any) => ({
@@ -183,7 +210,7 @@ export async function GET(request: NextRequest) {
             }));
           }
 
-          // 🔴 TRAITEMENT DEMOSPHERE (Filtre Today + 31 jours)
+          // 🔴 TRAITEMENT DEMOSPHERE
           if (source === "Demosphere") {
             return items
               .map((ev: any) => {
@@ -211,14 +238,11 @@ export async function GET(request: NextRequest) {
     // Normalisation finale et nettoyage
     events = events.map(ev => {
       let d = new Date(ev.date || ev.start);
-      // Sécurité date
       if (isNaN(d.getTime())) d = today;
 
       let description = ev.description ? decode(ev.description) : "";
-      // Nettoyage HTML sélectif
       description = description.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
 
-      // Images spécifiques UT Capitole
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         ev.image = getCapitoleImage(ev.title);
       }
@@ -226,7 +250,6 @@ export async function GET(request: NextRequest) {
       return { ...ev, date: d.toISOString(), description };
     });
 
-    // Dédoublonnage par ID ou combo Titre-Date-Source
     const uniq = new Map<string, any>();
     events.forEach(ev => {
       const key = ev.id || `${ev.title}-${ev.date}-${ev.source}`;
