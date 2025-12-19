@@ -107,6 +107,7 @@ export async function GET(request: NextRequest) {
     today.setHours(0, 0, 0, 0);
     const maxDate = new Date(today);
     maxDate.setDate(today.getDate() + 31);
+    maxDate.setHours(23, 59, 59, 999);
 
     const EXTERNAL_SOURCES = [
       { url: `${origin}/api/agenda-trad-haute-garonne`, source: "Agenda Trad Haute-Garonne" },
@@ -121,7 +122,8 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" },
       { url: `${origin}/api/radarsquat`, source: "Radar Squat" },
       { url: `${origin}/api/theatredupave`, source: "Théâtre du Pavé" },
-      { url: `${origin}/api/toulousemetropole`, source: "Toulouse Métropole" }, // 🆕 Ajout Métropole
+      { url: `${origin}/api/toulousemetropole`, source: "Toulouse Métropole" },
+      { url: `${origin}/api/tourismehautegaronne`, source: "Tourisme Haute-Garonne" }, // 🆕 Ajout Tourisme HG
     ];
 
     const results = await Promise.all(
@@ -144,52 +146,38 @@ export async function GET(request: NextRequest) {
           
           const items = normalizeApiResult(data);
 
-          // 🎭 TRAITEMENT TOULOUSE MÉTROPOLE
+          // 🆕 TRAITEMENT TOURISME HAUTE-GARONNE
+          if (source === "Tourisme Haute-Garonne") {
+            return items.map((ev: any) => ({
+              ...ev,
+              date: ev.date, // Déjà mis en ISO par sa propre route
+              link: ev.url,
+              fullAddress: ev.fullAddress || ev.location,
+              source
+            }));
+          }
+
+          // 🎭 TOULOUSE MÉTROPOLE
           if (source === "Toulouse Métropole") {
             return items.map((ev: any) => {
-              // Reconstruction de l'adresse à partir des multiples champs
-              const fullAddr = [
-                ev.lieu_nom,
-                ev.lieu_adresse_1,
-                ev.code_postal,
-                ev.commune
-              ].filter(Boolean).join(", ");
-
-              return {
-                ...ev,
-                fullAddress: fullAddr,
-                source
-              };
+              const fullAddr = [ev.lieu_nom, ev.lieu_adresse_1, ev.code_postal, ev.commune].filter(Boolean).join(", ");
+              return { ...ev, fullAddress: fullAddr, source };
             });
           }
 
-          // 🎭 TRAITEMENT THÉÂTRE DU PAVÉ
+          // 🎭 THÉÂTRE DU PAVÉ
           if (source === "Théâtre du Pavé") {
-            return items.map((ev: any) => ({
-              ...ev,
-              date: ev.start,
-              link: ev.url,
-              source
-            }));
+            return items.map((ev: any) => ({ ...ev, date: ev.start, link: ev.url, source }));
           }
 
           // 🏴‍☠️ RADAR SQUAT
           if (source === "Radar Squat") {
-            return items.map((ev: any) => ({
-              ...ev,
-              date: ev.start || ev.date,
-              source
-            }));
+            return items.map((ev: any) => ({ ...ev, date: ev.start || ev.date, source }));
           }
 
           // 🔴 DEMOSPHERE
           if (source === "Demosphere") {
-            return items.map((ev: any) => ({
-              ...ev,
-              date: ev.start || ev.date,
-              image: "/logo/demosphereoriginal.png",
-              source
-            }));
+            return items.map((ev: any) => ({ ...ev, date: ev.start || ev.date, image: "/logo/demosphereoriginal.png", source }));
           }
 
           return items.map(ev => ({ ...ev, source }));
@@ -203,22 +191,19 @@ export async function GET(request: NextRequest) {
     let events = results.flat();
     
     const processedEvents = events.map(ev => {
-      // Priorité aux clés de date divergentes
-      let d = new Date(ev.date || ev.start || ev.startDate || ev.scheduled_start_time || ev.date_debut);
+      let d = new Date(ev.date || ev.start || ev.startDate || ev.scheduled_start_time || ev.date_debut || ev.date_evenement);
       if (isNaN(d.getTime())) d = today;
 
       let description = ev.description ? decode(ev.description) : "";
-      // Nettoyage HTML
       description = description.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
 
-      // Images spécifiques Capitole
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         ev.image = getCapitoleImage(ev.title);
       }
 
       return { 
         ...ev, 
-        title: ev.title || ev.name || ev.nom_de_la_manifestation || "Événement",
+        title: ev.title || ev.name || ev.nom_de_la_manifestation || ev.titre || "Événement",
         date: d.toISOString(), 
         description,
         link: ev.link || ev.url || ev.href || "#",
@@ -227,7 +212,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Suppression doublons et filtrage temporel final
+    // Suppression doublons et filtrage temporel final strict
     const uniq = new Map<string, any>();
     processedEvents.forEach(ev => {
       const key = ev.id || `${ev.title}-${ev.date}-${ev.source}`;
