@@ -141,7 +141,8 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/demosphere`, source: "Demosphere" },
       { url: `${origin}/api/discord`, source: "Discord" },
       { url: `${origin}/api/ecluse`, source: "L'Écluse" },
-      { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" }, 
+      { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" },
+      { url: `${origin}/api/radarsquat`, source: "Radar Squat" }, // 🆕 Ajout Radar Squat
     ];
 
     const results = await Promise.all(
@@ -166,7 +167,7 @@ export async function GET(request: NextRequest) {
           const data = await res.json();
           const items = normalizeApiResult(data);
 
-          // 🔵 TRAITEMENT CULTURE HAUTE-GARONNE (31) avec Filtre J+31
+          // 🔵 TRAITEMENT CULTURE HAUTE-GARONNE (31)
           if (source === "Culture Haute-Garonne") {
             return items
               .map((ev: any) => {
@@ -180,6 +181,16 @@ export async function GET(request: NextRequest) {
                 };
               })
               .filter(Boolean);
+          }
+
+          // 🏴‍☠️ TRAITEMENT RADAR SQUAT
+          if (source === "Radar Squat") {
+            return items.map((ev: any) => ({
+              ...ev,
+              date: ev.start || ev.date, // Radar Squat utilise 'start'
+              location: ev.location || ev.fullAddress,
+              source
+            }));
           }
 
           // 🟢 TRAITEMENT ÉCLUSE
@@ -227,7 +238,8 @@ export async function GET(request: NextRequest) {
     let events = results.flat();
     
     events = events.map(ev => {
-      let d = new Date(ev.date || ev.start);
+      // Priorité aux clés de date divergentes
+      let d = new Date(ev.date || ev.start || ev.startDate);
       if (isNaN(d.getTime())) d = today;
 
       let description = ev.description ? decode(ev.description) : "";
@@ -237,7 +249,14 @@ export async function GET(request: NextRequest) {
         ev.image = getCapitoleImage(ev.title);
       }
 
-      return { ...ev, date: d.toISOString(), description };
+      return { 
+        ...ev, 
+        date: d.toISOString(), 
+        description,
+        // Assurer que le champ link et fullAddress existent pour le front
+        link: ev.link || ev.url || "#",
+        fullAddress: ev.fullAddress || ev.location || "Lieu non précisé"
+      };
     });
 
     const uniq = new Map<string, any>();
