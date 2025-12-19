@@ -94,6 +94,9 @@ const lotSites: SiteLot[] = [
   { id: 81, commune: 'Concots', description: 'Ancien carrefour commercial, tour du XIIIe et cuisine bistronomique', niveau: 2, categorie: 'remarquable', lat: 44.428, lng: 1.644 },
   { id: 82, commune: 'Varaire', description: 'Passage du GR 65, Lavoir Papillon et Château de Couanac', niveau: 2, categorie: 'remarquable', lat: 44.357, lng: 1.723 },
   { id: 83, commune: 'Grèzes', description: 'Église Saint-Jacques-le-Majeur, Chapelle Notre-Dame, Dolmens (Custalou, Champ de Ligoussou, Cloup-de-Périès, lac de Lapeyre)', niveau: 2, categorie: 'remarquable', lat: 44.627, lng: 1.821 },
+  { id: 84, commune: 'Meyronne', description: 'Église Saint-Sulpice, gouffres du Limon, Dolmen des Devinaudes, Notre-Dame du Rocher, ancienne résidence des évêques de Tulle', niveau: 1, categorie: 'incontournable', lat: 44.876, lng: 1.577 },
+  { id: 85, commune: 'Sousceyrac-en-Quercy', description: 'Église Saint-Martin, cité médiévale, châteaux (Grugnac, Sousceyrac, La Bessonie, Fraysse, Alzac), bois de la Luzette, pont Roumieu', niveau: 1, categorie: 'incontournable', lat: 44.873, lng: 2.035 },
+  { id: 86, commune: 'Bretenoux', description: 'Bastide, église Sainte-Catherine, place des Consuls, maison de l’oncle de Pierre Loti, château de Castelnau-Bretenoux, arcades', niveau: 1, categorie: 'incontournable', lat: 44.914, lng: 1.838 },
 ];
 
 export async function GET() {
