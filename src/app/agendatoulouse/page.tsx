@@ -40,7 +40,7 @@ export default function AgendaToulousePage() {
     setEvents([]);
 
     try {
-      const res = await fetch("/api/agendatoulouse");
+      const res = await fetch("/api/agendatoulousain");
 
       if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
 
