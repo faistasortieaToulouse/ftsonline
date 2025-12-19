@@ -93,6 +93,7 @@ const lotSites: SiteLot[] = [
   { id: 80, commune: 'Beauregard', description: 'Bastide typique du XIIIe siècle et labellisé Village Étoilé', niveau: 2, categorie: 'remarquable', lat: 44.346, lng: 1.733 },
   { id: 81, commune: 'Concots', description: 'Ancien carrefour commercial, tour du XIIIe et cuisine bistronomique', niveau: 2, categorie: 'remarquable', lat: 44.428, lng: 1.644 },
   { id: 82, commune: 'Varaire', description: 'Passage du GR 65, Lavoir Papillon et Château de Couanac', niveau: 2, categorie: 'remarquable', lat: 44.357, lng: 1.723 },
+  { id: 83, commune: 'Grèzes', description: 'Église Saint-Jacques-le-Majeur, Chapelle Notre-Dame, Dolmens (Custalou, Champ de Ligoussou, Cloup-de-Périès, lac de Lapeyre)', niveau: 2, categorie: 'remarquable', lat: 44.627, lng: 1.821 },
 ];
 
 export async function GET() {
