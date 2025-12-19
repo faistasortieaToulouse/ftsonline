@@ -69,7 +69,7 @@ export default function TourismeHauteGaronnePage() {
   const apiUrl =
     process.env.NODE_ENV === "development"
       ? "http://localhost:9002/api/tourismehautegaronne"
-      : "https://ftsonline.vercel.app/api/tourismehautegaronne";
+      : "https://ftstoulouse.vercel.app/api/tourismehautegaronne";
 
   async function fetchEvents() {
     setLoading(true);
