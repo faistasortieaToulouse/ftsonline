@@ -1,8 +1,7 @@
-// src/app/api/agendatoulousain/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { decode } from "he";
 
-// 🔹 UT-Capitole : images par défaut
+// --- UTILS CAPITOLE ---
 const getCapitoleImage = (title?: string) => {
   if (!title) return "/images/capitole/capidefaut.jpg";
   const lower = title.toLowerCase();
@@ -12,7 +11,6 @@ const getCapitoleImage = (title?: string) => {
   return "/images/capitole/capidefaut.jpg";
 };
 
-// 🔹 Cartographie catégorie → image par défaut COMDT
 const defaultComdtImages: Record<string, string> = {
   "Stages": "/images/comdt/catecomdtstage.jpg",
   "Stages de danse": "/images/comdt/catecomdtdanse.jpg",
@@ -21,7 +19,7 @@ const defaultComdtImages: Record<string, string> = {
   "Evénements partenaires": "/images/comdt/catecomdtpartenaire.jpg",
 };
 
-// 🔹 Normalisation générique
+// --- NORMALISATION GÉNÉRIQUE ---
 function normalizeApiResult(data: any): any[] {
   if (!data) return [];
   if (Array.isArray(data)) return data;
@@ -33,7 +31,7 @@ function normalizeApiResult(data: any): any[] {
   return Array.isArray(firstArray) ? firstArray : [];
 }
 
-// 🎬 Normalisation TMDB
+// --- NORMALISATION CINÉMA ---
 function normalizeCinema(data: any): any[] {
   if (!data?.results) return [];
   const today = new Date();
@@ -58,20 +56,17 @@ function normalizeCinema(data: any): any[] {
     }));
 }
 
-// 🔹 Parse ICS COMDT
+// --- PARSE ICS (COMDT) ---
 function parseICS(text: string) {
   const events: any[] = [];
   const blocks = text.split("BEGIN:VEVENT").slice(1);
-
   for (const block of blocks) {
     const get = (key: string) => {
       const m = block.match(new RegExp(`${key}[^:]*:(.+)`));
       return m ? m[1].trim() : "";
     };
-
     const dt = get("DTSTART");
     if (!dt) continue;
-
     let date: Date | null = null;
     if (/^\d{8}$/.test(dt)) {
       date = new Date(`${dt.slice(0, 4)}-${dt.slice(4, 6)}-${dt.slice(6, 8)}T00:00:00`);
@@ -85,13 +80,9 @@ function parseICS(text: string) {
     if (!image) {
       const categories = get("CATEGORIES").split(",").map(c => c.trim());
       for (const cat of categories) {
-        if (defaultComdtImages[cat]) {
-          image = defaultComdtImages[cat];
-          break;
-        }
+        if (defaultComdtImages[cat]) { image = defaultComdtImages[cat]; break; }
       }
     }
-
     events.push({
       id: get("UID"),
       title: get("SUMMARY"),
@@ -100,23 +91,10 @@ function parseICS(text: string) {
       location: get("LOCATION"),
       date: date.toISOString(),
       source: "COMDT",
-      categories: get("CATEGORIES").split(",").map(c => c.trim()),
       image,
     });
   }
   return events;
-}
-
-function normalizeComdtICS(events: any[]): any[] {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const maxDate = new Date(today);
-  maxDate.setDate(maxDate.getDate() + 31);
-
-  return events.filter(ev => {
-    const d = new Date(ev.date);
-    return !isNaN(d.getTime()) && d >= today && d <= maxDate;
-  });
 }
 
 export const dynamic = "force-dynamic";
@@ -129,7 +107,6 @@ export async function GET(request: NextRequest) {
     today.setHours(0, 0, 0, 0);
     const maxDate = new Date(today);
     maxDate.setDate(today.getDate() + 31);
-    maxDate.setHours(23, 59, 59, 999);
 
     const EXTERNAL_SOURCES = [
       { url: `${origin}/api/agenda-trad-haute-garonne`, source: "Agenda Trad Haute-Garonne" },
@@ -142,90 +119,75 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/discord`, source: "Discord" },
       { url: `${origin}/api/ecluse`, source: "L'Écluse" },
       { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" },
-      { url: `${origin}/api/radarsquat`, source: "Radar Squat" }, // 🆕 Ajout Radar Squat
+      { url: `${origin}/api/radarsquat`, source: "Radar Squat" },
+      { url: `${origin}/api/theatredupave`, source: "Théâtre du Pavé" }, // 🆕 Ajout Pavé
     ];
 
     const results = await Promise.all(
       EXTERNAL_SOURCES.map(async ({ url, source }) => {
         try {
-          if (source === "Sorties cinéma") {
-            const res = await fetch(`${origin}/api/cinematoulouse`, { cache: "no-store" });
-            return normalizeCinema(await res.json());
-          }
-
+          // Gestion COMDT (ICS direct)
           if (source === "COMDT") {
             const res = await fetch("https://www.comdt.org/events/feed/?ical=1", {
               headers: { Accept: "text/calendar" },
               cache: "no-store",
             });
             if (!res.ok) return [];
-            return normalizeComdtICS(parseICS(await res.text()));
+            return parseICS(await res.text()).filter(ev => {
+              const d = new Date(ev.date);
+              return d >= today && d <= maxDate;
+            });
           }
 
+          // Fetch API standard
           const res = await fetch(url, { cache: "no-store" });
           if (!res.ok) return [];
           const data = await res.json();
+          
+          if (source === "Sorties cinéma") return normalizeCinema(data);
+          
           const items = normalizeApiResult(data);
 
-          // 🔵 TRAITEMENT CULTURE HAUTE-GARONNE (31)
-          if (source === "Culture Haute-Garonne") {
-            return items
-              .map((ev: any) => {
-                const d = new Date(ev.date);
-                if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
-                return {
-                  ...ev,
-                  link: ev.url || ev.link,
-                  location: ev.fullAddress || ev.location,
-                  source
-                };
-              })
-              .filter(Boolean);
-          }
-
-          // 🏴‍☠️ TRAITEMENT RADAR SQUAT
-          if (source === "Radar Squat") {
+          // 🎭 TRAITEMENT THÉÂTRE DU PAVÉ
+          if (source === "Théâtre du Pavé") {
             return items.map((ev: any) => ({
               ...ev,
-              date: ev.start || ev.date, // Radar Squat utilise 'start'
-              location: ev.location || ev.fullAddress,
+              date: ev.start, // On harmonise 'start' vers 'date'
+              link: ev.url,
+              image: ev.image || "/images/theatre-pave-default.jpg",
               source
             }));
           }
 
-          // 🟢 TRAITEMENT ÉCLUSE
+          // 🏴‍☠️ RADAR SQUAT
+          if (source === "Radar Squat") {
+            return items.map((ev: any) => ({
+              ...ev,
+              date: ev.start || ev.date,
+              source
+            }));
+          }
+
+          // 🟢 ÉCLUSE
           if (source === "L'Écluse") {
             return items.map((ev: any) => ({
               ...ev,
               image: ev.image || "/images/ecluse/cateporteecluse.jpg",
               source,
-              categories: ["Théâtre"]
             }));
           }
 
-          // 🔵 TRAITEMENT CULTURE EN MOUVEMENTS
-          if (source === "Culture en Mouvements") {
+          // 🔴 DEMOSPHERE
+          if (source === "Demosphere") {
             return items.map((ev: any) => ({
               ...ev,
-              date: ev.start,
-              source,
-            }));
-          }
-
-          // 🔴 TRAITEMENT DEMOSPHERE
-          if (source === "Demosphere") {
-            return items
-              .map((ev: any) => {
-                const d = new Date(ev.start || ev.date);
-                if (isNaN(d.getTime()) || d < today || d > maxDate) return null;
-                return {
-                  ...ev,
-                  date: d.toISOString(),
-                  image: "/logo/demosphereoriginal.png",
-                  source
-                };
-              })
-              .filter(Boolean);
+              date: ev.start || ev.date,
+              image: "/logo/demosphereoriginal.png",
+              source
+            })).filter(ev => {
+              const d = new Date(ev.date);
+              return d >= today && d <= maxDate;
+            });
           }
 
           return items.map(ev => ({ ...ev, source }));
@@ -235,11 +197,11 @@ export async function GET(request: NextRequest) {
       })
     );
 
+    // --- HARMONISATION FINALE ---
     let events = results.flat();
     
-    events = events.map(ev => {
-      // Priorité aux clés de date divergentes
-      let d = new Date(ev.date || ev.start || ev.startDate);
+    const processedEvents = events.map(ev => {
+      let d = new Date(ev.date || ev.start || ev.startDate || ev.scheduled_start_time);
       if (isNaN(d.getTime())) d = today;
 
       let description = ev.description ? decode(ev.description) : "";
@@ -251,23 +213,28 @@ export async function GET(request: NextRequest) {
 
       return { 
         ...ev, 
+        title: ev.title || ev.name || "Événement",
         date: d.toISOString(), 
         description,
-        // Assurer que le champ link et fullAddress existent pour le front
-        link: ev.link || ev.url || "#",
-        fullAddress: ev.fullAddress || ev.location || "Lieu non précisé"
+        link: ev.link || ev.url || ev.href || "#",
+        fullAddress: ev.fullAddress || ev.location || "Lieu non précisé",
+        image: ev.image || "/images/default-event.jpg"
       };
     });
 
+    // Suppression doublons
     const uniq = new Map<string, any>();
-    events.forEach(ev => {
+    processedEvents.forEach(ev => {
       const key = ev.id || `${ev.title}-${ev.date}-${ev.source}`;
       if (!uniq.has(key)) uniq.set(key, ev);
     });
 
-    const sorted = Array.from(uniq.values()).sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
+    const sorted = Array.from(uniq.values())
+      .filter(ev => {
+        const d = new Date(ev.date);
+        return d >= today && d <= maxDate;
+      })
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return NextResponse.json({ total: sorted.length, events: sorted });
   } catch (err: any) {
