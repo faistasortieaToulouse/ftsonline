@@ -136,12 +136,12 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/agendaculturel`, source: "Agenda Culturel" },
       { url: `${origin}/api/capitole-min`, source: "Université Toulouse Capitole" },
       { url: `${origin}/api/cinematoulouse`, source: "Sorties cinéma" },
+      { url: "COMDT", source: "COMDT" },
       { url: `${origin}/api/cultureenmouvements`, source: "Culture en Mouvements" },
       { url: `${origin}/api/demosphere`, source: "Demosphere" },
       { url: `${origin}/api/discord`, source: "Discord" },
       { url: `${origin}/api/ecluse`, source: "L'Écluse" },
       { url: `${origin}/api/hautegaronne`, source: "Culture Haute-Garonne" }, 
-      { url: "COMDT", source: "COMDT" },
     ];
 
     const results = await Promise.all(
