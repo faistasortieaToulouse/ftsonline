@@ -35,14 +35,28 @@ export default function HauteGaronnePage() {
   // Filtrage + tri chronologique
   const filteredEvents = events
     .filter((event) => {
+      // 1. Recherche textuelle
       const query = searchQuery.toLowerCase();
-      return (
+      const matchesSearch = (
         event.title?.toLowerCase().includes(query) ||
         event.description?.toLowerCase().includes(query) ||
         event.fullAddress?.toLowerCase().includes(query) ||
         event.dateFormatted?.toLowerCase().includes(query) ||
         event.category?.toLowerCase().includes(query)
       );
+
+      // 2. Filtrage temporel (Aujourd'hui -> J+31)
+      const eventDate = new Date(event.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Début de journée pour inclure aujourd'hui
+
+      const maxDate = new Date();
+      maxDate.setDate(today.getDate() + 31);
+      maxDate.setHours(23, 59, 59, 999); // Fin de journée à J+31
+
+      const isWithinTimeRange = eventDate >= today && eventDate <= maxDate;
+
+      return matchesSearch && isWithinTimeRange;
     })
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
@@ -63,9 +77,11 @@ export default function HauteGaronnePage() {
       />
 
       {/* Compteur */}
-      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
+      <p className="mb-4 font-semibold text-blue-700">
+        Événements trouvés (prochains 31 jours) : {filteredEvents.length}
+      </p>
 
-      {/* Mode plein écran / vignette */}
+      {/* Mode de vue */}
       <div className="flex gap-4 mb-6">
         <Button
           onClick={() => setViewMode("card")}
@@ -92,13 +108,13 @@ export default function HauteGaronnePage() {
         </div>
       )}
 
-      {/* Mode plein écran */}
+      {/* Mode plein écran (Grille de cartes) */}
       {viewMode === "card" && filteredEvents.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredEvents.map((event) => (
             <div
               key={event.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[480px]"
+              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[480px] border border-gray-100"
             >
               <img
                 src={event.image || PLACEHOLDER_IMAGE}
@@ -108,7 +124,6 @@ export default function HauteGaronnePage() {
               <div className="p-4 flex flex-col flex-1 min-h-0">
                 <h2 className="text-xl font-semibold mb-2 line-clamp-2">{event.title}</h2>
 
-                {/* Description avec barre de défilement */}
                 <div
                   className="text-sm text-muted-foreground mb-2 overflow-y-auto"
                   style={{ flex: 1, minHeight: 0 }}
@@ -116,9 +131,11 @@ export default function HauteGaronnePage() {
                   {event.description}
                 </div>
 
-                <p className="text-sm font-medium mb-1">{event.dateFormatted}</p>
-                <p className="text-sm text-muted-foreground mb-1">{event.fullAddress}</p>
-                <p className="text-xs text-muted-foreground italic mb-3">Source : {event.source}</p>
+                <div className="mt-2 pt-2 border-t border-gray-50">
+                  <p className="text-sm font-bold text-blue-600 mb-1">{event.dateFormatted}</p>
+                  <p className="text-sm text-gray-600 mb-1 line-clamp-1">{event.fullAddress}</p>
+                  <p className="text-xs text-muted-foreground italic mb-3">Source : {event.source}</p>
+                </div>
 
                 {event.url && (
                   <a
@@ -136,31 +153,35 @@ export default function HauteGaronnePage() {
         </div>
       )}
 
-      {/* Mode vignette */}
+      {/* Mode vignette (Liste) */}
       {viewMode === "list" && filteredEvents.length > 0 && (
         <div className="space-y-4 mt-6">
           {filteredEvents.map((event) => (
             <div
               key={event.id}
-              className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white"
+              className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white hover:bg-gray-50 transition"
             >
-              <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs overflow-hidden">
+              <div className="w-24 h-24 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs overflow-hidden shrink-0">
                 <img
                   src={event.image || PLACEHOLDER_IMAGE}
                   alt={event.title}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold line-clamp-2">{event.title}</h2>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg font-semibold line-clamp-1">{event.title}</h2>
                 <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
-                <p className="text-sm font-medium mt-1">{event.dateFormatted}</p>
+                <div className="flex gap-4 mt-1 items-center">
+                  <p className="text-sm font-bold text-blue-600">{event.dateFormatted}</p>
+                  <span className="text-gray-300">|</span>
+                  <p className="text-xs text-gray-500 truncate">{event.fullAddress}</p>
+                </div>
                 {event.url && (
                   <a
                     href={event.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 underline text-sm mt-1 block"
+                    className="text-blue-600 underline text-sm mt-1 block font-medium"
                   >
                     Voir →
                   </a>
@@ -172,7 +193,12 @@ export default function HauteGaronnePage() {
       )}
 
       {filteredEvents.length === 0 && !loading && (
-        <p className="mt-6 text-muted-foreground">Aucun événement à venir trouvé.</p>
+        <div className="mt-10 text-center p-10 border-2 border-dashed rounded-lg">
+          <p className="text-xl text-muted-foreground">Aucun événement trouvé pour les 31 prochains jours.</p>
+          <Button variant="outline" className="mt-4" onClick={() => setSearchQuery("")}>
+            Réinitialiser la recherche
+          </Button>
+        </div>
       )}
     </div>
   );
