@@ -10,7 +10,6 @@ const DISCORD_EVENT_URL =
 // Cache mémoire
 let cachedData: { widget: any; events: any[]; timestamp: number } | null = null;
 
-// Horaires de rafraîchissement (5h et 17h)
 const REFRESH_TIMES = [
   { hour: 5, minute: 0 },
   { hour: 17, minute: 0 },
@@ -25,25 +24,45 @@ async function fetchDiscordData() {
 
   const eventsRes = await fetch(
     `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/scheduled-events?with_user_count=true`,
-    { headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}` }, cache: "no-store" }
+    { 
+      headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}` }, 
+      cache: "no-store" 
+    }
   );
 
   let eventsData: any[] = [];
   if (eventsRes.ok) {
     const rawEvents = await eventsRes.json();
-    eventsData = rawEvents.map((e: any) => ({
-      id: e.id,
-      title: e.name,
-      description: e.description,
-      date: e.scheduled_start_time,
-      endDate: e.scheduled_end_time,
-      location: "Discord",
-      image: e.image
-        ? `https://cdn.discordapp.com/guild-events/${e.id}/${e.image}.png?size=1024`
-        : null,
-      url: DISCORD_EVENT_URL,
-      source: "discord",
-    }));
+    eventsData = rawEvents.map((e: any) => {
+      // Préparation de la date pour éviter le "Invalid Date"
+      const startDate = e.scheduled_start_time ? new Date(e.scheduled_start_time) : null;
+      
+      return {
+        id: e.id,
+        title: e.name,
+        description: e.description || "",
+        // On envoie 'date' au format ISO pour que le Frontend puisse faire new Date()
+        date: e.scheduled_start_time, 
+        // Ajout explicite du formatage pour les composants qui l'utilisent directement
+        dateFormatted: startDate && !isNaN(startDate.getTime())
+          ? startDate.toLocaleString("fr-FR", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "Date à venir",
+        location: e.entity_metadata?.location || "Discord / Toulouse",
+        fullAddress: e.entity_metadata?.location || "En ligne / Serveur Discord",
+        image: e.image
+          ? `https://cdn.discordapp.com/guild-events/${e.id}/${e.image}.png?size=1024`
+          : "/logo/discord-bg.png", // Image par défaut plus sympa
+        url: DISCORD_EVENT_URL,
+        source: "Discord",
+      };
+    });
   }
 
   cachedData = { widget: widgetData, events: eventsData, timestamp: Date.now() };
@@ -67,7 +86,8 @@ export async function GET() {
   }
 
   try {
-    if (!cachedData) await fetchDiscordData();
+    // Forcer le refresh si les données sont trop vieilles ou absentes
+    await fetchDiscordData();
 
     const secondsUntilRefresh = getNextRefreshSeconds();
 
