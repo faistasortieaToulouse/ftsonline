@@ -123,7 +123,8 @@ export async function GET(request: NextRequest) {
       { url: `${origin}/api/radarsquat`, source: "Radar Squat" },
       { url: `${origin}/api/theatredupave`, source: "Théâtre du Pavé" },
       { url: `${origin}/api/toulousemetropole`, source: "Toulouse Métropole" },
-      { url: `${origin}/api/tourismehautegaronne`, source: "Tourisme Haute-Garonne" }, // 🆕 Ajout Tourisme HG
+      { url: `${origin}/api/tourismehautegaronne`, source: "Tourisme Haute-Garonne" },
+      { url: `${origin}/api/ut3-min`, source: "Université Toulouse III - Paul Sabatier" }, // 🆕 Ajout UT3
     ];
 
     const results = await Promise.all(
@@ -146,11 +147,21 @@ export async function GET(request: NextRequest) {
           
           const items = normalizeApiResult(data);
 
+          // 🆕 TRAITEMENT UT3
+          if (source === "Université Toulouse III - Paul Sabatier") {
+            return items.map((ev: any) => ({
+              ...ev,
+              date: ev.start, // UT3 utilise 'start'
+              link: ev.url,
+              source
+            }));
+          }
+
           // 🆕 TRAITEMENT TOURISME HAUTE-GARONNE
           if (source === "Tourisme Haute-Garonne") {
             return items.map((ev: any) => ({
               ...ev,
-              date: ev.date, // Déjà mis en ISO par sa propre route
+              date: ev.date,
               link: ev.url,
               fullAddress: ev.fullAddress || ev.location,
               source
@@ -191,12 +202,14 @@ export async function GET(request: NextRequest) {
     let events = results.flat();
     
     const processedEvents = events.map(ev => {
+      // Priorité aux clés de date divergentes
       let d = new Date(ev.date || ev.start || ev.startDate || ev.scheduled_start_time || ev.date_debut || ev.date_evenement);
       if (isNaN(d.getTime())) d = today;
 
       let description = ev.description ? decode(ev.description) : "";
       description = description.replace(/<(?!\/?(p|br|strong|em|a)\b)[^>]*>/gi, "").trim();
 
+      // Images spécifiques Capitole
       if (ev.source?.toLowerCase().includes("capitole") && !ev.image) {
         ev.image = getCapitoleImage(ev.title);
       }
@@ -212,7 +225,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Suppression doublons et filtrage temporel final strict
+    // Suppression doublons et filtrage temporel final strict (Today + 31 jours)
     const uniq = new Map<string, any>();
     processedEvents.forEach(ev => {
       const key = ev.id || `${ev.title}-${ev.date}-${ev.source}`;
