@@ -51,7 +51,11 @@ export default function TarnMapPage() {
         if (!response.ok) {
           throw new Error(`Erreur HTTP : ${response.status}`);
         }
-        const data: SiteTarn[] = await response.json();
+        let data: SiteTarn[] = await response.json();
+
+        // --- TRI ALPHABÉTIQUE DES COMMUNES ---
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
       } catch (error) {
         console.error("Erreur lors de la récupération des sites du Tarn :", error);
@@ -128,7 +132,7 @@ export default function TarnMapPage() {
         Statut : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Légende réécrite selon modèle Lot */}
+      {/* Légende */}
       <div style={legendStyle}>
         <strong>Légende :</strong>
         <span style={{ color: '#dc2626', fontWeight: 'bold' }}>🔴 Incontournable (Niveau 1)</span>
