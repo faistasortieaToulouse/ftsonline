@@ -1,4 +1,3 @@
-// src/app/patrimoine31/page.tsx
 'use client'; 
 
 import { useEffect, useRef, useState, CSSProperties } from "react"; 
@@ -28,7 +27,11 @@ export default function Patrimoine31MapPage() {
         const response = await fetch('/api/patrimoine31'); 
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         
-        const data: Site[] = await response.json();
+        let data: Site[] = await response.json();
+
+        // --- TRI ALPHABÉTIQUE DES COMMUNES ---
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
 
       } catch (error) {
@@ -45,7 +48,7 @@ export default function Patrimoine31MapPage() {
     if (!isReady || !mapRef.current || !window.google?.maps || sitesData.length === 0) return;
 
     const map = new google.maps.Map(mapRef.current, { 
-      zoom: 11, // Zoom ajusté pour la petite zone
+      zoom: 11, 
       center: HAUTE_GARONNE_CENTER, 
       gestureHandling: "greedy", 
     }); 
@@ -55,7 +58,6 @@ export default function Patrimoine31MapPage() {
 
     sitesData.forEach((site) => { 
       count++; 
-
       const position = new google.maps.LatLng(site.lat, site.lng);
 
       const marker = new google.maps.Marker({ 
@@ -69,7 +71,6 @@ export default function Patrimoine31MapPage() {
         },
       });
 
-      // Info-bulle affichée au clic - Nettoyage des retours à la ligne du template string
       const info = new google.maps.InfoWindow({ 
         content: `
           <div style="font-family: Arial; font-size: 14px;"> 
@@ -78,7 +79,7 @@ export default function Patrimoine31MapPage() {
             <b>Secteur :</b> ${site.secteur}<br/>
             <b>Distance de Toulouse :</b> ${site.distanceKm} km
           </div>
-        `.trim(), // Utilisation de .trim() pour supprimer les espaces/retours à la ligne inutiles
+        `.trim(),
       });
 
       marker.addListener("click", () => 
@@ -92,7 +93,6 @@ export default function Patrimoine31MapPage() {
   return ( 
     <div className="p-4 max-w-7xl mx-auto"> 
 
-      {/* Google Maps API (Vérifiez la clé API dans .env.local) */}
       <Script 
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`} 
         strategy="afterInteractive" 
@@ -105,18 +105,15 @@ export default function Patrimoine31MapPage() {
         Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Carte */}
       <div 
         ref={mapRef} 
         style={{ height: "70vh", width: "100%" }} 
         className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
       > 
         {(!isReady || isLoadingData) && <p>Chargement de la carte et des données…</p>} 
-        {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher. (Vérifiez la route API /api/patrimoine31)</p>}
+        {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher.</p>}
       </div>
       
-
-{/* Tableau */}
       <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({markersCount} marqueurs)</h2> 
 
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}> 
@@ -130,7 +127,6 @@ export default function Patrimoine31MapPage() {
           </tr> 
         </thead> 
         
-        {/* CORRECTION HYDRATATION FINALE : Suppression de tous les retours à la ligne autour du map dans tbody */}
         <tbody>{sitesData.map((site, i) => ( 
             <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
               <td style={tableCellStyle}>{i + 1}</td>
