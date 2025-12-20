@@ -10,17 +10,13 @@ interface SiteAude {
   commune: string;
   description: string;
   niveau: number;
-  // Note: Les catégories doivent correspondre exactement à celles de /api/aude/route.ts
   categorie: 'Incontournable' | 'Remarquable' | 'Suggéré'; 
   lat: number;
   lng: number;
 } 
 
-// --- Fonction pour obtenir l’icône du marqueur (couleur) ---
+// --- Fonction pour obtenir l’icône du marqueur ---
 const getMarkerColor = (categorie: SiteAude['categorie']): string => {
-  // 0: rouge (Incontournable)
-  // 3: orange (Remarquable)
-  // 2: bleu (Suggéré)
   switch (categorie) {
     case 'Incontournable':
       return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
@@ -32,15 +28,14 @@ const getMarkerColor = (categorie: SiteAude['categorie']): string => {
   }
 };
 
-// --- Fonction pour obtenir la couleur du numéro (label) ---
+// --- Fonction pour obtenir la couleur du numéro ---
 const getLabelColor = (categorie: SiteAude['categorie']): string => {
-  // Adaptation pour la lisibilité sur fond rouge/orange/bleu
   switch (categorie) {
-    case 'Incontournable': // rouge
+    case 'Incontournable':
       return 'yellow';
-    case 'Remarquable':    // orange
+    case 'Remarquable':
       return 'white';
-    case 'Suggéré':        // bleu
+    case 'Suggéré':
     default:
       return 'yellow'; 
   }
@@ -57,15 +52,18 @@ export default function AudeMapPage() {
   const [isReady, setIsReady] = useState(false); 
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // ---- 1. Récupération des données (Client-side) ----
+  // ---- 1. Récupération des données et tri alphabétique ----
   useEffect(() => {
     async function fetchSites() {
       try {
-        // CHANGEMENT : Récupération depuis /api/aude
         const response = await fetch('/api/aude'); 
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         
-        const data: SiteAude[] = await response.json();
+        let data: SiteAude[] = await response.json();
+
+        // Tri alphabétique par commune
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
 
       } catch (error) {
@@ -81,7 +79,6 @@ export default function AudeMapPage() {
   useEffect(() => { 
     if (!isReady || !mapRef.current || !window.google?.maps || sitesData.length === 0) return;
 
-    // Initialisation de la carte (CENTRAGE SUR L'AUDE)
     const map = new google.maps.Map(mapRef.current, { 
       zoom: 9, 
       center: AUDE_CENTER, 
@@ -90,13 +87,13 @@ export default function AudeMapPage() {
 
     mapInstance.current = map; 
     let count = 0;
-    const bounds = new google.maps.LatLngBounds(); // Pour l'ajustement du zoom
+    const bounds = new google.maps.LatLngBounds();
 
     sitesData.forEach((site) => { 
       count++; 
 
       const position = new google.maps.LatLng(site.lat, site.lng);
-      bounds.extend(position); // Ajoute la position pour le calcul de l'ajustement
+      bounds.extend(position);
 
       const marker = new google.maps.Marker({ 
         map: mapInstance.current, 
@@ -104,10 +101,10 @@ export default function AudeMapPage() {
         title: `${site.commune} - ${site.description}`,
         label: {
           text: String(count),
-          color: getLabelColor(site.categorie), // Couleur dynamique du numéro
+          color: getLabelColor(site.categorie),
           fontWeight: 'bold' as const
         },
-        icon: getMarkerColor(site.categorie) // Couleur dynamique de l'icône
+        icon: getMarkerColor(site.categorie)
       });
 
       const info = new google.maps.InfoWindow({ 
@@ -125,30 +122,25 @@ export default function AudeMapPage() {
       );
     });
     
-    // Ajuste le zoom pour inclure tous les marqueurs
     map.fitBounds(bounds);
-
     setMarkersCount(count); 
   }, [isReady, sitesData]);
 
   return ( 
     <div className="p-4 max-w-7xl mx-auto"> 
 
-      {/* Google Maps API */}
       <Script 
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`} 
         strategy="afterInteractive" 
         onLoad={() => setIsReady(true)} 
       /> 
 
-      {/* CHANGEMENT de Titre */}
       <h1 className="text-3xl font-extrabold mb-6">🏰 Sites Touristiques dans l'Aude sur la Carte</h1> 
 
       <p className="font-semibold text-lg mb-4">
         Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Légende */}
       <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
         <strong>Légende :</strong>
         <span style={{ color: 'red', fontWeight: 'bold' }}>🔴 Incontournable (1)</span>
@@ -156,7 +148,6 @@ export default function AudeMapPage() {
         <span style={{ color: 'blue', fontWeight: 'bold' }}>🔵 Suggéré (3)</span>
       </div>
 
-      {/* Carte */}
       <div 
         ref={mapRef} 
         style={{ height: "70vh", width: "100%" }} 
@@ -166,7 +157,6 @@ export default function AudeMapPage() {
         {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher.</p>}
       </div>
 
-      {/* Tableau */}
       <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({markersCount} marqueurs)</h2> 
 
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}> 
