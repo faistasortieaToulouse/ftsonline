@@ -1,4 +1,3 @@
-// src/app/pyreneesorientales/page.tsx
 'use client';
 
 import { useEffect, useRef, useState, CSSProperties } from "react";
@@ -18,13 +17,10 @@ interface SitePO {
 // --- Fonctions utilitaires pour le style des marqueurs ---
 const getMarkerIcon = (categorie: SitePO['categorie']): string => {
   switch (categorie) {
-    case 'incontournable':
-      return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-    case 'remarquable':
-      return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
-    case 'suggéré':
-    default:
-      return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+    case 'incontournable': return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+    case 'remarquable': return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
+    case 'suggéré': 
+    default: return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
   }
 };
 
@@ -49,11 +45,13 @@ export default function PyreneesOrientalesMapPage() {
     async function fetchSites() {
       try {
         const response = await fetch('/api/pyreneesorientales');
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP : ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
 
-        const data: SitePO[] = await response.json();
+        let data: SitePO[] = await response.json();
+
+        // --- TRI ALPHABÉTIQUE DES COMMUNES ---
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
       } catch (error) {
         console.error("Erreur lors de la récupération des sites PO :", error);
@@ -114,8 +112,6 @@ export default function PyreneesOrientalesMapPage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-
-      {/* Google Maps API */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
         strategy="afterInteractive"
@@ -130,7 +126,6 @@ export default function PyreneesOrientalesMapPage() {
         Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Légende */}
       <div style={legendStyle}>
         <strong>Légende :</strong>
         <span style={{ color: 'red', fontWeight: 'bold' }}>🔴 Incontournable (Niveau 1)</span>
@@ -138,7 +133,6 @@ export default function PyreneesOrientalesMapPage() {
         <span style={{ color: 'blue', fontWeight: 'bold' }}>🔵 Suggéré (Niveau 3)</span>
       </div>
 
-      {/* Carte */}
       <div
         ref={mapRef}
         style={{ height: "70vh", width: "100%" }}
@@ -148,7 +142,6 @@ export default function PyreneesOrientalesMapPage() {
         {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher.</p>}
       </div>
 
-      {/* Tableau */}
       <h2 className="text-2xl font-semibold mb-4">
         Liste complète des sites ({markersCount} marqueurs)
       </h2>
