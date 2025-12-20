@@ -27,7 +27,7 @@ const tarnSites: SiteTarn[] = [
   { id: 14, commune: 'Castres', site: 'Maisons sur l’Agout et Musée Goya', niveau: 1, categorie: 'incontournable', lat: 43.606, lng: 2.241 },
   { id: 15, commune: 'Cug-Toulza', site: 'Village et patrimoine local', niveau: 2, categorie: 'remarquable', lat: 43.767, lng: 1.893 },
   { id: 16, commune: 'Damiatte', site: 'Église et village historique', niveau: 3, categorie: 'suggéré', lat: 43.792, lng: 2.047 },
-  { id: 17, commune: 'Dourgne', site: 'Abbaye et village historique', niveau: 1, categorie: 'incontournable', lat: 43.550, lng: 2.135 },
+  { id: 17, commune: 'Dourgne', site: 'Abbaye d’En-Calcat et Sainte-Scholastique et village historique', niveau: 1, categorie: 'incontournable', lat: 43.550, lng: 2.135 },
   { id: 18, commune: 'Durfort', site: 'Village des chaudronniers et artisans du cuivre', niveau: 2, categorie: 'remarquable', lat: 43.438, lng: 2.068 },
   { id: 19, commune: 'Gaillac', site: 'Abbaye Saint-Michel et vignobles', niveau: 1, categorie: 'incontournable', lat: 43.901, lng: 1.897 },
   { id: 20, commune: 'Giroussens', site: 'Jardins et village historique', niveau: 1, categorie: 'incontournable', lat: 43.855, lng: 1.920 },
@@ -60,7 +60,7 @@ const tarnSites: SiteTarn[] = [
   { id: 47, commune: 'Saint-Pons-de-Thomières', site: 'Abbaye et village historique', niveau: 1, categorie: 'incontournable', lat: 43.600, lng: 2.450 },
   { id: 48, commune: 'Saint-Sulpice-la-Pointe', site: 'Église et patrimoine industriel', niveau: 2, categorie: 'remarquable', lat: 43.826, lng: 1.970 },
   { id: 49, commune: 'Saint-Urcisse', site: 'Village et patrimoine local', niveau: 1, categorie: 'incontournable', lat: 43.844, lng: 2.003 },
-  { id: 50, commune: 'Sorèze', site: 'Abbaye-École et Musée Dom Robert', niveau: 1, categorie: 'incontournable', lat: 43.452, lng: 2.067 },
+  { id: 50, commune: 'Sorèze', site: 'Abbaye-ÉcoleNotre-Dame de la Sagne et Musée Dom Robert', niveau: 1, categorie: 'incontournable', lat: 43.452, lng: 2.067 },
   { id: 51, commune: 'Técou', site: 'Église et village médiéval', niveau: 3, categorie: 'suggéré', lat: 43.867, lng: 2.220 },
   { id: 52, commune: 'Vaour', site: 'Village médiéval et château', niveau: 1, categorie: 'incontournable', lat: 43.973, lng: 1.830 },
   { id: 53, commune: 'Vabre', site: 'Village et patrimoine industriel', niveau: 2, categorie: 'remarquable', lat: 43.730, lng: 2.330 },
@@ -70,6 +70,9 @@ const tarnSites: SiteTarn[] = [
   { id: 57, commune: 'Murat-sur-Vèbre', site: 'Centre d\'interprétation des mégalithes', niveau: 1, categorie: 'incontournable', lat: 43.620, lng: 2.500 },
   { id: 58, commune: 'Ponteilla', site: 'Village et patrimoine local', niveau: 3, categorie: 'suggéré', lat: 43.705, lng: 2.210 },
   { id: 59, commune: 'La Sauzière-Saint-Jean', site: 'Village et église', niveau: 2, categorie: 'remarquable', lat: 43.746, lng: 2.040 },
+  { id: 60, commune: 'Lempaut', site: 'Abbaye d’Ardorel', niveau: 2, categorie: 'remarquable', lat: 43.966, lng: 2.370 },
+  { id: 61, commune: 'Montdragon', site: 'Abbaye de la Salvetat', niveau: 2, categorie: 'remarquable', lat: 43.940, lng: 2.480 },
+  { id: 62, commune: 'Vielmur-sur-Agout', site: 'Abbaye de Vielmur', niveau: 2, categorie: 'remarquable', lat: 43.905, lng: 2.565 },
 ];
 
 export async function GET() {
