@@ -43,7 +43,7 @@ export default function HautesPyreneesMapPage() {
   const [isReady, setIsReady] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // ---- 1. Récupération des données ----
+  // ---- 1. Récupération et tri des données ----
   useEffect(() => {
     async function fetchSites() {
       try {
@@ -52,6 +52,10 @@ export default function HautesPyreneesMapPage() {
           throw new Error(`Erreur HTTP : ${response.status}`);
         }
         const data: SiteHP[] = await response.json();
+
+        // --- Tri alphabétique par commune ---
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
       } catch (error) {
         console.error("Erreur lors de la récupération des sites des Hautes-Pyrénées :", error);
@@ -185,7 +189,7 @@ export default function HautesPyreneesMapPage() {
                   </span>
                 </td>
                 <td style={td}>
-                    <span className="capitalize">{site.categorie}</span>
+                  <span className="capitalize">{site.categorie}</span>
                 </td>
               </tr>
             ))}
@@ -210,21 +214,21 @@ const legendStyle: CSSProperties = {
 };
 
 const th: CSSProperties = { 
-    padding: "12px", 
-    borderBottom: "2px solid #e2e8f0", 
-    textAlign: "left",
-    color: "#475569",
-    fontSize: "0.9rem"
+  padding: "12px", 
+  borderBottom: "2px solid #e2e8f0", 
+  textAlign: "left",
+  color: "#475569",
+  fontSize: "0.9rem"
 };
 
 const td: CSSProperties = { 
-    padding: "12px", 
-    borderBottom: "1px solid #f1f5f9",
-    fontSize: "0.95rem"
+  padding: "12px", 
+  borderBottom: "1px solid #f1f5f9",
+  fontSize: "0.95rem"
 };
 
 const tdCenter: CSSProperties = { 
-    padding: "12px", 
-    borderBottom: "1px solid #f1f5f9", 
-    textAlign: "center" 
+  padding: "12px", 
+  borderBottom: "1px solid #f1f5f9", 
+  textAlign: "center" 
 };
