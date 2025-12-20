@@ -1,4 +1,3 @@
-// src/app/tarngaronne/page.tsx
 'use client';
 
 import { useEffect, useRef, useState, CSSProperties } from "react";
@@ -47,7 +46,11 @@ export default function TarnGaronneMapPage() {
       try {
         const response = await fetch('/api/tarngaronne');
         if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
-        const data: SiteTG[] = await response.json();
+        let data: SiteTG[] = await response.json();
+
+        // --- TRI ALPHABÉTIQUE DES COMMUNES ---
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
       } catch (error) {
         console.error("Erreur récupération Tarn-et-Garonne :", error);
