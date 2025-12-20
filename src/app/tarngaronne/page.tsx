@@ -15,13 +15,10 @@ interface SiteTG {
 
 const getMarkerIcon = (categorie: SiteTG['categorie']): string => {
   switch (categorie) {
-    case 'incontournable':
-      return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-    case 'remarquable':
-      return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
+    case 'incontournable': return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+    case 'remarquable': return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
     case 'suggéré':
-    default:
-      return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+    default: return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
   }
 };
 
@@ -30,7 +27,7 @@ const getLabelColor = (categorie: SiteTG['categorie']): string => {
 };
 
 // Centre Tarn-et-Garonne (Montauban)
-const TG_CENTER = { lat: 44.0174, lng: 1.3544 };
+const TG_CENTER = { lat: 44.05, lng: 1.40 };
 
 export default function TarnGaronneMapPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -41,16 +38,15 @@ export default function TarnGaronneMapPage() {
   const [isReady, setIsReady] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
+  // --- Fetch des données ---
   useEffect(() => {
     async function fetchSites() {
       try {
-        const response = await fetch('/api/tarngaronne');
+        const response = await fetch('/api/tarngaronne/route'); // <-- chemin correct
         if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
-        let data: SiteTG[] = await response.json();
+        const data: SiteTG[] = await response.json();
 
-        // --- TRI ALPHABÉTIQUE DES COMMUNES ---
         data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
-
         setSitesData(data);
       } catch (error) {
         console.error("Erreur récupération Tarn-et-Garonne :", error);
@@ -61,6 +57,7 @@ export default function TarnGaronneMapPage() {
     fetchSites();
   }, []);
 
+  // --- Initialisation de la carte et marqueurs ---
   useEffect(() => {
     if (!isReady || !mapRef.current || !window.google?.maps || sitesData.length === 0) return;
 
@@ -79,11 +76,7 @@ export default function TarnGaronneMapPage() {
         map,
         position,
         title: `${site.commune} - ${site.description}`,
-        label: {
-          text: String(count),
-          color: getLabelColor(site.categorie),
-          fontWeight: 'bold',
-        },
+        label: { text: String(count), color: getLabelColor(site.categorie), fontWeight: 'bold' },
         icon: getMarkerIcon(site.categorie),
       });
 
@@ -116,9 +109,9 @@ export default function TarnGaronneMapPage() {
 
       <div style={legendStyle}>
         <strong>Légende :</strong>
-        <span style={{ color: 'red', fontWeight: 'bold' }}>🔴 Incontournable (Niveau 1)</span>
-        <span style={{ color: 'orange', fontWeight: 'bold' }}>🟠 Remarquable (Niveau 2)</span>
-        <span style={{ color: 'blue', fontWeight: 'bold' }}>🔵 Suggéré (Niveau 3)</span>
+        <span style={{ color: 'red', fontWeight: 'bold' }}>🔴 Incontournable (1)</span>
+        <span style={{ color: 'orange', fontWeight: 'bold' }}>🟠 Remarquable (2)</span>
+        <span style={{ color: 'blue', fontWeight: 'bold' }}>🔵 Suggéré (3)</span>
       </div>
 
       <div
@@ -151,20 +144,18 @@ export default function TarnGaronneMapPage() {
               <td style={td}>{site.commune}</td>
               <td style={td}>{site.description}</td>
               <td style={tdCenter}>
-                <span
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: '12px',
-                    fontWeight: 'bold',
-                    fontSize: '0.9em',
-                    backgroundColor:
-                      site.niveau === 1 ? '#fee2e2' :
-                      site.niveau === 2 ? '#ffedd5' : '#dbeafe',
-                    color:
-                      site.niveau === 1 ? '#dc2626' :
-                      site.niveau === 2 ? '#ea580c' : '#2563eb',
-                  }}
-                >
+                <span style={{
+                  padding: '4px 10px',
+                  borderRadius: '12px',
+                  fontWeight: 'bold',
+                  fontSize: '0.9em',
+                  backgroundColor:
+                    site.niveau === 1 ? '#fee2e2' :
+                    site.niveau === 2 ? '#ffedd5' : '#dbeafe',
+                  color:
+                    site.niveau === 1 ? '#dc2626' :
+                    site.niveau === 2 ? '#ea580c' : '#2563eb',
+                }}>
                   {site.niveau}
                 </span>
               </td>
