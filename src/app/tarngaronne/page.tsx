@@ -42,7 +42,7 @@ export default function TarnGaronneMapPage() {
   useEffect(() => {
     async function fetchSites() {
       try {
-        const response = await fetch('/api/tarngaronne/route'); // <-- chemin correct
+        const response = await fetch('/api/tarngaronne'); // <-- chemin correct
         if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
         const data: SiteTG[] = await response.json();
 
