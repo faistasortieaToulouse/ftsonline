@@ -59,7 +59,11 @@ export default function AriegeMapPage() {
         const response = await fetch('/api/ariege');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         
-        const data: SiteAriege[] = await response.json();
+        let data: SiteAriege[] = await response.json();
+
+        // --- Tri alphabétique par commune ---
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
 
       } catch (error) {
