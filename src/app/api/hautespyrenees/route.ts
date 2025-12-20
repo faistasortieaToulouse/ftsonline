@@ -89,7 +89,7 @@ const hpSites: SiteHautesPyrenees[] = [
 { id: 76, commune: 'Mont', site: 'Église classée', niveau: 1, categorie: 'incontournable', lat: 42.84, lng: 0.45 },
 { id: 77, commune: 'Arnè', site: 'Tumulus de Chourtigade', niveau: 1, categorie: 'incontournable', lat: 43.05, lng: 0.22 },
 { id: 78, commune: 'Gèdre', site: 'Village de montagne, ski et lien avec Gavarnie', niveau: 1, categorie: 'incontournable', lat: 42.78, lng: -0.02 },
-  { id: 79, commune: 'Bagnères-de-Luchon', site: 'Station thermale, allées d’Étigny, téléphérique de Superbagnères, architecture Belle Époque', niveau: 1, categorie: 'incontournable', lat: 42.792, lng: 0.593 },
+{ id: 79, commune: 'Bagnères-de-Luchon', site: 'Station thermale, allées d’Étigny, téléphérique de Superbagnères, architecture Belle Époque', niveau: 1, categorie: 'incontournable', lat: 42.792, lng: 0.593 },
 { id: 80, commune: 'Bordères-sur-l’Échez', site: 'Village de la couronne tarbaise, église, berges de l’Échez', niveau: 3, categorie: 'suggéré', lat: 43.244, lng: 0.058 },
 { id: 81, commune: 'Séméac', site: 'Ville résidentielle, église Saint-Étienne, espaces verts et canal de l’Alaric', niveau: 3, categorie: 'suggéré', lat: 43.228, lng: 0.104 },
 { id: 82, commune: 'Soues', site: 'Village de plaine, église Saint-Pierre, proximité de l’Adour', niveau: 3, categorie: 'suggéré', lat: 43.206, lng: 0.097 },
