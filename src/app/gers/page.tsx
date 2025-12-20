@@ -26,7 +26,6 @@ const getMarkerIcon = (categorie: SiteGers['categorie']): string => {
 };
 
 const getLabelColor = (categorie: SiteGers['categorie']): string => {
-  // On change la couleur du texte selon le fond pour la lisibilité
   return categorie === 'remarquable' ? 'white' : 'yellow';
 };
 
@@ -41,14 +40,18 @@ export default function GersMapPage() {
   const [isReady, setIsReady] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // ---- 1. Récupération des données ----
+  // ---- 1. Récupération des données et tri alphabétique ----
   useEffect(() => {
     async function fetchSites() {
       try {
         const response = await fetch('/api/gers');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         
-        const data: SiteGers[] = await response.json();
+        let data: SiteGers[] = await response.json();
+
+        // Tri alphabétique par commune
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
       } catch (error) {
         console.error("Erreur lors de la récupération des sites du Gers:", error);
@@ -122,7 +125,7 @@ export default function GersMapPage() {
         Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Légende Mise à jour */}
+      {/* Légende */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', backgroundColor: '#fdfdfd' }}>
         <strong>Légende :</strong>
         <span style={{ color: 'red', fontWeight: 'bold' }}>🔴 Incontournable (Niveau 1)</span>
