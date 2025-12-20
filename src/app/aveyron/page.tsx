@@ -4,41 +4,33 @@
 import { useEffect, useRef, useState, CSSProperties } from "react"; 
 import Script from "next/script"; 
 
-// Import du type directement depuis la route API Aveyron (Bonne pratique)
+// Import du type directement depuis la route API Aveyron
 import type { SiteAveyron } from '../api/aveyron/route'; 
 
-// --- Fonction pour obtenir l’icône du marqueur ---
-// Les valeurs 0, 1, 2 correspondent aux couleurs par défaut des marqueurs Google Maps :
-// 0: Rouge (Incontournable)
-// 1: Orange (Remarquable)
-// 2: Bleu (Suggéré)
 const getMarkerColor = (categorie: SiteAveyron['categorie']): string => {
   switch (categorie) {
     case 'incontournable':
-      return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'; // Rouge
+      return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
     case 'remarquable':
-      return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png'; // Orange
+      return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
     case 'suggéré':
     default:
-      return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'; // Bleu
+      return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
   }
 };
 
-// --- Fonction pour obtenir la couleur du numéro sur le marqueur ---
 const getLabelColor = (categorie: SiteAveyron['categorie']): string => {
   switch (categorie) {
     case 'incontournable': 
-      return 'yellow'; // Contraste bien sur le rouge
+      return 'yellow';
     case 'remarquable':
-      return 'white'; // Contraste bien sur l'orange
+      return 'white';
     case 'suggéré': 
     default:
-      return 'yellow'; // Contraste bien sur le bleu
+      return 'yellow';
   }
 };
 
-// Coordonnées pour centrer la carte sur l'Aveyron (Rodez ou centre géographique)
-// J'utilise le centre géographique approximatif de l'Aveyron
 const AVEYRON_CENTER = { lat: 44.35, lng: 2.60 }; 
 
 export default function AveyronMapPage() { 
@@ -49,16 +41,18 @@ export default function AveyronMapPage() {
   const [isReady, setIsReady] = useState(false); 
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // ---- 1. Récupération des données ----
+  // ---- 1. Récupération des données et tri alphabétique ----
   useEffect(() => {
     async function fetchSites() {
       try {
-        // Changement de la route API pour l'Aveyron
         const response = await fetch('/api/aveyron'); 
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         
-        // Utilisation du type SiteAveyron pour les données
-        const data: SiteAveyron[] = await response.json();
+        let data: SiteAveyron[] = await response.json();
+
+        // Tri alphabétique par commune
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+
         setSitesData(data);
 
       } catch (error) {
@@ -72,10 +66,8 @@ export default function AveyronMapPage() {
 
   // ---- 2. Initialisation de la carte & marqueurs ----
   useEffect(() => { 
-    // Vérification que tout est chargé et prêt
     if (!isReady || !mapRef.current || !window.google?.maps || sitesData.length === 0) return;
 
-    // Initialisation de la carte, centrée sur l'Aveyron
     const map = new google.maps.Map(mapRef.current, { 
       zoom: 9, 
       center: AVEYRON_CENTER, 
@@ -85,7 +77,6 @@ export default function AveyronMapPage() {
     mapInstance.current = map; 
     let count = 0;
 
-    // Ajout des marqueurs
     sitesData.forEach((site) => { 
       count++; 
 
@@ -103,7 +94,6 @@ export default function AveyronMapPage() {
         icon: getMarkerColor(site.categorie)
       });
 
-      // Info-bulle affichée au clic
       const info = new google.maps.InfoWindow({ 
         content: `
           <div style="font-family: Arial; font-size: 14px;"> 
@@ -125,7 +115,6 @@ export default function AveyronMapPage() {
   return ( 
     <div className="p-4 max-w-7xl mx-auto"> 
 
-      {/* Google Maps API (Nécessite la clé API dans .env.local) */}
       <Script 
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`} 
         strategy="afterInteractive" 
@@ -138,26 +127,22 @@ export default function AveyronMapPage() {
         Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Légende */}
       <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', flexWrap: 'wrap' }}>
         <strong>Légende des marqueurs :</strong>
         <span style={{ color: '#E91E63', fontWeight: 'bold' }}>🔴 Incontournable (1)</span>
         <span style={{ color: '#FF9800', fontWeight: 'bold' }}>🟠 Remarquable (2)</span>
         <span style={{ color: '#2196F3', fontWeight: 'bold' }}>🔵 Suggéré (3)</span>
-        <span style={{ color: '#777', fontSize: '0.8rem' }}>(Les couleurs réelles des marqueurs Google Maps sont : 0=Rouge, 1=Orange, 2=Bleu)</span>
       </div>
 
-      {/* Carte */}
       <div 
         ref={mapRef} 
         style={{ height: "70vh", width: "100%" }} 
         className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
       > 
         {(!isReady || isLoadingData) && <p>Chargement de la carte et des données…</p>} 
-        {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher. (Vérifiez la route API /api/aveyron)</p>}
+        {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher.</p>}
       </div>
 
-      {/* Tableau */}
       <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({markersCount} marqueurs)</h2> 
 
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}> 
