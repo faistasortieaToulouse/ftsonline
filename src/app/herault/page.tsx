@@ -19,8 +19,8 @@ const getMarkerIcon = (categorie: SiteHerault['categorie']): string => {
   switch (categorie) {
     case 'incontournable': return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
     case 'remarquable':    return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
-    case 'suggéré':       return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
-    default:               return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+    case 'suggéré':         return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+    default:                return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
   }
 };
 
@@ -47,6 +47,8 @@ export default function HeraultMapPage() {
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         
         const data: SiteHerault[] = await response.json();
+        // Tri alphabétique des communes
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
         setSitesData(data);
       } catch (error) {
         console.error("Erreur lors de la récupération des sites de l'Hérault:", error);
