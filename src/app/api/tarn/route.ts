@@ -69,10 +69,10 @@ const tarnSites: SiteTarn[] = [
   { id: 56, commune: 'Villefranche-d\'Albigeois', site: 'Village et bastide', niveau: 3, categorie: 'suggéré', lat: 43.920, lng: 2.160 },
   { id: 57, commune: 'Murat-sur-Vèbre', site: 'Centre d\'interprétation des mégalithes', niveau: 1, categorie: 'incontournable', lat: 43.620, lng: 2.500 },
   { id: 58, commune: 'Ponteilla', site: 'Village et patrimoine local', niveau: 3, categorie: 'suggéré', lat: 43.705, lng: 2.210 },
-  { id: 59, commune: 'La Sauzière-Saint-Jean', site: 'Village et église', niveau: 2, categorie: 'remarquable', lat: 43.746, lng: 2.040 },
-  { id: 60, commune: 'Lempaut', site: 'Abbaye d’Ardorel', niveau: 2, categorie: 'remarquable', lat: 43.966, lng: 2.370 },
-  { id: 61, commune: 'Montdragon', site: 'Abbaye de la Salvetat', niveau: 2, categorie: 'remarquable', lat: 43.940, lng: 2.480 },
-  { id: 62, commune: 'Vielmur-sur-Agout', site: 'Abbaye de Vielmur', niveau: 2, categorie: 'remarquable', lat: 43.905, lng: 2.565 },
+  { id: 59, commune: 'La Sauzière-Saint-Jean', site: 'Village et église', niveau: 1, categorie: 'remarquable', lat: 43.746, lng: 2.040 },
+  { id: 60, commune: 'Lempaut', site: 'Abbaye d’Ardorel', niveau: 1, categorie: 'remarquable', lat: 43.966, lng: 2.370 },
+  { id: 61, commune: 'Montdragon', site: 'Abbaye de la Salvetat', niveau: 1, categorie: 'remarquable', lat: 43.940, lng: 2.480 },
+  { id: 62, commune: 'Vielmur-sur-Agout', site: 'Abbaye de Vielmur', niveau: 1, categorie: 'remarquable', lat: 43.905, lng: 2.565 },
 ];
 
 export async function GET() {
