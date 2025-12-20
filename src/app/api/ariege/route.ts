@@ -20,7 +20,7 @@ const ariegeSites: SiteAriege[] = [
   { id: 4, commune: "Lavelanet", description: "Musée du textile et du peigne en corne", niveau: 2, categorie: "remarquable", lat: 42.9356, lng: 1.8497 },
   { id: 5, commune: "Saverdun", description: "Aqua Play Park", niveau: 2, categorie: "remarquable", lat: 43.2384, lng: 1.5543 },
   { id: 6, commune: "Mazères", description: "Musée et hôtel de ville", niveau: 2, categorie: "remarquable", lat: 43.2500, lng: 1.6667 },
-  { id: 7, commune: "Varilhes", description: "—", niveau: 2, categorie: "remarquable", lat: 43.0560, lng: 1.6083 },
+  { id: 7, commune: "Varilhes", description: "Église Notre-Dame de l'Assomption, chapelle de Vals, maisons à colombages et en pierre, lavoir", niveau: 2, categorie: "remarquable", lat: 43.0560, lng: 1.6083 },
   { id: 8, commune: "La Tour-du-Crieu", description: "Église et château", niveau: 3, categorie: "suggéré", lat: 43.1000, lng: 1.6490 },
   { id: 9, commune: "Mirepoix", description: "Vergé de Gaillaidé, maisons à colombages", niveau: 1, categorie: "incontournable", lat: 43.1903, lng: 1.8681 },
   { id: 10, commune: "Tarascon-sur-Ariège", description: "Parc de la Préhistoire, musée train miniature, église ND de la Daurade", niveau: 1, categorie: "incontournable", lat: 42.8770, lng: 1.6053 },
