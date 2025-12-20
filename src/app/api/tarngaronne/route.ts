@@ -84,6 +84,10 @@ const tgSites: SiteTG[] = [
   { id: 71, commune: 'Auty', site: 'Point de vue d\'Auty', niveau: 1, categorie: 'incontournable', lat: 44.050, lng: 1.200 },
   { id: 72, commune: 'Cumont', site: 'Point du vue sur les Pyrénées', niveau: 3, categorie: 'suggéré', lat: 44.100, lng: 1.150 },
   { id: 73, commune: 'Gasques', site: 'Sentier nature du Vallon de Gasques', niveau: 2, categorie: 'remarquable', lat: 44.080, lng: 1.360 },
+  { id: 74, commune: 'Monclar-de-Quercy', site: 'Village ancien du Quercy, ruelles pittoresques et patrimoine rural', niveau: 3, categorie: 'suggéré', lat: 44.067, lng: 1.420 },
+  { id: 75, commune: 'Labastide-Saint-Pierre', site: 'Bastide médiévale, église et maisons à colombages', niveau: 3, categorie: 'suggéré', lat: 44.033, lng: 1.360 },
+  { id: 76, commune: 'Lavit', site: 'Village et panorama sur la vallée environnante, patrimoine rural', niveau: 2, categorie: 'remarquable', lat: 44.120, lng: 1.550 },
+
 ];
 
 export async function GET() {
