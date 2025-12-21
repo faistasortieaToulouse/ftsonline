@@ -155,7 +155,7 @@ const categories = [
   // --- AJOUT DES 3 NOUVELLES CARTES ICI ---
   { title: "Discord FTS", href: "/discordfts", icon: MessageSquare },
   { title: "Facebook FTS", href: "/facebookfts", icon: Facebook },
-  { title: "FTS Online", href: "/ftsfts", icon: Globe },
+  { title: "Fais Ta Sortie FTS", href: "/ftsfts", icon: Globe },
 ];
 
 const eventSources = [
