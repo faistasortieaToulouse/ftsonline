@@ -159,6 +159,7 @@ const categories = [
 ];
 
 const eventSources = [
+  { title: "Agenda Toulouse", href: "/agendatoulouse" },
   { title: "Agenda Trad Haute-Garonne", href: "/agenda-trad-haute-garonne" },
   { title: "Agenda Culturel", href: "/agendaculturel" },
   { title: "Capitole Min", href: "/capitole-min" },
