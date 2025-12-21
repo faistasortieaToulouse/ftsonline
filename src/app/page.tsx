@@ -268,10 +268,17 @@ export default function HomePage() {
                 {heure.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
               </span>
             </div>
-            <div className="flex-1 text-center border-purple-200 md:border-x px-4">
-              <div className="font-medium">Saint du jour : <span className="font-bold text-purple-900">{getSaintDuJour(heure)}</span></div>
-              <div className="italic text-sm mt-1 text-purple-600 opacity-80">"{dictonDuJour}"</div>
-            </div>
+<div className="flex-1 text-center border-purple-200 md:border-x px-4 flex flex-col justify-center gap-2">
+  {/* Ligne du Saint */}
+  <div className="font-medium">
+    Saint du jour : <span className="font-bold text-purple-900">{getSaintDuJour(heure)}</span>
+  </div>
+  
+  {/* Ligne du Dicton (Même style) */}
+  <div className="font-medium">
+    Dicton du jour : <span className="font-bold text-purple-900 italic">"{dictonDuJour}"</span>
+  </div>
+</div>
             <div className="flex items-center gap-4 min-w-[160px] justify-end">
               <WeatherIcon condition={meteo.condition} />
               <div className="flex flex-col text-right">
