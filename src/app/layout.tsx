@@ -1,11 +1,32 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'FTS Online - Événements',
-  description: 'Trouvez et gérez des événements en Haute-Garonne.',
+  title: 'FTS Online - Agenda & Événements à Toulouse et Haute-Garonne',
+  description: "Découvrez l'agenda complet des événements à Toulouse : Meetup, sorties cinéma, librairies, actualités culturelles, musées et visites en Occitanie. Guide pratique et transports Tisséo.",
+  keywords: "Toulouse, Haute-Garonne, Occitanie, Agenda, Actualités, Meetup, Culture, Cinéma, Librairie, Jeux de société, Sport, Parcs et jardins, Galeries d'art, Visites thématiques, Histoire, Exil espagnol, Résistance, Centre-ville historique, Châteaux cathares, Randonnées, Itinéraires littéraires, Transports Tisséo, Circulation",
+  authors: [{ name: "FTS Online" }],
+  viewport: "width=device-width, initial-scale=1",
+  robots: "index, follow",
+  
+  // Métadonnées pour le partage sur Facebook, Discord, etc.
+  openGraph: {
+    title: "FTS Online - Le guide des sorties à Toulouse",
+    description: "Tout l'agenda culturel, social et pratique de Toulouse et sa région.",
+    url: "https://ftstoulouse.fr.eu.org",
+    siteName: "FTS Online Toulouse",
+    locale: "fr_FR",
+    type: "website",
+  },
+
+  // Métadonnées pour Twitter/X
+  twitter: {
+    card: "summary_large_image",
+    title: "FTS Online Toulouse",
+    description: "Agenda et sorties culturelles à Toulouse et en Occitanie.",
+  },
 };
 
 export default function RootLayout({
@@ -19,6 +40,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        {/* Favicon optionnelle (si vous en avez une dans public/favicon.ico) */}
+        <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <div className="flex-1">
