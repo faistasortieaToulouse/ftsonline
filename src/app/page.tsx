@@ -1,247 +1,362 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { 
+  Book, Film, MapPin, Music, Globe, Gamepad, Calendar, 
+  Theater, Palette, Archive, Building, Bus,
+  Sun, Cloud, CloudRain, CloudLightning, CloudSnow,
+  MessageSquare, Facebook, laptop // Nouvelles icônes pour les 3 cartes
+} from "lucide-react";
 
-const PLACEHOLDER_IMAGE =
-  "https://via.placeholder.com/400x200?text=Événement";
+import { getSaintDuJour } from "../lib/saints";
+import { getDictonDuJour } from "../lib/dictons";
+import { getCelebrationsDuJour } from "../lib/celebrations";
+import { getConseilsJardin } from "../lib/jardin";
+import { getSigneZodiaque, getAscendant } from "../lib/astro";
 
-export default function Home() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState<any[]>([]);
-  const [viewMode, setViewMode] = useState<"card" | "list">("card");
-  const [search, setSearch] = useState("");
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+// --- DONNÉES DES CATÉGORIES ---
+const categories = [
+  { title: "Agenda des événements à Toulouse", href: "/agendatoulouse", icon: Calendar, isAgenda: true },
+  {
+    title: "Actualités nationale et locale",
+    href: "/actualites",
+    icon: Globe,
+    isActualites: true,
+    actualitesSources: [{ title: "Presse", href: "/src/app/presse" }],
+  },
+  {
+    title: "Événements Meetup à Toulouse",
+    href: "/meetup-full",
+    icon: Music,
+    isMeetup: true,
+    meetupSources: [
+      { title: "Les évènements Meetup", href: "/meetup-full" },
+      { title: "Nos évènements Meetup", href: "/meetup-events" },
+      { title: "Évènements Happy People 31", href: "/meetup-happy" },
+      { title: "Évènements de nos groupes - Coloc", href: "/meetup-coloc" },
+      { title: "Évènements de nos groupes - Expats", href: "/meetup-expats" },
+      { title: "Évènements de nos groupes - Sorties", href: "/meetup-sorties" },
+    ],
+  },
+  {
+    title: "Actualités culturelles et scientifiques",
+    href: "/culture",
+    icon: Theater,
+    isCulture: true,
+    cultureSources: [
+      { title: "Actualités culturelles", href: "/cotetoulouse" },
+      { title: "Actualités scientifiques", href: "/canalu" },
+    ],
+  },
+  {
+    title: "Sorties en librairie",
+    href: "/librairie",
+    icon: Book,
+    isLibrairie: true,
+    librairieSources: [
+      { title: "Sorties en librairie", href: "/podlibrairies" },
+      { title: "Marathon des Mots", href: "/podmarathon" },
+      { title: "Librairie Ombrs Blanches", href: "/podombres" },
+      { title: "Librairie Terra Nova", href: "/podterra" },
+    ],
+  },
+  {
+    title: "Sorties cinéma",
+    href: "/cinema",
+    icon: Film,
+    isCinema: true,
+    cinemaSources: [{ title: "Sorties cinéma", href: "/src/app/cinematoulouse" }],
+  },
+  {
+    title: "Sorties jeux de société",
+    href: "/jeux",
+    icon: Gamepad,
+    isJeux: true,
+    jeuxSources: [
+      { title: "Tric Trac", href: "/src/app/trictracphilibert" },
+      { title: "Philibert", href: "/src/app/philibertnet" },
+      { title: "Jeu de Plateau", href: "/src/app/jeuplateau" },
+    ],
+  },
+  {
+    title: "Culture, sport à Toulouse",
+    href: "/air",
+    icon: Palette,
+    isSites: true,
+    sitesSources: [
+      { title: "Bibliothèques à Toulouse", href: "/bibliomap" },
+      { title: "Cinémas de Toulouse et sa banlieue", href: "/cinemas31" },
+      { title: "Galeries d'art de Toulouse", href: "/visitegalerieart" },
+      { title: "Équipements de sport à Toulouse", href: "/sport" },
+      { title: "Parcs et jardins de Toulouse", href: "/parcjardin" },
+    ],
+  },
+  {
+    title: "Musées à Toulouse et en banlieue",
+    href: "/musee",
+    icon: Archive,
+    isMusee: true,
+    museeSources: [
+      { title: "Occitanie", href: "/src/app/museeoccitanie" },
+      { title: "Toulouse", href: "/src/app/museestoulouse" },
+      { title: "Ariège", href: "/src/app/museeariege" },
+      { title: "Aude", href: "/src/app/museeaude" },
+      { title: "Aveyron", href: "/src/app/museeaveyron" },
+      { title: "Gers", href: "/src/app/museegers" },
+      { title: "Hérault", href: "/src/app/museeherault" },
+      { title: "Haute-Garonne", href: "/src/app/museehg" },
+      { title: "Hautes-Pyrénées", href: "/src/app/museehp" },
+      { title: "Lot", href: "/src/app/museelot" },
+      { title: "Pyrénées-Orientales", href: "/src/app/museepo" },
+      { title: "Tarn", href: "/src/app/museetarn" },
+      { title: "Tarn-et-Garonne", href: "/src/app/museetarngaronne" },
+    ],
+  },
+  {
+    title: "Visites de Toulouse",
+    href: "/visites-toulouse",
+    icon: Building,
+    isVisites: true,
+    visitesSources: [
+      { title: "Centre de Toulouse", href: "/src/app/visitetoulouse" },
+      { title: "Quartiers de Toulouse", href: "/src/app/visiteruetoulouse" },
+      { title: "Exil espagnol", href: "/src/app/visiteexil" },
+      { title: "Occupation et Résistance", href: "/src/app/visiteresistance" },
+      { title: "Quartier Saint-Michel", href: "/src/app/visitesaintmichel" },
+      { title: "Quartier Jolimont", href: "/src/app/visitejolimont" },
+      { title: "Fontaines de Toulouse", href: "/src/app/visitefontaines" },
+    ],
+  },
+  {
+    title: "Visites en Occitanie",
+    href: "/visites-occitanie",
+    icon: MapPin,
+    isOccitanie: true,
+    occitanieSources: [
+      { title: "Ariège", href: "/src/app/ariege" },
+      { title: "Randonnées Ariège", href: "/src/app/randoariege" },
+      { title: "Aude", href: "/src/app/aude" },
+      { title: "Écrivains de l'Aude", href: "/src/app/ecrivainsaude" },
+      { title: "Châteaux Cathares", href: "/src/app/chateaucathare" },
+      { title: "Aveyron", href: "/src/app/aveyron" },
+      { title: "Gers", href: "/src/app/gers" },
+      { title: "Patrimoine Haute-Garonne", href: "/src/app/patrimoine31" },
+      { title: "Pyrénées-Orientales", href: "/src/app/pyreneesorientales" },
+      { title: "Lot", href: "/src/app/lot" },
+      { title: "Hautes Pyrénées", href: "/src/app/hautespyrenees" },
+      { title: "Tarn", href: "/src/app/tarn" },
+      { title: "Tarn-Garonne", href: "/src/app/tarngaronne" },
+      { title: "Cirque et sommet", href: "/src/app/montcirque" },
+    ],
+  },
+  { title: "Transports Tisséo et circulation", href: "/transports-tisseo", icon: Bus },
+  
+  // --- AJOUT DES 3 NOUVELLES CARTES ICI ---
+  { title: "Discord FTS", href: "/discordfts", icon: MessageSquare },
+  { title: "Facebook FTS", href: "/facebookfts", icon: Facebook },
+  { title: "FTS Online", href: "/ftsfts", icon: Globe },
+];
 
-  function getCategory(event: any) {
-    return (
-      event.category ||
-      event.type ||
-      event.tags?.join(", ") ||
-      detectCategory(event.title + " " + event.description)
-    );
-  }
+const eventSources = [
+  { title: "Agenda Trad Haute-Garonne", href: "/agenda-trad-haute-garonne" },
+  { title: "Agenda Culturel", href: "/agendaculturel" },
+  { title: "Capitole Min", href: "/capitole-min" },
+  { title: "Cinéma Toulouse", href: "/cinematoulouse" },
+  { title: "ComDT", href: "/comdt" },
+  { title: "Culture en Mouvements", href: "/cultureenmouvements" },
+  { title: "Demosphere", href: "/demosphere" },
+  { title: "Discord", href: "/discord" },
+  { title: "Écluse", href: "/ecluse" },
+  { title: "Haute-Garonne", href: "/hautegaronne" },
+  { title: "Radar Squat", href: "/radarsquat" },
+  { title: "Théâtre du Pavé", href: "/theatredupave" },
+  { title: "Toulouse Métropole", href: "/toulousemetropole" },
+  { title: "Tourisme Haute-Garonne", href: "/tourismehautegaronne" },
+  { title: "UT3 Min", href: "/ut3-min" },
+];
 
-  function detectCategory(text: string) {
-    const t = text.toLowerCase();
-    if (t.includes("concert")) return "Concert";
-    if (t.includes("théâtre") || t.includes("theatre")) return "Théâtre";
-    if (t.includes("exposition")) return "Exposition";
-    if (t.includes("festival")) return "Festival";
-    if (t.includes("salon")) return "Salon";
-    if (t.includes("conférence")) return "Conférence";
-    return "Autre";
-  }
+// --- COMPOSANT ICÔNE MÉTÉO ---
+const WeatherIcon = ({ condition }: { condition: string }) => {
+  const iconProps = { size: 36, strokeWidth: 2 };
+  const cond = condition?.toLowerCase() || "";
+  if (cond.includes("soleil") || cond.includes("ensoleillé")) return <Sun {...iconProps} className="text-orange-500 fill-orange-100" />;
+  if (cond.includes("nuage") || cond.includes("couvert")) return <Cloud {...iconProps} className="text-gray-400 fill-gray-100" />;
+  if (cond.includes("pluie") || cond.includes("averse")) return <CloudRain {...iconProps} className="text-blue-500" />;
+  if (cond.includes("orage")) return <CloudLightning {...iconProps} className="text-yellow-600" />;
+  if (cond.includes("neige")) return <CloudSnow {...iconProps} className="text-blue-200" />;
+  return <Sun {...iconProps} className="text-orange-500" />;
+};
 
-  async function fetchEvents() {
-    setLoading(true);
-    setError(null);
-    setEvents([]);
-
-    try {
-      const res = await fetch("/api/agendatoulouse");
-
-      if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
-
-      const data = await res.json();
-
-      setEvents(data.events || []);
-      setFilteredEvents(data.events || []);
-    } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
-    } finally {
-      setLoading(false);
-    }
-  }
+export default function HomePage() {
+  const [heure, setHeure] = useState(new Date());
+  const [meteo, setMeteo] = useState({ temperature: "25°C", condition: "Ensoleillé" });
+  
+  const celebrations = getCelebrationsDuJour(heure);
+  const dictonDuJour = getDictonDuJour(heure);
+  const conseilJardin = getConseilsJardin(heure);
+  const signeZodiaque = getSigneZodiaque(heure);
+  const ascendant = getAscendant(heure);
 
   useEffect(() => {
-    fetchEvents();
+    const timer = setInterval(() => setHeure(new Date()), 60000);
+    const fetchWeather = async () => {
+      try {
+        const response = await fetch('/api/weather');
+        if (response.ok) {
+          const data = await response.json();
+          setMeteo({ temperature: `${Math.round(data.temp)}°C`, condition: data.description });
+        }
+      } catch (e) { console.error("Erreur météo:", e); }
+    };
+    fetchWeather();
+    return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    if (!search.trim()) {
-      setFilteredEvents(events);
-      return;
-    }
-
-    const q = search.toLowerCase();
-    const result = events.filter((ev) => {
-      const category = getCategory(ev);
-      const combined = `
-        ${ev.title}
-        ${ev.description}
-        ${ev.fullAddress || ev.location}
-        ${ev.dateFormatted || ev.date}
-        ${category}
-      `.toLowerCase().trim();
-
-      return combined.includes(q);
-    });
-
-    setFilteredEvents(result);
-  }, [search, events]);
-
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold mb-4">
-        Agenda Toulouse – Tous les événements
-      </h1>
-
-      {/* Barre de recherche */}
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Rechercher par titre, lieu, date, description, catégorie…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      {/* Compteur */}
-      <p className="text-muted-foreground mb-4">
-        {filteredEvents.length} événement(s) trouvé(s)
-      </p>
-
-      {/* Boutons Plein écran / Vignette */}
-      <div className="flex gap-4 mb-6">
-        <Button
-          onClick={() => setViewMode("card")}
-          variant={viewMode === "card" ? "default" : "secondary"}
-        >
-          📺 Plein écran
-        </Button>
-        <Button
-          onClick={() => setViewMode("list")}
-          variant={viewMode === "list" ? "default" : "secondary"}
-        >
-          🔲 Vignette
-        </Button>
-      </div>
-
-      <Button onClick={fetchEvents} disabled={loading} className="mb-6">
-        {loading ? "Chargement..." : "📡 Recharger les événements"}
-      </Button>
-
-      {error && (
-        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
-          <strong>Erreur :</strong> {error}
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-purple-50">
+      {/* Hero Section */}
+      <section className="text-center py-16 px-4 bg-pink-500 text-white rounded-b-3xl shadow-lg">
+        <h1 className="text-5xl sm:text-6xl font-bold mb-4 drop-shadow-lg text-white">
+          Bienvenue sur <span className="text-purple-200">FTS Online</span>
+        </h1>
+        <div className="flex justify-center gap-4 flex-wrap">
+          <Link href="#categories" className="bg-purple-700 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg transition">
+            Explorer les rubriques
+          </Link>
+          <a href="https://faistasortieatoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-pink-100 text-pink-600 font-semibold py-3 px-6 rounded-full shadow-lg transition">
+            Fais Ta sortie à Toulouse
+          </a>
         </div>
-      )}
+      </section>
 
-      {/* Mode plein écran */}
-      {viewMode === "card" && filteredEvents.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {filteredEvents.map((event, i) => (
-            <div
-              key={event.id || i}
-              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[520px]"
-            >
-              <img
-                src={event.image || event.coverImage || PLACEHOLDER_IMAGE}
-                alt={event.title}
-                className="w-full h-54 sm:h-56 md:h-60 object-contain"
+      {/* Texte de présentation avec barre défilante */}
+      <section className="py-10 px-4 max-w-4xl mx-auto">
+        <div className="bg-white/50 backdrop-blur-sm rounded-2xl border border-purple-100 p-6 shadow-inner">
+          <div className="h-36 overflow-y-auto pr-4 text-center scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-transparent">
+            <p className="text-lg text-purple-700 leading-relaxed">
+              Cette page présente l'agenda des événements à Toulouse, ainsi que toutes les actualités nationales et locales et les informations sur les transports.
+              <br /><br />
+              Vous y trouverez les événements de Meetup à Toulouse, l'actualité culturelle et les initiatives de diffusion du savoir.
+              Découvrez les sorties en librairie, au cinéma et les activités de jeux de société.
+              <br /><br />
+              Explorez les sites culturels de Toulouse et de sa banlieue, les parcs et jardins, ainsi que les équipements sportifs de la métropole.
+              Partez à la découverte des galeries d'art et des visites thématiques à Toulouse : l'exil espagnol, l'occupation allemande et la résistance, les quartiers Saint-Michel et Jolimont, les fontaines et le centre-ville historique, ainsi que tous les quartiers de la ville.
+              <br /><br />
+              En Occitanie, profitez des itinéraires littéraires dans l'Aude, des randonnées en Ariège, des châteaux cathares, des cirques et sommets régionaux, et explorez chaque département : Ariège, Aude, Aveyron, Gers, Haute-Garonne, Hautes-Pyrénées, Lot, Pyrénées-Orientales, Tarn et Tarn-et-Garonne.
+              Enfin, restez informé sur les transports Tisséo et la circulation en Haute-Garonne.
+            </p>
+          </div>
+          {/* Petit indicateur visuel qu'il y a du texte en dessous */}
+          <div className="text-center mt-2 text-purple-300 animate-bounce">
+            ↓
+          </div>
+        </div>
+      </section>
 
-              />
-
-              <div className="p-4 flex flex-col flex-1">
-                {/* Titre avec barre de défilement si trop long */}
-                <div className="text-xl font-semibold mb-2 line-clamp-2 overflow-y-auto max-h-14">
-                  {event.title}
-                </div>
-
-                {/* Description avec barre de défilement si trop longue */}
-{/* Description avec hauteur fixe et barre de défilement pour certaines sources */}
-<div
-  className={`text-sm text-muted-foreground mb-2 flex-1 overflow-y-auto ${
-    event.source === "meetup-full" || event.source === "tourismehautegaronne"
-      ? "max-h-16"
-      : event.source === "toulousemetropole"
-      ? "max-h-20"
-      : "max-h-20"
-  }`}
->
-  {event.description}
-</div>
-
-          <p className="text-sm font-medium mb-1">
-                  {event.dateFormatted || event.date || event.start || ""}
-                </p>
-
-                <p className="text-sm text-muted-foreground mb-1">
-                  {event.fullAddress || event.location}
-                </p>
-
-		<p className="text-xs text-muted-foreground italic mb-3">
-		  Catégorie : {getCategory(event)} • Source : {event.source || "Inconnue"}
-		</p>
-
-                {event.url && (
-                  <a
-                    href={event.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto inline-block bg-blue-600 text-white text-center py-2 px-3 rounded hover:bg-blue-700 transition"
-                  >
-                    🔗 Voir l’événement officiel
-                  </a>
-                )}
+      {/* Barre d'informations */}
+      <div className="px-4 max-w-6xl mx-auto mb-12">
+        <section className="bg-purple-100 text-purple-700 rounded-2xl shadow-md border border-purple-200 overflow-hidden flex flex-col">
+          {/* Ligne 1 */}
+          <div className="py-4 px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col items-center text-center min-w-[200px]">
+              <span className="font-bold capitalize text-purple-800">
+                {heure.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+              </span>
+              <span className="font-medium text-3xl text-purple-900">
+                {heure.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            </div>
+            <div className="flex-1 text-center border-purple-200 md:border-x px-4">
+              <div className="font-medium">Saint du jour : <span className="font-bold text-purple-900">{getSaintDuJour(heure)}</span></div>
+              <div className="italic text-sm mt-1 text-purple-600 opacity-80">"{dictonDuJour}"</div>
+            </div>
+            <div className="flex items-center gap-4 min-w-[160px] justify-end">
+              <WeatherIcon condition={meteo.condition} />
+              <div className="flex flex-col text-right">
+                <span className="text-[10px] uppercase font-bold opacity-60">Météo Toulouse</span>
+                <span className="font-bold text-2xl leading-none">{meteo.temperature}</span>
+                <span className="text-xs font-medium capitalize">{meteo.condition}</span>
               </div>
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* Mode liste */}
-      {viewMode === "list" && filteredEvents.length > 0 && (
-        <div className="space-y-4 mt-6">
-          {filteredEvents.map((event, i) => (
-            <div
-              key={event.id || i}
-              className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
-            >
-              <img
-                src={event.image || event.coverImage || PLACEHOLDER_IMAGE}
-                alt={event.title}
-                className="w-24 h-24 rounded object-cover flex-shrink-0"
-              />
-
-              <div className="flex flex-col flex-1">
-                <div className="text-lg font-semibold text-blue-700 line-clamp-2 overflow-y-auto max-h-10">
-                  {event.title}
-                </div>
-
-                <div className="text-sm text-muted-foreground line-clamp-2 overflow-y-auto max-h-14">
-                  {event.description}
-                </div>
-
-                <p className="text-sm">{event.dateFormatted}</p>
-
-                <p className="text-xs text-muted-foreground italic">
-                  Catégorie : {getCategory(event)}
-                </p>
-
-                {event.url && (
-                  <a
-                    href={event.url}
-                    target="_blank"
-                    className="mt-1 text-blue-600 underline"
-                  >
-                    Voir →
-                  </a>
-                )}
+          </div>
+          {/* Ligne 2 */}
+          <div className="bg-purple-200/50 border-t border-purple-200 py-2 px-6">
+            <div className="flex items-center justify-center gap-3 w-full">
+              <span className="text-pink-500 text-lg">✨</span>
+              <p className="text-sm font-bold text-purple-900 text-center">{celebrations.join(" • ")}</p>
+              <span className="text-pink-500 text-lg">✨</span>
+            </div>
+          </div>
+          {/* Ligne 3 */}
+          <div className="bg-green-100/50 border-t border-purple-200 py-3 px-6">
+            <div className="flex items-center gap-3 w-full">
+              <span className="text-xl">🌱</span>
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] font-bold uppercase text-green-700">Le conseil jardinage du mois</span>
+                <p className="text-xs md:text-sm text-gray-700 italic">{conseilJardin}</p>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+          {/* Ligne 4 */}
+          <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
+            <div className="flex items-center justify-center gap-6 w-full text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-blue-500 text-lg">☀️</span>
+                <span className="text-gray-500 font-medium italic">Signe :</span>
+                <span className="font-bold text-blue-900">{signeZodiaque}</span>
+              </div>
+              <div className="w-px h-4 bg-purple-200 hidden sm:block"></div>
+              <div className="flex items-center gap-2">
+                <span className="text-indigo-500 text-lg">🌅</span>
+                <span className="text-gray-500 font-medium italic">Ascendant :</span>
+                <span className="font-bold text-indigo-900">{ascendant}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
-      {!loading && filteredEvents.length === 0 && !error && (
-        <p className="mt-6 text-muted-foreground">
-          Aucun événement ne correspond à la recherche.
-        </p>
-      )}
+      {/* Catégories Principales (Incluant maintenant Discord, Facebook et FTS) */}
+      <section id="categories" className="py-8 px-4 container mx-auto">
+        <h2 className="text-3xl font-bold mb-10 text-center text-purple-700">Nos rubriques</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {categories.map((cat) => {
+            const Icon = cat.icon;
+            // On vérifie s'il y a des sources définies, sinon on renvoie un tableau vide
+            const sources = (cat.isAgenda && eventSources) || (cat.isMeetup && (cat as any).meetupSources) || (cat.isCulture && (cat as any).cultureSources) || (cat.isLibrairie && (cat as any).librairieSources) || (cat.isCinema && (cat as any).cinemaSources) || (cat.isJeux && (cat as any).jeuxSources) || (cat.isSites && (cat as any).sitesSources) || (cat.isMusee && (cat as any).museeSources) || (cat.isActualites && (cat as any).actualitesSources) || (cat.isVisites && (cat as any).visitesSources) || (cat.isOccitanie && (cat as any).occitanieSources) || [];
+
+            return (
+              <div key={cat.href} className="flex flex-col h-full p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100">
+                <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
+                <h3 className="text-2xl font-semibold mb-2 text-purple-700 text-center">{cat.title}</h3>
+                <div className="text-gray-500 text-sm text-center mb-4 flex-grow">
+                   {cat.isAgenda 
+                     ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
+                     : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
+                </div>
+                
+                {/* Bouton pour les rubriques sans sources (comme Discord, Facebook, FTS) */}
+                {sources.length === 0 ? (
+                  <Link href={cat.href} className="mt-auto bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-2 px-4 rounded-xl transition text-center">
+                    Voir la rubrique
+                  </Link>
+                ) : (
+                  <div className="overflow-x-auto w-full py-2 mt-auto">
+                    <div className="flex gap-4">
+                      {sources.map((src: any) => (
+                        <Link key={src.href} href={src.href} className="flex-shrink-0 w-52 bg-purple-50 rounded-xl shadow-sm p-3 hover:shadow-md transition text-center border border-gray-100">
+                          <p className="text-purple-700 font-medium text-sm">{src.title}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
