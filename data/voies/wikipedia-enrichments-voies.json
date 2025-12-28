@@ -1,0 +1,51 @@
+import fs from "fs";
+import fetch from "node-fetch";
+import voies from "../data/voies/nomenclature-des-voies.json";
+
+function normalize(libelle: string) {
+  return libelle
+    .replace(/^(RUE|ALL|PL|AV|BD|CHEM|PROM|IMP|PRV|ESPA|RPT)\s+/i, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .trim();
+}
+
+async function fetchWiki(name: string) {
+  const url = `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data.extract) return null;
+  return {
+    title: data.title,
+    url: data.content_urls.desktop.page,
+    summary: data.extract
+  };
+}
+
+(async () => {
+  const enrichments: Record<string, any> = {};
+
+  for (const v of voies) {
+    if (!v.complement) continue; // on ne fait que les rues avec un complément
+    const key = normalize(v.libelle);
+    if (enrichments[key]) continue;
+    
+    const wiki = await fetchWiki(key);
+    if (wiki) {
+      enrichments[key] = wiki;
+      console.log("✔", key);
+    } else {
+      console.log("❌ pas trouvé sur Wikipédia :", key);
+    }
+  }
+
+  fs.writeFileSync(
+    "data/voies/wikipedia-enrichments.json",
+    JSON.stringify(enrichments, null, 2),
+    "utf-8"
+  );
+
+  console.log("Fichier wikipedia-enrichments.json généré !");
+})();
