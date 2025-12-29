@@ -1,149 +1,103 @@
-'use client'; 
+'use client';
 
-import { useEffect, useRef, useState, CSSProperties } from "react"; 
-import Script from "next/script"; 
+import { useEffect, useRef, useState, CSSProperties } from "react";
+import Script from "next/script";
+import type { ClocherMurSite } from '../api/clochermur/route';
 
-// Import du type mis à jour depuis la route API
-import type { SitePatrimoine31 } from '../api/patrimoine31/route'; 
+const CENTER_LAURAGAIS = { lat: 43.48, lng: 1.65 };
 
-// Définition du type pour l'usage local
-type Site = SitePatrimoine31;
+export default function ClocherMurMapPage() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<google.maps.Map | null>(null);
+  const [sitesData, setSitesData] = useState<ClocherMurSite[]>([]);
+  const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-// Coordonnées pour centrer la carte sur la zone Est de la Haute-Garonne
-const HAUTE_GARONNE_CENTER = { lat: 43.73, lng: 1.55 }; 
-
-export default function Patrimoine31MapPage() { 
-  const mapRef = useRef<HTMLDivElement | null>(null); 
-  const mapInstance = useRef<google.maps.Map | null>(null); 
-  const [sitesData, setSitesData] = useState<Site[]>([]);
-  const [markersCount, setMarkersCount] = useState(0); 
-  const [isReady, setIsReady] = useState(false); 
-  const [isLoadingData, setIsLoadingData] = useState(true);
-
-  // ---- 1. Récupération des données (API) ----
+  // 1. Fetch des données
   useEffect(() => {
     async function fetchSites() {
       try {
-        const response = await fetch('/api/patrimoine31'); 
-        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-        
-        let data: Site[] = await response.json();
-
-        // --- TRI ALPHABÉTIQUE DES COMMUNES ---
-        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
-
+        const response = await fetch('/api/clochermur');
+        if (!response.ok) throw new Error('Erreur API');
+        let data: ClocherMurSite[] = await response.json();
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr'));
         setSitesData(data);
-
-      } catch (error) {
-        console.error("Erreur lors de la récupération des sites:", error);
+      } catch (err) {
+        console.error(err);
       } finally {
-        setIsLoadingData(false);
+        setIsLoading(false);
       }
     }
     fetchSites();
   }, []);
 
-  // ---- 2. Initialisation de la carte & marqueurs ----
-  useEffect(() => { 
-    if (!isReady || !mapRef.current || !window.google?.maps || sitesData.length === 0) return;
+  // 2. Initialisation Google Maps
+  useEffect(() => {
+    if (!isReady || !mapRef.current || !window.google || sitesData.length === 0) return;
 
-    const map = new google.maps.Map(mapRef.current, { 
-      zoom: 11, 
-      center: HAUTE_GARONNE_CENTER, 
-      gestureHandling: "greedy", 
-    }); 
-
-    mapInstance.current = map; 
-    let count = 0;
-
-    sitesData.forEach((site) => { 
-      count++; 
-      const position = new google.maps.LatLng(site.lat, site.lng);
-
-      const marker = new google.maps.Marker({ 
-        map: mapInstance.current, 
-        position, 
-        title: `${site.commune} - ${site.description}`,
-        label: {
-          text: String(count),
-          color: 'white', 
-          fontWeight: 'bold' as const
-        },
-      });
-
-      const info = new google.maps.InfoWindow({ 
-        content: `
-          <div style="font-family: Arial; font-size: 14px;"> 
-            <strong>${count}. ${site.commune}</strong><br/> 
-            <b>Description :</b> ${site.description}<br/>
-            <b>Secteur :</b> ${site.secteur}<br/>
-            <b>Distance de Toulouse :</b> ${site.distanceKm} km
-          </div>
-        `.trim(),
-      });
-
-      marker.addListener("click", () => 
-        info.open({ anchor: marker, map: mapInstance.current! })
-      );
+    const map = new google.maps.Map(mapRef.current, {
+      zoom: 10,
+      center: CENTER_LAURAGAIS,
+      gestureHandling: "greedy",
     });
 
-    setMarkersCount(count); 
+    mapInstance.current = map;
+
+    sitesData.forEach((site, index) => {
+      const marker = new google.maps.Marker({
+        position: { lat: site.lat, lng: site.lng },
+        map: map,
+        title: site.commune,
+        label: { text: String(index + 1), color: "white" }
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `<div style="color:black; padding:5px;">
+                    <strong>${site.commune}</strong><br/>
+                    ${site.description}<br/>
+                    <small>${site.secteur} - ${site.distanceKm}km de Toulouse</small>
+                  </div>`
+      });
+
+      marker.addListener("click", () => infoWindow.open(map, marker));
+    });
   }, [isReady, sitesData]);
 
-  return ( 
-    <div className="p-4 max-w-7xl mx-auto"> 
-
+  return (
+    <div className="p-4 max-w-7xl mx-auto">
       <Script 
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`} 
-        strategy="afterInteractive" 
-        onLoad={() => setIsReady(true)} 
-      /> 
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+        onLoad={() => setIsReady(true)}
+      />
 
-      <h1 className="text-3xl font-extrabold mb-6">🏰 Sites de Patrimoine en Haute-Garonne (31)</h1> 
-
-      <p className="font-semibold text-lg mb-4">
-        Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
-      </p>
-
-      <div 
-        ref={mapRef} 
-        style={{ height: "70vh", width: "100%" }} 
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
-      > 
-        {(!isReady || isLoadingData) && <p>Chargement de la carte et des données…</p>} 
-        {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher.</p>}
-      </div>
+      <h1 className="text-3xl font-bold mb-4">🔔 Clochers-murs de style toulousain</h1>
       
-      <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({markersCount} marqueurs)</h2> 
+      <div ref={mapRef} style={{ height: "60vh", width: "100%" }} className="rounded-xl border shadow-inner bg-slate-50 mb-6">
+        {!isReady && <div className="flex h-full items-center justify-center">Chargement de la carte...</div>}
+      </div>
 
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}> 
-        <thead style={{ backgroundColor: "#e0e0e0" }}> 
-          <tr> 
-            <th style={tableHeaderStyle}>#</th>
-            <th style={tableHeaderStyle}>Commune</th> 
-            <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
-            <th style={tableHeaderStyleCenter}>Distance (km)</th>
-            <th style={tableHeaderStyle}>Secteur</th> 
-          </tr> 
-        </thead> 
-        
-        <tbody>{sitesData.map((site, i) => ( 
-            <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
-              <td style={tableCellStyle}>{i + 1}</td>
-              <td style={tableCellStyle}>{site.commune}</td> 
-              <td style={tableCellStyle}>{site.description}</td> 
-              <td style={tableCellStyleCenter}>{site.distanceKm}</td> 
-              <td style={tableCellStyle}>{site.secteur}</td> 
-            </tr> 
-          ))}</tbody>
-      </table> 
-    </div> 
-  ); 
+      <div className="overflow-x-auto">
+        <table className="min-w-full border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border p-2 text-left">#</th>
+              <th className="border p-2 text-left">Commune</th>
+              <th className="border p-2 text-left">Description</th>
+              <th className="border p-2 text-center">Distance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sitesData.map((site, i) => (
+              <tr key={site.id} className="hover:bg-blue-50">
+                <td className="border p-2">{i + 1}</td>
+                <td className="border p-2 font-medium">{site.commune}</td>
+                <td className="border p-2">{site.description}</td>
+                <td className="border p-2 text-center">{site.distanceKm} km</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }
-
-// Styles table
-const tableHeaderStyle: CSSProperties = { padding: "10px", border: "1px solid #ccc", textAlign: "left" };
-const tableHeaderStyleCenter: CSSProperties = { padding: "10px", border: "1px solid #ccc", textAlign: "center" };
-
-const tableCellStyle: CSSProperties = { padding: "8px", border: "1px solid #ddd" };
-const tableCellStyleCenter: CSSProperties = { padding: "8px", border: "1px solid #ddd", textAlign: "center" };
