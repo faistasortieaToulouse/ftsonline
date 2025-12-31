@@ -1,0 +1,794 @@
+[
+    {
+        "id": 1,
+        "pays": "Mexique",
+        "statut": "observateur",
+        "date_entree": "2014",
+        "population_totale": 130759000,
+        "nombre_francophones": 30000,
+        "pourcentage_augmentation": "0.002"
+    },
+    {
+        "id": 2,
+        "pays": "Égypte",
+        "statut": "membre",
+        "date_entree": "1983",
+        "population_totale": 99376000,
+        "nombre_francophones": 3000000,
+        "pourcentage_augmentation": "3 % en diminution"
+    },
+    {
+        "id": 3,
+        "pays": "République socialiste du Viêt Nam Viêt Nam",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 96491000,
+        "nombre_francophones": 675000,
+        "pourcentage_augmentation": "0,7 % en stagnation"
+    },
+    {
+        "id": 4,
+        "pays": "république démocratique du Congo République démocratique du Congo",
+        "statut": "membre",
+        "date_entree": "1977",
+        "population_totale": 84005000,
+        "nombre_francophones": 42533000,
+        "pourcentage_augmentation": "50,6 % en augmentation"
+    },
+    {
+        "id": 5,
+        "pays": "Thaïlande Thaïlande",
+        "statut": "observateur",
+        "date_entree": "2008",
+        "population_totale": 69183000,
+        "nombre_francophones": 567000,
+        "pourcentage_augmentation": "0,82 % en stagnation"
+    },
+    {
+        "id": 6,
+        "pays": "France France",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 68392000,
+        "nombre_francophones": 66060000,
+        "pourcentage_augmentation": "96,5 % en diminution"
+    },
+    {
+        "id": 7,
+        "pays": "Corée du Sud Corée du Sud",
+        "statut": "observateur",
+        "date_entree": "2016",
+        "population_totale": 51164000,
+        "nombre_francophones": 0,
+        "pourcentage_augmentation": "nd"
+    },
+    {
+        "id": 8,
+        "pays": "Argentine",
+        "statut": "observateur",
+        "date_entree": "2016",
+        "population_totale": 44689000,
+        "nombre_francophones": 0,
+        "pourcentage_augmentation": "nd"
+    },
+    {
+        "id": 9,
+        "pays": "Ukraine",
+        "statut": "observateur",
+        "date_entree": "2006",
+        "population_totale": 44009000,
+        "nombre_francophones": 53000,
+        "pourcentage_augmentation": "0,12 % en stagnation"
+    },
+    {
+        "id": 10,
+        "pays": "Pologne Pologne",
+        "statut": "observateur",
+        "date_entree": "1997",
+        "population_totale": 38105000,
+        "nombre_francophones": 949000,
+        "pourcentage_augmentation": "2,5 % en diminution"
+    },
+    {
+        "id": 11,
+        "pays": "Canada (total)",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 37265000,
+        "nombre_francophones": 10982000,
+        "pourcentage_augmentation": "29,4 % en augmentation"
+    },
+    {
+        "id": 12,
+        "pays": "Maroc",
+        "statut": "membre",
+        "date_entree": "1981",
+        "population_totale": 36192000,
+        "nombre_francophones": 12729000,
+        "pourcentage_augmentation": "35 % en augmentation"
+    },
+    {
+        "id": 13,
+        "pays": "Mozambique",
+        "statut": "observateur",
+        "date_entree": "2006",
+        "population_totale": 30529000,
+        "nombre_francophones": 92000,
+        "pourcentage_augmentation": "0,3 % en stagnation"
+    },
+    {
+        "id": 14,
+        "pays": "Ghana",
+        "statut": "associé",
+        "date_entree": "2006",
+        "population_totale": 29464000,
+        "nombre_francophones": 244000,
+        "pourcentage_augmentation": "0,8 % en stagnation"
+    },
+    {
+        "id": 15,
+        "pays": "Madagascar",
+        "statut": "membre",
+        "date_entree": "1970-1977 ; 1989 ",
+        "population_totale": 26263000,
+        "nombre_francophones": 5253000,
+        "pourcentage_augmentation": "20 % en stagnation"
+    },
+    {
+        "id": 16,
+        "pays": "Côte d'Ivoire Côte d'Ivoire",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 24906000,
+        "nombre_francophones": 8259000,
+        "pourcentage_augmentation": "33,2 % en diminution"
+    },
+    {
+        "id": 17,
+        "pays": "Cameroun",
+        "statut": "membre",
+        "date_entree": "1991 (associé, 1975) ",
+        "population_totale": 24678000,
+        "nombre_francophones": 10006000,
+        "pourcentage_augmentation": "40,5 % en augmentation"
+    },
+    {
+        "id": 18,
+        "pays": "Niger",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 22311000,
+        "nombre_francophones": 2840000,
+        "pourcentage_augmentation": "12,8 % en augmentation"
+    },
+    {
+        "id": 19,
+        "pays": "Faso Burkina Faso",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 19752000,
+        "nombre_francophones": 4752000,
+        "pourcentage_augmentation": "24 % en augmentation"
+    },
+    {
+        "id": 20,
+        "pays": "Roumanie Roumanie",
+        "statut": "membre",
+        "date_entree": "1993 (observateur, 1991) ",
+        "population_totale": 19581000,
+        "nombre_francophones": 2337000,
+        "pourcentage_augmentation": "11,9 % en augmentation"
+    },
+    {
+        "id": 21,
+        "pays": "Mali",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 19108000,
+        "nombre_francophones": 3237000,
+        "pourcentage_augmentation": "16,9 % en stagnation"
+    },
+    {
+        "id": 22,
+        "pays": "l'Ontario Ontario",
+        "statut": "observateur",
+        "date_entree": "2016d ",
+        "population_totale": 16653000,
+        "nombre_francophones": 1668000,
+        "pourcentage_augmentation": "0.1"
+    },
+    {
+        "id": 23,
+        "pays": "Sénégal",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 16294000,
+        "nombre_francophones": 4215000,
+        "pourcentage_augmentation": "26 % en augmentation"
+    },
+    {
+        "id": 24,
+        "pays": "Cambodge",
+        "statut": "membre",
+        "date_entree": "1993 (observateur, 1991) ",
+        "population_totale": 16246000,
+        "nombre_francophones": 439000,
+        "pourcentage_augmentation": "2,7 % en stagnation"
+    },
+    {
+        "id": 25,
+        "pays": "Tchad",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 15353000,
+        "nombre_francophones": 1957000,
+        "pourcentage_augmentation": "12,7 % en augmentation"
+    },
+    {
+        "id": 26,
+        "pays": "Guinée Guinée",
+        "statut": "membre",
+        "date_entree": "1981",
+        "population_totale": 13053000,
+        "nombre_francophones": 3319000,
+        "pourcentage_augmentation": "25,4 % en augmentation"
+    },
+    {
+        "id": 27,
+        "pays": "Rwanda",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 12501000,
+        "nombre_francophones": 724000,
+        "pourcentage_augmentation": "5,8 % en augmentation"
+    },
+    {
+        "id": 28,
+        "pays": "Tunisie Tunisie",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 11659000,
+        "nombre_francophones": 6081000,
+        "pourcentage_augmentation": "52 % en diminution"
+    },
+    {
+        "id": 29,
+        "pays": "Belgique Belgique",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 11499000,
+        "nombre_francophones": 8678000,
+        "pourcentage_augmentation": "75,5 % en augmentation"
+    },
+    {
+        "id": 30,
+        "pays": "Bénin",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 11486000,
+        "nombre_francophones": 3821000,
+        "pourcentage_augmentation": "33,3 % en diminution"
+    },
+    {
+        "id": 31,
+        "pays": "Burundi",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 11216000,
+        "nombre_francophones": 940000,
+        "pourcentage_augmentation": "8,4 % en augmentation"
+    },
+    {
+        "id": 32,
+        "pays": "Grèce Grèce",
+        "statut": "membre",
+        "date_entree": "2004",
+        "population_totale": 11142000,
+        "nombre_francophones": 803000,
+        "pourcentage_augmentation": "7,2 % en augmentation"
+    },
+    {
+        "id": 33,
+        "pays": "Haïti",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 11113000,
+        "nombre_francophones": 4667000,
+        "pourcentage_augmentation": "42 % en stagnation"
+    },
+    {
+        "id": 34,
+        "pays": "République dominicaine République dominicaine",
+        "statut": "observateur",
+        "date_entree": "2010",
+        "population_totale": 10883000,
+        "nombre_francophones": 157000,
+        "pourcentage_augmentation": "1,4 % en stagnation"
+    },
+    {
+        "id": 35,
+        "pays": "Tchéquie République tchèque",
+        "statut": "observateur",
+        "date_entree": "1999",
+        "population_totale": 10625000,
+        "nombre_francophones": 235000,
+        "pourcentage_augmentation": "2,2 % en augmentation"
+    },
+    {
+        "id": 36,
+        "pays": "Hongrie Hongrie",
+        "statut": "observateur",
+        "date_entree": "2004",
+        "population_totale": 9689000,
+        "nombre_francophones": 114000,
+        "pourcentage_augmentation": "0.011"
+    },
+    {
+        "id": 37,
+        "pays": "arabes unis Émirats arabes unis",
+        "statut": "associé",
+        "date_entree": "2010",
+        "population_totale": 9542000,
+        "nombre_francophones": 250000,
+        "pourcentage_augmentation": "3 % en augmentation"
+    },
+    {
+        "id": 38,
+        "pays": "Autriche",
+        "statut": "observateur",
+        "date_entree": "2004",
+        "population_totale": 8752000,
+        "nombre_francophones": 1132000,
+        "pourcentage_augmentation": "0.13"
+    },
+    {
+        "id": 39,
+        "pays": "Suisse Suisse",
+        "statut": "membre",
+        "date_entree": "1996",
+        "population_totale": 8544000,
+        "nombre_francophones": 5734000,
+        "pourcentage_augmentation": "67,1 % en diminution"
+    },
+    {
+        "id": 40,
+        "pays": "Québec Québec",
+        "statut": "membre",
+        "date_entree": "1971",
+        "population_totale": 8394000,
+        "nombre_francophones": 7833000,
+        "pourcentage_augmentation": "93,3% en stagnation"
+    },
+    {
+        "id": 41,
+        "pays": "Togo",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 7991000,
+        "nombre_francophones": 3217000,
+        "pourcentage_augmentation": "40 % en augmentation"
+    },
+    {
+        "id": 42,
+        "pays": "Bulgarie Bulgarie",
+        "statut": "membre",
+        "date_entree": "1993 (observateur, 1991) ",
+        "population_totale": 7037000,
+        "nombre_francophones": 164000,
+        "pourcentage_augmentation": "2,3 % en diminution"
+    },
+    {
+        "id": 43,
+        "pays": "Serbie Serbie",
+        "statut": "associé",
+        "date_entree": "2006",
+        "population_totale": 6971000,
+        "nombre_francophones": 251000,
+        "pourcentage_augmentation": "3,6 % en diminution"
+    },
+    {
+        "id": 44,
+        "pays": "Laos",
+        "statut": "membre",
+        "date_entree": "1991 (associé, 1972) ",
+        "population_totale": 6961000,
+        "nombre_francophones": 190000,
+        "pourcentage_augmentation": "2,7 % en stagnation"
+    },
+    {
+        "id": 45,
+        "pays": "Liban",
+        "statut": "membre",
+        "date_entree": "1973",
+        "population_totale": 6094000,
+        "nombre_francophones": 2315000,
+        "pourcentage_augmentation": "38 % en augmentation"
+    },
+    {
+        "id": 46,
+        "pays": "Slovaquie Slovaquie",
+        "statut": "observateur",
+        "date_entree": "2002",
+        "population_totale": 5450000,
+        "nombre_francophones": 114000,
+        "pourcentage_augmentation": "2,1 % en augmentation"
+    },
+    {
+        "id": 47,
+        "pays": "république du Congo République du Congo",
+        "statut": "membre",
+        "date_entree": "1981",
+        "population_totale": 5400000,
+        "nombre_francophones": 3182000,
+        "pourcentage_augmentation": "58,9 % en augmentation"
+    },
+    {
+        "id": 48,
+        "pays": "Rica Costa Rica",
+        "statut": "observateur",
+        "date_entree": "2014",
+        "population_totale": 4953000,
+        "nombre_francophones": 5000,
+        "pourcentage_augmentation": "0.001"
+    },
+    {
+        "id": 49,
+        "pays": "la Wallonie Féd. Wallonie-Bruxelles",
+        "statut": "membre",
+        "date_entree": "1980",
+        "population_totale": 4881000,
+        "nombre_francophones": 4783000,
+        "pourcentage_augmentation": "98 % en stagnation"
+    },
+    {
+        "id": 50,
+        "pays": "République centrafricaine République centrafricaine",
+        "statut": "membre",
+        "date_entree": "1971",
+        "population_totale": 4737000,
+        "nombre_francophones": 1343000,
+        "pourcentage_augmentation": "28,3 % en diminution"
+    },
+    {
+        "id": 51,
+        "pays": "Mauritanie Mauritanie",
+        "statut": "membre",
+        "date_entree": "1980",
+        "population_totale": 4540000,
+        "nombre_francophones": 604000,
+        "pourcentage_augmentation": "13 % en augmentation"
+    },
+    {
+        "id": 52,
+        "pays": "Croatie Croatie",
+        "statut": "observateur",
+        "date_entree": "2004",
+        "population_totale": 4165000,
+        "nombre_francophones": 97000,
+        "pourcentage_augmentation": "2,3 % en diminution"
+    },
+    {
+        "id": 53,
+        "pays": "Moldavie Moldavie",
+        "statut": "membre",
+        "date_entree": "1996",
+        "population_totale": 4041000,
+        "nombre_francophones": 55000,
+        "pourcentage_augmentation": "1,3 % en diminution"
+    },
+    {
+        "id": 54,
+        "pays": "Géorgie Géorgie",
+        "statut": "observateur",
+        "date_entree": "2004",
+        "population_totale": 3907000,
+        "nombre_francophones": 16000,
+        "pourcentage_augmentation": "0,41 % en stagnation"
+    },
+    {
+        "id": 55,
+        "pays": "Bosnie-Herzégovine Bosnie-Herzégovine",
+        "statut": "observateur",
+        "date_entree": "2010",
+        "population_totale": 3504000,
+        "nombre_francophones": 28000,
+        "pourcentage_augmentation": "0.008"
+    },
+    {
+        "id": 56,
+        "pays": "Uruguay",
+        "statut": "observateur",
+        "date_entree": "2012",
+        "population_totale": 3470000,
+        "nombre_francophones": 5000,
+        "pourcentage_augmentation": "0,14 % en diminution"
+    },
+    {
+        "id": 57,
+        "pays": "Arménie",
+        "statut": "membre",
+        "date_entree": "2004",
+        "population_totale": 2934000,
+        "nombre_francophones": 10000,
+        "pourcentage_augmentation": "0,34 % en diminution"
+    },
+    {
+        "id": 58,
+        "pays": "Albanie",
+        "statut": "membre",
+        "date_entree": "1999",
+        "population_totale": 2934000,
+        "nombre_francophones": 62000,
+        "pourcentage_augmentation": "2 % en diminution"
+    },
+    {
+        "id": 59,
+        "pays": "Lituanie Lituanie",
+        "statut": "observateur",
+        "date_entree": "1999",
+        "population_totale": 2876000,
+        "nombre_francophones": 68000,
+        "pourcentage_augmentation": "2,3 % en diminution"
+    },
+    {
+        "id": 60,
+        "pays": "Qatar",
+        "statut": "associé",
+        "date_entree": "2012",
+        "population_totale": 2695000,
+        "nombre_francophones": 115000,
+        "pourcentage_augmentation": "4,3 % en augmentation"
+    },
+    {
+        "id": 61,
+        "pays": "Macédoine du Nord Macédoine du Nord",
+        "statut": "membre",
+        "date_entree": "2006",
+        "population_totale": 2085000,
+        "nombre_francophones": 43000,
+        "pourcentage_augmentation": "2 % en diminution"
+    },
+    {
+        "id": 62,
+        "pays": "Slovénie Slovénie",
+        "statut": "observateur",
+        "date_entree": "1999",
+        "population_totale": 2081000,
+        "nombre_francophones": 50000,
+        "pourcentage_augmentation": "2,4 % en diminution"
+    },
+    {
+        "id": 63,
+        "pays": "Gabon",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 2068000,
+        "nombre_francophones": 1368000,
+        "pourcentage_augmentation": "66,1 % en stagnation"
+    },
+    {
+        "id": 64,
+        "pays": "Lettonie Lettonie",
+        "statut": "observateur",
+        "date_entree": "2008",
+        "population_totale": 1930000,
+        "nombre_francophones": 22000,
+        "pourcentage_augmentation": "1,1 % en diminution"
+    },
+    {
+        "id": 65,
+        "pays": "Guinée-Bissau Guinée-Bissau",
+        "statut": "membre",
+        "date_entree": "1979",
+        "population_totale": 1907000,
+        "nombre_francophones": 293000,
+        "pourcentage_augmentation": "15,3 % en stagnation"
+    },
+    {
+        "id": 66,
+        "pays": "Kosovo",
+        "statut": "associé",
+        "date_entree": "2014",
+        "population_totale": 1791000,
+        "nombre_francophones": 25000,
+        "pourcentage_augmentation": "0.014"
+    },
+    {
+        "id": 67,
+        "pays": "Guinée équatoriale Guinée équatoriale",
+        "statut": "membre",
+        "date_entree": "1989",
+        "population_totale": 1314000,
+        "nombre_francophones": 380000,
+        "pourcentage_augmentation": "28,9 % en stagnation"
+    },
+    {
+        "id": 68,
+        "pays": "Estonie",
+        "statut": "observateur",
+        "date_entree": "2010",
+        "population_totale": 1307000,
+        "nombre_francophones": 19000,
+        "pourcentage_augmentation": "1,4 % en diminution"
+    },
+    {
+        "id": 69,
+        "pays": "Maurice",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 1268000,
+        "nombre_francophones": 921000,
+        "pourcentage_augmentation": "72,6 % en stagnation"
+    },
+    {
+        "id": 70,
+        "pays": "Chypre",
+        "statut": "associé",
+        "date_entree": "2006",
+        "population_totale": 1189000,
+        "nombre_francophones": 78000,
+        "pourcentage_augmentation": "6,6 % en diminution"
+    },
+    {
+        "id": 71,
+        "pays": "Djibouti",
+        "statut": "membre",
+        "date_entree": "1977",
+        "population_totale": 971000,
+        "nombre_francophones": 486000,
+        "pourcentage_augmentation": "50 % en stagnation"
+    },
+    {
+        "id": 72,
+        "pays": "Comores",
+        "statut": "membre",
+        "date_entree": "1977",
+        "population_totale": 832000,
+        "nombre_francophones": 216000,
+        "pourcentage_augmentation": "25,9 % en augmentation"
+    },
+    {
+        "id": 73,
+        "pays": "Nouveau-Brunswick Nouveau-Brunswick",
+        "statut": "membre",
+        "date_entree": "1977",
+        "population_totale": 779000,
+        "nombre_francophones": 326000,
+        "pourcentage_augmentation": "41,8 % en augmentation"
+    },
+    {
+        "id": 74,
+        "pays": "Monténégro",
+        "statut": "observateur",
+        "date_entree": "2010",
+        "population_totale": 629000,
+        "nombre_francophones": 13000,
+        "pourcentage_augmentation": "2 % en diminution"
+    },
+    {
+        "id": 75,
+        "pays": "Luxembourg",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 590000,
+        "nombre_francophones": 543000,
+        "pourcentage_augmentation": "92 % en diminution"
+    },
+    {
+        "id": 76,
+        "pays": "Cap-Vert",
+        "statut": "membre",
+        "date_entree": "1996",
+        "population_totale": 553000,
+        "nombre_francophones": 60000,
+        "pourcentage_augmentation": "10,9 % en augmentation"
+    },
+    {
+        "id": 77,
+        "pays": "Vanuatu",
+        "statut": "membre",
+        "date_entree": "1979",
+        "population_totale": 282000,
+        "nombre_francophones": 89000,
+        "pourcentage_augmentation": "31,5 % en augmentation"
+    },
+    {
+        "id": 78,
+        "pays": "la Nouvelle-Calédonie Nouvelle-Calédonie",
+        "statut": "associé",
+        "date_entree": "2016",
+        "population_totale": 280000,
+        "nombre_francophones": 277000,
+        "pourcentage_augmentation": "0.989"
+    },
+    {
+        "id": 79,
+        "pays": "Tomé-et-Principe Sao Tomé-et-Principe",
+        "statut": "membre",
+        "date_entree": "1999",
+        "population_totale": 209000,
+        "nombre_francophones": 42000,
+        "pourcentage_augmentation": "20,1 % en diminution"
+    },
+    {
+        "id": 80,
+        "pays": "Sainte-Lucie",
+        "statut": "membre",
+        "date_entree": "2010",
+        "population_totale": 180000,
+        "nombre_francophones": 3000,
+        "pourcentage_augmentation": "1,7 % en augmentation"
+    },
+    {
+        "id": 81,
+        "pays": "Seychelles",
+        "statut": "membre",
+        "date_entree": "1976",
+        "population_totale": 95000,
+        "nombre_francophones": 50000,
+        "pourcentage_augmentation": "52,6 % en diminution"
+    },
+    {
+        "id": 82,
+        "pays": "Andorre",
+        "statut": "membre",
+        "date_entree": "2004",
+        "population_totale": 77000,
+        "nombre_francophones": 54000,
+        "pourcentage_augmentation": "70,1 % en diminution"
+    },
+    {
+        "id": 83,
+        "pays": "Dominique Dominique",
+        "statut": "membre",
+        "date_entree": "1979",
+        "population_totale": 74000,
+        "nombre_francophones": 7000,
+        "pourcentage_augmentation": "9,4 % en diminution"
+    },
+    {
+        "id": 84,
+        "pays": "Monaco",
+        "statut": "membre",
+        "date_entree": "1970",
+        "population_totale": 39000,
+        "nombre_francophones": 38000,
+        "pourcentage_augmentation": "97 % en augmentation"
+    },
+    {
+        "id": 85,
+        "pays": "Gambie Gambie",
+        "statut": "observateur",
+        "date_entree": "2018",
+        "population_totale": 0,
+        "nombre_francophones": 0,
+        "pourcentage_augmentation": "nd"
+    },
+    {
+        "id": 86,
+        "pays": "Irlande",
+        "statut": "observateur",
+        "date_entree": "2018",
+        "population_totale": 0,
+        "nombre_francophones": 0,
+        "pourcentage_augmentation": "nd"
+    },
+    {
+        "id": 87,
+        "pays": "la Louisiane Louisiane",
+        "statut": "observateur",
+        "date_entree": "2018",
+        "population_totale": 0,
+        "nombre_francophones": 0,
+        "pourcentage_augmentation": "nd"
+    },
+    {
+        "id": 88,
+        "pays": "Malte",
+        "statut": "observateur",
+        "date_entree": "2018",
+        "population_totale": 0,
+        "nombre_francophones": 0,
+        "pourcentage_augmentation": "nd"
+    }
+]

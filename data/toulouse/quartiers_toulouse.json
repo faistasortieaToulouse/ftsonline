@@ -1,0 +1,582 @@
+[
+    {
+        "id": 1,
+        "nom": "Amidonniers"
+    },
+    {
+        "id": 2,
+        "nom": "Amouroux"
+    },
+    {
+        "id": 3,
+        "nom": "Ancely"
+    },
+    {
+        "id": 4,
+        "nom": "Angély"
+    },
+    {
+        "id": 5,
+        "nom": "Ardennes"
+    },
+    {
+        "id": 6,
+        "nom": "Argoulets"
+    },
+    {
+        "id": 7,
+        "nom": "Arnaud-Bernard"
+    },
+    {
+        "id": 8,
+        "nom": "Arènes"
+    },
+    {
+        "id": 9,
+        "nom": "Ayga"
+    },
+    {
+        "id": 10,
+        "nom": "Bagatelle"
+    },
+    {
+        "id": 11,
+        "nom": "Baluffet"
+    },
+    {
+        "id": 12,
+        "nom": "Barigoude"
+    },
+    {
+        "id": 13,
+        "nom": "Barrière de Paris"
+    },
+    {
+        "id": 14,
+        "nom": "Basso-Cambo"
+    },
+    {
+        "id": 15,
+        "nom": "Bayard"
+    },
+    {
+        "id": 16,
+        "nom": "Belfort"
+    },
+    {
+        "id": 17,
+        "nom": "Bellefontaine"
+    },
+    {
+        "id": 18,
+        "nom": "Bonhoure"
+    },
+    {
+        "id": 19,
+        "nom": "Bonnefoy"
+    },
+    {
+        "id": 20,
+        "nom": "Bordelongue"
+    },
+    {
+        "id": 21,
+        "nom": "Bordeneuve"
+    },
+    {
+        "id": 22,
+        "nom": "Borderouge"
+    },
+    {
+        "id": 23,
+        "nom": "Bourrasol"
+    },
+    {
+        "id": 24,
+        "nom": "Bourse"
+    },
+    {
+        "id": 25,
+        "nom": "Béarnais"
+    },
+    {
+        "id": 26,
+        "nom": "Cagueloule"
+    },
+    {
+        "id": 27,
+        "nom": "Calquet"
+    },
+    {
+        "id": 28,
+        "nom": "Capitole"
+    },
+    {
+        "id": 29,
+        "nom": "Carmes"
+    },
+    {
+        "id": 30,
+        "nom": "Cartoucherie"
+    },
+    {
+        "id": 31,
+        "nom": "Casselardit"
+    },
+    {
+        "id": 32,
+        "nom": "Chalets"
+    },
+    {
+        "id": 33,
+        "nom": "Château de l'Hers"
+    },
+    {
+        "id": 34,
+        "nom": "Compans-Caffarelli"
+    },
+    {
+        "id": 35,
+        "nom": "Concorde"
+    },
+    {
+        "id": 36,
+        "nom": "Crampel"
+    },
+    {
+        "id": 37,
+        "nom": "Croix de Pierre"
+    },
+    {
+        "id": 38,
+        "nom": "Croix-Daurade"
+    },
+    {
+        "id": 39,
+        "nom": "Côte Pavée"
+    },
+    {
+        "id": 40,
+        "nom": "Dalbade"
+    },
+    {
+        "id": 41,
+        "nom": "Daurade"
+    },
+    {
+        "id": 42,
+        "nom": "Desbals"
+    },
+    {
+        "id": 43,
+        "nom": "Dupuy"
+    },
+    {
+        "id": 44,
+        "nom": "Empalot"
+    },
+    {
+        "id": 45,
+        "nom": "Esquirol"
+    },
+    {
+        "id": 46,
+        "nom": "Faourette"
+    },
+    {
+        "id": 47,
+        "nom": "Fer à Cheval"
+    },
+    {
+        "id": 48,
+        "nom": "Fontaine-Lestang"
+    },
+    {
+        "id": 49,
+        "nom": "Fontaines"
+    },
+    {
+        "id": 50,
+        "nom": "Fourtou"
+    },
+    {
+        "id": 51,
+        "nom": "Ginestous"
+    },
+    {
+        "id": 52,
+        "nom": "Gironis"
+    },
+    {
+        "id": 53,
+        "nom": "Gramont"
+    },
+    {
+        "id": 54,
+        "nom": "Grand Selve"
+    },
+    {
+        "id": 55,
+        "nom": "Griffoulet"
+    },
+    {
+        "id": 56,
+        "nom": "Guilhermy"
+    },
+    {
+        "id": 57,
+        "nom": "Guilhermy 2"
+    },
+    {
+        "id": 58,
+        "nom": "Jolimont"
+    },
+    {
+        "id": 59,
+        "nom": "Jules-Julien"
+    },
+    {
+        "id": 60,
+        "nom": "Juncasse"
+    },
+    {
+        "id": 61,
+        "nom": "L'Ormeau"
+    },
+    {
+        "id": 62,
+        "nom": "La Colonne"
+    },
+    {
+        "id": 63,
+        "nom": "La Cépière"
+    },
+    {
+        "id": 64,
+        "nom": "La Faourette"
+    },
+    {
+        "id": 65,
+        "nom": "La Fourguette"
+    },
+    {
+        "id": 66,
+        "nom": "La Glacière"
+    },
+    {
+        "id": 67,
+        "nom": "La Gloire"
+    },
+    {
+        "id": 68,
+        "nom": "La Grande Plaine"
+    },
+    {
+        "id": 69,
+        "nom": "La Salade"
+    },
+    {
+        "id": 70,
+        "nom": "La Terrasse"
+    },
+    {
+        "id": 71,
+        "nom": "La Vache"
+    },
+    {
+        "id": 72,
+        "nom": "Lacourtensourt"
+    },
+    {
+        "id": 73,
+        "nom": "Lafourguette"
+    },
+    {
+        "id": 74,
+        "nom": "Lalande"
+    },
+    {
+        "id": 75,
+        "nom": "Lardenne"
+    },
+    {
+        "id": 76,
+        "nom": "Larrieu"
+    },
+    {
+        "id": 77,
+        "nom": "Le Busca"
+    },
+    {
+        "id": 78,
+        "nom": "Le Palays"
+    },
+    {
+        "id": 79,
+        "nom": "Les Brugues"
+    },
+    {
+        "id": 80,
+        "nom": "Les Capelles"
+    },
+    {
+        "id": 81,
+        "nom": "Les Carmes"
+    },
+    {
+        "id": 82,
+        "nom": "Les Châlets"
+    },
+    {
+        "id": 83,
+        "nom": "Les Izards"
+    },
+    {
+        "id": 84,
+        "nom": "Les Pradettes"
+    },
+    {
+        "id": 85,
+        "nom": "Les Récollets"
+    },
+    {
+        "id": 86,
+        "nom": "Lespinet"
+    },
+    {
+        "id": 87,
+        "nom": "Liffard"
+    },
+    {
+        "id": 88,
+        "nom": "Limayrac"
+    },
+    {
+        "id": 89,
+        "nom": "Malepère"
+    },
+    {
+        "id": 90,
+        "nom": "Malroc"
+    },
+    {
+        "id": 91,
+        "nom": "Marengo"
+    },
+    {
+        "id": 92,
+        "nom": "Matabiau"
+    },
+    {
+        "id": 93,
+        "nom": "Maubec"
+    },
+    {
+        "id": 94,
+        "nom": "Mazades"
+    },
+    {
+        "id": 95,
+        "nom": "Minimes"
+    },
+    {
+        "id": 96,
+        "nom": "Mirail - Université"
+    },
+    {
+        "id": 97,
+        "nom": "Montaudran"
+    },
+    {
+        "id": 98,
+        "nom": "Montblanc"
+    },
+    {
+        "id": 99,
+        "nom": "Montplaisir"
+    },
+    {
+        "id": 100,
+        "nom": "Montredon"
+    },
+    {
+        "id": 101,
+        "nom": "Moscou"
+    },
+    {
+        "id": 102,
+        "nom": "Naubalette"
+    },
+    {
+        "id": 103,
+        "nom": "Négreneys"
+    },
+    {
+        "id": 104,
+        "nom": "Oustalous"
+    },
+    {
+        "id": 105,
+        "nom": "Paléficat / Virebent"
+    },
+    {
+        "id": 106,
+        "nom": "Papus"
+    },
+    {
+        "id": 107,
+        "nom": "Parc Toulousain"
+    },
+    {
+        "id": 108,
+        "nom": "Parc du Canal"
+    },
+    {
+        "id": 109,
+        "nom": "Patte d'Oie"
+    },
+    {
+        "id": 110,
+        "nom": "Pech-David"
+    },
+    {
+        "id": 111,
+        "nom": "Pinel"
+    },
+    {
+        "id": 112,
+        "nom": "Pont des Demoiselles"
+    },
+    {
+        "id": 113,
+        "nom": "Ponts Jumeaux"
+    },
+    {
+        "id": 114,
+        "nom": "Port Saint-Sauveur"
+    },
+    {
+        "id": 115,
+        "nom": "Pourvourville"
+    },
+    {
+        "id": 116,
+        "nom": "Purpan"
+    },
+    {
+        "id": 117,
+        "nom": "Raisins"
+    },
+    {
+        "id": 118,
+        "nom": "Rangueil"
+    },
+    {
+        "id": 119,
+        "nom": "Rapas"
+    },
+    {
+        "id": 120,
+        "nom": "Reynerie"
+    },
+    {
+        "id": 121,
+        "nom": "Riquet / Péri"
+    },
+    {
+        "id": 122,
+        "nom": "Rixens"
+    },
+    {
+        "id": 123,
+        "nom": "Roseraie"
+    },
+    {
+        "id": 124,
+        "nom": "Règuelongue"
+    },
+    {
+        "id": 125,
+        "nom": "Saint Martin du Touch"
+    },
+    {
+        "id": 126,
+        "nom": "Saint-Agne"
+    },
+    {
+        "id": 127,
+        "nom": "Saint-Aubin"
+    },
+    {
+        "id": 128,
+        "nom": "Saint-Cyprien"
+    },
+    {
+        "id": 129,
+        "nom": "Saint-Georges-Occitane"
+    },
+    {
+        "id": 130,
+        "nom": "Saint-Michel"
+    },
+    {
+        "id": 131,
+        "nom": "Saint-Sernin / Taur"
+    },
+    {
+        "id": 132,
+        "nom": "Saint-Simon"
+    },
+    {
+        "id": 133,
+        "nom": "Saint-Étienne"
+    },
+    {
+        "id": 134,
+        "nom": "Sainte-Cécile"
+    },
+    {
+        "id": 135,
+        "nom": "Salin"
+    },
+    {
+        "id": 136,
+        "nom": "Saouzelong"
+    },
+    {
+        "id": 137,
+        "nom": "Sept Deniers"
+    },
+    {
+        "id": 138,
+        "nom": "Sesquières"
+    },
+    {
+        "id": 139,
+        "nom": "Soupetard"
+    },
+    {
+        "id": 140,
+        "nom": "TOEC"
+    },
+    {
+        "id": 141,
+        "nom": "Tabar"
+    },
+    {
+        "id": 142,
+        "nom": "Trois-Cocus"
+    },
+    {
+        "id": 143,
+        "nom": "Université"
+    },
+    {
+        "id": 144,
+        "nom": "Victor-Hugo"
+    },
+    {
+        "id": 145,
+        "nom": "Îles du Ramier"
+    }
+]

@@ -1,0 +1,1248 @@
+[
+    {
+        "id": 1,
+        "date": "1074",
+        "leader": "dynastie des Seldjoukides",
+        "pays": "Turquie",
+        "debut": "émirat d'Anatolie"
+    },
+    {
+        "id": 2,
+        "date": "1299",
+        "leader": "Oghouzes",
+        "pays": "Turquie",
+        "debut": "tribu des Kayı"
+    },
+    {
+        "id": 3,
+        "date": "1299",
+        "leader": "Oghouzes",
+        "pays": "Turquie",
+        "debut": "dépend des Seldjoukides"
+    },
+    {
+        "id": 4,
+        "date": "1299",
+        "leader": "Oghouzes",
+        "pays": "Turquie",
+        "debut": "Beylicat ottoman"
+    },
+    {
+        "id": 5,
+        "date": "1299",
+        "leader": "Oghouzes",
+        "pays": "Turquie",
+        "debut": "Empire ottoman"
+    },
+    {
+        "id": 6,
+        "date": "1453",
+        "leader": "prise de Cosntantinople",
+        "pays": "Turquie",
+        "debut": "Istanbul"
+    },
+    {
+        "id": 7,
+        "date": "1453",
+        "leader": "prise de Cosntantinople",
+        "pays": "Turquie",
+        "debut": "prise par Mehmet II"
+    },
+    {
+        "id": 8,
+        "date": "1556",
+        "leader": "mort de Saliman",
+        "pays": "Turquie",
+        "debut": "Saliman le magnifique"
+    },
+    {
+        "id": 9,
+        "date": "1924",
+        "leader": "Lybie colonisée",
+        "pays": "Turquie",
+        "debut": "Istanbul"
+    },
+    {
+        "id": 10,
+        "date": "622",
+        "leader": "Mahommet",
+        "pays": "Arabie Saoudite",
+        "debut": "Médine"
+    },
+    {
+        "id": 11,
+        "date": "622",
+        "leader": "Mahommet",
+        "pays": "Arabie Saoudite",
+        "debut": "La Mecque"
+    },
+    {
+        "id": 12,
+        "date": "632",
+        "leader": "Mahommet",
+        "pays": "Arabie Saoudite",
+        "debut": "Arabie aoudite"
+    },
+    {
+        "id": 13,
+        "date": "632",
+        "leader": "Mahommet",
+        "pays": "Arabie Saoudite",
+        "debut": "décès de Mahommet"
+    },
+    {
+        "id": 14,
+        "date": "632",
+        "leader": "Calife Abou Bakr As-Siddiq",
+        "pays": "Arabie Saoudite",
+        "debut": "Médine"
+    },
+    {
+        "id": 15,
+        "date": "634",
+        "leader": "calife Omar ibn al-Khattab",
+        "pays": "Arabie Saoudite",
+        "debut": "Médine"
+    },
+    {
+        "id": 16,
+        "date": "644",
+        "leader": "Califat de Othman ibn Affan",
+        "pays": "Arabie Saoudite",
+        "debut": "Médine"
+    },
+    {
+        "id": 17,
+        "date": "661",
+        "leader": "fin des 4 Califes bien guidés",
+        "pays": "Arabie Saoudite",
+        "debut": "Médine"
+    },
+    {
+        "id": 18,
+        "date": "661",
+        "leader": "dynastie des Marwanides",
+        "pays": "Arabie Saoudite",
+        "debut": "La Mecque"
+    },
+    {
+        "id": 19,
+        "date": "669",
+        "leader": "mort d'Hassan",
+        "pays": "Arabie Saoudite",
+        "debut": "Médine"
+    },
+    {
+        "id": 20,
+        "date": "669",
+        "leader": "mort d'Hassan",
+        "pays": "Arabie Saoudite",
+        "debut": "fils d'Ali"
+    },
+    {
+        "id": 21,
+        "date": "1916",
+        "leader": "révolte des arabes",
+        "pays": "Arabie Saoudite",
+        "debut": "Arabie Saoudite"
+    },
+    {
+        "id": 22,
+        "date": "638",
+        "leader": "arabes",
+        "pays": "Israël",
+        "debut": "Jérusalem"
+    },
+    {
+        "id": 23,
+        "date": "636",
+        "leader": "arabes",
+        "pays": "Palestine",
+        "debut": "défaites des byzantins"
+    },
+    {
+        "id": 24,
+        "date": "1920",
+        "leader": "mandat anglais en Palestine",
+        "pays": "Palestine",
+        "debut": "Ramallah"
+    },
+    {
+        "id": 25,
+        "date": "1920",
+        "leader": "mandat français au Liban",
+        "pays": "Liban",
+        "debut": "Beyrouth"
+    },
+    {
+        "id": 26,
+        "date": "636",
+        "leader": "arabes",
+        "pays": "Iran",
+        "debut": "al-Qadisiyya"
+    },
+    {
+        "id": 27,
+        "date": "651",
+        "leader": "arabes",
+        "pays": "Iran",
+        "debut": "Kanarang"
+    },
+    {
+        "id": 28,
+        "date": "651",
+        "leader": "Calife des Rachidoune",
+        "pays": "Iran",
+        "debut": "Perse"
+    },
+    {
+        "id": 29,
+        "date": "1037",
+        "leader": "Oghouzes",
+        "pays": "Iran",
+        "debut": "Empire seldjoukide"
+    },
+    {
+        "id": 30,
+        "date": "1037",
+        "leader": "dynastie des Seldjoukides",
+        "pays": "Iran",
+        "debut": "perses turcisés"
+    },
+    {
+        "id": 31,
+        "date": "1037",
+        "leader": "dynastie des Seldjoukides",
+        "pays": "Iran",
+        "debut": "sultanat"
+    },
+    {
+        "id": 32,
+        "date": "1041",
+        "leader": "dynastie des Seldjoukides",
+        "pays": "Iran",
+        "debut": "Kerman"
+    },
+    {
+        "id": 33,
+        "date": "1501",
+        "leader": "dynastie safavide",
+        "pays": "Iran",
+        "debut": "Ismail 1er"
+    },
+    {
+        "id": 34,
+        "date": "1501",
+        "leader": "dynastie safavide",
+        "pays": "Iran",
+        "debut": "chiisme duodécimain"
+    },
+    {
+        "id": 35,
+        "date": "636",
+        "leader": "arabes",
+        "pays": "Syrie",
+        "debut": "défaites des byzantins"
+    },
+    {
+        "id": 36,
+        "date": "661",
+        "leader": "dynastie des Omeyades",
+        "pays": "Syrie",
+        "debut": "Damas"
+    },
+    {
+        "id": 37,
+        "date": "661",
+        "leader": "dynastie des Soufyanides",
+        "pays": "Syrie",
+        "debut": "Damas"
+    },
+    {
+        "id": 38,
+        "date": "750",
+        "leader": "dynastie des Abbassides",
+        "pays": "Syrie",
+        "debut": "Damas"
+    },
+    {
+        "id": 39,
+        "date": "1078",
+        "leader": "dynastie des Seldjoukides",
+        "pays": "Syrie",
+        "debut": "émirat de Damas"
+    },
+    {
+        "id": 40,
+        "date": "1078",
+        "leader": "dynastie des Seldjoukides",
+        "pays": "Syrie",
+        "debut": "émirat d'Alep"
+    },
+    {
+        "id": 41,
+        "date": "1171",
+        "leader": "règne de Saladin",
+        "pays": "Syrie",
+        "debut": "Damas"
+    },
+    {
+        "id": 42,
+        "date": "1911",
+        "leader": "italiens en Libye",
+        "pays": "Syrie",
+        "debut": "Tripoli"
+    },
+    {
+        "id": 43,
+        "date": "1920",
+        "leader": "mandat français en Syrie",
+        "pays": "Syrie",
+        "debut": "Damas"
+    },
+    {
+        "id": 44,
+        "date": "656",
+        "leader": "mort d'Othman",
+        "pays": "Irak",
+        "debut": "Koufa"
+    },
+    {
+        "id": 45,
+        "date": "656",
+        "leader": "Calife d'Ali ibn Abi Talib",
+        "pays": "Irak",
+        "debut": "Koufa"
+    },
+    {
+        "id": 46,
+        "date": "661",
+        "leader": "mort d'Ali",
+        "pays": "Irak",
+        "debut": "Koufa"
+    },
+    {
+        "id": 47,
+        "date": "661",
+        "leader": "fin des 4 Califes bien guidés",
+        "pays": "Irak",
+        "debut": "Koufa"
+    },
+    {
+        "id": 48,
+        "date": "680",
+        "leader": "mort d'Hussein",
+        "pays": "Irak",
+        "debut": "Kerbala"
+    },
+    {
+        "id": 49,
+        "date": "680",
+        "leader": "mort d'Hussein",
+        "pays": "Irak",
+        "debut": "assassiné par les Omeyades"
+    },
+    {
+        "id": 50,
+        "date": "680",
+        "leader": "mort d'Hussein",
+        "pays": "Irak",
+        "debut": "frère d'Hassan, 3ème immam"
+    },
+    {
+        "id": 51,
+        "date": "750",
+        "leader": "dynastie des Abbassides",
+        "pays": "Irak",
+        "debut": "Bagdad"
+    },
+    {
+        "id": 52,
+        "date": "1118",
+        "leader": "dynastie des Seldjoukides",
+        "pays": "Irak",
+        "debut": "Bagdad"
+    },
+    {
+        "id": 53,
+        "date": "1258",
+        "leader": "fin des Abbassides",
+        "pays": "Irak",
+        "debut": "Bagdad"
+    },
+    {
+        "id": 54,
+        "date": "1258",
+        "leader": "dynastie des Ilkhans",
+        "pays": "Irak",
+        "debut": "mongols"
+    },
+    {
+        "id": 55,
+        "date": "1921",
+        "leader": "roi Abdallah bin al-Hussein",
+        "pays": "Jordanie",
+        "debut": "fils du chérif de La Mecque"
+    },
+    {
+        "id": 56,
+        "date": "1921",
+        "leader": "roi Abdallah bin al-Hussein",
+        "pays": "Jordanie",
+        "debut": "Amman"
+    },
+    {
+        "id": 57,
+        "date": "758",
+        "leader": "Aïssa ben Yazid",
+        "pays": "Mauritanie",
+        "debut": "Émirat de Sijilmassa"
+    },
+    {
+        "id": 58,
+        "date": "1055",
+        "leader": "califat almohade",
+        "pays": "Mauritanie",
+        "debut": "fin de Sijilmassa"
+    },
+    {
+        "id": 59,
+        "date": "640",
+        "leader": "Amr ibn al-As",
+        "pays": "Egypte",
+        "debut": "Héliopolis"
+    },
+    {
+        "id": 60,
+        "date": "640",
+        "leader": "Amr ibn al-As",
+        "pays": "Egypte",
+        "debut": "Alexandrie"
+    },
+    {
+        "id": 61,
+        "date": "969",
+        "leader": "Califat fatimide",
+        "pays": "Egypte",
+        "debut": "al-Qâhira"
+    },
+    {
+        "id": 62,
+        "date": "1171",
+        "leader": "Sultanat ayyoubide",
+        "pays": "Egypte",
+        "debut": "sultan Saladin"
+    },
+    {
+        "id": 63,
+        "date": "1171",
+        "leader": "règne de Saladin",
+        "pays": "Egypte",
+        "debut": "Le Caire"
+    },
+    {
+        "id": 64,
+        "date": "1250",
+        "leader": "dynastie des Mamelouks",
+        "pays": "Egypte",
+        "debut": "Le Caire"
+    },
+    {
+        "id": 65,
+        "date": "1517",
+        "leader": "fin des Mamelouks",
+        "pays": "Egypte",
+        "debut": "Le Caire"
+    },
+    {
+        "id": 66,
+        "date": "1798",
+        "leader": "conquête de Bonaparte",
+        "pays": "Egypte",
+        "debut": "Alexandrie"
+    },
+    {
+        "id": 67,
+        "date": "642",
+        "leader": "arabes",
+        "pays": "Libye",
+        "debut": "Tripoli"
+    },
+    {
+        "id": 68,
+        "date": "800",
+        "leader": "dynastrie des Aghlabides",
+        "pays": "Libye",
+        "debut": "émir al-Aghlab"
+    },
+    {
+        "id": 69,
+        "date": "647",
+        "leader": "Abdallah Ibn Saad",
+        "pays": "Tunisie",
+        "debut": "Sufétula"
+    },
+    {
+        "id": 70,
+        "date": "665",
+        "leader": "arabes",
+        "pays": "Tunisie",
+        "debut": "Barqa"
+    },
+    {
+        "id": 71,
+        "date": "683",
+        "leader": "Oqba Ibn Nafaa",
+        "pays": "Tunisie",
+        "debut": "Ifriqya"
+    },
+    {
+        "id": 72,
+        "date": "698",
+        "leader": "Hassan Ibn Numan",
+        "pays": "Tunisie",
+        "debut": "Carthage"
+    },
+    {
+        "id": 73,
+        "date": "701",
+        "leader": "califat omeyyade",
+        "pays": "Tunisie",
+        "debut": "Tabarka"
+    },
+    {
+        "id": 74,
+        "date": "800",
+        "leader": "dynastrie des Aghlabides",
+        "pays": "Tunisie",
+        "debut": "émir al-Aghlab"
+    },
+    {
+        "id": 75,
+        "date": "909",
+        "leader": "Califat fatimide",
+        "pays": "Tunisie",
+        "debut": "Raqqada"
+    },
+    {
+        "id": 76,
+        "date": "918",
+        "leader": "Califat fatimide",
+        "pays": "Tunisie",
+        "debut": "Mahdia"
+    },
+    {
+        "id": 77,
+        "date": "741",
+        "leader": "berbères",
+        "pays": "Algérie",
+        "debut": "émirat sufrite"
+    },
+    {
+        "id": 78,
+        "date": "777",
+        "leader": "dynéstie des Rostémides",
+        "pays": "Algérie",
+        "debut": "dynastie ibadite"
+    },
+    {
+        "id": 79,
+        "date": "800",
+        "leader": "dynastrie des Aghlabides",
+        "pays": "Algérie",
+        "debut": "émir al-Aghlab"
+    },
+    {
+        "id": 80,
+        "date": "984",
+        "leader": "dynastie des Zirides",
+        "pays": "Algérie",
+        "debut": "émirat berbère"
+    },
+    {
+        "id": 81,
+        "date": "984",
+        "leader": "dynastie des Zirides",
+        "pays": "Algérie",
+        "debut": "vassal des Fatimides"
+    },
+    {
+        "id": 82,
+        "date": "1830",
+        "leader": "barbaresques",
+        "pays": "Algérie",
+        "debut": "fin des razzias"
+    },
+    {
+        "id": 83,
+        "date": "1830",
+        "leader": "conquête de l'Algérie",
+        "pays": "Algérie",
+        "debut": "Alger"
+    },
+    {
+        "id": 84,
+        "date": "709",
+        "leader": "Califat omeyyade",
+        "pays": "Maroc",
+        "debut": "Maghreb al-Aqsa"
+    },
+    {
+        "id": 85,
+        "date": "789",
+        "leader": "dynastie idrisside",
+        "pays": "Maroc",
+        "debut": "roi Idris 1er"
+    },
+    {
+        "id": 86,
+        "date": "1666",
+        "leader": "roi Moulay Rachid",
+        "pays": "Maroc",
+        "debut": "chérif du Tafilalet"
+    },
+    {
+        "id": 87,
+        "date": "1881",
+        "leader": "protectorat français",
+        "pays": "Maroc",
+        "debut": "Rabat"
+    },
+    {
+        "id": 88,
+        "date": "711",
+        "leader": "Tariq ibn Ziyad",
+        "pays": "El Andalous",
+        "debut": "Tolède"
+    },
+    {
+        "id": 89,
+        "date": "712",
+        "leader": "Abdelaziz",
+        "pays": "El Andalous",
+        "debut": "Séville"
+    },
+    {
+        "id": 90,
+        "date": "716",
+        "leader": "Al-Hurr",
+        "pays": "El Andalous",
+        "debut": "Cordoue"
+    },
+    {
+        "id": 91,
+        "date": "716",
+        "leader": "Al-Hurr",
+        "pays": "El Andalous",
+        "debut": "Barbastro"
+    },
+    {
+        "id": 92,
+        "date": "716",
+        "leader": "Al-Hurr",
+        "pays": "El Andalous",
+        "debut": "Pampelune"
+    },
+    {
+        "id": 93,
+        "date": "717",
+        "leader": "Al-Hurr",
+        "pays": "El Andalous",
+        "debut": "Gijón"
+    },
+    {
+        "id": 94,
+        "date": "718",
+        "leader": "berbères et arabes",
+        "pays": "El Andalous",
+        "debut": "échec dans les Asturies"
+    },
+    {
+        "id": 95,
+        "date": "726",
+        "leader": "wilaya d'al-Andalus",
+        "pays": "El Andalous",
+        "debut": "Hispanie"
+    },
+    {
+        "id": 96,
+        "date": "731",
+        "leader": "Abd al-Rahman",
+        "pays": "El Andalous",
+        "debut": "Émir de Cordoue"
+    },
+    {
+        "id": 97,
+        "date": "785",
+        "leader": "francs",
+        "pays": "El Andalous",
+        "debut": "Catalogne, zone tampon"
+    },
+    {
+        "id": 98,
+        "date": "929",
+        "leader": "califat de Cordoue",
+        "pays": "El Andalous",
+        "debut": "Cordoue"
+    },
+    {
+        "id": 99,
+        "date": "902",
+        "leader": "Omeyyades",
+        "pays": "El Andalous",
+        "debut": "Baléares"
+    },
+    {
+        "id": 100,
+        "date": "1011",
+        "leader": "Omeyyades",
+        "pays": "El Andalous",
+        "debut": "guerre civile"
+    },
+    {
+        "id": 101,
+        "date": "1031",
+        "leader": "taïfas",
+        "pays": "El Andalous",
+        "debut": "morcellement"
+    },
+    {
+        "id": 102,
+        "date": "1090",
+        "leader": "dynastie des Almoravides",
+        "pays": "El Andalous",
+        "debut": "Cordoue"
+    },
+    {
+        "id": 103,
+        "date": "1140",
+        "leader": "taïfas",
+        "pays": "El Andalous",
+        "debut": "chute des Almoravides"
+    },
+    {
+        "id": 104,
+        "date": "1203",
+        "leader": "dynastie des Almohades",
+        "pays": "El Andalous",
+        "debut": "Séville"
+    },
+    {
+        "id": 105,
+        "date": "1238",
+        "leader": "Mohammed ben Nazar",
+        "pays": "El Andalous",
+        "debut": "émirat de Grenade"
+    },
+    {
+        "id": 106,
+        "date": "1238",
+        "leader": "dynastie des Nazari",
+        "pays": "El Andalous",
+        "debut": "Grenade"
+    },
+    {
+        "id": 107,
+        "date": "1492",
+        "leader": "Reconquista",
+        "pays": "El Andalous",
+        "debut": "fin de l'émirat de Grenade"
+    },
+    {
+        "id": 108,
+        "date": "719",
+        "leader": "Al-Samh",
+        "pays": "Septimanie",
+        "debut": "Perpignan"
+    },
+    {
+        "id": 109,
+        "date": "719",
+        "leader": "Al-Samh",
+        "pays": "Septimanie",
+        "debut": "Narbonne"
+    },
+    {
+        "id": 110,
+        "date": "724",
+        "leader": "Ambiza",
+        "pays": "Septimanie",
+        "debut": "Carcassonne"
+    },
+    {
+        "id": 111,
+        "date": "725",
+        "leader": "Ambiza",
+        "pays": "Septimanie",
+        "debut": "Nîmes"
+    },
+    {
+        "id": 112,
+        "date": "890",
+        "leader": "maures",
+        "pays": "Septimanie",
+        "debut": "Provence"
+    },
+    {
+        "id": 113,
+        "date": "973",
+        "leader": "maures",
+        "pays": "Septimanie",
+        "debut": "fin Septimanie"
+    },
+    {
+        "id": 114,
+        "date": "721",
+        "leader": "Al-Samh",
+        "pays": "Francie",
+        "debut": "siège de Toulouse"
+    },
+    {
+        "id": 115,
+        "date": "732",
+        "leader": "Al-Ghafiqi",
+        "pays": "Francie",
+        "debut": "échec à Bordeaux"
+    },
+    {
+        "id": 116,
+        "date": "732",
+        "leader": "Al-Ghafiqi",
+        "pays": "Francie",
+        "debut": "échec à Poitiers"
+    },
+    {
+        "id": 117,
+        "date": "732",
+        "leader": "Al-Ghafiqi",
+        "pays": "Francie",
+        "debut": "échec en Bourgogne"
+    },
+    {
+        "id": 118,
+        "date": "737",
+        "leader": "Al-Ghafiqi",
+        "pays": "Francie",
+        "debut": "fin à Avignon"
+    },
+    {
+        "id": 119,
+        "date": "720",
+        "leader": "Omeyyades",
+        "pays": "Italie",
+        "debut": "Sicile"
+    },
+    {
+        "id": 120,
+        "date": "720",
+        "leader": "Omeyyades",
+        "pays": "Italie",
+        "debut": "Sardaigne"
+    },
+    {
+        "id": 121,
+        "date": "720",
+        "leader": "Omeyyades",
+        "pays": "Italie",
+        "debut": "Corse"
+    },
+    {
+        "id": 122,
+        "date": "846",
+        "leader": "barbaresques",
+        "pays": "Italie",
+        "debut": "Rome"
+    },
+    {
+        "id": 123,
+        "date": "1480",
+        "leader": "barbaresques",
+        "pays": "Italie",
+        "debut": "Otrante"
+    },
+    {
+        "id": 124,
+        "date": "1123",
+        "leader": "barbaresques",
+        "pays": "Croatie",
+        "debut": "Trogir"
+    },
+    {
+        "id": 125,
+        "date": "1683",
+        "leader": "défaite des Ottomans",
+        "pays": "Autriche",
+        "debut": "Vienne"
+    },
+    {
+        "id": 126,
+        "date": "1389",
+        "leader": "chute du roi Tvrtko Ier",
+        "pays": "Kosovo",
+        "debut": "Kosovo Polje"
+    },
+    {
+        "id": 127,
+        "date": "1580",
+        "leader": "fondation du Pachalik de Bosnie",
+        "pays": "Bosnie-Herzégovine",
+        "debut": "Sarajevo"
+    },
+    {
+        "id": 128,
+        "date": "1370",
+        "leader": "ottomans",
+        "pays": "Macédoine du Nord",
+        "debut": "Vilayet de Skopje"
+    },
+    {
+        "id": 129,
+        "date": "1474",
+        "leader": "Suleiman-Pacha",
+        "pays": "Albanie",
+        "debut": "Tirana"
+    },
+    {
+        "id": 130,
+        "date": "688",
+        "leader": "arabes",
+        "pays": "Chypre",
+        "debut": "co-dominion arabe et byzantin"
+    },
+    {
+        "id": 131,
+        "date": "1441",
+        "leader": "khanat de Crimée",
+        "pays": "Ukraine",
+        "debut": "fondation par les Tatars"
+    },
+    {
+        "id": 132,
+        "date": "1783",
+        "leader": "guerre russo-Tatars",
+        "pays": "Ukraine",
+        "debut": "chute du khanat de Crimée"
+    },
+    {
+        "id": 133,
+        "date": "889",
+        "leader": "dynastie des Sajides",
+        "pays": "Azerbaïdjan",
+        "debut": "Bakou"
+    },
+    {
+        "id": 134,
+        "date": "1137",
+        "leader": "dynastie des atabegs",
+        "pays": "Azerbaïdjan",
+        "debut": "Bakou"
+    },
+    {
+        "id": 135,
+        "date": "750",
+        "leader": "Oghouzes",
+        "pays": "Turkménistan",
+        "debut": "État d'Oghouze-Yabgou"
+    },
+    {
+        "id": 136,
+        "date": "712",
+        "leader": "Qutayba ibn Muslim",
+        "pays": "Ouzbékistan",
+        "debut": "Tachkent"
+    },
+    {
+        "id": 137,
+        "date": "712",
+        "leader": "Qutayba ibn Muslim",
+        "pays": "Kirghizistan",
+        "debut": "Bichkek"
+    },
+    {
+        "id": 138,
+        "date": "717",
+        "leader": "Khanat Türgesh",
+        "pays": "Tadjikistan",
+        "debut": "Douchanbé"
+    },
+    {
+        "id": 139,
+        "date": "724",
+        "leader": "Qutayba ben Muslim",
+        "pays": "Tadjikistan",
+        "debut": "Douchanbé"
+    },
+    {
+        "id": 140,
+        "date": "724",
+        "leader": "Califat omeyyade",
+        "pays": "Tadjikistan",
+        "debut": "Douchanbé"
+    },
+    {
+        "id": 141,
+        "date": "748",
+        "leader": "Califat abbasside",
+        "pays": "Tadjikistan",
+        "debut": "Douchanbé"
+    },
+    {
+        "id": 142,
+        "date": "717",
+        "leader": "Khanat Türgesh",
+        "pays": "Kazakhstan",
+        "debut": "Astana"
+    },
+    {
+        "id": 143,
+        "date": "724",
+        "leader": "Qutayba ben Muslim",
+        "pays": "Kazakhstan",
+        "debut": "Astana"
+    },
+    {
+        "id": 144,
+        "date": "724",
+        "leader": "Califat omeyyade",
+        "pays": "Kazakhstan",
+        "debut": "Astana"
+    },
+    {
+        "id": 145,
+        "date": "748",
+        "leader": "Califat abbasside",
+        "pays": "Kazakhstan",
+        "debut": "Astana"
+    },
+    {
+        "id": 146,
+        "date": "717",
+        "leader": "Khanat Türgesh",
+        "pays": "Afghanistan",
+        "debut": "Kaboul"
+    },
+    {
+        "id": 147,
+        "date": "724",
+        "leader": "Qutayba ben Muslim",
+        "pays": "Afghanistan",
+        "debut": "Kaboul"
+    },
+    {
+        "id": 148,
+        "date": "724",
+        "leader": "Califat omeyyade",
+        "pays": "Afghanistan",
+        "debut": "Kaboul"
+    },
+    {
+        "id": 149,
+        "date": "748",
+        "leader": "Califat abbasside",
+        "pays": "Afghanistan",
+        "debut": "Kaboul"
+    },
+    {
+        "id": 150,
+        "date": "717",
+        "leader": "Khanat Türgesh",
+        "pays": "Turkménistan",
+        "debut": "Achgabat"
+    },
+    {
+        "id": 151,
+        "date": "724",
+        "leader": "Qutayba ben Muslim",
+        "pays": "Turkménistan",
+        "debut": "Achgabat"
+    },
+    {
+        "id": 152,
+        "date": "724",
+        "leader": "Califat omeyyade",
+        "pays": "Turkménistan",
+        "debut": "Achgabat"
+    },
+    {
+        "id": 153,
+        "date": "748",
+        "leader": "Califat abbasside",
+        "pays": "Turkménistan",
+        "debut": "Achgabat"
+    },
+    {
+        "id": 154,
+        "date": "699",
+        "leader": "Türgesh",
+        "pays": "Xinjiang",
+        "debut": "Khaganat turc occidental"
+    },
+    {
+        "id": 155,
+        "date": "766",
+        "leader": "Karlouks",
+        "pays": "Xinjiang",
+        "debut": "Khaganat ouïgour"
+    },
+    {
+        "id": 156,
+        "date": "711",
+        "leader": "arabes",
+        "pays": "Indes",
+        "debut": "Sind"
+    },
+    {
+        "id": 157,
+        "date": "711",
+        "leader": "Mahmoud de Ghaznî",
+        "pays": "Indes",
+        "debut": "Sind"
+    },
+    {
+        "id": 158,
+        "date": "711",
+        "leader": "Muhammad Ghuri",
+        "pays": "Indes",
+        "debut": "Sind"
+    },
+    {
+        "id": 159,
+        "date": "712",
+        "leader": "Muhammad ibn al-Qasim",
+        "pays": "Indes",
+        "debut": "Sind"
+    },
+    {
+        "id": 160,
+        "date": "723",
+        "leader": "Al Junayd",
+        "pays": "Indes",
+        "debut": "Sind"
+    },
+    {
+        "id": 161,
+        "date": "731",
+        "leader": "Al-Hakam",
+        "pays": "Indes",
+        "debut": "Sind"
+    },
+    {
+        "id": 162,
+        "date": "1211",
+        "leader": "turcs",
+        "pays": "Indes",
+        "debut": "sultanat de Delhi"
+    },
+    {
+        "id": 163,
+        "date": "1211",
+        "leader": "Dynastie des Turcs ilbarîdes",
+        "pays": "Indes",
+        "debut": "sultanat de Delhi"
+    },
+    {
+        "id": 164,
+        "date": "1290",
+        "leader": "Dynastie des Afghans Khaljis",
+        "pays": "Indes",
+        "debut": "sultanat de Delhi"
+    },
+    {
+        "id": 165,
+        "date": "1320",
+        "leader": "Dynastie des indiens Tughluq",
+        "pays": "Indes",
+        "debut": "sultanat de Delhi"
+    },
+    {
+        "id": 166,
+        "date": "1399",
+        "leader": "mogholes",
+        "pays": "Indes",
+        "debut": "Tamerlan"
+    },
+    {
+        "id": 167,
+        "date": "1414",
+        "leader": "Dynastie des mogholes Sayyid",
+        "pays": "Indes",
+        "debut": "sultanat de Delhi"
+    },
+    {
+        "id": 168,
+        "date": "1451",
+        "leader": "Dynastie des Afghans Lodi",
+        "pays": "Indes",
+        "debut": "sultanat de Delhi"
+    },
+    {
+        "id": 169,
+        "date": "1519",
+        "leader": "mogholes",
+        "pays": "Indes",
+        "debut": "Babur"
+    },
+    {
+        "id": 170,
+        "date": "1526",
+        "leader": "Empire moghol",
+        "pays": "Indes",
+        "debut": "sultanat de Delhi"
+    },
+    {
+        "id": 171,
+        "date": "1282",
+        "leader": "roi de Samudra musulman",
+        "pays": "Indonésie",
+        "debut": "Sumatra"
+    },
+    {
+        "id": 172,
+        "date": "1416",
+        "leader": "musulmans chinois",
+        "pays": "Indonésie",
+        "debut": "Java"
+    },
+    {
+        "id": 173,
+        "date": "1550",
+        "leader": "musulmans",
+        "pays": "Indonésie",
+        "debut": "Bornéo"
+    },
+    {
+        "id": 174,
+        "date": "1419",
+        "leader": "conversion du roi de Malacca",
+        "pays": "Malaisie",
+        "debut": "Malacca"
+    },
+    {
+        "id": 175,
+        "date": "1141",
+        "leader": "conversion du roi des Maldives",
+        "pays": "Maldives",
+        "debut": "Malé"
+    },
+    {
+        "id": 176,
+        "date": "1368",
+        "leader": "Muhammad Shah devient Sultan",
+        "pays": "Bruneï",
+        "debut": "Bandar Seri Begawan"
+    },
+    {
+        "id": 177,
+        "date": "1368",
+        "leader": "Muhammad Shah devient Sultan",
+        "pays": "Bruneï",
+        "debut": "le sultan est malais"
+    },
+    {
+        "id": 178,
+        "date": "1215",
+        "leader": "invasion de Gengis Khan",
+        "pays": "Mongolie",
+        "debut": "Oulan-Bator"
+    }
+]

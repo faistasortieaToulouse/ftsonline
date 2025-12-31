@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1,
+        "culture": "Caral",
+        "periode": "du XXXe siècle av. J.-C. au XXVe siècle av. J.-C.",
+        "localisation": "Dans le Pérou côtier et non loin de Lima."
+    },
+    {
+        "id": 2,
+        "culture": "Chavín",
+        "periode": "du IXe siècle av. J.-C. au IIe siècle av. J.-C.",
+        "localisation": "Principalement dans les Andes péruviennes du nord"
+    },
+    {
+        "id": 3,
+        "culture": "Vicús",
+        "periode": "du Ve siècle av. J.-C. au IVe siècle",
+        "localisation": "Autour de la frontière actuelle entre le Pérou et l'Équateur, près du littoral"
+    },
+    {
+        "id": 4,
+        "culture": "Tiahuanaco",
+        "periode": "du Ve siècle av. J.-C. au Xe siècle",
+        "localisation": "Autour du lac Titicaca"
+    },
+    {
+        "id": 5,
+        "culture": "Chibcha ou Muiscas",
+        "periode": "du Ve siècle av. J.-C. au XVIe siècle",
+        "localisation": "Colombie andine."
+    },
+    {
+        "id": 6,
+        "culture": "Tayronas",
+        "periode": "du Ve siècle av. J.-C. au XVIe siècle",
+        "localisation": "Nord de la Colombie (Cote caraïbe et Sierra Nevada de Santa Marta)"
+    },
+    {
+        "id": 7,
+        "culture": "Paracas",
+        "periode": "du IIIe siècle av. J.-C. au IIe siècle",
+        "localisation": "Région côtière du sud du Pérou"
+    },
+    {
+        "id": 8,
+        "culture": "Virú",
+        "periode": "du IIe siècle av. J.-C. au IIIe siècle",
+        "localisation": "Région côtière du nord du Pérou"
+    },
+    {
+        "id": 9,
+        "culture": "Nazca",
+        "periode": "du IIe siècle au VIIe siècle",
+        "localisation": "Littoral sud péruvien"
+    },
+    {
+        "id": 10,
+        "culture": "Moche",
+        "periode": "du IIe siècle au VIIIe siècle",
+        "localisation": "Littoral nord péruvien"
+    },
+    {
+        "id": 11,
+        "culture": "Huari",
+        "periode": "du Ve siècle au IXe siècle",
+        "localisation": "Tout le sud et le centre du Pérou"
+    },
+    {
+        "id": 12,
+        "culture": "Sicán",
+        "periode": "du IXe siècle au XIVe siècle",
+        "localisation": "Vallée du Lambayeque (nord du Pérou)"
+    },
+    {
+        "id": 13,
+        "culture": "Manteño-Guancavilca",
+        "periode": "du VIIe siècle au XVIe siècle",
+        "localisation": "Cote centrale et méridionale de l'Équateur"
+    },
+    {
+        "id": 14,
+        "culture": "Chimú",
+        "periode": "du XIIe siècle au XVe siècle",
+        "localisation": "Tout le littoral nord du Pérou"
+    },
+    {
+        "id": 15,
+        "culture": "Inca",
+        "periode": "du XVe siècle au XVIe siècle",
+        "localisation": "Ensemble des régions côtières et andines, de l'Équateur jusqu'au nord du Chili et de l'Argentine"
+    }
+]

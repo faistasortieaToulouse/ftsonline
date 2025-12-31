@@ -1,0 +1,248 @@
+[
+    {
+        "id": 1,
+        "debut": "431",
+        "fin": "508",
+        "nom": "Tournai"
+    },
+    {
+        "id": 2,
+        "debut": "486",
+        "fin": "508",
+        "nom": "Soissons"
+    },
+    {
+        "id": 3,
+        "debut": "508",
+        "fin": "768",
+        "nom": "Paris"
+    },
+    {
+        "id": 4,
+        "debut": "511",
+        "fin": "",
+        "nom": "Orléans, Paris, Reims et Soissons"
+    },
+    {
+        "id": 5,
+        "debut": "511",
+        "fin": "558",
+        "nom": "Orléans, Metz, Paris et Soissons"
+    },
+    {
+        "id": 6,
+        "debut": "558",
+        "fin": "561",
+        "nom": "Soissons"
+    },
+    {
+        "id": 7,
+        "debut": "561",
+        "fin": "613",
+        "nom": "Orléans, Paris, Reims et Soissons"
+    },
+    {
+        "id": 8,
+        "debut": "613",
+        "fin": "629",
+        "nom": "Paris"
+    },
+    {
+        "id": 9,
+        "debut": "629",
+        "fin": "639",
+        "nom": "Clichy et d'autres villes"
+    },
+    {
+        "id": 10,
+        "debut": "639",
+        "fin": "673",
+        "nom": "Clichy et Metz"
+    },
+    {
+        "id": 11,
+        "debut": "673",
+        "fin": "675",
+        "nom": "Paris"
+    },
+    {
+        "id": 12,
+        "debut": "675",
+        "fin": "795",
+        "nom": "Chalon, Orléans, Metz, Paris et Soissons"
+    },
+    {
+        "id": 13,
+        "debut": "795",
+        "fin": "843",
+        "nom": "Aix-la-Chapelle"
+    },
+    {
+        "id": 14,
+        "debut": "",
+        "fin": "987",
+        "nom": "Laon"
+    },
+    {
+        "id": 15,
+        "debut": "900",
+        "fin": "1417",
+        "nom": "Paris"
+    },
+    {
+        "id": 16,
+        "debut": "1417",
+        "fin": "1422",
+        "nom": "Troyes"
+    },
+    {
+        "id": 17,
+        "debut": "1422",
+        "fin": "1498",
+        "nom": "Tours"
+    },
+    {
+        "id": 18,
+        "debut": "1498",
+        "fin": "1528",
+        "nom": "Blois"
+    },
+    {
+        "id": 19,
+        "debut": "1528",
+        "fin": "1588",
+        "nom": "Paris"
+    },
+    {
+        "id": 20,
+        "debut": "1588",
+        "fin": "1594",
+        "nom": "Tours"
+    },
+    {
+        "id": 21,
+        "debut": "1594",
+        "fin": "1682",
+        "nom": "Paris"
+    },
+    {
+        "id": 22,
+        "debut": "1682",
+        "fin": "1715",
+        "nom": "Versailles"
+    },
+    {
+        "id": 23,
+        "debut": "1715",
+        "fin": "1722",
+        "nom": "Paris"
+    },
+    {
+        "id": 24,
+        "debut": "1722",
+        "fin": "1789",
+        "nom": "Versailles"
+    },
+    {
+        "id": 25,
+        "debut": "1789",
+        "fin": "1792",
+        "nom": "Paris"
+    },
+    {
+        "id": 26,
+        "debut": "1792",
+        "fin": "1871",
+        "nom": "Paris"
+    },
+    {
+        "id": 27,
+        "debut": "1870",
+        "fin": "",
+        "nom": "Paris"
+    },
+    {
+        "id": 28,
+        "debut": "1870",
+        "fin": "",
+        "nom": "Tours"
+    },
+    {
+        "id": 29,
+        "debut": "1870",
+        "fin": "",
+        "nom": "Bordeaux"
+    },
+    {
+        "id": 30,
+        "debut": "1871",
+        "fin": "1879",
+        "nom": "Versailles"
+    },
+    {
+        "id": 31,
+        "debut": "1879",
+        "fin": "1914",
+        "nom": "Paris"
+    },
+    {
+        "id": 32,
+        "debut": "1914",
+        "fin": "",
+        "nom": "Bordeaux"
+    },
+    {
+        "id": 33,
+        "debut": "1914",
+        "fin": "",
+        "nom": "Paris"
+    },
+    {
+        "id": 34,
+        "debut": "1940",
+        "fin": "",
+        "nom": "Tours"
+    },
+    {
+        "id": 35,
+        "debut": "1940",
+        "fin": "",
+        "nom": "Clermont-Ferrand"
+    },
+    {
+        "id": 36,
+        "debut": "1940",
+        "fin": "",
+        "nom": "Vichy"
+    },
+    {
+        "id": 37,
+        "debut": "1940",
+        "fin": "",
+        "nom": "Londres"
+    },
+    {
+        "id": 38,
+        "debut": "1940",
+        "fin": "1943",
+        "nom": "Brazzaville"
+    },
+    {
+        "id": 39,
+        "debut": "1942",
+        "fin": "",
+        "nom": "Alger"
+    },
+    {
+        "id": 40,
+        "debut": "1944",
+        "fin": "",
+        "nom": "Bayeux"
+    },
+    {
+        "id": 41,
+        "debut": "1944",
+        "fin": "",
+        "nom": "Paris"
+    }
+]

@@ -1,0 +1,1592 @@
+[
+    {
+        "id": 1,
+        "date": "281",
+        "royaume": "état franc",
+        "dirigeant": "Gennobaud"
+    },
+    {
+        "id": 2,
+        "date": "584",
+        "royaume": "état franc",
+        "dirigeant": "Faramond"
+    },
+    {
+        "id": 3,
+        "date": "324",
+        "royaume": "francs rhénans",
+        "dirigeant": "Bonitus"
+    },
+    {
+        "id": 4,
+        "date": "507",
+        "royaume": "francs rhénans",
+        "dirigeant": "Sigebert"
+    },
+    {
+        "id": 5,
+        "date": "508",
+        "royaume": "francs rhénans",
+        "dirigeant": "Clodéric"
+    },
+    {
+        "id": 6,
+        "date": "335",
+        "royaume": "francs saliens",
+        "dirigeant": "Charietto"
+    },
+    {
+        "id": 7,
+        "date": "411",
+        "royaume": "francs saliens",
+        "dirigeant": "Théodomir"
+    },
+    {
+        "id": 8,
+        "date": "420",
+        "royaume": "francs saliens",
+        "dirigeant": "Clodion"
+    },
+    {
+        "id": 9,
+        "date": "448",
+        "royaume": "francs saliens",
+        "dirigeant": "Mérovée"
+    },
+    {
+        "id": 10,
+        "date": "457",
+        "royaume": "francs saliens",
+        "dirigeant": "Childéric Ier"
+    },
+    {
+        "id": 11,
+        "date": "481",
+        "royaume": "Mérovingiens",
+        "dirigeant": "Clovis 1er"
+    },
+    {
+        "id": 12,
+        "date": "511",
+        "royaume": "Mérovingiens",
+        "dirigeant": "Clodomir"
+    },
+    {
+        "id": 13,
+        "date": "511",
+        "royaume": "Mérovingiens",
+        "dirigeant": "Thierry Ier"
+    },
+    {
+        "id": 14,
+        "date": "751",
+        "royaume": "Mérovingiens",
+        "dirigeant": "Childéric III"
+    },
+    {
+        "id": 15,
+        "date": "511",
+        "royaume": "Neustrie",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 16,
+        "date": "613",
+        "royaume": "Neustrie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 17,
+        "date": "613",
+        "royaume": "Neustrie",
+        "dirigeant": "Clothaire II"
+    },
+    {
+        "id": 18,
+        "date": "639",
+        "royaume": "Neustrie",
+        "dirigeant": "Clovis II"
+    },
+    {
+        "id": 19,
+        "date": "673",
+        "royaume": "Neustrie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 20,
+        "date": "751",
+        "royaume": "Neustrie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 21,
+        "date": "751",
+        "royaume": "Neustrie",
+        "dirigeant": "Pépin le Bref"
+    },
+    {
+        "id": 22,
+        "date": "861",
+        "royaume": "Neustrie",
+        "dirigeant": "marche"
+    },
+    {
+        "id": 23,
+        "date": "861",
+        "royaume": "Neustrie",
+        "dirigeant": "marche"
+    },
+    {
+        "id": 24,
+        "date": "987",
+        "royaume": "Neustrie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 25,
+        "date": "511",
+        "royaume": "Austrasie",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 26,
+        "date": "613",
+        "royaume": "Austrasie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 27,
+        "date": "613",
+        "royaume": "Austrasie",
+        "dirigeant": "Clothaire II"
+    },
+    {
+        "id": 28,
+        "date": "634",
+        "royaume": "Austrasie",
+        "dirigeant": "Sigebert III"
+    },
+    {
+        "id": 29,
+        "date": "662",
+        "royaume": "Austrasie",
+        "dirigeant": "Childéric II"
+    },
+    {
+        "id": 30,
+        "date": "691",
+        "royaume": "Austrasie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 31,
+        "date": "691",
+        "royaume": "Austrasie",
+        "dirigeant": "Clovis IV"
+    },
+    {
+        "id": 32,
+        "date": "753",
+        "royaume": "Austrasie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 33,
+        "date": "753",
+        "royaume": "Austrasie",
+        "dirigeant": "Pépin le Bref"
+    },
+    {
+        "id": 34,
+        "date": "",
+        "royaume": "Aquitaine",
+        "dirigeant": "comtes d'Auvergne"
+    },
+    {
+        "id": 35,
+        "date": "",
+        "royaume": "Aquitaine",
+        "dirigeant": "comtes de Poitiers"
+    },
+    {
+        "id": 36,
+        "date": "271",
+        "royaume": "Aquitaine",
+        "dirigeant": "Novempopulanie"
+    },
+    {
+        "id": 37,
+        "date": "471",
+        "royaume": "Aquitaine",
+        "dirigeant": "Vasconie"
+    },
+    {
+        "id": 38,
+        "date": "576",
+        "royaume": "Aquitaine",
+        "dirigeant": "Didier"
+    },
+    {
+        "id": 39,
+        "date": "584",
+        "royaume": "Aquitaine",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 40,
+        "date": "585",
+        "royaume": "Aquitaine",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 41,
+        "date": "600",
+        "royaume": "Aquitaine",
+        "dirigeant": "Duché de Vasconie"
+    },
+    {
+        "id": 42,
+        "date": "626",
+        "royaume": "Aquitaine",
+        "dirigeant": "Novempopulanie"
+    },
+    {
+        "id": 43,
+        "date": "629",
+        "royaume": "Aquitaine",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 44,
+        "date": "631",
+        "royaume": "Aquitaine",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 45,
+        "date": "660",
+        "royaume": "Aquitaine",
+        "dirigeant": "Félix"
+    },
+    {
+        "id": 46,
+        "date": "745",
+        "royaume": "Aquitaine",
+        "dirigeant": "Waïfre"
+    },
+    {
+        "id": 47,
+        "date": "769",
+        "royaume": "Aquitaine",
+        "dirigeant": "Hunald II"
+    },
+    {
+        "id": 48,
+        "date": "771",
+        "royaume": "Aquitaine",
+        "dirigeant": "Vasconie"
+    },
+    {
+        "id": 49,
+        "date": "778",
+        "royaume": "Aquitaine",
+        "dirigeant": "Corson"
+    },
+    {
+        "id": 50,
+        "date": "781",
+        "royaume": "Aquitaine",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 51,
+        "date": "932",
+        "royaume": "Aquitaine",
+        "dirigeant": "Raymond Pons"
+    },
+    {
+        "id": 52,
+        "date": "942",
+        "royaume": "Aquitaine",
+        "dirigeant": "Raymond II"
+    },
+    {
+        "id": 53,
+        "date": "962",
+        "royaume": "Aquitaine",
+        "dirigeant": "Guillaume III"
+    },
+    {
+        "id": 54,
+        "date": "987",
+        "royaume": "Aquitaine",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 55,
+        "date": "1063",
+        "royaume": "Aquitaine",
+        "dirigeant": "Duché de Vasconie"
+    },
+    {
+        "id": 56,
+        "date": "1453",
+        "royaume": "Aquitaine",
+        "dirigeant": "Henri VI"
+    },
+    {
+        "id": 57,
+        "date": "1469",
+        "royaume": "Aquitaine",
+        "dirigeant": "Charles de France"
+    },
+    {
+        "id": 58,
+        "date": "1753",
+        "royaume": "Aquitaine",
+        "dirigeant": "Xavier de France"
+    },
+    {
+        "id": 59,
+        "date": "1972",
+        "royaume": "Aquitaine",
+        "dirigeant": "Gonzalve de Bourbon"
+    },
+    {
+        "id": 60,
+        "date": "400",
+        "royaume": "Bourgogne",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 61,
+        "date": "400",
+        "royaume": "Bourgogne",
+        "dirigeant": "Gibica"
+    },
+    {
+        "id": 62,
+        "date": "406",
+        "royaume": "Bourgogne",
+        "dirigeant": "Godomar Ier"
+    },
+    {
+        "id": 63,
+        "date": "534",
+        "royaume": "Bourgogne",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 64,
+        "date": "534",
+        "royaume": "Bourgogne",
+        "dirigeant": "Clovis 1er"
+    },
+    {
+        "id": 65,
+        "date": "561",
+        "royaume": "Bourgogne",
+        "dirigeant": "Clotaire Ier"
+    },
+    {
+        "id": 66,
+        "date": "561",
+        "royaume": "Bourgogne",
+        "dirigeant": "Gontran"
+    },
+    {
+        "id": 67,
+        "date": "613",
+        "royaume": "Bourgogne",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 68,
+        "date": "613",
+        "royaume": "Bourgogne",
+        "dirigeant": "Clothaire II"
+    },
+    {
+        "id": 69,
+        "date": "751",
+        "royaume": "Bourgogne",
+        "dirigeant": "Childéric III"
+    },
+    {
+        "id": 70,
+        "date": "879",
+        "royaume": "Bourgogne",
+        "dirigeant": "Louis II le Bègue"
+    },
+    {
+        "id": 71,
+        "date": "879",
+        "royaume": "Bourgogne",
+        "dirigeant": "Boson"
+    },
+    {
+        "id": 72,
+        "date": "888",
+        "royaume": "Bourgogne",
+        "dirigeant": "Rodolphe Ier"
+    },
+    {
+        "id": 73,
+        "date": "928",
+        "royaume": "Bourgogne",
+        "dirigeant": "royaume d'Arles"
+    },
+    {
+        "id": 74,
+        "date": "928",
+        "royaume": "Bourgogne",
+        "dirigeant": "Rodolphe II"
+    },
+    {
+        "id": 75,
+        "date": "1032",
+        "royaume": "Bourgogne",
+        "dirigeant": "Rodolphe III le Pieux"
+    },
+    {
+        "id": 76,
+        "date": "1033",
+        "royaume": "Bourgogne",
+        "dirigeant": "Conrad II le Salique"
+    },
+    {
+        "id": 77,
+        "date": "1125",
+        "royaume": "Bourgogne",
+        "dirigeant": "Henri V"
+    },
+    {
+        "id": 78,
+        "date": "1133",
+        "royaume": "Bourgogne",
+        "dirigeant": "Lothaire III le Saxon"
+    },
+    {
+        "id": 79,
+        "date": "1137",
+        "royaume": "Bourgogne",
+        "dirigeant": "Lothaire III le Saxon"
+    },
+    {
+        "id": 80,
+        "date": "1138",
+        "royaume": "Bourgogne",
+        "dirigeant": "Conrad III"
+    },
+    {
+        "id": 81,
+        "date": "1197",
+        "royaume": "Bourgogne",
+        "dirigeant": "Henri VI le Sévère"
+    },
+    {
+        "id": 82,
+        "date": "1209",
+        "royaume": "Bourgogne",
+        "dirigeant": "Otton IV"
+    },
+    {
+        "id": 83,
+        "date": "1215",
+        "royaume": "Bourgogne",
+        "dirigeant": "Otton IV"
+    },
+    {
+        "id": 84,
+        "date": "1215",
+        "royaume": "Bourgogne",
+        "dirigeant": "Frédéric II"
+    },
+    {
+        "id": 85,
+        "date": "1250",
+        "royaume": "Bourgogne",
+        "dirigeant": "Frédéric II"
+    },
+    {
+        "id": 86,
+        "date": "1273",
+        "royaume": "Bourgogne",
+        "dirigeant": "Rodolphe Ier"
+    },
+    {
+        "id": 87,
+        "date": "1378",
+        "royaume": "Bourgogne",
+        "dirigeant": "Charles IV"
+    },
+    {
+        "id": 88,
+        "date": "1342",
+        "royaume": "Bourgogne",
+        "dirigeant": "état bourguignon"
+    },
+    {
+        "id": 89,
+        "date": "1342",
+        "royaume": "Bourgogne",
+        "dirigeant": "Philippe le Hardi"
+    },
+    {
+        "id": 90,
+        "date": "1477",
+        "royaume": "Bourgogne",
+        "dirigeant": "Charles le Téméraire"
+    },
+    {
+        "id": 91,
+        "date": "1482",
+        "royaume": "Bourgogne",
+        "dirigeant": "Philippe Ier le Beau"
+    },
+    {
+        "id": 92,
+        "date": "1512",
+        "royaume": "Bourgogne",
+        "dirigeant": "Charles Quint"
+    },
+    {
+        "id": 93,
+        "date": "849",
+        "royaume": "Bretagne",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 94,
+        "date": "907",
+        "royaume": "Bretagne",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 95,
+        "date": "888",
+        "royaume": "Rodolphiens",
+        "dirigeant": "Rodolphe Ier"
+    },
+    {
+        "id": 96,
+        "date": "928",
+        "royaume": "Rodolphiens",
+        "dirigeant": "Rodolphe II"
+    },
+    {
+        "id": 97,
+        "date": "937",
+        "royaume": "Rodolphiens",
+        "dirigeant": "Conrad III le Pacifique"
+    },
+    {
+        "id": 98,
+        "date": "1032",
+        "royaume": "Rodolphiens",
+        "dirigeant": "Rodolphe III le Pieux"
+    },
+    {
+        "id": 99,
+        "date": "1037",
+        "royaume": "Rodolphiens",
+        "dirigeant": "Henri Ier"
+    },
+    {
+        "id": 100,
+        "date": "558",
+        "royaume": "Pépinides",
+        "dirigeant": "Clotaire Ier"
+    },
+    {
+        "id": 101,
+        "date": "601",
+        "royaume": "Pépinides",
+        "dirigeant": "Carloman"
+    },
+    {
+        "id": 102,
+        "date": "639",
+        "royaume": "Pépinides",
+        "dirigeant": "Pépin de Landen"
+    },
+    {
+        "id": 103,
+        "date": "643",
+        "royaume": "Pépinides",
+        "dirigeant": "Grimoald Ier"
+    },
+    {
+        "id": 104,
+        "date": "656",
+        "royaume": "Pépinides",
+        "dirigeant": "Childebert III l'Adopté"
+    },
+    {
+        "id": 105,
+        "date": "508",
+        "royaume": "Carolingiens",
+        "dirigeant": "Clodéric"
+    },
+    {
+        "id": 106,
+        "date": "511",
+        "royaume": "Carolingiens",
+        "dirigeant": "Ansbert le sénateur"
+    },
+    {
+        "id": 107,
+        "date": "590",
+        "royaume": "Carolingiens",
+        "dirigeant": "Aigulphe de Metz"
+    },
+    {
+        "id": 108,
+        "date": "601",
+        "royaume": "Carolingiens",
+        "dirigeant": "Arnoald"
+    },
+    {
+        "id": 109,
+        "date": "613",
+        "royaume": "Carolingiens",
+        "dirigeant": "Arnoul de Metz"
+    },
+    {
+        "id": 110,
+        "date": "630",
+        "royaume": "Carolingiens",
+        "dirigeant": "Ansegisel"
+    },
+    {
+        "id": 111,
+        "date": "676",
+        "royaume": "Carolingiens",
+        "dirigeant": "Pépin de Herstal"
+    },
+    {
+        "id": 112,
+        "date": "718",
+        "royaume": "Carolingiens",
+        "dirigeant": "Charles Martel"
+    },
+    {
+        "id": 113,
+        "date": "751",
+        "royaume": "Carolingiens",
+        "dirigeant": "Pépin le Bref"
+    },
+    {
+        "id": 114,
+        "date": "768",
+        "royaume": "Carolingiens",
+        "dirigeant": "Charlemagne"
+    },
+    {
+        "id": 115,
+        "date": "840",
+        "royaume": "Carolingiens",
+        "dirigeant": "Louis le Pieux"
+    },
+    {
+        "id": 116,
+        "date": "843",
+        "royaume": "Francie Occidentale",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 117,
+        "date": "877",
+        "royaume": "Francie Occidentale",
+        "dirigeant": "Louis II le Bègue"
+    },
+    {
+        "id": 118,
+        "date": "987",
+        "royaume": "Francie Occidentale",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 119,
+        "date": "843",
+        "royaume": "Francie médiane",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 120,
+        "date": "855",
+        "royaume": "Francie médiane",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 121,
+        "date": "855",
+        "royaume": "Lotharingie",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 122,
+        "date": "869",
+        "royaume": "Lotharingie",
+        "dirigeant": "Charles le Chauve"
+    },
+    {
+        "id": 123,
+        "date": "880",
+        "royaume": "Lotharingie",
+        "dirigeant": "Rodolphe Ier"
+    },
+    {
+        "id": 124,
+        "date": "900",
+        "royaume": "Lotharingie",
+        "dirigeant": "Zwentibold"
+    },
+    {
+        "id": 125,
+        "date": "923",
+        "royaume": "Lotharingie",
+        "dirigeant": "Charles III le Simple"
+    },
+    {
+        "id": 126,
+        "date": "923",
+        "royaume": "Lotharingie",
+        "dirigeant": "duché de Lotharingie"
+    },
+    {
+        "id": 127,
+        "date": "959",
+        "royaume": "Lotharingie",
+        "dirigeant": "Basse-Lotharingie"
+    },
+    {
+        "id": 128,
+        "date": "959",
+        "royaume": "Lotharingie",
+        "dirigeant": "Haute-Lotharingie"
+    },
+    {
+        "id": 129,
+        "date": "965",
+        "royaume": "Lotharingie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 130,
+        "date": "1047",
+        "royaume": "Lotharingie",
+        "dirigeant": "Duché de Lorraine"
+    },
+    {
+        "id": 131,
+        "date": "1190",
+        "royaume": "Lotharingie",
+        "dirigeant": "Duché de de Lothier"
+    },
+    {
+        "id": 132,
+        "date": "1190",
+        "royaume": "Lotharingie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 133,
+        "date": "843",
+        "royaume": "Francie orientale",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 134,
+        "date": "936",
+        "royaume": "Francie orientale",
+        "dirigeant": "Otton Ier"
+    },
+    {
+        "id": 135,
+        "date": "962",
+        "royaume": "Francie orientale",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 136,
+        "date": "1806",
+        "royaume": "Francie orientale",
+        "dirigeant": "François II"
+    },
+    {
+        "id": 137,
+        "date": "855",
+        "royaume": "Provence",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 138,
+        "date": "863",
+        "royaume": "Provence",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 139,
+        "date": "879",
+        "royaume": "Provence",
+        "dirigeant": "Boson"
+    },
+    {
+        "id": 140,
+        "date": "928",
+        "royaume": "Provence",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 141,
+        "date": "972",
+        "royaume": "Provence",
+        "dirigeant": "comté"
+    },
+    {
+        "id": 142,
+        "date": "972",
+        "royaume": "Provence",
+        "dirigeant": "marquisat"
+    },
+    {
+        "id": 143,
+        "date": "987",
+        "royaume": "Provence",
+        "dirigeant": "comté"
+    },
+    {
+        "id": 144,
+        "date": "1063",
+        "royaume": "Provence",
+        "dirigeant": "Bertrand Ier"
+    },
+    {
+        "id": 145,
+        "date": "1085",
+        "royaume": "Provence",
+        "dirigeant": "Raymond IV Saint-Gilles"
+    },
+    {
+        "id": 146,
+        "date": "1093",
+        "royaume": "Provence",
+        "dirigeant": "Bertrand II"
+    },
+    {
+        "id": 147,
+        "date": "1125",
+        "royaume": "Provence",
+        "dirigeant": "comté de Toulouse"
+    },
+    {
+        "id": 148,
+        "date": "1229",
+        "royaume": "Provence",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 149,
+        "date": "1508",
+        "royaume": "Provence",
+        "dirigeant": "fin du titre de courtoisie"
+    },
+    {
+        "id": 150,
+        "date": "829",
+        "royaume": "Bivinides",
+        "dirigeant": "Boson l'Ancien"
+    },
+    {
+        "id": 151,
+        "date": "842",
+        "royaume": "Bivinides",
+        "dirigeant": "Bivin de Vienne"
+    },
+    {
+        "id": 152,
+        "date": "879",
+        "royaume": "Bivinides",
+        "dirigeant": "Boson"
+    },
+    {
+        "id": 153,
+        "date": "901",
+        "royaume": "Bivinides",
+        "dirigeant": "Louis III l'Aveugle"
+    },
+    {
+        "id": 154,
+        "date": "634",
+        "royaume": "Robertiens",
+        "dirigeant": "Robert (référendaire)"
+    },
+    {
+        "id": 155,
+        "date": "639",
+        "royaume": "Robertiens",
+        "dirigeant": "Lambert Ier de Hesbaye"
+    },
+    {
+        "id": 156,
+        "date": "654",
+        "royaume": "Robertiens",
+        "dirigeant": "Robert (chancelier)"
+    },
+    {
+        "id": 157,
+        "date": "665",
+        "royaume": "Robertiens",
+        "dirigeant": "Lambert II de Hesbaye"
+    },
+    {
+        "id": 158,
+        "date": "715",
+        "royaume": "Robertiens",
+        "dirigeant": "Robert Ier de Hesbaye"
+    },
+    {
+        "id": 159,
+        "date": "767",
+        "royaume": "Robertiens",
+        "dirigeant": "Thurimbert"
+    },
+    {
+        "id": 160,
+        "date": "795",
+        "royaume": "Robertiens",
+        "dirigeant": "Robert II de Hesbaye"
+    },
+    {
+        "id": 161,
+        "date": "812",
+        "royaume": "Robertiens",
+        "dirigeant": "Robert III de Hesbaye"
+    },
+    {
+        "id": 162,
+        "date": "861",
+        "royaume": "Robertiens",
+        "dirigeant": "Robert le Fort"
+    },
+    {
+        "id": 163,
+        "date": "888",
+        "royaume": "Robertiens",
+        "dirigeant": "Eudes"
+    },
+    {
+        "id": 164,
+        "date": "922",
+        "royaume": "Robertiens",
+        "dirigeant": "Robert Ier"
+    },
+    {
+        "id": 165,
+        "date": "923",
+        "royaume": "Robertiens",
+        "dirigeant": "Hugues le Grand"
+    },
+    {
+        "id": 166,
+        "date": "987",
+        "royaume": "Capétiens",
+        "dirigeant": "Hugues Capet"
+    },
+    {
+        "id": 167,
+        "date": "1328",
+        "royaume": "Capétiens",
+        "dirigeant": "Valois"
+    },
+    {
+        "id": 168,
+        "date": "1498",
+        "royaume": "Capétiens",
+        "dirigeant": "Valois-Orléans"
+    },
+    {
+        "id": 169,
+        "date": "1515",
+        "royaume": "Capétiens",
+        "dirigeant": "Valois-Orléans-Angoulême"
+    },
+    {
+        "id": 170,
+        "date": "1589",
+        "royaume": "Capétiens",
+        "dirigeant": "Bourbons"
+    },
+    {
+        "id": 171,
+        "date": "1830",
+        "royaume": "Capétiens",
+        "dirigeant": "Bourbons-Orléans"
+    },
+    {
+        "id": 172,
+        "date": "",
+        "royaume": "Capétiens",
+        "dirigeant": "branches des Bourbons"
+    },
+    {
+        "id": 173,
+        "date": "",
+        "royaume": "Capétiens",
+        "dirigeant": "Bourbon en Espagne"
+    },
+    {
+        "id": 174,
+        "date": "",
+        "royaume": "Capétiens",
+        "dirigeant": "Bourbon -Luxembourg"
+    },
+    {
+        "id": 175,
+        "date": "",
+        "royaume": "Capétiens",
+        "dirigeant": "Bourbon-Siciles"
+    },
+    {
+        "id": 176,
+        "date": "",
+        "royaume": "Capétiens",
+        "dirigeant": "Bourbon-Parme"
+    },
+    {
+        "id": 177,
+        "date": "824",
+        "royaume": "Navarre",
+        "dirigeant": "royaume"
+    },
+    {
+        "id": 178,
+        "date": "824",
+        "royaume": "Navarre",
+        "dirigeant": "Maison Iñiguez"
+    },
+    {
+        "id": 179,
+        "date": "905",
+        "royaume": "Navarre",
+        "dirigeant": "Maison Jiménez"
+    },
+    {
+        "id": 180,
+        "date": "1234",
+        "royaume": "Navarre",
+        "dirigeant": "Maison de Blois-Champagne"
+    },
+    {
+        "id": 181,
+        "date": "1305",
+        "royaume": "Navarre",
+        "dirigeant": "Capétiens"
+    },
+    {
+        "id": 182,
+        "date": "1305",
+        "royaume": "Navarre",
+        "dirigeant": "Philippe Ier"
+    },
+    {
+        "id": 183,
+        "date": "1349",
+        "royaume": "Navarre",
+        "dirigeant": "Capéties d'Évreux-Navarre"
+    },
+    {
+        "id": 184,
+        "date": "1441",
+        "royaume": "Navarre",
+        "dirigeant": "Maison de Trastamare"
+    },
+    {
+        "id": 185,
+        "date": "1479",
+        "royaume": "Navarre",
+        "dirigeant": "Maison de Foix-Grailly"
+    },
+    {
+        "id": 186,
+        "date": "1484",
+        "royaume": "Navarre",
+        "dirigeant": "Maison d'Albret"
+    },
+    {
+        "id": 187,
+        "date": "1512",
+        "royaume": "Navarre",
+        "dirigeant": "Maison de Trastamare"
+    },
+    {
+        "id": 188,
+        "date": "1516",
+        "royaume": "Navarre",
+        "dirigeant": "Haute-Navarre"
+    },
+    {
+        "id": 189,
+        "date": "1517",
+        "royaume": "Navarre",
+        "dirigeant": "Maison d'Albret"
+    },
+    {
+        "id": 190,
+        "date": "1555",
+        "royaume": "Navarre",
+        "dirigeant": "Bourbons"
+    },
+    {
+        "id": 191,
+        "date": "1700",
+        "royaume": "Navarre",
+        "dirigeant": "Haute-Navarre"
+    },
+    {
+        "id": 192,
+        "date": "1830",
+        "royaume": "Navarre",
+        "dirigeant": "fin des Bourbons"
+    },
+    {
+        "id": 193,
+        "date": "1833",
+        "royaume": "Navarre",
+        "dirigeant": "Haute-Navarre carliste"
+    },
+    {
+        "id": 194,
+        "date": "1841",
+        "royaume": "Navarre",
+        "dirigeant": "fin Haute-Navarre"
+    },
+    {
+        "id": 195,
+        "date": "1872",
+        "royaume": "Navarre",
+        "dirigeant": "Charles \"VIII\""
+    },
+    {
+        "id": 196,
+        "date": "1872",
+        "royaume": "Navarre",
+        "dirigeant": "Charles \"IX\""
+    },
+    {
+        "id": 197,
+        "date": "1876",
+        "royaume": "Navarre",
+        "dirigeant": "fin Haute-Navarre carliste"
+    },
+    {
+        "id": 198,
+        "date": "418",
+        "royaume": "Septimanie",
+        "dirigeant": "province wisigothe"
+    },
+    {
+        "id": 199,
+        "date": "507",
+        "royaume": "Septimanie",
+        "dirigeant": "province burgonde"
+    },
+    {
+        "id": 200,
+        "date": "719",
+        "royaume": "Septimanie",
+        "dirigeant": "Conquête par les Maures"
+    },
+    {
+        "id": 201,
+        "date": "759",
+        "royaume": "Septimanie",
+        "dirigeant": "Prise par les Carolingiens"
+    },
+    {
+        "id": 202,
+        "date": "790",
+        "royaume": "Septimanie",
+        "dirigeant": "Marquisat de Gothie"
+    },
+    {
+        "id": 203,
+        "date": "1065",
+        "royaume": "Septimanie",
+        "dirigeant": "fin"
+    },
+    {
+        "id": 204,
+        "date": "371",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Ariaric"
+    },
+    {
+        "id": 205,
+        "date": "410",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Alaric Ier"
+    },
+    {
+        "id": 206,
+        "date": "410",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "royaume de Toulouse"
+    },
+    {
+        "id": 207,
+        "date": "410",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Athaulf"
+    },
+    {
+        "id": 208,
+        "date": "507",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Alaric II"
+    },
+    {
+        "id": 209,
+        "date": "507",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "royaume de Tolède"
+    },
+    {
+        "id": 210,
+        "date": "507",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Geisalic"
+    },
+    {
+        "id": 211,
+        "date": "586",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Léovigilde"
+    },
+    {
+        "id": 212,
+        "date": "586",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Récarède"
+    },
+    {
+        "id": 213,
+        "date": "743",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Athanagilde II"
+    },
+    {
+        "id": 214,
+        "date": "743",
+        "royaume": "royaume Wisigoth",
+        "dirigeant": "Empire Omeyade"
+    },
+    {
+        "id": 215,
+        "date": "",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "comtes d'Auvergne"
+    },
+    {
+        "id": 216,
+        "date": "",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "comtes du Rouergue"
+    },
+    {
+        "id": 217,
+        "date": "778",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Corson"
+    },
+    {
+        "id": 218,
+        "date": "790",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Guillaume de Gellone"
+    },
+    {
+        "id": 219,
+        "date": "806",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Bégon de Paris"
+    },
+    {
+        "id": 220,
+        "date": "816",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Bérenger de Toulouse"
+    },
+    {
+        "id": 221,
+        "date": "835",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Bernard de Septimanie"
+    },
+    {
+        "id": 222,
+        "date": "842",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Acfred"
+    },
+    {
+        "id": 223,
+        "date": "844",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Guillaume de Septimanie"
+    },
+    {
+        "id": 224,
+        "date": "849",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Frédolon"
+    },
+    {
+        "id": 225,
+        "date": "852",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond Ier"
+    },
+    {
+        "id": 226,
+        "date": "863",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Unifred"
+    },
+    {
+        "id": 227,
+        "date": "865",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Bernard"
+    },
+    {
+        "id": 228,
+        "date": "872",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Bernard Plantevelue"
+    },
+    {
+        "id": 229,
+        "date": "886",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Eudes"
+    },
+    {
+        "id": 230,
+        "date": "918",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond II"
+    },
+    {
+        "id": 231,
+        "date": "924",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond III Pons"
+    },
+    {
+        "id": 232,
+        "date": "942",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond (IV)"
+    },
+    {
+        "id": 233,
+        "date": "961",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Hugues"
+    },
+    {
+        "id": 234,
+        "date": "972",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond (V)"
+    },
+    {
+        "id": 235,
+        "date": "978",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Guillaume III Taillefer"
+    },
+    {
+        "id": 236,
+        "date": "1037",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Pons"
+    },
+    {
+        "id": 237,
+        "date": "1060",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Guillaume IV"
+    },
+    {
+        "id": 238,
+        "date": "1094",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond (VI) Saint-Gilles"
+    },
+    {
+        "id": 239,
+        "date": "1105",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Bertrand"
+    },
+    {
+        "id": 240,
+        "date": "1109",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Alphonse Jourdain"
+    },
+    {
+        "id": 241,
+        "date": "1110",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Philippa"
+    },
+    {
+        "id": 242,
+        "date": "1117",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Alphonse Jourdain"
+    },
+    {
+        "id": 243,
+        "date": "1148",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond (VII)"
+    },
+    {
+        "id": 244,
+        "date": "1194",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond (VIII)"
+    },
+    {
+        "id": 245,
+        "date": "1215",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Simon IV de Montfort"
+    },
+    {
+        "id": 246,
+        "date": "1218",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond (VIII)"
+    },
+    {
+        "id": 247,
+        "date": "1222",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Raymond (IX)"
+    },
+    {
+        "id": 248,
+        "date": "1249",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Jeanne de Toulouse"
+    },
+    {
+        "id": 249,
+        "date": "1271",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Alphonse de Poitiers"
+    },
+    {
+        "id": 250,
+        "date": "1681",
+        "royaume": "comtes de Toulouse",
+        "dirigeant": "Louis-Alexandre de Bourbon"
+    },
+    {
+        "id": 251,
+        "date": "1102",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Maison de Toulouse"
+    },
+    {
+        "id": 252,
+        "date": "1102",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Raymond Ier Saint-Gilles"
+    },
+    {
+        "id": 253,
+        "date": "1105",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Guillaume Jourdain"
+    },
+    {
+        "id": 254,
+        "date": "1109",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Bertrand"
+    },
+    {
+        "id": 255,
+        "date": "1112",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Pons"
+    },
+    {
+        "id": 256,
+        "date": "1137",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Raymond II"
+    },
+    {
+        "id": 257,
+        "date": "1152",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Raymond III"
+    },
+    {
+        "id": 258,
+        "date": "1187",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Raymond IV de Tripoli"
+    },
+    {
+        "id": 259,
+        "date": "1189",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Maison de Poitiers"
+    },
+    {
+        "id": 260,
+        "date": "1189",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Bohémond IV d'Antioche"
+    },
+    {
+        "id": 261,
+        "date": "1289",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Lucie"
+    },
+    {
+        "id": 262,
+        "date": "1342",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Pierre de Lusignan"
+    },
+    {
+        "id": 263,
+        "date": "1586",
+        "royaume": "comtes de Tripoli",
+        "dirigeant": "Alvise de Nores"
+    },
+    {
+        "id": 264,
+        "date": "768",
+        "royaume": "royaume de Toulouse",
+        "dirigeant": "Waïfre"
+    },
+    {
+        "id": 265,
+        "date": "769",
+        "royaume": "royaume de Toulouse",
+        "dirigeant": "Hunald II"
+    }
+]

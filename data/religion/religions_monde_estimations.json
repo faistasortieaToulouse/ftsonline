@@ -1,0 +1,95 @@
+{
+    "titre": "Religions dans le monde",
+    "annee_estimation": 2020,
+    "source_unite": "Nombre réel d'individus",
+    "statistiques": [
+        {
+            "religion": "Chrétiens",
+            "nombre": 2100000000
+        },
+        {
+            "religion": "Musulmans",
+            "nombre": 1500000000
+        },
+        {
+            "religion": "Sans religion",
+            "nombre": 1100000000
+        },
+        {
+            "religion": "Hindouistes",
+            "nombre": 900000000
+        },
+        {
+            "religion": "Religions chinoises",
+            "nombre": 394000000
+        },
+        {
+            "religion": "Bouddhisme",
+            "nombre": 376000000
+        },
+        {
+            "religion": "Religions tribales",
+            "nombre": 300000000
+        },
+        {
+            "religion": "Religions africaines et afro-américaines",
+            "nombre": 100000000
+        },
+        {
+            "religion": "Sikhs",
+            "nombre": 230000000
+        },
+        {
+            "religion": "Juche",
+            "nombre": 19000000
+        },
+        {
+            "religion": "Spirites",
+            "nombre": 15000000
+        },
+        {
+            "religion": "Juifs",
+            "nombre": 14000000
+        },
+        {
+            "religion": "Bahaïsme",
+            "nombre": 7000000
+        },
+        {
+            "religion": "Jaïns",
+            "nombre": 4200000
+        },
+        {
+            "religion": "Shintoïstes",
+            "nombre": 4000000
+        },
+        {
+            "religion": "Caodaïstes",
+            "nombre": 4000000
+        },
+        {
+            "religion": "Zoroastriens",
+            "nombre": 2600000
+        },
+        {
+            "religion": "Tenrikyo",
+            "nombre": 2000000
+        },
+        {
+            "religion": "Néo-païens",
+            "nombre": 1000000
+        },
+        {
+            "religion": "Unitaristes",
+            "nombre": 800000
+        },
+        {
+            "religion": "Rastafariens",
+            "nombre": 600000
+        },
+        {
+            "religion": "Scientologues",
+            "nombre": 500000
+        }
+    ]
+}

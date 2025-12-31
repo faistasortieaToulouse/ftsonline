@@ -1,0 +1,402 @@
+[
+    {
+        "id": 1,
+        "pays": "République socialiste du Viêt Nam Viêt Nam",
+        "statut": "membre",
+        "population_totale": 96491000,
+        "nombre_francophones": 675000,
+        "evolution": "0,7 % en stagnation"
+    },
+    {
+        "id": 2,
+        "pays": "république démocratique du Congo République démocratique du Congo",
+        "statut": "membre",
+        "population_totale": 84005000,
+        "nombre_francophones": 42533000,
+        "evolution": "50,6 % en augmentation"
+    },
+    {
+        "id": 3,
+        "pays": "France France",
+        "statut": "membre",
+        "population_totale": 68392000,
+        "nombre_francophones": 66060000,
+        "evolution": "96,5 % en diminution"
+    },
+    {
+        "id": 4,
+        "pays": "Canada (total)",
+        "statut": "membre",
+        "population_totale": 37265000,
+        "nombre_francophones": 10982000,
+        "evolution": "29,4 % en augmentation"
+    },
+    {
+        "id": 5,
+        "pays": "Maroc",
+        "statut": "membre",
+        "population_totale": 36192000,
+        "nombre_francophones": 12729000,
+        "evolution": "35 % en augmentation"
+    },
+    {
+        "id": 6,
+        "pays": "Madagascar",
+        "statut": "membre",
+        "population_totale": 26263000,
+        "nombre_francophones": 5253000,
+        "evolution": "20 % en stagnation"
+    },
+    {
+        "id": 7,
+        "pays": "Côte d'Ivoire Côte d'Ivoire",
+        "statut": "membre",
+        "population_totale": 24906000,
+        "nombre_francophones": 8259000,
+        "evolution": "33,2 % en diminution"
+    },
+    {
+        "id": 8,
+        "pays": "Cameroun",
+        "statut": "membre",
+        "population_totale": 24678000,
+        "nombre_francophones": 10006000,
+        "evolution": "40,5 % en augmentation"
+    },
+    {
+        "id": 9,
+        "pays": "Niger",
+        "statut": "membre",
+        "population_totale": 22311000,
+        "nombre_francophones": 2840000,
+        "evolution": "12,8 % en augmentation"
+    },
+    {
+        "id": 10,
+        "pays": "Faso Burkina Faso",
+        "statut": "membre",
+        "population_totale": 19752000,
+        "nombre_francophones": 4752000,
+        "evolution": "24 % en augmentation"
+    },
+    {
+        "id": 11,
+        "pays": "Mali",
+        "statut": "membre",
+        "population_totale": 19108000,
+        "nombre_francophones": 3237000,
+        "evolution": "16,9 % en stagnation"
+    },
+    {
+        "id": 12,
+        "pays": "Sénégal",
+        "statut": "membre",
+        "population_totale": 16294000,
+        "nombre_francophones": 4215000,
+        "evolution": "26 % en augmentation"
+    },
+    {
+        "id": 13,
+        "pays": "Cambodge",
+        "statut": "membre",
+        "population_totale": 16246000,
+        "nombre_francophones": 439000,
+        "evolution": "2,7 % en stagnation"
+    },
+    {
+        "id": 14,
+        "pays": "Tchad",
+        "statut": "membre",
+        "population_totale": 15353000,
+        "nombre_francophones": 1957000,
+        "evolution": "12,7 % en augmentation"
+    },
+    {
+        "id": 15,
+        "pays": "Guinée Guinée",
+        "statut": "membre",
+        "population_totale": 13053000,
+        "nombre_francophones": 3319000,
+        "evolution": "25,4 % en augmentation"
+    },
+    {
+        "id": 16,
+        "pays": "Rwanda",
+        "statut": "membre",
+        "population_totale": 12501000,
+        "nombre_francophones": 724000,
+        "evolution": "5,8 % en augmentation"
+    },
+    {
+        "id": 17,
+        "pays": "Tunisie Tunisie",
+        "statut": "membre",
+        "population_totale": 11659000,
+        "nombre_francophones": 6081000,
+        "evolution": "52 % en diminution"
+    },
+    {
+        "id": 18,
+        "pays": "Belgique Belgique",
+        "statut": "membre",
+        "population_totale": 11499000,
+        "nombre_francophones": 8678000,
+        "evolution": "75,5 % en augmentation"
+    },
+    {
+        "id": 19,
+        "pays": "Bénin",
+        "statut": "membre",
+        "population_totale": 11486000,
+        "nombre_francophones": 3821000,
+        "evolution": "33,3 % en diminution"
+    },
+    {
+        "id": 20,
+        "pays": "Burundi",
+        "statut": "membre",
+        "population_totale": 11216000,
+        "nombre_francophones": 940000,
+        "evolution": "8,4 % en augmentation"
+    },
+    {
+        "id": 21,
+        "pays": "Haïti",
+        "statut": "membre",
+        "population_totale": 11113000,
+        "nombre_francophones": 4667000,
+        "evolution": "42 % en stagnation"
+    },
+    {
+        "id": 22,
+        "pays": "Suisse Suisse",
+        "statut": "membre",
+        "population_totale": 8544000,
+        "nombre_francophones": 5734000,
+        "evolution": "67,1 % en diminution"
+    },
+    {
+        "id": 23,
+        "pays": "Québec Québec",
+        "statut": "membre",
+        "population_totale": 8394000,
+        "nombre_francophones": 7833000,
+        "evolution": "93,3% en stagnation"
+    },
+    {
+        "id": 24,
+        "pays": "Togo",
+        "statut": "membre",
+        "population_totale": 7991000,
+        "nombre_francophones": 3217000,
+        "evolution": "40 % en augmentation"
+    },
+    {
+        "id": 25,
+        "pays": "Laos",
+        "statut": "membre",
+        "population_totale": 6961000,
+        "nombre_francophones": 190000,
+        "evolution": "2,7 % en stagnation"
+    },
+    {
+        "id": 26,
+        "pays": "Liban",
+        "statut": "membre",
+        "population_totale": 6094000,
+        "nombre_francophones": 2315000,
+        "evolution": "38 % en augmentation"
+    },
+    {
+        "id": 27,
+        "pays": "république du Congo République du Congo",
+        "statut": "membre",
+        "population_totale": 5400000,
+        "nombre_francophones": 3182000,
+        "evolution": "58,9 % en augmentation"
+    },
+    {
+        "id": 28,
+        "pays": "la Wallonie Féd. Wallonie-Bruxelles",
+        "statut": "membre",
+        "population_totale": 4881000,
+        "nombre_francophones": 4783000,
+        "evolution": "98 % en stagnation"
+    },
+    {
+        "id": 29,
+        "pays": "République centrafricaine République centrafricaine",
+        "statut": "membre",
+        "population_totale": 4737000,
+        "nombre_francophones": 1343000,
+        "evolution": "28,3 % en diminution"
+    },
+    {
+        "id": 30,
+        "pays": "Mauritanie Mauritanie",
+        "statut": "membre",
+        "population_totale": 4540000,
+        "nombre_francophones": 604000,
+        "evolution": "13 % en augmentation"
+    },
+    {
+        "id": 31,
+        "pays": "Moldavie Moldavie",
+        "statut": "membre",
+        "population_totale": 4041000,
+        "nombre_francophones": 55000,
+        "evolution": "1,3 % en diminution"
+    },
+    {
+        "id": 32,
+        "pays": "Gabon",
+        "statut": "membre",
+        "population_totale": 2068000,
+        "nombre_francophones": 1368000,
+        "evolution": "66,1 % en stagnation"
+    },
+    {
+        "id": 33,
+        "pays": "Lettonie Lettonie",
+        "statut": "observateur",
+        "population_totale": 1930000,
+        "nombre_francophones": 22000,
+        "evolution": "1,1 % en diminution"
+    },
+    {
+        "id": 34,
+        "pays": "Guinée-Bissau Guinée-Bissau",
+        "statut": "membre",
+        "population_totale": 1907000,
+        "nombre_francophones": 293000,
+        "evolution": "15,3 % en stagnation"
+    },
+    {
+        "id": 35,
+        "pays": "Guinée équatoriale Guinée équatoriale",
+        "statut": "membre",
+        "population_totale": 1314000,
+        "nombre_francophones": 380000,
+        "evolution": "28,9 % en stagnation"
+    },
+    {
+        "id": 36,
+        "pays": "Maurice",
+        "statut": "membre",
+        "population_totale": 1268000,
+        "nombre_francophones": 921000,
+        "evolution": "72,6 % en stagnation"
+    },
+    {
+        "id": 37,
+        "pays": "Djibouti",
+        "statut": "membre",
+        "population_totale": 971000,
+        "nombre_francophones": 486000,
+        "evolution": "50 % en stagnation"
+    },
+    {
+        "id": 38,
+        "pays": "Comores",
+        "statut": "membre",
+        "population_totale": 832000,
+        "nombre_francophones": 216000,
+        "evolution": "25,9 % en augmentation"
+    },
+    {
+        "id": 39,
+        "pays": "Nouveau-Brunswick Nouveau-Brunswick",
+        "statut": "membre",
+        "population_totale": 779000,
+        "nombre_francophones": 326000,
+        "evolution": "41,8 % en augmentation"
+    },
+    {
+        "id": 40,
+        "pays": "Luxembourg",
+        "statut": "membre",
+        "population_totale": 590000,
+        "nombre_francophones": 543000,
+        "evolution": "92 % en diminution"
+    },
+    {
+        "id": 41,
+        "pays": "Cap-Vert",
+        "statut": "membre",
+        "population_totale": 553000,
+        "nombre_francophones": 60000,
+        "evolution": "10,9 % en augmentation"
+    },
+    {
+        "id": 42,
+        "pays": "Vanuatu",
+        "statut": "membre",
+        "population_totale": 282000,
+        "nombre_francophones": 89000,
+        "evolution": "31,5 % en augmentation"
+    },
+    {
+        "id": 43,
+        "pays": "la Nouvelle-Calédonie Nouvelle-Calédonie",
+        "statut": "associé",
+        "population_totale": 280000,
+        "nombre_francophones": 277000,
+        "evolution": "0.989"
+    },
+    {
+        "id": 44,
+        "pays": "Tomé-et-Principe Sao Tomé-et-Principe",
+        "statut": "membre",
+        "population_totale": 209000,
+        "nombre_francophones": 42000,
+        "evolution": "20,1 % en diminution"
+    },
+    {
+        "id": 45,
+        "pays": "Sainte-Lucie",
+        "statut": "membre",
+        "population_totale": 180000,
+        "nombre_francophones": 3000,
+        "evolution": "1,7 % en augmentation"
+    },
+    {
+        "id": 46,
+        "pays": "Seychelles",
+        "statut": "membre",
+        "population_totale": 95000,
+        "nombre_francophones": 50000,
+        "evolution": "52,6 % en diminution"
+    },
+    {
+        "id": 47,
+        "pays": "Andorre",
+        "statut": "membre",
+        "population_totale": 77000,
+        "nombre_francophones": 54000,
+        "evolution": "70,1 % en diminution"
+    },
+    {
+        "id": 48,
+        "pays": "Monaco",
+        "statut": "membre",
+        "population_totale": 39000,
+        "nombre_francophones": 38000,
+        "evolution": "97 % en augmentation"
+    },
+    {
+        "id": 49,
+        "pays": "la Louisiane Louisiane",
+        "statut": "observateur",
+        "population_totale": 0,
+        "nombre_francophones": 0,
+        "evolution": "nd"
+    },
+    {
+        "id": 50,
+        "pays": "Malte",
+        "statut": "observateur",
+        "population_totale": 0,
+        "nombre_francophones": 0,
+        "evolution": "nd"
+    }
+]

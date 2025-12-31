@@ -1,0 +1,3650 @@
+[
+    {
+        "pays": "Maldives",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 100,
+                "nombre": 521000
+            },
+            "Sunnisme": {
+                "pourcentage": 100,
+                "nombre": 521
+            }
+        }
+    },
+    {
+        "pays": "Maroc",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 99.9,
+                "nombre": 38162000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 2100
+            },
+            "Sunnisme": {
+                "pourcentage": 99,
+                "nombre": 0
+            },
+            "Soufisme": {
+                "pourcentage": 25,
+                "nombre": 9600000
+            }
+        }
+    },
+    {
+        "pays": "Mauritanie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 99.9,
+                "nombre": 5195000
+            },
+            "Soufisme": {
+                "pourcentage": 85,
+                "nombre": 4400000
+            }
+        }
+    },
+    {
+        "pays": "Somalie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 99.8,
+                "nombre": 18663000
+            },
+            "Sunnisme": {
+                "pourcentage": 99.9,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Afghanistan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 99.7,
+                "nombre": 43170000
+            },
+            "Chiisme": {
+                "pourcentage": 11,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 86,
+                "nombre": 0
+            },
+            "Soufisme": {
+                "pourcentage": 15,
+                "nombre": 6400000
+            }
+        }
+    },
+    {
+        "pays": "Iran",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 99.4,
+                "nombre": 89659000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 9500
+            },
+            "Chiisme": {
+                "pourcentage": 85,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 10,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Yémen",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 99.2,
+                "nombre": 35117000
+            },
+            "Chiisme": {
+                "pourcentage": 35,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 63,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Algérie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 99,
+                "nombre": 46530000
+            },
+            "Kharidjisme": {
+                "pourcentage": 0.6000000000000001,
+                "nombre": 280800
+            },
+            "Soufisme": {
+                "pourcentage": 12,
+                "nombre": 5600000
+            }
+        }
+    },
+    {
+        "pays": "Tunisie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 99,
+                "nombre": 12573000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 1000
+            },
+            "Sunnisme": {
+                "pourcentage": 99.1,
+                "nombre": 0
+            },
+            "Kharidjisme": {
+                "pourcentage": 0.4,
+                "nombre": 49200
+            },
+            "Soufisme": {
+                "pourcentage": 5,
+                "nombre": 615000
+            }
+        }
+    },
+    {
+        "pays": "Comores",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 98.3,
+                "nombre": 855000
+            },
+            "Sunnisme": {
+                "pourcentage": 98,
+                "nombre": 835
+            }
+        }
+    },
+    {
+        "pays": "Niger",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 98.3,
+                "nombre": 27720000
+            },
+            "Soufisme": {
+                "pourcentage": 35,
+                "nombre": 9800000
+            }
+        }
+    },
+    {
+        "pays": "Arabie saoudite",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 98.2,
+                "nombre": 37021000
+            },
+            "Chiisme": {
+                "pourcentage": 12,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 87,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Tadjikistan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 97.9,
+                "nombre": 10279000
+            },
+            "Chiisme": {
+                "pourcentage": 5,
+                "nombre": 507
+            },
+            "Sunnisme": {
+                "pourcentage": 85,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Palestine",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 97.5,
+                "nombre": 5460000
+            },
+            "Sunnisme": {
+                "pourcentage": 91,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Jordanie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 97.2,
+                "nombre": 11372000
+            },
+            "Chiisme": {
+                "pourcentage": 1,
+                "nombre": 113
+            },
+            "Sunnisme": {
+                "pourcentage": 93,
+                "nombre": 0
+            },
+            "Druzisme": {
+                "pourcentage": 0.17,
+                "nombre": 20000
+            }
+        }
+    },
+    {
+        "pays": "Djibouti",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 97,
+                "nombre": 1115000
+            }
+        }
+    },
+    {
+        "pays": "Libye",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 97,
+                "nombre": 6790000
+            },
+            "Kharidjisme": {
+                "pourcentage": 4,
+                "nombre": 296000
+            },
+            "Soufisme": {
+                "pourcentage": 10,
+                "nombre": 740000
+            }
+        }
+    },
+    {
+        "pays": "Mayotte",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 97,
+                "nombre": 320000
+            }
+        }
+    },
+    {
+        "pays": "Soudan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 97,
+                "nombre": 49470000
+            },
+            "Sunnisme": {
+                "pourcentage": 70,
+                "nombre": 0
+            },
+            "Soufisme": {
+                "pourcentage": 30,
+                "nombre": 15000000
+            }
+        }
+    },
+    {
+        "pays": "Azerbaïdjan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 96.9,
+                "nombre": 10174000
+            },
+            "juifs": {
+                "pourcentage": 0.07,
+                "nombre": 7200
+            },
+            "Orthodoxie": {
+                "pourcentage": 4.8,
+                "nombre": 485
+            },
+            "Chiisme": {
+                "pourcentage": 14,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 79.4,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Pakistan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 96.5,
+                "nombre": 239320000
+            },
+            "Catholicisme": {
+                "pourcentage": 0.43,
+                "nombre": 1000000
+            },
+            "Chiisme": {
+                "pourcentage": 15,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 80,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Sénégal",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 96.1,
+                "nombre": 18259000
+            },
+            "Soufisme": {
+                "pourcentage": 90,
+                "nombre": 17100000
+            }
+        }
+    },
+    {
+        "pays": "Gambie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 95.7,
+                "nombre": 2679000
+            },
+            "Soufisme": {
+                "pourcentage": 60,
+                "nombre": 1600000
+            }
+        }
+    },
+    {
+        "pays": "Irak",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 95.7,
+                "nombre": 44500000
+            },
+            "Chiisme": {
+                "pourcentage": 61,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 36,
+                "nombre": 0
+            },
+            "Soufisme": {
+                "pourcentage": 8,
+                "nombre": 3700000
+            }
+        }
+    },
+    {
+        "pays": "Mali",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 95,
+                "nombre": 23180000
+            },
+            "Soufisme": {
+                "pourcentage": 40,
+                "nombre": 9600000
+            }
+        }
+    },
+    {
+        "pays": "Turkménistan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 93.7,
+                "nombre": 6184000
+            },
+            "Orthodoxie": {
+                "pourcentage": 9,
+                "nombre": 586
+            }
+        }
+    },
+    {
+        "pays": "Bangladesh",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 90.4,
+                "nombre": 156392000
+            },
+            "Brahmoïsme": {
+                "pourcentage": 0.0005,
+                "nombre": 1000
+            }
+        }
+    },
+    {
+        "pays": "Égypte",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 92.35,
+                "nombre": 107126000
+            },
+            "Orthodoxie": {
+                "pourcentage": 8,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Turquie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 89.5,
+                "nombre": 77865000
+            },
+            "juifs": {
+                "pourcentage": 0.02,
+                "nombre": 14600
+            },
+            "Chiisme": {
+                "pourcentage": 4,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 70,
+                "nombre": 0
+            },
+            "Soufisme": {
+                "pourcentage": 15,
+                "nombre": 13000000
+            }
+        }
+    },
+    {
+        "pays": "Guinée",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 89.1,
+                "nombre": 13097000
+            },
+            "Soufisme": {
+                "pourcentage": 50,
+                "nombre": 7500000
+            }
+        }
+    },
+    {
+        "pays": "Ouzbékistan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 88.7,
+                "nombre": 32286000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 2800
+            },
+            "Orthodoxie": {
+                "pourcentage": 9,
+                "nombre": 0
+            },
+            "Soufisme": {
+                "pourcentage": 18,
+                "nombre": 6500000
+            }
+        }
+    },
+    {
+        "pays": "Kosovo",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 88,
+                "nombre": 1496000
+            },
+            "Orthodoxie": {
+                "pourcentage": 1.5,
+                "nombre": 26
+            }
+        }
+    },
+    {
+        "pays": "Indonésie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 87.2,
+                "nombre": 245032000
+            },
+            "Boudhisme": {
+                "pourcentage": 1,
+                "nombre": 2346940
+            },
+            "Catholicisme": {
+                "pourcentage": 2.56,
+                "nombre": 7000000
+            },
+            "Soufisme": {
+                "pourcentage": 20,
+                "nombre": 56400000
+            }
+        }
+    },
+    {
+        "pays": "Oman",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 87,
+                "nombre": 4176000
+            },
+            "Kharidjisme": {
+                "pourcentage": 60,
+                "nombre": 3180000
+            }
+        }
+    },
+    {
+        "pays": "Syrie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 85.2,
+                "nombre": 21044000
+            },
+            "Chiisme": {
+                "pourcentage": 11,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 73,
+                "nombre": 0
+            },
+            "Druzisme": {
+                "pourcentage": 2.31,
+                "nombre": 570000
+            }
+        }
+    },
+    {
+        "pays": "Kirghizistan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 80,
+                "nombre": 5440000
+            },
+            "Orthodoxie": {
+                "pourcentage": 20,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Brunei",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 78.8,
+                "nombre": 362000
+            },
+            "Boudhisme": {
+                "pourcentage": 14.4,
+                "nombre": 53939
+            }
+        }
+    },
+    {
+        "pays": "Sierra Leone",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 78.6,
+                "nombre": 7152000
+            }
+        }
+    },
+    {
+        "pays": "Qatar",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 77.5,
+                "nombre": 2131000
+            },
+            "Hindouisme": {
+                "pourcentage": 13.8,
+                "nombre": 379500
+            },
+            "Sunnisme": {
+                "pourcentage": 46.9,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Émirats arabes unis",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 76,
+                "nombre": 7220000
+            },
+            "Sunnisme": {
+                "pourcentage": 44.8,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Îles Cocos",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 75,
+                "nombre": 450
+            },
+            "Sunnisme": {
+                "pourcentage": 80,
+                "nombre": 500
+            }
+        }
+    },
+    {
+        "pays": "Koweït",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 74.6,
+                "nombre": 3282000
+            },
+            "Sunnisme": {
+                "pourcentage": 2.2,
+                "nombre": 95
+            }
+        }
+    },
+    {
+        "pays": "Bahreïn",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 73.7,
+                "nombre": 1105000
+            },
+            "Chiisme": {
+                "pourcentage": 36.5,
+                "nombre": 542
+            },
+            "Sunnisme": {
+                "pourcentage": 33.7,
+                "nombre": 501
+            }
+        }
+    },
+    {
+        "pays": "Kazakhstan",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 70.2,
+                "nombre": 14040000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 2500
+            }
+        }
+    },
+    {
+        "pays": "Burkina Faso",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 61.5,
+                "nombre": 14329000
+            },
+            "Traditionnalisme": {
+                "pourcentage": 15.4,
+                "nombre": 3588200
+            },
+            "Soufisme": {
+                "pourcentage": 15,
+                "nombre": 3600000
+            }
+        }
+    },
+    {
+        "pays": "Malaisie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 61.3,
+                "nombre": 21271000
+            },
+            "Boudhisme": {
+                "pourcentage": 22,
+                "nombre": 5460683
+            },
+            "Catholicisme": {
+                "pourcentage": 2.95,
+                "nombre": 1000000
+            }
+        }
+    },
+    {
+        "pays": "Liban",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 59,
+                "nombre": 3422000
+            },
+            "Catholicisme": {
+                "pourcentage": 18.9,
+                "nombre": 1000000
+            },
+            "Orthodoxie": {
+                "pourcentage": 8,
+                "nombre": 428
+            },
+            "Chiisme": {
+                "pourcentage": 27,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 27,
+                "nombre": 0
+            },
+            "Druzisme": {
+                "pourcentage": 6.21,
+                "nombre": 360000
+            }
+        }
+    },
+    {
+        "pays": "Tchad",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 58,
+                "nombre": 11136000
+            },
+            "Catholicisme": {
+                "pourcentage": 11.7,
+                "nombre": 2000000
+            },
+            "Soufisme": {
+                "pourcentage": 20,
+                "nombre": 3800000
+            }
+        }
+    },
+    {
+        "pays": "Albanie",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 56.7,
+                "nombre": 1587000
+            },
+            "Orthodoxie": {
+                "pourcentage": 6.8,
+                "nombre": 187
+            },
+            "Soufisme": {
+                "pourcentage": 20,
+                "nombre": 560000
+            }
+        }
+    },
+    {
+        "pays": "Bosnie-Herzégovine",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 50.7,
+                "nombre": 1622000
+            },
+            "chrétiens": {
+                "pourcentage": 52,
+                "nombre": 1664000
+            },
+            "juifs": {
+                "pourcentage": 0.02,
+                "nombre": 500
+            }
+        }
+    },
+    {
+        "pays": "Nigeria",
+        "religions": {
+            "musulmans": {
+                "pourcentage": 49.6,
+                "nombre": 114080000
+            },
+            "Soufisme": {
+                "pourcentage": 25,
+                "nombre": 57500000
+            }
+        }
+    },
+    {
+        "pays": "Vatican",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 100,
+                "nombre": 800
+            }
+        }
+    },
+    {
+        "pays": "Samoa",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 99.2,
+                "nombre": 226000
+            },
+            "Protestantisme": {
+                "pourcentage": 57.4,
+                "nombre": 130
+            }
+        }
+    },
+    {
+        "pays": "Arménie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 99,
+                "nombre": 2745000
+            },
+            "Protestantisme": {
+                "pourcentage": 93.6,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Grenade",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 99,
+                "nombre": 125700
+            }
+        }
+    },
+    {
+        "pays": "Guatemala",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 99,
+                "nombre": 18117000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 900
+            },
+            "Catholicisme": {
+                "pourcentage": 39.8,
+                "nombre": 7000000
+            }
+        }
+    },
+    {
+        "pays": "Roumanie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 99,
+                "nombre": 18909000
+            },
+            "juifs": {
+                "pourcentage": 0.05,
+                "nombre": 8900
+            },
+            "Catholicisme": {
+                "pourcentage": 5.24,
+                "nombre": 1000000
+            },
+            "Orthodoxie": {
+                "pourcentage": 81.9,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Timor oriental",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 99,
+                "nombre": 1346000
+            }
+        }
+    },
+    {
+        "pays": "Guinée équatoriale",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 98.6,
+                "nombre": 1656000
+            }
+        }
+    },
+    {
+        "pays": "Moldavie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 98.5,
+                "nombre": 3350000
+            },
+            "juifs": {
+                "pourcentage": 0.08,
+                "nombre": 1900
+            },
+            "Orthodoxie": {
+                "pourcentage": 93.3,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Tuvalu",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 98.4,
+                "nombre": 11300
+            },
+            "Protestantisme": {
+                "pourcentage": 98.4,
+                "nombre": 11
+            }
+        }
+    },
+    {
+        "pays": "Samoa américaines",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 98.3,
+                "nombre": 43200
+            },
+            "Protestantisme": {
+                "pourcentage": 50,
+                "nombre": 22
+            }
+        }
+    },
+    {
+        "pays": "Grèce",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 98,
+                "nombre": 10192000
+            },
+            "juifs": {
+                "pourcentage": 0.04,
+                "nombre": 4400
+            },
+            "Orthodoxie": {
+                "pourcentage": 98,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Malte",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 98,
+                "nombre": 529000
+            }
+        }
+    },
+    {
+        "pays": "Venezuela",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 98,
+                "nombre": 28224000
+            },
+            "juifs": {
+                "pourcentage": 0.02,
+                "nombre": 6000
+            }
+        }
+    },
+    {
+        "pays": "Pologne",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 97.7,
+                "nombre": 36735000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 4500
+            },
+            "Catholicisme": {
+                "pourcentage": 87.3,
+                "nombre": 33000000
+            },
+            "Orthodoxie": {
+                "pourcentage": 1.3,
+                "nombre": 477
+            }
+        }
+    },
+    {
+        "pays": "Zambie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 97.5,
+                "nombre": 20572000
+            },
+            "Catholicisme": {
+                "pourcentage": 15.5,
+                "nombre": 3000000
+            }
+        }
+    },
+    {
+        "pays": "Angola",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 97,
+                "nombre": 35502000
+            },
+            "Catholicisme": {
+                "pourcentage": 46.4,
+                "nombre": 16000000
+            }
+        }
+    },
+    {
+        "pays": "Bolivie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 97,
+                "nombre": 11931000
+            },
+            "juifs": {
+                "pourcentage": 0,
+                "nombre": 500
+            },
+            "Catholicisme": {
+                "pourcentage": 58.3,
+                "nombre": 7000000
+            }
+        }
+    },
+    {
+        "pays": "Porto Rico",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 97,
+                "nombre": 3150000
+            },
+            "juifs": {
+                "pourcentage": 0.05,
+                "nombre": 1500
+            }
+        }
+    },
+    {
+        "pays": "Paraguay",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 96.9,
+                "nombre": 6686000
+            },
+            "juifs": {
+                "pourcentage": 0.02,
+                "nombre": 1100
+            },
+            "Catholicisme": {
+                "pourcentage": 89.6,
+                "nombre": 6000000
+            }
+        }
+    },
+    {
+        "pays": "Bahamas",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 96.3,
+                "nombre": 395000
+            },
+            "Protestantisme": {
+                "pourcentage": 46.4,
+                "nombre": 191
+            }
+        }
+    },
+    {
+        "pays": "Haïti",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 96,
+                "nombre": 11232000
+            },
+            "Catholicisme": {
+                "pourcentage": 43.5,
+                "nombre": 5000000
+            },
+            "Protestantisme": {
+                "pourcentage": 19.9,
+                "nombre": 0
+            },
+            "Vaudouisme": {
+                "pourcentage": 2.1,
+                "nombre": 246
+            }
+        }
+    },
+    {
+        "pays": "Kiribati",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 96,
+                "nombre": 130500
+            }
+        }
+    },
+    {
+        "pays": "Panama",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 96,
+                "nombre": 4320000
+            },
+            "juifs": {
+                "pourcentage": 0.22,
+                "nombre": 10000
+            },
+            "Catholicisme": {
+                "pourcentage": 46,
+                "nombre": 2000000
+            }
+        }
+    },
+    {
+        "pays": "Îles Vierges britanniques",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 96,
+                "nombre": 30700
+            },
+            "juifs": {
+                "pourcentage": 1.25,
+                "nombre": 400
+            },
+            "Protestantisme": {
+                "pourcentage": 50.7,
+                "nombre": 16
+            }
+        }
+    },
+    {
+        "pays": "Salomon",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 95.9,
+                "nombre": 719000
+            }
+        }
+    },
+    {
+        "pays": "République démocratique du Congo",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 95.7,
+                "nombre": 100485000
+            }
+        }
+    },
+    {
+        "pays": "République dominicaine",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 95.2,
+                "nombre": 10853000
+            }
+        }
+    },
+    {
+        "pays": "Cap-Vert",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 95,
+                "nombre": 568000
+            }
+        }
+    },
+    {
+        "pays": "Islande",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 95,
+                "nombre": 361000
+            },
+            "Protestantisme": {
+                "pourcentage": 79.7,
+                "nombre": 314
+            }
+        }
+    },
+    {
+        "pays": "Saint-Marin",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 95,
+                "nombre": 32000
+            }
+        }
+    },
+    {
+        "pays": "Malouines",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 94.3,
+                "nombre": 3600
+            }
+        }
+    },
+    {
+        "pays": "Irlande",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 94.1,
+                "nombre": 4893000
+            },
+            "juifs": {
+                "pourcentage": 0.05,
+                "nombre": 2700
+            },
+            "Catholicisme": {
+                "pourcentage": 59.1,
+                "nombre": 3000000
+            }
+        }
+    },
+    {
+        "pays": "Îles Féroé",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 94,
+                "nombre": 51700
+            },
+            "Protestantisme": {
+                "pourcentage": 83.8,
+                "nombre": 45
+            }
+        }
+    },
+    {
+        "pays": "Micronésie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 93.8,
+                "nombre": 107800
+            }
+        }
+    },
+    {
+        "pays": "Rwanda",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 93.6,
+                "nombre": 13291000
+            },
+            "Catholicisme": {
+                "pourcentage": 30.1,
+                "nombre": 4000000
+            },
+            "Protestantisme": {
+                "pourcentage": 12.2,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Serbie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 93.5,
+                "nombre": 6217000
+            },
+            "juifs": {
+                "pourcentage": 0.02,
+                "nombre": 1400
+            },
+            "Orthodoxie": {
+                "pourcentage": 84.6,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Nauru",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 93.4,
+                "nombre": 11200
+            },
+            "Protestantisme": {
+                "pourcentage": 60.4,
+                "nombre": 8
+            }
+        }
+    },
+    {
+        "pays": "Philippines",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 93.1,
+                "nombre": 109858000
+            },
+            "Boudhisme": {
+                "pourcentage": 2.5,
+                "nombre": 2276932
+            },
+            "Catholicisme": {
+                "pourcentage": 75.9,
+                "nombre": 85000000
+            },
+            "Protestantisme": {
+                "pourcentage": 5.1,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Équateur",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 92,
+                "nombre": 16744000
+            },
+            "juifs": {
+                "pourcentage": 0,
+                "nombre": 600
+            },
+            "Protestantisme": {
+                "pourcentage": 10.4,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Seychelles",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 91.2,
+                "nombre": 97500
+            }
+        }
+    },
+    {
+        "pays": "Croatie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 90.6,
+                "nombre": 3624000
+            },
+            "juifs": {
+                "pourcentage": 0.04,
+                "nombre": 1700
+            },
+            "Catholicisme": {
+                "pourcentage": 77.3,
+                "nombre": 3000000
+            },
+            "Orthodoxie": {
+                "pourcentage": 4.4,
+                "nombre": 170
+            }
+        }
+    },
+    {
+        "pays": "Anguilla",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 90.5,
+                "nombre": 14400
+            },
+            "Protestantisme": {
+                "pourcentage": 46.6,
+                "nombre": 7
+            }
+        }
+    },
+    {
+        "pays": "Colombie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 90,
+                "nombre": 46800000
+            },
+            "juifs": {
+                "pourcentage": 0,
+                "nombre": 2100
+            },
+            "Catholicisme": {
+                "pourcentage": 68.2,
+                "nombre": 35000000
+            }
+        }
+    },
+    {
+        "pays": "Namibie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 90,
+                "nombre": 2340000
+            }
+        }
+    },
+    {
+        "pays": "Mexique",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 89.7,
+                "nombre": 115713000
+            },
+            "juifs": {
+                "pourcentage": 0.03,
+                "nombre": 40000
+            },
+            "Catholicisme": {
+                "pourcentage": 78,
+                "nombre": 100000000
+            },
+            "Protestantisme": {
+                "pourcentage": 5,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Nicaragua",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 89.6,
+                "nombre": 6361000
+            },
+            "Catholicisme": {
+                "pourcentage": 29.2,
+                "nombre": 2000000
+            },
+            "Protestantisme": {
+                "pourcentage": 23.2,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Andorre",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 89.5,
+                "nombre": 71600
+            }
+        }
+    },
+    {
+        "pays": "Dominique",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 88.7,
+                "nombre": 64700
+            }
+        }
+    },
+    {
+        "pays": "Aruba",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 88.6,
+                "nombre": 94700
+            }
+        }
+    },
+    {
+        "pays": "Géorgie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 88.6,
+                "nombre": 3278000
+            },
+            "juifs": {
+                "pourcentage": 0.04,
+                "nombre": 1500
+            },
+            "Orthodoxie": {
+                "pourcentage": 83.9,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Ouganda",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 88.6,
+                "nombre": 43414000
+            },
+            "Catholicisme": {
+                "pourcentage": 34.1,
+                "nombre": 16000000
+            }
+        }
+    },
+    {
+        "pays": "Pérou",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 88.1,
+                "nombre": 30130000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 1900
+            },
+            "Protestantisme": {
+                "pourcentage": 11.5,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Brésil",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 87.6,
+                "nombre": 189216000
+            },
+            "juifs": {
+                "pourcentage": 0.04,
+                "nombre": 92000
+            },
+            "Catholicisme": {
+                "pourcentage": 61.7,
+                "nombre": 132000000
+            },
+            "Protestantisme": {
+                "pourcentage": 10.7,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Chili",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 87.2,
+                "nombre": 17091000
+            },
+            "juifs": {
+                "pourcentage": 0.08,
+                "nombre": 16000
+            },
+            "sans religion": {
+                "pourcentage": 11.4,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 52.4,
+                "nombre": 10000000
+            }
+        }
+    },
+    {
+        "pays": "Luxembourg",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 87,
+                "nombre": 582000
+            },
+            "juifs": {
+                "pourcentage": 0.11,
+                "nombre": 700
+            }
+        }
+    },
+    {
+        "pays": "Portugal",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 86.7,
+                "nombre": 8843000
+            },
+            "juifs": {
+                "pourcentage": 0.03,
+                "nombre": 3100
+            },
+            "Catholicisme": {
+                "pourcentage": 77.7,
+                "nombre": 8000000
+            }
+        }
+    },
+    {
+        "pays": "Norvège",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 86.2,
+                "nombre": 4741000
+            },
+            "juifs": {
+                "pourcentage": 0.02,
+                "nombre": 1300
+            },
+            "Protestantisme": {
+                "pourcentage": 64,
+                "nombre": 0
+            },
+            "Orthodoxie": {
+                "pourcentage": 0.5,
+                "nombre": 28
+            }
+        }
+    },
+    {
+        "pays": "Argentine",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 88,
+                "nombre": 40480000
+            },
+            "juifs": {
+                "pourcentage": 0.39,
+                "nombre": 179500
+            }
+        }
+    },
+    {
+        "pays": "Île Cook (Îles Sandwich du Sud)",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 86,
+                "nombre": 14600
+            }
+        }
+    },
+    {
+        "pays": "Monaco",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 86,
+                "nombre": 31300
+            }
+        }
+    },
+    {
+        "pays": "République du Congo",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 85.9,
+                "nombre": 5240000
+            },
+            "Protestantisme": {
+                "pourcentage": 22.3,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Liberia",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 85.6,
+                "nombre": 4708000
+            }
+        }
+    },
+    {
+        "pays": "Kenya",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 85.1,
+                "nombre": 47656000
+            },
+            "Catholicisme": {
+                "pourcentage": 17.5,
+                "nombre": 9000000
+            },
+            "Kharidjisme": {
+                "pourcentage": 0.02,
+                "nombre": 11400
+            }
+        }
+    },
+    {
+        "pays": "Lituanie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 85,
+                "nombre": 2312000
+            },
+            "juifs": {
+                "pourcentage": 0.09,
+                "nombre": 2400
+            },
+            "Catholicisme": {
+                "pourcentage": 71.4,
+                "nombre": 2000000
+            },
+            "Orthodoxie": {
+                "pourcentage": 4.9,
+                "nombre": 141
+            }
+        }
+    },
+    {
+        "pays": "Bulgarie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 84,
+                "nombre": 5628000
+            },
+            "juifs": {
+                "pourcentage": 0.03,
+                "nombre": 2000
+            },
+            "Orthodoxie": {
+                "pourcentage": 76,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Slovaquie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 83.8,
+                "nombre": 4558000
+            },
+            "juifs": {
+                "pourcentage": 0.05,
+                "nombre": 2600
+            },
+            "Catholicisme": {
+                "pourcentage": 55.2,
+                "nombre": 3000000
+            }
+        }
+    },
+    {
+        "pays": "Italie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 83.3,
+                "nombre": 49147000
+            },
+            "juifs": {
+                "pourcentage": 0.05,
+                "nombre": 27300
+            },
+            "Catholicisme": {
+                "pourcentage": 77.9,
+                "nombre": 46000000
+            }
+        }
+    },
+    {
+        "pays": "Liechtenstein",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 83.2,
+                "nombre": 32800
+            }
+        }
+    },
+    {
+        "pays": "Costa Rica",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 83,
+                "nombre": 4357000
+            },
+            "juifs": {
+                "pourcentage": 0.05,
+                "nombre": 2500
+            },
+            "Catholicisme": {
+                "pourcentage": 38.8,
+                "nombre": 2000000
+            }
+        }
+    },
+    {
+        "pays": "Honduras",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 83,
+                "nombre": 8798000
+            },
+            "Catholicisme": {
+                "pourcentage": 29.1,
+                "nombre": 3000000
+            }
+        }
+    },
+    {
+        "pays": "Vanuatu",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 82.4,
+                "nombre": 276000
+            },
+            "Protestantisme": {
+                "pourcentage": 54.9,
+                "nombre": 184
+            }
+        }
+    },
+    {
+        "pays": "Salvador",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 81.9,
+                "nombre": 5241000
+            },
+            "Catholicisme": {
+                "pourcentage": 31.6,
+                "nombre": 2000000
+            }
+        }
+    },
+    {
+        "pays": "Ukraine",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 81.9,
+                "nombre": 30303000
+            },
+            "juifs": {
+                "pourcentage": 0.12,
+                "nombre": 45000
+            },
+            "Catholicisme": {
+                "pourcentage": 6.85,
+                "nombre": 3000000
+            },
+            "Orthodoxie": {
+                "pourcentage": 54.6,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Finlande",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 81,
+                "nombre": 4455000
+            },
+            "juifs": {
+                "pourcentage": 0.02,
+                "nombre": 1300
+            },
+            "Protestantisme": {
+                "pourcentage": 78.4,
+                "nombre": 0
+            },
+            "Orthodoxie": {
+                "pourcentage": 1.1,
+                "nombre": 61
+            }
+        }
+    },
+    {
+        "pays": "Tonga",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 81,
+                "nombre": 87400
+            },
+            "Protestantisme": {
+                "pourcentage": 64.1,
+                "nombre": 69
+            }
+        }
+    },
+    {
+        "pays": "Danemark",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 80.9,
+                "nombre": 4773000
+            },
+            "juifs": {
+                "pourcentage": 0.11,
+                "nombre": 6400
+            },
+            "Protestantisme": {
+                "pourcentage": 81,
+                "nombre": 0
+            },
+            "Orthodoxie": {
+                "pourcentage": 1,
+                "nombre": 59
+            }
+        }
+    },
+    {
+        "pays": "République centrafricaine",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 80.3,
+                "nombre": 4577000
+            }
+        }
+    },
+    {
+        "pays": "Lettonie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 80.2,
+                "nombre": 1467000
+            },
+            "juifs": {
+                "pourcentage": 0.22,
+                "nombre": 4100
+            },
+            "Orthodoxie": {
+                "pourcentage": 15.3,
+                "nombre": 288
+            }
+        }
+    },
+    {
+        "pays": "Afrique du Sud",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 80,
+                "nombre": 48800000
+            },
+            "juifs": {
+                "pourcentage": 0.09,
+                "nombre": 52300
+            },
+            "sans religion": {
+                "pourcentage": 15.1,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 3.37,
+                "nombre": 2000000
+            },
+            "Protestantisme": {
+                "pourcentage": 13.5,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Biélorussie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 80,
+                "nombre": 7520000
+            },
+            "juifs": {
+                "pourcentage": 0.09,
+                "nombre": 8500
+            },
+            "Orthodoxie": {
+                "pourcentage": 80,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Lesotho",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 80,
+                "nombre": 1840000
+            }
+        }
+    },
+    {
+        "pays": "Malawi",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 79.9,
+                "nombre": 16938000
+            },
+            "Catholicisme": {
+                "pourcentage": 15.1,
+                "nombre": 3000000
+            }
+        }
+    },
+    {
+        "pays": "Palaos",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 77.9,
+                "nombre": 14000
+            }
+        }
+    },
+    {
+        "pays": "Belize",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 76.7,
+                "nombre": 322000
+            }
+        }
+    },
+    {
+        "pays": "Burundi",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 75,
+                "nombre": 10125000
+            },
+            "Catholicisme": {
+                "pourcentage": 56.5,
+                "nombre": 7000000
+            }
+        }
+    },
+    {
+        "pays": "Barbade",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 74.6,
+                "nombre": 210000
+            }
+        }
+    },
+    {
+        "pays": "Madagascar",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 74.5,
+                "nombre": 22722000
+            },
+            "Catholicisme": {
+                "pourcentage": 20.7,
+                "nombre": 6000000
+            }
+        }
+    },
+    {
+        "pays": "Hongrie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 74.4,
+                "nombre": 7142000
+            },
+            "juifs": {
+                "pourcentage": 0.49,
+                "nombre": 47200
+            },
+            "Catholicisme": {
+                "pourcentage": 30.9,
+                "nombre": 3000000
+            },
+            "Protestantisme": {
+                "pourcentage": 13.8,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Antigua-et-Barbuda",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 74,
+                "nombre": 70300
+            }
+        }
+    },
+    {
+        "pays": "Îles Caïmans",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 73.8,
+                "nombre": 50900
+            },
+            "Protestantisme": {
+                "pourcentage": 51.3,
+                "nombre": 36
+            }
+        }
+    },
+    {
+        "pays": "Chypre",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 73.2,
+                "nombre": 915000
+            },
+            "Orthodoxie": {
+                "pourcentage": 89.1,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Suède",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 72.9,
+                "nombre": 7727000
+            },
+            "juifs": {
+                "pourcentage": 0.14,
+                "nombre": 15000
+            },
+            "Protestantisme": {
+                "pourcentage": 87,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Espagne",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 72,
+                "nombre": 34416000
+            },
+            "juifs": {
+                "pourcentage": 0.03,
+                "nombre": 13000
+            },
+            "sans religion": {
+                "pourcentage": 25,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 67.5,
+                "nombre": 32000000
+            }
+        }
+    },
+    {
+        "pays": "Gabon",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 72,
+                "nombre": 1764000
+            }
+        }
+    },
+    {
+        "pays": "Botswana",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 71.6,
+                "nombre": 1897000
+            }
+        }
+    },
+    {
+        "pays": "Swaziland",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 71.3,
+                "nombre": 869000
+            }
+        }
+    },
+    {
+        "pays": "Cameroun",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 70,
+                "nombre": 20300000
+            },
+            "Catholicisme": {
+                "pourcentage": 33.1,
+                "nombre": 9000000
+            },
+            "Soufisme": {
+                "pourcentage": 10,
+                "nombre": 3000000
+            }
+        }
+    },
+    {
+        "pays": "Russie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 69.8,
+                "nombre": 100512000
+            },
+            "juifs": {
+                "pourcentage": 0.11,
+                "nombre": 155000
+            },
+            "Boudhisme": {
+                "pourcentage": 1.1,
+                "nombre": 1555155
+            },
+            "sans religion": {
+                "pourcentage": 16.2,
+                "nombre": 0
+            },
+            "Orthodoxie": {
+                "pourcentage": 79,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "États-Unis",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 69,
+                "nombre": 233910000
+            },
+            "juifs": {
+                "pourcentage": 1.6800000000000002,
+                "nombre": 5700000
+            },
+            "Boudhisme": {
+                "pourcentage": 1.2,
+                "nombre": 3613679
+            },
+            "sans religion": {
+                "pourcentage": 22.8,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Suisse",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 74,
+                "nombre": 6512000
+            },
+            "juifs": {
+                "pourcentage": 0.21,
+                "nombre": 18500
+            },
+            "sans religion": {
+                "pourcentage": 20.1,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 34.5,
+                "nombre": 3000000
+            }
+        }
+    },
+    {
+        "pays": "Ghana",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 68.8,
+                "nombre": 23392000
+            },
+            "Catholicisme": {
+                "pourcentage": 6.11,
+                "nombre": 2000000
+            },
+            "Soufisme": {
+                "pourcentage": 5,
+                "nombre": 1700000
+            }
+        }
+    },
+    {
+        "pays": "Uruguay",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 68,
+                "nombre": 2325000
+            },
+            "juifs": {
+                "pourcentage": 0.48,
+                "nombre": 16500
+            },
+            "sans religion": {
+                "pourcentage": 40.4,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 29.2,
+                "nombre": 1000000
+            }
+        }
+    },
+    {
+        "pays": "Canada",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 67.3,
+                "nombre": 26247000
+            },
+            "juifs": {
+                "pourcentage": 1,
+                "nombre": 393000
+            },
+            "sans religion": {
+                "pourcentage": 34.6,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 34,
+                "nombre": 13000000
+            },
+            "Protestantisme": {
+                "pourcentage": 4.8,
+                "nombre": 0
+            },
+            "Orthodoxie": {
+                "pourcentage": 1.6,
+                "nombre": 642
+            }
+        }
+    },
+    {
+        "pays": "Bermudes",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 67,
+                "nombre": 42800
+            }
+        }
+    },
+    {
+        "pays": "France",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 66,
+                "nombre": 44880000
+            },
+            "juifs": {
+                "pourcentage": 0.66,
+                "nombre": 448000
+            },
+            "Boudhisme": {
+                "pourcentage": 0.5,
+                "nombre": 318591
+            },
+            "sans religion": {
+                "pourcentage": 53,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 54.7,
+                "nombre": 37000000
+            }
+        }
+    },
+    {
+        "pays": "Papouasie-Nouvelle-Guinée",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 66,
+                "nombre": 6732000
+            },
+            "Protestantisme": {
+                "pourcentage": 37.2,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Jamaïque",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 65.3,
+                "nombre": 1841000
+            },
+            "sans religion": {
+                "pourcentage": 21.2,
+                "nombre": 0
+            },
+            "Protestantisme": {
+                "pourcentage": 46,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Macédoine",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 65.1,
+                "nombre": 1360000
+            }
+        }
+    },
+    {
+        "pays": "Belgique",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 65,
+                "nombre": 7605000
+            },
+            "juifs": {
+                "pourcentage": 0.25,
+                "nombre": 29000
+            },
+            "Catholicisme": {
+                "pourcentage": 51.7,
+                "nombre": 6000000
+            }
+        }
+    },
+    {
+        "pays": "Fidji",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 64.4,
+                "nombre": 605000
+            },
+            "Hindouisme": {
+                "pourcentage": 27.9,
+                "nombre": 262260
+            },
+            "Protestantisme": {
+                "pourcentage": 44.2,
+                "nombre": 414
+            }
+        }
+    },
+    {
+        "pays": "Allemagne",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 64,
+                "nombre": 53312000
+            },
+            "juifs": {
+                "pourcentage": 0.14,
+                "nombre": 118000
+            },
+            "Boudhisme": {
+                "pourcentage": 0.3,
+                "nombre": 247203
+            },
+            "sans religion": {
+                "pourcentage": 59,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 26.4,
+                "nombre": 22000000
+            },
+            "Protestantisme": {
+                "pourcentage": 27.9,
+                "nombre": 0
+            },
+            "Orthodoxie": {
+                "pourcentage": 1.9,
+                "nombre": 0
+            },
+            "Chiisme": {
+                "pourcentage": 0.8,
+                "nombre": 676
+            },
+            "Sunnisme": {
+                "pourcentage": 3.3,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Érythrée",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 62.9,
+                "nombre": 2327000
+            },
+            "Orthodoxie": {
+                "pourcentage": 40,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Éthiopie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 62.8,
+                "nombre": 80384000
+            },
+            "juifs": {
+                "pourcentage": 0.001,
+                "nombre": 100
+            },
+            "Orthodoxie": {
+                "pourcentage": 43.5,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Zimbabwe",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 73.5,
+                "nombre": 12127000
+            },
+            "Protestantisme": {
+                "pourcentage": 38,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Australie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 61.1,
+                "nombre": 16191000
+            },
+            "juifs": {
+                "pourcentage": 0.44,
+                "nombre": 118000
+            },
+            "sans religion": {
+                "pourcentage": 38.9,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 19.4,
+                "nombre": 5000000
+            },
+            "Protestantisme": {
+                "pourcentage": 5.6,
+                "nombre": 0
+            },
+            "Orthodoxie": {
+                "pourcentage": 3.8,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Autriche",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 60.5,
+                "nombre": 5445000
+            },
+            "juifs": {
+                "pourcentage": 0.11,
+                "nombre": 10100
+            },
+            "Catholicisme": {
+                "pourcentage": 44.8,
+                "nombre": 4000000
+            },
+            "Orthodoxie": {
+                "pourcentage": 2.2,
+                "nombre": 201
+            }
+        }
+    },
+    {
+        "pays": "Soudan du Sud",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 60.5,
+                "nombre": 6715000
+            },
+            "Traditionnalisme": {
+                "pourcentage": 32.9,
+                "nombre": 3651900
+            },
+            "Catholicisme": {
+                "pourcentage": 27.8,
+                "nombre": 3000000
+            }
+        }
+    },
+    {
+        "pays": "Tanzanie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 59.6,
+                "nombre": 41362000
+            },
+            "Catholicisme": {
+                "pourcentage": 28.3,
+                "nombre": 18000000
+            },
+            "Protestantisme": {
+                "pourcentage": 29,
+                "nombre": 0
+            },
+            "Chiisme": {
+                "pourcentage": 6.3,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 12.6,
+                "nombre": 0
+            },
+            "Kharidjisme": {
+                "pourcentage": 0.30000000000000004,
+                "nombre": 208200
+            }
+        }
+    },
+    {
+        "pays": "Royaume-Uni",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 59.3,
+                "nombre": 40027000
+            },
+            "juifs": {
+                "pourcentage": 0.43,
+                "nombre": 292000
+            },
+            "sans religion": {
+                "pourcentage": 25.1,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 7.46,
+                "nombre": 5000000
+            },
+            "Protestantisme": {
+                "pourcentage": 51,
+                "nombre": 0
+            },
+            "Néodruidisme": {
+                "pourcentage": 0.04,
+                "nombre": 27500
+            }
+        }
+    },
+    {
+        "pays": "Cuba",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 59.2,
+                "nombre": 6512000
+            },
+            "juifs": {
+                "pourcentage": 0.01,
+                "nombre": 500
+            },
+            "Traditionnalisme": {
+                "pourcentage": 17.4,
+                "nombre": 1914000
+            },
+            "Catholicisme": {
+                "pourcentage": 54.1,
+                "nombre": 6000000
+            }
+        }
+    },
+    {
+        "pays": "Slovénie",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 58.7,
+                "nombre": 1232000
+            },
+            "Catholicisme": {
+                "pourcentage": 47.4,
+                "nombre": 1000000
+            },
+            "Orthodoxie": {
+                "pourcentage": 2.3,
+                "nombre": 49
+            }
+        }
+    },
+    {
+        "pays": "Trinité-et-Tobago",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 57.6,
+                "nombre": 887000
+            },
+            "Hindouisme": {
+                "pourcentage": 22.7,
+                "nombre": 349580
+            }
+        }
+    },
+    {
+        "pays": "Guyana",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 57,
+                "nombre": 464000
+            },
+            "Hindouisme": {
+                "pourcentage": 24.9,
+                "nombre": 202935
+            }
+        }
+    },
+    {
+        "pays": "Mozambique",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 56.1,
+                "nombre": 19074000
+            },
+            "Catholicisme": {
+                "pourcentage": 12.5,
+                "nombre": 4000000
+            }
+        }
+    },
+    {
+        "pays": "Nouvelle-Zélande",
+        "religions": {
+            "chrétiens": {
+                "pourcentage": 55.6,
+                "nombre": 2891000
+            },
+            "juifs": {
+                "pourcentage": 0.14,
+                "nombre": 7500
+            },
+            "sans religion": {
+                "pourcentage": 48.2,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Total Asie",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.14,
+                "nombre": 6808500
+            }
+        }
+    },
+    {
+        "pays": "Israël",
+        "religions": {
+            "juifs": {
+                "pourcentage": 74.2,
+                "nombre": 6773400
+            },
+            "Druzisme": {
+                "pourcentage": 1.18,
+                "nombre": 118000
+            }
+        }
+    },
+    {
+        "pays": "Total Amérique",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.63,
+                "nombre": 6466900
+            }
+        }
+    },
+    {
+        "pays": "Total Europe",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.18,
+                "nombre": 1329400
+            }
+        }
+    },
+    {
+        "pays": "Union européenne",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.17,
+                "nombre": 788800
+            }
+        }
+    },
+    {
+        "pays": "Total Océanie",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.28,
+                "nombre": 125600
+            }
+        }
+    },
+    {
+        "pays": "Total Afrique",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0,
+                "nombre": 56800
+            }
+        }
+    },
+    {
+        "pays": "Pays-Bas",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.17,
+                "nombre": 29800
+            },
+            "Boudhisme": {
+                "pourcentage": 0.55,
+                "nombre": 91552
+            },
+            "sans religion": {
+                "pourcentage": 42.1,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 17.1,
+                "nombre": 3000000
+            },
+            "Protestantisme": {
+                "pourcentage": 12,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Inde",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.001,
+                "nombre": 4800
+            },
+            "Hindouisme": {
+                "pourcentage": 79.5,
+                "nombre": 1144800000
+            },
+            "Catholicisme": {
+                "pourcentage": 1.07,
+                "nombre": 15000000
+            },
+            "Chiisme": {
+                "pourcentage": 3.5,
+                "nombre": 0
+            },
+            "Sunnisme": {
+                "pourcentage": 9.5,
+                "nombre": 0
+            },
+            "Sikhisme": {
+                "pourcentage": 1.7,
+                "nombre": 0
+            },
+            "Jaïnisme": {
+                "pourcentage": 0.4,
+                "nombre": 0
+            },
+            "Soufisme": {
+                "pourcentage": 12,
+                "nombre": 172000000
+            },
+            "Brahmoïsme": {
+                "pourcentage": 0.0015,
+                "nombre": 22000
+            }
+        }
+    },
+    {
+        "pays": "République tchèque",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.04,
+                "nombre": 3900
+            }
+        }
+    },
+    {
+        "pays": "Estonie",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.26,
+                "nombre": 3500
+            },
+            "sans religion": {
+                "pourcentage": 59.6,
+                "nombre": 0
+            },
+            "Orthodoxie": {
+                "pourcentage": 16.2,
+                "nombre": 221
+            }
+        }
+    },
+    {
+        "pays": "Chine",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.001,
+                "nombre": 3000
+            },
+            "Boudhisme": {
+                "pourcentage": 13,
+                "nombre": 105748151
+            },
+            "sans religion": {
+                "pourcentage": 52.2,
+                "nombre": 0
+            },
+            "Traditionnalisme": {
+                "pourcentage": 21.9,
+                "nombre": 308790000
+            },
+            "Catholicisme": {
+                "pourcentage": 0.64,
+                "nombre": 9000000
+            },
+            "Taoïsme": {
+                "pourcentage": 4.4,
+                "nombre": 0
+            },
+            "Confucianisme": {
+                "pourcentage": 25,
+                "nombre": 354500000
+            },
+            "Soufisme": {
+                "pourcentage": 1.5,
+                "nombre": 21300000
+            }
+        }
+    },
+    {
+        "pays": "Japon",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.001,
+                "nombre": 1000
+            },
+            "Boudhisme": {
+                "pourcentage": 44,
+                "nombre": 56070737
+            },
+            "sans religion": {
+                "pourcentage": 57,
+                "nombre": 0
+            },
+            "shintoïsme": {
+                "pourcentage": 79.2,
+                "nombre": 0
+            },
+            "Confucianisme": {
+                "pourcentage": 1.5,
+                "nombre": 1850000
+            }
+        }
+    },
+    {
+        "pays": "Singapour",
+        "religions": {
+            "juifs": {
+                "pourcentage": 0.02,
+                "nombre": 900
+            },
+            "Boudhisme": {
+                "pourcentage": 56.05,
+                "nombre": 2551961
+            },
+            "sans religion": {
+                "pourcentage": 17,
+                "nombre": 0
+            },
+            "Taoïsme": {
+                "pourcentage": 11.3,
+                "nombre": 669
+            }
+        }
+    },
+    {
+        "pays": "Gibraltar",
+        "religions": {
+            "juifs": {
+                "pourcentage": 2.42,
+                "nombre": 800
+            }
+        }
+    },
+    {
+        "pays": "Thaïlande",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 95,
+                "nombre": 61814742
+            }
+        }
+    },
+    {
+        "pays": "Birmanie",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 90,
+                "nombre": 42636562
+            }
+        }
+    },
+    {
+        "pays": "Corée du Nord",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 64.5,
+                "nombre": 15029613
+            },
+            "sans religion": {
+                "pourcentage": 71.3,
+                "nombre": 0
+            },
+            "Traditionnalisme": {
+                "pourcentage": 12.3,
+                "nombre": 3222600
+            }
+        }
+    },
+    {
+        "pays": "Sri Lanka",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 70,
+                "nombre": 14648421
+            },
+            "Hindouisme": {
+                "pourcentage": 13.6,
+                "nombre": 2978400
+            },
+            "Catholicisme": {
+                "pourcentage": 4.51,
+                "nombre": 1000000
+            }
+        }
+    },
+    {
+        "pays": "Cambodge",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 95,
+                "nombre": 13296109
+            }
+        }
+    },
+    {
+        "pays": "Viêt Nam",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 50.5,
+                "nombre": 43057490
+            },
+            "Traditionnalisme": {
+                "pourcentage": 45.3,
+                "nombre": 45435900
+            },
+            "Caodaïsme": {
+                "pourcentage": 4.8,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Corée du Sud",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 36.65,
+                "nombre": 17974915
+            },
+            "sans religion": {
+                "pourcentage": 46.4,
+                "nombre": 0
+            },
+            "Catholicisme": {
+                "pourcentage": 9.71,
+                "nombre": 5000000
+            }
+        }
+    },
+    {
+        "pays": "Taïwan",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 67.6,
+                "nombre": 15467836
+            },
+            "Traditionnalisme": {
+                "pourcentage": 44.2,
+                "nombre": 10585900
+            },
+            "Taoïsme": {
+                "pourcentage": 44,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Hong Kong",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 90,
+                "nombre": 6282371
+            },
+            "Traditionnalisme": {
+                "pourcentage": 12.8,
+                "nombre": 960000
+            },
+            "Taoïsme": {
+                "pourcentage": 14.2,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Laos",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 96,
+                "nombre": 6261118
+            },
+            "Traditionnalisme": {
+                "pourcentage": 30.7,
+                "nombre": 2363900
+            }
+        }
+    },
+    {
+        "pays": "Népal",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 11,
+                "nombre": 3179197
+            },
+            "Hindouisme": {
+                "pourcentage": 80.7,
+                "nombre": 25178400
+            }
+        }
+    },
+    {
+        "pays": "Mongolie",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 72,
+                "nombre": 2125286
+            },
+            "sans religion": {
+                "pourcentage": 38.6,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Bhoutan",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 74,
+                "nombre": 1651895
+            },
+            "Hindouisme": {
+                "pourcentage": 22.6,
+                "nombre": 178540
+            }
+        }
+    },
+    {
+        "pays": "Macao",
+        "religions": {
+            "Boudhisme": {
+                "pourcentage": 85,
+                "nombre": 388441
+            },
+            "Traditionnalisme": {
+                "pourcentage": 58.9,
+                "nombre": 418190
+            }
+        }
+    },
+    {
+        "pays": "Tchéquie",
+        "religions": {
+            "sans religion": {
+                "pourcentage": 34,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Moyenne mondiale",
+        "religions": {
+            "sans religion": {
+                "pourcentage": 16.3,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Côte d'Ivoire",
+        "religions": {
+            "sans religion": {
+                "pourcentage": 12,
+                "nombre": 0
+            },
+            "Traditionnalisme": {
+                "pourcentage": 10.2,
+                "nombre": 2998800
+            },
+            "Catholicisme": {
+                "pourcentage": 18.1,
+                "nombre": 5000000
+            },
+            "Soufisme": {
+                "pourcentage": 15,
+                "nombre": 4600000
+            }
+        }
+    },
+    {
+        "pays": "Maurice",
+        "religions": {
+            "Hindouisme": {
+                "pourcentage": 48.5,
+                "nombre": 615950
+            }
+        }
+    },
+    {
+        "pays": "Suriname",
+        "religions": {
+            "Hindouisme": {
+                "pourcentage": 19.8,
+                "nombre": 123750
+            }
+        }
+    },
+    {
+        "pays": "Togo",
+        "religions": {
+            "Traditionnalisme": {
+                "pourcentage": 35.6,
+                "nombre": 3310800
+            },
+            "Catholicisme": {
+                "pourcentage": 11.6,
+                "nombre": 1000000
+            },
+            "Soufisme": {
+                "pourcentage": 5,
+                "nombre": 450000
+            }
+        }
+    },
+    {
+        "pays": "Guinée-Bissau",
+        "religions": {
+            "Traditionnalisme": {
+                "pourcentage": 30.9,
+                "nombre": 664350
+            }
+        }
+    },
+    {
+        "pays": "Bénin",
+        "religions": {
+            "Traditionnalisme": {
+                "pourcentage": 18.1,
+                "nombre": 2570200
+            },
+            "Catholicisme": {
+                "pourcentage": 7.69,
+                "nombre": 1000000
+            },
+            "Protestantisme": {
+                "pourcentage": 8.2,
+                "nombre": 0
+            },
+            "Vaudouisme": {
+                "pourcentage": 17.3,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Etats-Unis",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 20.8,
+                "nombre": 69000000
+            }
+        }
+    },
+    {
+        "pays": "Congo (RDC)",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 33.3,
+                "nombre": 2000000
+            }
+        }
+    },
+    {
+        "pays": "Argnetine",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 59,
+                "nombre": 27000000
+            }
+        }
+    },
+    {
+        "pays": "P2rou",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 71.9,
+                "nombre": 24000000
+            }
+        }
+    },
+    {
+        "pays": "Nigéria",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 10.8,
+                "nombre": 23000000
+            }
+        }
+    },
+    {
+        "pays": "Vénézuela",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 77.8,
+                "nombre": 22000000
+            }
+        }
+    },
+    {
+        "pays": "Equateur",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 61.8,
+                "nombre": 11000000
+            }
+        }
+    },
+    {
+        "pays": "Viêt-Nam",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 6.15,
+                "nombre": 6000000
+            }
+        }
+    },
+    {
+        "pays": "Rép. Dominicaine",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 45,
+                "nombre": 5000000
+            }
+        }
+    },
+    {
+        "pays": "Burkina Fasso",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 9.05,
+                "nombre": 2000000
+            }
+        }
+    },
+    {
+        "pays": "Porto-Rico (USA)",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 61.3,
+                "nombre": 2000000
+            }
+        }
+    },
+    {
+        "pays": "Papouasie",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 10.1,
+                "nombre": 1000000
+            }
+        }
+    },
+    {
+        "pays": "Guinée Equatoriale",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 61,
+                "nombre": 1000000
+            }
+        }
+    },
+    {
+        "pays": "Rép. Tchèque",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 9.51,
+                "nombre": 1000000
+            }
+        }
+    },
+    {
+        "pays": "Timor Oriental",
+        "religions": {
+            "Catholicisme": {
+                "pourcentage": 74.6,
+                "nombre": 1000000
+            }
+        }
+    },
+    {
+        "pays": "Îles Pitcairn",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 100,
+                "nombre": 40
+            }
+        }
+    },
+    {
+        "pays": "Groenland",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 96,
+                "nombre": 55
+            }
+        }
+    },
+    {
+        "pays": "Îles Åland",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 78.3,
+                "nombre": 24
+            },
+            "Orthodoxie": {
+                "pourcentage": 0.3,
+                "nombre": 100
+            }
+        }
+    },
+    {
+        "pays": "Niue",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 70,
+                "nombre": 1
+            }
+        }
+    },
+    {
+        "pays": "Îles Turks et Caïques",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 62.8,
+                "nombre": 29
+            }
+        }
+    },
+    {
+        "pays": "Îles Cook",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 62.8,
+                "nombre": 9
+            }
+        }
+    },
+    {
+        "pays": "Tokelau",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 60,
+                "nombre": 1
+            }
+        }
+    },
+    {
+        "pays": "Îles Vierges américaines",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 42,
+                "nombre": 44
+            }
+        }
+    },
+    {
+        "pays": "États fédérés de Micronésie",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 41.1,
+                "nombre": 47
+            }
+        }
+    },
+    {
+        "pays": "Antigua et Barbuda",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 38.5,
+                "nombre": 36
+            }
+        }
+    },
+    {
+        "pays": "Myanmar",
+        "religions": {
+            "Protestantisme": {
+                "pourcentage": 3,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Monténégro",
+        "religions": {
+            "Orthodoxie": {
+                "pourcentage": 72.1,
+                "nombre": 444
+            }
+        }
+    },
+    {
+        "pays": "Macédoine du Nord",
+        "religions": {
+            "Orthodoxie": {
+                "pourcentage": 64.8,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Bosnie-et-Herzégovine",
+        "religions": {
+            "Orthodoxie": {
+                "pourcentage": 30.7,
+                "nombre": 986
+            }
+        }
+    },
+    {
+        "pays": "États-Unis d'Amérique",
+        "religions": {
+            "Orthodoxie": {
+                "pourcentage": 0.5,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Sahara occidental",
+        "religions": {
+            "Sunnisme": {
+                "pourcentage": 99,
+                "nombre": 646
+            }
+        }
+    },
+    {
+        "pays": "Hors du Moyen-Orient",
+        "religions": {
+            "Druzisme": {
+                "pourcentage": 0.0001,
+                "nombre": 165000
+            }
+        }
+    },
+    {
+        "pays": "Ibadisme",
+        "religions": {
+            "Kharidjisme": {
+                "pourcentage": 0,
+                "nombre": 0
+            }
+        }
+    },
+    {
+        "pays": "Corée",
+        "religions": {
+            "Confucianisme": {
+                "pourcentage": 15,
+                "nombre": 7750000
+            }
+        }
+    },
+    {
+        "pays": "Vietnam",
+        "religions": {
+            "Confucianisme": {
+                "pourcentage": 10,
+                "nombre": 10100000
+            }
+        }
+    },
+    {
+        "pays": "Asie Centrale",
+        "religions": {
+            "Soufisme": {
+                "pourcentage": 15,
+                "nombre": 12000000
+            }
+        }
+    },
+    {
+        "pays": "Perse",
+        "religions": {
+            "Soufisme": {
+                "pourcentage": 4,
+                "nombre": 3600000
+            }
+        }
+    },
+    {
+        "pays": "Egypte",
+        "religions": {
+            "Soufisme": {
+                "pourcentage": 15,
+                "nombre": 17000000
+            }
+        }
+    }
+]

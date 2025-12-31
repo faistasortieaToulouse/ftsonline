@@ -1,0 +1,36 @@
+import json
+import os
+
+def creer_json_chine():
+    # 1. Données brutes (en millions comme dans votre texte)
+    donnees_chine = {
+        "pays": "Chine",
+        "annee": 2024,
+        "unite": "Millions",
+        "pratiquants": [
+            {"religion": "Taoïstes", "nombre": 62},
+            {"religion": "sans religion", "nombre": 52},
+            {"religion": "Protestants", "nombre": 45},
+            {"religion": "Traditionalisme", "nombre": 22},
+            {"religion": "Musulmans", "nombre": 20},
+            {"religion": "Boudhistes", "nombre": 18},
+            {"religion": "Catholiques", "nombre": 9}
+        ]
+    }
+
+    # 2. Calcul du total (optionnel mais utile)
+    total_pratiquants = sum(item["nombre"] for item in donnees_chine["pratiquants"])
+    donnees_chine["total_estime_millions"] = total_pratiquants
+
+    # 3. Sauvegarde
+    chemin_sortie = r"D:\Python\chine_2024.json"
+    
+    try:
+        with open(chemin_sortie, 'w', encoding='utf-8') as f:
+            json.dump(donnees_chine, f, indent=4, ensure_ascii=False)
+        print(f"✅ Fichier JSON créé avec succès : {chemin_sortie}")
+    except Exception as e:
+        print(f"❌ Erreur lors de la création du fichier : {e}")
+
+if __name__ == "__main__":
+    creer_json_chine()

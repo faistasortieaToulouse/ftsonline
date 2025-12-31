@@ -1,0 +1,2576 @@
+{
+    "Turquie": [
+        {
+            "date": "744",
+            "pays": "Turquie",
+            "evenement": "Califat omeyyade"
+        },
+        {
+            "date": "1055",
+            "pays": "Turquie",
+            "evenement": "Ahilik"
+        },
+        {
+            "date": "1071",
+            "pays": "Turquie",
+            "evenement": "beylicats"
+        },
+        {
+            "date": "1082",
+            "pays": "Turquie",
+            "evenement": "Artukides"
+        },
+        {
+            "date": "1231",
+            "pays": "Turquie",
+            "evenement": "Germiyan"
+        },
+        {
+            "date": "1250",
+            "pays": "Turquie",
+            "evenement": "Karamanides"
+        },
+        {
+            "date": "1291",
+            "pays": "Turquie",
+            "evenement": "Dynastie Candar"
+        },
+        {
+            "date": "1328",
+            "pays": "Turquie",
+            "evenement": "Eretnides"
+        },
+        {
+            "date": "1378",
+            "pays": "Turquie",
+            "evenement": "Ramazanides"
+        },
+        {
+            "date": "1515",
+            "pays": "Turquie",
+            "evenement": "pachalik de Diyarbakır"
+        },
+        {
+            "date": "1522",
+            "pays": "Turquie",
+            "evenement": "Eyalet de Dulkadir"
+        },
+        {
+            "date": "1867",
+            "pays": "Turquie",
+            "evenement": "vilayet de Diyarbekir"
+        },
+        {
+            "date": "1869",
+            "pays": "Turquie",
+            "evenement": "vilayet d'Adana"
+        },
+        {
+            "date": "1923",
+            "pays": "Turquie",
+            "evenement": "Kahramanmaras (province)"
+        },
+        {
+            "date": "1923",
+            "pays": "Turquie",
+            "evenement": "Gaziantep (province)"
+        },
+        {
+            "date": "1923",
+            "pays": "Turquie",
+            "evenement": "Sanlıurfa (province)"
+        }
+    ],
+    "Arabie Saoudite": [
+        {
+            "date": "497",
+            "pays": "Arabie Saoudite",
+            "evenement": "Hāshim ibn ʿAbd Manāf"
+        },
+        {
+            "date": "622",
+            "pays": "Arabie Saoudite",
+            "evenement": "Mahommet"
+        },
+        {
+            "date": "632",
+            "pays": "Arabie Saoudite",
+            "evenement": "Califat bien guidé"
+        },
+        {
+            "date": "632",
+            "pays": "Arabie Saoudite",
+            "evenement": "Calife Abou Bakr As-Siddiq"
+        },
+        {
+            "date": "634",
+            "pays": "Arabie Saoudite",
+            "evenement": "Calife Omar ibn al-Khattab"
+        },
+        {
+            "date": "644",
+            "pays": "Arabie Saoudite",
+            "evenement": "Calife Othman ibn Affan"
+        },
+        {
+            "date": "656",
+            "pays": "Arabie Saoudite",
+            "evenement": "Calife d'Ali ibn Abi Talib"
+        },
+        {
+            "date": "661",
+            "pays": "Arabie Saoudite",
+            "evenement": "Califat omeyyade"
+        },
+        {
+            "date": "866",
+            "pays": "Arabie Saoudite",
+            "evenement": "État d'Al-Akhdari"
+        },
+        {
+            "date": "970",
+            "pays": "Arabie Saoudite",
+            "evenement": "Chérif de La Mecque"
+        },
+        {
+            "date": "971",
+            "pays": "Arabie Saoudite",
+            "evenement": "Hilaliens"
+        },
+        {
+            "date": "1250",
+            "pays": "Arabie Saoudite",
+            "evenement": "Mamelouks"
+        },
+        {
+            "date": "1517",
+            "pays": "Arabie Saoudite",
+            "evenement": "Empire Ottoman"
+        },
+        {
+            "date": "1824",
+            "pays": "Arabie Saoudite",
+            "evenement": "Emirat du Nedjd"
+        },
+        {
+            "date": "1835",
+            "pays": "Arabie Saoudite",
+            "evenement": "Émirat de Haïl"
+        },
+        {
+            "date": "1902",
+            "pays": "Arabie Saoudite",
+            "evenement": "Émirat du Nedjd et du Hassa"
+        },
+        {
+            "date": "1910",
+            "pays": "Arabie Saoudite",
+            "evenement": "Émirat idrisside d'Asir"
+        },
+        {
+            "date": "1915",
+            "pays": "Arabie Saoudite",
+            "evenement": "Hachémites"
+        },
+        {
+            "date": "1916",
+            "pays": "Arabie Saoudite",
+            "evenement": "Rois du Hedjaz"
+        },
+        {
+            "date": "1921",
+            "pays": "Arabie Saoudite",
+            "evenement": "Sultanat du Nedjd"
+        },
+        {
+            "date": "1925",
+            "pays": "Arabie Saoudite",
+            "evenement": "fin des Chérif de La Mecque"
+        },
+        {
+            "date": "1926",
+            "pays": "Arabie Saoudite",
+            "evenement": "Dynastie saoudienne"
+        },
+        {
+            "date": "1926",
+            "pays": "Arabie Saoudite",
+            "evenement": "Royaume du Nedjd et du Hedjaz"
+        }
+    ],
+    "Israël": [
+        {
+            "date": "1098",
+            "pays": "Israël",
+            "evenement": "Fatimides"
+        },
+        {
+            "date": "1244",
+            "pays": "Israël",
+            "evenement": "Seldjoukide"
+        },
+        {
+            "date": "1250",
+            "pays": "Israël",
+            "evenement": "Mamelouks"
+        },
+        {
+            "date": "1516",
+            "pays": "Israël",
+            "evenement": "Empire Ottoman"
+        }
+    ],
+    "Palestine": [
+        {
+            "date": "638",
+            "pays": "Palestine",
+            "evenement": "Calife Omar"
+        },
+        {
+            "date": "644",
+            "pays": "Palestine",
+            "evenement": "Califat bien guidé"
+        },
+        {
+            "date": "661",
+            "pays": "Palestine",
+            "evenement": "Califat omeyyade"
+        },
+        {
+            "date": "755",
+            "pays": "Palestine",
+            "evenement": "Wali d’Égypte"
+        },
+        {
+            "date": "972",
+            "pays": "Palestine",
+            "evenement": "calife Fatimides"
+        },
+        {
+            "date": "1090",
+            "pays": "Palestine",
+            "evenement": "haschischins"
+        },
+        {
+            "date": "1250",
+            "pays": "Palestine",
+            "evenement": "Mamelouks"
+        },
+        {
+            "date": "1516",
+            "pays": "Palestine",
+            "evenement": "Empire Ottoman"
+        },
+        {
+            "date": "1701",
+            "pays": "Palestine",
+            "evenement": "pacha de Damas"
+        },
+        {
+            "date": "1703",
+            "pays": "Palestine",
+            "evenement": "naqib al-ashraf"
+        },
+        {
+            "date": "1705",
+            "pays": "Palestine",
+            "evenement": "Empire Ottoman"
+        }
+    ],
+    "Liban": [
+        {
+            "date": "1516",
+            "pays": "Liban",
+            "evenement": "Émirat du Mont-Liban"
+        },
+        {
+            "date": "1517",
+            "pays": "Liban",
+            "evenement": "dynastie des Assafs"
+        },
+        {
+            "date": "1544",
+            "pays": "Liban",
+            "evenement": "Dynastie des Maan"
+        },
+        {
+            "date": "1579",
+            "pays": "Liban",
+            "evenement": "Pachalik de Tripoli"
+        },
+        {
+            "date": "1660",
+            "pays": "Liban",
+            "evenement": "Eyalet de Sidon"
+        },
+        {
+            "date": "1697",
+            "pays": "Liban",
+            "evenement": "fin dynastie des Maan"
+        },
+        {
+            "date": "1697",
+            "pays": "Liban",
+            "evenement": "Dynastie des Chehab"
+        },
+        {
+            "date": "1842",
+            "pays": "Liban",
+            "evenement": "double caïmacanat"
+        },
+        {
+            "date": "1861",
+            "pays": "Liban",
+            "evenement": "Moutassarifat du Mont-Liban"
+        },
+        {
+            "date": "1861",
+            "pays": "Liban",
+            "evenement": "vilayet de Beyrouth"
+        },
+        {
+            "date": "1865",
+            "pays": "Liban",
+            "evenement": "vilayet de Syrie"
+        },
+        {
+            "date": "1915",
+            "pays": "Liban",
+            "evenement": "chute des ottomans"
+        }
+    ],
+    "Iran": [
+        {
+            "date": "637",
+            "pays": "Iran",
+            "evenement": "Calife Omar"
+        },
+        {
+            "date": "651",
+            "pays": "Iran",
+            "evenement": "Masmughans du Dumavand"
+        },
+        {
+            "date": "820",
+            "pays": "Iran",
+            "evenement": "Tahirides"
+        },
+        {
+            "date": "864",
+            "pays": "Iran",
+            "evenement": "Alavides"
+        },
+        {
+            "date": "875",
+            "pays": "Iran",
+            "evenement": "Dynastie samanide"
+        },
+        {
+            "date": "879",
+            "pays": "Iran",
+            "evenement": "Ghorides"
+        },
+        {
+            "date": "928",
+            "pays": "Iran",
+            "evenement": "Dynastie ziyaride"
+        },
+        {
+            "date": "932",
+            "pays": "Iran",
+            "evenement": "Bouyides"
+        },
+        {
+            "date": "934",
+            "pays": "Iran",
+            "evenement": "Dynastie bouyide"
+        },
+        {
+            "date": "963",
+            "pays": "Iran",
+            "evenement": "Empire ghaznévide"
+        },
+        {
+            "date": "1037",
+            "pays": "Iran",
+            "evenement": "Empire seldjoukide"
+        },
+        {
+            "date": "1040",
+            "pays": "Iran",
+            "evenement": "Empire seldjoukide"
+        },
+        {
+            "date": "1077",
+            "pays": "Iran",
+            "evenement": "Empire khorezmien"
+        },
+        {
+            "date": "1077",
+            "pays": "Iran",
+            "evenement": "Khwarezmchahs"
+        },
+        {
+            "date": "1118",
+            "pays": "Iran",
+            "evenement": "seldjoukide"
+        },
+        {
+            "date": "1176",
+            "pays": "Iran",
+            "evenement": "Ghorides"
+        },
+        {
+            "date": "1225",
+            "pays": "Iran",
+            "evenement": "Empire khwarezmien"
+        },
+        {
+            "date": "1256",
+            "pays": "Iran",
+            "evenement": "Ilkhanat de Perse"
+        },
+        {
+            "date": "1265",
+            "pays": "Iran",
+            "evenement": "Ilkhanat de Perse"
+        },
+        {
+            "date": "1306",
+            "pays": "Iran",
+            "evenement": "Ilkhanat de Perse"
+        },
+        {
+            "date": "1314",
+            "pays": "Iran",
+            "evenement": "Dynastie mozaffaride"
+        },
+        {
+            "date": "1335",
+            "pays": "Iran",
+            "evenement": "Indjouïdes"
+        },
+        {
+            "date": "1336",
+            "pays": "Iran",
+            "evenement": "Mozaffarides"
+        },
+        {
+            "date": "1370",
+            "pays": "Iran",
+            "evenement": "Empire timouride"
+        },
+        {
+            "date": "1370",
+            "pays": "Iran",
+            "evenement": "Empire khorezmien"
+        },
+        {
+            "date": "1405",
+            "pays": "Iran",
+            "evenement": "Empire khorezmien"
+        },
+        {
+            "date": "1501",
+            "pays": "Iran",
+            "evenement": "Empire séfévide"
+        },
+        {
+            "date": "1555",
+            "pays": "Iran",
+            "evenement": "Empire séfévide"
+        },
+        {
+            "date": "1722",
+            "pays": "Iran",
+            "evenement": "Afghans hotaki"
+        },
+        {
+            "date": "1736",
+            "pays": "Iran",
+            "evenement": "Dynastie afcharide"
+        },
+        {
+            "date": "1750",
+            "pays": "Iran",
+            "evenement": "Dynastie Zand"
+        },
+        {
+            "date": "1794",
+            "pays": "Iran",
+            "evenement": "Empire kadjar"
+        },
+        {
+            "date": "1925",
+            "pays": "Iran",
+            "evenement": "Dynastie Pahlavi"
+        },
+        {
+            "date": "1979",
+            "pays": "Iran",
+            "evenement": "fin des Pahlavi"
+        }
+    ],
+    "Syrie": [
+        {
+            "date": "661",
+            "pays": "Syrie",
+            "evenement": "Califat omeyyade"
+        },
+        {
+            "date": "796",
+            "pays": "Syrie",
+            "evenement": "Califat abbasside"
+        },
+        {
+            "date": "1104",
+            "pays": "Syrie",
+            "evenement": "Bourides"
+        },
+        {
+            "date": "1127",
+            "pays": "Syrie",
+            "evenement": "Zengides"
+        },
+        {
+            "date": "1169",
+            "pays": "Syrie",
+            "evenement": "Ayyoubides"
+        },
+        {
+            "date": "1250",
+            "pays": "Syrie",
+            "evenement": "Sultan mamelouk"
+        },
+        {
+            "date": "1516",
+            "pays": "Syrie",
+            "evenement": "fin du Sultan mamelouk"
+        },
+        {
+            "date": "1516",
+            "pays": "Syrie",
+            "evenement": "Empire ottoman"
+        },
+        {
+            "date": "1516",
+            "pays": "Syrie",
+            "evenement": "Émirat du Mont-Liban"
+        },
+        {
+            "date": "1517",
+            "pays": "Syrie",
+            "evenement": "émir druze"
+        },
+        {
+            "date": "1579",
+            "pays": "Syrie",
+            "evenement": "fin des Assaf"
+        },
+        {
+            "date": "1599",
+            "pays": "Syrie",
+            "evenement": "Pachalik de Damas"
+        },
+        {
+            "date": "1609",
+            "pays": "Syrie",
+            "evenement": "Pachalik d'Alep"
+        },
+        {
+            "date": "1635",
+            "pays": "Syrie",
+            "evenement": "fin des princes druzes"
+        },
+        {
+            "date": "1697",
+            "pays": "Syrie",
+            "evenement": "fin dynastie des Maan"
+        },
+        {
+            "date": "1697",
+            "pays": "Syrie",
+            "evenement": "Dynastie des Chehab"
+        },
+        {
+            "date": "1730",
+            "pays": "Syrie",
+            "evenement": "chef Dahir al-Umar"
+        },
+        {
+            "date": "1775",
+            "pays": "Syrie",
+            "evenement": "mamelouk de Bosnie"
+        },
+        {
+            "date": "1865",
+            "pays": "Syrie",
+            "evenement": "vilayet de Syrie"
+        },
+        {
+            "date": "1867",
+            "pays": "Syrie",
+            "evenement": "vilayet d'Alep"
+        },
+        {
+            "date": "1917",
+            "pays": "Syrie",
+            "evenement": "Hachémites"
+        },
+        {
+            "date": "1918",
+            "pays": "Syrie",
+            "evenement": "rois de Syrie"
+        },
+        {
+            "date": "1920",
+            "pays": "Syrie",
+            "evenement": "fin des rois"
+        }
+    ],
+    "Irak": [
+        {
+            "date": "750",
+            "pays": "Irak",
+            "evenement": "Califat abbasside"
+        },
+        {
+            "date": "809",
+            "pays": "Irak",
+            "evenement": "Califat abbasside"
+        },
+        {
+            "date": "945",
+            "pays": "Irak",
+            "evenement": "Dynastie bouyide"
+        },
+        {
+            "date": "1055",
+            "pays": "Irak",
+            "evenement": "Seldjoukides"
+        },
+        {
+            "date": "1157",
+            "pays": "Irak",
+            "evenement": "Abbassides"
+        },
+        {
+            "date": "1258",
+            "pays": "Irak",
+            "evenement": "Ilkhanat de Perse"
+        },
+        {
+            "date": "1335",
+            "pays": "Irak",
+            "evenement": "Djalayirides"
+        },
+        {
+            "date": "1394",
+            "pays": "Irak",
+            "evenement": "Timourides"
+        },
+        {
+            "date": "1405",
+            "pays": "Irak",
+            "evenement": "Timourides"
+        },
+        {
+            "date": "1411",
+            "pays": "Irak",
+            "evenement": "Qara Qoyunlu"
+        },
+        {
+            "date": "1479",
+            "pays": "Irak",
+            "evenement": "Aq Qoyunlu"
+        },
+        {
+            "date": "1490",
+            "pays": "Irak",
+            "evenement": "Aq Qoyunlu"
+        },
+        {
+            "date": "1508",
+            "pays": "Irak",
+            "evenement": "Séfévides"
+        },
+        {
+            "date": "1534",
+            "pays": "Irak",
+            "evenement": "Ottomans"
+        },
+        {
+            "date": "1624",
+            "pays": "Irak",
+            "evenement": "Séfévides"
+        },
+        {
+            "date": "1638",
+            "pays": "Irak",
+            "evenement": "Ottomans"
+        },
+        {
+            "date": "1917",
+            "pays": "Irak",
+            "evenement": "fin des ottomans"
+        },
+        {
+            "date": "1925",
+            "pays": "Irak",
+            "evenement": "Hachémites"
+        },
+        {
+            "date": "1946",
+            "pays": "Irak",
+            "evenement": "rois d'Irak"
+        },
+        {
+            "date": "1958",
+            "pays": "Irak",
+            "evenement": "fin des rois"
+        }
+    ],
+    "Jordanie": [
+        {
+            "date": "497",
+            "pays": "Jordanie",
+            "evenement": "Hachémites"
+        },
+        {
+            "date": "1919",
+            "pays": "Jordanie",
+            "evenement": "Hachémites"
+        },
+        {
+            "date": "1921",
+            "pays": "Jordanie",
+            "evenement": "Émirats de Transjordanie"
+        },
+        {
+            "date": "1946",
+            "pays": "Jordanie",
+            "evenement": "Royaume de Jordanie"
+        }
+    ],
+    "Mauritanie": [
+        {
+            "date": "758",
+            "pays": "Mauritanie",
+            "evenement": "Émirat de Sijilmassa"
+        },
+        {
+            "date": "1040",
+            "pays": "Mauritanie",
+            "evenement": "Almoravides"
+        },
+        {
+            "date": "1055",
+            "pays": "Mauritanie",
+            "evenement": "Empire du Ghana"
+        },
+        {
+            "date": "1300",
+            "pays": "Mauritanie",
+            "evenement": "Banî Hassan"
+        },
+        {
+            "date": "1464",
+            "pays": "Mauritanie",
+            "evenement": "Empire Songhai"
+        },
+        {
+            "date": "1560",
+            "pays": "Mauritanie",
+            "evenement": "dynastie des Saadiens"
+        },
+        {
+            "date": "1800",
+            "pays": "Mauritanie",
+            "evenement": "fin de l'émirat"
+        }
+    ],
+    "Egypte": [
+        {
+            "date": "639",
+            "pays": "Egypte",
+            "evenement": "califat Rachidoune"
+        },
+        {
+            "date": "661",
+            "pays": "Egypte",
+            "evenement": "dynastie Omeyades"
+        },
+        {
+            "date": "750",
+            "pays": "Egypte",
+            "evenement": "dynastie Abbassides"
+        },
+        {
+            "date": "868",
+            "pays": "Egypte",
+            "evenement": "dynastie Toulounides"
+        },
+        {
+            "date": "935",
+            "pays": "Egypte",
+            "evenement": "dynastie Ikhchidides"
+        },
+        {
+            "date": "969",
+            "pays": "Egypte",
+            "evenement": "dynastie Fatimides"
+        },
+        {
+            "date": "1171",
+            "pays": "Egypte",
+            "evenement": "dynastie Ayyoubides"
+        },
+        {
+            "date": "1250",
+            "pays": "Egypte",
+            "evenement": "sultanat Mamelouk"
+        },
+        {
+            "date": "1261",
+            "pays": "Egypte",
+            "evenement": "Califat abbasside"
+        },
+        {
+            "date": "1517",
+            "pays": "Egypte",
+            "evenement": "Empire Ottoman"
+        },
+        {
+            "date": "1798",
+            "pays": "Egypte",
+            "evenement": "occupation Fr et GB"
+        },
+        {
+            "date": "1867",
+            "pays": "Egypte",
+            "evenement": "Khédivat d'Égypte"
+        },
+        {
+            "date": "1914",
+            "pays": "Egypte",
+            "evenement": "Sultanat d'Égypte"
+        },
+        {
+            "date": "1922",
+            "pays": "Egypte",
+            "evenement": "Royaume d'Égypte"
+        },
+        {
+            "date": "1953",
+            "pays": "Egypte",
+            "evenement": "Fin du Royaume"
+        }
+    ],
+    "Libye": [
+        {
+            "date": "1228",
+            "pays": "Libye",
+            "evenement": "Hafsides"
+        },
+        {
+            "date": "1300",
+            "pays": "Libye",
+            "evenement": "Sultanat hafside"
+        },
+        {
+            "date": "1551",
+            "pays": "Libye",
+            "evenement": "Régence de Tripoli"
+        },
+        {
+            "date": "1919",
+            "pays": "Libye",
+            "evenement": "Émirat de Cyrénaïque"
+        },
+        {
+            "date": "1969",
+            "pays": "Libye",
+            "evenement": "Jamahiriya arabe"
+        }
+    ],
+    "Tunisie": [
+        {
+            "date": "661",
+            "pays": "Tunisie",
+            "evenement": "Califat omeyyade"
+        },
+        {
+            "date": "750",
+            "pays": "Tunisie",
+            "evenement": "Califat abbasside"
+        },
+        {
+            "date": "800",
+            "pays": "Tunisie",
+            "evenement": "Aghlabides"
+        },
+        {
+            "date": "909",
+            "pays": "Tunisie",
+            "evenement": "Califat fatimide"
+        },
+        {
+            "date": "984",
+            "pays": "Tunisie",
+            "evenement": "Zirides"
+        },
+        {
+            "date": "1067",
+            "pays": "Tunisie",
+            "evenement": "Meknassas"
+        },
+        {
+            "date": "1121",
+            "pays": "Tunisie",
+            "evenement": "Dynastie almohade"
+        },
+        {
+            "date": "1228",
+            "pays": "Tunisie",
+            "evenement": "Sultanat hafside de Tunis"
+        },
+        {
+            "date": "1300",
+            "pays": "Tunisie",
+            "evenement": "Sultanat hafside"
+        },
+        {
+            "date": "1574",
+            "pays": "Tunisie",
+            "evenement": "Régence de Tunis"
+        },
+        {
+            "date": "1593",
+            "pays": "Tunisie",
+            "evenement": "Dynastie mouradite"
+        },
+        {
+            "date": "1705",
+            "pays": "Tunisie",
+            "evenement": "Dynastie husseinite"
+        }
+    ],
+    "Algérie": [
+        {
+            "date": "661",
+            "pays": "Algérie",
+            "evenement": "Califat omeyyade"
+        },
+        {
+            "date": "742",
+            "pays": "Algérie",
+            "evenement": "Royaume sufrite"
+        },
+        {
+            "date": "777",
+            "pays": "Algérie",
+            "evenement": "Rostémides"
+        },
+        {
+            "date": "789",
+            "pays": "Algérie",
+            "evenement": "Idrissides"
+        },
+        {
+            "date": "790",
+            "pays": "Algérie",
+            "evenement": "Ifrenides"
+        },
+        {
+            "date": "800",
+            "pays": "Algérie",
+            "evenement": "Aghlabides"
+        },
+        {
+            "date": "970",
+            "pays": "Algérie",
+            "evenement": "Maghraouas"
+        },
+        {
+            "date": "976",
+            "pays": "Algérie",
+            "evenement": "Zirides"
+        },
+        {
+            "date": "1014",
+            "pays": "Algérie",
+            "evenement": "Hammadides"
+        },
+        {
+            "date": "1057",
+            "pays": "Algérie",
+            "evenement": "Zirides"
+        },
+        {
+            "date": "1067",
+            "pays": "Algérie",
+            "evenement": "Meknassas"
+        },
+        {
+            "date": "1121",
+            "pays": "Algérie",
+            "evenement": "Dynastie almohade"
+        },
+        {
+            "date": "1235",
+            "pays": "Algérie",
+            "evenement": "Sultanat zianide"
+        },
+        {
+            "date": "1285",
+            "pays": "Algérie",
+            "evenement": "Sultanat de Béjaïa"
+        },
+        {
+            "date": "1285",
+            "pays": "Algérie",
+            "evenement": "Émirat Hafside"
+        },
+        {
+            "date": "1479",
+            "pays": "Algérie",
+            "evenement": "Monarchie catholique espagnole"
+        },
+        {
+            "date": "1510",
+            "pays": "Algérie",
+            "evenement": "Royaume des Beni Abbès"
+        },
+        {
+            "date": "1515",
+            "pays": "Algérie",
+            "evenement": "Royaume de Koukou"
+        },
+        {
+            "date": "1516",
+            "pays": "Algérie",
+            "evenement": "Régence d'Alger"
+        },
+        {
+            "date": "1516",
+            "pays": "Algérie",
+            "evenement": "Sultanat Raïs"
+        },
+        {
+            "date": "1533",
+            "pays": "Algérie",
+            "evenement": "khalifa des Beylerbeys"
+        },
+        {
+            "date": "1587",
+            "pays": "Algérie",
+            "evenement": "Pachas"
+        },
+        {
+            "date": "1659",
+            "pays": "Algérie",
+            "evenement": "Aghas"
+        },
+        {
+            "date": "1671",
+            "pays": "Algérie",
+            "evenement": "Deys"
+        },
+        {
+            "date": "1833",
+            "pays": "Algérie",
+            "evenement": "État d'Abdelkader"
+        }
+    ],
+    "Maroc": [
+        {
+            "date": "661",
+            "pays": "Maroc",
+            "evenement": "Califat omeyyade"
+        },
+        {
+            "date": "710",
+            "pays": "Maroc",
+            "evenement": "Émirat de Nekor"
+        },
+        {
+            "date": "740",
+            "pays": "Maroc",
+            "evenement": "Wilaya d'Ifriqiya"
+        },
+        {
+            "date": "744",
+            "pays": "Maroc",
+            "evenement": "Royaume des Berghouata"
+        },
+        {
+            "date": "758",
+            "pays": "Maroc",
+            "evenement": "Émirat de Sijilmassa"
+        },
+        {
+            "date": "789",
+            "pays": "Maroc",
+            "evenement": "Dynastie idrisside"
+        },
+        {
+            "date": "790",
+            "pays": "Maroc",
+            "evenement": "Ifrenides"
+        },
+        {
+            "date": "909",
+            "pays": "Maroc",
+            "evenement": "Califat fatimide"
+        },
+        {
+            "date": "929",
+            "pays": "Maroc",
+            "evenement": "Califat de Cordoue"
+        },
+        {
+            "date": "984",
+            "pays": "Maroc",
+            "evenement": "Meknassas"
+        },
+        {
+            "date": "1001",
+            "pays": "Maroc",
+            "evenement": "Maghraouas"
+        },
+        {
+            "date": "1058",
+            "pays": "Maroc",
+            "evenement": "Almoravides"
+        },
+        {
+            "date": "1060",
+            "pays": "Maroc",
+            "evenement": "Dynastie almoravide"
+        },
+        {
+            "date": "1121",
+            "pays": "Maroc",
+            "evenement": "Almohades"
+        },
+        {
+            "date": "1145",
+            "pays": "Maroc",
+            "evenement": "Dynastie almohade"
+        },
+        {
+            "date": "1244",
+            "pays": "Maroc",
+            "evenement": "Dynastie mérinide"
+        },
+        {
+            "date": "1465",
+            "pays": "Maroc",
+            "evenement": "Dynastie idrisside"
+        },
+        {
+            "date": "1472",
+            "pays": "Maroc",
+            "evenement": "Dynastie wattasside"
+        },
+        {
+            "date": "1549",
+            "pays": "Maroc",
+            "evenement": "Dynastie saadienne"
+        },
+        {
+            "date": "1659",
+            "pays": "Maroc",
+            "evenement": "Mouvement dilaïte"
+        },
+        {
+            "date": "1666",
+            "pays": "Maroc",
+            "evenement": "Dynastie alaouite"
+        }
+    ],
+    "El Andalous": [
+        {
+            "date": "661",
+            "pays": "El Andalous",
+            "evenement": "Califat omeyyade"
+        },
+        {
+            "date": "711",
+            "pays": "El Andalous",
+            "evenement": "Emirat de Damas"
+        },
+        {
+            "date": "755",
+            "pays": "El Andalous",
+            "evenement": "dynastie Omeyades"
+        },
+        {
+            "date": "755",
+            "pays": "El Andalous",
+            "evenement": "Emirat de Cordoue"
+        },
+        {
+            "date": "929",
+            "pays": "El Andalous",
+            "evenement": "Califat de Cordoue"
+        },
+        {
+            "date": "976",
+            "pays": "El Andalous",
+            "evenement": "dynastie amiride"
+        },
+        {
+            "date": "989",
+            "pays": "El Andalous",
+            "evenement": "Maghraouas"
+        },
+        {
+            "date": "1009",
+            "pays": "El Andalous",
+            "evenement": "taïfas"
+        },
+        {
+            "date": "1086",
+            "pays": "El Andalous",
+            "evenement": "dynastie des Almoravides"
+        },
+        {
+            "date": "1145",
+            "pays": "El Andalous",
+            "evenement": "taïfas"
+        },
+        {
+            "date": "1147",
+            "pays": "El Andalous",
+            "evenement": "dynastie des Almohades"
+        },
+        {
+            "date": "1224",
+            "pays": "El Andalous",
+            "evenement": "taïfas"
+        },
+        {
+            "date": "1238",
+            "pays": "El Andalous",
+            "evenement": "dynastie des Nasrides"
+        }
+    ],
+    "Septimanie": [
+        {
+            "date": "711",
+            "pays": "Septimanie",
+            "evenement": "invasion arabe"
+        },
+        {
+            "date": "720",
+            "pays": "Septimanie",
+            "evenement": "wali d'Al-Andalus"
+        },
+        {
+            "date": "732",
+            "pays": "Septimanie",
+            "evenement": "arrêt des arabes"
+        },
+        {
+            "date": "759",
+            "pays": "Septimanie",
+            "evenement": "fin du wali d'Al-Andalus"
+        }
+    ],
+    "Francie": [
+        {
+            "date": "711",
+            "pays": "Francie",
+            "evenement": "invasion arabe"
+        },
+        {
+            "date": "758",
+            "pays": "Francie",
+            "evenement": "arrêt des arabes"
+        }
+    ],
+    "Italie": [
+        {
+            "date": "652",
+            "pays": "Italie",
+            "evenement": "invasion de la Sicile"
+        },
+        {
+            "date": "669",
+            "pays": "Italie",
+            "evenement": "invasion de la Sicile"
+        },
+        {
+            "date": "710",
+            "pays": "Italie",
+            "evenement": "invasion en Sardaigne"
+        },
+        {
+            "date": "720",
+            "pays": "Italie",
+            "evenement": "invasion de la Corse"
+        },
+        {
+            "date": "720",
+            "pays": "Italie",
+            "evenement": "invasion en Sardaigne"
+        },
+        {
+            "date": "720",
+            "pays": "Italie",
+            "evenement": "invasion de la Sicile"
+        },
+        {
+            "date": "778",
+            "pays": "Italie",
+            "evenement": "invasion en Sardaigne"
+        },
+        {
+            "date": "806",
+            "pays": "Italie",
+            "evenement": "invasion de la Corse"
+        },
+        {
+            "date": "821",
+            "pays": "Italie",
+            "evenement": "invasion en Sardaigne"
+        },
+        {
+            "date": "827",
+            "pays": "Italie",
+            "evenement": "Aghlabides en Sicile"
+        },
+        {
+            "date": "846",
+            "pays": "Italie",
+            "evenement": "barbaresques"
+        },
+        {
+            "date": "916",
+            "pays": "Italie",
+            "evenement": "Fatimides en Sicile"
+        },
+        {
+            "date": "998",
+            "pays": "Italie",
+            "evenement": "émir de Sicile"
+        },
+        {
+            "date": "1091",
+            "pays": "Italie",
+            "evenement": "fin de l'émirat de Sicile"
+        },
+        {
+            "date": "1480",
+            "pays": "Italie",
+            "evenement": "barbaresques"
+        }
+    ],
+    "Croatie": [
+        {
+            "date": "1123",
+            "pays": "Croatie",
+            "evenement": "barbaresques"
+        }
+    ],
+    "Autriche": [
+        {
+            "date": "1683",
+            "pays": "Autriche",
+            "evenement": "défaite ottomane"
+        }
+    ],
+    "Hongrie": [
+        {
+            "date": "1541",
+            "pays": "Hongrie",
+            "evenement": "invasion ottomane"
+        },
+        {
+            "date": "1544",
+            "pays": "Hongrie",
+            "evenement": "invasion ottomane"
+        },
+        {
+            "date": "1566",
+            "pays": "Hongrie",
+            "evenement": "invasion ottomane"
+        }
+    ],
+    "Serbie": [
+        {
+            "date": "1390",
+            "pays": "Serbie",
+            "evenement": "vassale ottomane"
+        },
+        {
+            "date": "1402",
+            "pays": "Serbie",
+            "evenement": "despotat de Serbie"
+        },
+        {
+            "date": "1882",
+            "pays": "Serbie",
+            "evenement": "fin de la vassalité ottomane"
+        }
+    ],
+    "Kosovo": [
+        {
+            "date": "1389",
+            "pays": "Kosovo",
+            "evenement": "victoire des ottomans"
+        },
+        {
+            "date": "1421",
+            "pays": "Kosovo",
+            "evenement": "despotat de Serbie"
+        },
+        {
+            "date": "1454",
+            "pays": "Kosovo",
+            "evenement": "Empire Ottoman"
+        },
+        {
+            "date": "1882",
+            "pays": "Kosovo",
+            "evenement": "fin des ottomans"
+        }
+    ],
+    "Bosnie-Herzégovine": [
+        {
+            "date": "1463",
+            "pays": "Bosnie-Herzégovine",
+            "evenement": "invasion ottomane"
+        },
+        {
+            "date": "1580",
+            "pays": "Bosnie-Herzégovine",
+            "evenement": "Pachalik de Bosnie"
+        },
+        {
+            "date": "1867",
+            "pays": "Bosnie-Herzégovine",
+            "evenement": "Vilayet de Bosnie"
+        },
+        {
+            "date": "1878",
+            "pays": "Bosnie-Herzégovine",
+            "evenement": "Condominium de Bosnie"
+        },
+        {
+            "date": "1918",
+            "pays": "Bosnie-Herzégovine",
+            "evenement": "fin des ottomans"
+        }
+    ],
+    "Macédoine du Nord": [
+        {
+            "date": "1370",
+            "pays": "Macédoine du Nord",
+            "evenement": "Vilayet de Skopje"
+        },
+        {
+            "date": "1912",
+            "pays": "Macédoine du Nord",
+            "evenement": "fin des ottomans"
+        }
+    ],
+    "Albanie": [
+        {
+            "date": "1474",
+            "pays": "Albanie",
+            "evenement": "Empire Ottoman"
+        },
+        {
+            "date": "1912",
+            "pays": "Albanie",
+            "evenement": "fin des ottomans"
+        }
+    ],
+    "Chypre": [
+        {
+            "date": "1571",
+            "pays": "Chypre",
+            "evenement": "Empire Ottoman"
+        },
+        {
+            "date": "1878",
+            "pays": "Chypre",
+            "evenement": "fin des ottomans"
+        },
+        {
+            "date": "1974",
+            "pays": "Chypre",
+            "evenement": "invasion turque du Nord"
+        }
+    ],
+    "Grèce": [
+        {
+            "date": "1453",
+            "pays": "Grèce",
+            "evenement": "Empire Ottoman"
+        },
+        {
+            "date": "1646",
+            "pays": "Grèce",
+            "evenement": "prise de la Crète"
+        },
+        {
+            "date": "1829",
+            "pays": "Grèce",
+            "evenement": "fin des ottomans"
+        },
+        {
+            "date": "1893",
+            "pays": "Grèce",
+            "evenement": "libération de la Crète"
+        }
+    ],
+    "Ukraine": [
+        {
+            "date": "1441",
+            "pays": "Ukraine",
+            "evenement": "khanat de Crimée"
+        },
+        {
+            "date": "1466",
+            "pays": "Ukraine",
+            "evenement": "Khanat d'Astrakhan"
+        },
+        {
+            "date": "1783",
+            "pays": "Ukraine",
+            "evenement": "fin du khanat de Crimée"
+        }
+    ],
+    "Azerbaïdjan": [
+        {
+            "date": "633",
+            "pays": "Azerbaïdjan",
+            "evenement": "Conquête musulmane"
+        },
+        {
+            "date": "1037",
+            "pays": "Azerbaïdjan",
+            "evenement": "Empire seldjoukide"
+        },
+        {
+            "date": "1040",
+            "pays": "Azerbaïdjan",
+            "evenement": "Empire seldjoukide"
+        },
+        {
+            "date": "1137",
+            "pays": "Azerbaïdjan",
+            "evenement": "atabegs d'Azerbaïdjan"
+        },
+        {
+            "date": "1220",
+            "pays": "Azerbaïdjan",
+            "evenement": "Empire khwarezmien"
+        },
+        {
+            "date": "1225",
+            "pays": "Azerbaïdjan",
+            "evenement": "Khwarezmchahs"
+        },
+        {
+            "date": "1265",
+            "pays": "Azerbaïdjan",
+            "evenement": "Ilkhanat de Perse"
+        },
+        {
+            "date": "1405",
+            "pays": "Azerbaïdjan",
+            "evenement": "Timourides"
+        },
+        {
+            "date": "1411",
+            "pays": "Azerbaïdjan",
+            "evenement": "Qara Qoyunlu"
+        },
+        {
+            "date": "1479",
+            "pays": "Azerbaïdjan",
+            "evenement": "Aq Qoyunlu"
+        },
+        {
+            "date": "1501",
+            "pays": "Azerbaïdjan",
+            "evenement": "Empire séfévide"
+        },
+        {
+            "date": "1548",
+            "pays": "Azerbaïdjan",
+            "evenement": "Chirvanchah"
+        },
+        {
+            "date": "1730",
+            "pays": "Azerbaïdjan",
+            "evenement": "Khanats de Caucase"
+        },
+        {
+            "date": "1736",
+            "pays": "Azerbaïdjan",
+            "evenement": "Afcharides"
+        },
+        {
+            "date": "1747",
+            "pays": "Azerbaïdjan",
+            "evenement": "Khanat d'Ourmia"
+        },
+        {
+            "date": "1789",
+            "pays": "Azerbaïdjan",
+            "evenement": "Dynastie Kadjar"
+        },
+        {
+            "date": "1925",
+            "pays": "Azerbaïdjan",
+            "evenement": "fin des Kadjar"
+        }
+    ],
+    "Turkménistan": [
+        {
+            "date": "1077",
+            "pays": "Turkménistan",
+            "evenement": "Empire khorezmien"
+        },
+        {
+            "date": "1077",
+            "pays": "Turkménistan",
+            "evenement": "Khwarezmchahs"
+        },
+        {
+            "date": "1118",
+            "pays": "Turkménistan",
+            "evenement": "Empire seldjoukide"
+        },
+        {
+            "date": "1256",
+            "pays": "Turkménistan",
+            "evenement": "ilsamisation des Ilkhanides"
+        },
+        {
+            "date": "1285",
+            "pays": "Turkménistan",
+            "evenement": "Esrefogulları"
+        },
+        {
+            "date": "1309",
+            "pays": "Turkménistan",
+            "evenement": "Empire timouride"
+        },
+        {
+            "date": "1321",
+            "pays": "Turkménistan",
+            "evenement": "Hamidides"
+        },
+        {
+            "date": "1511",
+            "pays": "Turkménistan",
+            "evenement": "Khanat de Khiva"
+        },
+        {
+            "date": "1709",
+            "pays": "Turkménistan",
+            "evenement": "dynastie Hotaki"
+        },
+        {
+            "date": "1736",
+            "pays": "Turkménistan",
+            "evenement": "Afcharides"
+        },
+        {
+            "date": "1747",
+            "pays": "Turkménistan",
+            "evenement": "Empire durrani"
+        },
+        {
+            "date": "1826",
+            "pays": "Turkménistan",
+            "evenement": "fin des Durranis"
+        }
+    ],
+    "Ouzbékistan": [
+        {
+            "date": "706",
+            "pays": "Ouzbékistan",
+            "evenement": "invasion arabe"
+        },
+        {
+            "date": "712",
+            "pays": "Ouzbékistan",
+            "evenement": "Omeyyades"
+        },
+        {
+            "date": "747",
+            "pays": "Ouzbékistan",
+            "evenement": "Abbassides"
+        },
+        {
+            "date": "819",
+            "pays": "Ouzbékistan",
+            "evenement": "Samanides perses"
+        },
+        {
+            "date": "875",
+            "pays": "Ouzbékistan",
+            "evenement": "Dynastie samanide"
+        },
+        {
+            "date": "920",
+            "pays": "Ouzbékistan",
+            "evenement": "Qarakhanides"
+        },
+        {
+            "date": "1040",
+            "pays": "Ouzbékistan",
+            "evenement": "Seldjoukides turcs"
+        },
+        {
+            "date": "1077",
+            "pays": "Ouzbékistan",
+            "evenement": "Empire khwarezmien"
+        },
+        {
+            "date": "1077",
+            "pays": "Ouzbékistan",
+            "evenement": "Khwarezmchahs"
+        },
+        {
+            "date": "1212",
+            "pays": "Ouzbékistan",
+            "evenement": "Khwârazm-Shahs perso-turcs"
+        },
+        {
+            "date": "1220",
+            "pays": "Ouzbékistan",
+            "evenement": "Khanat de Djaghataï"
+        },
+        {
+            "date": "1220",
+            "pays": "Ouzbékistan",
+            "evenement": "Khwarezmchahs"
+        },
+        {
+            "date": "1229",
+            "pays": "Ouzbékistan",
+            "evenement": "Tchaghataïdes"
+        },
+        {
+            "date": "1347",
+            "pays": "Ouzbékistan",
+            "evenement": "émir Kazaghan"
+        },
+        {
+            "date": "1360",
+            "pays": "Ouzbékistan",
+            "evenement": "Barlas"
+        },
+        {
+            "date": "1370",
+            "pays": "Ouzbékistan",
+            "evenement": "Empire khorezmien"
+        },
+        {
+            "date": "1394",
+            "pays": "Ouzbékistan",
+            "evenement": "Timourides"
+        },
+        {
+            "date": "1429",
+            "pays": "Ouzbékistan",
+            "evenement": "Chaybanides"
+        },
+        {
+            "date": "1511",
+            "pays": "Ouzbékistan",
+            "evenement": "Khanat de Khiva"
+        },
+        {
+            "date": "1555",
+            "pays": "Ouzbékistan",
+            "evenement": "Djanides"
+        },
+        {
+            "date": "1598",
+            "pays": "Ouzbékistan",
+            "evenement": "khanat de Boukhara"
+        },
+        {
+            "date": "1709",
+            "pays": "Ouzbékistan",
+            "evenement": "Khanat de Kokand"
+        },
+        {
+            "date": "1747",
+            "pays": "Ouzbékistan",
+            "evenement": "Empire durrani"
+        },
+        {
+            "date": "1876",
+            "pays": "Ouzbékistan",
+            "evenement": "fin du Khanat"
+        },
+        {
+            "date": "1920",
+            "pays": "Ouzbékistan",
+            "evenement": "Beylicat de Mastchoh"
+        }
+    ],
+    "Kirghizistan": [
+        {
+            "date": "840",
+            "pays": "Kirghizistan",
+            "evenement": "Qarakhanides"
+        },
+        {
+            "date": "1124",
+            "pays": "Kirghizistan",
+            "evenement": "Kara Khitans"
+        },
+        {
+            "date": "1510",
+            "pays": "Kirghizistan",
+            "evenement": "Chaybanides"
+        },
+        {
+            "date": "1709",
+            "pays": "Kirghizistan",
+            "evenement": "Khanat de Kokand"
+        },
+        {
+            "date": "1800",
+            "pays": "Kirghizistan",
+            "evenement": "Khanat dzoungar"
+        },
+        {
+            "date": "1876",
+            "pays": "Kirghizistan",
+            "evenement": "fin du Khanat"
+        }
+    ],
+    "Tadjikistan": [
+        {
+            "date": "706",
+            "pays": "Tadjikistan",
+            "evenement": "invasion arabe"
+        },
+        {
+            "date": "712",
+            "pays": "Tadjikistan",
+            "evenement": "Omeyyades"
+        },
+        {
+            "date": "747",
+            "pays": "Tadjikistan",
+            "evenement": "Abbassides"
+        },
+        {
+            "date": "819",
+            "pays": "Tadjikistan",
+            "evenement": "calife abbasside"
+        },
+        {
+            "date": "821",
+            "pays": "Tadjikistan",
+            "evenement": "émirat tahiride"
+        },
+        {
+            "date": "873",
+            "pays": "Tadjikistan",
+            "evenement": "émirat saffaride"
+        },
+        {
+            "date": "999",
+            "pays": "Tadjikistan",
+            "evenement": "Qarakhanides"
+        },
+        {
+            "date": "1598",
+            "pays": "Tadjikistan",
+            "evenement": "khanat de Boukhara"
+        },
+        {
+            "date": "1709",
+            "pays": "Tadjikistan",
+            "evenement": "Khanat de Kokand"
+        },
+        {
+            "date": "1868",
+            "pays": "Tadjikistan",
+            "evenement": "fin du Khanat"
+        }
+    ],
+    "Kazakhstan": [
+        {
+            "date": "840",
+            "pays": "Kazakhstan",
+            "evenement": "Qarakhanides"
+        },
+        {
+            "date": "1220",
+            "pays": "Kazakhstan",
+            "evenement": "Khanat de Djaghataï"
+        },
+        {
+            "date": "1326",
+            "pays": "Kazakhstan",
+            "evenement": "Mogholistan musulman"
+        },
+        {
+            "date": "1456",
+            "pays": "Kazakhstan",
+            "evenement": "Khanat kazakh"
+        },
+        {
+            "date": "1501",
+            "pays": "Kazakhstan",
+            "evenement": "État de Tachkent"
+        },
+        {
+            "date": "1715",
+            "pays": "Kazakhstan",
+            "evenement": "Jüz"
+        },
+        {
+            "date": "1801",
+            "pays": "Kazakhstan",
+            "evenement": "khanat kazakh"
+        },
+        {
+            "date": "1847",
+            "pays": "Kazakhstan",
+            "evenement": "fin du Khanat"
+        }
+    ],
+    "Afghanistan": [
+        {
+            "date": "861",
+            "pays": "Afghanistan",
+            "evenement": "Saffarides"
+        },
+        {
+            "date": "879",
+            "pays": "Afghanistan",
+            "evenement": "Ghorides"
+        },
+        {
+            "date": "962",
+            "pays": "Afghanistan",
+            "evenement": "Empire ghaznévide"
+        },
+        {
+            "date": "1077",
+            "pays": "Afghanistan",
+            "evenement": "Khwarezmchahs"
+        },
+        {
+            "date": "1212",
+            "pays": "Afghanistan",
+            "evenement": "Khwarezmchahs"
+        },
+        {
+            "date": "1212",
+            "pays": "Afghanistan",
+            "evenement": "Empire khwarezmien"
+        },
+        {
+            "date": "1220",
+            "pays": "Afghanistan",
+            "evenement": "Khwarezmchahs"
+        },
+        {
+            "date": "1336",
+            "pays": "Afghanistan",
+            "evenement": "Tchoupanides"
+        },
+        {
+            "date": "1370",
+            "pays": "Afghanistan",
+            "evenement": "Timourides"
+        },
+        {
+            "date": "1405",
+            "pays": "Afghanistan",
+            "evenement": "Empire khorezmien"
+        },
+        {
+            "date": "1722",
+            "pays": "Afghanistan",
+            "evenement": "Afghans hotaki"
+        },
+        {
+            "date": "1747",
+            "pays": "Afghanistan",
+            "evenement": "dynastie Durrani"
+        },
+        {
+            "date": "1918",
+            "pays": "Afghanistan",
+            "evenement": "fin de l'Empire afghan"
+        },
+        {
+            "date": "1919",
+            "pays": "Afghanistan",
+            "evenement": "Émirat d'Afghanistan"
+        },
+        {
+            "date": "1929",
+            "pays": "Afghanistan",
+            "evenement": "Royaume d'Afghanistan"
+        },
+        {
+            "date": "1973",
+            "pays": "Afghanistan",
+            "evenement": "chute du roi d'Afghanistan"
+        },
+        {
+            "date": "1992",
+            "pays": "Afghanistan",
+            "evenement": "Emirat afghan"
+        }
+    ],
+    "Xinjiang": [
+        {
+            "date": "766",
+            "pays": "Xinjiang",
+            "evenement": "Khaganat ouïgour"
+        },
+        {
+            "date": "1334",
+            "pays": "Xinjiang",
+            "evenement": "Mogholistan"
+        },
+        {
+            "date": "1339",
+            "pays": "Xinjiang",
+            "evenement": "Quatre oïrats"
+        }
+    ],
+    "Pakistan": [
+        {
+            "date": "1040",
+            "pays": "Pakistan",
+            "evenement": "Empire seldjoukide"
+        },
+        {
+            "date": "1176",
+            "pays": "Pakistan",
+            "evenement": "Ghorides"
+        },
+        {
+            "date": "1206",
+            "pays": "Pakistan",
+            "evenement": "Sultanat de Delhi"
+        },
+        {
+            "date": "1526",
+            "pays": "Pakistan",
+            "evenement": "Empire moghol"
+        },
+        {
+            "date": "1747",
+            "pays": "Pakistan",
+            "evenement": "Empire durrani"
+        },
+        {
+            "date": "1857",
+            "pays": "Pakistan",
+            "evenement": "fin d'Empire"
+        }
+    ],
+    "Indes": [
+        {
+            "date": "1206",
+            "pays": "Indes",
+            "evenement": "Sultanat de Delhi"
+        },
+        {
+            "date": "1352",
+            "pays": "Indes",
+            "evenement": "Sultanat du Bengale"
+        },
+        {
+            "date": "1384",
+            "pays": "Indes",
+            "evenement": "Sultanat du Gujarat"
+        },
+        {
+            "date": "1392",
+            "pays": "Indes",
+            "evenement": "Sultanat de Malva"
+        },
+        {
+            "date": "1470",
+            "pays": "Indes",
+            "evenement": "Bahmanî"
+        },
+        {
+            "date": "1481",
+            "pays": "Indes",
+            "evenement": "Bijapur"
+        },
+        {
+            "date": "1487",
+            "pays": "Indes",
+            "evenement": "Sultanats du Deccan"
+        },
+        {
+            "date": "1487",
+            "pays": "Indes",
+            "evenement": "Berar"
+        },
+        {
+            "date": "1487",
+            "pays": "Indes",
+            "evenement": "Golkonda"
+        },
+        {
+            "date": "1526",
+            "pays": "Indes",
+            "evenement": "Empire moghol"
+        },
+        {
+            "date": "1609",
+            "pays": "Indes",
+            "evenement": "Bîdâr"
+        },
+        {
+            "date": "1674",
+            "pays": "Indes",
+            "evenement": "Empire marathe"
+        },
+        {
+            "date": "1747",
+            "pays": "Indes",
+            "evenement": "Empire durrani"
+        },
+        {
+            "date": "1759",
+            "pays": "Indes",
+            "evenement": "Ahmadnagar"
+        },
+        {
+            "date": "1857",
+            "pays": "Indes",
+            "evenement": "fin d'Empire"
+        },
+        {
+            "date": "1858",
+            "pays": "Indes",
+            "evenement": "Raj britannique"
+        }
+    ],
+    "Indonésie": [
+        {
+            "date": "1257",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Ternate"
+        },
+        {
+            "date": "1267",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Pasai"
+        },
+        {
+            "date": "1274",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Tidore"
+        },
+        {
+            "date": "1310",
+            "pays": "Indonésie",
+            "evenement": "Royaume de Gowa"
+        },
+        {
+            "date": "1347",
+            "pays": "Indonésie",
+            "evenement": "Royaume de Pagaruyung"
+        },
+        {
+            "date": "1367",
+            "pays": "Indonésie",
+            "evenement": "Empire de Brunei"
+        },
+        {
+            "date": "1400",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Malacca"
+        },
+        {
+            "date": "1445",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Cirebon"
+        },
+        {
+            "date": "1450",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Sulu"
+        },
+        {
+            "date": "1476",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Demak"
+        },
+        {
+            "date": "1496",
+            "pays": "Indonésie",
+            "evenement": "Sultanat d'Aceh"
+        },
+        {
+            "date": "1526",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Banten"
+        },
+        {
+            "date": "1527",
+            "pays": "Indonésie",
+            "evenement": "Royaume de Jepara"
+        },
+        {
+            "date": "1568",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Langkat"
+        },
+        {
+            "date": "1585",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Mataram"
+        },
+        {
+            "date": "1630",
+            "pays": "Indonésie",
+            "evenement": "Sultanat d'Asahan"
+        },
+        {
+            "date": "1632",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Deli"
+        },
+        {
+            "date": "1723",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Siak"
+        },
+        {
+            "date": "1819",
+            "pays": "Indonésie",
+            "evenement": "Sultanat de Lingga-Riau"
+        }
+    ],
+    "Malaisie": [
+        {
+            "date": "1136",
+            "pays": "Malaisie",
+            "evenement": "Sultanat de Kedah"
+        },
+        {
+            "date": "1402",
+            "pays": "Malaisie",
+            "evenement": "Sultanat de Malacca"
+        },
+        {
+            "date": "1405",
+            "pays": "Malaisie",
+            "evenement": "Sultanat de Brunei"
+        },
+        {
+            "date": "1450",
+            "pays": "Malaisie",
+            "evenement": "Sultanat de Sulu"
+        },
+        {
+            "date": "1528",
+            "pays": "Malaisie",
+            "evenement": "Sultanat de Johor"
+        }
+    ],
+    "Maldives": [
+        {
+            "date": "1141",
+            "pays": "Maldives",
+            "evenement": "conversion du roi des Maldives"
+        }
+    ],
+    "Bruneï": [
+        {
+            "date": "1368",
+            "pays": "Bruneï",
+            "evenement": "Bandar Seri Begawan"
+        },
+        {
+            "date": "1368",
+            "pays": "Bruneï",
+            "evenement": "le sultan est malais"
+        },
+        {
+            "date": "1485",
+            "pays": "Bruneï",
+            "evenement": "Empire de Brunei"
+        },
+        {
+            "date": "1888",
+            "pays": "Bruneï",
+            "evenement": "fin de l'Empire"
+        },
+        {
+            "date": "1888",
+            "pays": "Bruneï",
+            "evenement": "Sultanat de Brunei"
+        }
+    ],
+    "Mongolie": [
+        {
+            "date": "1215",
+            "pays": "Mongolie",
+            "evenement": "invasion de Gengis Khan"
+        }
+    ],
+    "Russie": [
+        {
+            "date": "1450",
+            "pays": "Russie",
+            "evenement": "Sibir"
+        },
+        {
+            "date": "1452",
+            "pays": "Russie",
+            "evenement": "Khanat de Qasim"
+        },
+        {
+            "date": "1920",
+            "pays": "Russie",
+            "evenement": "Beylicat de Mastchoh"
+        }
+    ],
+    "Soudan": [
+        {
+            "date": "1504",
+            "pays": "Soudan",
+            "evenement": "Sultanat de Sennar"
+        },
+        {
+            "date": "1504",
+            "pays": "Soudan",
+            "evenement": "Founji"
+        },
+        {
+            "date": "1517",
+            "pays": "Soudan",
+            "evenement": "Province d'Egypte"
+        },
+        {
+            "date": "1885",
+            "pays": "Soudan",
+            "evenement": "Soudan mahdiste"
+        }
+    ],
+    "Somalie": [
+        {
+            "date": "1285",
+            "pays": "Somalie",
+            "evenement": "Sultanat d'Ifat"
+        },
+        {
+            "date": "1415",
+            "pays": "Somalie",
+            "evenement": "Sultanat d'Adal"
+        },
+        {
+            "date": "1450",
+            "pays": "Somalie",
+            "evenement": "Sultanat Ajuran"
+        },
+        {
+            "date": "1517",
+            "pays": "Somalie",
+            "evenement": "Empire ottoman"
+        }
+    ],
+    "Ethiopie": [
+        {
+            "date": "1471",
+            "pays": "Ethiopie",
+            "evenement": "fin du Sultanat"
+        },
+        {
+            "date": "1683",
+            "pays": "Ethiopie",
+            "evenement": "Empire Ottoman"
+        },
+        {
+            "date": "1850",
+            "pays": "Ethiopie",
+            "evenement": "Empire Omanais"
+        }
+    ],
+    "Érythrée": [
+        {
+            "date": "1279",
+            "pays": "Érythrée",
+            "evenement": "sultanat d'Ifat"
+        },
+        {
+            "date": "1415",
+            "pays": "Érythrée",
+            "evenement": "sultanat d'Adal"
+        }
+    ],
+    "Comores": [
+        {
+            "date": "650",
+            "pays": "Comores",
+            "evenement": "islamisation"
+        },
+        {
+            "date": "900",
+            "pays": "Comores",
+            "evenement": "domination perse"
+        },
+        {
+            "date": "1500",
+            "pays": "Comores",
+            "evenement": "chaféisme"
+        }
+    ],
+    "Yémen": [
+        {
+            "date": "1538",
+            "pays": "Yémen",
+            "evenement": "Eyalet du Yémen"
+        },
+        {
+            "date": "1608",
+            "pays": "Yémen",
+            "evenement": "Eyalet d'Adana"
+        },
+        {
+            "date": "1675",
+            "pays": "Yémen",
+            "evenement": "État qasmide"
+        },
+        {
+            "date": "1838",
+            "pays": "Yémen",
+            "evenement": "Aden"
+        },
+        {
+            "date": "1849",
+            "pays": "Yémen",
+            "evenement": "Eyalet du Yémen"
+        },
+        {
+            "date": "1867",
+            "pays": "Yémen",
+            "evenement": "Vilayet de Konya"
+        },
+        {
+            "date": "1872",
+            "pays": "Yémen",
+            "evenement": "vilayet du Yémen"
+        },
+        {
+            "date": "1910",
+            "pays": "Yémen",
+            "evenement": "Émirat idrisside d'Asir"
+        },
+        {
+            "date": "1918",
+            "pays": "Yémen",
+            "evenement": "Royaume mutawakkilite"
+        }
+    ],
+    "Oman": [
+        {
+            "date": "751",
+            "pays": "Oman",
+            "evenement": "Imamat d'Oman"
+        }
+    ],
+    "Emirats Arabes Unis": [
+        {
+            "date": "971",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "Ajman (émirat)"
+        },
+        {
+            "date": "1727",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "Charjah (émirat)"
+        },
+        {
+            "date": "1771",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "Abou Dabi (émirat)"
+        },
+        {
+            "date": "1771",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "Ras el Khaïmah (émirat)"
+        },
+        {
+            "date": "1775",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "Oumm al Qaïwaïn (émirat)"
+        },
+        {
+            "date": "1799",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "Dubaï (émirat)"
+        },
+        {
+            "date": "1820",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "États de la Trêve"
+        },
+        {
+            "date": "1876",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "Fujaïrah (émirat)"
+        },
+        {
+            "date": "1971",
+            "pays": "Emirats Arabes Unis",
+            "evenement": "Emirats Arabes Unis"
+        }
+    ],
+    "Koweït": [
+        {
+            "date": "1715",
+            "pays": "Koweït",
+            "evenement": "cheikh du Koweït"
+        }
+    ],
+    "Bahreïn": [
+        {
+            "date": "1782",
+            "pays": "Bahreïn",
+            "evenement": "domination perse"
+        },
+        {
+            "date": "1783",
+            "pays": "Bahreïn",
+            "evenement": "Règne des al-Khalifa"
+        }
+    ],
+    "Qatar": [
+        {
+            "date": "628",
+            "pays": "Qatar",
+            "evenement": "Mahomet"
+        },
+        {
+            "date": "632",
+            "pays": "Qatar",
+            "evenement": "Califat bien guidé"
+        },
+        {
+            "date": "1538",
+            "pays": "Qatar",
+            "evenement": "Empire ottoman"
+        }
+    ]
+}
