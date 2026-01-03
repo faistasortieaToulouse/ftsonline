@@ -1,0 +1,19 @@
+[
+  { "id": 1, "section": "Souverain Sacré", "titre": "Mikado (Tenno)", "description": "L'Empereur, souverain de droit divin et autorité spirituelle suprême." },
+  { "id": 2, "section": "Haute Noblesse (Kazoku)", "titre": "Kōshaku (Prince)", "description": "Rang le plus élevé de la pairie, réservé aux branches collatérales de la famille impériale et aux plus grands Daimyos." },
+  { "id": 3, "section": "Haute Noblesse (Kazoku)", "titre": "Kōshaku (Marquis)", "description": "Deuxième rang de la noblesse, attribué aux anciens seigneurs de domaines majeurs." },
+  { "id": 4, "section": "Haute Noblesse (Kazoku)", "titre": "Hakushaku (Comte)", "description": "Rang intermédiaire de la pairie, équivalent au titre de Comte." },
+  { "id": 5, "section": "Haute Noblesse (Kazoku)", "titre": "Shishaku (Vicomte)", "description": "Rang de noblesse équivalent au titre de Vicomte." },
+  { "id": 6, "section": "Haute Noblesse (Kazoku)", "titre": "Danshaku (Baron)", "description": "Dernier rang de la pairie Kazoku, équivalent au titre de Baron." },
+  { "id": 7, "section": "Gouvernement Militaire", "titre": "Shogun", "description": "Dictateur militaire et dirigeant effectif du pays, nommé par le Mikado." },
+  { "id": 8, "section": "Noblesse de Cour (Kuge)", "titre": "Sessho / Kanpaku", "description": "Régent ou Grand Conseiller de l'Empereur, rang civil le plus élevé." },
+  { "id": 9, "section": "Haute Noblesse Guerrière", "titre": "Daimyo", "description": "L'équivalent du Duc. Un grand seigneur terrien qui possède une armée de samouraïs." },
+  { "id": 10, "section": "Gouvernement Militaire", "titre": "Roju", "description": "Conseil des Anciens, principaux ministres et conseillers du Shogun." },
+  { "id": 11, "section": "Elite Guerrière", "titre": "Hatamoto", "description": "Le 'gardien de la bannière'. Samouraï de haut rang ayant un accès direct au Shogun." },
+  { "id": 12, "section": "Elite Guerrière", "titre": "Gokenin", "description": "Vassal direct du Shogun, rang inférieur au Hatamoto, sans droit d'audience." },
+  { "id": 13, "section": "Noblesse de Service", "titre": "Samouraï", "description": "Guerrier noble lié à un seigneur (Daimyo) par un serment de fidélité." },
+  { "id": 14, "section": "Noblesse de Service", "titre": "Mushashugyo", "description": "Guerrier en quête de perfectionnement, voyageant pour tester ses compétences." },
+  { "id": 15, "section": "Noblesse Déclassée", "titre": "Ronin", "description": "Un samouraï sans maître, errant et sans domaine (noble déclassé)." },
+  { "id": 16, "section": "Forces Auxiliaires", "titre": "Ashigaru", "description": "Soldat d'infanterie issu de la paysannerie, servant de garde ou de soutien." },
+  { "id": 17, "section": "Clergé Militaire", "titre": "Sohei", "description": "Moine-guerrier protégeant les temples et les domaines sacrés." }
+]

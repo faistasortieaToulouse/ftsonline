@@ -1,0 +1,8 @@
+[
+  { "id": 1, "section": "Souverain Suprême", "titre": "Padichah ou Chahanchah", "description": "Empereur, le 'Roi des Rois', détenteur de la souveraineté absolue." },
+  { "id": 2, "section": "Lignage Impérial", "titre": "Shah-i-buland iqbal", "description": "Prince impérial de haut rang, souvent l'héritier désigné au destin glorieux." },
+  { "id": 3, "section": "Haute Administration", "titre": "Pervane", "description": "Équivalent du Grand Vizir, assistant personnel du souverain et chef de l'administration." },
+  { "id": 4, "section": "Titres Souverains", "titre": "Chah", "description": "Roi, souverain d'un royaume ou d'une province importante sous l'autorité de l'Empereur." },
+  { "id": 5, "section": "Lignage Royal", "titre": "Chahzadé", "description": "Prince royal, fils ou descendant direct d'un Chah." },
+  { "id": 6, "section": "Haute Fonction", "titre": "Khédive", "description": "Vice-roi, gouverneur doté d'une autonomie importante et de pouvoirs régaliens." }
+]

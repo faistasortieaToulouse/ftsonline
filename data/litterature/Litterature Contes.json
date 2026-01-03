@@ -1,0 +1,22 @@
+[
+  { "classement": 1, "titre": "Le Petit Prince" },
+  { "classement": 2, "titre": "Les Aventures d'Alice au pays des merveilles" },
+  { "classement": 3, "titre": "La Petite Sirène" },
+  { "classement": 4, "titre": "Le Petit Chaperon rouge" },
+  { "classement": 5, "titre": "La Barbe bleue" },
+  { "classement": 6, "titre": "La Petite Fille aux allumettes" },
+  { "classement": 7, "titre": "Peau d'âne" },
+  { "classement": 8, "titre": "Blanche-Neige" },
+  { "classement": 9, "titre": "Le Maître chat ou le Chat botté" },
+  { "classement": 10, "titre": "La Belle et la Bête" },
+  { "classement": 11, "titre": "Contes (Grimm)" },
+  { "classement": 12, "titre": "Le Vilain Petit Canard" },
+  { "classement": 13, "titre": "La Belle au bois dormant" },
+  { "classement": 14, "titre": "Le Petit Poucet" },
+  { "classement": 15, "titre": "Les Contes de ma mère l'Oye" },
+  { "classement": 16, "titre": "Le joueur de flûte de Hamelin" },
+  { "classement": 17, "titre": "La Reine des neiges" },
+  { "classement": 18, "titre": "Peter Pan" },
+  { "classement": 19, "titre": "Contes (Andersen)" },
+  { "classement": 20, "titre": "Le Magicien d'Oz" }
+]

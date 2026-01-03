@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "section": "Source de Légitimité",
+    "titre": "Mahomet",
+    "description": "Le Prophète, fondateur de l'islam et source de toute autorité spirituelle et législative."
+  },
+  {
+    "id": 2,
+    "section": "Haute Autorité Religieuse",
+    "titre": "Mufti (Sunnite) / Mollah (Chiite)",
+    "description": "Interprète de la loi musulmane (Mufti) ou érudit religieux (Mollah) assurant la guidance doctrinale."
+  },
+  {
+    "id": 3,
+    "section": "Justice Impériale",
+    "titre": "Grand Cadi",
+    "description": "Le juge suprême de l'Empire, responsable de la nomination des magistrats et de la conformité légale de l'État."
+  },
+  {
+    "id": 4,
+    "section": "Justice Locale",
+    "titre": "Cadi",
+    "description": "Juge musulman exerçant dans les cités et provinces, tranchant les litiges selon la Charia."
+  },
+  {
+    "id": 5,
+    "section": "Justice Locale",
+    "titre": "Adel",
+    "description": "Notaire musulman, témoin honorable certifiant les actes juridiques et les contrats."
+  },
+  {
+    "id": 6,
+    "section": "Ordre Public",
+    "titre": "Sahib as-Sulta",
+    "description": "Chef de la police, responsable de l'ordre public, de la sécurité des villes et de l'exécution des peines."
+  },
+  {
+    "id": 7,
+    "section": "Lignage Historique",
+    "titre": "Tabi‘un",
+    "description": "Les Successeurs. Génération ayant suivi les compagnons de Mahomet, piliers de la transmission du savoir."
+  }
+]

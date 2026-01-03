@@ -1,0 +1,16 @@
+[
+  { "id": 1, "section": "Autorité Spirituelle", "titre": "Brahmane (Rajpurohit)", "description": "Prêtre et conseiller spirituel du roi, garant de l'ordre cosmique (Dharma)." },
+  { "id": 2, "section": "Titres Souverains", "titre": "Samrat", "description": "Empereur ou monarque universel, souverain des rois (tradition hindoue)." },
+  { "id": 3, "section": "Titres Souverains", "titre": "Nizam", "description": "Souverain suprême d'un État majeur, titre musulman de très haut rang en Inde." },
+  { "id": 4, "section": "Titres Souverains", "titre": "Maharaja", "description": "Grand Roi. Un titre souverain au-dessus des autres princes." },
+  { "id": 5, "section": "Gouvernement Temporel", "titre": "Peshwa", "description": "Premier ministre exécutif (équivalent du Shogun), détenant le pouvoir réel dans l'Empire marathe." },
+  { "id": 6, "section": "Titres Souverains", "titre": "Nabab (Nawab)", "description": "Souverain musulman, émir d'une province ou d'un État princier." },
+  { "id": 7, "section": "Titres Souverains", "titre": "Raja", "description": "Le roi ou prince local, dirigeant d'un État princier." },
+  { "id": 8, "section": "Lignage Royal", "titre": "Yuvaraja", "description": "Prince héritier, le 'Jeune Roi' en préparation au trône." },
+  { "id": 9, "section": "Noblesse de Cour", "titre": "Dewan", "description": "Grand vizir ou ministre des finances d'un État princier (hindou ou musulman)." },
+  { "id": 10, "section": "Noblesse Foncière", "titre": "Thakur", "description": "Seigneur de domaine ou d'un clan, titre de noblesse foncière (équivalent du Châtelain)." },
+  { "id": 11, "section": "Noblesse Administrative", "titre": "Zamindar", "description": "Aristocrate collecteur d'impôts avec un pouvoir féodal sur les terres et les paysans." },
+  { "id": 12, "section": "Aristocratie Militaire", "titre": "Sardar", "description": "Chef militaire de haut rang, noble portant un titre de commandement." },
+  { "id": 13, "section": "Elite Guerrière", "titre": "Rajput", "description": "Fils de roi. Guerrier de lignage noble dévoué au code de l'honneur et à la guerre." },
+  { "id": 14, "section": "Petite Noblesse", "titre": "Jagirdar", "description": "Détenteur d'un fief (Jagir) octroyé par le roi en récompense de services militaires." }
+]

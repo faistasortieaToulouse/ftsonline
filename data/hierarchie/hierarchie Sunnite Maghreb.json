@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "section": "Source de Légitimité",
+    "titre": "Mahomet",
+    "description": "Le Prophète, source suprême de la foi et de la loi sunnite."
+  },
+  {
+    "id": 2,
+    "section": "Haute Autorité",
+    "titre": "Mufti",
+    "description": "Jurisconsulte de haut rang chargé d'interpréter la loi et de délivrer des fatwas."
+  },
+  {
+    "id": 3,
+    "section": "Justice",
+    "titre": "Cadi",
+    "description": "Juge musulman responsable de l'application de la Charia dans les litiges civils."
+  },
+  {
+    "id": 4,
+    "section": "Encadrement Religieux",
+    "titre": "Mourchidate",
+    "description": "Guide religieuse (équivalent féminin de l'Imam) chargée de l'enseignement, du conseil spirituel et de l'encadrement des femmes dans les mosquées et institutions."
+  },
+  {
+    "id": 5,
+    "section": "Culte",
+    "titre": "Imam",
+    "description": "Guide qui dirige la prière et assure la gestion religieuse de la mosquée."
+  },
+  {
+    "id": 6,
+    "section": "Autorité Spirituelle (Soufisme)",
+    "titre": "Cheikh de Zaouïa",
+    "description": "Maître spirituel à la tête d'une confrérie, figure de sagesse et d'autorité sociale locale."
+  },
+  {
+    "id": 7,
+    "section": "Religiosité Populaire",
+    "titre": "Marabout",
+    "description": "Saint homme ou ascète, souvent vénéré pour sa baraka (bénédiction) et son rôle de médiateur."
+  },
+  {
+    "id": 8,
+    "section": "Enseignement",
+    "titre": "Taleb",
+    "description": "Étudiant ou érudit local maîtrisant la lecture et la récitation du Coran."
+  }
+]

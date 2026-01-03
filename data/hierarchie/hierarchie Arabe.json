@@ -1,0 +1,19 @@
+[
+  { "id": 1, "section": "Source Suprême", "titre": "Mahomet", "description": "Le Prophète, fondateur et guide ultime de la communauté des croyants." },
+  { "id": 2, "section": "Autorité Impériale", "titre": "Calife", "description": "Commandeur des croyants, successeur du Prophète et chef temporel et spirituel." },
+  { "id": 3, "section": "Lignage Sacré", "titre": "Chérif", "description": "Descendant de Mahomet par les filles (Fatima), haute noblesse de sang." },
+  { "id": 4, "section": "Autorité Impériale", "titre": "Sultan", "description": "Détenteur du pouvoir et de la puissance, équivalent du titre d'Empereur." },
+  { "id": 5, "section": "Haute Administration", "titre": "Hadjib", "description": "Celui qui 'couvre' le souverain, chef du gouvernement et chambellan." },
+  { "id": 6, "section": "Haute Administration", "titre": "Khaznaji", "description": "Chef du gouvernement de la régence et gardien du trésor." },
+  { "id": 7, "section": "Gouvernement Provincial", "titre": "Beylerbey", "description": "Émir des émirs, gouverneur général ayant autorité sur plusieurs provinces." },
+  { "id": 8, "section": "Titres de Noblesse", "titre": "Émir (Arabe)", "description": "Chef ou prince, détenteur d'un commandement militaire ou d'un territoire." },
+  { "id": 9, "section": "Titres de Noblesse", "titre": "Malik (Arabe)", "description": "Titre souverain désignant un Roi." },
+  { "id": 10, "section": "Titres de Noblesse", "titre": "Moulay", "description": "Monarque ou seigneur, descendant du Prophète (particulier au Maroc)." },
+  { "id": 11, "section": "Gouvernement Provincial", "titre": "Naib", "description": "Vice-roi ou délégué agissant au nom d'une autorité supérieure." },
+  { "id": 12, "section": "Gouvernement Provincial", "titre": "Wali", "description": "Représentant du roi en province, gouverneur d'une Wilaya." },
+  { "id": 13, "section": "Justice et Autorité", "titre": "Hakim", "description": "Gouverneur exerçant la fonction de juge." },
+  { "id": 14, "section": "Autorité Sociale", "titre": "Cheikh", "description": "Maître, vieillard, sage et chef tribal." },
+  { "id": 15, "section": "Lignage Sacré", "titre": "Sayyid", "description": "Seigneur, titre honorifique pour les descendants du Prophète." },
+  { "id": 16, "section": "Commandement Civil", "titre": "Raïs", "description": "Dirigeant, chef ou capitaine." },
+  { "id": 17, "section": "Dignité Individuelle", "titre": "Sahib", "description": "Compagnon du souverain ou titulaire d'une maîtrise." }
+]

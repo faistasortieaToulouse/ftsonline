@@ -1,0 +1,21 @@
+[
+  { "id": 1, "section": "Souverain Suprême", "titre": "Hünkar", "description": "Le Grand Sultan, titre le plus majestueux du souverain ottoman." },
+  { "id": 2, "section": "Souverain Suprême", "titre": "Sultan", "description": "Empereur, détenteur du pouvoir absolu sur l'Empire." },
+  { "id": 3, "section": "Haute Administration", "titre": "Grand Vizir", "description": "Chef du gouvernement, dépositaire du sceau impérial." },
+  { "id": 4, "section": "Haute Administration", "titre": "Vizir", "description": "Ministre, membre du Divan (conseil impérial)." },
+  { "id": 5, "section": "Administration Territoriale", "titre": "Vali", "description": "Gouverneur général à la tête d'un Vilayet ou d'un Eyalet (Province)." },
+  { "id": 6, "section": "Administration Territoriale", "titre": "Mutessarif", "description": "Gouverneur de rang intermédiaire, chef d'un Sandjak (District)." },
+  { "id": 7, "section": "Administration Territoriale", "titre": "Kaïmakam", "description": "Sous-gouverneur représentant l'autorité dans un Caza (Canton)." },
+  { "id": 8, "section": "Administration Territoriale", "titre": "Mudir", "description": "Administrateur local ou maire à la tête d'une Nahié (Commune)." },
+  { "id": 9, "section": "Lignage Princier", "titre": "Yabgu", "description": "Prince turc, titre de haute noblesse d'origine centre-asiatique." },
+  { "id": 10, "section": "Régence et Autorité", "titre": "Dey", "description": "Oncle ou régent, chef de gouvernement dans les régences." },
+  { "id": 11, "section": "Haute Administration", "titre": "Khaznadji", "description": "Chef de gouvernement et responsable du trésor." },
+  { "id": 12, "section": "Éducation et Dignité", "titre": "Atabeg", "description": "Dignitaire jouant le rôle de tuteur d'un jeune prince impérial." },
+  { "id": 13, "section": "Commandement Territorial", "titre": "Mirmiran", "description": "Équivalent du Beylerbey, souverain provincial de haut rang." },
+  { "id": 14, "section": "Gouvernement Provincial", "titre": "Pacha", "description": "Gouverneur de province, titre de dignité militaire et civile élevé." },
+  { "id": 15, "section": "Gouvernement Provincial", "titre": "Khédive", "description": "Gouverneur d'Égypte, titre marquant une quasi-souveraineté." },
+  { "id": 16, "section": "Noblesse de Clan", "titre": "Bey", "description": "Chef de clan ou seigneur local (anciennement Sandjak-Bey)." },
+  { "id": 17, "section": "Aristocratie Militaire", "titre": "Agha", "description": "Maître ou seigneur, officier supérieur (souvent des Janissaires)." },
+  { "id": 18, "section": "Commandement Civil/Maritime", "titre": "Reïs", "description": "Dirigeant ou capitaine, chef de navire ou d'administration." },
+  { "id": 19, "section": "Petite Noblesse Militaire", "titre": "Spahi", "description": "Cavalier noble, première subdivision féodale de l'Empire." }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "section": "Haute Érudition et Jurisprudence",
+    "titre": "Ouléma",
+    "description": "Savant de haut rang, gardien de la loi et de la tradition, expert en sciences religieuses (Coran, Hadith, Fiqh)."
+  },
+  {
+    "id": 2,
+    "section": "Haute Érudition et Jurisprudence",
+    "titre": "Compilateur de hadiths",
+    "description": "Savant spécialisé dans la collecte, l'authentification et la transmission des paroles et actes du Prophète (Muhaddith)."
+  },
+  {
+    "id": 3,
+    "section": "Savoir Intellectuel",
+    "titre": "Philosophe musulman",
+    "description": "Penseur expert en théologie rationnelle (Kalam) et en métaphysique, cherchant à concilier raison et révélation."
+  },
+  {
+    "id": 4,
+    "section": "Savoir Intellectuel",
+    "titre": "Érudit musulman",
+    "description": "Savant possédant une connaissance approfondie et multidisciplinaire des sciences islamiques."
+  },
+  {
+    "id": 5,
+    "section": "Expertise Sunnite",
+    "titre": "Islamologue musulman sunnite",
+    "description": "Chercheur spécialisé dans l'étude académique et doctrinale de l'islam selon la tradition sunnite."
+  },
+  {
+    "id": 6,
+    "section": "Expertise Sunnite",
+    "titre": "Érudit musulman sunnite",
+    "description": "Savant reconnu au sein de la communauté sunnite pour sa maîtrise du dogme et de la jurisprudence (Fiqh)."
+  },
+  {
+    "id": 7,
+    "section": "Autorité Locale",
+    "titre": "Imam sunnite",
+    "description": "Guide spirituel qui dirige la prière communautaire et assure la guidance religieuse locale des fidèles."
+  }
+]

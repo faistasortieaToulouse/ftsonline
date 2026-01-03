@@ -1,0 +1,62 @@
+{
+  "hierarchie_noblesse_francaise": {
+    "castes_de_la_noblesse": [
+      {
+        "type": "Noblesse d'Épée",
+        "description": "Noblesse ancienne issue de la fonction militaire et de la chevalerie.",
+        "prestige": "Maximum (Le Sang)"
+      },
+      {
+        "type": "Noblesse de Robe",
+        "description": "Noblesse issue des hautes fonctions judiciaires et administratives.",
+        "prestige": "Élevé (Le Pouvoir)"
+      },
+      {
+        "type": "Noblesse de Cloche",
+        "description": "Noblesse acquise par l'exercice de fonctions municipales (Maires, Échevins).",
+        "prestige": "Moyen (Urbain)"
+      }
+    ],
+    "organisation_de_la_cour": {
+      "niveau_1_direction_etat": {
+        "categorie": "Grands Officiers de la Couronne",
+        "role": "Conseil d'administration du Royaume",
+        "exemples": ["Chancelier", "Grand Maître", "Connétable", "Maréchaux"]
+      },
+      "niveau_2_gestion_domestique": {
+        "categorie": "Grands Officiers de la Maison",
+        "role": "Directeurs de départements royaux",
+        "exemples": ["Grand Veneur", "Grand Chambellan", "Grand Écuyer"]
+      },
+      "niveau_3_cadres_superieurs": {
+        "categorie": "Premiers Gentilshommes / Grands Tranchants",
+        "role": "Haute gestion de l'intimité et du service d'honneur",
+        "statut": "Haute Noblesse"
+      },
+      "niveau_4_cadres_intermediaires": {
+        "categorie": "Officiers ordinaires",
+        "role": "Service quotidien du Roi",
+        "exemples": ["Gentilshommes de la manche", "Valets de chambre nobles"]
+      },
+      "niveau_5_execution": {
+        "categorie": "Personnel de service",
+        "role": "Tâches manuelles et logistiques",
+        "composition": "Souvent roturiers (Valets, cuisiniers, palefreniers)"
+      }
+    ],
+    "les_pairs_de_france": {
+      "pairs_ecclesiastiques": {
+        "nombre": 6,
+        "composition": ["Archevêque-Duc de Reims", "Évêques-Comtes de Beauvais, Châlons, Noyon", "Évêques-Ducs de Laon, Langres"]
+      },
+      "pairs_laics_primitifs": {
+        "nombre": 6,
+        "composition": ["Ducs de Bourgogne, Normandie, Guyenne", "Comtes de Flandre, Champagne, Toulouse"]
+      },
+      "pairs_de_creation_royale": {
+        "description": "Ducs et Pairs créés par lettres patentes au fil des siècles par le souverain.",
+        "statut": "Héréditaire"
+      }
+    }
+  }
+}

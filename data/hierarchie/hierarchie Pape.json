@@ -1,0 +1,274 @@
+[
+  {
+    "personne": "Pape",
+    "lieu": "Vatican",
+    "institution": "Saint-Siège",
+    "ordre": "clergé séculier",
+    "superieur": "Christ / Apôtres",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Chef de dicastère",
+    "lieu": "Vatican",
+    "institution": "Curie Romaine",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Daterie apostolique, Assistant au trône pontifical, Receveur général du clergé, Légat du pape"
+  },
+  {
+    "personne": "Vicaire apostolique",
+    "lieu": "Territoire de mission",
+    "institution": "Vicariat apostolique",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Préfet de tribunal, Ordinaire, Administrateur apostolique"
+  },
+  {
+    "personne": "Préfet apostolique",
+    "lieu": "Territoire de mission",
+    "institution": "Préfecture apostolique",
+    "ordre": "clergé séculier",
+    "superieur": "Vicaire apostolique",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Ordinaire",
+    "lieu": "Diocèse / Structure personnelle",
+    "institution": "Ordinaire",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Prélat territorial"
+  },
+  {
+    "personne": "Ordinaire personnel",
+    "lieu": "Structure personnelle",
+    "institution": "Ordinariat",
+    "ordre": "clergé séculier",
+    "superieur": "Ordinaire",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Prélat territorial",
+    "lieu": "Prélature",
+    "institution": "Prélature territoriale",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Ordinaire"
+  },
+  {
+    "personne": "Prélat personnel",
+    "lieu": "Prélature",
+    "institution": "Prélature personnelle",
+    "ordre": "clergé séculier",
+    "superieur": "Prélat territorial",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Administrateur apostolique",
+    "lieu": "Diocèse en vacance",
+    "institution": "Administration apostolique",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Exarchat apostolique",
+    "lieu": "Église Orientale",
+    "institution": "Exarchat",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Exarchat patriarcal",
+    "lieu": "Église Orientale",
+    "institution": "Exarchat",
+    "ordre": "clergé séculier",
+    "superieur": "Exarchat apostolique",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Exarchat archiépiscopal",
+    "lieu": "Église Orientale",
+    "institution": "Exarchat",
+    "ordre": "clergé séculier",
+    "superieur": "Exarchat patriarcal",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Évêque apostolique",
+    "lieu": "Vatican / Mission",
+    "institution": "Saint-Siège",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Évêque patriarcal",
+    "lieu": "Patriarcat",
+    "institution": "Église patriarcale",
+    "ordre": "clergé séculier",
+    "superieur": "Évêque apostolique",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Évêque archiépiscopal",
+    "lieu": "Archevêché",
+    "institution": "Église archiépiscopale",
+    "ordre": "clergé séculier",
+    "superieur": "Évêque patriarcal",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Préfet de tribunal",
+    "lieu": "Vatican (Rote / Signature)",
+    "institution": "Tribunal apostolique",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Chef de dicastère"
+  },
+  {
+    "personne": "Doyen (Tribunal)",
+    "lieu": "Tribunal",
+    "institution": "Tribunal",
+    "ordre": "clergé séculier",
+    "superieur": "Préfet de tribunal",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Juge ou Auditeur",
+    "lieu": "Tribunal",
+    "institution": "Tribunal",
+    "ordre": "clergé séculier",
+    "superieur": "Doyen (Tribunal)",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Promoteur de justice ou Défenseur du lien",
+    "lieu": "Tribunal",
+    "institution": "Tribunal",
+    "ordre": "clergé séculier",
+    "superieur": "Juge ou Auditeur",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Daterie apostolique",
+    "lieu": "Vatican",
+    "institution": "Curie Romaine",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Chef de dicastère, Assistant au trône pontifical, Receveur général du clergé, Légat du pape"
+  },
+  {
+    "personne": "Assistant au trône pontifical",
+    "lieu": "Vatican",
+    "institution": "Chapelle Pontificale",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Chef de dicastère, Daterie apostolique, Receveur général du clergé, Légat du pape"
+  },
+  {
+    "personne": "Receveur général du clergé",
+    "lieu": "Vatican",
+    "institution": "Administration",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Chef de dicastère, Daterie apostolique, Assistant au trône pontifical, Légat du pape"
+  },
+  {
+    "personne": "Légat du pape",
+    "lieu": "Extérieur (Diplomatie)",
+    "institution": "Diplomatie pontificale",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Chef de dicastère, Daterie apostolique, Assistant au trône pontifical, Receveur général du clergé"
+  },
+  {
+    "personne": "Nonce apostolique",
+    "lieu": "Extérieur (Diplomatie)",
+    "institution": "Diplomatie pontificale",
+    "ordre": "clergé séculier",
+    "superieur": "Légat du pape",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Cardinal secrétaire d'État",
+    "lieu": "Vatican",
+    "institution": "Secrétairerie d'État",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Cardinal vicaire de Rome"
+  },
+  {
+    "personne": "Cardinal vicaire de Rome",
+    "lieu": "Rome (Latran)",
+    "institution": "Diocèse de Rome",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Cardinal secrétaire d'État"
+  },
+  {
+    "personne": "Prélat",
+    "lieu": "Vatican",
+    "institution": "Famille pontificale",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Camérier, Chapelain de Sa Sainteté, Noblesse pontificale, Collateur"
+  },
+  {
+    "personne": "Protonotaire",
+    "lieu": "Vatican",
+    "institution": "Curie Romaine",
+    "ordre": "clergé séculier",
+    "superieur": "Prélat",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Camérier",
+    "lieu": "Vatican",
+    "institution": "Maison pontificale",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Prélat, Chapelain de Sa Sainteté"
+  },
+  {
+    "personne": "Chapelain de Sa Sainteté",
+    "lieu": "Vatican",
+    "institution": "Maison pontificale",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Prélat, Camérier"
+  },
+  {
+    "personne": "Noblesse pontificale",
+    "lieu": "Vatican",
+    "institution": "Cour pontificale",
+    "ordre": "Laïc",
+    "superieur": "Pape",
+    "niveau_equivalent": "Collateur"
+  },
+  {
+    "personne": "Collateur",
+    "lieu": "Vatican",
+    "institution": "Chancellerie",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": "Noblesse pontificale"
+  },
+  {
+    "personne": "Pétitionnaire",
+    "lieu": "Vatican",
+    "institution": "Daterie / Chancellerie",
+    "ordre": "clergé séculier",
+    "superieur": "Pape",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Postulateur",
+    "lieu": "Vatican",
+    "institution": "Causes des saints",
+    "ordre": "clergé séculier/régulier",
+    "superieur": "Pétitionnaire",
+    "niveau_equivalent": null
+  }
+]

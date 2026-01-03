@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "section": "Source de Légitimité",
+    "titre": "Mahomet",
+    "description": "Le Prophète, fondateur de l'islam et source ultime de toute autorité religieuse."
+  },
+  {
+    "id": 2,
+    "section": "Haute Autorité Religieuse",
+    "titre": "Grand Mufti",
+    "description": "Le Cheikh al-Islam, la plus haute autorité religieuse de l'Empire, conseiller du Sultan pour la conformité à la charia."
+  },
+  {
+    "id": 3,
+    "section": "Jurisprudence",
+    "titre": "Mufti",
+    "description": "Religieux musulman sunnite et interprète de la loi musulmane, habilité à délivrer des avis juridiques (fatwas)."
+  },
+  {
+    "id": 4,
+    "section": "Savoir Théologique",
+    "titre": "Ouléma",
+    "description": "Théologien de l'islam, savant reconnu pour sa maîtrise des sciences religieuses et de la doctrine sunnite."
+  },
+  {
+    "id": 5,
+    "section": "Jurisprudence",
+    "titre": "Mujtahid",
+    "description": "Savant qui délivre un effort de réflexion personnelle (ijtihad) pour interpréter les textes sacrés."
+  },
+  {
+    "id": 6,
+    "section": "Culte et Guidance",
+    "titre": "Imam",
+    "description": "Guide religieux des musulmans, responsable de la direction des prières et de la vie spirituelle de la communauté."
+  },
+  {
+    "id": 7,
+    "section": "Prédication",
+    "titre": "Khatib",
+    "description": "Prédicateur chargé de prononcer le sermon (khutba) lors de la prière du vendredi."
+  },
+  {
+    "id": 8,
+    "section": "Aumônerie Militaire",
+    "titre": "Marabout",
+    "description": "Aumônier au sein d'une armée islamique, apportant soutien spirituel et guidance aux soldats."
+  }
+]

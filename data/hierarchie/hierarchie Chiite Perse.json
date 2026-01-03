@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "section": "Source de Légitimité",
+    "titre": "Ali",
+    "description": "Cousin et gendre de Mahomet, premier Imam du chiisme et référence absolue de la lignée spirituelle."
+  },
+  {
+    "id": 2,
+    "section": "Haute Autorité Religieuse",
+    "titre": "Ayatollah",
+    "description": "Signe de Dieu. Expert de l'islam de haut rang, autorisé à interpréter la loi divine."
+  },
+  {
+    "id": 3,
+    "section": "Autorité Religieuse",
+    "titre": "Hodjatoleslam",
+    "description": "Preuve de l'islam. Autorité sur l'islam, titre intermédiaire entre le Mollah et l'Ayatollah (équivalent fonctionnel de l'Ouléma sunnite)."
+  },
+  {
+    "id": 4,
+    "section": "Base du Clergé",
+    "titre": "Mollah",
+    "description": "Érudit musulman ayant complété des études religieuses, responsable de la guidance locale et de l'enseignement."
+  }
+]

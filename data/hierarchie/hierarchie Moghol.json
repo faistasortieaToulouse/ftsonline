@@ -1,0 +1,6 @@
+[
+  { "id": 1, "section": "Souverain Suprême", "titre": "Khagan", "description": "Le Khan des Khans, Grand Khan et Empereur, autorité suprême des lignages mongols et turcs." },
+  { "id": 2, "section": "Titres Souverains", "titre": "Khan", "description": "Dirigeant souverain d'un khanat ou d'un territoire majeur, chef de clan puissant." },
+  { "id": 3, "section": "Titres Souverains", "titre": "Nizam", "description": "Roi ou souverain vassal de haut rang, administrateur d'un État au sein de l'Empire." },
+  { "id": 4, "section": "Haute Dignité Militaire", "titre": "Kavkhan", "description": "Officier de haut rang et dignitaire suprême, commandant en chef des armées." }
+]

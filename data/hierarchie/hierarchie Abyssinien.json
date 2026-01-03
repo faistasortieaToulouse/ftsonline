@@ -1,0 +1,7 @@
+[
+  { "id": 1, "section": "Souverain Suprême", "titre": "Négus", "description": "Roi. Souvent utilisé sous la forme 'Négusa Nagast' (Roi des Rois), désignant l'Empereur." },
+  { "id": 2, "section": "Haute Noblesse", "titre": "Ras", "description": "Littéralement 'Tête'. Titre de dignité le plus élevé après le roi, équivalent à un Duc ou un Prince." },
+  { "id": 3, "section": "Lignage Royal", "titre": "Lidj", "description": "Titre porté par les enfants de la lignée impériale, équivalent de l'Infant ou du Prince." },
+  { "id": 4, "section": "Aristocratie Féodale", "titre": "Les Mesafint", "description": "La haute noblesse princière et héréditaire (les Princes), détenant le pouvoir régional." },
+  { "id": 5, "section": "Noblesse de Cour", "titre": "Les Mekwanent", "description": "La noblesse d'office ou de robe, composée des dignitaires et des officiers nommés par l'Empereur." }
+]

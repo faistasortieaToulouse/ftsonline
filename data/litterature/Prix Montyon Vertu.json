@@ -1,0 +1,29 @@
+{
+  "nom_du_prix": "Prix de Vertu (Fondation Montyon)",
+  "laureats": [
+    { "annee": 1784, "nom": "Françoise Legros", "details": "pour son rôle dans la libération de Latude" },
+    { "annee": 1820, "nom": "Jean Guénisset", "details": "le modèle des bons serviteurs" },
+    { "annee": 1820, "nom": "Pierre-Alexandre Philipault", "lieu": "Rennes" },
+    { "annee": 1821, "nom": "Antoinette Louis", "details": "l'apprentie reconnaissante" },
+    { "annee": 1824, "nom": "Dacheux", "details": "grand dévouement", "lieu": "Dieppe" },
+    { "annee": 1825, "nom": "Roch Martin" },
+    { "annee": 1826, "nom": "Célestine Détrimont" },
+    { "annee": 1828, "nom": "Joseph Taine", "details": "le bon gendarme" },
+    { "annee": 1829, "nom": "Louise Scheppler", "details": "fondatrice des salles d'asile" },
+    { "annee": 1829, "nom": "Reine Baubis", "details": "mère adoptive" },
+    { "annee": 1829, "nom": "Les époux Bachelard" },
+    { "annee": 1830, "nom": "Philippe Barré", "details": "multiples sauvetages" },
+    { "annee": 1832, "nom": "Eustache, dit Belin", "details": "nègre de Saint-Domingue" },
+    { "annee": 1833, "nom": "Suzanne Guiraud", "details": "l'ange des prisons" },
+    { "annee": 1836, "nom": "Joseph-Nicolas Plège", "details": "funambule bienfaisant" },
+    { "annee": 1841, "nom": "Simon Pierre Moëssard", "details": "acteur" },
+    { "annee": 1845, "nom": "Jeanne Jugan", "details": "fondatrice des Petites Sœurs des pauvres" },
+    { "annee": 1848, "nom": "Joseph Looten", "details": "Éclusier, +100 sauvés" },
+    { "annee": 1853, "nom": "Paul Dunez", "details": "esclave guyanais" },
+    { "annee": 1860, "nom": "John Bost", "details": "fondateur des asiles de La Force" },
+    { "annee": 1886, "nom": "Jean-Baptiste Jupille", "details": "jeune berger (rage)" },
+    { "annee": 1892, "nom": "Paulin Enfert", "details": "fondateur de La Mie de pain" },
+    { "annee": 1901, "nom": "Anna Delouf", "details": "a élevé ses 11 frères et sœurs" },
+    { "annee": 1936, "nom": "Jeunesse ouvrière chrétienne", "details": "aide aux jeunes chômeurs" }
+  ]
+}

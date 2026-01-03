@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "section": "Haute Autorité",
+    "titre": "Ayatollah",
+    "description": "Signe de Dieu. Un érudit de haut rang expert en droit islamique, en éthique et en philosophie, ayant l'autorité de rendre ses propres jugements juridiques."
+  },
+  {
+    "id": 2,
+    "section": "Clergé",
+    "titre": "Clergé chiite",
+    "description": "L'ensemble des dignitaires religieux organisés au sein d'une structure hiérarchique, incluant les Hojatoleslam et les Mullahs."
+  },
+  {
+    "id": 3,
+    "section": "Études et Savoir",
+    "titre": "Islamologue",
+    "description": "Chercheur ou expert spécialisé dans l'étude scientifique et historique de l'islam, de ses textes et de ses civilisations."
+  },
+  {
+    "id": 4,
+    "section": "Érudition",
+    "titre": "Érudit musulman (Ouléma)",
+    "description": "Un savant reconnu pour sa connaissance approfondie des sciences religieuses et de la jurisprudence islamique."
+  }
+]

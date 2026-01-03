@@ -1,0 +1,37 @@
+{
+  "hierarchie_dignitaires": [
+    { "personne": "Grand Maître", "institution": "Souveraineté", "superieur": "Pape", "niveau_equivalent": null },
+    { "personne": "Baillis conventuels", "institution": "Haut Conseil", "superieur": "Grand Maître", "niveau_equivalent": "Trésorier" },
+    { "personne": "Trésorier", "institution": "Trésorerie", "superieur": "Grand Maître", "niveau_equivalent": "Baillis conventuels" },
+    { "personne": "Grand commandeur ou Grand précepteur", "institution": "Administration centrale", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Grand hospitalier à la langue de France", "institution": "Hôpital (France)", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Grand maréchal", "institution": "Affaires militaires", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Grand drapier", "institution": "Intendance / Habillement", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Grand hospitalier", "institution": "Hôpital général", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Grand amiral", "institution": "Marine", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Turcoplier", "institution": "Troupes légères", "superieur": "Grand Maître", "niveau_equivalent": null }
+  ],
+  "fonctions_et_organisation": [
+    { "personne": "Grand Maître", "institution": "Organes du pouvoir", "superieur": "Pape", "niveau_equivalent": "Les Grands Dignitaires" },
+    { "personne": "Frère bailli conventuel", "institution": "Les grands offices", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Frère pilier", "institution": "Langue", "superieur": "Frère bailli conventuel", "niveau_equivalent": null },
+    { "personne": "Frère bailli capitulaire", "institution": "Chapitre", "superieur": "Frère pilier", "niveau_equivalent": null },
+    { "personne": "Frère prieur provincial", "institution": "Province", "superieur": "Frère bailli capitulaire", "niveau_equivalent": null },
+    { "personne": "Frère prieur conventuel", "institution": "Prieuré", "superieur": "Frère prieur provincial", "niveau_equivalent": null },
+    { "personne": "Frère commandeur", "institution": "Commanderie", "superieur": "Frère prieur conventuel", "niveau_equivalent": null },
+    { "personne": "Commissaires", "institution": "Charges spéciales", "superieur": "Frère commandeur", "niveau_equivalent": "Officiers, Conseillers, Prud'hommes" },
+    { "personne": "Frères chevaliers", "institution": "Base combattante", "superieur": "Frère commandeur", "niveau_equivalent": null },
+    { "personne": "Sergents d'armes", "institution": "Base militaire", "superieur": "Frères chevaliers", "niveau_equivalent": null },
+    { "personne": "Sergents d'office", "institution": "Logistique et services", "superieur": "Sergents d'armes", "niveau_equivalent": "Frères prêtres / Chapelains" }
+  ],
+  "classes_et_statuts": [
+    { "personne": "Frères prêtres / Chapelains conventuels", "institution": "Clercs", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Frères prêtres d'obédience", "institution": "Clercs", "superieur": "Frères chapelains conventuels", "niveau_equivalent": null },
+    { "personne": "Frères chevaliers profès", "institution": "Chevaliers", "superieur": "Grand Maître", "niveau_equivalent": null },
+    { "personne": "Frères chevaliers de grâce", "institution": "Chevaliers", "superieur": "Frères chevaliers profès", "niveau_equivalent": null },
+    { "personne": "Servants hospitaliers", "institution": "Laïcs", "superieur": "Frères chevaliers", "niveau_equivalent": "Sergents d'armes (Laïcs)" },
+    { "personne": "Confrères donats (Grand'croix, Demi-croix, Médaillers)", "institution": "Laïcs", "superieur": "Frères chevaliers", "niveau_equivalent": null },
+    { "personne": "Nos seigneurs les malades", "institution": "Autour de l'Ordre", "superieur": "Ordre (Service)", "niveau_equivalent": null },
+    { "personne": "La familia", "institution": "Autour de l'Ordre", "superieur": "L'Ordre", "niveau_equivalent": "Les dépendants" }
+  ]
+}

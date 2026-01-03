@@ -1,0 +1,42 @@
+[
+  {
+    "personne": "Le prieur de la Grande Chartreuse",
+    "lieu": "Saint-Pierre-de-Chartreuse",
+    "institution": "Grande Chartreuse",
+    "ordre": "Ordre des Chartreux",
+    "superieur": "Pape",
+    "niveau_equivalent": "Monsieur de Chartreuse"
+  },
+  {
+    "personne": "Monsieur de Chartreuse",
+    "lieu": "Grande Chartreuse",
+    "institution": "Direction de l'Ordre",
+    "ordre": "Ordre des Chartreux",
+    "superieur": "Pape",
+    "niveau_equivalent": "Le prieur de la Grande Chartreuse"
+  },
+  {
+    "personne": "Orateur de Chartreuse",
+    "lieu": "Grande Chartreuse",
+    "institution": "Chapitre Général",
+    "ordre": "Ordre des Chartreux",
+    "superieur": "Le prieur de la Grande Chartreuse",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Révérend Père ou (Révérendissime)",
+    "lieu": "Monastère",
+    "institution": "Gouvernance",
+    "ordre": "Ordre des Chartreux",
+    "superieur": "Pape",
+    "niveau_equivalent": "Père général"
+  },
+  {
+    "personne": "Père général",
+    "lieu": "Grande Chartreuse",
+    "institution": "Gouvernement de l'Ordre",
+    "ordre": "Ordre des Chartreux",
+    "superieur": "Pape",
+    "niveau_equivalent": "Révérendissime"
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "personne": "Moine-soldat (Grand Maître)",
+    "lieu": "Palais Magistral",
+    "institution": "Ordre de Malte",
+    "ordre": "clergé régulier",
+    "superieur": "Pape",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Chevaliers de justice",
+    "lieu": "Ordre de Malte",
+    "institution": "Première classe",
+    "ordre": "clergé régulier (vœux solennels)",
+    "superieur": "Grand Maître",
+    "niveau_equivalent": "Chapelains conventuels"
+  },
+  {
+    "personne": "Chapelains conventuels",
+    "lieu": "Commanderie hospitalière",
+    "institution": "Première classe",
+    "ordre": "clergé régulier",
+    "superieur": "Grand Maître",
+    "niveau_equivalent": "Chevaliers de justice"
+  },
+  {
+    "personne": "Deuxième classe (Langues hospitalières)",
+    "lieu": "Langues hospitalières",
+    "institution": "Ordre de Malte",
+    "ordre": null,
+    "superieur": "Chapelains conventuels",
+    "niveau_equivalent": "Pilier"
+  },
+  {
+    "personne": "Chevaliers et dames d'honneur et de dévotion en obédience",
+    "lieu": "Grand Prieuré hospitalier",
+    "institution": "Deuxième classe",
+    "ordre": "Laïcs consacrés (promesse)",
+    "superieur": "Deuxième classe (Langues hospitalières)",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Chevaliers et dames de grâce et de dévotion en obédience",
+    "lieu": "Prieuré hospitalier",
+    "institution": "Deuxième classe",
+    "ordre": "Laïcs consacrés (promesse)",
+    "superieur": "Chevaliers et dames d'honneur et de dévotion en obédience",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Chevaliers et dames de grâce magistrale en obédience",
+    "lieu": "Chapellenie hospitalière",
+    "institution": "Deuxième classe",
+    "ordre": "Laïcs consacrés (promesse)",
+    "superieur": "Chevaliers et dames de grâce et de dévotion en obédience",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Troisième classe",
+    "lieu": "Ordre de Malte",
+    "institution": "Ordre de Malte",
+    "ordre": null,
+    "superieur": "Chevaliers et dames de grâce magistrale en obédience",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Chevaliers et dames d'honneur et de dévotion",
+    "lieu": "Maisons hospitalières",
+    "institution": "Troisième classe",
+    "ordre": "Laïcs",
+    "superieur": "Troisième classe",
+    "niveau_equivalent": "Chapelains conventuels (3e classe)"
+  },
+  {
+    "personne": "Chapelains conventuels ad honorem",
+    "lieu": "Maisons hospitalières",
+    "institution": "Troisième classe",
+    "ordre": "Clergé séculier",
+    "superieur": "Chevaliers et dames d'honneur et de dévotion",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Chevaliers et dames de grâce et de dévotion",
+    "lieu": "Maisons hospitalières",
+    "institution": "Troisième classe",
+    "ordre": "Laïcs",
+    "superieur": "Chapelains conventuels ad honorem",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Chapelains magistraux",
+    "lieu": "Maisons hospitalières",
+    "institution": "Troisième classe",
+    "ordre": "Clergé séculier",
+    "superieur": "Chevaliers et dames de grâce et de dévotion",
+    "niveau_equivalent": "Diacres magistraux"
+  },
+  {
+    "personne": "Diacres magistraux",
+    "lieu": "Maisons hospitalières",
+    "institution": "Troisième classe",
+    "ordre": "Clergé séculier",
+    "superieur": "Chevaliers et dames de grâce et de dévotion",
+    "niveau_equivalent": "Chapelains magistraux"
+  },
+  {
+    "personne": "Chevaliers et dames de grâce magistrale",
+    "lieu": "Maisons hospitalières",
+    "institution": "Troisième classe",
+    "ordre": "Laïcs",
+    "superieur": "Chapelains magistraux",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Donats et donates de dévotion",
+    "lieu": "Maisons hospitalières",
+    "institution": "Troisième classe",
+    "ordre": "Laïcs",
+    "superieur": "Chevaliers et dames de grâce magistrale",
+    "niveau_equivalent": null
+  }
+]

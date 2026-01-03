@@ -1,0 +1,138 @@
+[
+  {
+    "personne": "Moine-soldat",
+    "lieu": "Ordre Militaire",
+    "institution": "Sommet de l'Ordre",
+    "ordre": "clergé régulier",
+    "superieur": "Grand Maître",
+    "niveau_equivalent": "Hôspitaliers"
+  },
+  {
+    "personne": "Grand hospitalier",
+    "lieu": "Hôpital de l'Ordre",
+    "institution": "Administration Centrale",
+    "ordre": "clergé régulier",
+    "superieur": "Grand Maître",
+    "niveau_equivalent": "Supérieur régional"
+  },
+  {
+    "personne": "Supérieur régional",
+    "lieu": "Province hospitalière",
+    "institution": "Administration Régionale",
+    "ordre": "clergé régulier",
+    "superieur": "Grand hospitalier",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Pilier",
+    "lieu": "Langues hospitalières",
+    "institution": "Auberge de Langue",
+    "ordre": "clergé régulier",
+    "superieur": "Grand Maître",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Grand prieur",
+    "lieu": "Grand Prieuré hospitalier",
+    "institution": "Prieuré",
+    "ordre": "clergé régulier",
+    "superieur": "Pilier",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Bailli",
+    "lieu": "Baillie hospitalière",
+    "institution": "Baillie",
+    "ordre": "clergé régulier",
+    "superieur": "Grand prieur",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Commandeur",
+    "lieu": "Commanderie hospitalière",
+    "institution": "Commanderie",
+    "ordre": "clergé régulier",
+    "superieur": "Bailli",
+    "niveau_equivalent": "Prieur"
+  },
+  {
+    "personne": "Prieur",
+    "lieu": "Prieuré hospitalier",
+    "institution": "Prieuré local",
+    "ordre": "clergé régulier",
+    "superieur": "Grand prieur",
+    "niveau_equivalent": "Commandeur"
+  },
+  {
+    "personne": "Chapelain",
+    "lieu": "Chapellenie hospitalière",
+    "institution": "Chapellenie",
+    "ordre": "clergé régulier",
+    "superieur": "Prieur",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Sergent d'arme",
+    "lieu": "Maisons hospitalières",
+    "institution": "Maison",
+    "ordre": "clergé régulier",
+    "superieur": "Commandeur",
+    "niveau_equivalent": "Chevalier-Hospitalier"
+  },
+  {
+    "personne": "Chevalier-Hospitalier",
+    "lieu": "Ordre",
+    "institution": "Chevalerie",
+    "ordre": "clergé régulier",
+    "superieur": "Commandeur",
+    "niveau_equivalent": "Sergent d'arme"
+  },
+  {
+    "personne": "Frère hospitalier",
+    "lieu": "Ordre",
+    "institution": "Base de l'ordre",
+    "ordre": "clergé régulier",
+    "superieur": "Chevalier-Hospitalier",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Amiral",
+    "lieu": "Marine de l'Ordre",
+    "institution": "Flotte",
+    "ordre": "Militaire",
+    "superieur": "Grand Maître",
+    "niveau_equivalent": "Bailli"
+  },
+  {
+    "personne": "Officiers",
+    "lieu": "Marine de l'Ordre",
+    "institution": "Flotte",
+    "ordre": "Militaire",
+    "superieur": "Amiral",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Capitaine",
+    "lieu": "Vaisseau",
+    "institution": "Flotte",
+    "ordre": "Militaire",
+    "superieur": "Officiers",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Chevalier (Marine)",
+    "lieu": "Vaisseau",
+    "institution": "Flotte",
+    "ordre": "Militaire",
+    "superieur": "Capitaine",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Frère (Marine)",
+    "lieu": "Vaisseau",
+    "institution": "Flotte",
+    "ordre": "Militaire",
+    "superieur": "Chevalier (Marine)",
+    "niveau_equivalent": null
+  }
+]
