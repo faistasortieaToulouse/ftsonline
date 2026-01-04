@@ -1,0 +1,2123 @@
+[
+    {
+        "id": 1,
+        "adresse": "num voie nom de voie",
+        "nom": "nom de l'hôtel",
+        "profession_proprietaire": "profession",
+        "siecle": "siècle"
+    },
+    {
+        "id": 2,
+        "adresse": "2 rue Alsace-Lorraine",
+        "nom": "hôtel de Ciron-Fumel (palais consulaire)",
+        "profession_proprietaire": "comte",
+        "siecle": "18"
+    },
+    {
+        "id": 3,
+        "adresse": "7 rue Arts",
+        "nom": "hôtel Baichère (hôtel Nolet), tour",
+        "profession_proprietaire": "hôtel",
+        "siecle": "17"
+    },
+    {
+        "id": 4,
+        "adresse": "7 rue Arts",
+        "nom": "hôtel Nolet disp ?",
+        "profession_proprietaire": "trésorier",
+        "siecle": "17"
+    },
+    {
+        "id": 5,
+        "adresse": "10 rue Arts",
+        "nom": "hôtel Dupuy-Montaut",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 6,
+        "adresse": "16 rue Arts",
+        "nom": "hôtel Ramel",
+        "profession_proprietaire": "général",
+        "siecle": "18"
+    },
+    {
+        "id": 7,
+        "adresse": "17 rue Arts",
+        "nom": "hôtel Duranti disp ?",
+        "profession_proprietaire": "avocat",
+        "siecle": "17"
+    },
+    {
+        "id": 8,
+        "adresse": "1 place Assézat",
+        "nom": "hôtel d'Assézat",
+        "profession_proprietaire": "pastelier",
+        "siecle": "16"
+    },
+    {
+        "id": 9,
+        "adresse": "3 rue Astorg",
+        "nom": "emplacement hôtel de Guillaume Flotte, puis Niquet",
+        "profession_proprietaire": "chancelier",
+        "siecle": "15"
+    },
+    {
+        "id": 10,
+        "adresse": "8 rue Aussargues",
+        "nom": "hôtel de Raymond",
+        "profession_proprietaire": "substitut",
+        "siecle": "17"
+    },
+    {
+        "id": 11,
+        "adresse": "14 rue Baour-Lormian",
+        "nom": "hôtel Tivollier",
+        "profession_proprietaire": "hôtelier",
+        "siecle": "19"
+    },
+    {
+        "id": 12,
+        "adresse": "12 rue Baronie",
+        "nom": "hôtel de Pierre Ducos, Hôtel de Bernard de Sapte",
+        "profession_proprietaire": "marchand",
+        "siecle": "18"
+    },
+    {
+        "id": 13,
+        "adresse": "1 square Boulingrin",
+        "nom": "hôtel Calespoutrat",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "20"
+    },
+    {
+        "id": 14,
+        "adresse": "8 rue Bouqières",
+        "nom": "hôtel de Puivert",
+        "profession_proprietaire": "magistrat",
+        "siecle": "18"
+    },
+    {
+        "id": 15,
+        "adresse": "19 place Bourse",
+        "nom": "ancien hôtel de la Bourse des marchands",
+        "profession_proprietaire": "institut",
+        "siecle": "17"
+    },
+    {
+        "id": 16,
+        "adresse": "26 place Bourse",
+        "nom": "emplacement tour de Najac, puis l'hôtel de Bastard",
+        "profession_proprietaire": "président",
+        "siecle": "18"
+    },
+    {
+        "id": 17,
+        "adresse": "15 rue Bourse",
+        "nom": "hôtel de Nupces",
+        "profession_proprietaire": "président",
+        "siecle": "18"
+    },
+    {
+        "id": 18,
+        "adresse": "16 rue Bourse",
+        "nom": "hôtel des Quatre-Saisons",
+        "profession_proprietaire": "àVoir",
+        "siecle": "18"
+    },
+    {
+        "id": 19,
+        "adresse": "20 rue Bourse",
+        "nom": "hôtel Delfau, tour",
+        "profession_proprietaire": "pastelier",
+        "siecle": "15"
+    },
+    {
+        "id": 20,
+        "adresse": "5 rue Boyer-Fonfrède",
+        "nom": "hôtel de Gayssion, tour",
+        "profession_proprietaire": "marchand",
+        "siecle": "16"
+    },
+    {
+        "id": 21,
+        "adresse": "angle rue Brunière",
+        "nom": "disp : hôtel de Montmorency-Laval : angle",
+        "profession_proprietaire": "veuve",
+        "siecle": "18"
+    },
+    {
+        "id": 22,
+        "adresse": "7 rue Canard",
+        "nom": "hôtel Rossel et hôtel Caussade",
+        "profession_proprietaire": "avocat",
+        "siecle": "17"
+    },
+    {
+        "id": 23,
+        "adresse": "8 rue Canard",
+        "nom": "hôtel Vendange de Malepeyre",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 24,
+        "adresse": "2 rue Cantegril",
+        "nom": "hôtel de Bertier",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 25,
+        "adresse": "11 rue Cantegril",
+        "nom": "tour Cantegril",
+        "profession_proprietaire": "àVoir",
+        "siecle": "15"
+    },
+    {
+        "id": 26,
+        "adresse": "10 place Capitole",
+        "nom": "hôtel Puget",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 27,
+        "adresse": "38 place Carmes",
+        "nom": "hôtel Marty (hôtel Sabatier)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 28,
+        "adresse": "4 rue Chaîne",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "18"
+    },
+    {
+        "id": 29,
+        "adresse": "4 rue Chalande",
+        "nom": "hôtel Bolé, Tour Séguy",
+        "profession_proprietaire": "marchand",
+        "siecle": "15"
+    },
+    {
+        "id": 30,
+        "adresse": "53 rue Châlets",
+        "nom": "hôtel, villa, maison",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "20"
+    },
+    {
+        "id": 31,
+        "adresse": "16 rue Changes",
+        "nom": "hôtel Astorg : escalier en bois, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 32,
+        "adresse": "16 rue Changes",
+        "nom": "hôtel de Saint-Germain",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 33,
+        "adresse": "17 rue Changes",
+        "nom": "Hôtel de Boscredon",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 34,
+        "adresse": "19 rue Changes",
+        "nom": "hôtel et tour de Brucelles",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 35,
+        "adresse": "20 rue Changes",
+        "nom": "hôtel Delpech, tour",
+        "profession_proprietaire": "pastelier",
+        "siecle": "15"
+    },
+    {
+        "id": 36,
+        "adresse": "22 rue Changes",
+        "nom": "hôtel Labonne",
+        "profession_proprietaire": "marchand",
+        "siecle": "17"
+    },
+    {
+        "id": 37,
+        "adresse": "27 rue Changes",
+        "nom": "hôtel Comère",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 38,
+        "adresse": "30 rue Changes",
+        "nom": "hôtel Prohenques",
+        "profession_proprietaire": "marchand",
+        "siecle": "15"
+    },
+    {
+        "id": 39,
+        "adresse": "31 rue Changes",
+        "nom": "hôtel et tour de Delcros-Lancefoc",
+        "profession_proprietaire": "marchand",
+        "siecle": "15"
+    },
+    {
+        "id": 40,
+        "adresse": "4 rue Coffres",
+        "nom": "hôtel Darquier",
+        "profession_proprietaire": "receveur",
+        "siecle": "18"
+    },
+    {
+        "id": 41,
+        "adresse": "11 rue Coffres",
+        "nom": "hôtel Bousquet",
+        "profession_proprietaire": "procureur",
+        "siecle": "18"
+    },
+    {
+        "id": 42,
+        "adresse": "8 rue Coq d'Inde",
+        "nom": "hôtel Segla disp ?",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 43,
+        "adresse": "6 rue Couteliers",
+        "nom": "hôtel Aliès",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 44,
+        "adresse": "26 rue Couteliers",
+        "nom": "hôtel de Reste",
+        "profession_proprietaire": "marchand",
+        "siecle": "15"
+    },
+    {
+        "id": 45,
+        "adresse": "44 rue Couteliers",
+        "nom": "Hôtel Pierre Barassy",
+        "profession_proprietaire": "capitoul",
+        "siecle": "18"
+    },
+    {
+        "id": 46,
+        "adresse": "46 rue Couteliers",
+        "nom": "hôtel Dassier",
+        "profession_proprietaire": "graveur",
+        "siecle": "18"
+    },
+    {
+        "id": 47,
+        "adresse": "6 rue Croix-Baragnon",
+        "nom": "hôtel de Ciron-Fumel",
+        "profession_proprietaire": "mortier",
+        "siecle": "17"
+    },
+    {
+        "id": 48,
+        "adresse": "10 rue Croix-Baragnon",
+        "nom": "hôtel Castellane, Arnaud Faure, disp. (de Campaigno)",
+        "profession_proprietaire": "évêque",
+        "siecle": "18"
+    },
+    {
+        "id": 49,
+        "adresse": "14 rue Croix-Baragnon",
+        "nom": "hôtel de Bonfontan",
+        "profession_proprietaire": "capitoul",
+        "siecle": "18"
+    },
+    {
+        "id": 50,
+        "adresse": "15 rue Croix-Baragnon",
+        "nom": "Maison romano-gothique",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "14"
+    },
+    {
+        "id": 51,
+        "adresse": "19 rue Croix-Baragnon",
+        "nom": "hôtel Beringuier-Bonnefoy, tour",
+        "profession_proprietaire": "litographe",
+        "siecle": "16"
+    },
+    {
+        "id": 52,
+        "adresse": "24 rue Croix-Baragnon",
+        "nom": "hôtel Sahuqué",
+        "profession_proprietaire": "professeur",
+        "siecle": "19"
+    },
+    {
+        "id": 53,
+        "adresse": "27 rue Croix-Baragnon",
+        "nom": "hôtel Thomas de Montval",
+        "profession_proprietaire": "minotier",
+        "siecle": "20"
+    },
+    {
+        "id": 54,
+        "adresse": "41 rue Croix-Baragnon",
+        "nom": "hôtel de Bonfontan",
+        "profession_proprietaire": "capitoul",
+        "siecle": "18"
+    },
+    {
+        "id": 55,
+        "adresse": "1bis rue Cuves-Saint-Sernin",
+        "nom": "anciens greniers du Chapitre Saint-Sernin",
+        "profession_proprietaire": "abbaye",
+        "siecle": "16"
+    },
+    {
+        "id": 56,
+        "adresse": "2 rue Dalbade",
+        "nom": "emplacement de l'hôtel de Rivière",
+        "profession_proprietaire": "bourgeois",
+        "siecle": "16"
+    },
+    {
+        "id": 57,
+        "adresse": "5 rue Dalbade",
+        "nom": "hôtel Masuyer",
+        "profession_proprietaire": "président",
+        "siecle": "15"
+    },
+    {
+        "id": 58,
+        "adresse": "7 rue Dalbade",
+        "nom": "hôtel de Saint-Pierre, puis de Bastard",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 59,
+        "adresse": "8 rue Dalbade",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "16"
+    },
+    {
+        "id": 60,
+        "adresse": "11 rue Dalbade",
+        "nom": "hôtel particulier, Notre-Dame du Calvaire",
+        "profession_proprietaire": "àVoir",
+        "siecle": "18"
+    },
+    {
+        "id": 61,
+        "adresse": "13 rue Dalbade",
+        "nom": "Hôtel Le Masuyer, couvent Visitation",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "17"
+    },
+    {
+        "id": 62,
+        "adresse": "15 rue Dalbade",
+        "nom": "Hôtel de Béarn, couvent Visitation",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "17"
+    },
+    {
+        "id": 63,
+        "adresse": "16 rue Dalbade",
+        "nom": "hôtel de Villepigne",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 64,
+        "adresse": "18 rue Dalbade",
+        "nom": "hôtel de Montbel (hôtel Cazals)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 65,
+        "adresse": "22 rue Dalbade",
+        "nom": "hôtel de Felzins (ou de Molinier, Hôtel de Cathelan)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 66,
+        "adresse": "23 rue Dalbade",
+        "nom": "hôtel Bajuly",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 67,
+        "adresse": "25 rue Dalbade",
+        "nom": "hôtel Clari ou de pierre (Bagis)",
+        "profession_proprietaire": "président",
+        "siecle": "17"
+    },
+    {
+        "id": 68,
+        "adresse": "25 rue Dalbade",
+        "nom": "hôtel de Bagis (hôtel Daguin)",
+        "profession_proprietaire": "président",
+        "siecle": "16"
+    },
+    {
+        "id": 69,
+        "adresse": "25 rue Dalbade",
+        "nom": "Hôtel de Pierre-de-Ruppe, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 70,
+        "adresse": "29 rue Dalbade",
+        "nom": "hôtel de Massas (ou hôtel d'Aldeguier)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 71,
+        "adresse": "30 rue Dalbade",
+        "nom": "hôtel de Saint-Jean XVII°",
+        "profession_proprietaire": "religieux",
+        "siecle": "17"
+    },
+    {
+        "id": 72,
+        "adresse": "31 rue Dalbade",
+        "nom": "hôtel de La Mamye",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 73,
+        "adresse": "32 rue Dalbade",
+        "nom": "hôtel Saint-Jean",
+        "profession_proprietaire": "ordre",
+        "siecle": "17"
+    },
+    {
+        "id": 74,
+        "adresse": "37 rue Dalbade",
+        "nom": "hôtel Bruni, tour",
+        "profession_proprietaire": "religieux",
+        "siecle": "16"
+    },
+    {
+        "id": 75,
+        "adresse": "3 rue Darquier",
+        "nom": "hôtel de Clergues",
+        "profession_proprietaire": "chapelier",
+        "siecle": "18"
+    },
+    {
+        "id": 76,
+        "adresse": "5 rue Darquier",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "15"
+    },
+    {
+        "id": 77,
+        "adresse": "8 rue Darquier",
+        "nom": "hôtel Darquier",
+        "profession_proprietaire": "astronome",
+        "siecle": "18"
+    },
+    {
+        "id": 78,
+        "adresse": "10 rue Darquier",
+        "nom": "hôtel de Boysset",
+        "profession_proprietaire": "trésorier",
+        "siecle": "16"
+    },
+    {
+        "id": 79,
+        "adresse": "11 rue Darquier",
+        "nom": "hôtel de Quinquiry",
+        "profession_proprietaire": "avocat",
+        "siecle": "16"
+    },
+    {
+        "id": 80,
+        "adresse": "12, 14 rue Darquier",
+        "nom": "hôtel Fajole",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 81,
+        "adresse": "1 place Daurade",
+        "nom": "hôtel Fontfrède (dans prieuré Daurade)",
+        "profession_proprietaire": "marchand",
+        "siecle": "18"
+    },
+    {
+        "id": 82,
+        "adresse": "17 place Daurade",
+        "nom": "portail de l'hôtel Vesa (détruit)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 83,
+        "adresse": "2 allées Demoiselles",
+        "nom": "maison Valette",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 84,
+        "adresse": "4 allées Demoiselles",
+        "nom": "hôtel, villa, maison",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 85,
+        "adresse": "13 allées Demoiselles",
+        "nom": "hôtel, villa, maison",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 86,
+        "adresse": "15 allées Demoiselles",
+        "nom": "hôtel, villa, maison",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 87,
+        "adresse": "35 allées Demoiselles",
+        "nom": "villa Saphir",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 88,
+        "adresse": "41 allées Demoiselles",
+        "nom": "hôtel, villa, maison",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 89,
+        "adresse": "43 allées Demoiselles",
+        "nom": "hôtel, villa, maison",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 90,
+        "adresse": "45 allées Demoiselles",
+        "nom": "villa de la Tourelle",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 91,
+        "adresse": "47 allées Demoiselles",
+        "nom": "hôtel, villa, maison",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 92,
+        "adresse": "52 allées Demoiselles",
+        "nom": "hôtel, villa, maison",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 93,
+        "adresse": "37 - 39 allées Demoiselles",
+        "nom": "villa des Violettes",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 94,
+        "adresse": "1 rue Deville",
+        "nom": "derrière : hôtel Cambolas disp ?",
+        "profession_proprietaire": "président",
+        "siecle": "17"
+    },
+    {
+        "id": 95,
+        "adresse": "23 rue Deville",
+        "nom": "hôtel de Villeneuve",
+        "profession_proprietaire": "lithographe",
+        "siecle": "19"
+    },
+    {
+        "id": 96,
+        "adresse": "1 rue Dumay",
+        "nom": "hôtel Darbou",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 97,
+        "adresse": "7 rue Dumay",
+        "nom": "hôtel Dumay",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 98,
+        "adresse": "18 place Dupuy",
+        "nom": "hôtel de Mazères",
+        "profession_proprietaire": "distilateur",
+        "siecle": "16"
+    },
+    {
+        "id": 99,
+        "adresse": "1 rue Echarpe",
+        "nom": "Tour de Bénézit, hôtel Ysalguier",
+        "profession_proprietaire": "capitoul",
+        "siecle": "14"
+    },
+    {
+        "id": 100,
+        "adresse": "3 rue Echarpe",
+        "nom": "hôtel de l'Écharpe",
+        "profession_proprietaire": "capitoul",
+        "siecle": "20"
+    },
+    {
+        "id": 101,
+        "adresse": "1 rue Espinasse",
+        "nom": "hôtel Mansencal, tour (hôtel Sevin-Mansencal)",
+        "profession_proprietaire": "président",
+        "siecle": "16"
+    },
+    {
+        "id": 102,
+        "adresse": "1 rue Espinasse",
+        "nom": "hôtel Sevin-Mansencal",
+        "profession_proprietaire": "veuve",
+        "siecle": "18"
+    },
+    {
+        "id": 103,
+        "adresse": "4 rue Espinasse",
+        "nom": "hôtel Tournier disp ?",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 104,
+        "adresse": "5 rue Espinasse",
+        "nom": "hôtel Gach disp ? (hôtel Gach)",
+        "profession_proprietaire": "président",
+        "siecle": "17"
+    },
+    {
+        "id": 105,
+        "adresse": "3 rue Esquile",
+        "nom": "hôtel de Caylus",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 106,
+        "adresse": "5 ou 6 rue Esquile",
+        "nom": "hôtel de Caylus XVIII° : 5 ou 6",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 107,
+        "adresse": "12 place Esquirol",
+        "nom": "hôtel Desplats ou Palaminy",
+        "profession_proprietaire": "mortier",
+        "siecle": "17"
+    },
+    {
+        "id": 108,
+        "adresse": "1 rue Féral",
+        "nom": "hôtel de Blaise d'Auriol (ou Féral",
+        "profession_proprietaire": "régent",
+        "siecle": "16"
+    },
+    {
+        "id": 109,
+        "adresse": "5 rue Fermat",
+        "nom": "hôtel de Malenfant (ou de Panat)",
+        "profession_proprietaire": "juge",
+        "siecle": "17"
+    },
+    {
+        "id": 110,
+        "adresse": "11 rue Fermat",
+        "nom": "hôtel Roquelaine",
+        "profession_proprietaire": "pépiniériste",
+        "siecle": "18"
+    },
+    {
+        "id": 111,
+        "adresse": "1, 3 rue Fermat",
+        "nom": "hôtel Sevin-Mansencal",
+        "profession_proprietaire": "veuve",
+        "siecle": "16"
+    },
+    {
+        "id": 112,
+        "adresse": "11 rue Filatiers",
+        "nom": "hôtel Montluc",
+        "profession_proprietaire": "gouverneur",
+        "siecle": "17"
+    },
+    {
+        "id": 113,
+        "adresse": "1 rue Fleurs",
+        "nom": "ancien hôtel Monnaie",
+        "profession_proprietaire": "monnaie",
+        "siecle": "13"
+    },
+    {
+        "id": 114,
+        "adresse": "13 rue Fleurs",
+        "nom": "Hôtel Fajole",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 115,
+        "adresse": "22 rue Fleurs",
+        "nom": "hôtel de la Sénéchausée : avant église des Gésus",
+        "profession_proprietaire": "sénéchal",
+        "siecle": "16"
+    },
+    {
+        "id": 116,
+        "adresse": "15 rue Fonderie",
+        "nom": "hôtel de Margastaud",
+        "profession_proprietaire": "capitoul",
+        "siecle": "18"
+    },
+    {
+        "id": 117,
+        "adresse": "1 rue Fourtanier",
+        "nom": "hôtel Viguerie",
+        "profession_proprietaire": "chirurgien",
+        "siecle": "19"
+    },
+    {
+        "id": 118,
+        "adresse": "1 rue Furgole",
+        "nom": "hôtel de Lézèque ou Furgole",
+        "profession_proprietaire": "carrosses",
+        "siecle": "17"
+    },
+    {
+        "id": 119,
+        "adresse": "1 rue Gambetta",
+        "nom": "hôtel Bernuy",
+        "profession_proprietaire": "pastelier",
+        "siecle": "16"
+    },
+    {
+        "id": 120,
+        "adresse": "35 rue Gambetta",
+        "nom": "hôtel de Campunaud",
+        "profession_proprietaire": "capitoul",
+        "siecle": "19"
+    },
+    {
+        "id": 121,
+        "adresse": "43 rue Gambetta",
+        "nom": "hôtel Maleprade",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 122,
+        "adresse": "58 rue Gambetta",
+        "nom": "tourelles collège Ste-Catherine, hôtel Crown Plaza",
+        "profession_proprietaire": "collège",
+        "siecle": "14"
+    },
+    {
+        "id": 123,
+        "adresse": "13, 25 rue Gambetta",
+        "nom": "hôtel Saint-Étienne",
+        "profession_proprietaire": "avocat",
+        "siecle": "17"
+    },
+    {
+        "id": 124,
+        "adresse": "23 rue Homme Armé",
+        "nom": "hôtel Galien (ou Margastaud)",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 125,
+        "adresse": "15 rue Japon",
+        "nom": "hôtel Labit",
+        "profession_proprietaire": "commerçant",
+        "siecle": "20"
+    },
+    {
+        "id": 126,
+        "adresse": "16 rue Joseph-Bosc",
+        "nom": "Dépendance de l'hôtel Baylet",
+        "profession_proprietaire": "entrepreneur",
+        "siecle": "19"
+    },
+    {
+        "id": 127,
+        "adresse": "2 rue Joutx Aigues",
+        "nom": "hôtel de Rességuier, tour Bertrand de Rességuier",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 128,
+        "adresse": "2 rue Joutx Aigues",
+        "nom": "tour Bertrand de Rességuier",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 129,
+        "adresse": "3 rue Joutx Aigues",
+        "nom": "hôtel Sapte disp ?",
+        "profession_proprietaire": "mortier",
+        "siecle": "18"
+    },
+    {
+        "id": 130,
+        "adresse": "10 rue Languedoc",
+        "nom": "hôtel Raymond d'Aymeric",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 131,
+        "adresse": "16 rue Languedoc",
+        "nom": "hôtel Rabaudy de Paucy",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 132,
+        "adresse": "26 rue Languedoc",
+        "nom": "hôtel de Blaise d'Auriol",
+        "profession_proprietaire": "régent",
+        "siecle": "16"
+    },
+    {
+        "id": 133,
+        "adresse": "30 rue Languedoc",
+        "nom": "Hôtel d'Ouvrier, tour de Guillaume Carreri",
+        "profession_proprietaire": "port",
+        "siecle": "15"
+    },
+    {
+        "id": 134,
+        "adresse": "34 rue Languedoc",
+        "nom": "hôtel de Puymaurin (hôtel Labat de Mourlens)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 135,
+        "adresse": "36 rue Languedoc",
+        "nom": "hôtel Aussargues (hôtel de Lancrau)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 136,
+        "adresse": "36 rue Languedoc",
+        "nom": "hôtel Béringuier Maynier (Vieux-Raisin, de Lasbordes)",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 137,
+        "adresse": "46 rue Languedoc",
+        "nom": "hôtel Antonin (hôtel des Pins)",
+        "profession_proprietaire": "évêque",
+        "siecle": "16"
+    },
+    {
+        "id": 138,
+        "adresse": "1bis rue Languedoc",
+        "nom": "tour du capitoul de Ruppe",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 139,
+        "adresse": "75 bd Lazare Carnot",
+        "nom": "Immeuble dit Hôtel Modèle, disp ?",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "19"
+    },
+    {
+        "id": 140,
+        "adresse": "3 rue Lieutenant-Pelissier",
+        "nom": "Hôtel Caulet-Resseguier (ou hôtel Duranti)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 141,
+        "adresse": "1 rue Lois",
+        "nom": "hôtel Grand Balcon",
+        "profession_proprietaire": "hôtel",
+        "siecle": "19"
+    },
+    {
+        "id": 142,
+        "adresse": "3 rue Madeleine",
+        "nom": "hôtel Tornié de Vaillac",
+        "profession_proprietaire": "président",
+        "siecle": "16"
+    },
+    {
+        "id": 143,
+        "adresse": "3 rue Madeleine",
+        "nom": "hôtel Tournoër ou Tournié disp ? (Tornié-Barrassy)",
+        "profession_proprietaire": "président",
+        "siecle": "18"
+    },
+    {
+        "id": 144,
+        "adresse": "4 rue Madeleine",
+        "nom": "hôtel Barravy",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 145,
+        "adresse": "3 rue Mage",
+        "nom": "hôtel d'Espie (ou Courtois de Viçoze)",
+        "profession_proprietaire": "comte",
+        "siecle": "18"
+    },
+    {
+        "id": 146,
+        "adresse": "11 rue Mage",
+        "nom": "hôtel d'Orbessan",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 147,
+        "adresse": "16 rue Mage",
+        "nom": "hôtel Ayguevives (hôtel Bernard)",
+        "profession_proprietaire": "avocat",
+        "siecle": "18"
+    },
+    {
+        "id": 148,
+        "adresse": "18 rue Mage",
+        "nom": "Hôtel Reynier",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 149,
+        "adresse": "20 rue Mage",
+        "nom": "hôtel Davasse",
+        "profession_proprietaire": "capitoul",
+        "siecle": "18"
+    },
+    {
+        "id": 150,
+        "adresse": "20 rue Mage",
+        "nom": "hôtel Durasse (puis hôtel Davasse, tour Reynier)",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 151,
+        "adresse": "32 rue Mage",
+        "nom": "hôtel Cassan : statue",
+        "profession_proprietaire": "conseiller",
+        "siecle": "19"
+    },
+    {
+        "id": 152,
+        "adresse": "25 rue Malaret",
+        "nom": "emplacement de l'hôtel d'Hautpoul, petit séminaire",
+        "profession_proprietaire": "comte",
+        "siecle": "18"
+    },
+    {
+        "id": 153,
+        "adresse": "29 rue Malaret",
+        "nom": "emplacement de l'hôtel de Luppé",
+        "profession_proprietaire": "noble",
+        "siecle": "17"
+    },
+    {
+        "id": 154,
+        "adresse": "1 rue Malcousinat",
+        "nom": "hôtel de Bénézit",
+        "profession_proprietaire": "président",
+        "siecle": "16"
+    },
+    {
+        "id": 155,
+        "adresse": "11 rue Malcousinat",
+        "nom": "Hôtel de Boysson-Cheverry",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 156,
+        "adresse": "13 rue Malcousinat",
+        "nom": "hôtel Boscredon",
+        "profession_proprietaire": "marchand",
+        "siecle": "15"
+    },
+    {
+        "id": 157,
+        "adresse": "3 rue Maletache",
+        "nom": "hôtel des Comère",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 158,
+        "adresse": "37 rue Marchands",
+        "nom": "hôtel de Bertier",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 159,
+        "adresse": "28  Marchands",
+        "nom": "Hôtel des Marchands ou des cariatides",
+        "profession_proprietaire": "àVoir",
+        "siecle": "19"
+    },
+    {
+        "id": 160,
+        "adresse": "2 rue Martyrs-de-la-Libération",
+        "nom": "hôtel Besaucèle",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "20"
+    },
+    {
+        "id": 161,
+        "adresse": "28bis rue Martyrs-de-la-Libération",
+        "nom": "hôtel Verzanobre",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "20"
+    },
+    {
+        "id": 162,
+        "adresse": "11bis rue Mercié",
+        "nom": "emplacement de l'ancien hôtel Duranti",
+        "profession_proprietaire": "président",
+        "siecle": "19"
+    },
+    {
+        "id": 163,
+        "adresse": "4 rue Merlane",
+        "nom": "hôtel Cassan",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 164,
+        "adresse": "7 rue Merlane",
+        "nom": "hôtel de Malenfant ou de Panat",
+        "profession_proprietaire": "mage",
+        "siecle": "17"
+    },
+    {
+        "id": 165,
+        "adresse": "8 rue Merlane",
+        "nom": "hôtel Sevin-Mansencal",
+        "profession_proprietaire": "président",
+        "siecle": "16"
+    },
+    {
+        "id": 166,
+        "adresse": "3 rue Montoulieu-Saint-Jacques",
+        "nom": "hôtel Lestang, tour",
+        "profession_proprietaire": "évêque",
+        "siecle": "16"
+    },
+    {
+        "id": 167,
+        "adresse": "11 rue Montoulieu-Vélane",
+        "nom": "hôtel Descoffres",
+        "profession_proprietaire": "trésorier",
+        "siecle": "18"
+    },
+    {
+        "id": 168,
+        "adresse": "8 gde rue Nazareth",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "17"
+    },
+    {
+        "id": 169,
+        "adresse": "19 gde rue Nazareth",
+        "nom": "hôtel Doazan",
+        "profession_proprietaire": "avocat",
+        "siecle": "18"
+    },
+    {
+        "id": 170,
+        "adresse": "24 gde rue Nazareth",
+        "nom": "hôtel d'Avizard",
+        "profession_proprietaire": "enquêtes",
+        "siecle": "17"
+    },
+    {
+        "id": 171,
+        "adresse": "28 gde rue Nazareth",
+        "nom": "hôtel Potier-Laterrasse",
+        "profession_proprietaire": "prieur",
+        "siecle": "16"
+    },
+    {
+        "id": 172,
+        "adresse": "32 gde rue Nazareth",
+        "nom": "hôtel de Ricard, démoli (hôtel de Riquet)",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 173,
+        "adresse": "35 gde rue Nazareth",
+        "nom": "hôtel Bauderon-Maussac (Hôtel de Guilhermy)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 174,
+        "adresse": "37 gde rue Nazareth",
+        "nom": "ancien hôtel Baderon-Maussac, disp",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 175,
+        "adresse": "37 gde rue Nazareth",
+        "nom": "tour de l'hôtel subsiste au numéro 8 de la rue Ozenne",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 176,
+        "adresse": "40 gde rue Nazareth",
+        "nom": "école St-Thomas Acquin (façade hôtel Mansencal)",
+        "profession_proprietaire": "ordre",
+        "siecle": "16"
+    },
+    {
+        "id": 177,
+        "adresse": "12 rue Ninau",
+        "nom": "hôtel Paulo : 12 & 14 (hôtel Gary)",
+        "profession_proprietaire": "comte",
+        "siecle": "18"
+    },
+    {
+        "id": 178,
+        "adresse": "15 rue Ninau",
+        "nom": "hôtel d'Ulmo (hôtel de Verdiguier)",
+        "profession_proprietaire": "président",
+        "siecle": "16"
+    },
+    {
+        "id": 179,
+        "adresse": "19 rue Ninau",
+        "nom": "hôtel de Castagnier d'Auriac (hôtel Lévis-Mirepoix)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 180,
+        "adresse": "20 rue Ninau",
+        "nom": "hôtel Guérard",
+        "profession_proprietaire": "capitoul",
+        "siecle": "18"
+    },
+    {
+        "id": 181,
+        "adresse": "2 rue Ozenne",
+        "nom": "hôtel Bérenguier Maynier",
+        "profession_proprietaire": "lithographe",
+        "siecle": "15"
+    },
+    {
+        "id": 182,
+        "adresse": "4 rue Ozenne",
+        "nom": "Hôtel de Puymaurin",
+        "profession_proprietaire": "baron",
+        "siecle": "17"
+    },
+    {
+        "id": 183,
+        "adresse": "9 rue Ozenne",
+        "nom": "Hôtel Dahus-Tournoer (Hôtel de Roquette)",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 184,
+        "adresse": "10 rue Ozenne",
+        "nom": "hôtel Potier-Laterrasse",
+        "profession_proprietaire": "prieur",
+        "siecle": "16"
+    },
+    {
+        "id": 185,
+        "adresse": "8bis rue Ozenne",
+        "nom": "hôtel de Baderon-Maussac",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 186,
+        "adresse": "4 rue Paradoux",
+        "nom": "hôtel Rességuier",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 187,
+        "adresse": "28 rue Paradoux",
+        "nom": "hôtel Castaing",
+        "profession_proprietaire": "couvreur",
+        "siecle": "17"
+    },
+    {
+        "id": 188,
+        "adresse": "32 rue Paradoux",
+        "nom": "hôtel de Michel de Cantuer",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 189,
+        "adresse": "66 rue Pargaminières",
+        "nom": "hôtel de Cambolas",
+        "profession_proprietaire": "président",
+        "siecle": "17"
+    },
+    {
+        "id": 190,
+        "adresse": "12 place Parlement",
+        "nom": "hôtel Chalvet",
+        "profession_proprietaire": "président",
+        "siecle": "17"
+    },
+    {
+        "id": 191,
+        "adresse": "7, 8 place Parlement",
+        "nom": "Maison Seilhan",
+        "profession_proprietaire": "viguier",
+        "siecle": "13"
+    },
+    {
+        "id": 192,
+        "adresse": "1 allées Paul-Feuga",
+        "nom": "Hôtel de Seube",
+        "profession_proprietaire": "musée",
+        "siecle": "20"
+    },
+    {
+        "id": 193,
+        "adresse": "24 rue Perchepinte",
+        "nom": "hôtel de Castelpers",
+        "profession_proprietaire": "marquis",
+        "siecle": "18"
+    },
+    {
+        "id": 194,
+        "adresse": "56 rue Périgord",
+        "nom": "hôtel Maurand, tour",
+        "profession_proprietaire": "marchand",
+        "siecle": "12"
+    },
+    {
+        "id": 195,
+        "adresse": "13 rue Peyras",
+        "nom": "hôtel Tiffy-Duclos de Bouillas",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 196,
+        "adresse": "14 rue Peyras",
+        "nom": "hôtel Druilhet",
+        "profession_proprietaire": "écuiller",
+        "siecle": "17"
+    },
+    {
+        "id": 197,
+        "adresse": "22 rue Peyras",
+        "nom": "hôtel Desplats-Sipière",
+        "profession_proprietaire": "mortier",
+        "siecle": "17"
+    },
+    {
+        "id": 198,
+        "adresse": "3 rue Peyrolières",
+        "nom": "hôtel d'Olmières, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 199,
+        "adresse": "18 rue Peyrolières",
+        "nom": "hôtel Ysalguier, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "14"
+    },
+    {
+        "id": 200,
+        "adresse": "34 rue Peyrolières",
+        "nom": "hôtel Labat",
+        "profession_proprietaire": "conseiller",
+        "siecle": "16"
+    },
+    {
+        "id": 201,
+        "adresse": "34 rue Peyrolières",
+        "nom": "hôtel Lagorrée, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 202,
+        "adresse": "39 rue Peyrolières",
+        "nom": "Hôtel de Belbèze",
+        "profession_proprietaire": "noble",
+        "siecle": "16"
+    },
+    {
+        "id": 203,
+        "adresse": "15 rue Pharaon",
+        "nom": "hôtel Castet",
+        "profession_proprietaire": "avocat",
+        "siecle": "17"
+    },
+    {
+        "id": 204,
+        "adresse": "17 rue Pharaon",
+        "nom": "hôtel Waroquier (hôtel Foulquier)",
+        "profession_proprietaire": "avocat",
+        "siecle": "18"
+    },
+    {
+        "id": 205,
+        "adresse": "21 rue Pharaon",
+        "nom": "hôtel de Jérôme Taverne",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 206,
+        "adresse": "21 rue Pharaon",
+        "nom": "hôtel Taverne ou Rolle (de Ruffy), tour Noël Rolle",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 207,
+        "adresse": "29 rue Pharaon",
+        "nom": "hôtel Vignales",
+        "profession_proprietaire": "veuve",
+        "siecle": "18"
+    },
+    {
+        "id": 208,
+        "adresse": "30 rue Pharaon",
+        "nom": "hôtel Bétoux",
+        "profession_proprietaire": "noble",
+        "siecle": "18"
+    },
+    {
+        "id": 209,
+        "adresse": "35 rue Pharaon",
+        "nom": "tour du capitoul Servientes",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 210,
+        "adresse": "42 rue Pharaon",
+        "nom": "fontaine, hôtel de Réversac XVII°",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 211,
+        "adresse": "45 rue Pharaon",
+        "nom": "hôtel de Lespinasse",
+        "profession_proprietaire": "marchand",
+        "siecle": "16"
+    },
+    {
+        "id": 212,
+        "adresse": "47 rue Pharaon",
+        "nom": "hôtel de Marvéjol",
+        "profession_proprietaire": "marchand",
+        "siecle": "17"
+    },
+    {
+        "id": 213,
+        "adresse": "52 rue Pharaon",
+        "nom": "hôtel Pastoureau, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 214,
+        "adresse": "56 rue Pharaon",
+        "nom": "hôtel Burta",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 215,
+        "adresse": "13 rue Pleau",
+        "nom": "hôtel et tour de Pierre Martin ou de Pierre Besson",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 216,
+        "adresse": "17 rue Pleau",
+        "nom": "hôtel Lapleau : inconnu",
+        "profession_proprietaire": "sénéchal pr",
+        "siecle": "16"
+    },
+    {
+        "id": 217,
+        "adresse": "5 rue Pomme",
+        "nom": "hôtel de Guillaume de Bernuy",
+        "profession_proprietaire": "greffier",
+        "siecle": "16"
+    },
+    {
+        "id": 218,
+        "adresse": "28 rue Pomme",
+        "nom": "hôtel Saint-Géniès",
+        "profession_proprietaire": "procureur",
+        "siecle": "17"
+    },
+    {
+        "id": 219,
+        "adresse": "3 rue Prêtres",
+        "nom": "hôtel Roguier",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 220,
+        "adresse": "5 rue Prêtres",
+        "nom": "hôtel du Poids des Blés, tourelle",
+        "profession_proprietaire": "institut",
+        "siecle": "14"
+    },
+    {
+        "id": 221,
+        "adresse": "4bis rue Prieuré",
+        "nom": "hôtel Viguerie",
+        "profession_proprietaire": "chirurgien",
+        "siecle": "16"
+    },
+    {
+        "id": 222,
+        "adresse": "20 rue Puits-Clos",
+        "nom": "hôtel Darbou ; domicile de Jean Jaurès",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 223,
+        "adresse": "2b, 4 rue Puits-Clos",
+        "nom": "hôtel Tiffy – Duclos de Bouillas",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 224,
+        "adresse": "8 rue Puits-Vert",
+        "nom": "hôtel Tiffy – Duclos de Bouillas",
+        "profession_proprietaire": "avocat",
+        "siecle": "17"
+    },
+    {
+        "id": 225,
+        "adresse": "4 rue Quatre-Billards",
+        "nom": "hôtel Comère",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 226,
+        "adresse": "8 rue Regans",
+        "nom": "hôtel Boissy",
+        "profession_proprietaire": "avocat",
+        "siecle": "17"
+    },
+    {
+        "id": 227,
+        "adresse": "17 rue Rémusat",
+        "nom": "Hôtel du Sénéchal",
+        "profession_proprietaire": "institut",
+        "siecle": "16"
+    },
+    {
+        "id": 228,
+        "adresse": "7 rue Renforts",
+        "nom": "hôtel de Bruée",
+        "profession_proprietaire": "noble",
+        "siecle": "16"
+    },
+    {
+        "id": 229,
+        "adresse": "25 rue République",
+        "nom": "hôtel Virebent",
+        "profession_proprietaire": "statuaire",
+        "siecle": "18"
+    },
+    {
+        "id": 230,
+        "adresse": "3 rue Saint-Antoine du T",
+        "nom": "hôtel Caulet XVII°",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 231,
+        "adresse": "47 rue Saint-Antoine du T",
+        "nom": "hôtel Palaminy refait en 1843",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 232,
+        "adresse": "3 rue Saint-Bernard",
+        "nom": "hôtel, villa, maison Charry",
+        "profession_proprietaire": "docteur",
+        "siecle": "20"
+    },
+    {
+        "id": 233,
+        "adresse": "5 rue Saint-Bernard",
+        "nom": "hôtel, villa, maison Reygasse",
+        "profession_proprietaire": "docteur",
+        "siecle": "20"
+    },
+    {
+        "id": 234,
+        "adresse": "7 rue Saint-Bernard",
+        "nom": "hôtel, villa, maison Fédou",
+        "profession_proprietaire": "maître",
+        "siecle": "20"
+    },
+    {
+        "id": 235,
+        "adresse": "9 rue Saint-Bernard",
+        "nom": "hôtel, villa, maison Sudre",
+        "profession_proprietaire": "monsieur",
+        "siecle": "20"
+    },
+    {
+        "id": 236,
+        "adresse": "11 rue Saint-Bernard",
+        "nom": "hôtel, villa, maison Pouey",
+        "profession_proprietaire": "monsieur",
+        "siecle": "20"
+    },
+    {
+        "id": 237,
+        "adresse": "22 rue Sainte-Anne",
+        "nom": "hôtel Bernet",
+        "profession_proprietaire": "marchand",
+        "siecle": "19"
+    },
+    {
+        "id": 238,
+        "adresse": "1 place Sainte-Scarbes",
+        "nom": "Hôtel Arquata (hôtel Spignola)",
+        "profession_proprietaire": "marquis",
+        "siecle": "18"
+    },
+    {
+        "id": 239,
+        "adresse": "1 place Sainte-Scarbes",
+        "nom": "hôtel Muriel ou Castelpers",
+        "profession_proprietaire": "marquis",
+        "siecle": "18"
+    },
+    {
+        "id": 240,
+        "adresse": "3 place Sainte-Scarbes",
+        "nom": "hôtel Courtois",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 241,
+        "adresse": "6 place Sainte-Scarbes",
+        "nom": "hôtel Dubourg",
+        "profession_proprietaire": "greffier",
+        "siecle": "17"
+    },
+    {
+        "id": 242,
+        "adresse": "4 place Saint-Etienne",
+        "nom": "hôtel de Maran",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 243,
+        "adresse": "6 place Saint-Etienne",
+        "nom": "hôtel Catel, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 244,
+        "adresse": "11 place Saint-Etienne",
+        "nom": "hôtel de Froidour",
+        "profession_proprietaire": "eaux forêts",
+        "siecle": "18"
+    },
+    {
+        "id": 245,
+        "adresse": "14 place Saint-Etienne",
+        "nom": "hôtel Cambon (hôtel de France)",
+        "profession_proprietaire": "président",
+        "siecle": "18"
+    },
+    {
+        "id": 246,
+        "adresse": "11 rue Sainte-Ursule",
+        "nom": "hôtel Monserat",
+        "profession_proprietaire": "marchand",
+        "siecle": "17"
+    },
+    {
+        "id": 247,
+        "adresse": "12 rue Sainte-Ursule",
+        "nom": "hôtel Darbo",
+        "profession_proprietaire": "sénéchal cs",
+        "siecle": "17"
+    },
+    {
+        "id": 248,
+        "adresse": "13 rue Sainte-Ursule",
+        "nom": "tour Jean de Boysson",
+        "profession_proprietaire": "seigneur",
+        "siecle": "16"
+    },
+    {
+        "id": 249,
+        "adresse": "19 place Saint-Georges",
+        "nom": "hôtel Lafage",
+        "profession_proprietaire": "syndic",
+        "siecle": "18"
+    },
+    {
+        "id": 250,
+        "adresse": "22 place Saint-Georges",
+        "nom": "hôtel Bertier",
+        "profession_proprietaire": "évêque",
+        "siecle": "17"
+    },
+    {
+        "id": 251,
+        "adresse": "1 rue Saint-Jacques",
+        "nom": "hôtel Marmiesse",
+        "profession_proprietaire": "avocat",
+        "siecle": "15"
+    },
+    {
+        "id": 252,
+        "adresse": "18 rue Saint-Jacques",
+        "nom": "hôtel de Charlary",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 253,
+        "adresse": "20 rue Saint-Jacques",
+        "nom": "hôtel Lestang, tour",
+        "profession_proprietaire": "président",
+        "siecle": "16"
+    },
+    {
+        "id": 254,
+        "adresse": "3 rue Saint-Rémésy",
+        "nom": "hôtel Borassol disp ?",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 255,
+        "adresse": "9 rue Saint-Rémésy",
+        "nom": "portail anc. Hôtel Réqui (hôtel Lamotte)",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 256,
+        "adresse": "11 rue Saint-Rémésy",
+        "nom": "hôtel Hébrard (hôtel de Claude de Saint-Félix)",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 257,
+        "adresse": "18 rue Saint-Rémésy",
+        "nom": "hôtel d'Aigna (ou Eygna)",
+        "profession_proprietaire": "noble",
+        "siecle": "18"
+    },
+    {
+        "id": 258,
+        "adresse": "28 rue Saint-Rémésy",
+        "nom": "hôtel Roguier",
+        "profession_proprietaire": "avocat",
+        "siecle": "16"
+    },
+    {
+        "id": 259,
+        "adresse": "14 rue Saint-Rome",
+        "nom": "tour de Jean Bolle",
+        "profession_proprietaire": "orfèvre",
+        "siecle": "16"
+    },
+    {
+        "id": 260,
+        "adresse": "21 rue Saint-Rome",
+        "nom": "hôtel de Comynihan",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 261,
+        "adresse": "30 rue Saint-Rome",
+        "nom": "Tour Roguier",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 262,
+        "adresse": "39 rue Saint-Rome",
+        "nom": "maison Auger-Ferrier",
+        "profession_proprietaire": "imprimeur",
+        "siecle": "16"
+    },
+    {
+        "id": 263,
+        "adresse": "2, 4 rue Saint-Rome",
+        "nom": "tour et hôtel de Serta",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 264,
+        "adresse": "1 & 3 place Saint-Sernin",
+        "nom": "St Sernin hôtel Dubarry : 1 & 3",
+        "profession_proprietaire": "capitaine",
+        "siecle": "18"
+    },
+    {
+        "id": 265,
+        "adresse": "1 place Salin",
+        "nom": "hôtel de la Monnaie : autour rue d'Azes",
+        "profession_proprietaire": "institut",
+        "siecle": "13"
+    },
+    {
+        "id": 266,
+        "adresse": "5 rue Sénéchal",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "18"
+    },
+    {
+        "id": 267,
+        "adresse": "9 rue Sénéchal",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "18"
+    },
+    {
+        "id": 268,
+        "adresse": "11 rue Sénéchal",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "17"
+    },
+    {
+        "id": 269,
+        "adresse": "6 rue Sesquières",
+        "nom": "hôtel Davisard",
+        "profession_proprietaire": "marquis",
+        "siecle": "16"
+    },
+    {
+        "id": 270,
+        "adresse": "52 bd Strasbourg",
+        "nom": "hôtel Baylet",
+        "profession_proprietaire": "entrepreneur",
+        "siecle": "19"
+    },
+    {
+        "id": 271,
+        "adresse": "76 bd Strasbourg",
+        "nom": "hôtel Calvet",
+        "profession_proprietaire": "propriétaire",
+        "siecle": "20"
+    },
+    {
+        "id": 272,
+        "adresse": "68, 72 bd Strasbourg",
+        "nom": "hôtel Pauilhac",
+        "profession_proprietaire": "industriel",
+        "siecle": "19"
+    },
+    {
+        "id": 273,
+        "adresse": "4 rue Tabac",
+        "nom": "hôtel d'Olmières",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 274,
+        "adresse": "8 rue Taur",
+        "nom": "hôtel d'Aymès",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 275,
+        "adresse": "38 rue Taur",
+        "nom": "hôtel Mazzoli",
+        "profession_proprietaire": "seigneur",
+        "siecle": "19"
+    },
+    {
+        "id": 276,
+        "adresse": "56 rue Taur",
+        "nom": "tour et hôtel Maurand",
+        "profession_proprietaire": "marchand",
+        "siecle": "12"
+    },
+    {
+        "id": 277,
+        "adresse": "65 rue Taur",
+        "nom": "hôtel de Caylus",
+        "profession_proprietaire": "conseiller",
+        "siecle": "18"
+    },
+    {
+        "id": 278,
+        "adresse": "62, 64 rue Taur",
+        "nom": "hôtel de Lassus",
+        "profession_proprietaire": "seigneur",
+        "siecle": "17"
+    },
+    {
+        "id": 279,
+        "adresse": "2 rue Temponnières",
+        "nom": "hôtel Ricardy",
+        "profession_proprietaire": "marchand",
+        "siecle": "17"
+    },
+    {
+        "id": 280,
+        "adresse": "7 rue Temponnières",
+        "nom": "hôtel de Baynaguet, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 281,
+        "adresse": "7 rue Temponnières",
+        "nom": "Hôtel de la Belle-Paule, Paule de Viguier",
+        "profession_proprietaire": "épouse",
+        "siecle": "16"
+    },
+    {
+        "id": 282,
+        "adresse": "10 rue Temponnières",
+        "nom": "tour Vinhas (hôtel Vinhas)",
+        "profession_proprietaire": "capitoul",
+        "siecle": "13"
+    },
+    {
+        "id": 283,
+        "adresse": "5 rue Tolosane",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "17"
+    },
+    {
+        "id": 284,
+        "adresse": "6 rue Tolosane",
+        "nom": "hôtel Candie de Saint-Simon",
+        "profession_proprietaire": "noble",
+        "siecle": "18"
+    },
+    {
+        "id": 285,
+        "adresse": "7 rue Tolosane",
+        "nom": "hôtel Ramondy",
+        "profession_proprietaire": "aides",
+        "siecle": "18"
+    },
+    {
+        "id": 286,
+        "adresse": "10 rue Tolosane",
+        "nom": "immeuble, dit hôtel Dambes ou Viguerie.",
+        "profession_proprietaire": "noble",
+        "siecle": "18"
+    },
+    {
+        "id": 287,
+        "adresse": "14 rue Tolosane",
+        "nom": "hôtel Foucaud",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 288,
+        "adresse": "2 & 4 rue Tolosane",
+        "nom": "hôtel de Campistron : 2 & 4",
+        "profession_proprietaire": "avocat",
+        "siecle": "17"
+    },
+    {
+        "id": 289,
+        "adresse": "9 rue Tourneurs",
+        "nom": "hôtel de Pons Imbert, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "15"
+    },
+    {
+        "id": 290,
+        "adresse": "15 rue Tourneurs",
+        "nom": "hôtel Ramondi",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 291,
+        "adresse": "43 rue Tourneurs",
+        "nom": "hôtel Desplats",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 292,
+        "adresse": "45 rue Tourneurs",
+        "nom": "hôtel Desplats, tour",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    },
+    {
+        "id": 293,
+        "adresse": "49 rue Trente-Six-Ponts",
+        "nom": "maison Ferrier ou enclos Bénech",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 294,
+        "adresse": "6 rue Trinité",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "15"
+    },
+    {
+        "id": 295,
+        "adresse": "19 rue Trinité",
+        "nom": "tour du capitoul Pons Imbert (Tour Del Fossat)",
+        "profession_proprietaire": "capitoul",
+        "siecle": "16"
+    },
+    {
+        "id": 296,
+        "adresse": "9 rue Tripière",
+        "nom": "hôtel Comère, cour, tour",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 297,
+        "adresse": "12 & 14 rue Tripière",
+        "nom": "hôtel Virazel : 12 & 14",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 298,
+        "adresse": "5 rue Vélane",
+        "nom": "hôtel de Sacère-Murat",
+        "profession_proprietaire": "noble",
+        "siecle": "18"
+    },
+    {
+        "id": 299,
+        "adresse": "10 rue Vélane",
+        "nom": "hôtel particulier",
+        "profession_proprietaire": "àVoir",
+        "siecle": "17"
+    },
+    {
+        "id": 300,
+        "adresse": "12 rue Vélane",
+        "nom": "hôtel de Jossé-Decars",
+        "profession_proprietaire": "capitoul",
+        "siecle": "18"
+    },
+    {
+        "id": 301,
+        "adresse": "13 rue Vélane",
+        "nom": "Hôtel de Jossé-Lauvreins",
+        "profession_proprietaire": "capitoul",
+        "siecle": "17"
+    },
+    {
+        "id": 302,
+        "adresse": "14 rue Vélane",
+        "nom": "hôtel de Puymirol",
+        "profession_proprietaire": "noble",
+        "siecle": "18"
+    },
+    {
+        "id": 303,
+        "adresse": "16 rue Vélane",
+        "nom": "hôtel Reich de Pennautier",
+        "profession_proprietaire": "conseiller",
+        "siecle": "17"
+    }
+]

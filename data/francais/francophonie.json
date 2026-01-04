@@ -55,12 +55,12 @@
     },
     {
         "id": 7,
-        "pays": "Corée du Sud Corée du Sud",
+        "pays": "Corée du Sud",
         "statut": "observateur",
         "date_entree": "2016",
         "population_totale": 51164000,
-        "nombre_francophones": 0,
-        "pourcentage_augmentation": "nd"
+        "nombre_francophones": 40000,
+        "pourcentage_augmentation": "0.08"
     },
     {
         "id": 8,
@@ -68,8 +68,8 @@
         "statut": "observateur",
         "date_entree": "2016",
         "population_totale": 44689000,
-        "nombre_francophones": 0,
-        "pourcentage_augmentation": "nd"
+        "nombre_francophones": 100000,
+        "pourcentage_augmentation": "0.22"
     },
     {
         "id": 9,
@@ -790,5 +790,32 @@
         "population_totale": 0,
         "nombre_francophones": 0,
         "pourcentage_augmentation": "nd"
-    }
+    },
+{
+        "id": 89,
+        "pays": "Arabie saoudite",
+        "statut": "observateur",
+        "date_entree": "2016",
+        "population_totale": 34268000,
+        "nombre_francophones": 0,
+        "pourcentage_augmentation": "nd"
+    },
+    {
+        "id": 90,
+        "pays": "Ouzbékistan",
+        "statut": "observateur",
+        "date_entree": "2018",
+        "population_totale": 32981000,
+        "nombre_francophones": 0,
+        "pourcentage_augmentation": "nd"
+    },
+{
+    "id": 91,
+    "pays": "Puntland",
+    "statut": "observateur",
+    "date_entree": "2018",
+    "population_totale": 4500000,
+    "nombre_francophones": 0,
+    "pourcentage_augmentation": "0%"
+}
 ]

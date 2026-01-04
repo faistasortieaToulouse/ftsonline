@@ -6,7 +6,12 @@ import {
   Book, Film, MapPin, Music, Globe, Gamepad, Calendar, 
   Theater, Palette, Archive, Building, Bus,
   Sun, Cloud, CloudRain, CloudLightning, CloudSnow,
-  MessageSquare, Facebook, laptop // Nouvelles icônes pour les 3 cartes
+  MessageSquare, Facebook, laptop, ShoppingCart, Apple,
+  Leaf, Sprout, Landmark, Files, Map, History, Scroll,
+  Castle, Home, DraftingCompass, Construction, Cake,
+  PartyPopper, Church, GraduationCap, Lightbulb, BookOpen,
+  Library, Flower, TrainFront, TramFront, Car, Bike, Plane,
+  Amphora, CalendarDays, Trees
 } from "lucide-react";
 
 import { getSaintDuJour } from "../lib/saints";
@@ -18,146 +23,188 @@ import { getSigneZodiaque, getAscendant } from "../lib/astro";
 // --- DONNÉES DES CATÉGORIES ---
 const categories = [
   { title: "Agenda des événements à Toulouse", href: "/agendatoulouse", icon: Calendar, isAgenda: true },
-  {
-    title: "Actualités nationale et locale",
-    href: "/actualites",
-    icon: Globe,
-    isActualites: true,
-    actualitesSources: [{ title: "Presse", href: "/presse" }],
-  },
-  {
-    title: "Événements Meetup à Toulouse",
-    href: "/meetup-full",
-    icon: Music,
-    isMeetup: true,
-    meetupSources: [
-      { title: "Les évènements Meetup", href: "/meetup-full" },
-      { title: "Nos évènements Meetup", href: "/meetup-events" },
-      { title: "Évènements Happy People 31", href: "/meetup-happy" },
-      { title: "Évènements de nos groupes - Coloc", href: "/meetup-coloc" },
-      { title: "Évènements de nos groupes - Expats", href: "/meetup-expats" },
-      { title: "Évènements de nos groupes - Sorties", href: "/meetup-sorties" },
-    ],
-  },
-  {
-    title: "Actualités culturelles et scientifiques",
-    href: "/culture",
-    icon: Theater,
-    isCulture: true,
-    cultureSources: [
-      { title: "Actualités culturelles", href: "/cotetoulouse" },
-      { title: "Actualités scientifiques", href: "/canalu" },
-    ],
-  },
-  {
-    title: "Sorties en librairie",
-    href: "/librairie",
-    icon: Book,
-    isLibrairie: true,
-    librairieSources: [
-      { title: "Sorties en librairie", href: "/podlibrairies" },
-      { title: "Marathon des Mots", href: "/podmarathon" },
-      { title: "Librairie Ombrs Blanches", href: "/podombres" },
-      { title: "Librairie Terra Nova", href: "/podterra" },
-    ],
-  },
-  {
-    title: "Sorties cinéma",
-    href: "/cinema",
-    icon: Film,
-    isCinema: true,
-    cinemaSources: [{ title: "Sorties cinéma", href: "/cinematoulouse" }],
-  },
-  {
-    title: "Sorties jeux de société",
-    href: "/jeux",
-    icon: Gamepad,
-    isJeux: true,
-    jeuxSources: [
-      { title: "Tric Trac", href: "/trictracphilibert" },
-      { title: "Philibert", href: "/philibertnet" },
-      { title: "Jeu de Plateau", href: "/jeuplateau" },
-    ],
-  },
-  {
-    title: "Culture, sport à Toulouse",
-    href: "/air",
-    icon: Palette,
-    isSites: true,
-    sitesSources: [
-      { title: "Bibliothèques à Toulouse", href: "/bibliomap" },
-      { title: "Cinémas de Toulouse et sa banlieue", href: "/cinemas31" },
-      { title: "Galeries d'art de Toulouse", href: "/visitegalerieart" },
-      { title: "Équipements de sport à Toulouse", href: "/sport" },
-      { title: "Parcs et jardins de Toulouse", href: "/parcjardin" },
-    ],
-  },
-  {
-    title: "Musées à Toulouse et en banlieue",
-    href: "/musee",
-    icon: Archive,
-    isMusee: true,
-    museeSources: [
-      { title: "Occitanie", href: "/museeoccitanie" },
-      { title: "Toulouse", href: "/museestoulouse" },
-      { title: "Ariège", href: "/museeariege" },
-      { title: "Aude", href: "/museeaude" },
-      { title: "Aveyron", href: "/museeaveyron" },
-      { title: "Gers", href: "/museegers" },
-      { title: "Hérault", href: "/museeherault" },
-      { title: "Haute-Garonne", href: "/museehg" },
-      { title: "Hautes-Pyrénées", href: "/museehp" },
-      { title: "Lot", href: "/museelot" },
-      { title: "Pyrénées-Orientales", href: "/museepo" },
-      { title: "Tarn", href: "/museetarn" },
-      { title: "Tarn-et-Garonne", href: "/museetarngaronne" },
-    ],
-  },
-  {
-    title: "Visites de Toulouse",
-    href: "/visites-toulouse",
-    icon: Building,
-    isVisites: true,
-    visitesSources: [
-      { title: "Centre de Toulouse", href: "/visitetoulouse" },
-      { title: "Quartiers de Toulouse", href: "/visiteruetoulouse" },
-      { title: "Exil espagnol", href: "/visiteexil" },
-      { title: "Occupation et Résistance", href: "/visiteresistance" },
-      { title: "Quartier Saint-Michel", href: "/visitesaintmichel" },
-      { title: "Quartier Jolimont", href: "/visitejolimont" },
-      { title: "Fontaines de Toulouse", href: "/visitefontaines" },
-    ],
-  },
-  {
-    title: "Visites en Occitanie",
-    href: "/visites-occitanie",
-    icon: MapPin,
-    isOccitanie: true,
-    occitanieSources: [
-      { title: "Ariège", href: "/ariege" },
-      { title: "Randonnées Ariège", href: "/randoariege" },
-      { title: "Aude", href: "/aude" },
-      { title: "Écrivains de l'Aude", href: "/ecrivainsaude" },
-      { title: "Châteaux Cathares", href: "/chateaucathare" },
-      { title: "Aveyron", href: "/aveyron" },
-      { title: "Gers", href: "/gers" },
-      { title: "Patrimoine Haute-Garonne", href: "/patrimoine31" },
-      { title: "Pyrénées-Orientales", href: "/pyreneesorientales" },
-      { title: "Lot", href: "/lot" },
-      { title: "Hautes Pyrénées", href: "/hautespyrenees" },
-      { title: "Tarn", href: "/tarn" },
-      { title: "Tarn-Garonne", href: "/tarngaronne" },
-      { title: "Cirque et sommet", href: "/montcirque" },
-    ],
-  },
-  { title: "Transports Tisséo et circulation", href: "/transports-tisseo", icon: Bus },
-  
-  // --- AJOUT DES 3 NOUVELLES CARTES ICI ---
+  { title: "Actualités nationale et locale", href: "/actualites", icon: Globe, isActualites: true, actualitesSources: [
+    { title: "Presse", href: "/presse" }
+  ]},
+
+  { title: "Événements Meetup à Toulouse", href: "/meetup-full", icon: Music, isMeetup: true, meetupSources: [
+    { title: "Les évènements Meetup", href: "/meetup-full" },
+    { title: "Nos évènements Meetup", href: "/meetup-events" },
+    { title: "Évènements Happy People 31", href: "/meetup-happy" },
+    { title: "Évènements de nos groupes - Coloc", href: "/meetup-coloc" },
+    { title: "Évènements de nos groupes - Expats", href: "/meetup-expats" },
+    { title: "Évènements de nos groupes - Sorties", href: "/meetup-sorties" },
+  ]},
+
+  { title: "Actualités culturelles et scientifiques", href: "/culture", icon: Theater, isCulture: true, cultureSources: [
+    { title: "Actualités culturelles", href: "/cotetoulouse" },
+    { title: "Actualités scientifiques", href: "/canalu" },
+  ]},
+
+  { title: "Sorties en librairie", href: "/librairie", icon: Book, isLibrairie: true, librairieSources: [
+    { title: "Sorties en librairie", href: "/podlibrairies" },
+    { title: "Marathon des Mots", href: "/podmarathon" },
+    { title: "Librairie Ombrs Blanches", href: "/podombres" },
+    { title: "Librairie Terra Nova", href: "/podterra" },
+  ]},
+
+  { title: "Sorties cinéma", href: "/cinema", icon: Film, isCinema: true, cinemaSources: [{ title: "Sorties cinéma", href: "/cinematoulouse" }] },
+
+  { title: "Sorties jeux de société", href: "/jeux", icon: Gamepad, isJeux: true, jeuxSources: [
+    { title: "Tric Trac", href: "/trictracphilibert" },
+    { title: "Philibert", href: "/philibertnet" },
+    { title: "Jeu de Plateau", href: "/jeuplateau" },
+  ]},
+
+  { title: "Culture, sport à Toulouse", href: "/air", icon: Palette, isSites: true, sitesSources: [
+    { title: "Bibliothèques à Toulouse", href: "/bibliomap" },
+    { title: "Cinémas de Toulouse et sa banlieue", href: "/cinemas31" },
+    { title: "Galeries d'art de Toulouse", href: "/visitegalerieart" },
+    { title: "Équipements de sport à Toulouse", href: "/sport" },
+    { title: "Parcs et jardins de Toulouse", href: "/parcjardin" },
+  ]},
+
+  { title: "Musées à Toulouse et en banlieue", href: "/musee", icon: Archive, isMusee: true, museeSources: [
+    { title: "Occitanie", href: "/museeoccitanie" },
+    { title: "Toulouse", href: "/museestoulouse" },
+    { title: "Ariège", href: "/museeariege" },
+    { title: "Aude", href: "/museeaude" },
+    { title: "Aveyron", href: "/museeaveyron" },
+    { title: "Gers", href: "/museegers" },
+    { title: "Hérault", href: "/museeherault" },
+    { title: "Haute-Garonne", href: "/museehg" },
+    { title: "Hautes-Pyrénées", href: "/museehp" },
+    { title: "Lot", href: "/museelot" },
+    { title: "Pyrénées-Orientales", href: "/museepo" },
+    { title: "Tarn", href: "/museetarn" },
+    { title: "Tarn-et-Garonne", href: "/museetarngaronne" },
+  ]},
+
+  { title: "Visites de Toulouse", href: "/visites-toulouse", icon: Building, isVisites: true, visitesSources: [
+    { title: "Centre de Toulouse", href: "/visitetoulouse" },
+    { title: "Quartiers de Toulouse", href: "/visiteruetoulouse" },
+    { title: "Exil espagnol", href: "/visiteexil" },
+    { title: "Occupation et Résistance", href: "/visiteresistance" },
+    { title: "Quartier Saint-Michel", href: "/visitesaintmichel" },
+    { title: "Quartier Jolimont", href: "/visitejolimont" },
+    { title: "Fontaines de Toulouse", href: "/visitefontaines" },
+    { title: "Hôtels particuliers de Toulouse", href: "/hotelsparticuliers" },
+    { title: "Monuments actuels et disparus de Toulouse", href: "/visitetoulousetotal" },
+    { title: "Circuits à Toulouse", href: "/balade" },
+    { title: "RAndo-vélo à Toulouse", href: "/randovelos" },
+  ]},
+
+  { title: "Visites en Occitanie", href: "/visites-occitanie", icon: MapPin, isOccitanie: true, occitanieSources: [
+    { title: "Ariège", href: "/ariege" },
+    { title: "Randonnées Ariège", href: "/randoariege" },
+    { title: "Aude", href: "/aude" },
+    { title: "Écrivains de l'Aude", href: "/ecrivainsaude" },
+    { title: "Châteaux Cathares", href: "/chateaucathare" },
+    { title: "Aveyron", href: "/aveyron" },
+    { title: "Gers", href: "/gers" },
+    { title: "Clochers murs du Midi-Toulousain", href: "/clochermur" },
+    { title: "Patrimoine Haute-Garonne", href: "/patrimoine31" },
+    { title: "Pyrénées-Orientales", href: "/pyreneesorientales" },
+    { title: "Lot", href: "/lot" },
+    { title: "Hautes Pyrénées", href: "/hautespyrenees" },
+    { title: "Tarn", href: "/tarn" },
+    { title: "Tarn-Garonne", href: "/tarngaronne" },
+    { title: "Cirque et sommet", href: "/montcirque" },
+  ]},
+
+  { title: "Transports Tisséo", href: "/transports-tisseo", icon: Bus },
+
   { title: "Discord FTS", href: "/discordfts", icon: MessageSquare },
   { title: "Facebook FTS", href: "/facebookfts", icon: Facebook },
   { title: "Fais Ta Sortie FTS", href: "/ftsfts", icon: Globe },
+
+
+  /* ---------------- TOULOUSE ---------------- */
+
+
+  { title: "Toulouse : Consommation", href: "/marches", icon: Apple, isOccitanie: true, occitanieSources: [
+    { title: "Marchés", href: "/marches" },
+  ]},
+
+  { title: "Toulouse : Environnement", href: "/flore", icon: Flower, isOccitanie: true, occitanieSources: [
+    { title: "Flore", href: "/flore" },
+  ]},
+
+  { title: "Toulouse : Equipements", href: "/administration", icon: Home, isOccitanie: true, occitanieSources: [
+    { title: "Administration", href: "/administration" },
+    { title: "Salles de conférences", href: "/conference" },
+    { title: "École & Culture", href: "/ecoleculture" },
+  ]},
+
+  { title: "Toulouse : Géographie", href: "/altitudes", icon: Map, isOccitanie: true, occitanieSources: [
+    { title: "Altitudes", href: "/altitudes" },
+    { title: "Codes postaux", href: "/codes-postaux" },
+    { title: "Hydrographie", href: "/hydrographie" },
+    { title: "Quartiers", href: "/quartiertoulouse" },
+    { title: "Voies (carte)", href: "/voiesmap" },
+  ]},
+
+  { title: "Toulouse : Histoire", href: "/parcellaire", icon: History, isOccitanie: true, occitanieSources: [
+    { title: "Capitale", href: "/capitale_toulouse" },
+    { title: "Parcellaire de 1830", href: "/parcellaire" },
+    { title: "Terminus des transports en 1863 et 1957", href: "/terminus" },
+  ]},
+
+  { title: "Toulouse : Monuments", href: "/lagrave", icon: Castle, isOccitanie: true, occitanieSources: [
+    { title: "Hôpital de la Grave", href: "/lagrave" },
+    { title: "Hôtel-Dieu", href: "/hoteldieu" },
+  ]},
+
+  /* ---------------- SAVOIRS ---------------- */
+
+
+  { title: "Savoirs : Architecture", href: "/architecture", icon: DraftingCompass, isOccitanie: true, occitanieSources: [
+    { title: "Architecture", href: "/architecture" },
+  ]},
+
+  { title: "Savoirs : Fêtes", href: "/datefetes", icon: PartyPopper, isOccitanie: true, occitanieSources: [
+    { title: "Dates des fêtes", href: "/datefetes" },
+  ]},
+
+  { title: "Savoirs : Français", href: "/francais", icon: GraduationCap, isOccitanie: true, occitanieSources: [
+    { title: "Français", href: "/francais" },
+    { title: "Francophonie", href: "/francophonie" },
+    { title: "Français Autres", href: "/francaisautres" },
+  ]},
+
+  { title: "Savoirs : Hiérarchie", href: "/hierarchie", icon: Library, isOccitanie: true, occitanieSources: [
+    { title: "Abyssinien", href: "/hierarchieAbyssinien" },
+    { title: "Arabe", href: "/hierarchieArabe" },
+    { title: "Chartreux", href: "/hierarchieChartreux" },
+    { title: "Chiite", href: "/hierarchieChiite" },
+    { title: "Chiite Perse", href: "/hierarchieChiitePerse" },
+    { title: "Église", href: "/hierarchieEglise" },
+  ]},
+
+  { title: "Savoirs : Histoire", href: "/histoire", icon: Car, isOccitanie: true, occitanieSources: [
+    { title: "Dynastie Islam", href: "/dynastieislam" },
+    { title: "Expansion Islam", href: "/expansionislam" },
+    { title: "Hordes & Khanats", href: "/hordes_khanats" },
+    { title: "Capitales France", href: "/capitales_france" },
+    { title: "Royaumes France", href: "/royaumes_france" },
+    { title: "Dynastie Islam Simple", href: "/dynastieislamsimple" },
+    { title: "Expansion Islam Simple", href: "/expansionislamsimple" },
+    { title: "Hordes & Khanats Simple", href: "/hordes_khanats_simple" },
+    { title: "Royaumes France Simple", href: "/royaumes_france_simple" },
+  ]},
+
+  { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
+    { title: "Religion Chine", href: "/religionchine" },
+    { title: "Religions Monde", href: "/religionsmonde" },
+    { title: "Religions Part", href: "/religionspart" },
+  ]},
+
+
+  /* ---------------- FTS ---------------- */
+
 ];
 
+// --- SOURCES ÉVÉNEMENTS ---
 const eventSources = [
   { title: "Agenda Toulouse", href: "/agendatoulouse" },
   { title: "Agenda Trad Haute-Garonne", href: "/agenda-trad-haute-garonne" },
@@ -177,6 +224,10 @@ const eventSources = [
   { title: "UT3 Min", href: "/ut3-min" },
 ];
 
+/* ------------------------------------------------------------------ */
+/*  MÉTÉO                                                              */
+/* ------------------------------------------------------------------ */
+
 // --- COMPOSANT ICÔNE MÉTÉO ---
 const WeatherIcon = ({ condition }: { condition: string }) => {
   const iconProps = { size: 36, strokeWidth: 2 };
@@ -189,6 +240,7 @@ const WeatherIcon = ({ condition }: { condition: string }) => {
   return <Sun {...iconProps} className="text-orange-500" />;
 };
 
+// --- COMPOSANT PRINCIPAL ---
 export default function HomePage() {
   const [heure, setHeure] = useState(new Date());
   const [meteo, setMeteo] = useState({ temperature: "25°C", condition: "Ensoleillé" });
@@ -325,26 +377,37 @@ export default function HomePage() {
         </section>
       </div>
 
-      {/* Catégories Principales (Incluant maintenant Discord, Facebook et FTS) */}
+      {/* Catégories */}
       <section id="categories" className="py-8 px-4 container mx-auto">
         <h2 className="text-3xl font-bold mb-10 text-center text-purple-700">Nos rubriques</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {categories.map((cat) => {
             const Icon = cat.icon;
-            // On vérifie s'il y a des sources définies, sinon on renvoie un tableau vide
-            const sources = (cat.isAgenda && eventSources) || (cat.isMeetup && (cat as any).meetupSources) || (cat.isCulture && (cat as any).cultureSources) || (cat.isLibrairie && (cat as any).librairieSources) || (cat.isCinema && (cat as any).cinemaSources) || (cat.isJeux && (cat as any).jeuxSources) || (cat.isSites && (cat as any).sitesSources) || (cat.isMusee && (cat as any).museeSources) || (cat.isActualites && (cat as any).actualitesSources) || (cat.isVisites && (cat as any).visitesSources) || (cat.isOccitanie && (cat as any).occitanieSources) || [];
+            const sources =
+              (cat.isAgenda && eventSources) ||
+              (cat.isMeetup && (cat as any).meetupSources) ||
+              (cat.isCulture && (cat as any).cultureSources) ||
+              (cat.isLibrairie && (cat as any).librairieSources) ||
+              (cat.isCinema && (cat as any).cinemaSources) ||
+              (cat.isJeux && (cat as any).jeuxSources) ||
+              (cat.isSites && (cat as any).sitesSources) ||
+              (cat.isMusee && (cat as any).museeSources) ||
+              (cat.isActualites && (cat as any).actualitesSources) ||
+              (cat.isVisites && (cat as any).visitesSources) ||
+              (cat.isOccitanie && (cat as any).occitanieSources) ||
+              (cat.savoirSources && (cat as any).savoirSources) ||
+              [];
 
             return (
               <div key={cat.href} className="flex flex-col h-full p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100">
                 <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
                 <h3 className="text-2xl font-semibold mb-2 text-purple-700 text-center">{cat.title}</h3>
                 <div className="text-gray-500 text-sm text-center mb-4 flex-grow">
-                   {cat.isAgenda 
-                     ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
-                     : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
+                  {cat.isAgenda 
+                    ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
+                    : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
                 </div>
-                
-                {/* Bouton pour les rubriques sans sources (comme Discord, Facebook, FTS) */}
+
                 {sources.length === 0 ? (
                   <Link href={cat.href} className="mt-auto bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-2 px-4 rounded-xl transition text-center">
                     Voir la rubrique

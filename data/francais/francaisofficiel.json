@@ -9,7 +9,7 @@
     },
     {
         "id": 2,
-        "pays": "république démocratique du Congo République démocratique du Congo",
+        "pays": "République démocratique du Congo",
         "statut": "membre",
         "population_totale": 84005000,
         "nombre_francophones": 42533000,
@@ -383,20 +383,20 @@
         "nombre_francophones": 38000,
         "evolution": "97 % en augmentation"
     },
-    {
+{
         "id": 49,
-        "pays": "la Louisiane Louisiane",
+        "pays": "la Louisiane (USA)",
         "statut": "observateur",
-        "population_totale": 0,
-        "nombre_francophones": 0,
-        "evolution": "nd"
+        "population_totale": 4660000,
+        "nombre_francophones": 115000,
+        "evolution": "2,5 % en augmentation"
     },
     {
         "id": 50,
         "pays": "Malte",
         "statut": "observateur",
-        "population_totale": 0,
-        "nombre_francophones": 0,
-        "evolution": "nd"
+        "population_totale": 515000,
+        "nombre_francophones": 67000,
+        "evolution": "13 % en stagnation"
     }
 ]

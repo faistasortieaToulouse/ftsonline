@@ -1,0 +1,198 @@
+[
+  {
+    "pays": "États-Unis",
+    "nombre_francophones": 2000000,
+    "expatries_francais": 233300,
+    "population_totale": 302000000,
+    "pourcentage": "0,7 %"
+  },
+  {
+    "pays": "Brésil",
+    "nombre_francophones": 30000,
+    "expatries_francais": 25000,
+    "population_totale": 184000000,
+    "pourcentage": "0,016 %"
+  },
+  {
+    "pays": "Russie",
+    "nombre_francophones": 705200,
+    "expatries_francais": 5139,
+    "population_totale": 143000000,
+    "pourcentage": "0,5 %"
+  },
+  {
+    "pays": "Allemagne",
+    "nombre_francophones": 11943000,
+    "expatries_francais": 165000,
+    "population_totale": 82000000,
+    "pourcentage": "14,5 %"
+  },
+  {
+    "pays": "Vietnam",
+    "nombre_francophones": 570000,
+    "expatries_francais": null,
+    "population_totale": 81500000,
+    "pourcentage": "0,7 %"
+  },
+  {
+    "pays": "Turquie",
+    "nombre_francophones": 100000,
+    "expatries_francais": 3400,
+    "population_totale": 70000000,
+    "pourcentage": "0,2 %"
+  },
+  {
+    "pays": "Royaume-Uni",
+    "nombre_francophones": 10520000,
+    "expatries_francais": 300000,
+    "population_totale": 62700000,
+    "pourcentage": "16,8 %"
+  },
+  {
+    "pays": "Italie",
+    "nombre_francophones": 9394000,
+    "expatries_francais": null,
+    "population_totale": 59000000,
+    "pourcentage": "19 %"
+  },
+  {
+    "pays": "Afrique du Sud",
+    "nombre_francophones": 100000,
+    "expatries_francais": 7600,
+    "population_totale": 48000000,
+    "pourcentage": "0,2 %"
+  },
+  {
+    "pays": "Espagne",
+    "nombre_francophones": 5022000,
+    "expatries_francais": null,
+    "population_totale": 46439864,
+    "pourcentage": "10,8 %"
+  },
+  {
+    "pays": "Colombie",
+    "nombre_francophones": 20000,
+    "expatries_francais": 3800,
+    "population_totale": 45000000,
+    "pourcentage": "0,044 %"
+  },
+  {
+    "pays": "Algérie",
+    "nombre_francophones": 29000000,
+    "expatries_francais": 37458,
+    "population_totale": 44155680,
+    "pourcentage": "66 %"
+  },
+  {
+    "pays": "Soudan",
+    "nombre_francophones": 400000,
+    "expatries_francais": 500,
+    "population_totale": 36000000,
+    "pourcentage": "1,1 %"
+  },
+  {
+    "pays": "Maroc",
+    "nombre_francophones": 10657000,
+    "expatries_francais": 60000,
+    "population_totale": 34400000,
+    "pourcentage": "32 %"
+  },
+  {
+    "pays": "Ouganda",
+    "nombre_francophones": 200000,
+    "expatries_francais": 200,
+    "population_totale": 28000000,
+    "pourcentage": "0,7 %"
+  },
+  {
+    "pays": "Venezuela",
+    "nombre_francophones": 20090,
+    "expatries_francais": 5800,
+    "population_totale": 26000000,
+    "pourcentage": "0,08 %"
+  },
+  {
+    "pays": "Australie",
+    "nombre_francophones": 65000,
+    "expatries_francais": 41800,
+    "population_totale": 20000000,
+    "pourcentage": "0,3 %"
+  },
+  {
+    "pays": "Syrie",
+    "nombre_francophones": 10000,
+    "expatries_francais": null,
+    "population_totale": 19000000,
+    "pourcentage": "0,4 %"
+  },
+  {
+    "pays": "Pays-Bas",
+    "nombre_francophones": 213000,
+    "expatries_francais": 20300,
+    "population_totale": 17000000,
+    "pourcentage": "1,3 %"
+  },
+  {
+    "pays": "Chili",
+    "nombre_francophones": 10000,
+    "expatries_francais": 6500,
+    "population_totale": 16000000,
+    "pourcentage": "0,0625 %"
+  },
+  {
+    "pays": "Équateur",
+    "nombre_francophones": 5000,
+    "expatries_francais": 1400,
+    "population_totale": 14200000,
+    "pourcentage": "0,035 %"
+  },
+  {
+    "pays": "Malawi",
+    "nombre_francophones": 50300,
+    "expatries_francais": 63,
+    "population_totale": 10600000,
+    "pourcentage": "0,5 %"
+  },
+  {
+    "pays": "Tunisie",
+    "nombre_francophones": 6000000,
+    "expatries_francais": 15000,
+    "population_totale": 10000000,
+    "pourcentage": "60 %"
+  },
+  {
+    "pays": "Israël",
+    "nombre_francophones": 500000,
+    "expatries_francais": 100000,
+    "population_totale": 9000000,
+    "pourcentage": "5,6 %"
+  },
+  {
+    "pays": "Liban",
+    "nombre_francophones": 2000000,
+    "expatries_francais": null,
+    "population_totale": 4000000,
+    "pourcentage": "50 %"
+  },
+  {
+    "pays": "Lituanie",
+    "nombre_francophones": 8000,
+    "expatries_francais": 300,
+    "population_totale": 3500000,
+    "pourcentage": "0,23 %"
+  },
+  {
+    "pays": "Gambie",
+    "nombre_francophones": 45000,
+    "expatries_francais": 150,
+    "population_totale": 1700000,
+    "pourcentage": "2,7 %"
+  },
+  {
+    "pays": "Qatar",
+    "nombre_francophones": 10000,
+    "expatries_francais": 700,
+    "population_totale": 800000,
+    "pourcentage": "1,25 %"
+  }
+]

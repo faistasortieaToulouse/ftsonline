@@ -1,0 +1,266 @@
+{
+  "civilisations_precolombiennes": {
+    "Arctique_et_Grand_Nord": [
+      {
+        "culture": "Culture de Dorset",
+        "periode": "500 av. J.-C. au XVe siècle",
+        "localisation": "Arctique canadien et Groenland",
+        "coordonnees": { "lat": 69.00, "lon": -68.00 }
+      },
+      {
+        "culture": "Thulé (Ancêtres des Inuits)",
+        "periode": "Xe siècle au XVIIIe siècle",
+        "localisation": "De l'Alaska au Groenland",
+        "coordonnees": { "lat": 70.48, "lon": -68.50 }
+      },
+      {
+        "culture": "Haïda",
+        "periode": "Ve s. av. J.-C. au XVIIIe siècle",
+        "localisation": "Archipel Haïda Gwaii (Colombie-Britannique), Canada",
+        "coordonnees": { "lat": 53.20, "lon": -132.00 }
+      },
+      {
+        "culture": "Confédération Huronne-Wendat",
+        "periode": "XIVe siècle au XVIIe siècle",
+        "localisation": "Sud de l'Ontario, Canada",
+        "coordonnees": { "lat": 44.50, "lon": -79.70 }
+      },
+      {
+        "culture": "Culture de Point Peninsula",
+        "periode": "VIe s. av. J.-C. au Xe siècle",
+        "localisation": "Ontario, Québec et Nord-Est des USA",
+        "coordonnees": { "lat": 45.42, "lon": -75.70 }
+      },
+      {
+        "culture": "Beothuk",
+        "periode": "Ier siècle au XIXe siècle",
+        "localisation": "Île de Terre-Neuve, Canada",
+        "coordonnees": { "lat": 49.00, "lon": -56.00 }
+      }
+    ],
+    "Amerique_du_Nord": [
+      {
+        "culture": "Culture Adena",
+        "periode": "Xe siècle av. J.-C. au Ier siècle",
+        "localisation": "Vallée de l'Ohio, États-Unis",
+        "coordonnees": { "lat": 39.00, "lon": -84.00 }
+      },
+      {
+        "culture": "Hopewells",
+        "periode": "IIe siècle av. J.-C. au Ve siècle",
+        "localisation": "Est des États-Unis",
+        "coordonnees": { "lat": 39.35, "lon": -82.98 }
+      },
+      {
+        "culture": "Mogollon",
+        "periode": "VIe siècle av. J.-C. au XIVe siècle",
+        "localisation": "Sud-Ouest des États-Unis et Nord du Mexique",
+        "coordonnees": { "lat": 33.00, "lon": -108.50 }
+      },
+      {
+        "culture": "Hohokam",
+        "periode": "IIIe siècle av. J.-C. au XVe siècle",
+        "localisation": "État d'Arizona (Sud-Ouest des États-Unis)",
+        "coordonnees": { "lat": 33.43, "lon": -112.01 }
+      },
+      {
+        "culture": "Culture Fremont",
+        "periode": "VIIe siècle au XIIe siècle",
+        "localisation": "État de l'Utah, Sud-ouest des États-Unis",
+        "coordonnees": { "lat": 38.50, "lon": -111.00 }
+      },
+      {
+        "culture": "Anasazi",
+        "periode": "VIIIe siècle au XIVe siècle",
+        "localisation": "Sud-Ouest des États-Unis (région des Four Corners)",
+        "coordonnees": { "lat": 37.00, "lon": -109.04 }
+      },
+      {
+        "culture": "Civilisation du Mississippi",
+        "periode": "IXe au XVIIe siècle",
+        "localisation": "Bassin du Mississippi, États-Unis",
+        "coordonnees": { "lat": 38.65, "lon": -90.06 }
+      }
+    ],
+    "Mesoamerique": [
+      {
+        "culture": "Olmèques",
+        "periode": "XIIIe siècle av. J.-C. au VIe siècle av. J.-C.",
+        "localisation": "Côte du Golfe, Mexique",
+        "coordonnees": { "lat": 18.15, "lon": -94.40 }
+      },
+      {
+        "culture": "Zapotèques",
+        "periode": "VIe siècle av. J.-C. au VIIIe siècle",
+        "localisation": "État d'Oaxaca (Mexique)",
+        "coordonnees": { "lat": 17.04, "lon": -96.76 }
+      },
+      {
+        "culture": "Mixtèques",
+        "periode": "XVe siècle av. J.-C. au XVIe siècle",
+        "localisation": "Région de l'Oaxaca, Mexique",
+        "coordonnees": { "lat": 17.20, "lon": -97.60 }
+      },
+      {
+        "culture": "Mayas",
+        "periode": "XIe siècle av. J.-C. au XVIe siècle",
+        "localisation": "Du Yucatán (Mexique) au Honduras",
+        "coordonnees": { "lat": 17.22, "lon": -89.62 }
+      },
+      {
+        "culture": "Teotihuacán",
+        "periode": "IIe siècle av. J.-C. au VIIIe siècle",
+        "localisation": "État de Mexico (Mexique)",
+        "coordonnees": { "lat": 19.69, "lon": -98.84 }
+      },
+      {
+        "culture": "Totonac",
+        "periode": "IXe siècle au XVIe siècle",
+        "localisation": "État de Veracruz, Mexique",
+        "coordonnees": { "lat": 20.44, "lon": -97.45 }
+      },
+      {
+        "culture": "Toltèques",
+        "periode": "Xe siècle au XIIIe siècle",
+        "localisation": "État de Mexico (Mexique)",
+        "coordonnees": { "lat": 20.05, "lon": -99.34 }
+      },
+      {
+        "culture": "Aztèques",
+        "periode": "XIVe siècle au XVIe siècle",
+        "localisation": "Vallée de Mexico",
+        "coordonnees": { "lat": 19.43, "lon": -99.13 }
+      }
+    ],
+    "Amerique_Andine": [
+      {
+        "culture": "Valdivia",
+        "periode": "3500 à 1800 av. J.-C.",
+        "localisation": "Côte de l’Équateur",
+        "coordonnees": { "lat": -2.15, "lon": -80.73 }
+      },
+      {
+        "culture": "Caral",
+        "periode": "XXXe siècle av. J.-C. au XXVe siècle av. J.-C.",
+        "localisation": "Pérou côtier",
+        "coordonnees": { "lat": -10.89, "lon": -77.61 }
+      },
+      {
+        "culture": "Chavín",
+        "periode": "IXe siècle av. J.-C. au IIe siècle av. J.-C.",
+        "localisation": "Andes péruviennes du nord",
+        "coordonnees": { "lat": -9.59, "lon": -77.17 }
+      },
+      {
+        "culture": "Vicús",
+        "periode": "Ve siècle av. J.-C. au IVe siècle",
+        "localisation": "Frontière Pérou-Équateur",
+        "coordonnees": { "lat": -5.00, "lon": -80.00 }
+      },
+      {
+        "culture": "Tiahuanaco (Tiwanaku)",
+        "periode": "Ve siècle av. J.-C. au XIe siècle",
+        "localisation": "Lac Titicaca, Bolivie",
+        "coordonnees": { "lat": -16.55, "lon": -68.67 }
+      },
+      {
+        "culture": "Chibcha (Muiscas)",
+        "periode": "Ve siècle av. J.-C. au XVIe siècle",
+        "localisation": "Colombie andine",
+        "coordonnees": { "lat": 4.60, "lon": -74.08 }
+      },
+      {
+        "culture": "Tayronas",
+        "periode": "Ve siècle av. J.-C. au XVIe siècle",
+        "localisation": "Sierra Nevada, Colombie",
+        "coordonnees": { "lat": 11.24, "lon": -74.20 }
+      },
+      {
+        "culture": "Paracas",
+        "periode": "IIIe siècle av. J.-C. au IIe siècle",
+        "localisation": "Côte sud du Pérou",
+        "coordonnees": { "lat": -13.83, "lon": -76.25 }
+      },
+      {
+        "culture": "Nazca",
+        "periode": "IIe siècle au VIIe siècle",
+        "localisation": "Littoral sud péruvien",
+        "coordonnees": { "lat": -14.73, "lon": -75.13 }
+      },
+      {
+        "culture": "Moche",
+        "periode": "IIe siècle au VIIIe siècle",
+        "localisation": "Littoral nord péruvien",
+        "coordonnees": { "lat": -8.11, "lon": -79.03 }
+      },
+      {
+        "culture": "Huari",
+        "periode": "Ve siècle au IXe siècle",
+        "localisation": "Centre du Pérou",
+        "coordonnees": { "lat": -13.15, "lon": -74.22 }
+      },
+      {
+        "culture": "Chachapoyas",
+        "periode": "IXe siècle au XVe siècle",
+        "localisation": "Andes amazoniennes du Pérou",
+        "coordonnees": { "lat": -6.42, "lon": -77.92 }
+      },
+      {
+        "culture": "Cañaris",
+        "periode": "500 apr. J.-C. au XVIe siècle",
+        "localisation": "Andes de l'Équateur",
+        "coordonnees": { "lat": -2.55, "lon": -78.93 }
+      },
+      {
+        "culture": "Sicán",
+        "periode": "IXe siècle au XIVe siècle",
+        "localisation": "Nord du Pérou",
+        "coordonnees": { "lat": -6.71, "lon": -79.91 }
+      },
+      {
+        "culture": "Chimú",
+        "periode": "XIIe siècle au XVe siècle",
+        "localisation": "Littoral nord du Pérou",
+        "coordonnees": { "lat": -8.10, "lon": -79.07 }
+      },
+      {
+        "culture": "Inca",
+        "periode": "XVe siècle au XVIe siècle",
+        "localisation": "Cuzco (Pérou) et Andes",
+        "coordonnees": { "lat": -13.53, "lon": -71.96 }
+      }
+    ],
+    "Amazonie_et_Caraibes": [
+      {
+        "culture": "Marajoara",
+        "periode": "Ve siècle au XIVe siècle",
+        "localisation": "Île de Marajó, Brésil",
+        "coordonnees": { "lat": -0.80, "lon": -49.50 }
+      },
+      {
+        "culture": "Kuhikugu (Xingu)",
+        "periode": "VIe siècle au XVIIe siècle",
+        "localisation": "Amazonie brésilienne (Mato Grosso)",
+        "coordonnees": { "lat": -12.33, "lon": -53.40 }
+      },
+      {
+        "culture": "Géoglyphes d'Acre",
+        "periode": "Ier au XVe siècle",
+        "localisation": "Amazonie occidentale, Brésil",
+        "coordonnees": { "lat": -10.00, "lon": -67.50 }
+      },
+      {
+        "culture": "Taïnos",
+        "periode": "VIIIe siècle au XVIe siècle",
+        "localisation": "Grandes Antilles (Cuba, Porto Rico)",
+        "coordonnees": { "lat": 18.50, "lon": -69.90 }
+      },
+      {
+        "culture": "Kalinago (Caraïbes)",
+        "periode": "XIIe siècle au XVIIe siècle",
+        "localisation": "Petites Antilles",
+        "coordonnees": { "lat": 15.30, "lon": -61.30 }
+      }
+    ]
+  }
+}
