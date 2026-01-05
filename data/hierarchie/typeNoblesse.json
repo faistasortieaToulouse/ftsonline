@@ -2,18 +2,18 @@
   "hierarchie_noblesse_francaise": {
     "castes_de_la_noblesse": [
       {
-        "type": "Noblesse d'Épée",
+        "type": "Noblesse d'Epée",
         "description": "Noblesse ancienne issue de la fonction militaire et de la chevalerie.",
         "prestige": "Maximum (Le Sang)"
       },
       {
         "type": "Noblesse de Robe",
         "description": "Noblesse issue des hautes fonctions judiciaires et administratives.",
-        "prestige": "Élevé (Le Pouvoir)"
+        "prestige": "Elevé (Le Pouvoir)"
       },
       {
         "type": "Noblesse de Cloche",
-        "description": "Noblesse acquise par l'exercice de fonctions municipales (Maires, Échevins).",
+        "description": "Noblesse acquise par l'exercice de fonctions municipales (Maires, Echevins).",
         "prestige": "Moyen (Urbain)"
       }
     ],
@@ -21,12 +21,12 @@
       "niveau_1_direction_etat": {
         "categorie": "Grands Officiers de la Couronne",
         "role": "Conseil d'administration du Royaume",
-        "exemples": ["Chancelier", "Grand Maître", "Connétable", "Maréchaux"]
+        "exemples": ["Chancelier", "Grand Maître", "Connetable", "Marechaux"]
       },
       "niveau_2_gestion_domestique": {
         "categorie": "Grands Officiers de la Maison",
-        "role": "Directeurs de départements royaux",
-        "exemples": ["Grand Veneur", "Grand Chambellan", "Grand Écuyer"]
+        "role": "Directeurs de departements royaux",
+        "exemples": ["Grand Veneur", "Grand Chambellan", "Grand Ecuyer"]
       },
       "niveau_3_cadres_superieurs": {
         "categorie": "Premiers Gentilshommes / Grands Tranchants",
@@ -40,22 +40,29 @@
       },
       "niveau_5_execution": {
         "categorie": "Personnel de service",
-        "role": "Tâches manuelles et logistiques",
+        "role": "Taches manuelles et logistiques",
         "composition": "Souvent roturiers (Valets, cuisiniers, palefreniers)"
       }
-    ],
+    },
     "les_pairs_de_france": {
       "pairs_ecclesiastiques": {
         "nombre": 6,
-        "composition": ["Archevêque-Duc de Reims", "Évêques-Comtes de Beauvais, Châlons, Noyon", "Évêques-Ducs de Laon, Langres"]
+        "composition": [
+          "Archeveque-Duc de Reims",
+          "Eveques-Comtes de Beauvais, Chalons, Noyon",
+          "Eveques-Ducs de Laon, Langres"
+        ]
       },
       "pairs_laics_primitifs": {
         "nombre": 6,
-        "composition": ["Ducs de Bourgogne, Normandie, Guyenne", "Comtes de Flandre, Champagne, Toulouse"]
+        "composition": [
+          "Ducs de Bourgogne, Normandie, Guyenne",
+          "Comtes de Flandre, Champagne, Toulouse"
+        ]
       },
       "pairs_de_creation_royale": {
         "description": "Ducs et Pairs créés par lettres patentes au fil des siècles par le souverain.",
-        "statut": "Héréditaire"
+        "statut": "Hereditaires"
       }
     }
   }
