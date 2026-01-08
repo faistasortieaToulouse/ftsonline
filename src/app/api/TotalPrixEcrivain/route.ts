@@ -4,15 +4,30 @@ import path from 'path';
 
 export async function GET() {
   try {
-    // Construction propre du chemin
-    const filePath = path.join(process.cwd(), 'data', 'litterature', 'Total Prix par ecrivain.json');
-    
+    const filePath = path.join(
+      process.cwd(),
+      'data',
+      'litterature',
+      'Total Prix par ecrivain.json'
+    );
+
     const fileContents = await fs.readFile(filePath, 'utf8');
-    const data = JSON.parse(fileContents);
+    const rawData = JSON.parse(fileContents);
+
+    // 🔥 NORMALISATION DES CLÉS
+    const data = rawData.map((item: any) => ({
+      annee: item.annee ?? item.année ?? null,
+      auteur: item.auteur ?? item.écrivain ?? null,
+      titre: item.titre ?? null,
+      prix: item.prix ?? null,
+    }));
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Erreur lecture JSON Prix Flore:", error);
-    return NextResponse.json({ error: "Impossible de lire les données" }, { status: 500 });
+    console.error('Erreur lecture TotalPrixEcrivain:', error);
+    return NextResponse.json(
+      { error: 'Impossible de lire les données' },
+      { status: 500 }
+    );
   }
 }

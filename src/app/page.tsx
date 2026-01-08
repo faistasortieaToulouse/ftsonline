@@ -179,6 +179,23 @@ const categories = [
     { title: "Chiite", href: "/hierarchieChiite" },
     { title: "Chiite Perse", href: "/hierarchieChiitePerse" },
     { title: "Église", href: "/hierarchieEglise" },
+    { title: "Ordre des Hospitaliers", href: "/hierarchieHospitalier" },
+    { title: "Empire Indien", href: "/hierarchieInde" },
+    { title: "Empire du Japon", href: "/hierarchieJapon" },
+    { title: "Ordre de Jérusalem", href: "/hierarchieJerusalem" },
+    { title: "Ordre de Malte", href: "/hierarchieMalte" },
+    { title: "Empire Moghol", href: "/hierarchieMoghol" },
+    { title: "Noblesse", href: "/hierarchieNoblesse" },
+    { title: "Ordre d'Orient", href: "/hierarchieOrient" },
+    { title: "Empire Ottoman", href: "/hierarchieOttoman" },
+    { title: "Papauté", href: "/hierarchiePape" },
+    { title: "Empire Perse", href: "/hierarchiePerse" },
+    { title: "Sunnite Arabe", href: "/hierarchieSunniteArabe" },
+    { title: "Sunnite Maghreb", href: "/hierarchieSunniteMaghreb" },
+    { title: "Sunnite Ottoman", href: "/hierarchieSunniteOttoman" },
+    { title: "Sunnite", href: "/hierarchieSunnite" },
+    { title: "Pape et Pops", href: "/ordreReligieuxPopPape" },
+    { title: "type de Noblesse", href: "/typeNoblesse" },
   ]},
 
   { title: "Savoirs : Histoire", href: "/histoire", icon: Car, isOccitanie: true, occitanieSources: [
@@ -191,6 +208,7 @@ const categories = [
     { title: "Expansion Islam Simple", href: "/expansionislamsimple" },
     { title: "Hordes & Khanats Simple", href: "/hordes_khanats_simple" },
     { title: "Royaumes France Simple", href: "/royaumes_france_simple" },
+    { title: "Entrée des Etats aux USA", href: "/EtatsUSA" },
   ]},
 
   { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [

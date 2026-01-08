@@ -1,0 +1,354 @@
+{
+  "etats_unis": [
+    {
+      "nom": "Delaware",
+      "genre": "m",
+      "ordre_entree": 1,
+      "date_entree": "1787-12-07",
+      "description": "Premier État à avoir ratifié la Constitution. Faisait partie des 13 colonies originelles révoltées contre les Britanniques."
+    },
+    {
+      "nom": "Pennsylvanie",
+      "genre": "f",
+      "ordre_entree": 2,
+      "date_entree": "1787-12-12",
+      "description": "Un des premiers États révoltés contre les Britanniques. Ratification de la Constitution en 2ème position."
+    },
+    {
+      "nom": "New Jersey",
+      "genre": "m",
+      "ordre_entree": 3,
+      "date_entree": "1787-12-18",
+      "description": "Un des premiers États révoltés contre les Britanniques. Ratification de la Constitution en 3ème position."
+    },
+    {
+      "nom": "Géorgie",
+      "genre": "f",
+      "ordre_entree": 4,
+      "date_entree": "1788-01-02",
+      "description": "Deuxième vague de ratification. Ancienne colonie britannique."
+    },
+    {
+      "nom": "Connecticut",
+      "genre": "m",
+      "ordre_entree": 5,
+      "date_entree": "1788-01-09",
+      "description": "Deuxième vague de ratification. Ancienne colonie britannique."
+    },
+    {
+      "nom": "Massachusetts",
+      "genre": "m",
+      "ordre_entree": 6,
+      "date_entree": "1788-02-06",
+      "description": "Deuxième vague de ratification. Foyer important de la Révolution américaine."
+    },
+    {
+      "nom": "Maryland",
+      "genre": "m",
+      "ordre_entree": 7,
+      "date_entree": "1788-04-28",
+      "description": "Deuxième vague de ratification. Ancienne colonie britannique."
+    },
+    {
+      "nom": "Caroline du Sud",
+      "genre": "f",
+      "ordre_entree": 8,
+      "date_entree": "1788-05-23",
+      "description": "Une des 13 colonies originelles."
+    },
+    {
+      "nom": "New Hampshire",
+      "genre": "m",
+      "ordre_entree": 9,
+      "date_entree": "1788-06-21",
+      "description": "Une des 13 colonies originelles. Sa ratification a permis l'entrée en vigueur de la Constitution."
+    },
+    {
+      "nom": "Virginie",
+      "genre": "f",
+      "ordre_entree": 10,
+      "date_entree": "1788-06-25",
+      "description": "Une des 13 colonies originelles."
+    },
+    {
+      "nom": "New York",
+      "genre": "m",
+      "ordre_entree": 11,
+      "date_entree": "1788-07-26",
+      "description": "Une des 13 colonies originelles."
+    },
+    {
+      "nom": "Caroline du Nord",
+      "genre": "f",
+      "ordre_entree": 12,
+      "date_entree": "1789-11-21",
+      "description": "Une des 13 colonies originelles."
+    },
+    {
+      "nom": "Rhode Island",
+      "genre": "m",
+      "ordre_entree": 13,
+      "date_entree": "1790-05-29",
+      "description": "Dernière des 13 colonies originelles à ratifier la Constitution."
+    },
+    {
+      "nom": "Vermont",
+      "genre": "m",
+      "ordre_entree": 14,
+      "date_entree": "1791-03-04",
+      "description": "Ancienne République du Vermont (1777-1791). Ancienne zone d'influence française."
+    },
+    {
+      "nom": "Kentucky",
+      "genre": "m",
+      "ordre_entree": 15,
+      "date_entree": "1792-06-01",
+      "description": "Séparé de l'État de Virginie."
+    },
+    {
+      "nom": "Tennessee",
+      "genre": "m",
+      "ordre_entree": 16,
+      "date_entree": "1796-06-01",
+      "description": "Issu du Territoire du Sud-Ouest, séparé de la Caroline du Nord."
+    },
+    {
+      "nom": "Ohio",
+      "genre": "m",
+      "ordre_entree": 17,
+      "date_entree": "1803-03-01",
+      "description": "Issu du Territoire du Nord-Ouest (Ordonnance de 1787)."
+    },
+    {
+      "nom": "Louisiane",
+      "genre": "f",
+      "ordre_entree": 18,
+      "date_entree": "1812-04-30",
+      "description": "Ancienne Louisiane française vendue par Napoléon en 1803. Territoire d'Orléans."
+    },
+    {
+      "nom": "Indiana",
+      "genre": "m",
+      "ordre_entree": 19,
+      "date_entree": "1816-12-11",
+      "description": "Séparé du Territoire du Nord-Ouest."
+    },
+    {
+      "nom": "Mississippi",
+      "genre": "m",
+      "ordre_entree": 20,
+      "date_entree": "1817-12-10",
+      "description": "Territoire du Mississippi créé en 1798. Séparé de la Géorgie. Ancienne colonie française."
+    },
+    {
+      "nom": "Illinois",
+      "genre": "m",
+      "ordre_entree": 21,
+      "date_entree": "1818-12-03",
+      "description": "Séparé du Territoire de l'Indiana. Ancienne colonie française."
+    },
+    {
+      "nom": "Alabama",
+      "genre": "m",
+      "ordre_entree": 22,
+      "date_entree": "1819-12-14",
+      "description": "Séparé du Territoire du Mississippi. Ancienne colonie française."
+    },
+    {
+      "nom": "Maine",
+      "genre": "m",
+      "ordre_entree": 23,
+      "date_entree": "1820-03-15",
+      "description": "Séparé du Massachusetts (Compromis du Missouri)."
+    },
+    {
+      "nom": "Missouri",
+      "genre": "f",
+      "ordre_entree": 24,
+      "date_entree": "1821-08-10",
+      "description": "Issu du Territoire de Louisiane. Ancienne colonie française."
+    },
+    {
+      "nom": "Arkansas",
+      "genre": "m",
+      "ordre_entree": 25,
+      "date_entree": "1836-06-15",
+      "description": "Séparé du Territoire du Missouri. Ancienne colonie française."
+    },
+    {
+      "nom": "Michigan",
+      "genre": "m",
+      "ordre_entree": 26,
+      "date_entree": "1837-01-26",
+      "description": "Issu du Territoire du Michigan. Ancienne colonie française."
+    },
+    {
+      "nom": "Floride",
+      "genre": "f",
+      "ordre_entree": 27,
+      "date_entree": "1845-03-03",
+      "description": "Ancienne Floride espagnole. Territoire de Floride (1822-1845)."
+    },
+    {
+      "nom": "Texas",
+      "genre": "m",
+      "ordre_entree": 28,
+      "date_entree": "1845-12-29",
+      "description": "Ancienne République du Texas (1836-1845) ayant fait sécession du Mexique."
+    },
+    {
+      "nom": "Iowa",
+      "genre": "m",
+      "ordre_entree": 29,
+      "date_entree": "1846-12-28",
+      "description": "Séparé du Territoire du Wisconsin. Ancienne colonie française."
+    },
+    {
+      "nom": "Wisconsin",
+      "genre": "m",
+      "ordre_entree": 30,
+      "date_entree": "1848-05-29",
+      "description": "Séparé du Territoire du Michigan. Ancienne colonie française."
+    },
+    {
+      "nom": "Californie",
+      "genre": "f",
+      "ordre_entree": 31,
+      "date_entree": "1850-09-09",
+      "description": "Cédée par le Mexique. Éphémère République de Californie en 1846."
+    },
+    {
+      "nom": "Minnesota",
+      "genre": "m",
+      "ordre_entree": 32,
+      "date_entree": "1858-05-11",
+      "description": "Séparé du Territoire de l'Iowa. Ancienne colonie française."
+    },
+    {
+      "nom": "Oregon",
+      "genre": "m",
+      "ordre_entree": 33,
+      "date_entree": "1859-02-14",
+      "description": "Issu du Territoire de l'Oregon."
+    },
+    {
+      "nom": "Kansas",
+      "genre": "m",
+      "ordre_entree": 34,
+      "date_entree": "1861-01-29",
+      "description": "Issu du Territoire du Kansas. Ancienne colonie française."
+    },
+    {
+      "nom": "Virginie-Occidentale",
+      "genre": "f",
+      "ordre_entree": 35,
+      "date_entree": "1863-06-20",
+      "description": "Scission de la Virginie lors de la guerre de Sécession (Congrès de Wheeling)."
+    },
+    {
+      "nom": "Nevada",
+      "genre": "m",
+      "ordre_entree": 36,
+      "date_entree": "1864-10-31",
+      "description": "Séparé du Territoire de l'Utah. Ancienne colonie française."
+    },
+    {
+      "nom": "Nebraska",
+      "genre": "m",
+      "ordre_entree": 37,
+      "date_entree": "1867-03-01",
+      "description": "Issu du Territoire du Nebraska. Ancienne colonie française."
+    },
+    {
+      "nom": "Colorado",
+      "genre": "m",
+      "ordre_entree": 38,
+      "date_entree": "1876-08-01",
+      "description": "Issu du Territoire du Colorado."
+    },
+    {
+      "nom": "Dakota du Nord",
+      "genre": "m",
+      "ordre_entree": 39,
+      "date_entree": "1889-11-02",
+      "description": "Issu du Territoire du Dakota. Ancienne colonie française."
+    },
+    {
+      "nom": "Dakota du Sud",
+      "genre": "m",
+      "ordre_entree": 40,
+      "date_entree": "1889-11-02",
+      "description": "Issu du Territoire du Dakota. Ancienne colonie française."
+    },
+    {
+      "nom": "Montana",
+      "genre": "m",
+      "ordre_entree": 41,
+      "date_entree": "1889-11-08",
+      "description": "Issu du Territoire du Montana. En partie ancienne colonie française."
+    },
+    {
+      "nom": "Washington",
+      "genre": "m",
+      "ordre_entree": 42,
+      "date_entree": "1889-11-11",
+      "description": "Séparé du Territoire de l'Oregon."
+    },
+    {
+      "nom": "Idaho",
+      "genre": "m",
+      "ordre_entree": 43,
+      "date_entree": "1890-07-03",
+      "description": "Séparé du Territoire de Washington."
+    },
+    {
+      "nom": "Wyoming",
+      "genre": "m",
+      "ordre_entree": 44,
+      "date_entree": "1890-07-10",
+      "description": "Issu du Territoire du Wyoming. Ancienne colonie française."
+    },
+    {
+      "nom": "Utah",
+      "genre": "m",
+      "ordre_entree": 45,
+      "date_entree": "1896-01-04",
+      "description": "Issu du Territoire de l'Utah et de l'État du Désert."
+    },
+    {
+      "nom": "Oklahoma",
+      "genre": "m",
+      "ordre_entree": 46,
+      "date_entree": "1907-11-16",
+      "description": "Issu du Territoire de l'Oklahoma et du Territoire indien."
+    },
+    {
+      "nom": "Nouveau-Mexique",
+      "genre": "m",
+      "ordre_entree": 47,
+      "date_entree": "1912-01-06",
+      "description": "Issu du Territoire du Nouveau-Mexique."
+    },
+    {
+      "nom": "Arizona",
+      "genre": "m",
+      "ordre_entree": 48,
+      "date_entree": "1912-02-14",
+      "description": "Issu du Territoire de l'Arizona, scission du Nouveau-Mexique durant la guerre de Sécession."
+    },
+    {
+      "nom": "Alaska",
+      "genre": "m",
+      "ordre_entree": 49,
+      "date_entree": "1959-01-03",
+      "description": "Acheté à la Russie en 1867. Ancien district puis territoire de l'Alaska."
+    },
+    {
+      "nom": "Hawaï",
+      "genre": "m",
+      "ordre_entree": 50,
+      "date_entree": "1959-08-21",
+      "description": "Ancien Royaume d'Hawaï, annexé en 1898, devenu territoire en 1900."
+    }
+  ]
+}
