@@ -6,12 +6,13 @@ import {
   Book, Film, MapPin, Music, Globe, Gamepad, Calendar, 
   Theater, Palette, Archive, Building, Bus,
   Sun, Cloud, CloudRain, CloudLightning, CloudSnow,
-  MessageSquare, Facebook, laptop, ShoppingCart, Apple,
+  MessageSquare, Facebook, Laptop, ShoppingCart, Apple,
   Leaf, Sprout, Landmark, Files, Map, History, Scroll,
   Castle, Home, DraftingCompass, Construction, Cake,
   PartyPopper, Church, GraduationCap, Lightbulb, BookOpen,
   Library, Flower, TrainFront, TramFront, Car, Bike, Plane,
-  Amphora, CalendarDays, Trees
+  Amphora, CalendarDays, Trees, Hexagon, Languages, PenTool,
+  Trophy, Medal, Award
 } from "lucide-react";
 
 import { getSaintDuJour } from "../lib/saints";
@@ -155,6 +156,87 @@ const categories = [
     { title: "Hôtel-Dieu", href: "/hoteldieu" },
   ]},
 
+
+  /* ---------------- LITTERATURE ---------------- */
+
+  { 
+    title: "Littératures étrangères", 
+    href: "/litterature-etrangere", 
+    icon: Languages,
+    isLitteratureEtrangere: true, 
+    litteratureEtrangereSources: [
+      { title: "Littérature Allemande", href: "/LitteratureAllemande" },
+      { title: "Littérature Belge", href: "/LitteratureBelge" },
+      { title: "Littérature Britannique", href: "/LitteratureBritannique" },
+      { title: "Littérature Italienne", href: "/LitteratureItalienne" },
+      { title: "Littérature Latino-Américaine", href: "/LitteratureLatinoAmericaine" },
+      { title: "Littérature Russe", href: "/LitteratureRusse" },
+      { title: "Littérature Suédoise", href: "/LitteratureSuedoise" }
+    ]
+  },
+
+{ 
+    title: "Littérature française", 
+    href: "/litterature-francaise", 
+    icon: PenTool,
+    isLitteratureFrancaise: true, 
+    litteratureFrancaiseSources: [
+      { title: "Littérature d'Amour", href: "/LitteratureAmour" },
+      { title: "Littérature autobiographique", href: "/LitteratureAutoBiographie" },
+      { title: "Littérature d'aventure", href: "/LitteratureAventure" },
+      { title: "Littérature de Biographie", href: "/LitteratureBiographie" },
+      { title: "Littérature Classique", href: "/LitteratureClassique" },
+      { title: "Littérature des contes", href: "/LitteratureContes" },
+      { title: "Littérature d'Enfance", href: "/LitteratureEnfance" },
+      { title: "Littérature d'Espionnage", href: "/LitteratureEspionnage" },
+      { title: "Littérature Fantsay", href: "/LitteratureFantasy" },
+      { title: "Littérature Historique", href: "/LitteratureHistorique" },
+      { title: "Littérature Humaniste", href: "/LitteratureHumaniste" },
+      { title: "Littérature d'Humour", href: "/LitteratureHumour" },
+      { title: "Littérature des Nouvelles", href: "/LitteratureNouvelles" },
+      { title: "Littérature de Philosophie", href: "/LitteraturePhilosophie" },
+      { title: "Littérature de Poésie", href: "/LitteraturePoesie" },
+      { title: "Littérature Policier", href: "/LitteraturePolicier" },
+      { title: "Littérature Politique", href: "/LitteraturePolitique" },
+      { title: "Littérature de Science-Fiction", href: "/LitteratureScienceFiction" },
+      { title: "Littérature de Théâtre", href: "/LitteratureTheatre" },
+      { title: "Littérature de Thrillers", href: "/LitteratureThrillers" },
+      { title: "Littérature Triste", href: "/LitteratureTriste" },
+      { title: "Littérature de Voyage", href: "/LitteratureVoyage" }
+    ]
+  },
+
+  { 
+    title: "Prix littéraires", 
+    href: "/prix-litteraires", 
+    icon: Trophy,
+    isLivresPrix: true, 
+    livresPrixSources: [
+      { title: "Grand Prix Fémina", href: "/GrandPrixFemina" },
+      { title: "Prix des Deux Magots", href: "/PrixDeuxMagots" },
+      { title: "Prix Flore", href: "/PrixFlore" },
+      { title: "Prix France Culture", href: "/prixFranceCulture" },
+      { title: "Prix France Culture Télérama", href: "/prixFranceCultureTelerama" },
+      { title: "Prix France Télévisions", href: "/PrixFranceTelevisions" },
+      { title: "Prix Gongourt", href: "/PrixGoncourt" },
+      { title: "Prix Interallié", href: "/PrixInterallie" },
+      { title: "Prix des Librairies", href: "/PrixLibraires" },
+      { title: "Prix des Livres Magazine Lire", href: "/PrixLivresMagazineLire" },
+      { title: "Prix de la Maison de la Presse", href: "/PrixMaisonPresse" },
+      { title: "Prix Maurice Renard", href: "/PrixMauriceRenard" },
+      { title: "Prix Médicis", href: "/PrixMedicis" },
+      { title: "Prix Montyon Littéraire", href: "/PrixMontyonLitteraire" },
+      { title: "Prix Montyon Scientifique", href: "/PrixMontyonScientifique" },
+      { title: "Prix Montyon de la Vertu", href: "/PrixMontyonVertu" },
+      { title: "Prix du Premier Roman", href: "/PrixPremierRoman" },
+      { title: "Prix du Quai des Orfèvres", href: "/PrixQuaiOrfevres" },
+      { title: "Prix Renaissance", href: "/PrixRenaissance" },
+      { title: "Prix Renaudot", href: "/PrixRenaudot" },
+      { title: "Prix Total par écrivains", href: "/TotalPrixEcrivain" }
+    ]
+  },
+
+
   /* ---------------- SAVOIRS ---------------- */
 
 
@@ -216,6 +298,11 @@ const categories = [
     { title: "Religions Monde", href: "/religionsmonde" },
     { title: "Religions Part", href: "/religionspart" },
   ]},
+
+  { title: "Savoirs – Territoires français", href: "/territoires-francais", icon: Hexagon,
+    isSavoirsTerritoires: true,
+    savoirsTerritoiresSources: [{ title: "France", href: "/France" }]
+  },
 
 
   /* ---------------- FTS ---------------- */
@@ -414,6 +501,10 @@ export default function HomePage() {
               (cat.isVisites && (cat as any).visitesSources) ||
               (cat.isOccitanie && (cat as any).occitanieSources) ||
               (cat.savoirSources && (cat as any).savoirSources) ||
+            (cat.isLitteratureEtrangere && cat.litteratureEtrangereSources) ||
+            (cat.isLitteratureFrancaise && cat.litteratureFrancaiseSources) ||
+            (cat.isLivresPrix && cat.livresPrixSources) ||
+            (cat.isSavoirsTerritoires && cat.savoirsTerritoiresSources) ||
               [];
 
             return (
