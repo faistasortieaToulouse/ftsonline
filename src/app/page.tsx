@@ -207,7 +207,7 @@ const categories = [
   },
 
   { 
-    title: "Prix littéraires", 
+    title: "Livres : Prix littéraires", 
     href: "/prix-litteraires", 
     icon: Trophy,
     isLivresPrix: true, 
@@ -299,7 +299,7 @@ const categories = [
     { title: "Religions Part", href: "/religionspart" },
   ]},
 
-  { title: "Savoirs – Territoires français", href: "/territoires-francais", icon: Hexagon,
+  { title: "Savoirs : Territoires français", href: "/territoires-francais", icon: Hexagon,
     isSavoirsTerritoires: true,
     savoirsTerritoiresSources: [{ title: "France", href: "/France" }]
   },
