@@ -1,0 +1,33 @@
+{
+  "nom_liste": "Pays membres de l'Union Européenne",
+  "total": 27,
+  "pays": [
+    { "nom": "Allemagne", "code": "DE", "entree_ue": 1958, "schengen": true, "lat": 51.1657, "lng": 10.4515 },
+    { "nom": "Autriche", "code": "AT", "entree_ue": 1995, "schengen": true, "lat": 47.5162, "lng": 14.5501 },
+    { "nom": "Belgique", "code": "BE", "entree_ue": 1958, "schengen": true, "lat": 50.5039, "lng": 4.4699 },
+    { "nom": "Bulgarie", "code": "BG", "entree_ue": 2007, "schengen": "partiel", "lat": 42.7339, "lng": 25.4858 },
+    { "nom": "Chypre", "code": "CY", "entree_ue": 2004, "schengen": false, "lat": 35.1264, "lng": 33.4299 },
+    { "nom": "Croatie", "code": "HR", "entree_ue": 2013, "schengen": true, "lat": 45.1, "lng": 15.2 },
+    { "nom": "Danemark", "code": "DK", "entree_ue": 1973, "schengen": true, "lat": 56.2639, "lng": 9.5018 },
+    { "nom": "Espagne", "code": "ES", "entree_ue": 1986, "schengen": true, "lat": 40.4637, "lng": -3.7492 },
+    { "nom": "Estonie", "code": "EE", "entree_ue": 2004, "schengen": true, "lat": 58.5953, "lng": 25.0136 },
+    { "nom": "Finlande", "code": "FI", "entree_ue": 1995, "schengen": true, "lat": 61.9241, "lng": 25.7482 },
+    { "nom": "France", "code": "FR", "entree_ue": 1958, "schengen": true, "lat": 46.2276, "lng": 2.2137 },
+    { "nom": "Grèce", "code": "GR", "entree_ue": 1981, "schengen": true, "lat": 39.0742, "lng": 21.8243 },
+    { "nom": "Hongrie", "code": "HU", "entree_ue": 2004, "schengen": true, "lat": 47.1625, "lng": 19.5033 },
+    { "nom": "Irlande", "code": "IE", "entree_ue": 1973, "schengen": false, "lat": 53.4129, "lng": -8.2439 },
+    { "nom": "Italie", "code": "IT", "entree_ue": 1958, "schengen": true, "lat": 41.8719, "lng": 12.5674 },
+    { "nom": "Lettonie", "code": "LV", "entree_ue": 2004, "schengen": true, "lat": 56.8796, "lng": 24.6032 },
+    { "nom": "Lituanie", "code": "LT", "entree_ue": 2004, "schengen": true, "lat": 55.1694, "lng": 23.8813 },
+    { "nom": "Luxembourg", "code": "LU", "entree_ue": 1958, "schengen": true, "lat": 49.8153, "lng": 6.1296 },
+    { "nom": "Malte", "code": "MT", "entree_ue": 2004, "schengen": true, "lat": 35.9375, "lng": 14.3754 },
+    { "nom": "Pays-Bas", "code": "NL", "entree_ue": 1958, "schengen": true, "lat": 52.1326, "lng": 5.2913 },
+    { "nom": "Pologne", "code": "PL", "entree_ue": 2004, "schengen": true, "lat": 51.9194, "lng": 19.1451 },
+    { "nom": "Portugal", "code": "PT", "entree_ue": 1986, "schengen": true, "lat": 39.3999, "lng": -8.2245 },
+    { "nom": "Roumanie", "code": "RO", "entree_ue": 2007, "schengen": "partiel", "lat": 45.9432, "lng": 24.9668 },
+    { "nom": "Slovaquie", "code": "SK", "entree_ue": 2004, "schengen": true, "lat": 48.669, "lng": 19.699 },
+    { "nom": "Slovénie", "code": "SI", "entree_ue": 2004, "schengen": true, "lat": 46.1512, "lng": 14.9955 },
+    { "nom": "Suède", "code": "SE", "entree_ue": 1995, "schengen": true, "lat": 60.1282, "lng": 18.6435 },
+    { "nom": "Tchéquie", "code": "CZ", "entree_ue": 2004, "schengen": true, "lat": 49.8175, "lng": 15.473 }
+  ]
+}

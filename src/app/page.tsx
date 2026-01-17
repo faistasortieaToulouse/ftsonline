@@ -12,7 +12,7 @@ import {
   PartyPopper, Church, GraduationCap, Lightbulb, BookOpen,
   Library, Flower, TrainFront, TramFront, Car, Bike, Plane,
   Amphora, CalendarDays, Trees, Hexagon, Languages, PenTool,
-  Trophy, Medal, Award
+  Trophy, Medal, Award, Job, Ticket, Briefcase
 } from "lucide-react";
 
 import { getSaintDuJour } from "../lib/saints";
@@ -20,6 +20,16 @@ import { getDictonDuJour } from "../lib/dictons";
 import { getCelebrationsDuJour } from "../lib/celebrations";
 import { getConseilsJardin } from "../lib/jardin";
 import { getSigneZodiaque, getAscendant } from "../lib/astro";
+
+// Ces lignes doivent être AVANT le "export default function..."
+// Si tes fichiers sont dans src/data/celebration/
+import annuellesData from "../../data/celebration/celebrations_annuelles.json";
+import religieusesData from "../../data/celebration/celebrations_religieuses.json";
+import saintsData from "../../data/celebration/celebrations_saints.json";
+import bienheureuxData from "../../data/celebration/celebrations_bienheureux.json";
+import orthodoxesData from "../../data/celebration/celebrations_orthodoxes.json";
+import prenomsData from "../../data/celebration/prenoms_du_jour.json";
+import { ChevronDown } from "lucide-react";
 
 // --- DONNÉES DES CATÉGORIES ---
 const categories = [
@@ -37,6 +47,30 @@ const categories = [
     { title: "Évènements de nos groupes - Sorties", href: "/meetup-sorties" },
   ]},
 
+/* 1. Évènements Toulouse */
+{ 
+    title: "Evènements Toulouse", 
+    href: "/toulouse-edu-events", // Clé unique
+    icon: CalendarDays, 
+    isToulouseEvents: true, 
+    toulouseEventsSources: [
+      { title: "Evènements Toulouse", href: "/toulouseevent" },
+      { title: "Évènements à l'université", href: "/universites" },
+    ] 
+  },
+
+/* 2. Billet spectacle */
+  { 
+    title: "Billets spectacle", 
+    href: "/spectacles", 
+    icon: Ticket, 
+    isSpectacle: true, 
+    spectacleSources: [
+      { title: "Billets évènements des Associations", href: "/assotoulouse" },
+      { title: "Billèterie Spectacles", href: "/billetticket" }
+    ] 
+  },
+
   { title: "Actualités culturelles et scientifiques", href: "/culture", icon: Theater, isCulture: true, cultureSources: [
     { title: "Actualités culturelles", href: "/cotetoulouse" },
     { title: "Actualités scientifiques", href: "/canalu" },
@@ -44,18 +78,26 @@ const categories = [
 
   { title: "Sorties en librairie", href: "/librairie", icon: Book, isLibrairie: true, librairieSources: [
     { title: "Sorties en librairie", href: "/podlibrairies" },
+    { title: "Librairies à Toulouse", href: "/toulouselibrairies" },
     { title: "Marathon des Mots", href: "/podmarathon" },
     { title: "Librairie Ombrs Blanches", href: "/podombres" },
     { title: "Librairie Terra Nova", href: "/podterra" },
   ]},
 
-  { title: "Sorties cinéma", href: "/cinema", icon: Film, isCinema: true, cinemaSources: [{ title: "Sorties cinéma", href: "/cinematoulouse" }] },
+  { title: "Sorties cinéma", href: "/cinema", icon: Film, isCinema: true, cinemaSources: [
+	{ title: "Sorties cinéma", href: "/cinematoulouse" },
+	{ title: "Programmes cinéma", href: "/cinemastoulouse" }
+  ] },
 
   { title: "Sorties jeux de société", href: "/jeux", icon: Gamepad, isJeux: true, jeuxSources: [
     { title: "Tric Trac", href: "/trictracphilibert" },
     { title: "Philibert", href: "/philibertnet" },
     { title: "Jeu de Plateau", href: "/jeuplateau" },
   ]},
+
+  { title: "Discord FTS", href: "/discordfts", icon: MessageSquare },
+  { title: "Facebook FTS", href: "/facebookfts", icon: Facebook },
+  { title: "Fais Ta Sortie FTS", href: "/ftsfts", icon: Globe },
 
   { title: "Culture, sport à Toulouse", href: "/air", icon: Palette, isSites: true, sitesSources: [
     { title: "Bibliothèques à Toulouse", href: "/bibliomap" },
@@ -113,11 +155,10 @@ const categories = [
     { title: "Cirque et sommet", href: "/montcirque" },
   ]},
 
-  { title: "Transports Tisséo", href: "/transports-tisseo", icon: Bus },
-
-  { title: "Discord FTS", href: "/discordfts", icon: MessageSquare },
-  { title: "Facebook FTS", href: "/facebookfts", icon: Facebook },
-  { title: "Fais Ta Sortie FTS", href: "/ftsfts", icon: Globe },
+  { title: "Transports & Trafic", href: "/transports-tisseo", icon: Bus, isTransport: true, transportSources: [
+    { title: "Tisséo Toulouse", href: "/tisseotoulouse" },
+    { title: "Bison Futé 31", href: "/bisonfute" },
+  ]},
 
 
   /* ---------------- TOULOUSE ---------------- */
@@ -126,6 +167,17 @@ const categories = [
   { title: "Toulouse : Consommation", href: "/marches", icon: Apple, isOccitanie: true, occitanieSources: [
     { title: "Marchés", href: "/marches" },
   ]},
+
+/* 3. Toulouse : Emploi */
+  { 
+    title: "Toulouse : Emploi", 
+    href: "/emploi", 
+    icon: Briefcase, 
+    isEmploi: true, 
+    emploiSources: [
+      { title: "Evènements Emploi", href: "/toulousetravail" }
+    ] 
+  },
 
   { title: "Toulouse : Environnement", href: "/flore", icon: Flower, isOccitanie: true, occitanieSources: [
     { title: "Flore", href: "/flore" },
@@ -244,6 +296,21 @@ const categories = [
     { title: "Architecture", href: "/architecture" },
   ]},
 
+/* 4. Savoirs : Europe */
+  { 
+    title: "Savoirs : Europe", 
+    href: "/europe", 
+    icon: GraduationCap, 
+    isEurope: true, 
+    savoirsEuropeSources: [
+      { title: "Pays de l'Europe", href: "/europe" },
+      { title: "Membres de l'Union Eruopéenne", href: "/membresue" },
+      { title: "États associés à l'UE", href: "/associeseurope" },
+      { title: "Membres de l'OTAN", href: "/OTAN" },
+      { title: "Partenaires de l'OTAN", href: "/OTANsup" }
+    ] 
+  },
+
   { title: "Savoirs : Fêtes", href: "/datefetes", icon: PartyPopper, isOccitanie: true, occitanieSources: [
     { title: "Dates des fêtes", href: "/datefetes" },
   ]},
@@ -283,6 +350,8 @@ const categories = [
   { title: "Savoirs : Histoire", href: "/histoire", icon: Car, isOccitanie: true, occitanieSources: [
     { title: "Dynastie Islam", href: "/dynastieislam" },
     { title: "Expansion Islam", href: "/expansionislam" },
+    { title: "Expansion Christianisme", href: "/expansionchristianisme" },
+    { title: "Expansion Hébraïsme", href: "/expansionhebraisme" },
     { title: "Hordes & Khanats", href: "/hordes_khanats" },
     { title: "Capitales France", href: "/capitales_france" },
     { title: "Royaumes France", href: "/royaumes_france" },
@@ -301,8 +370,11 @@ const categories = [
 
   { title: "Savoirs : Territoires français", href: "/territoires-francais", icon: Hexagon,
     isSavoirsTerritoires: true,
-    savoirsTerritoiresSources: [{ title: "France", href: "/France" }]
-  },
+    savoirsTerritoiresSources: [
+	{ title: "France", href: "/France" },
+	{ title: "Anciens départements", href: "/anciensdepartements" },
+	{ title: "Colonies en Europe", href: "/colonieeurope" }
+  ]},
 
 
   /* ---------------- FTS ---------------- */
@@ -412,75 +484,157 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Barre d'informations */}
-      <div className="px-4 max-w-6xl mx-auto mb-12">
-        <section className="bg-purple-100 text-purple-700 rounded-2xl shadow-md border border-purple-200 overflow-hidden flex flex-col">
-          {/* Ligne 1 */}
-          <div className="py-4 px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex flex-col items-center text-center min-w-[200px]">
-              <span className="font-bold capitalize text-purple-800">
-                {heure.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-              </span>
-              <span className="font-medium text-3xl text-purple-900">
-                {heure.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-              </span>
-            </div>
-<div className="flex-1 text-center border-purple-200 md:border-x px-4 flex flex-col justify-center gap-2">
-  {/* Ligne du Saint */}
-  <div className="font-medium">
-    Saint du jour : <span className="font-bold text-purple-900">{getSaintDuJour(heure)}</span>
-  </div>
-  
-  {/* Ligne du Dicton (Même style) */}
-  <div className="font-medium">
-    Dicton du jour : <span className="font-bold text-purple-900 italic">"{dictonDuJour}"</span>
-  </div>
-</div>
-            <div className="flex items-center gap-4 min-w-[160px] justify-end">
-              <WeatherIcon condition={meteo.condition} />
-              <div className="flex flex-col text-right">
-                <span className="text-[10px] uppercase font-bold opacity-60">Météo Toulouse</span>
-                <span className="font-bold text-2xl leading-none">{meteo.temperature}</span>
-                <span className="text-xs font-medium capitalize">{meteo.condition}</span>
-              </div>
-            </div>
-          </div>
-          {/* Ligne 2 */}
-          <div className="bg-purple-200/50 border-t border-purple-200 py-2 px-6">
-            <div className="flex items-center justify-center gap-3 w-full">
-              <span className="text-pink-500 text-lg">✨</span>
-              <p className="text-sm font-bold text-purple-900 text-center">{celebrations.join(" • ")}</p>
-              <span className="text-pink-500 text-lg">✨</span>
-            </div>
-          </div>
-          {/* Ligne 3 */}
-          <div className="bg-green-100/50 border-t border-purple-200 py-3 px-6">
-            <div className="flex items-center gap-3 w-full">
-              <span className="text-xl">🌱</span>
-              <div className="flex flex-col text-left">
-                <span className="text-[10px] font-bold uppercase text-green-700">Le conseil jardinage du mois</span>
-                <p className="text-xs md:text-sm text-gray-700 italic">{conseilJardin}</p>
-              </div>
-            </div>
-          </div>
-          {/* Ligne 4 */}
-          <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
-            <div className="flex items-center justify-center gap-6 w-full text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-blue-500 text-lg">☀️</span>
-                <span className="text-gray-500 font-medium italic">Signe :</span>
-                <span className="font-bold text-blue-900">{signeZodiaque}</span>
-              </div>
-              <div className="w-px h-4 bg-purple-200 hidden sm:block"></div>
-              <div className="flex items-center gap-2">
-                <span className="text-indigo-500 text-lg">🌅</span>
-                <span className="text-gray-500 font-medium italic">Ascendant :</span>
-                <span className="font-bold text-indigo-900">{ascendant}</span>
-              </div>
-            </div>
-          </div>
-        </section>
+{/* Barre d'informations */}
+<div className="px-4 max-w-6xl mx-auto mb-12">
+  <section className="bg-purple-100 text-purple-700 rounded-2xl shadow-md border border-purple-200 overflow-hidden flex flex-col">
+    
+    {/* Ligne 1 : Date, Heure, Saint, Dicton et Météo */}
+    <div className="py-4 px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="flex flex-col items-center text-center min-w-[200px]">
+        <span className="font-bold capitalize text-purple-800">
+          {heure.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+        </span>
+        <span className="font-medium text-3xl text-purple-900">
+          {heure.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+        </span>
       </div>
+
+      <div className="flex-1 text-center border-purple-200 md:border-x px-4 flex flex-col justify-center gap-2">
+        <div className="font-medium">
+          Saint du jour : <span className="font-bold text-purple-900">{getSaintDuJour(heure)}</span>
+        </div>
+        <div className="font-medium">
+          Dicton du jour : <span className="font-bold text-purple-900 italic">"{dictonDuJour}"</span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4 min-w-[160px] justify-end">
+        <WeatherIcon condition={meteo.condition} />
+        <div className="flex flex-col text-right">
+          <span className="text-[10px] uppercase font-bold opacity-60">Météo Toulouse</span>
+          <span className="font-bold text-2xl leading-none">{meteo.temperature}</span>
+          <span className="text-xs font-medium capitalize">{meteo.condition}</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Ligne 2 : Célébrations textuelles */}
+    <div className="bg-purple-200/50 border-t border-purple-200 py-2 px-6">
+      <div className="flex items-center justify-center gap-3 w-full">
+        <span className="text-pink-500 text-lg">✨</span>
+        <p className="text-sm font-bold text-purple-900 text-center">{celebrations.join(" • ")}</p>
+        <span className="text-pink-500 text-lg">✨</span>
+      </div>
+    </div>
+
+    {/* Ligne 3 : Conseil Jardinage */}
+    <div className="bg-green-100/50 border-t border-purple-200 py-3 px-6">
+      <div className="flex items-center gap-3 w-full">
+        <span className="text-xl">🌱</span>
+        <div className="flex flex-col text-left">
+          <span className="text-[10px] font-bold uppercase text-green-700">Le conseil jardinage du mois</span>
+          <p className="text-xs md:text-sm text-gray-700 italic">{conseilJardin}</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Ligne 4 : Astro */}
+    <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
+      <div className="flex items-center justify-center gap-6 w-full text-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-blue-500 text-lg">☀️</span>
+          <span className="text-gray-500 font-medium italic">Signe :</span>
+          <span className="font-bold text-blue-900">{signeZodiaque}</span>
+        </div>
+        <div className="w-px h-4 bg-purple-200 hidden sm:block"></div>
+        <div className="flex items-center gap-2">
+          <span className="text-indigo-500 text-lg">🌅</span>
+          <span className="text-gray-500 font-medium italic">Ascendant :</span>
+          <span className="font-bold text-indigo-900">{ascendant}</span>
+        </div>
+      </div>
+    </div>
+
+{/* Ligne 5 : MENUS DÉROULANTS (Ajout) */}
+    <div className="bg-white/40 border-t border-purple-200 py-3 px-6">
+      <div className="flex flex-wrap justify-center gap-3">
+{/* Texte d'introduction ajouté ici */}
+        <span className="text-sm font-bold text-purple-900/60 uppercase tracking-wider mr-2">
+          Célébrations :
+        </span>
+
+        {(() => {
+          // 1. On génère la date exacte du jour au format exact du JSON (ex: "17 janvier")
+          const jourMois = heure.toLocaleDateString("fr-FR", { day: "numeric", month: "long" }).toLowerCase();
+          
+          const sections = [
+{ 
+  label: "Nationales", 
+  data: (() => {
+    // 1. On cherche d'abord s'il y a des célébrations spécifiques au 17 janvier
+    const specific = annuellesData.find(d => d.date.toLowerCase().trim() === jourMois);
+    if (specific) return specific.details;
+
+    // 2. Si rien au 17 janvier, on cherche les internationales/nationales générales
+    const generales = annuellesData.find(d => d.date === "Internationales et nationales");
+    return generales ? generales.details : [];
+  })()
+},
+            { 
+              label: "Religieuses", 
+              data: religieusesData.find(d => d.date.toLowerCase() === jourMois)?.celebrations 
+            },
+            { 
+              label: "Saints", 
+              data: saintsData.find(d => d.date.toLowerCase() === jourMois)?.saints 
+            },
+            { 
+              label: "Bienheureux", 
+              data: bienheureuxData.find(d => d.date_standard.toLowerCase() === jourMois)?.personnalites 
+            },
+            { 
+              label: "Orthodoxes", 
+              data: orthodoxesData.find(d => d.date_propre.toLowerCase() === jourMois)?.saints 
+            },
+            { 
+              label: "Prénoms", 
+              data: prenomsData.find(d => d.date.toLowerCase() === jourMois)?.prenoms 
+            },
+          ];
+
+          return sections.map((sec, idx) => (
+            <div key={idx} className="relative group">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-purple-600 hover:text-white text-purple-700 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm">
+                {sec.label}
+                <ChevronDown className="w-4 h-4 opacity-50" />
+              </button>
+
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 p-4">
+                <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
+                  {sec.label} du {jourMois}
+                </div>
+                
+                <ul className="max-h-60 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-purple-200 pr-2">
+                  {sec.data && sec.data.length > 0 ? (
+                    sec.data.map((text: string, i: number) => (
+                      <li key={i} className="text-base text-slate-700 leading-relaxed list-none pl-0 border-b border-slate-50 last:border-0 pb-2">
+                        • {text}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-sm text-gray-400 italic text-center py-2">Aucune donnée pour aujourd'hui</li>
+                  )}
+                </ul>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
+              </div>
+            </div>
+          ));
+        })()}
+      </div>
+    </div>
+
+  </section>
+</div>
 
       {/* Catégories */}
       <section id="categories" className="py-8 px-4 container mx-auto">
@@ -488,24 +642,31 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {categories.map((cat) => {
             const Icon = cat.icon;
-            const sources =
-              (cat.isAgenda && eventSources) ||
-              (cat.isMeetup && (cat as any).meetupSources) ||
-              (cat.isCulture && (cat as any).cultureSources) ||
-              (cat.isLibrairie && (cat as any).librairieSources) ||
-              (cat.isCinema && (cat as any).cinemaSources) ||
-              (cat.isJeux && (cat as any).jeuxSources) ||
-              (cat.isSites && (cat as any).sitesSources) ||
-              (cat.isMusee && (cat as any).museeSources) ||
-              (cat.isActualites && (cat as any).actualitesSources) ||
-              (cat.isVisites && (cat as any).visitesSources) ||
-              (cat.isOccitanie && (cat as any).occitanieSources) ||
-              (cat.savoirSources && (cat as any).savoirSources) ||
-            (cat.isLitteratureEtrangere && cat.litteratureEtrangereSources) ||
-            (cat.isLitteratureFrancaise && cat.litteratureFrancaiseSources) ||
-            (cat.isLivresPrix && cat.livresPrixSources) ||
-            (cat.isSavoirsTerritoires && cat.savoirsTerritoiresSources) ||
-              [];
+               const sources =
+                (cat.isAgenda && eventSources) ||
+                (cat.isMeetup && (cat as any).meetupSources) ||
+                ((cat as any).isToulouseEvents && (cat as any).toulouseEventsSources) ||
+                (cat.isCulture && (cat as any).cultureSources) ||
+                (cat.isLibrairie && (cat as any).librairieSources) ||
+                (cat.isCinema && (cat as any).cinemaSources) ||
+                (cat.isJeux && (cat as any).jeuxSources) ||
+                (cat.isSites && (cat as any).sitesSources) ||
+                (cat.isMusee && (cat as any).museeSources) ||
+                (cat.isActualites && (cat as any).actualitesSources) ||
+                (cat.isVisites && (cat as any).visitesSources) ||
+                   // Ajouts pour vos nouvelles rubriques
+                (cat.isSpectacle && (cat as any).spectacleSources) ||
+                (cat.isEmploi && (cat as any).emploiSources) ||
+		(cat.isTransport && (cat as any).transportSources) ||
+                (cat.isEurope && (cat as any).savoirsEuropeSources) ||
+                   // Fin des ajouts
+                (cat.isOccitanie && (cat as any).occitanieSources) ||
+                (cat.savoirSources && (cat as any).savoirSources) ||
+                (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
+                (cat.isLitteratureFrancaise && (cat as any).litteratureFrancaiseSources) ||
+                (cat.isLivresPrix && (cat as any).livresPrixSources) ||
+                (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
+                [];
 
             return (
               <div key={cat.href} className="flex flex-col h-full p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100">

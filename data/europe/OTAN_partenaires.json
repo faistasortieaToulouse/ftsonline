@@ -1,0 +1,64 @@
+{
+  "nom_liste": "Partenaires de l'OTAN",
+  "total": 68,
+  "candidatures_promesses": [
+    { "pays": "Ukraine", "ppp": "Février 1994", "ipap": "-", "dialogue": "-", "map": "-", "protocole": "-", "statut": "Promesse participation future" },
+    { "pays": "Géorgie", "ppp": "Mars 1994", "ipap": "Octobre 2004", "dialogue": "Septembre 2006", "map": "-", "protocole": "-", "statut": "Promesse participation future" },
+    { "pays": "Bosnie-Herzégovine", "ppp": "Décembre 2006", "ipap": "Septembre 2008", "dialogue": "Avril 2008", "map": "Décembre 2018", "protocole": "-", "statut": "Candidat à l'adhésion" }
+  ],
+  "partenaires_plan_individuel": [
+    { "pays": "Kazakhstan" },
+    { "pays": "Serbie" },
+    { "pays": "Moldavie" }
+  ],
+  "partenariat_global": [
+    { "pays": "Australie" },
+    { "pays": "Nouvelle-Zélande" },
+    { "pays": "Mongolie" },
+    { "pays": "Pakistan" },
+    { "pays": "Colombie" },
+    { "pays": "Japon" },
+    { "pays": "Corée du Sud" },
+    { "pays": "Irak" }
+  ],
+  "partenariat_paix_membres": [
+    { "pays": "Arménie", "date": "5 octobre 1994", "statut": "Actif" },
+    { "pays": "Autriche", "date": "1er février 1995", "statut": "Actif" },
+    { "pays": "Azerbaïdjan", "date": "4 mai 1994", "statut": "Actif" },
+    { "pays": "Biélorussie", "date": "11 janvier 1995", "statut": "Suspendue (nov. 2021)" },
+    { "pays": "Bosnie-Herzégovine", "date": "14 décembre 2006", "statut": "Actif" },
+    { "pays": "Géorgie", "date": "23 mars 1994", "statut": "Actif" },
+    { "pays": "Irlande", "date": "1er décembre 1999", "statut": "Actif" },
+    { "pays": "Kazakhstan", "date": "27 mai 1994", "statut": "Actif" },
+    { "pays": "Kirghizistan", "date": "1er juin 1994", "statut": "Actif" },
+    { "pays": "Malte", "date": "26 avril 1995", "statut": "Actif" },
+    { "pays": "Moldavie", "date": "16 mars 1994", "statut": "Actif" },
+    { "pays": "Russie", "date": "22 juin 1994", "statut": "Suspendue" },
+    { "pays": "Serbie", "date": "14 décembre 2006", "statut": "Actif" },
+    { "pays": "Suisse", "date": "11 décembre 1996", "statut": "Actif" },
+    { "pays": "Tadjikistan", "date": "20 février 2002", "statut": "Actif" },
+    { "pays": "Turkménistan", "date": "10 mai 1994", "statut": "Actif" },
+    { "pays": "Ukraine", "date": "8 février 1994", "statut": "Actif" },
+    { "pays": "Ouzbékistan", "date": "13 juillet 1994", "statut": "Actif" },
+    { "pays": "Chypre", "date": "-", "statut": "Actif" },
+    { "pays": "Kosovo", "date": "-", "statut": "Actif" }
+  ],
+  "dialogue_mediterraneen": [
+    { "pays": "Maroc", "date_adhesion": "Février 1995" },
+    { "pays": "Israël", "date_adhesion": "Février 1995" },
+    { "pays": "Égypte", "date_adhesion": "Février 1995" },
+    { "pays": "Mauritanie", "date_adhesion": "Février 1995" },
+    { "pays": "Tunisie", "date_adhesion": "Février 1995" },
+    { "pays": "Jordanie", "date_adhesion": "Novembre 1995" },
+    { "pays": "Algérie", "date_adhesion": "2000" },
+    { "pays": "Libye", "date_adhesion": "2012" }
+  ],
+  "cooperation_istanbul": [
+    { "pays": "Bahreïn" },
+    { "pays": "Qatar" },
+    { "pays": "Koweït" },
+    { "pays": "Émirats arabes unis" },
+    { "pays": "Oman" },
+    { "pays": "Yémen", "note": "CDP" }
+  ]
+}

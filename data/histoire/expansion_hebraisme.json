@@ -1,0 +1,244 @@
+{
+  "diffusion_hebraisme_mondiale": {
+    "Afrique": [
+      {
+        "periode": "~1300 av. J.-C.",
+        "region": "Égypte",
+        "evenement": "L'Exode : Présence des Hébreux en Égypte avant le départ vers Canaan."
+      },
+      {
+        "periode": "~1000 av. J.-C.",
+        "region": "Éthiopie / Corne",
+        "evenement": "Légende de Salomon et Saba : Fondation mythique de la dynastie salomonienne par Ménélik Ier."
+      },
+      {
+        "periode": "VIe siècle av. J.-C.",
+        "region": "Égypte (Éléphantine)",
+        "evenement": "Garnisons juives : Installation d'une communauté militaire juive sur une île du Nil."
+      },
+      {
+        "periode": "IIIe - IIe s. av. J.-C.",
+        "region": "Libye (Cyrénaïque)",
+        "evenement": "Premières colonies au Maghreb sous la dynastie des Ptolémées."
+      },
+      {
+        "periode": "70 - 115 ap. J.-C.",
+        "region": "Afrique du Nord",
+        "evenement": "Vagues de réfugiés suite à la destruction du Second Temple."
+      },
+      {
+        "periode": "IVe - VIe siècle",
+        "region": "Maghreb / Sahara",
+        "evenement": "Judaïsation des Berbères (ex: Djerawa, Nefoussa)."
+      },
+      {
+        "periode": "VIIe siècle",
+        "region": "Maghreb / Éthiopie",
+        "evenement": "Conquêtes arabes : Résistance de la Kahena ; isolement des Beta Israel en Éthiopie."
+      },
+      {
+        "periode": "IXe - Xe siècle",
+        "region": "Afrique de l'Ouest",
+        "evenement": "Royaumes du Soudan : Commerce transsaharien et traditions d'ascendance juive (Lemba, Igbo)."
+      },
+      {
+        "periode": "1492 - 1497",
+        "region": "Maghreb",
+        "evenement": "Expulsion d'Espagne et du Portugal : Arrivée massive des Juifs Séfarades."
+      },
+      {
+        "periode": "XVIIe - XVIIIe s.",
+        "region": "Afrique Australe",
+        "evenement": "Arrivée des premiers colons d'origine juive avec la Compagnie des Indes."
+      },
+      {
+        "periode": "1841",
+        "region": "Afrique du Sud",
+        "evenement": "Fondation de la première synagogue organisée au Cap."
+      },
+      {
+        "periode": "1880 - 1930",
+        "region": "Afrique du Sud / Est",
+        "evenement": "Immigration Litvak : Arrivée de Juifs d'Europe de l'Est fuyant les pogroms."
+      },
+      {
+        "periode": "1948 - 1960",
+        "region": "Tout le continent",
+        "evenement": "Décolonisation : Exode des communautés vers Israël et la France."
+      },
+      {
+        "periode": "1984 - 1991",
+        "region": "Éthiopie",
+        "evenement": "Opérations Moïse et Salomon : Ponts aériens vers Israël."
+      }
+    ],
+    "Asie": [
+      {
+        "periode": "-722 av. J.-C.",
+        "region": "Assyrie / Asie Centrale",
+        "evenement": "Chute du Royaume d'Israël et mythe des Dix Tribus Perdues."
+      },
+      {
+        "periode": "-586 av. J.-C.",
+        "region": "Babylone (Irak)",
+        "evenement": "Exil à Babylone et naissance du foyer intellectuel du Talmud."
+      },
+      {
+        "periode": "-539 av. J.-C.",
+        "region": "Perse (Iran)",
+        "evenement": "Cyrus le Grand autorise le retour ; formation des communautés Mizrahim."
+      },
+      {
+        "periode": "~Ier siècle ap. J.-C.",
+        "region": "Inde (Cochin)",
+        "evenement": "Arrivée légendaire sur la côte de Malabar."
+      },
+      {
+        "periode": "IIe - VIIe siècle",
+        "region": "Route de la Soie",
+        "evenement": "Expansion des marchands Radhanites vers l'Asie Centrale."
+      },
+      {
+        "periode": "VIIIe - IXe siècle",
+        "region": "Chine (Kaifeng)",
+        "evenement": "Premières preuves de présence juive sous la dynastie Tang."
+      },
+      {
+        "periode": "1000 - 1100",
+        "region": "Inde (Bene Israel)",
+        "evenement": "Installation près de Bombay après un naufrage (selon la tradition)."
+      },
+      {
+        "periode": "XVe - XVIe siècle",
+        "region": "Inde (Goa / Madras)",
+        "evenement": "Arrivée des Séfarades fuyant l'Inquisition."
+      },
+      {
+        "periode": "XVIIIe - XIXe s.",
+        "region": "Baghdadi Jews",
+        "evenement": "Migration d'Irak vers l'Inde et l'Asie du Sud-Est."
+      },
+      {
+        "periode": "1933 - 1941",
+        "region": "Shanghai (Chine)",
+        "evenement": "Refuge pour 20 000 Juifs fuyant le nazisme."
+      },
+      {
+        "periode": "1948 - 1950",
+        "region": "Exode vers Israël",
+        "evenement": "Départ massif des communautés d'Irak, d'Iran et d'Inde."
+      }
+    ],
+    "Ameriques": [
+      {
+        "periode": "1492",
+        "region": "Amérique Latine",
+        "evenement": "Arrivée des Nouveaux Chrétiens avec Christophe Colomb."
+      },
+      {
+        "periode": "XVIe siècle",
+        "region": "Mexique / Pérou",
+        "evenement": "Crypto-judaïsme : installation pour fuir l'Inquisition."
+      },
+      {
+        "periode": "1630 - 1654",
+        "region": "Brésil (Recife)",
+        "evenement": "Première communauté juive ouverte sous domination hollandaise."
+      },
+      {
+        "periode": "1654",
+        "region": "New Amsterdam (New York)",
+        "evenement": "Arrivée de 23 Juifs fuyant le Brésil ; fondation de la première congrégation."
+      },
+      {
+        "periode": "XVIIIe s.",
+        "region": "USA / Caraïbes",
+        "evenement": "Émancipation aux USA ; déclin relatif dans les colonies espagnoles."
+      },
+      {
+        "periode": "1840 - 1880",
+        "region": "Amériques",
+        "evenement": "Vague allemande aux USA ; Indépendances en AL abolissant l'Inquisition."
+      },
+      {
+        "periode": "1881 - 1924",
+        "region": "USA / Argentine",
+        "evenement": "Migration massive d'Europe de l'Est ; projet des Gauchos Juifs en Argentine."
+      },
+      {
+        "periode": "1933 - 1945",
+        "region": "Amériques",
+        "evenement": "Réfugiés du Nazisme ; les USA deviennent le centre du judaïsme mondial."
+      },
+      {
+        "periode": "1950 - 1970",
+        "region": "USA / Cuba",
+        "evenement": "Essor culturel aux USA ; exode des Juifs cubains vers Miami."
+      }
+    ],
+    "Oceanie": [
+      {
+        "periode": "1788",
+        "region": "Australie",
+        "evenement": "Arrivée des premiers condamnés juifs avec la First Fleet."
+      },
+      {
+        "periode": "1850 - 1860",
+        "region": "Victoria (Australie)",
+        "evenement": "Ruée vers l'or : la population juive quadruple."
+      },
+      {
+        "periode": "1873 - 1877",
+        "region": "Australie / NZ",
+        "evenement": "Ascension politique : Sir Julius Vogel devient Premier ministre en NZ."
+      },
+      {
+        "periode": "1914 - 1918",
+        "region": "Océanie",
+        "evenement": "Général Sir John Monash, héros militaire australien."
+      },
+      {
+        "periode": "21e siècle",
+        "region": "Australie",
+        "evenement": "Dynamisme actuel avec environ 120 000 Juifs."
+      }
+    ],
+    "Europe_et_Russie": [
+      {
+        "periode": "Ier - IIe siècle",
+        "region": "Empire Romain",
+        "evenement": "Diaspora forcée après la chute de Jérusalem."
+      },
+      {
+        "periode": "VIIIe - Xe siècle",
+        "region": "Sud de la Russie",
+        "evenement": "Le Royaume Khazar : conversion de l'élite au judaïsme."
+      },
+      {
+        "periode": "Xe - XIe siècle",
+        "region": "Vallée du Rhin",
+        "evenement": "Berceau Ashkénaze et rayonnement de Rachi de Troyes."
+      },
+      {
+        "periode": "1492",
+        "region": "Espagne",
+        "evenement": "Décret de l'Alhambra : expulsion des Séfarades."
+      },
+      {
+        "periode": "1791",
+        "region": "Empire Russe",
+        "evenement": "Création de la Zone de Résidence par Catherine la Grande."
+      },
+      {
+        "periode": "1939 - 1945",
+        "region": "Europe",
+        "evenement": "La Shoah : extermination de 6 millions de Juifs."
+      },
+      {
+        "periode": "1990",
+        "region": "Russie / Ex-URSS",
+        "evenement": "Migration massive vers Israël et l'Allemagne après la chute du communisme."
+      }
+    ]
+  }
+}
