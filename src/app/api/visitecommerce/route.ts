@@ -669,7 +669,7 @@ export async function GET(req: NextRequest) {
   { "nomLieu": "kiosque", "num": "0", "typeRue": "allées", "nomRue": "Jean Jaurès", "quartier": "Jean Jaures", "établissement": "kiosque", "commentaire": "", "lat": 43.60621, "lng": 1.44921 },
   { "nomLieu": "le Nouveau Bar", "num": "0", "typeRue": "allées", "nomRue": "Jean Jaurès", "quartier": "Jean Jaures", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6054, "lng": 1.4488 },
   { "nomLieu": "théâtre de Lazari", "num": "0", "typeRue": "allées", "nomRue": "Jean Jaurès", "quartier": "Jean Jaures", "établissement": "théâtre", "commentaire": "ancien", "lat": 43.6051, "lng": 1.4482 },
-  { "nomLieu": "café Cardinal", "num": "1", "typeRue": "allées", "nomRue": "Jean Jaurès", "quartier": "Jean Jaures", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6053, "lng": 1.4484 }
+  { "nomLieu": "café Cardinal", "num": "1", "typeRue": "allées", "nomRue": "Jean Jaurès", "quartier": "Jean Jaures", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6053, "lng": 1.4484 },
   { "nomLieu": "Pizza Lopez", "num": "8", "typeRue": "allées", "nomRue": "Jean Jaurès", "quartier": "Jean Jaures", "établissement": "restaurant", "commentaire": "pizzeria", "lat": 43.60741, "lng": 1.44782 },
   { "nomLieu": "bar Marseillais", "num": "14", "typeRue": "allées", "nomRue": "Jean Jaurès", "quartier": "Jean Jaures", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6057, "lng": 1.4504 },
   { "nomLieu": "bar Pyrénées", "num": "14", "typeRue": "allées", "nomRue": "Jean Jaurès", "quartier": "Jean Jaures", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6057, "lng": 1.4504 },
