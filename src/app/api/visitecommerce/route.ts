@@ -639,7 +639,7 @@ export async function GET(req: NextRequest) {
   { "nomLieu": "bar Sans Pareil", "num": "2", "typeRue": "avenue", "nomRue": "Honoré Serres", "quartier": "Minimes", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6111, "lng": 1.4404 },
   { "nomLieu": "bar de Paris", "num": "3", "typeRue": "avenue", "nomRue": "Honoré Serres", "quartier": "Minimes", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6112, "lng": 1.4399 },
   { "nomLieu": "cinéma Fantasio", "num": "5", "typeRue": "avenue", "nomRue": "Honoré Serres", "quartier": "Minimes", "établissement": "cinéma", "commentaire": "ancien", "lat": 43.6115, "lng": 1.4398 },
-  { "nomLieu": "bar Fantasio", "num": "10", "typeRue": "avenue", "nomRue": "Honoré Serres", "quartier": "Minimes", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6119, "lng": 1.4402 }
+  { "nomLieu": "bar Fantasio", "num": "10", "typeRue": "avenue", "nomRue": "Honoré Serres", "quartier": "Minimes", "établissement": "café, pub", "commentaire": "ancien", "lat": 43.6119, "lng": 1.4402 },
   { "nomLieu": "Comptoir Occitan", "num": "12", "typeRue": "avenue", "nomRue": "Honoré Serres", "quartier": "Minimes", "établissement": "restaurant", "commentaire": "occitan", "lat": 43.61208, "lng": 1.44021 },
   { "nomLieu": "Big Forno Gusto Toulouse", "num": "14", "typeRue": "avenue", "nomRue": "Honoré Serres", "quartier": "Minimes", "établissement": "restaurant", "commentaire": "pizzeria", "lat": 43.61224, "lng": 1.44018 },
   { "nomLieu": "cinéma Arnaud-Bernard", "num": "15", "typeRue": "avenue", "nomRue": "Honoré Serres", "quartier": "Minimes", "établissement": "cinéma", "commentaire": "ancien", "lat": 43.6123, "lng": 1.4398 },
