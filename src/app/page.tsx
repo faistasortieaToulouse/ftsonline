@@ -373,7 +373,8 @@ const categories = [
     savoirsTerritoiresSources: [
 	{ title: "France", href: "/France" },
 	{ title: "Anciens départements", href: "/anciensdepartements" },
-	{ title: "Colonies en Europe", href: "/colonieeurope" }
+	{ title: "Colonies en Europe", href: "/colonieeurope" },
+	{ title: "Colonies dans le Monde", href: "/coloniefrance" }
   ]},
 
 
