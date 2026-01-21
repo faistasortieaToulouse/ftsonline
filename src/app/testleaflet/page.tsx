@@ -7,10 +7,11 @@ interface Establishment {
   num: string;
   typeRue: string;
   nomRue: string;
-  établissement: string; // <-- On utilise cette clé qui est dans votre JSON
+  établissement: string;
+  quartier: string;
+  commentaire?: string;
   lat: number;
   lng: number;
-  commentaire?: string;
 }
 
 export default function TestLeaflet() {
@@ -21,80 +22,89 @@ export default function TestLeaflet() {
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   
-  // MISE À JOUR : On utilise les vrais types de votre base de données
   const [filters, setFilters] = useState<Record<string, boolean>>({
     "café, pub": true,
     "restaurant": true,
     "cinéma": true,
     "hôtel": true,
     "hôpital": true,
-    "Antiquités": true
+    "Antiquités": true,
+    "brûlerie": true
   });
 
   const typeColors: Record<string, string> = {
-    "café, pub": "red",
-    "restaurant": "blue",
-    "cinéma": "orange",
-    "hôtel": "purple",
-    "hôpital": "green",
-    "Antiquités": "brown"
+    "café, pub": "#e63946",
+    "restaurant": "#457b9d",
+    "cinéma": "#f4a261",
+    "hôtel": "#8338ec",
+    "hôpital": "#2a9d8f",
+    "Antiquités": "#6d6875",
+    "brûlerie": "#bc6c25"
   };
 
   useEffect(() => {
     setIsMounted(true);
-    fetch("/api/visitecommerce") // <-- Vérifiez que c'est la bonne route
+    fetch("/api/visitecommerce")
       .then((res) => res.json())
       .then((data) => setEstablishments(data))
       .catch(console.error);
   }, []);
 
+  // Initialisation Carte
   useEffect(() => {
     if (!isMounted || !mapRef.current || mapInstance.current) return;
 
     const L = require("leaflet");
-
-    delete L.Icon.Default.prototype._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-      shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    });
-
-    mapInstance.current = L.map(mapRef.current).setView([43.6045, 1.444], 13);
-
+    mapInstance.current = L.map(mapRef.current).setView([43.6045, 1.444], 14);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '© OpenStreetMap contributors',
+      attribution: '© OpenStreetMap',
     }).addTo(mapInstance.current);
 
     markersLayer.current = L.layerGroup().addTo(mapInstance.current);
   }, [isMounted]);
 
+  // Mise à jour des marqueurs avec NUMÉROS
   useEffect(() => {
     if (!mapInstance.current || !markersLayer.current) return;
-
     const L = require("leaflet");
     markersLayer.current.clearLayers();
 
-    // MISE À JOUR : On filtre sur "établissement"
+    // On numérote uniquement les éléments visibles
     const filtered = establishments.filter(est => filters[est.établissement]);
 
-    filtered.forEach((est) => {
+    filtered.forEach((est, index) => {
       if (est.lat && est.lng) {
         const color = typeColors[est.établissement] || "gray";
-        
-        const marker = L.circleMarker([est.lat, est.lng], {
-          radius: 8,
-          fillColor: color,
-          color: "#000",
-          weight: 1,
-          opacity: 1,
-          fillOpacity: 0.8,
+        const numero = index + 1;
+
+        // Création d'une icône personnalisée avec le numéro
+        const customIcon = L.divIcon({
+          className: "custom-number-marker",
+          html: `<div style="
+            background-color: ${color};
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          ">${numero}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
         });
 
+        const marker = L.marker([est.lat, est.lng], { icon: customIcon });
+        
         marker.bindPopup(`
-          <strong>${est.nomLieu}</strong><br>
-          ${est.num !== "0" ? est.num : ""} ${est.typeRue} ${est.nomRue}<br>
-          <em>${est.établissement}</em>
+          <div style="font-family: sans-serif;">
+            <strong style="color:${color}">#${numero} ${est.nomLieu}</strong><br>
+            ${est.établissement}
+          </div>
         `);
         
         markersLayer.current.addLayer(marker);
@@ -108,44 +118,66 @@ export default function TestLeaflet() {
 
   if (!isMounted) return null;
 
-  return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-extrabold mb-6">📍 Toulouse (Leaflet)</h1>
+  const filteredList = establishments.filter(est => filters[est.établissement]);
 
-      <div className="mb-4 flex flex-wrap gap-4">
+  return (
+    <div className="p-4 max-w-7xl mx-auto font-sans bg-gray-50 min-h-screen">
+      <h1 className="text-3xl font-black mb-6 text-gray-800 tracking-tight">📍 Toulouse Explorer</h1>
+
+      {/* Filtres */}
+      <div className="mb-6 flex flex-wrap gap-2">
         {Object.keys(filters).map(type => (
-          <label key={type} className="flex items-center gap-2 cursor-pointer bg-gray-50 p-2 rounded border">
-            <input
-              type="checkbox"
-              checked={filters[type]}
-              onChange={() => toggleFilter(type)}
-            />
-            <span style={{ color: typeColors[type] || "black", fontWeight: 'bold' }}>
-              {type}
-            </span>
-          </label>
+          <button
+            key={type}
+            onClick={() => toggleFilter(type)}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${
+              filters[type] ? 'bg-white shadow-sm' : 'bg-gray-200 text-gray-400 border-transparent'
+            }`}
+            style={{ color: filters[type] ? typeColors[type] : '', borderColor: filters[type] ? typeColors[type] : '' }}
+          >
+            {type}
+          </button>
         ))}
       </div>
 
+      {/* Carte */}
       <div
         ref={mapRef}
-        className="mb-8 border rounded-lg shadow-inner bg-gray-100"
-        style={{ height: "70vh", width: "100%", zIndex: 1 }}
+        className="mb-8 border-4 border-white shadow-2xl rounded-3xl overflow-hidden"
+        style={{ height: "55vh", width: "100%", zIndex: 1 }}
       />
 
-      <h2 className="text-2xl font-bold mb-4">Liste des commerces</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {establishments
-          .filter(est => filters[est.établissement]) // <-- Changement ici aussi
-          .map((est, i) => (
-            <div key={i} className="p-4 border rounded bg-white shadow-sm">
-              <p className="font-bold text-blue-900">{est.nomLieu}</p>
-              <p className="text-sm text-gray-600">
-                {est.num !== "0" ? est.num : ""} {est.typeRue} {est.nomRue} — <span className="italic">{est.établissement}</span>
-              </p>
-              {est.commentaire && <p className="text-xs text-gray-400 mt-1">{est.commentaire}</p>}
-            </div>
-          ))}
+      {/* Tableau */}
+      <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="bg-gray-800 text-white text-[10px] uppercase tracking-[0.2em]">
+              <th className="p-4 w-16 text-center">#</th>
+              <th className="p-4">Établissement</th>
+              <th className="p-4">Catégorie</th>
+              <th className="p-4">Adresse</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {filteredList.map((est, i) => (
+              <tr key={i} className="hover:bg-blue-50/50 transition-colors">
+                <td className="p-4 text-center font-black text-gray-300">{i + 1}</td>
+                <td className="p-4 font-bold text-gray-800">{est.nomLieu}</td>
+                <td className="p-4">
+                  <span 
+                    className="px-2 py-0.5 rounded text-[10px] font-bold text-white"
+                    style={{ backgroundColor: typeColors[est.établissement] }}
+                  >
+                    {est.établissement}
+                  </span>
+                </td>
+                <td className="p-4 text-sm text-gray-500">
+                  {est.num !== "0" ? est.num : ""} {est.typeRue} {est.nomRue}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
