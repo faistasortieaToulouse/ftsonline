@@ -1,119 +1,151 @@
 "use client";
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 
-// 1. On utilise les types qui correspondent à votre nouveau JSON
 interface Establishment {
   nomLieu: string;
   num: string;
   typeRue: string;
   nomRue: string;
-  quartier: string;
-  établissement: string; // C'est ici que se trouve le type
-  commentaire?: string;
+  établissement: string; // <-- On utilise cette clé qui est dans votre JSON
   lat: number;
   lng: number;
+  commentaire?: string;
 }
 
-// Import dynamique de la carte pour éviter l'erreur "window is not defined"
-const MapWithNoSSR = dynamic(() => import("@/components/Map"), {
-  ssr: false,
-  loading: () => <div className="h-[70vh] flex items-center justify-center bg-gray-100">Chargement de la carte...</div>
-});
-
 export default function TestLeaflet() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const markersLayer = useRef<any>(null);
+  
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // MISE À JOUR : On utilise les vrais types de votre base de données
   const [filters, setFilters] = useState<Record<string, boolean>>({
     "café, pub": true,
     "restaurant": true,
     "cinéma": true,
     "hôtel": true,
-    "Antiquités": true,
     "hôpital": true,
-    "librairie": true,
+    "Antiquités": true
   });
 
   const typeColors: Record<string, string> = {
-    "café, pub": "#e63946",
-    "restaurant": "#457b9d",
-    "cinéma": "#ffb703",
-    "hôtel": "#8338ec",
-    "Antiquités": "#6d6875",
-    "hôpital": "#2a9d8f",
-    "librairie": "#fb8500",
+    "café, pub": "red",
+    "restaurant": "blue",
+    "cinéma": "orange",
+    "hôtel": "purple",
+    "hôpital": "green",
+    "Antiquités": "brown"
   };
 
   useEffect(() => {
-    // Vérifiez bien que cette route renvoie le nouveau JSON avec lat/lng
-    fetch("/api/visitecommerce")
+    setIsMounted(true);
+    fetch("/api/visitecommerce") // <-- Vérifiez que c'est la bonne route
       .then((res) => res.json())
-      .then((data: Establishment[]) => setEstablishments(data))
+      .then((data) => setEstablishments(data))
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (!isMounted || !mapRef.current || mapInstance.current) return;
+
+    const L = require("leaflet");
+
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+      shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    });
+
+    mapInstance.current = L.map(mapRef.current).setView([43.6045, 1.444], 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '© OpenStreetMap contributors',
+    }).addTo(mapInstance.current);
+
+    markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+  }, [isMounted]);
+
+  useEffect(() => {
+    if (!mapInstance.current || !markersLayer.current) return;
+
+    const L = require("leaflet");
+    markersLayer.current.clearLayers();
+
+    // MISE À JOUR : On filtre sur "établissement"
+    const filtered = establishments.filter(est => filters[est.établissement]);
+
+    filtered.forEach((est) => {
+      if (est.lat && est.lng) {
+        const color = typeColors[est.établissement] || "gray";
+        
+        const marker = L.circleMarker([est.lat, est.lng], {
+          radius: 8,
+          fillColor: color,
+          color: "#000",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8,
+        });
+
+        marker.bindPopup(`
+          <strong>${est.nomLieu}</strong><br>
+          ${est.num !== "0" ? est.num : ""} ${est.typeRue} ${est.nomRue}<br>
+          <em>${est.établissement}</em>
+        `);
+        
+        markersLayer.current.addLayer(marker);
+      }
+    });
+  }, [establishments, filters]);
 
   const toggleFilter = (type: string) => {
     setFilters(prev => ({ ...prev, [type]: !prev[type] }));
   };
 
-  // Filtrage des données pour la carte ET le tableau
-  const filteredData = establishments.filter(est => filters[est.établissement] ?? true);
+  if (!isMounted) return null;
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-extrabold mb-6">📍 Exploration de Toulouse</h1>
+      <h1 className="text-3xl font-extrabold mb-6">📍 Toulouse (Leaflet)</h1>
 
-      {/* Filtres */}
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap gap-4">
         {Object.keys(filters).map(type => (
-          <button
-            key={type}
-            onClick={() => toggleFilter(type)}
-            className={`px-3 py-1 rounded-full text-sm font-medium border transition ${
-              filters[type] ? 'bg-white shadow-sm' : 'bg-gray-100 text-gray-400 opacity-50'
-            }`}
-            style={{ borderColor: filters[type] ? typeColors[type] : '#ddd', color: filters[type] ? typeColors[type] : '' }}
-          >
-            {type}
-          </button>
+          <label key={type} className="flex items-center gap-2 cursor-pointer bg-gray-50 p-2 rounded border">
+            <input
+              type="checkbox"
+              checked={filters[type]}
+              onChange={() => toggleFilter(type)}
+            />
+            <span style={{ color: typeColors[type] || "black", fontWeight: 'bold' }}>
+              {type}
+            </span>
+          </label>
         ))}
       </div>
 
-      {/* La Carte (Via composant dynamique) */}
-      <div className="mb-8 border rounded-lg overflow-hidden shadow-lg h-[60vh]">
-        <MapWithNoSSR 
-          data={filteredData} 
-          typeColors={typeColors} 
-        />
-      </div>
+      <div
+        ref={mapRef}
+        className="mb-8 border rounded-lg shadow-inner bg-gray-100"
+        style={{ height: "70vh", width: "100%", zIndex: 1 }}
+      />
 
-      {/* Le Tableau (C'est ici qu'on corrige l'affichage) */}
-      <h2 className="text-2xl font-semibold mb-4">
-        Liste des lieux ({filteredData.length})
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredData.map((est, i) => (
-          <div key={i} className="p-4 border rounded bg-white shadow-sm hover:shadow-md transition">
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded" 
-                    style={{ backgroundColor: `${typeColors[est.établissement]}22`, color: typeColors[est.établissement] }}>
-                {est.établissement}
-              </span>
-              <span className="text-gray-400 text-xs">#{i + 1}</span>
+      <h2 className="text-2xl font-bold mb-4">Liste des commerces</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {establishments
+          .filter(est => filters[est.établissement]) // <-- Changement ici aussi
+          .map((est, i) => (
+            <div key={i} className="p-4 border rounded bg-white shadow-sm">
+              <p className="font-bold text-blue-900">{est.nomLieu}</p>
+              <p className="text-sm text-gray-600">
+                {est.num !== "0" ? est.num : ""} {est.typeRue} {est.nomRue} — <span className="italic">{est.établissement}</span>
+              </p>
+              {est.commentaire && <p className="text-xs text-gray-400 mt-1">{est.commentaire}</p>}
             </div>
-            <p className="text-lg font-bold text-gray-800 leading-tight mb-1">
-              {est.nomLieu}
-            </p>
-            <p className="text-sm text-gray-600 italic">
-              {est.num !== "0" ? est.num : ""} {est.typeRue} {est.nomRue}
-            </p>
-            <p className="text-xs text-blue-500 mt-2 font-medium">📍 {est.quartier}</p>
-            {est.commentaire && (
-              <p className="text-xs text-gray-400 mt-2 border-t pt-2">{est.commentaire}</p>
-            )}
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
