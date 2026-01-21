@@ -1,152 +1,142 @@
-"use client";
+'use client';
+
 import { useEffect, useRef, useState } from "react";
-import "leaflet/dist/leaflet.css";
+import Script from "next/script";
 
-// Interface mise à jour pour inclure les coordonnées que nous avons générées
-interface Establishment {
-  nomLieu: string;
-  num: string;
-  typeRue: string;
-  nomRue: string;
-  établissement: string;
-  lat: number;
-  lng: number;
-  type?: "library" | "centre_culturel" | "maison_quartier" | "mjc" | "conservatoire";
-}
+const STATIONS = [
+  { id: "stop_point:SP_1", name: "Jean Jaurès", lat: 43.6061, lng: 1.4485, lines: ["A", "B"] },
+  { id: "stop_point:SP_18", name: "Capitole", lat: 43.6044, lng: 1.4433, lines: ["A"] },
+  { id: "stop_point:SP_221", name: "Marengo-SNCF", lat: 43.6111, lng: 1.4536, lines: ["A"] },
+  { id: "stop_point:SP_2156", name: "Palais de Justice", lat: 43.5932, lng: 1.4441, lines: ["T1", "T2", "B"] }
+];
 
-export default function TestLeaflet() {
+export default function TisseoPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<any>(null);
-  const markersLayer = useRef<any>(null);
+  const mapInstance = useRef<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
   
-  const [establishments, setEstablishments] = useState<Establishment[]>([]);
-  const [isMounted, setIsMounted] = useState(false);
-  
-  const [filters, setFilters] = useState<Record<string, boolean>>({
-    library: true,
-    centre_culturel: true,
-    maison_quartier: true,
-    mjc: true,
-    conservatoire: true,
-  });
+  const [selectedStation, setSelectedStation] = useState(STATIONS[0]);
+  const [schedules, setSchedules] = useState<any[]>([]);
+  const [isMapReady, setIsMapReady] = useState(false);
 
-  const typeColors: Record<string, string> = {
-    library: "red",
-    centre_culturel: "blue",
-    maison_quartier: "orange",
-    mjc: "green",
-    conservatoire: "purple",
-  };
-
-  // 1. Montage du composant
+  // Récupération des horaires
   useEffect(() => {
-    setIsMounted(true);
-    fetch("/api/bibliomap")
-      .then((res) => res.json())
-      .then((data) => setEstablishments(data))
-      .catch(console.error);
-  }, []);
+    fetch(`/api/tisseotoulouse?stopPointId=${selectedStation.id}`)
+      .then(res => res.json())
+      .then(data => setSchedules(Array.isArray(data) ? data : []))
+      .catch(err => console.error("Erreur horaires:", err));
+  }, [selectedStation]);
 
-  // 2. Initialisation de la carte (une seule fois)
+  // Mise à jour de la carte
   useEffect(() => {
-    if (!isMounted || !mapRef.current || mapInstance.current) return;
+    if (!isMapReady || !mapRef.current || typeof window.google === 'undefined') return;
 
-    // Import dynamique de Leaflet pour éviter les erreurs SSR
-    const L = require("leaflet");
+    if (!mapInstance.current) {
+      mapInstance.current = new google.maps.Map(mapRef.current, {
+        zoom: 15,
+        center: { lat: selectedStation.lat, lng: selectedStation.lng },
+        mapId: "TISSEO_MAP"
+      });
+    } else {
+      mapInstance.current.panTo({ lat: selectedStation.lat, lng: selectedStation.lng });
+    }
 
-    // Correction des icônes par défaut de Leaflet
-    delete L.Icon.Default.prototype._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-      shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    if (markerRef.current) markerRef.current.setMap(null);
+    markerRef.current = new google.maps.Marker({
+      position: { lat: selectedStation.lat, lng: selectedStation.lng },
+      map: mapInstance.current,
+      title: selectedStation.name,
+      animation: google.maps.Animation.DROP
     });
-
-    mapInstance.current = L.map(mapRef.current).setView([43.6045, 1.444], 13);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '© OpenStreetMap contributors',
-    }).addTo(mapInstance.current);
-
-    markersLayer.current = L.layerGroup().addTo(mapInstance.current);
-  }, [isMounted]);
-
-  // 3. Mise à jour des marqueurs selon les filtres
-  useEffect(() => {
-    if (!mapInstance.current || !markersLayer.current) return;
-
-    const L = require("leaflet");
-    markersLayer.current.clearLayers();
-
-    const filtered = establishments.filter(est => filters[est.type ?? "library"]);
-
-    filtered.forEach((est) => {
-      if (est.lat && est.lng) {
-        const type = est.type ?? "library";
-        
-        // Création d'un marqueur circulaire coloré
-        const marker = L.circleMarker([est.lat, est.lng], {
-          radius: 8,
-          fillColor: typeColors[type],
-          color: "#000",
-          weight: 1,
-          opacity: 1,
-          fillOpacity: 0.8,
-        });
-
-        marker.bindPopup(`
-          <strong>${est.nomLieu}</strong><br>
-          ${est.num} ${est.typeRue} ${est.nomRue}<br>
-          <em>${est.établissement}</em>
-        `);
-        
-        markersLayer.current.addLayer(marker);
-      }
-    });
-  }, [establishments, filters]);
-
-  const toggleFilter = (type: string) => {
-    setFilters(prev => ({ ...prev, [type]: !prev[type] }));
-  };
-
-  if (!isMounted) return null;
+  }, [isMapReady, selectedStation]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-extrabold mb-6">📍 Toulouse (Leaflet)</h1>
-
-      <div className="mb-4 flex flex-wrap gap-4">
-        {Object.keys(filters).map(type => (
-          <label key={type} className="flex items-center gap-2 cursor-pointer bg-gray-50 p-2 rounded border">
-            <input
-              type="checkbox"
-              checked={filters[type]}
-              onChange={() => toggleFilter(type)}
-            />
-            <span style={{ color: typeColors[type], fontWeight: 'bold' }}>
-              {type}
-            </span>
-          </label>
-        ))}
-      </div>
-
-      <div
-        ref={mapRef}
-        className="mb-8 border rounded-lg shadow-inner bg-gray-100"
-        style={{ height: "70vh", width: "100%", zIndex: 1 }}
+    <div className="p-4 max-w-6xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+        strategy="afterInteractive"
+        onLoad={() => setIsMapReady(true)}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {establishments
-          .filter(est => filters[est.type ?? "library"])
-          .map((est, i) => (
-            <div key={i} className="p-4 border rounded bg-white shadow-sm">
-              <p className="font-bold text-blue-900">{est.nomLieu}</p>
-              <p className="text-sm text-gray-600">
-                {est.num} {est.typeRue} {est.nomRue} — {est.établissement}
-              </p>
+      <header className="mb-6 bg-indigo-900 p-8 rounded-3xl shadow-2xl text-white">
+        <h1 className="text-4xl font-black mb-2 flex items-center gap-3">
+          <span>🚇</span> Tisséo Live
+        </h1>
+        <p className="text-indigo-200 font-medium">Temps réel - Métro, Tram et Bus Toulouse</p>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Colonne Gauche : Sélecteur et Carte */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <h3 className="font-bold mb-4 text-slate-400 uppercase text-xs tracking-widest">Choisir une station</h3>
+            <div className="flex flex-col gap-2">
+              {STATIONS.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setSelectedStation(s)}
+                  className={`p-4 rounded-xl text-left transition-all font-bold ${
+                    selectedStation.id === s.id 
+                    ? "bg-indigo-600 text-white shadow-lg translate-x-2" 
+                    : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  {s.name}
+                </button>
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div ref={mapRef} style={{ height: "300px" }} className="rounded-2xl shadow-md border-4 border-white overflow-hidden" />
+        </div>
+
+        {/* Colonne Droite : Horaires */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+              <h2 className="text-xl font-bold">Prochains passages</h2>
+              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold animate-pulse">LIVE</span>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="text-[10px] uppercase text-slate-400 bg-slate-50">
+                    <th className="px-6 py-4">Ligne</th>
+                    <th className="px-6 py-4">Destination</th>
+                    <th className="px-6 py-4">Attente</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {schedules.length > 0 ? schedules.map((dep, idx) => {
+                    const diffMins = Math.round((new Date(dep.dateTime).getTime() - Date.now()) / 60000);
+                    return (
+                      <tr key={idx} className="hover:bg-indigo-50/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <span className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-black shadow-sm" style={{ backgroundColor: dep.line.color }}>
+                            {dep.line.shortName}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 font-bold text-slate-700">
+                          {dep.destination?.[0]?.name}
+                        </td>
+                        <td className="px-6 py-4 font-mono font-black text-indigo-600">
+                          {diffMins <= 0 ? "À quai" : `${diffMins} min`}
+                        </td>
+                      </tr>
+                    );
+                  }) : (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-20 text-center text-slate-400 italic">
+                        Aucun passage détecté. Vérifiez la connexion à l'API.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
