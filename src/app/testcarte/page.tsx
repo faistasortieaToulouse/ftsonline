@@ -9,6 +9,8 @@ interface EtatUSA {
   ordre_entree: number;
   date_entree: string;
   description: string;
+  lat: number; // Nouvelle propriété
+  lng: number; // Nouvelle propriété
 }
 
 export default function EtatsUSAPage() {
@@ -18,7 +20,7 @@ export default function EtatsUSAPage() {
   const [etats, setEtats] = useState<EtatUSA[]>([]);
   const [isReady, setIsReady] = useState(false);
 
-  // --- Charger les données ---
+  // --- 1. Charger les données depuis votre API ---
   useEffect(() => {
     fetch("/api/EtatsUSA")
       .then(async (res) => {
@@ -30,15 +32,14 @@ export default function EtatsUSAPage() {
       .catch(console.error);
   }, []);
 
-  // --- Initialisation de Leaflet ---
+  // --- 2. Initialisation de Leaflet ---
   useEffect(() => {
     const initMap = async () => {
       if (!mapRef.current || mapInstance.current) return;
 
-      // Import dynamique de Leaflet pour éviter "window is not defined"
       const L = (await import('leaflet')).default;
 
-      // Correction des icônes par défaut
+      // Configuration des icônes par défaut
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -46,6 +47,7 @@ export default function EtatsUSAPage() {
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
 
+      // Centrage sur le milieu des USA
       mapInstance.current = L.map(mapRef.current).setView([39.8283, -98.5795], 4);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -65,46 +67,41 @@ export default function EtatsUSAPage() {
     };
   }, []);
 
-  // --- Gestion des Marqueurs (Geocoding Leaflet) ---
+  // --- 3. Ajout Instantané des Marqueurs (Plus de fetch externe) ---
   useEffect(() => {
     if (!isReady || !mapInstance.current || etats.length === 0) return;
 
     const addMarkers = async () => {
       const L = (await import('leaflet')).default;
 
-      etats.forEach(async (etat) => {
-        try {
-          const recherche = `${etat.nom}, USA`;
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(recherche)}&limit=1`
-          );
-          const data = await response.json();
+      // On utilise un FeatureGroup pour des raisons de performance (rendu groupé)
+      const markersGroup = L.featureGroup();
 
-          if (data && data[0]) {
-            const { lat, lon } = data[0];
+      etats.forEach((etat) => {
+        // Utilisation directe des coordonnées du JSON
+        if (etat.lat && etat.lng) {
+          const customIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background-color:#2563eb; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:10px;">${etat.ordre_entree}</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          });
 
-            // Création du marqueur avec le numéro (Label style Google Maps)
-            const customIcon = L.divIcon({
-              className: 'custom-marker',
-              html: `<div style="background-color:#2563eb; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:10px;">${etat.ordre_entree}</div>`,
-              iconSize: [24, 24],
-              iconAnchor: [12, 12]
-            });
+          const marker = L.marker([etat.lat, etat.lng], { icon: customIcon });
 
-            const marker = L.marker([parseFloat(lat), parseFloat(lon)], { icon: customIcon }).addTo(mapInstance.current);
+          marker.bindPopup(`
+            <div style="color: black; padding: 5px; font-family: sans-serif;">
+              <strong>#${etat.ordre_entree} - ${etat.nom}</strong><br>
+              <small>Entrée le : ${new Date(etat.date_entree).toLocaleDateString('fr-FR')}</small><br>
+              <p style="margin-top:5px; font-size: 12px; line-height: 1.4;">${etat.description}</p>
+            </div>
+          `);
 
-            marker.bindPopup(`
-              <div style="color: black; padding: 5px; font-family: sans-serif;">
-                <strong>#${etat.ordre_entree} - ${etat.nom}</strong><br>
-                <small>Entrée le : ${new Date(etat.date_entree).toLocaleDateString('fr-FR')}</small><br>
-                <p style="margin-top:5px; font-size: 12px;">${etat.description}</p>
-              </div>
-            `);
-          }
-        } catch (error) {
-          console.error("Erreur de géocodage:", error);
+          marker.addTo(markersGroup);
         }
       });
+
+      markersGroup.addTo(mapInstance.current);
     };
 
     addMarkers();
@@ -119,7 +116,7 @@ export default function EtatsUSAPage() {
         <p className="text-gray-600 mt-2">Chronologie de la ratification de la Constitution</p>
       </header>
 
-      {/* --- Carte Leaflet --- */}
+      {/* --- Carte --- */}
       <div
         ref={mapRef}
         style={{ height: "60vh", width: "100%" }}
@@ -127,12 +124,12 @@ export default function EtatsUSAPage() {
       >
         {!isReady && (
           <div className="flex items-center justify-center h-full">
-            <p className="animate-pulse font-bold text-blue-600">Initialisation de la carte Leaflet...</p>
+            <p className="animate-pulse font-bold text-blue-600">Initialisation de la carte...</p>
           </div>
         )}
       </div>
 
-      {/* --- Liste des États (Mise en page originale conservée) --- */}
+      {/* --- Liste des États (Mise en page originale préservée) --- */}
       <h2 className="text-2xl font-bold mb-6 text-red-700">Palmarès Chronologique</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
