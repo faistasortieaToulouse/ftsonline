@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link"; // Import nécessaire
+import { ArrowLeft } from "lucide-react"; // Import nécessaire
 import 'leaflet/dist/leaflet.css';
 
 interface EtatUSA {
@@ -40,7 +42,6 @@ export default function EtatsUSAPage() {
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
 
-      // CONFIGURATION : Molette activée pour ordi, Tap activé pour mobile
       mapInstance.current = L.map(mapRef.current, {
         scrollWheelZoom: true, 
         tap: true
@@ -79,13 +80,11 @@ export default function EtatsUSAPage() {
 
           const marker = L.marker([etat.lat, etat.lng], { icon: customIcon });
           
-          // Tooltip pour le survol (Ordi)
           marker.bindTooltip(`<strong>${etat.nom}</strong>`, { 
             direction: 'top', 
             offset: [0, -10] 
           });
 
-          // Popup pour le clic (Tous supports)
           marker.bindPopup(`
             <div style="color: black; padding: 2px; font-family: sans-serif; max-width: 200px;">
               <strong style="font-size: 14px;">#${etat.ordre_entree} - ${etat.nom}</strong><br>
@@ -103,6 +102,13 @@ export default function EtatsUSAPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+      
+      {/* BOUTON RETOUR : Placé en haut à gauche */}
+      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline mb-6 transition-colors group">
+        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+        Retour à l'accueil
+      </Link>
+
       <header className="mb-6 md:mb-10 text-center md:text-left">
         <h1 className="text-3xl md:text-5xl font-black text-blue-900 flex flex-wrap justify-center md:justify-start items-center gap-3">
           <span>🇺🇸</span> États de l'Union
@@ -112,7 +118,6 @@ export default function EtatsUSAPage() {
         </p>
       </header>
 
-      {/* Carte adaptative */}
       <div
         ref={mapRef}
         className="h-[45vh] md:h-[60vh] w-full mb-10 border-4 border-white shadow-2xl rounded-3xl bg-slate-100 overflow-hidden z-0"
@@ -137,14 +142,13 @@ export default function EtatsUSAPage() {
           >
             <div className="flex justify-between items-center mb-4">
               <span className="text-4xl font-black text-slate-100 group-hover:text-blue-50">#{etat.ordre_entree}</span>
-<span className="text-[10px] font-bold px-3 py-1 bg-blue-50 text-blue-600 rounded-full">
-  {/* Conversion de la chaîne en objet Date, puis formatage français */}
-  {new Date(etat.date_entree).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  })}
-</span>
+              <span className="text-[10px] font-bold px-3 py-1 bg-blue-50 text-blue-600 rounded-full">
+                {new Date(etat.date_entree).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })}
+              </span>
             </div>
             <h3 className="text-xl font-bold text-blue-900">{etat.nom}</h3>
             <p className="text-sm text-gray-600 mt-2 line-clamp-3 md:line-clamp-none">
