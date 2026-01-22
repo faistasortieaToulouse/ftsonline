@@ -58,7 +58,6 @@
     { "nom": "Forêt domaniale du Mundat", "statut": "Propriété d'État", "continent": "Europe", "lat": 49.071, "lng": 7.962, "description": "Forêt située en Allemagne appartenant à la France (contrat de 1990)." },
     { "nom": "Base Jean-Corbel", "statut": "Base scientifique", "continent": "Europe", "lat": 78.923, "lng": 12.112, "description": "Base de recherche française au Svalbard (Arctique)." },
     { "nom": "Pays Quint", "statut": "Droit de jouissance", "continent": "Europe", "lat": 43.045, "lng": -1.411, "description": "Territoire espagnol dont la France possède l'usage moyennant rente." },
-    { "nom": "Pays Quint", "statut": "Droit de jouissance", "continent": "Europe", "lat": 43.045, "lng": -1.411, "description": "Territoire espagnol dont la France possède la jouissance (rente annuelle)." },
     { "nom": "Ban de Rhinau (Partie allemande)", "statut": "Domaine foncier", "continent": "Europe", "lat": 48.275, "lng": 7.712, "description": "Territoire allemand (997 ha) appartenant à la commune française de Rhinau." },
     { "nom": "Secteur suisse de l'Euroairport", "statut": "Zone binationale", "continent": "Europe", "lat": 47.598, "lng": 7.525, "description": "Zone sous douanes suisses située en territoire français (Haut-Rhin)." },
     { "nom": "Benkenspitz", "statut": "Curiosité frontalière", "continent": "Europe", "lat": 47.495, "lng": 7.461, "description": "Pointe du territoire suisse s'enfonçant dans le Haut-Rhin." },
