@@ -5,336 +5,432 @@
       "genre": "m",
       "ordre_entree": 1,
       "date_entree": "1787-12-07",
-      "description": "Premier État à avoir ratifié la Constitution. Faisait partie des 13 colonies originelles révoltées contre les Britanniques."
+      "description": "Premier État à avoir ratifié la Constitution. Faisait partie des 13 colonies originelles révoltées contre les Britanniques.",
+      "lat": 39.1581,
+      "lng": -75.5244
     },
     {
       "nom": "Pennsylvanie",
       "genre": "f",
       "ordre_entree": 2,
       "date_entree": "1787-12-12",
-      "description": "Un des premiers États révoltés contre les Britanniques. Ratification de la Constitution en 2ème position."
+      "description": "Un des premiers États révoltés contre les Britanniques. Ratification de la Constitution en 2ème position.",
+      "lat": 41.2033,
+      "lng": -77.1945
     },
     {
       "nom": "New Jersey",
       "genre": "m",
       "ordre_entree": 3,
       "date_entree": "1787-12-18",
-      "description": "Un des premiers États révoltés contre les Britanniques. Ratification de la Constitution en 3ème position."
+      "description": "Un des premiers États révoltés contre les Britanniques. Ratification de la Constitution en 3ème position.",
+      "lat": 40.0583,
+      "lng": -74.4057
     },
     {
       "nom": "Géorgie",
       "genre": "f",
       "ordre_entree": 4,
       "date_entree": "1788-01-02",
-      "description": "Deuxième vague de ratification. Ancienne colonie britannique."
+      "description": "Deuxième vague de ratification. Ancienne colonie britannique.",
+      "lat": 32.1656,
+      "lng": -82.9001
     },
     {
       "nom": "Connecticut",
       "genre": "m",
       "ordre_entree": 5,
       "date_entree": "1788-01-09",
-      "description": "Deuxième vague de ratification. Ancienne colonie britannique."
+      "description": "Deuxième vague de ratification. Ancienne colonie britannique.",
+      "lat": 41.6032,
+      "lng": -73.0877
     },
     {
       "nom": "Massachusetts",
       "genre": "m",
       "ordre_entree": 6,
       "date_entree": "1788-02-06",
-      "description": "Deuxième vague de ratification. Foyer important de la Révolution américaine."
+      "description": "Deuxième vague de ratification. Foyer important de la Révolution américaine.",
+      "lat": 42.4072,
+      "lng": -71.3824
     },
     {
       "nom": "Maryland",
       "genre": "m",
       "ordre_entree": 7,
       "date_entree": "1788-04-28",
-      "description": "Deuxième vague de ratification. Ancienne colonie britannique."
+      "description": "Deuxième vague de ratification. Ancienne colonie britannique.",
+      "lat": 38.9784,
+      "lng": -76.4922
     },
     {
       "nom": "Caroline du Sud",
       "genre": "f",
       "ordre_entree": 8,
       "date_entree": "1788-05-23",
-      "description": "Une des 13 colonies originelles."
+      "description": "Une des 13 colonies originelles.",
+      "lat": 33.8361,
+      "lng": -81.1637
     },
     {
       "nom": "New Hampshire",
       "genre": "m",
       "ordre_entree": 9,
       "date_entree": "1788-06-21",
-      "description": "Une des 13 colonies originelles. Sa ratification a permis l'entrée en vigueur de la Constitution."
+      "description": "Une des 13 colonies originelles. Sa ratification a permis l'entrée en vigueur de la Constitution.",
+      "lat": 43.1939,
+      "lng": -71.5724
     },
     {
       "nom": "Virginie",
       "genre": "f",
       "ordre_entree": 10,
       "date_entree": "1788-06-25",
-      "description": "Une des 13 colonies originelles."
+      "description": "Une des 13 colonies originelles.",
+      "lat": 37.4316,
+      "lng": -78.6569
     },
     {
       "nom": "New York",
       "genre": "m",
       "ordre_entree": 11,
       "date_entree": "1788-07-26",
-      "description": "Une des 13 colonies originelles."
+      "description": "Une des 13 colonies originelles.",
+      "lat": 40.7128,
+      "lng": -74.0060
     },
     {
       "nom": "Caroline du Nord",
       "genre": "f",
       "ordre_entree": 12,
       "date_entree": "1789-11-21",
-      "description": "Une des 13 colonies originelles."
+      "description": "Une des 13 colonies originelles.",
+      "lat": 35.7596,
+      "lng": -79.0193
     },
     {
       "nom": "Rhode Island",
       "genre": "m",
       "ordre_entree": 13,
       "date_entree": "1790-05-29",
-      "description": "Dernière des 13 colonies originelles à ratifier la Constitution."
+      "description": "Dernière des 13 colonies originelles à ratifier la Constitution.",
+      "lat": 41.5801,
+      "lng": -71.4774
     },
     {
       "nom": "Vermont",
       "genre": "m",
       "ordre_entree": 14,
       "date_entree": "1791-03-04",
-      "description": "Ancienne République du Vermont (1777-1791). Ancienne zone d'influence française."
+      "description": "Ancienne République du Vermont (1777-1791). Ancienne zone d'influence française.",
+      "lat": 44.5588,
+      "lng": -72.5778
     },
     {
       "nom": "Kentucky",
       "genre": "m",
       "ordre_entree": 15,
       "date_entree": "1792-06-01",
-      "description": "Séparé de l'État de Virginie."
+      "description": "Séparé de l'État de Virginie.",
+      "lat": 37.8393,
+      "lng": -84.2700
     },
     {
       "nom": "Tennessee",
       "genre": "m",
       "ordre_entree": 16,
       "date_entree": "1796-06-01",
-      "description": "Issu du Territoire du Sud-Ouest, séparé de la Caroline du Nord."
+      "description": "Issu du Territoire du Sud-Ouest, séparé de la Caroline du Nord.",
+      "lat": 35.5175,
+      "lng": -86.5804
     },
     {
       "nom": "Ohio",
       "genre": "m",
       "ordre_entree": 17,
       "date_entree": "1803-03-01",
-      "description": "Issu du Territoire du Nord-Ouest (Ordonnance de 1787)."
+      "description": "Issu du Territoire du Nord-Ouest (Ordonnance de 1787).",
+      "lat": 40.4173,
+      "lng": -82.9071
     },
     {
       "nom": "Louisiane",
       "genre": "f",
       "ordre_entree": 18,
       "date_entree": "1812-04-30",
-      "description": "Ancienne Louisiane française vendue par Napoléon en 1803. Territoire d'Orléans."
+      "description": "Ancienne Louisiane française vendue par Napoléon en 1803. Territoire d'Orléans.",
+      "lat": 30.9843,
+      "lng": -91.9623
     },
     {
       "nom": "Indiana",
       "genre": "m",
       "ordre_entree": 19,
       "date_entree": "1816-12-11",
-      "description": "Séparé du Territoire du Nord-Ouest."
+      "description": "Séparé du Territoire du Nord-Ouest.",
+      "lat": 40.2672,
+      "lng": -86.1349
     },
     {
       "nom": "Mississippi",
       "genre": "m",
       "ordre_entree": 20,
       "date_entree": "1817-12-10",
-      "description": "Territoire du Mississippi créé en 1798. Séparé de la Géorgie. Ancienne colonie française."
+      "description": "Territoire du Mississippi créé en 1798. Séparé de la Géorgie. Ancienne colonie française.",
+      "lat": 32.3547,
+      "lng": -89.3985
     },
     {
       "nom": "Illinois",
       "genre": "m",
       "ordre_entree": 21,
       "date_entree": "1818-12-03",
-      "description": "Séparé du Territoire de l'Indiana. Ancienne colonie française."
+      "description": "Séparé du Territoire de l'Indiana. Ancienne colonie française.",
+      "lat": 40.6331,
+      "lng": -89.3985
     },
     {
       "nom": "Alabama",
       "genre": "m",
       "ordre_entree": 22,
       "date_entree": "1819-12-14",
-      "description": "Séparé du Territoire du Mississippi. Ancienne colonie française."
+      "description": "Séparé du Territoire du Mississippi. Ancienne colonie française.",
+      "lat": 32.3182,
+      "lng": -86.9023
     },
     {
       "nom": "Maine",
       "genre": "m",
       "ordre_entree": 23,
       "date_entree": "1820-03-15",
-      "description": "Séparé du Massachusetts (Compromis du Missouri)."
+      "description": "Séparé du Massachusetts (Compromis du Missouri).",
+      "lat": 45.2538,
+      "lng": -69.4455
     },
     {
       "nom": "Missouri",
       "genre": "f",
       "ordre_entree": 24,
       "date_entree": "1821-08-10",
-      "description": "Issu du Territoire de Louisiane. Ancienne colonie française."
+      "description": "Issu du Territoire de Louisiane. Ancienne colonie française.",
+      "lat": 37.9643,
+      "lng": -91.8318
     },
     {
       "nom": "Arkansas",
       "genre": "m",
       "ordre_entree": 25,
       "date_entree": "1836-06-15",
-      "description": "Séparé du Territoire du Missouri. Ancienne colonie française."
+      "description": "Séparé du Territoire du Missouri. Ancienne colonie française.",
+      "lat": 34.9697,
+      "lng": -92.3731
     },
     {
       "nom": "Michigan",
       "genre": "m",
       "ordre_entree": 26,
       "date_entree": "1837-01-26",
-      "description": "Issu du Territoire du Michigan. Ancienne colonie française."
+      "description": "Issu du Territoire du Michigan. Ancienne colonie française.",
+      "lat": 44.3148,
+      "lng": -85.6024
     },
     {
       "nom": "Floride",
       "genre": "f",
       "ordre_entree": 27,
       "date_entree": "1845-03-03",
-      "description": "Ancienne Floride espagnole. Territoire de Floride (1822-1845)."
+      "description": "Ancienne Floride espagnole. Territoire de Floride (1822-1845).",
+      "lat": 27.6648,
+      "lng": -81.5158
     },
     {
       "nom": "Texas",
       "genre": "m",
       "ordre_entree": 28,
       "date_entree": "1845-12-29",
-      "description": "Ancienne République du Texas (1836-1845) ayant fait sécession du Mexique."
+      "description": "Ancienne République du Texas (1836-1845) ayant fait sécession du Mexique.",
+      "lat": 31.9686,
+      "lng": -99.9018
     },
     {
       "nom": "Iowa",
       "genre": "m",
       "ordre_entree": 29,
       "date_entree": "1846-12-28",
-      "description": "Séparé du Territoire du Wisconsin. Ancienne colonie française."
+      "description": "Séparé du Territoire du Wisconsin. Ancienne colonie française.",
+      "lat": 41.8780,
+      "lng": -93.0977
     },
     {
       "nom": "Wisconsin",
       "genre": "m",
       "ordre_entree": 30,
       "date_entree": "1848-05-29",
-      "description": "Séparé du Territoire du Michigan. Ancienne colonie française."
+      "description": "Séparé du Territoire du Michigan. Ancienne colonie française.",
+      "lat": 43.7844,
+      "lng": -88.7879
     },
     {
       "nom": "Californie",
       "genre": "f",
       "ordre_entree": 31,
       "date_entree": "1850-09-09",
-      "description": "Cédée par le Mexique. Éphémère République de Californie en 1846."
+      "description": "Cédée par le Mexique. Éphémère République de Californie en 1846.",
+      "lat": 36.7783,
+      "lng": -119.4179
     },
     {
       "nom": "Minnesota",
       "genre": "m",
       "ordre_entree": 32,
       "date_entree": "1858-05-11",
-      "description": "Séparé du Territoire de l'Iowa. Ancienne colonie française."
+      "description": "Séparé du Territoire de l'Iowa. Ancienne colonie française.",
+      "lat": 46.7296,
+      "lng": -94.6859
     },
     {
       "nom": "Oregon",
       "genre": "m",
       "ordre_entree": 33,
       "date_entree": "1859-02-14",
-      "description": "Issu du Territoire de l'Oregon."
+      "description": "Issu du Territoire de l'Oregon.",
+      "lat": 43.8041,
+      "lng": -120.5542
     },
     {
       "nom": "Kansas",
       "genre": "m",
       "ordre_entree": 34,
       "date_entree": "1861-01-29",
-      "description": "Issu du Territoire du Kansas. Ancienne colonie française."
+      "description": "Issu du Territoire du Kansas. Ancienne colonie française.",
+      "lat": 39.0119,
+      "lng": -98.4842
     },
     {
       "nom": "Virginie-Occidentale",
       "genre": "f",
       "ordre_entree": 35,
       "date_entree": "1863-06-20",
-      "description": "Scission de la Virginie lors de la guerre de Sécession (Congrès de Wheeling)."
+      "description": "Scission de la Virginie lors de la guerre de Sécession (Congrès de Wheeling).",
+      "lat": 38.5976,
+      "lng": -80.4549
     },
     {
       "nom": "Nevada",
       "genre": "m",
       "ordre_entree": 36,
       "date_entree": "1864-10-31",
-      "description": "Séparé du Territoire de l'Utah. Ancienne colonie française."
+      "description": "Séparé du Territoire de l'Utah. Ancienne colonie française.",
+      "lat": 38.8026,
+      "lng": -116.4194
     },
     {
       "nom": "Nebraska",
       "genre": "m",
       "ordre_entree": 37,
       "date_entree": "1867-03-01",
-      "description": "Issu du Territoire du Nebraska. Ancienne colonie française."
+      "description": "Issu du Territoire du Nebraska. Ancienne colonie française.",
+      "lat": 41.1254,
+      "lng": -98.2681
     },
     {
       "nom": "Colorado",
       "genre": "m",
       "ordre_entree": 38,
       "date_entree": "1876-08-01",
-      "description": "Issu du Territoire du Colorado."
+      "description": "Issu du Territoire du Colorado.",
+      "lat": 39.5501,
+      "lng": -105.7821
     },
     {
       "nom": "Dakota du Nord",
       "genre": "m",
       "ordre_entree": 39,
       "date_entree": "1889-11-02",
-      "description": "Issu du Territoire du Dakota. Ancienne colonie française."
+      "description": "Issu du Territoire du Dakota. Ancienne colonie française.",
+      "lat": 47.5515,
+      "lng": -101.0020
     },
     {
       "nom": "Dakota du Sud",
       "genre": "m",
       "ordre_entree": 40,
       "date_entree": "1889-11-02",
-      "description": "Issu du Territoire du Dakota. Ancienne colonie française."
+      "description": "Issu du Territoire du Dakota. Ancienne colonie française.",
+      "lat": 44.2998,
+      "lng": -99.4388
     },
     {
       "nom": "Montana",
       "genre": "m",
       "ordre_entree": 41,
       "date_entree": "1889-11-08",
-      "description": "Issu du Territoire du Montana. En partie ancienne colonie française."
+      "description": "Issu du Territoire du Montana. En partie ancienne colonie française.",
+      "lat": 46.8797,
+      "lng": -110.3626
     },
     {
       "nom": "Washington",
       "genre": "m",
       "ordre_entree": 42,
       "date_entree": "1889-11-11",
-      "description": "Séparé du Territoire de l'Oregon."
+      "description": "Séparé du Territoire de l'Oregon.",
+      "lat": 47.4749,
+      "lng": -120.5708
     },
     {
       "nom": "Idaho",
       "genre": "m",
       "ordre_entree": 43,
       "date_entree": "1890-07-03",
-      "description": "Séparé du Territoire de Washington."
+      "description": "Séparé du Territoire de Washington.",
+      "lat": 44.2405,
+      "lng": -114.4788
     },
     {
       "nom": "Wyoming",
       "genre": "m",
       "ordre_entree": 44,
       "date_entree": "1890-07-10",
-      "description": "Issu du Territoire du Wyoming. Ancienne colonie française."
+      "description": "Issu du Territoire du Wyoming. Ancienne colonie française.",
+      "lat": 42.7560,
+      "lng": -107.3025
     },
     {
       "nom": "Utah",
       "genre": "m",
       "ordre_entree": 45,
       "date_entree": "1896-01-04",
-      "description": "Issu du Territoire de l'Utah et de l'État du Désert."
+      "description": "Issu du Territoire de l'Utah et de l'État du Désert.",
+      "lat": 39.3210,
+      "lng": -111.0937
     },
     {
       "nom": "Oklahoma",
       "genre": "m",
       "ordre_entree": 46,
       "date_entree": "1907-11-16",
-      "description": "Issu du Territoire de l'Oklahoma et du Territoire indien."
+      "description": "Issu du Territoire de l'Oklahoma et du Territoire indien.",
+      "lat": 35.5653,
+      "lng": -96.9289
     },
     {
       "nom": "Nouveau-Mexique",
       "genre": "m",
       "ordre_entree": 47,
       "date_entree": "1912-01-06",
-      "description": "Issu du Territoire du Nouveau-Mexique."
+      "description": "Issu du Territoire du Nouveau-Mexique.",
+      "lat": 34.8405,
+      "lng": -106.2485
     },
     {
       "nom": "Arizona",
       "genre": "m",
       "ordre_entree": 48,
       "date_entree": "1912-02-14",
-      "description": "Issu du Territoire de l'Arizona, scission du Nouveau-Mexique durant la guerre de Sécession."
+      "description": "Issu du Territoire de l'Arizona, scission du Nouveau-Mexique durant la guerre de Sécession.",
+      "lat": 34.0489,
+      "lng": -111.0937
     },
     {
       "nom": "Alaska",
