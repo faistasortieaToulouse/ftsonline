@@ -61,7 +61,7 @@ export default function OTANSupPage() {
     };
   }, []);
 
-  // 3. Ajout des Marqueurs pour TOUTES les catégories
+  // 3. Ajout des Marqueurs avec numéros et couleurs
   useEffect(() => {
     if (!isReady || !mapInstance.current || !data) return;
 
@@ -79,7 +79,7 @@ export default function OTANSupPage() {
             });
 
             L.marker([p.lat, p.lng], { icon: customIcon })
-              .bindPopup(`<strong>${p.pays}</strong><br/><span style="font-size:10px; color:#666;">Partenaire OTAN</span>`)
+              .bindPopup(`<strong>${p.pays}</strong>`)
               .addTo(mapInstance.current);
           }
         });
@@ -133,9 +133,12 @@ export default function OTANSupPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {data?.candidatures_promesses?.map((p: any, i: number) => (
-              <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border border-red-100 hover:shadow-md transition-shadow">
+              <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border border-red-100 hover:shadow-md transition-shadow relative overflow-hidden">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-black text-xl text-slate-800">{p.pays}</h3>
+                  <div className="flex items-center gap-3">
+                    <span className="bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">{i+1}</span>
+                    <h3 className="font-black text-xl text-slate-800">{p.pays}</h3>
+                  </div>
                   <span className="bg-red-50 text-red-600 text-[10px] px-2 py-1 rounded-md font-bold uppercase">{p.statut}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500 font-medium">
@@ -149,7 +152,7 @@ export default function OTANSupPage() {
           </div>
         </section>
 
-        {/* 2. IPAP (LES DONNÉES QUE VOUS VOULIEZ) */}
+        {/* 2. IPAP */}
         <section>
           <h2 className="text-2xl font-bold text-slate-700 mb-4 flex items-center gap-2 underline underline-offset-8 decoration-slate-200">
             📋 Plan d'action individuel (IPAP)
@@ -158,13 +161,10 @@ export default function OTANSupPage() {
             {data?.partenaires_plan_individuel?.map((p: any, i: number) => (
               <div key={i} className="bg-white p-4 rounded-xl border-2 border-slate-100 flex items-center justify-between hover:bg-slate-50 transition-colors">
                 <div className="flex items-center gap-3">
-                  <span className="bg-slate-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">{i+1}</span>
+                  <span className="bg-slate-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">{i+1}</span>
                   <span className="font-bold text-slate-800 text-lg">{p.pays}</span>
                 </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Partenaire IPAP</span>
-                  <span className="text-[8px] text-slate-300 italic">{p.lat.toFixed(2)}, {p.lng.toFixed(2)}</span>
-                </div>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Partenaire IPAP</span>
               </div>
             ))}
           </div>
@@ -178,7 +178,7 @@ export default function OTANSupPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {data?.partenariat_global?.map((p: any, i: number) => (
               <div key={i} className="bg-purple-50 p-3 rounded-xl border border-purple-100 flex items-center gap-3">
-                <MapPin size={14} className="text-purple-400" />
+                <span className="bg-purple-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0">{i+1}</span>
                 <span className="font-bold text-purple-900">{p.pays}</span>
               </div>
             ))}
@@ -194,11 +194,14 @@ export default function OTANSupPage() {
             {data?.partenariat_paix_membres?.map((p: any, i: number) => (
               <div key={i} className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-all group">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="font-bold text-slate-800 group-hover:text-blue-700 transition-colors">{p.pays}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-blue-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold">{i+1}</span>
+                    <span className="font-bold text-slate-800 group-hover:text-blue-700 transition-colors">{p.pays}</span>
+                  </div>
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col ml-6">
                   <span className="text-[9px] text-slate-400 font-medium italic">{p.date}</span>
-                  <span className={`text-[10px] font-black uppercase ${p.statut === 'Actif' ? 'text-blue-500' : 'text-red-500'}`}>{p.statut}</span>
+                  <span className={`text-[10px] font-black uppercase ${p.statut.includes('Actif') ? 'text-blue-500' : 'text-red-500'}`}>{p.statut}</span>
                 </div>
               </div>
             ))}
@@ -211,8 +214,9 @@ export default function OTANSupPage() {
             <h2 className="text-xl font-bold text-amber-700 mb-4 flex items-center gap-2">☀️ Dialogue Méditerranéen</h2>
             <div className="grid grid-cols-2 gap-y-3">
               {data?.dialogue_mediterraneen?.map((p: any, i: number) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-amber-900 font-semibold">
-                  <span className="w-1.5 h-1.5 bg-amber-400 rounded-full"></span> {p.pays}
+                <div key={i} className="flex items-center gap-3 text-sm text-amber-900 font-semibold">
+                  <span className="bg-amber-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0">{i+1}</span>
+                  {p.pays}
                 </div>
               ))}
             </div>
@@ -222,8 +226,9 @@ export default function OTANSupPage() {
             <h2 className="text-xl font-bold text-emerald-700 mb-4 flex items-center gap-2">🕌 Coopération d'Istanbul (ICI)</h2>
             <div className="grid grid-cols-2 gap-y-3">
               {data?.cooperation_istanbul?.map((p: any, i: number) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-emerald-900 font-semibold">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span> {p.pays}
+                <div key={i} className="flex items-center gap-3 text-sm text-emerald-900 font-semibold">
+                  <span className="bg-emerald-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0">{i+1}</span>
+                  {p.pays}
                 </div>
               ))}
             </div>
