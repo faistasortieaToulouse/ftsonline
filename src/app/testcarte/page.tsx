@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
-// Importation du CSS de Leaflet obligatoirement ici
 import 'leaflet/dist/leaflet.css';
 
 interface EtatUSA {
   nom: string;
+  genre: string;
   ordre_entree: number;
   date_entree: string;
   description: string;
@@ -13,29 +13,33 @@ interface EtatUSA {
 
 export default function EtatsUSAPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<any>(null); // On utilise any pour éviter les conflits de types au début
+  const mapInstance = useRef<any>(null);
+
   const [etats, setEtats] = useState<EtatUSA[]>([]);
   const [isReady, setIsReady] = useState(false);
 
-  // 1. Charger les données
+  // --- Charger les données ---
   useEffect(() => {
     fetch("/api/EtatsUSA")
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setEtats(data); })
+      .then(async (res) => {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setEtats(data);
+        }
+      })
       .catch(console.error);
   }, []);
 
-  // 2. Initialiser Leaflet UNIQUEMENT côté client
+  // --- Initialisation de Leaflet ---
   useEffect(() => {
-    // Import dynamique de Leaflet pour éviter l'erreur "window is not defined"
     const initMap = async () => {
       if (!mapRef.current || mapInstance.current) return;
 
+      // Import dynamique de Leaflet pour éviter "window is not defined"
       const L = (await import('leaflet')).default;
 
-      // Correction pour les icônes par défaut de Leaflet qui buggent souvent avec Webpack/Next
-      // @ts-ignore
-      delete L.Icon.Default.prototype._getIconUrl;
+      // Correction des icônes par défaut
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
         iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -45,7 +49,7 @@ export default function EtatsUSAPage() {
       mapInstance.current = L.map(mapRef.current).setView([39.8283, -98.5795], 4);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
+        attribution: '&copy; OpenStreetMap contributors'
       }).addTo(mapInstance.current);
 
       setIsReady(true);
@@ -53,7 +57,6 @@ export default function EtatsUSAPage() {
 
     initMap();
 
-    // Nettoyage au démontage du composant
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -62,31 +65,45 @@ export default function EtatsUSAPage() {
     };
   }, []);
 
-  // 3. Ajouter les marqueurs
+  // --- Gestion des Marqueurs (Geocoding Leaflet) ---
   useEffect(() => {
-    if (!isReady || etats.length === 0) return;
+    if (!isReady || !mapInstance.current || etats.length === 0) return;
 
     const addMarkers = async () => {
       const L = (await import('leaflet')).default;
 
       etats.forEach(async (etat) => {
         try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(etat.nom + ", USA")}&limit=1`);
-          const data = await res.json();
+          const recherche = `${etat.nom}, USA`;
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(recherche)}&limit=1`
+          );
+          const data = await response.json();
 
           if (data && data[0]) {
+            const { lat, lon } = data[0];
+
+            // Création du marqueur avec le numéro (Label style Google Maps)
             const customIcon = L.divIcon({
-              className: '',
-              html: `<div style="background:#2563eb;color:white;border-radius:50%;width:25px;height:25px;display:flex;align-items:center;justify-content:center;font-weight:bold;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);font-size:11px;">${etat.ordre_entree}</div>`,
-              iconSize: [25, 25],
+              className: 'custom-marker',
+              html: `<div style="background-color:#2563eb; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:10px;">${etat.ordre_entree}</div>`,
+              iconSize: [24, 24],
               iconAnchor: [12, 12]
             });
 
-            L.marker([parseFloat(data[0].lat), parseFloat(data[0].lon)], { icon: customIcon })
-              .addTo(mapInstance.current)
-              .bindPopup(`<b>#${etat.ordre_entree} - ${etat.nom}</b><br>${etat.description}`);
+            const marker = L.marker([parseFloat(lat), parseFloat(lon)], { icon: customIcon }).addTo(mapInstance.current);
+
+            marker.bindPopup(`
+              <div style="color: black; padding: 5px; font-family: sans-serif;">
+                <strong>#${etat.ordre_entree} - ${etat.nom}</strong><br>
+                <small>Entrée le : ${new Date(etat.date_entree).toLocaleDateString('fr-FR')}</small><br>
+                <p style="margin-top:5px; font-size: 12px;">${etat.description}</p>
+              </div>
+            `);
           }
-        } catch (e) { console.error(e); }
+        } catch (error) {
+          console.error("Erreur de géocodage:", error);
+        }
       });
     };
 
@@ -94,34 +111,45 @@ export default function EtatsUSAPage() {
   }, [isReady, etats]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">🇺🇸 États de l'Union</h1>
-      
-      {/* Conteneur de la carte : l'ID ou la REF est cruciale */}
-      <div 
-        ref={mapRef} 
-        className="h-[500px] w-full rounded-xl shadow-lg border-2 border-gray-200 z-0 mb-8"
-        style={{ minHeight: '500px' }} // Sécurité pour l'affichage
-      />
+    <div className="p-4 max-w-7xl mx-auto font-sans">
+      <header className="mb-8">
+        <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3">
+          🇺🇸 Ordre d'entrée des États de l'Union
+        </h1>
+        <p className="text-gray-600 mt-2">Chronologie de la ratification de la Constitution</p>
+      </header>
 
-      {/* Tableau en dessous */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-3 text-left">Rang</th>
-              <th className="p-3 text-left">Nom</th>
-            </tr>
-          </thead>
-          <tbody>
-            {etats.map((e, i) => (
-              <tr key={i} className="border-t">
-                <td className="p-3 font-bold">#{e.ordre_entree}</td>
-                <td className="p-3">{e.nom}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* --- Carte Leaflet --- */}
+      <div
+        ref={mapRef}
+        style={{ height: "60vh", width: "100%" }}
+        className="mb-8 border-4 border-white shadow-2xl rounded-2xl bg-slate-100 overflow-hidden z-0"
+      >
+        {!isReady && (
+          <div className="flex items-center justify-center h-full">
+            <p className="animate-pulse font-bold text-blue-600">Initialisation de la carte Leaflet...</p>
+          </div>
+        )}
+      </div>
+
+      {/* --- Liste des États (Mise en page originale conservée) --- */}
+      <h2 className="text-2xl font-bold mb-6 text-red-700">Palmarès Chronologique</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {etats.map((etat, i) => (
+          <div key={i} className="p-5 border-l-4 border-blue-600 bg-white shadow-lg rounded-r-lg hover:shadow-xl transition-shadow">
+            <div className="flex justify-between items-start">
+              <span className="text-3xl font-black text-slate-200">#{etat.ordre_entree}</span>
+              <span className="text-xs font-bold uppercase p-1 bg-slate-100 text-slate-500 rounded">
+                {etat.date_entree}
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-blue-900 mt-2">{etat.nom}</h3>
+            <p className="text-sm text-gray-700 mt-3 leading-relaxed">
+              {etat.description}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
