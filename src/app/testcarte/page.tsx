@@ -43,7 +43,6 @@ export default function FranceTerritoiresPage() {
       if (!mapRef.current || mapInstance.current) return;
       const L = (await import('leaflet')).default;
 
-      // Correction des icônes par défaut de Leaflet
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -54,7 +53,7 @@ export default function FranceTerritoiresPage() {
       mapInstance.current = L.map(mapRef.current, {
         scrollWheelZoom: true,
         tap: true
-      }).setView([20, 10], 2); // Vue mondiale centrée
+      }).setView([20, 10], 2);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
@@ -73,14 +72,13 @@ export default function FranceTerritoiresPage() {
     };
   }, []);
 
-  // --- 3. Ajout des Marqueurs ---
+  // --- 3. Ajout des Marqueurs avec Tooltip (Survol) et Popup (Clic) ---
   useEffect(() => {
     if (!isReady || !mapInstance.current || territoires.length === 0) return;
 
     const addMarkers = async () => {
       const L = (await import('leaflet')).default;
       
-      // Nettoyage des anciens marqueurs si nécessaire
       mapInstance.current.eachLayer((layer: any) => {
         if (layer instanceof L.Marker) mapInstance.current.removeLayer(layer);
       });
@@ -97,12 +95,21 @@ export default function FranceTerritoiresPage() {
           });
 
           const marker = L.marker([t.lat, t.lng], { icon: customIcon });
+
+          // --- AJOUT DU TITRE AU SURVOL (Tooltip) ---
+          marker.bindTooltip(`<strong>${t.nom}</strong>`, {
+            direction: 'top',
+            offset: [0, -10],
+            opacity: 0.9
+          });
           
+          // --- DÉTAILS AU CLIC (Popup) ---
           marker.bindPopup(`
-            <div style="color: black; font-family: sans-serif; min-width: 150px;">
+            <div style="color: black; font-family: sans-serif; min-width: 150px; padding: 5px;">
               <strong style="font-size: 14px;">#${index + 1} - ${t.nom}</strong><br>
               <small style="color: #2563eb; font-weight: bold; text-transform: uppercase;">${t.statut}</small>
-              <p style="font-size: 12px; margin-top: 5px; line-height: 1.4;">${t.description}</p>
+              <hr style="margin: 8px 0; border: 0; border-top: 1px solid #eee;">
+              <p style="font-size: 12px; margin: 0; line-height: 1.4;">${t.description}</p>
             </div>
           `);
 
@@ -125,7 +132,6 @@ export default function FranceTerritoiresPage() {
         </p>
       </header>
 
-      {/* --- Carte Responsive --- */}
       <div
         ref={mapRef}
         className="h-[50vh] md:h-[65vh] w-full mb-10 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden z-0"
@@ -137,7 +143,6 @@ export default function FranceTerritoiresPage() {
         )}
       </div>
 
-      {/* --- Liste organisée par Continents --- */}
       <div className="space-y-12">
         {["Europe", "Afrique", "Amérique", "Asie", "Antarctique", "Océanie"].map((continent) => {
           const list = territoires.filter(t => t.continent === continent);
@@ -152,7 +157,6 @@ export default function FranceTerritoiresPage() {
                 </span>
               </h2>
               
-              {/* Grille responsive : 1 col sur mobile, 2 sur tablette, 3 sur desktop */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {list.map((t) => {
                   const globalIndex = territoires.indexOf(t);
