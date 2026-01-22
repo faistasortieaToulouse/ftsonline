@@ -31,6 +31,9 @@ import orthodoxesData from "../../data/celebration/celebrations_orthodoxes.json"
 import prenomsData from "../../data/celebration/prenoms_du_jour.json";
 import { ChevronDown } from "lucide-react";
 
+import SunCalc from 'suncalc';
+import * as Astronomy from 'astronomy-engine';
+
 // --- DONNÉES DES CATÉGORIES ---
 const categories = [
   { title: "Agenda des événements à Toulouse", href: "/agendatoulouse", icon: Calendar, isAgenda: true },
@@ -422,6 +425,56 @@ const WeatherIcon = ({ condition }: { condition: string }) => {
 export default function HomePage() {
   const [heure, setHeure] = useState(new Date());
   const [meteo, setMeteo] = useState({ temperature: "25°C", condition: "Ensoleillé" });
+
+  // 1. Coordonnées de Toulouse
+  const lat = 43.6045;
+  const lng = 1.4442;
+
+  // 2. Calculs Soleil (SunCalc) sécurisés
+  const sunTimes = SunCalc.getTimes(heure, lat, lng);
+  const dureeMs = sunTimes.sunset.getTime() - sunTimes.sunrise.getTime();
+  const dureeHeures = Math.floor(dureeMs / 3600000);
+  const dureeMinutes = Math.floor((dureeMs % 3600000) / 60000);
+
+  // 3. Calculs Lune
+  const moonIllum = SunCalc.getMoonIllumination(heure);
+  const phase = moonIllum.phase;
+  let emojiLune = "🌙";
+  if (phase <= 0.05 || phase > 0.95) emojiLune = "🌑";
+  else if (phase > 0.45 && phase <= 0.55) emojiLune = "🌕";
+
+  // 4. Calcul Sirius (Correction RA/Dec pour éviter l'erreur "Unknown body")
+  const observer = new Astronomy.Observer(lat, lng, 0);
+  const siriusRA = 6.75247;
+  const siriusDec = -16.7161;
+
+// On supprime le dernier argument pour utiliser le calcul par défaut
+const starHorizon = Astronomy.Horizon(
+  heure, 
+  observer, 
+  siriusRA, 
+  siriusDec
+);
+
+  const siriusVisible = starHorizon.altitude > 0;
+
+  // 5. Constellations avec sécurité (pour éviter le crash au changement de mois)
+  const constellationsData = {
+    0: { n: "Orion, Taureau", s: "Grand Chien, Carène" },
+    1: { n: "Lion, Cancer", s: "Voiles, Hydre" },
+    2: { n: "Bouvier, Vierge", s: "Centaure, Croix du Sud" },
+    3: { n: "Hercule, Lyre", s: "Loup, Règle" },
+    4: { n: "Cygne, Aigle", s: "Scorpion, Sagittaire" },
+    5: { n: "Flèche, Dauphin", s: "Autel, Télescope" },
+    6: { n: "Pégase, Andromède", s: "Grue, Toucan" },
+    7: { n: "Persée, Cassiopée", s: "Phénix, Sculpteur" },
+    8: { n: "Baleine, Poissons", s: "Fourneau, Horloge" },
+    9: { n: "Céphée, Dragon", s: "Table, Octant" },
+    10: { n: "Girafe, Cocher", s: "Peintre, Dorade" },
+    11: { n: "Persée, Orion", s: "Colomb, Lièvre" }
+  };
+  const currentMonth = heure.getMonth();
+  const constMonth = constellationsData[currentMonth as keyof typeof constellationsData] || { n: "N/A", s: "N/A" };
   
   const celebrations = getCelebrationsDuJour(heure);
   const dictonDuJour = getDictonDuJour(heure);
@@ -539,7 +592,7 @@ export default function HomePage() {
       </div>
     </div>
 
-    {/* Ligne 4 : Astro */}
+    {/* Ligne 4 : Astro (Zodiaque) */}
     <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
       <div className="flex items-center justify-center gap-6 w-full text-sm">
         <div className="flex items-center gap-2">
@@ -556,51 +609,31 @@ export default function HomePage() {
       </div>
     </div>
 
-{/* Ligne 5 : MENUS DÉROULANTS (Ajout) */}
+    {/* Ligne 5 : MENUS DÉROULANTS */}
     <div className="bg-white/40 border-t border-purple-200 py-3 px-6">
       <div className="flex flex-wrap justify-center gap-3">
-{/* Texte d'introduction ajouté ici */}
         <span className="text-sm font-bold text-purple-900/60 uppercase tracking-wider mr-2">
           Célébrations :
         </span>
 
         {(() => {
-          // 1. On génère la date exacte du jour au format exact du JSON (ex: "17 janvier")
           const jourMois = heure.toLocaleDateString("fr-FR", { day: "numeric", month: "long" }).toLowerCase();
           
           const sections = [
-{ 
-  label: "Nationales", 
-  data: (() => {
-    // 1. On cherche d'abord s'il y a des célébrations spécifiques au 17 janvier
-    const specific = annuellesData.find(d => d.date.toLowerCase().trim() === jourMois);
-    if (specific) return specific.details;
-
-    // 2. Si rien au 17 janvier, on cherche les internationales/nationales générales
-    const generales = annuellesData.find(d => d.date === "Internationales et nationales");
-    return generales ? generales.details : [];
-  })()
-},
             { 
-              label: "Religieuses", 
-              data: religieusesData.find(d => d.date.toLowerCase() === jourMois)?.celebrations 
+              label: "Nationales", 
+              data: (() => {
+                const specific = annuellesData.find(d => d.date.toLowerCase().trim() === jourMois);
+                if (specific) return specific.details;
+                const generales = annuellesData.find(d => d.date === "Internationales et nationales");
+                return generales ? generales.details : [];
+              })()
             },
-            { 
-              label: "Saints", 
-              data: saintsData.find(d => d.date.toLowerCase() === jourMois)?.saints 
-            },
-            { 
-              label: "Bienheureux", 
-              data: bienheureuxData.find(d => d.date_standard.toLowerCase() === jourMois)?.personnalites 
-            },
-            { 
-              label: "Orthodoxes", 
-              data: orthodoxesData.find(d => d.date_propre.toLowerCase() === jourMois)?.saints 
-            },
-            { 
-              label: "Prénoms", 
-              data: prenomsData.find(d => d.date.toLowerCase() === jourMois)?.prenoms 
-            },
+            { label: "Religieuses", data: religieusesData.find(d => d.date.toLowerCase() === jourMois)?.celebrations },
+            { label: "Saints", data: saintsData.find(d => d.date.toLowerCase() === jourMois)?.saints },
+            { label: "Bienheureux", data: bienheureuxData.find(d => d.date_standard.toLowerCase() === jourMois)?.personnalites },
+            { label: "Orthodoxes", data: orthodoxesData.find(d => d.date_propre.toLowerCase() === jourMois)?.saints },
+            { label: "Prénoms", data: prenomsData.find(d => d.date.toLowerCase() === jourMois)?.prenoms },
           ];
 
           return sections.map((sec, idx) => (
@@ -614,7 +647,6 @@ export default function HomePage() {
                 <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
                   {sec.label} du {jourMois}
                 </div>
-                
                 <ul className="max-h-60 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-purple-200 pr-2">
                   {sec.data && sec.data.length > 0 ? (
                     sec.data.map((text: string, i: number) => (
@@ -633,6 +665,47 @@ export default function HomePage() {
         })()}
       </div>
     </div>
+
+{/* Ligne 6 : ÉPHÉMÉRIDES ASTRONOMIQUES */}
+<div className="bg-slate-900 text-slate-300 border-t border-purple-200 py-3 px-6">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+    
+    {/* Soleil */}
+    <div className="flex items-center gap-3 justify-center md:justify-start">
+      <span className="text-yellow-400 text-xl">☀️</span>
+      <div className="flex flex-col">
+        <span className="text-[10px] uppercase font-bold text-slate-500">Soleil (Toulouse)</span>
+        <div className="text-xs font-bold text-slate-200">
+          {sunTimes.sunrise.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})} 
+          <span className="mx-2 text-slate-600">|</span>
+          {sunTimes.sunset.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}
+        </div>
+        <span className="text-[10px] italic text-yellow-200/50">Jour : {dureeHeures}h {dureeMinutes}min</span>
+      </div>
+    </div>
+
+    {/* Lune & Sirius */}
+    <div className="flex items-center gap-3 justify-center border-y md:border-y-0 md:border-x border-slate-800 py-2 md:py-0">
+      <span className="text-2xl">{emojiLune}</span>
+      <div className="flex flex-col">
+        <span className="text-[10px] uppercase font-bold text-slate-500">Lune & Étoiles</span>
+        <span className="text-xs text-slate-200">Phase : <b>{(moonIllum.fraction * 100).toFixed(0)}%</b></span>
+        <span className={`text-[10px] font-medium ${siriusVisible ? 'text-cyan-400' : 'text-red-400'}`}>
+          ✨ Sirius : {siriusVisible ? `Visible (${starHorizon.altitude.toFixed(0)}°)` : "Sous l'horizon"}
+        </span>
+      </div>
+    </div>
+
+    {/* Constellations */}
+    <div className="flex flex-col items-center md:items-end">
+      <span className="text-[10px] uppercase font-bold text-slate-500 mb-1">Ciel du mois</span>
+      <div className="flex flex-col gap-1 text-[10px] text-center md:text-right">
+        <div><span className="text-blue-400 font-bold">Nord:</span> {constMonth.n}</div>
+        <div><span className="text-emerald-400 font-bold">Sud:</span> {constMonth.s}</div>
+      </div>
+    </div>
+  </div>
+</div>
 
   </section>
 </div>
