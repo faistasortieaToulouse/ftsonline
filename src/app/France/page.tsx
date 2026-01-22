@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link"; // Import pour la navigation
+import { ArrowLeft } from "lucide-react"; // Import pour l'icône
 import 'leaflet/dist/leaflet.css';
 
 interface Territoire {
@@ -96,14 +98,12 @@ export default function FranceTerritoiresPage() {
 
           const marker = L.marker([t.lat, t.lng], { icon: customIcon });
 
-          // --- AJOUT DU TITRE AU SURVOL (Tooltip) ---
           marker.bindTooltip(`<strong>${t.nom}</strong>`, {
             direction: 'top',
             offset: [0, -10],
             opacity: 0.9
           });
           
-          // --- DÉTAILS AU CLIC (Popup) ---
           marker.bindPopup(`
             <div style="color: black; font-family: sans-serif; min-width: 150px; padding: 5px;">
               <strong style="font-size: 14px;">#${index + 1} - ${t.nom}</strong><br>
@@ -123,6 +123,13 @@ export default function FranceTerritoiresPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+      
+      {/* BOUTON RETOUR : Ajouté ici pour la cohérence */}
+      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline mb-6 transition-colors group">
+        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+        Retour à l'accueil
+      </Link>
+
       <header className="mb-8 border-b pb-6 text-center md:text-left">
         <h1 className="text-3xl md:text-5xl font-black text-blue-900 flex flex-wrap justify-center md:justify-start items-center gap-3">
           <span>🇫🇷</span> Territoires Français
