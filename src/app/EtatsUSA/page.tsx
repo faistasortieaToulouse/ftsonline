@@ -137,9 +137,14 @@ export default function EtatsUSAPage() {
           >
             <div className="flex justify-between items-center mb-4">
               <span className="text-4xl font-black text-slate-100 group-hover:text-blue-50">#{etat.ordre_entree}</span>
-              <span className="text-[10px] font-bold px-3 py-1 bg-blue-50 text-blue-600 rounded-full">
-                {etat.date_entree}
-              </span>
+<span className="text-[10px] font-bold px-3 py-1 bg-blue-50 text-blue-600 rounded-full">
+  {/* Conversion de la chaîne en objet Date, puis formatage français */}
+  {new Date(etat.date_entree).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })}
+</span>
             </div>
             <h3 className="text-xl font-bold text-blue-900">{etat.nom}</h3>
             <p className="text-sm text-gray-600 mt-2 line-clamp-3 md:line-clamp-none">
