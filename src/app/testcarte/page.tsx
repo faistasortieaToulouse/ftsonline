@@ -1,67 +1,97 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+// Importation dynamique de Leaflet car il nécessite l'objet 'window'
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-// --- Imports dynamiques pour Leaflet (SSR Safe) ---
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
-
-interface Colonie {
-  grande_entite: string;
-  territoire: string;
-  periode: string;
-  lat: number;
-  lng: number;
+interface Conference {
+  geo_point_2d: { lon: number; lat: number };
+  nom_equipement: string;
+  gestionnaire: string;
+  telephone: string | null;
+  site_web: string | null;
+  numero: string;
+  lib_off: string;
+  id_secteur_postal: number;
+  ville: string;
+  secteur: number;
+  quartier: number;
 }
 
-export default function ColonieFrancePage() {
-  const [colonies, setColonies] = useState<Colonie[]>([]);
-  const [isReady, setIsReady] = useState(false);
-  const [L, setL] = useState<any>(null);
+export default function ConferencePage() {
+  const [conferences, setConferences] = useState<Conference[]>([]);
+  const [loading, setLoading] = useState(true);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<L.Map | null>(null);
 
+  // 1. Fetch et tri alphabétique
   useEffect(() => {
-    // 1. Charger Leaflet pour les icônes personnalisées
-    import("leaflet").then((leaflet) => {
-      setL(leaflet.default);
-      setIsReady(true);
-    });
-
-    // 2. Récupérer les données
-    fetch("/api/coloniefrance")
-      .then(async (res) => {
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          const sorted = data.sort((a, b) => {
-            if (a.grande_entite !== b.grande_entite) {
-              return a.grande_entite.localeCompare(b.grande_entite);
-            }
-            return a.territoire.localeCompare(b.territoire, 'fr');
-          });
-          setColonies(sorted);
-        }
+    fetch("/api/conference")
+      .then((res) => res.json())
+      .then((data: Conference[]) => {
+        if (!Array.isArray(data)) return;
+        const sorted = [...data].sort((a, b) =>
+          (a.nom_equipement ?? "").localeCompare(b.nom_equipement ?? "")
+        );
+        setConferences(sorted);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
-  // Calcul du centre moyen
-  const center: [number, number] = colonies.length > 0 
-    ? [
-        colonies.reduce((sum, c) => sum + c.lat, 0) / colonies.length,
-        colonies.reduce((sum, c) => sum + c.lng, 0) / colonies.length
-      ]
-    : [20, 0]; // Centre par défaut (monde)
+  // 2. Initialisation de la carte Leaflet
+  useEffect(() => {
+    if (!mapRef.current || conferences.length === 0 || mapInstance.current) return;
 
-  const entites = Array.from(new Set(colonies.map(c => c.grande_entite)));
+    // Fix pour les icônes par défaut de Leaflet dans Next.js
+    const DefaultIcon = L.icon({
+      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+    L.Marker.prototype.options.icon = DefaultIcon;
+
+    // Création de la carte
+    const map = L.map(mapRef.current).setView([43.6045, 1.444], 12);
+    mapInstance.current = map;
+
+    // Ajout de la couche OpenStreetMap
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    // Ajout des marqueurs
+    conferences.forEach((c, i) => {
+      if (c.geo_point_2d) {
+        const marker = L.marker([c.geo_point_2d.lat, c.geo_point_2d.lon])
+          .addTo(map)
+          .bindPopup(`
+            <div style="font-family: sans-serif;">
+              <strong>${i + 1}. ${c.nom_equipement}</strong><br/>
+              ${c.lib_off}, ${c.ville}<br/>
+              <small>Gestionnaire : ${c.gestionnaire}</small><br/>
+              <small>Tél : ${c.telephone ?? "-"}</small>
+            </div>
+          `);
+      }
+    });
+
+    // Nettoyage au démontage
+    return () => {
+      map.remove();
+      mapInstance.current = null;
+    };
+  }, [conferences]);
+
+  if (loading) return <p className="p-4">Chargement des centres culturels…</p>;
+  if (!conferences.length) return <p className="p-4">Aucun centre culturel disponible.</p>;
 
   return (
-    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
-      
+    <div className="p-4 max-w-7xl mx-auto">
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -69,86 +99,56 @@ export default function ColonieFrancePage() {
         </Link>
       </nav>
 
-      <header className="mb-8 border-b pb-6">
-        <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3">
-          ⚜️ Anciennes Colonies de la France
-        </h1>
-        <p className="text-gray-600 mt-2 italic">Chronologie et géographie du premier empire colonial</p>
-      </header>
+      <h1 className="text-3xl font-extrabold mb-6 text-center text-blue-700">
+        🎭 Centres culturels et salles de conférences à Toulouse
+      </h1>
 
-      {/* --- CARTE LEAFLET --- */}
-      <div className="mb-8 border-4 border-white shadow-xl rounded-3xl bg-slate-200 overflow-hidden h-[65vh] relative">
-        {!isReady || colonies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full gap-3">
-            <Loader2 className="animate-spin text-blue-600" size={32} />
-            <p className="font-bold text-blue-600 text-lg">Initialisation de la carte coloniale...</p>
-          </div>
-        ) : (
-          <MapContainer 
-            center={center} 
-            zoom={3} 
-            style={{ height: "100%", width: "100%" }}
-            scrollWheelZoom={true}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; OpenStreetMap contributors'
-            />
-            
-            {colonies.map((c, index) => {
-              // Création de l'icône personnalisée (Cercle bleu avec numéro)
-              const customIcon = L.divIcon({
-                className: "custom-div-icon",
-                html: `<div style="background-color: #1e3a8a; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${index + 1}</div>`,
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
-              });
+      {/* Conteneur de la carte */}
+      <div
+        ref={mapRef}
+        style={{ height: "60vh", width: "100%" }}
+        className="mb-8 border-4 border-blue-200 rounded-xl bg-gray-50 z-0" 
+      />
 
-              return (
-                <Marker key={`${c.territoire}-${index}`} position={[c.lat, c.lng]} icon={customIcon}>
-                  <Popup>
-                    <div style={{ color: 'black', padding: '5px', maxWidth: '220px' }}>
-                      <strong style={{ fontSize: '14px' }}>#${index + 1} - ${c.territoire}</strong><br />
-                      <span style={{ color: '#b91c1c', fontSize: '11px', fontWeight: 'bold' }}>${c.periode}</span><br />
-                      <span style={{ color: '#666', fontSize: '10px', textTransform: 'uppercase' }}>${c.grande_entite}</span>
-                    </div>
-                  </Popup>
-                </Marker>
-              );
-            })}
-          </MapContainer>
-        )}
-      </div>
-
-      {/* --- LISTE DES TERRITOIRES PAR ENTITÉS (Inchangée) --- */}
-      <div className="space-y-12">
-        {entites.map((entite) => (
-          <section key={entite} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h2 className="text-2xl font-black mb-6 text-blue-900 border-l-4 border-blue-600 pl-4">
-              {entite}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {colonies
-                .filter(c => c.grande_entite === entite)
-                .map((c) => {
-                  const globalIndex = colonies.indexOf(c);
-                  return (
-                    <div key={`${c.territoire}-${globalIndex}`} className="group p-4 bg-slate-50 rounded-xl hover:bg-blue-900 transition-all duration-300 flex gap-4">
-                      <span className="text-3xl font-black text-slate-300 group-hover:text-blue-400/50 transition-colors">
-                        {(globalIndex + 1).toString().padStart(2, '0')}
-                      </span>
-                      <div>
-                        <h3 className="font-bold text-slate-900 group-hover:text-white transition-colors">{c.territoire}</h3>
-                        <div className="text-xs font-bold text-red-600 group-hover:text-red-300 mt-1">
-                          {c.periode}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </section>
-        ))}
+      {/* Tableau (Mise en page conservée à l'identique) */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-blue-100">
+              <th className="border p-2">#</th>
+              <th className="border p-2">Nom</th>
+              <th className="border p-2">Adresse</th>
+              <th className="border p-2">Gestionnaire</th>
+              <th className="border p-2">Téléphone</th>
+              <th className="border p-2">Site web</th>
+            </tr>
+          </thead>
+          <tbody>
+            {conferences.map((c, i) => (
+              <tr key={`${c.nom_equipement}-${i}`} className="hover:bg-blue-50">
+                <td className="border p-2 font-bold">{i + 1}</td>
+                <td className="border p-2">{c.nom_equipement}</td>
+                <td className="border p-2">{c.lib_off}</td>
+                <td className="border p-2">{c.gestionnaire}</td>
+                <td className="border p-2">{c.telephone ?? "-"}</td>
+                <td className="border p-2">
+                  {c.site_web ? (
+                    <a
+                      href={c.site_web.startsWith('http') ? c.site_web : `http://${c.site_web}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      Lien
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
