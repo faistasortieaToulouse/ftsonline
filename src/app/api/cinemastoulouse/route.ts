@@ -10,14 +10,14 @@ export async function GET() {
       lat: 43.604561,
       lng: 1.4479128
     },
-    { 
-      name: "UGC Toulouse", 
-      address: "9 Allée du Président Franklin Roosevelt, 31000 Toulouse",
-      url: "https://www.ugc.fr/cinema.html?id=56", 
-      category: "Multiplexe",
-      lat: 43.605613,
-      lng: 1.448028
-    },
+{ 
+  name: "UGC Toulouse Montaudran", 
+  address: "8 Avenue de l'Aérodrome de Montaudran, 31400 Toulouse",
+  url: "https://www.ugc.fr/cinema.html?id=56", 
+  category: "Multiplexe",
+  lat: 43.5739, 
+  lng: 1.4815
+},
     { 
       name: "Véo Grand Central", 
       address: "10 Place de la Charte des Libertés Communales, 31300 Toulouse",
