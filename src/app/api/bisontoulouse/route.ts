@@ -3,7 +3,6 @@ import { parseStringPromise } from "xml2js";
 
 export const dynamic = 'force-dynamic';
 
-// On utilise le flux QTV (Quotidien) qui est un index centralisé
 const BISON_URL = "https://tipi.bison-fute.gouv.fr/bison-fute-ouvert/publicationsDIR/QTV-DIR/qtvDir.xml";
 
 export async function GET() {
@@ -20,26 +19,30 @@ export async function GET() {
     if (!res.ok) throw new Error(`Erreur Bison: ${res.status}`);
 
     const xmlText = await res.text();
-    const data = await parseStringPromise(xmlText, { explicitArray: false });
+    const data = await parseStringPromise(xmlText, { 
+        explicitArray: false,
+        tagNameProcessors: [(name) => name.replace('soap:', '').replace('xsi:', '')] // On nettoie les préfixes
+    });
 
-    // Dans qtvDir.xml, la structure est différente :
-    // d2LogicalModel -> payloadPublication -> situation
-    let situations = data?.d2LogicalModel?.payloadPublication?.situation;
+    // NAVIGATION DANS LA STRUCTURE SOAP DÉTECTÉE :
+    // Envelope -> Body -> d2LogicalModel -> payloadPublication -> situation
+    const envelope = data["Envelope"] || data["soap:Envelope"];
+    const body = envelope?.Body || envelope?.["soap:Body"];
+    const model = body?.d2LogicalModel;
+    const situations = model?.payloadPublication?.situation;
 
     let list = [];
     if (Array.isArray(situations)) list = situations;
     else if (situations) list = [situations];
 
-    // FILTRAGE : On cherche Toulouse ou les routes du 31
+    // Filtrage pour Toulouse
     const toulouseKeywords = ["toulouse", "(31)", "a620", "a61", "a62", "a64", "a68", "rocade"];
-    
-    let filtered = list.filter((sit: any) => {
+    const filtered = list.filter((sit: any) => {
       const text = JSON.stringify(sit).toLowerCase();
       return toulouseKeywords.some(k => text.includes(k));
     });
 
-    // TEST DE SECOURS : Si rien à Toulouse, on affiche les 3 premiers incidents du flux
-    // pour prouver que la connexion fonctionne.
+    // Sécurité : si le filtre est vide, on renvoie les 3 premiers du flux pour tester
     const finalData = filtered.length > 0 ? filtered : list.slice(0, 3);
 
     return NextResponse.json(finalData);
