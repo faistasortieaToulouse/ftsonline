@@ -1,100 +1,84 @@
-'use client'; 
+'use client';
 
-import { useEffect, useState, CSSProperties } from "react"; 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
-// --- Interface de type ---
-interface SiteAriege {
-  id: number;
-  commune: string;
-  description: string;
-  niveau: number;
-  categorie: 'incontournable' | 'remarquable' | 'suggéré';
-  lat: number;
-  lng: number;
-} 
-
-// --- Imports dynamiques pour Leaflet ---
+// --- Imports dynamiques pour Leaflet (pas de SSR) ---
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
-// --- Gestion des couleurs ---
-const getMarkerColor = (categorie: SiteAriege['categorie']): string => {
-  switch (categorie) {
-    case 'incontournable': return '#ef4444'; // Rouge
-    case 'remarquable':    return '#f97316'; // Orange
-    case 'suggéré':       return '#3b82f6'; // Bleu
-    default:               return '#3b82f6';
-  }
-};
+interface Territoire {
+  nom: string;
+  statut: string;
+  continent: string;
+  lat: number;
+  lng: number;
+  description: string;
+}
 
-const getLabelColor = (categorie: SiteAriege['categorie']): string => {
-  return (categorie === 'remarquable') ? 'white' : 'yellow';
-};
-
-const ARIÈGE_CENTER: [number, number] = [42.9667, 1.6000];
-
-export default function AriegeMapPage() { 
-  const [sitesData, setSitesData] = useState<SiteAriege[]>([]);
-  const [isLoadingData, setIsLoadingData] = useState(true);
-  const [L, setL] = useState<any>(null);
+export default function AssociesEuropePage() {
+  const [territoires, setTerritoires] = useState<Territoire[]>([]);
+  const [L, setL] = useState<any>(null); // Pour stocker l'instance Leaflet (icônes)
 
   useEffect(() => {
+    // Chargement des données
+    fetch("/api/associeseurope")
+      .then(async (res) => {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const ordreContinents = ["Europe", "Afrique", "Amérique", "Asie", "Antarctique", "Océanie"];
+          const sorted = data.sort((a, b) => {
+            if (a.continent !== b.continent) {
+              return ordreContinents.indexOf(a.continent) - ordreContinents.indexOf(b.continent);
+            }
+            return a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' });
+          });
+          setTerritoires(sorted);
+        }
+      })
+      .catch(console.error);
+
+    // Chargement de Leaflet pour les icônes personnalisées
     import("leaflet").then((leaflet) => {
       setL(leaflet);
     });
-
-    async function fetchSites() {
-      try {
-        const response = await fetch('/api/ariege');
-        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-        let data: SiteAriege[] = await response.json();
-        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
-        setSitesData(data);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des sites:", error);
-      } finally {
-        setIsLoadingData(false);
-      }
-    }
-    fetchSites();
   }, []);
 
-  const createCustomIcon = (index: number, categorie: SiteAriege['categorie']) => {
+  // Fonction pour créer l'icône personnalisée (Cercle bleu avec numéro)
+  const createCustomIcon = (index: number) => {
     if (!L) return null;
     return L.divIcon({
-      className: 'custom-leaflet-marker',
+      className: 'custom-icon',
       html: `
         <div style="
-          background-color: ${getMarkerColor(categorie)};
-          width: 28px;
-          height: 28px;
+          background-color: #1e3a8a;
+          color: white;
+          width: 24px;
+          height: 24px;
           border-radius: 50%;
           border: 2px solid white;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: ${getLabelColor(categorie)};
+          font-size: 10px;
           font-weight: bold;
-          font-size: 12px;
           box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         ">
           ${index + 1}
         </div>
       `,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
   };
 
-  return ( 
-    <div className="p-4 max-w-7xl mx-auto"> 
-
+  return (
+    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -102,82 +86,77 @@ export default function AriegeMapPage() {
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-extrabold mb-6">🏔️ Sites Touristiques en Ariège sur la Carte</h1> 
+      <header className="mb-8 border-b pb-6">
+        <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3">
+          🇪🇺 États et Territoires Associés à l'UE
+        </h1>
+        <p className="text-gray-600 mt-2 italic">Analyse des statuts fiscaux et douaniers des dépendances européennes</p>
+      </header>
 
-      <p className="font-semibold text-lg mb-4">
-        Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
-      </p>
-
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', flexWrap: 'wrap' }}>
-        <strong>Légende :</strong>
-        <span style={{ color: '#ef4444', fontWeight: 'bold' }}>🔴 Incontournable (1)</span>
-        <span style={{ color: '#f97316', fontWeight: 'bold' }}>🟠 Remarquable (2)</span>
-        <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>🔵 Suggéré (3)</span>
-      </div>
-
-      <div style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 relative z-0"> 
-        {isLoadingData ? (
-          <div className="flex items-center justify-center h-full">Chargement de la carte et des données…</div>
-        ) : (
-          <MapContainer center={ARIÈGE_CENTER} zoom={9} style={{ height: "100%", width: "100%" }}>
+      {/* --- ZONE CARTE LEAFLET --- */}
+      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden" style={{ height: "60vh", width: "100%" }}>
+        {typeof window !== "undefined" && L && (
+          <MapContainer center={[25, 10]} zoom={3} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {sitesData.map((site, i) => {
-              const icon = createCustomIcon(i, site.categorie);
-              return icon && (
-                <Marker key={site.id} position={[site.lat, site.lng]} icon={icon}>
+            {territoires.map((t, index) => {
+              const icon = createCustomIcon(index);
+              return icon ? (
+                <Marker key={t.nom} position={[t.lat, t.lng]} icon={icon}>
                   <Popup>
-                    <div style={{ fontFamily: 'Arial', fontSize: '14px' }}> 
-                      <strong>{i + 1}. {site.commune}</strong> ({site.categorie})<br/> 
-                      <b>Description :</b> {site.description}<br/>
-                      <b>Niveau :</b> {site.niveau}
+                    <div style={{ color: 'black', padding: '5px', fontFamily: 'sans-serif', maxWidth: '200px' }}>
+                      <strong style={{ fontSize: '14px' }}>#${index + 1} - ${t.nom}</strong><br />
+                      <span style={{ color: '#1e3a8a', fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold' }}>{t.statut}</span>
+                      <p style={{ marginTop: '8px', fontSize: '12px', lineHeight: '1.4' }}>{t.description}</p>
                     </div>
                   </Popup>
                 </Marker>
-              );
+              ) : null;
             })}
           </MapContainer>
         )}
       </div>
 
-      <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({sitesData.length} marqueurs)</h2> 
+      {/* --- ZONE CONTENU (Inchangée) --- */}
+      <div className="space-y-12">
+        {["Europe", "Afrique", "Amérique", "Asie", "Antarctique", "Océanie"].map((continent) => {
+          const list = territoires.filter(t => t.continent === continent);
+          if (list.length === 0) return null;
 
-      <div style={{ overflowX: "auto", width: "100%", borderRadius: "8px" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px", minWidth: "700px" }}> 
-          <thead style={{ backgroundColor: "#e0e0e0" }}> 
-            <tr> 
-              <th style={tableHeaderStyle}>#</th>
-              <th style={tableHeaderStyle}>Commune</th> 
-              <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
-              <th style={tableHeaderStyle}>Niveau</th> 
-              <th style={tableHeaderStyle}>Catégorie</th> 
-            </tr> 
-          </thead> 
-          <tbody> 
-            {sitesData.map((site, i) => ( 
-              <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
-                <td style={tableCellStyle}>{i + 1}</td>
-                <td style={tableCellStyle}>{site.commune}</td> 
-                <td style={tableCellStyle}>{site.description}</td> 
-                {/* Niveau avec couleur dynamique */}
-                <td style={{ ...tableCellStyleCenter, color: getMarkerColor(site.categorie), fontWeight: 'bold' }}>
-                  {site.niveau}
-                </td> 
-                {/* Catégorie avec couleur dynamique */}
-                <td style={{ ...tableCellStyle, color: getMarkerColor(site.categorie), fontWeight: 'bold', textTransform: 'capitalize' }}>
-                  {site.categorie}
-                </td> 
-              </tr> 
-            ))} 
-          </tbody> 
-        </table>
-      </div> 
-    </div> 
-  ); 
+          return (
+            <section key={continent} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+              <h2 className="text-2xl font-black mb-6 text-blue-900 flex items-center justify-between border-l-4 border-blue-600 pl-4">
+                <span>{continent}</span>
+                <span className="text-sm font-normal bg-blue-50 text-blue-600 px-3 py-1 rounded-full">{list.length} territoires</span>
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {list.map((t) => {
+                  const globalIndex = territoires.indexOf(t);
+                  return (
+                    <div key={t.nom} className="group p-4 bg-slate-50 rounded-xl hover:bg-blue-900 transition-all duration-300 flex gap-4 border border-slate-100 hover:border-blue-700">
+                      <span className="text-3xl font-black text-slate-300 group-hover:text-blue-400/50 transition-colors">
+                        {(globalIndex + 1).toString().padStart(2, '0')}
+                      </span>
+                      <div>
+                        <h3 className="font-bold text-slate-900 group-hover:text-white transition-colors">{t.nom}</h3>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 group-hover:text-blue-200 mt-1">
+                          {t.statut}
+                        </div>
+                        <p className="text-sm text-gray-600 group-hover:text-blue-100 mt-2 leading-snug">
+                          {t.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
-
-const tableHeaderStyle: CSSProperties = { padding: "10px", border: "1px solid #ccc", textAlign: "left" };
-const tableCellStyle: CSSProperties = { padding: "8px", border: "1px solid #ddd" };
-const tableCellStyleCenter: CSSProperties = { padding: "8px", border: "1px solid #ddd", textAlign: "center" };
