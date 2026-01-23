@@ -1,22 +1,25 @@
 import { NextResponse } from "next/server";
-import xml2js from "xml2js";
+import { parseStringPromise } from "xml2js";
 
-const BISON_XML_URL = "https://url-du-xml-bisonfute.xml";
+const BISON_SITUATIONS_URL = "https://www.bison-fute.gouv.fr/opendata/flux/zones/SIT_NATIONALE.xml";
 
 export async function GET() {
-  const res = await fetch(BISON_XML_URL);
-  const xmlText = await res.text();
+  try {
+    const res = await fetch(BISON_SITUATIONS_URL, { next: { revalidate: 300 } });
+    const xmlText = await res.text();
+    const data = await parseStringPromise(xmlText, { explicitArray: false });
 
-  const parser = new xml2js.Parser();
-  const data = await parser.parseStringPromise(xmlText);
+    let situations = data?.d2LogicalModel?.payloadPublication?.situation || [];
+    if (!Array.isArray(situations)) situations = [situations];
 
-  // Ici tu dois adapter selon la structure XML exacte
-  const axes = data?.TrafficData?.Axes?.[0]?.Axe || [];
+    // On filtre sur "Toulouse" ou "31" (Haute-Garonne)
+    const filtered = situations.filter((sit: any) => {
+      const text = JSON.stringify(sit).toLowerCase();
+      return text.includes("toulouse") || text.includes("(31)");
+    });
 
-  // Filtrer pour Toulouse si possible
-  const toulouseAxes = axes.filter((a: any) =>
-    a.Name?.[0]?.includes("Toulouse")
-  );
-
-  return NextResponse.json(toulouseAxes);
+    return NextResponse.json(filtered);
+  } catch (error) {
+    return NextResponse.json({ error: "Erreur de flux" }, { status: 500 });
+  }
 }
