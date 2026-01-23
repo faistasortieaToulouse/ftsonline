@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -6,93 +6,95 @@ import { ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
-/* ================= TYPES ================= */
-
-interface GeoPoint {
-  lat: number;
-  lon: number;
-}
-
-interface GeoShape {
-  geometry: {
-    coordinates: number[][]; // Leaflet préfère souvent un tableau simple de coordonnées pour les polylines
-  };
-}
-
-interface Balade {
-  id: string;
-  nom: string;
-  lieu: string;
-  accessibilite: string;
-  duree: string;
-  distance: number;
-  remarks: string;
-  lien: string;
-  geo_point_2d: GeoPoint;
-  geo_shape: GeoShape;
-}
-
-type GroupedBalades = Record<string, Balade[]>;
-
-/* ================= COMPOSANTS DYNAMIQUES ================= */
-
+// --- Imports dynamiques pour éviter les erreurs SSR de Leaflet ---
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
-const Polyline = dynamic(() => import("react-leaflet").then((mod) => mod.Polyline), { ssr: false });
 
-/* ================= PAGE ================= */
+interface Establishment {
+  name: string;
+  address: string;
+  type?: "library" | "centre_culturel" | "maison_quartier" | "mjc" | "conservatoire";
+  lat?: number; // Optionnel si déjà présent
+  lng?: number; // Optionnel si déjà présent
+}
 
-export default function BaladePage() {
-  const [balades, setBalades] = useState<Balade[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface EnrichedEstablishment extends Establishment {
+  coords?: [number, number];
+}
+
+export default function BibliomapPage() {
+  const [establishments, setEstablishments] = useState<EnrichedEstablishment[]>([]);
   const [L, setL] = useState<any>(null);
+  const [filters, setFilters] = useState<Record<NonNullable<Establishment["type"]>, boolean>>({
+    library: true,
+    centre_culturel: true,
+    maison_quartier: true,
+    mjc: true,
+    conservatoire: true,
+  });
 
-  /* ---------- Chargement des données ---------- */
+  const typeColors: Record<NonNullable<Establishment["type"]>, string> = {
+    library: "#ef4444", // red-500
+    centre_culturel: "#3b82f6", // blue-500
+    maison_quartier: "#f97316", // orange-500
+    mjc: "#22c55e", // green-500
+    conservatoire: "#a855f7", // purple-500
+  };
+
+  const typeLabels: Record<NonNullable<Establishment["type"]>, string> = {
+    library: "bibliothèque",
+    centre_culturel: "centre culturel",
+    maison_quartier: "maison de quartier",
+    mjc: "MJC",
+    conservatoire: "conservatoire",
+  };
+
+  // 1. Chargement des données et géocodage (si nécessaire)
   useEffect(() => {
-    import("leaflet").then((leaflet) => {
-      setL(leaflet);
-    });
+    import("leaflet").then((leaflet) => setL(leaflet));
 
-    fetch('/api/balade')
-      .then(res => {
-        if (!res.ok) throw new Error("Erreur API");
-        return res.json();
+    fetch("/api/bibliomap")
+      .then((res) => res.json())
+      .then(async (data: Establishment[]) => {
+        // Si votre API ne renvoie pas de lat/lng, on géocode via Nominatim (OpenStreetMap)
+        const enriched = await Promise.all(
+          data.map(async (est) => {
+            if (est.lat && est.lng) return { ...est, coords: [est.lat, est.lng] as [number, number] };
+            
+            try {
+              const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(est.address + ", Toulouse")}`);
+              const json = await res.json();
+              if (json[0]) return { ...est, coords: [parseFloat(json[0].lat), parseFloat(json[0].lon)] as [number, number] };
+            } catch (e) { console.error("Erreur géocodage", e); }
+            return est;
+          })
+        );
+        setEstablishments(enriched);
       })
-      .then((data) => {
-        if (!Array.isArray(data)) return;
-        data.sort((a, b) => a.lieu.localeCompare(b.lieu));
-        setBalades(data);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setIsLoading(false);
-      });
+      .catch(console.error);
   }, []);
 
-  /* ---------- Icône personnalisée Leaflet ---------- */
-  const createIcon = (id: string) => {
+  const toggleFilter = (type: NonNullable<Establishment["type"]>) => {
+    setFilters(prev => ({ ...prev, [type]: !prev[type] }));
+  };
+
+  const filteredEstablishments = establishments.filter(est => filters[est.type ?? "library"]);
+
+  // 2. Création de l'icône personnalisée Leaflet
+  const createIcon = (color: string, label: string) => {
     if (!L) return null;
     return L.divIcon({
-      className: 'custom-balade-icon',
-      html: `<div style="background-color: #15803d; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">${id}</div>`,
+      className: "custom-div-icon",
+      html: `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${label}</div>`,
       iconSize: [24, 24],
-      iconAnchor: [12, 12]
+      iconAnchor: [12, 12],
     });
   };
 
-  /* ---------- Regroupement par lieu ---------- */
-  const groupedBalades: GroupedBalades = balades.reduce((acc, balade) => {
-    acc[balade.lieu] = acc[balade.lieu] || [];
-    acc[balade.lieu].push(balade);
-    return acc;
-  }, {} as GroupedBalades);
-
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -100,100 +102,69 @@ export default function BaladePage() {
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-extrabold mb-4 text-green-700">
-        🚶 Balades nature ({balades.length})
-      </h1>
+      <h1 className="text-3xl font-extrabold mb-6">📍 Carte des Établissements de Toulouse</h1>
 
-      {/* ---------- CARTE LEAFLET ---------- */}
-      <div className="mb-8 border rounded-lg bg-gray-100 overflow-hidden" style={{ height: '70vh', width: '100%' }}>
-        {!isLoading && typeof window !== 'undefined' ? (
-          <MapContainer center={[43.6045, 1.444]} zoom={11} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
+      <div className="mb-4 flex flex-wrap gap-4">
+        {(Object.keys(filters) as Array<NonNullable<Establishment["type"]>>).map(type => (
+          <label key={type} className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={filters[type]}
+              onChange={() => toggleFilter(type)}
+            />
+            <span style={{ color: typeColors[type], fontWeight: 'bold' }}>
+              {typeLabels[type]}
+            </span>
+          </label>
+        ))}
+      </div>
+
+      {/* --- CARTE LEAFLET --- */}
+      <div className="mb-8 border rounded-lg bg-gray-100 overflow-hidden" style={{ height: "70vh", width: "100%" }}>
+        {typeof window !== "undefined" && L ? (
+          <MapContainer center={[43.6045, 1.444]} zoom={13} style={{ height: "100%", width: "100%" }}>
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            
-            {balades.map((balade) => {
-              const icon = createIcon(balade.id);
+            {filteredEstablishments.map((est, i) => {
+              const type = est.type ?? "library";
+              const icon = createIcon(typeColors[type], (i + 1).toString());
               
-              // Préparation des coordonnées du tracé (Polyline)
-              // Note: Dans GeoJSON c'est [lng, lat], Leaflet veut [lat, lng]
-              const polylinePoints = balade.geo_shape?.geometry?.coordinates?.map(coord => [coord[1], coord[0]]) as [number, number][];
-
-              return (
-                <div key={balade.id}>
-                  {/* Marqueur 📍 */}
-                  {icon && (
-                    <Marker position={[balade.geo_point_2d.lat, balade.geo_point_2d.lon]} icon={icon}>
-                      <Popup>
-                        <div style={{ fontFamily: 'sans-serif' }}>
-                          <strong>{balade.nom}</strong><br/>
-                          <em>{balade.lieu}</em><br/>
-                          ⏱ {balade.duree} — 📏 {balade.distance} km<br/>
-                          {balade.lien && <a href={balade.lien} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>Voir →</a>}
-                        </div>
-                      </Popup>
-                    </Marker>
-                  )}
-
-                  {/* Tracé de la balade 🧭 */}
-                  {polylinePoints && (
-                    <Polyline 
-                      positions={polylinePoints} 
-                      pathOptions={{ color: '#16a34a', weight: 3, opacity: 0.7 }} 
-                    />
-                  )}
-                </div>
-              );
+              return est.coords ? (
+                <Marker key={i} position={est.coords} icon={icon}>
+                  <Popup>
+                    <strong>{i + 1}. {est.name}</strong><br />{est.address}
+                  </Popup>
+                </Marker>
+              ) : null;
             })}
           </MapContainer>
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            Chargement de la carte...
-          </div>
+          <div className="flex items-center justify-center h-full">Chargement de la carte...</div>
         )}
       </div>
 
-      {/* ---------- LISTE DES BALADES (Inchangée) ---------- */}
-      <div className="space-y-12">
-        {Object.entries(groupedBalades).map(([lieu, items]) => (
-          <div key={lieu}>
-            <h2 className="text-2xl font-bold mb-4 border-b-2 border-green-400">
-              {lieu} ({items.length})
-            </h2>
+      {/* --- LISTE (Contenu original conservé) --- */}
+      <h2 className="text-2xl font-semibold mb-4">
+        Liste Complète ({filteredEstablishments.length})
+      </h2>
 
-            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {items.map(balade => (
-                <li
-                  key={balade.id}
-                  className="p-4 bg-white rounded-lg shadow border"
-                >
-                  <p className="font-bold text-lg">
-                    {balade.id}. {balade.nom}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    ⏱ {balade.duree} — 📏 {balade.distance} km
-                  </p>
-                  <p className="text-sm italic">
-                    {balade.accessibilite}
-                  </p>
-
-                  {balade.lien && (
-                    <a
-                      href={balade.lien}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 text-sm"
-                    >
-                      Voir →
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {filteredEstablishments.map((est, i) => {
+          const type = est.type ?? "library";
+          const color = typeColors[type];
+          return (
+            <li key={i} className="p-4 border rounded bg-white shadow">
+              <p className="text-lg font-bold">
+                {i + 1}. {est.name}{" "}
+                <span style={{ color }}>({typeLabels[type]})</span>
+              </p>
+              <p>{est.address}</p>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
