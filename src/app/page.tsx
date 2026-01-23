@@ -605,54 +605,44 @@ const starHorizon = Astronomy.Horizon(
       </div>
     </div>
 
+{/* --- Bloc unique : Éphéméride & Environnement --- */}
 <div className="bg-indigo-900/10 border-t border-purple-200 py-2 px-6">
-  <div className="flex flex-wrap justify-around gap-4 text-xs font-medium text-indigo-800">
-    <div className="flex items-center gap-2">
-      <span>📈</span> 
-      {/* Ici on pourrait calculer la différence avec hier */}
-      <span>Lumière : <b>En augmentation</b></span>
-    </div>
+  <div className="flex flex-wrap justify-around items-center gap-y-3 gap-x-6 text-[11px] font-medium text-indigo-800">
     
-    <div className="flex items-center gap-2">
-      <span>📷</span>
-      <span>Heure dorée : <b>
-        {sunTimes.goldenHour.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}
-      </b></span>
+    {/* 1. Tendance Lumière */}
+    <div className="flex items-center gap-1.5">
+      <span className="text-sm">📈</span> 
+      <span>Lumière : <b className="text-indigo-900">En augmentation</b></span>
     </div>
 
-    <div className="flex items-center gap-2 border-l border-purple-300 pl-4">
-      <span>💨</span>
-      {/* Idéalement lié à votre état 'meteo' */}
-      <span>Vent d'Autan : <b>{meteo.condition.includes("Vent") ? "Actif" : "Calme"}</b></span>
-    </div>
-  </div>
-</div>
-
-	  <div className="bg-indigo-900/10 border-t border-purple-200 py-2 px-6">
-  <div className="flex flex-wrap justify-around gap-y-3 gap-x-6 text-[11px] font-medium text-indigo-800">
-    
-    {/* Groupe Photo / Lumière */}
-    <div className="flex items-center gap-4">
+    {/* 2. Groupe Photo (Dorée & Bleue) */}
+    <div className="flex items-center gap-4 border-l border-indigo-200 pl-4">
       <div className="flex items-center gap-1.5">
-        <span title="Heure Dorée (Lumière chaude)">📷</span> 
-        <span>Heure Dorée : <b>{heureDoree}</b></span>
+        <span className="text-sm" title="Heure Dorée (Lumière chaude)">📷</span> 
+        <span>Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
       </div>
-      <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
-        <span title="Heure Bleue (Crépuscule)">🌃</span>
-        <span>Heure Bleue : <b>{heureBleue}</b></span>
+      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+        <span className="text-sm" title="Heure Bleue (Crépuscule)">🌃</span>
+        <span>Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
       </div>
     </div>
 
-    {/* Groupe Santé / Environnement */}
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-1.5 border-l border-indigo-200 md:border-l-0 pl-4 md:pl-0">
-        <span title="Qualité de l'air">🍃</span>
-        <span>Air : <span className="text-emerald-700 font-bold">{qualiteAir}</span></span>
+    {/* 3. Environnement (Vent & Air) */}
+    <div className="flex items-center gap-4 border-l border-indigo-200 pl-4">
+      <div className="flex items-center gap-1.5">
+        <span className="text-sm" title="Vent d'Autan">💨</span>
+        <span>Vent d'Autan : <b className="text-indigo-900">{meteo.condition.includes("Vent") ? "Actif" : "Calme"}</b></span>
       </div>
-      <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
-        <span title="Indice UV">🕶️</span>
-        <span>UV : <b>{indiceUV}</b></span>
+      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+        <span className="text-sm" title="Qualité de l'air">🍃</span>
+        <span>Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span></span>
       </div>
+    </div>
+
+    {/* 4. Santé (UV) */}
+    <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
+      <span className="text-sm" title="Indice UV">🕶️</span>
+      <span>UV : <b className="text-indigo-900">{indiceUV}</b></span>
     </div>
 
   </div>
