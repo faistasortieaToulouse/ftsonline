@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from 'react';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 const MOIS_COLONNES = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "décembre"];
 const JOURS_LIGNES = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
@@ -35,6 +37,14 @@ export default function DateFetesPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 font-sans relative">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-black text-gray-900 mb-2 uppercase tracking-tighter">
