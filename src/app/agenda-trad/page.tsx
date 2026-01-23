@@ -71,6 +71,16 @@ export default function AgendaTradHauteGaronnePage() {
 
   return (
     <div className="container mx-auto py-10 px-4">
+      {/* --- BOUTON RETOUR --- */}
+      <nav className="mb-6">
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold transition-colors group"
+        >
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+          Retour à l'accueil
+        </Link>
+      </nav>
       <h1 className="text-3xl font-bold mb-4">AgendaTrad – Haute-Garonne</h1>
 
       <div className="mb-6 flex flex-col sm:flex-row gap-3">
