@@ -674,7 +674,7 @@ const starHorizon = Astronomy.Horizon(
     <div className="flex items-center gap-3 justify-center md:justify-start">
       <span className="text-yellow-400 text-xl">☀️</span>
       <div className="flex flex-col">
-        <span className="text-[10px] uppercase font-bold text-slate-500">Soleil (Toulouse)</span>
+        <span className="text-[10px] uppercase font-bold text-yellow-400">Soleil (Toulouse)</span>
         <div className="text-xs font-bold text-slate-200">
           {sunTimes.sunrise.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})} 
           <span className="mx-2 text-slate-600">|</span>
@@ -688,7 +688,7 @@ const starHorizon = Astronomy.Horizon(
     <div className="flex items-center gap-3 justify-center border-y md:border-y-0 md:border-x border-slate-800 py-2 md:py-0">
       <span className="text-2xl">{emojiLune}</span>
       <div className="flex flex-col">
-        <span className="text-[10px] uppercase font-bold text-slate-500">Lune & Étoiles</span>
+        <span className="text-[10px] uppercase font-bold text-yellow-400">Lune & Étoiles</span>
         <span className="text-xs text-slate-200">Phase : <b>{(moonIllum.fraction * 100).toFixed(0)}%</b></span>
         <span className={`text-[10px] font-medium ${siriusVisible ? 'text-cyan-400' : 'text-red-400'}`}>
           ✨ Sirius : {siriusVisible ? `Visible (${starHorizon.altitude.toFixed(0)}°)` : "Sous l'horizon"}
@@ -698,7 +698,7 @@ const starHorizon = Astronomy.Horizon(
 
     {/* Constellations */}
     <div className="flex flex-col items-center md:items-end">
-      <span className="text-[10px] uppercase font-bold text-slate-500 mb-1">Ciel du mois</span>
+      <span className="text-[10px] uppercase font-bold text-yellow-400 mb-1">Ciel du mois</span>
       <div className="flex flex-col gap-1 text-[10px] text-center md:text-right">
         <div><span className="text-blue-400 font-bold">Nord:</span> {constMonth.n}</div>
         <div><span className="text-emerald-400 font-bold">Sud:</span> {constMonth.s}</div>
