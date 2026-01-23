@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { Waves } from "lucide-react";
+import "leaflet/dist/leaflet.css";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface HydroPoint {
   id: number;
@@ -102,6 +105,14 @@ export default function HydrographiePage() {
 
   return (
     <div className="flex flex-col h-screen p-4 gap-4 bg-slate-50">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
         strategy="afterInteractive"
