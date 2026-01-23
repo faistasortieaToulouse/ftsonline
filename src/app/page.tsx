@@ -667,7 +667,7 @@ const starHorizon = Astronomy.Horizon(
     </div>
 
 {/* Ligne 6 : ÉPHÉMÉRIDES ASTRONOMIQUES */}
-<div className="bg-blue-600 text-slate-300 border-t border-purple-200 py-3 px-6">
+<div className="bg-blue-600 text-yellow-400 border-t border-purple-200 py-3 px-6">
   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
     
     {/* Soleil */}
