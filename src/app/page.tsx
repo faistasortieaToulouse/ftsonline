@@ -430,7 +430,14 @@ export default function HomePage() {
   const lat = 43.6045;
   const lng = 1.4442;
 
-// --- AJOUT POUR L'HEURE DORÉE ET BLEUE ---
+  // 2. Calculs Soleil (SunCalc) sécurisés
+  const sunTimes = SunCalc.getTimes(heure, lat, lng);
+  const dureeMs = sunTimes.sunset.getTime() - sunTimes.sunrise.getTime();
+  const dureeHeures = Math.floor(dureeMs / 3600000);
+  const dureeMinutes = Math.floor((dureeMs % 3600000) / 60000);
+
+	
+  // --- AJOUT POUR L'HEURE DORÉE ET BLEUE ---
 // 'goldenHour' est la fin de l'heure dorée le soir
 const heureDoree = sunTimes.goldenHour.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
 // 'dusk' correspond à la fin du crépuscule civil (début de l'heure bleue profonde)
@@ -440,12 +447,7 @@ const heureBleue = sunTimes.dusk.toLocaleTimeString('fr-FR', {hour:'2-digit', mi
 // Si votre API météo ne renvoie pas encore l'UV, on peut l'initialiser par défaut
 const indiceUV = meteo.uv || "Faible (1)"; 
 const qualiteAir = "Bon (Indice 22)"; // Idéalement à mapper sur meteo.air
-
-  // 2. Calculs Soleil (SunCalc) sécurisés
-  const sunTimes = SunCalc.getTimes(heure, lat, lng);
-  const dureeMs = sunTimes.sunset.getTime() - sunTimes.sunrise.getTime();
-  const dureeHeures = Math.floor(dureeMs / 3600000);
-  const dureeMinutes = Math.floor((dureeMs % 3600000) / 60000);
+	
 
   // 3. Calculs Lune
   const moonIllum = SunCalc.getMoonIllumination(heure);
