@@ -1,9 +1,20 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import dynamic from "next/dynamic";
+import "leaflet/dist/leaflet.css";
 
-// Helper pour extraire les données du flux complexe DATEX2
+// 1. Import dynamique strict pour éviter l'erreur d'hydratation #418
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { 
+  ssr: false,
+  loading: () => <div className="h-full w-full bg-slate-200 animate-pulse flex items-center justify-center">Chargement de la carte...</div>
+});
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
+
 const getInfo = (sit: any) => {
   const record = sit.situationRecord;
   return {
@@ -13,122 +24,113 @@ const getInfo = (sit: any) => {
     route: record?.groupOfLocations?.locationContainedInGroup?.locationByReference?.predefinedLocationReference || "Réseau National",
     gravite: record?.severity || 'normal',
     debut: record?.validity?.validityTimeSpecification?.overallStartTime,
-    // Extraction des coordonnées
     coords: record?.groupOfLocations?.locationContainedInGroup?.pointByCoordinates?.pointCoordinates 
          || record?.groupOfLocations?.locationByReference?.pointByCoordinates?.pointCoordinates
   };
 };
 
 export default function BisonFutePage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
   const [events, setEvents] = useState<any[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [isMounted, setIsMounted] = useState(false); // 🔥 Crucial pour l'hydratation
+  const [L, setL] = useState<any>(null);
 
-  // 1. Récupération des données
   useEffect(() => {
-    fetch("/api/bisonfute")
-      .then(res => res.json())
-      .then(data => {
+    setIsMounted(true); // On signale que le client est prêt
+    
+    import("leaflet").then((leaflet) => {
+      setL(leaflet);
+    });
+
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/bisonfute");
+        const data = await res.json();
         if (Array.isArray(data)) setEvents(data);
         else if (data && data.situation) setEvents([data.situation]);
-      })
-      .catch(console.error);
+        else if (data && data.situations) setEvents(data.situations); // Parfois le flux est dans .situations
+      } catch (err) {
+        console.error("Erreur Fetch BisonFute:", err);
+      }
+    }
+    fetchData();
   }, []);
 
-  // 2. Gestion de la Carte Google Maps
-  useEffect(() => {
-    if (!isReady || !mapRef.current || typeof window.google === 'undefined') return;
-
-    // Initialisation de la carte si elle n'existe pas
-    if (!mapInstance.current) {
-      mapInstance.current = new google.maps.Map(mapRef.current, {
-        zoom: 10,
-        center: { lat: 43.6047, lng: 1.4442 }, // Toulouse
-        mapId: 'DEMO_MAP_ID', // Requis pour certaines fonctionnalités avancées
-      });
-    }
-
-    // Nettoyage des anciens marqueurs
-    markersRef.current.forEach(marker => marker.setMap(null));
-    markersRef.current = [];
-
-    // Ajout des marqueurs pour les événements
-    events.forEach((sit) => {
-      const info = getInfo(sit);
-      
-      if (info.coords?.latitude && info.coords?.longitude) {
-        const isAccident = info.type.toLowerCase().includes('accident');
-        
-        const marker = new google.maps.Marker({
-          position: { lat: parseFloat(info.coords.latitude), lng: parseFloat(info.coords.longitude) },
-          map: mapInstance.current,
-          title: info.type,
-          icon: {
-            path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-            scale: 5,
-            fillColor: isAccident ? "#ef4444" : "#f59e0b", // Rouge ou Orange
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: "#ffffff",
-          }
-        });
-
-        // Fenêtre d'info au clic
-        const infoWindow = new google.maps.InfoWindow({
-          content: `
-            <div style="color: #1e293b; padding: 8px; max-width: 200px;">
-              <h3 style="font-weight: bold; text-transform: uppercase; font-size: 12px; margin-bottom: 4px;">${info.type}</h3>
-              <p style="font-size: 11px; color: #64748b;">${info.route}</p>
-              <hr style="margin: 8px 0; border: 0; border-top: 1px solid #e2e8f0;"/>
-              <p style="font-size: 11px;">${info.desc}</p>
-            </div>
-          `
-        });
-
-        marker.addListener("click", () => {
-          infoWindow.open(mapInstance.current, marker);
-        });
-
-        markersRef.current.push(marker);
-      }
+  const createCustomIcon = (type: string) => {
+    if (!L) return null;
+    const isAccident = type.toLowerCase().includes('accident');
+    return L.divIcon({
+      className: 'custom-marker',
+      html: `<div style="background-color: ${isAccident ? "#ef4444" : "#f59e0b"}; width: 14px; height: 14px; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 8px rgba(0,0,0,0.3);"></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7]
     });
-  }, [isReady, events]);
+  };
+
+  // Si on est encore côté serveur, on affiche un squelette vide pour éviter l'erreur #418
+  if (!isMounted) {
+    return <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">Chargement...</div>;
+  }
 
   return (
     <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
 
       <header className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl shadow-sm border-b-4 border-yellow-400 gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">🚗 Info Trafic Haute-Garonne</h1>
-          <p className="text-slate-500 text-sm font-medium">Données Bison Futé en temps réel</p>
+          <p className="text-slate-500 text-sm font-medium">Temps réel — Bison Futé</p>
         </div>
         <div className="flex gap-3">
-            <div className="flex items-center gap-2 bg-red-50 px-3 py-1.5 rounded-full border border-red-100">
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                <span className="text-red-700 text-xs font-bold uppercase tracking-wider">Accidents</span>
-            </div>
-            <div className="flex items-center gap-2 bg-orange-50 px-3 py-1.5 rounded-full border border-orange-100">
-                <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
-                <span className="text-orange-700 text-xs font-bold uppercase tracking-wider">Travaux / Maintenance</span>
-            </div>
+          <div className="flex items-center gap-2 bg-red-50 px-3 py-1.5 rounded-full border border-red-100">
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            <span className="text-red-700 text-xs font-bold uppercase tracking-wider">Accidents</span>
+          </div>
+          <div className="flex items-center gap-2 bg-orange-50 px-3 py-1.5 rounded-full border border-orange-100">
+            <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+            <span className="text-orange-700 text-xs font-bold uppercase tracking-wider">Travaux</span>
+          </div>
         </div>
       </header>
 
-      {/* Carte */}
-      <div 
-        ref={mapRef} 
-        style={{ height: "50vh" }} 
-        className="rounded-3xl shadow-xl border-4 border-white mb-10 overflow-hidden bg-slate-200" 
-      />
+      {/* Carte avec protection Hydratation */}
+      <div className="rounded-3xl shadow-xl border-4 border-white mb-10 overflow-hidden bg-slate-200 h-[50vh]">
+        <MapContainer center={[43.6047, 1.4442]} zoom={10} style={{ height: "100%", width: "100%" }}>
+          <TileLayer
+            attribution='&copy; OpenStreetMap'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {events.map((sit, idx) => {
+            const info = getInfo(sit);
+            const icon = createCustomIcon(info.type);
+            if (info.coords?.latitude && info.coords?.longitude && icon) {
+              return (
+                <Marker 
+                  key={idx} 
+                  position={[parseFloat(info.coords.latitude), parseFloat(info.coords.longitude)]}
+                  icon={icon}
+                >
+                  <Popup>
+                    <div className="text-slate-800 p-1">
+                      <h3 className="font-bold uppercase text-[12px] mb-1">{info.type}</h3>
+                      <p className="text-[11px] text-slate-500 mb-1">{info.route}</p>
+                      <hr className="my-1 border-slate-100"/>
+                      <p className="text-[11px]">{info.desc}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              );
+            }
+            return null;
+          })}
+        </MapContainer>
+      </div>
 
-      {/* Tableau des événements */}
+      {/* Tableau (Mise en page conservée) */}
       <section className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-10">
         <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -154,9 +156,8 @@ export default function BisonFutePage() {
                 const info = getInfo(sit);
                 const isAccident = info.type.toLowerCase().includes('accident');
                 const isMaintenance = info.type.toLowerCase().includes('maintenance') || info.type.toLowerCase().includes('work');
-                
                 return (
-                  <tr key={idx} className="hover:bg-slate-50 transition-colors group">
+                  <tr key={idx} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${
                         isAccident ? 'bg-red-100 text-red-600' : 
@@ -165,12 +166,8 @@ export default function BisonFutePage() {
                         {info.type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm font-bold text-slate-700">
-                      {info.route}
-                    </td>
-                    <td className="px-6 py-4 text-xs text-slate-500 max-w-xs truncate lg:max-w-md">
-                      {info.desc}
-                    </td>
+                    <td className="px-6 py-4 text-sm font-bold text-slate-700">{info.route}</td>
+                    <td className="px-6 py-4 text-xs text-slate-500 max-w-xs truncate">{info.desc}</td>
                     <td className="px-6 py-4 text-xs text-slate-400 font-mono">
                       {info.debut ? new Date(info.debut).toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
                     </td>
@@ -178,17 +175,14 @@ export default function BisonFutePage() {
                       <div className={`w-2.5 h-2.5 rounded-full mx-auto ${
                         info.gravite === 'highest' ? 'bg-red-500 animate-pulse' : 
                         info.gravite === 'medium' ? 'bg-orange-400' : 'bg-green-400'
-                      }`} title={`Gravité: ${info.gravite}`} />
+                      }`} />
                     </td>
                   </tr>
                 );
               }) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-20 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <span className="text-3xl">✅</span>
-                        <p className="text-slate-400 italic font-medium">Aucun incident majeur sur le réseau national actuellement.</p>
-                      </div>
+                  <td colSpan={5} className="px-6 py-20 text-center text-slate-400 italic font-medium">
+                    Aucun incident majeur détecté.
                   </td>
                 </tr>
               )}
