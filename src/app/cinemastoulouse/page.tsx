@@ -1,111 +1,83 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import "leaflet/dist/leaflet.css";
+
+// --- Imports dynamiques pour éviter les erreurs SSR ---
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
 interface Cinema {
   name: string;
   address: string;
   url: string;
   category: string;
+  lat?: number;
+  lng?: number;
 }
 
 export default function CinemasToulousePage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-
   const [cinemas, setCinemas] = useState<Cinema[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [L, setL] = useState<any>(null);
 
-  // --- 1. Charger les données depuis votre API ---
+  // --- 1. Charger les données et l'objet Leaflet ---
   useEffect(() => {
+    // Charger Leaflet pour les icônes personnalisées
+    import("leaflet").then((leaflet) => {
+      setL(leaflet.default);
+    });
+
     fetch("/api/cinemastoulouse")
       .then(async (res) => {
         if (!res.ok) throw new Error("Erreur lors de la récupération");
         const data: Cinema[] = await res.json();
-        // Tri alphabétique pour que la numérotation soit logique
-        setCinemas(data.sort((a, b) => a.name.localeCompare(b.name)));
+        const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Géocodage des adresses (Nominatim)
+        // Note: Dans un vrai projet, il vaut mieux stocker lat/lng en BDD
+        const geocodeAll = async () => {
+          const updated = await Promise.all(sortedData.map(async (cinema, i) => {
+            try {
+              // Petit délai pour respecter les limites de Nominatim
+              await new Promise(resolve => setTimeout(resolve, i * 200)); 
+              const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cinema.address + ", Toulouse")}`);
+              const results = await response.json();
+              if (results.length > 0) {
+                return { ...cinema, lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) };
+              }
+            } catch (err) {
+              console.error("Geocoding error", err);
+            }
+            return cinema;
+          }));
+          setCinemas(updated);
+          setLoading(false);
+        };
+
+        geocodeAll();
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
-
-  // --- 2. Initialiser la carte et les marqueurs ---
-  useEffect(() => {
-    if (!isReady || !mapRef.current || cinemas.length === 0) return;
-
-    // Création de la carte centrée sur Toulouse
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 13,
-      center: { lat: 43.6045, lng: 1.444 },
-      scrollwheel: true,
-      gestureHandling: "greedy",
-      styles: [ // Style optionnel pour rendre la carte plus moderne
-        { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
-      ]
-    });
-
-    const geocoder = new google.maps.Geocoder();
-
-    cinemas.forEach((cinema, i) => {
-      // On utilise l'adresse complète stockée dans l'API
-      const adresse = cinema.address;
-
-      // Délai pour éviter de saturer le quota du Geocoder Google (Over Query Limit)
-      setTimeout(() => {
-        geocoder.geocode({ address: adresse }, (results, status) => {
-          if (status !== "OK" || !results?.[0]) {
-            console.warn(`⚠ Adresse introuvable: "${adresse}"`);
-            return;
-          }
-
-          const marker = new google.maps.Marker({
-            map: mapInstance.current!,
-            position: results[0].geometry.location,
-            label: {
-              text: `${i + 1}`,
-              color: "white",
-              fontWeight: "bold"
-            },
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 12,
-              fillColor: "#e11d48", // Rose Toulouse
-              fillOpacity: 1,
-              strokeWeight: 2,
-              strokeColor: "white",
-            },
-            title: cinema.name,
-            animation: google.maps.Animation.DROP
-          });
-
-          const infowindow = new google.maps.InfoWindow({
-            content: `
-              <div style="padding: 10px; font-family: sans-serif;">
-                <strong style="font-size: 14px;">${i + 1}. ${cinema.name}</strong><br>
-                <p style="margin: 5px 0; font-size: 12px; color: #666;">${cinema.address}</p>
-                <span style="display: inline-block; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-bottom: 8px;">${cinema.category}</span><br>
-                <a href="${cinema.url}" target="_blank" style="color: #e11d48; font-weight: bold; text-decoration: none; font-size: 12px;">Voir le programme →</a>
-              </div>
-            `,
-          });
-
-          marker.addListener("click", () => {
-            infowindow.open(mapInstance.current, marker);
-          });
-        });
-      }, i * 250); // 250ms entre chaque requête pour respecter les limites Google
-    });
-  }, [isReady, cinemas]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto min-h-screen bg-slate-50">
-      {/* --- Script Google Maps --- */}
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
-
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <header className="mb-8">
         <h1 className="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tight">
           🎬 Cinémas <span className="text-rose-600">Toulouse</span>
@@ -113,20 +85,57 @@ export default function CinemasToulousePage() {
         <p className="text-slate-600 italic">Carte interactive des salles obscures de la ville rose.</p>
       </header>
 
-      {/* --- Carte --- */}
-      <div
-        ref={mapRef}
-        style={{ height: "60vh", width: "100%" }}
-        className="mb-10 border-4 border-white shadow-xl rounded-2xl bg-gray-200 overflow-hidden relative"
-      >
-        {!isReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
-            <p className="animate-pulse font-bold text-slate-400">Initialisation de la carte...</p>
+      {/* --- Zone de la Carte Leaflet --- */}
+      <div className="mb-10 border-4 border-white shadow-xl rounded-2xl bg-gray-200 overflow-hidden h-[60vh] relative">
+        {loading && (
+          <div className="absolute inset-0 z-[1000] flex items-center justify-center bg-slate-100/80 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="animate-spin text-rose-600" size={40} />
+              <p className="font-bold text-slate-500">Géolocalisation des cinémas...</p>
+            </div>
           </div>
+        )}
+
+        {L && (
+          <MapContainer 
+            center={[43.6045, 1.444]} 
+            zoom={13} 
+            style={{ height: "100%", width: "100%" }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; OpenStreetMap contributors'
+            />
+            {cinemas.map((cinema, i) => {
+              if (!cinema.lat || !cinema.lng) return null;
+
+              const customMarker = L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div style="background-color: #e11d48; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${i + 1}</div>`,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+              });
+
+              return (
+                <Marker key={i} position={[cinema.lat, cinema.lng]} icon={customMarker}>
+                  <Popup>
+                    <div className="p-1">
+                      <strong className="text-rose-600">{i + 1}. {cinema.name}</strong><br />
+                      <p className="text-xs text-slate-600 my-1">{cinema.address}</p>
+                      <span className="text-[10px] bg-slate-100 px-1 rounded font-bold uppercase">{cinema.category}</span>
+                      <div className="mt-2">
+                        <a href={cinema.url} target="_blank" className="text-xs font-bold text-blue-600 hover:underline">Voir le programme →</a>
+                      </div>
+                    </div>
+                  </Popup>
+                </Marker>
+              );
+            })}
+          </MapContainer>
         )}
       </div>
 
-      {/* --- Liste des cinémas --- */}
+      {/* --- Liste des cinémas (Inchangée) --- */}
       <h2 className="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2">
         <span className="bg-rose-600 text-white px-3 py-1 rounded-lg text-sm">{cinemas.length}</span>
         Salles répertoriées
@@ -137,12 +146,6 @@ export default function CinemasToulousePage() {
           <div 
             key={i} 
             className="group p-5 border border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-md hover:border-rose-200 transition-all cursor-pointer"
-            onClick={() => {
-              // Centrer la carte au clic sur la liste si besoin
-              if (mapInstance.current) {
-                // Ici on pourrait rajouter un zoom sur le point
-              }
-            }}
           >
             <div className="flex items-start justify-between mb-4">
               <span className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 text-white font-black">
