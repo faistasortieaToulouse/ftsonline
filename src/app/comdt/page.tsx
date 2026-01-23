@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import parse from "html-react-parser";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -111,6 +113,14 @@ export default function ComdtPage() {
 
   return (
     <div className="container mx-auto py-10 px-4">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       {/* Style scrollbar personnalisé */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
