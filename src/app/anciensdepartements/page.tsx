@@ -1,9 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import dynamic from "next/dynamic";
+import "leaflet/dist/leaflet.css";
+
+// Imports dynamiques pour Leaflet (pas de SSR)
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
 interface Departement {
   nom: string;
@@ -17,18 +24,19 @@ interface Departement {
 }
 
 export default function AnciensDepartementsPage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-
   const [departements, setDepartements] = useState<Departement[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [L, setL] = useState<any>(null);
 
   useEffect(() => {
+    // Chargement de l'objet Leaflet pour les icônes personnalisées
+    import("leaflet").then((leaflet) => {
+      setL(leaflet);
+    });
+
     fetch("/api/anciensdepartements")
       .then(async (res) => {
         const data = await res.json();
         if (Array.isArray(data)) {
-          // Tri alphabétique par NOM du département
           const sorted = data.sort((a, b) => 
             a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' })
           );
@@ -38,71 +46,42 @@ export default function AnciensDepartementsPage() {
       .catch(console.error);
   }, []);
 
-  useEffect(() => {
-    if (!isReady || !mapRef.current || departements.length === 0) return;
-
-    // Centrage initial sur la Méditerranée pour voir Italie et Algérie
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 4,
-      center: { lat: 42.0, lng: 12.0 }, 
-      scrollwheel: true,
-      gestureHandling: "greedy",
-      mapTypeId: 'terrain'
+  // Fonction pour créer l'icône "Bleu de France" avec le numéro
+  const createIcon = (index: number) => {
+    if (!L) return null;
+    return L.divIcon({
+      className: 'custom-marker',
+      html: `
+        <div style="
+          background-color: #002395;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 2px solid white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 10px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        ">
+          ${index + 1}
+        </div>
+      `,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
-
-    departements.forEach((d, index) => {
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: { lat: d.lat, lng: d.lng },
-        title: d.nom,
-        label: {
-          text: (index + 1).toString(),
-          color: "white",
-          fontSize: "10px",
-          fontWeight: "bold"
-        },
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 12,
-          fillColor: "#002395", // Bleu de France
-          fillOpacity: 1,
-          strokeWeight: 2,
-          strokeColor: "#ffffff",
-        }
-      });
-
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <div style="color: black; padding: 5px; font-family: sans-serif; max-width: 220px;">
-            <strong style="font-size: 14px;">#${index + 1} - ${d.nom}</strong><br>
-            <span style="color: #002395; font-size: 11px; font-weight: bold;">${d.pays.toUpperCase()}</span><br>
-            <span style="color: #b91c1c; font-size: 10px; font-weight: bold;">${d.date_debut} — ${d.date_fin}</span><br>
-            <p style="margin-top:8px; font-size: 12px; line-height: 1.4; color: #333;">${d.description}</p>
-          </div>
-        `,
-      });
-
-      marker.addListener("click", () => {
-        infowindow.open(mapInstance.current, marker);
-      });
-    });
-  }, [isReady, departements]);
+  };
 
   return (
     <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
-
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
 
       <header className="mb-8 border-b pb-6 text-center">
         <h1 className="text-4xl font-black text-blue-900 uppercase tracking-tighter">
@@ -111,18 +90,39 @@ export default function AnciensDepartementsPage() {
         <p className="text-gray-600 mt-2 italic">Hors frontières actuelles : Europe Napoléonienne et Algérie Française</p>
       </header>
 
-      <div
-        ref={mapRef}
-        style={{ height: "60vh", width: "100%" }}
-        className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden"
-      >
-        {!isReady && (
-          <div className="flex items-center justify-center h-full bg-slate-100">
-            <p className="animate-pulse font-bold text-blue-600">Chargement de la cartographie historique...</p>
-          </div>
+      {/* ZONE CARTE LEAFLET */}
+      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden" style={{ height: "60vh" }}>
+        {typeof window !== "undefined" && (
+          <MapContainer 
+            center={[42.0, 12.0]} 
+            zoom={4} 
+            scrollWheelZoom={true} 
+            style={{ height: "100%", width: "100%", zIndex: 0 }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {departements.map((d, index) => {
+              const icon = createIcon(index);
+              return icon ? (
+                <Marker key={d.nom} position={[d.lat, d.lng]} icon={icon}>
+                  <Popup>
+                    <div style={{ color: 'black', padding: '5px', fontFamily: 'sans-serif', maxWidth: '220px' }}>
+                      <strong style={{ fontSize: '14px' }}>#${index + 1} - ${d.nom}</strong><br />
+                      <span style={{ color: '#002395', fontSize: '11px', font_weight: 'bold' }}>{d.pays.toUpperCase()}</span><br />
+                      <span style={{ color: '#b91c1c', fontSize: '10px', font_weight: 'bold' }}>{d.date_debut} — {d.date_fin}</span><br />
+                      <p style={{ marginTop: '8px', fontSize: '12px', lineHeight: '1.4', color: '#333' }}>{d.description}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              ) : null;
+            })}
+          </MapContainer>
         )}
       </div>
 
+      {/* GRILLE DE DEPARTEMENTS (Inchangée) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {departements.map((d, index) => (
           <div key={d.nom} className="group p-5 bg-white rounded-2xl shadow-sm border border-slate-200 hover:bg-blue-900 transition-all duration-300 flex gap-4">
