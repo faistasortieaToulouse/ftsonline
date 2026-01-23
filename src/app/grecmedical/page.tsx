@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 type MotGrec = {
   id: number;
@@ -30,6 +32,14 @@ export default function GrecMedicalPage() {
 
   return (
     <div className="p-4">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-2xl font-bold mb-4">Dictionnaire Grec Médical</h1>
 
       <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
