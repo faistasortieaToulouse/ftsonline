@@ -430,6 +430,17 @@ export default function HomePage() {
   const lat = 43.6045;
   const lng = 1.4442;
 
+// --- AJOUT POUR L'HEURE DORÉE ET BLEUE ---
+// 'goldenHour' est la fin de l'heure dorée le soir
+const heureDoree = sunTimes.goldenHour.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+// 'dusk' correspond à la fin du crépuscule civil (début de l'heure bleue profonde)
+const heureBleue = sunTimes.dusk.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+
+// --- POUR L'INDICE UV / AIR ---
+// Si votre API météo ne renvoie pas encore l'UV, on peut l'initialiser par défaut
+const indiceUV = meteo.uv || "Faible (1)"; 
+const qualiteAir = "Bon (Indice 22)"; // Idéalement à mapper sur meteo.air
+
   // 2. Calculs Soleil (SunCalc) sécurisés
   const sunTimes = SunCalc.getTimes(heure, lat, lng);
   const dureeMs = sunTimes.sunset.getTime() - sunTimes.sunrise.getTime();
@@ -591,6 +602,59 @@ const starHorizon = Astronomy.Horizon(
         </div>
       </div>
     </div>
+
+<div className="bg-indigo-900/10 border-t border-purple-200 py-2 px-6">
+  <div className="flex flex-wrap justify-around gap-4 text-xs font-medium text-indigo-800">
+    <div className="flex items-center gap-2">
+      <span>📈</span> 
+      {/* Ici on pourrait calculer la différence avec hier */}
+      <span>Lumière : <b>En augmentation</b></span>
+    </div>
+    
+    <div className="flex items-center gap-2">
+      <span>📷</span>
+      <span>Heure dorée : <b>
+        {sunTimes.goldenHour.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}
+      </b></span>
+    </div>
+
+    <div className="flex items-center gap-2 border-l border-purple-300 pl-4">
+      <span>💨</span>
+      {/* Idéalement lié à votre état 'meteo' */}
+      <span>Vent d'Autan : <b>{meteo.condition.includes("Vent") ? "Actif" : "Calme"}</b></span>
+    </div>
+  </div>
+</div>
+
+	  <div className="bg-indigo-900/10 border-t border-purple-200 py-2 px-6">
+  <div className="flex flex-wrap justify-around gap-y-3 gap-x-6 text-[11px] font-medium text-indigo-800">
+    
+    {/* Groupe Photo / Lumière */}
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1.5">
+        <span title="Heure Dorée (Lumière chaude)">📷</span> 
+        <span>Heure Dorée : <b>{heureDoree}</b></span>
+      </div>
+      <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
+        <span title="Heure Bleue (Crépuscule)">🌃</span>
+        <span>Heure Bleue : <b>{heureBleue}</b></span>
+      </div>
+    </div>
+
+    {/* Groupe Santé / Environnement */}
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1.5 border-l border-indigo-200 md:border-l-0 pl-4 md:pl-0">
+        <span title="Qualité de l'air">🍃</span>
+        <span>Air : <span className="text-emerald-700 font-bold">{qualiteAir}</span></span>
+      </div>
+      <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
+        <span title="Indice UV">🕶️</span>
+        <span>UV : <b>{indiceUV}</b></span>
+      </div>
+    </div>
+
+  </div>
+</div>
 
     {/* Ligne 4 : Astro (Zodiaque) */}
     <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
