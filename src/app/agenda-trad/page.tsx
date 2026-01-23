@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import parse from "html-react-parser";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 const MAX_EVENTS = 50;
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
