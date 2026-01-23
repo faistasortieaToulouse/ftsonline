@@ -1,83 +1,57 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-// --- Imports dynamiques pour Leaflet ---
+// --- Imports dynamiques pour Leaflet (SSR Safe) ---
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
-const Polygon = dynamic(() => import("react-leaflet").then((mod) => mod.Polygon), { ssr: false });
 
-interface GeoPoint { lat: number; lon: number }
-interface GeoShape { geometry: { coordinates: any; type: string } }
-
-interface CodePostal {
-  id: string;
-  code_postal: string;
-  communes: string[];
-  geo_point_2d: GeoPoint | null;
-  geo_shape: GeoShape | null;
-  numero?: number;
+interface Territoire {
+  nom: string;
+  statut: string;
+  continent: string;
+  lat: number;
+  lng: number;
+  description: string;
+  date_debut: number;
+  date_fin: number;
 }
 
-const COLORS = ["#2563eb", "#16a34a", "#dc2626", "#7c3aed", "#ea580c", "#0891b2"];
-
-// Coordonnées manuelles pour Plaisance-du-Touch (format Leaflet: [lat, lng])
-const PATH_PLAISANCE: [number, number][] = [
-  [43.536668, 1.310472], [43.535392, 1.299290], [43.525987, 1.289615],
-  [43.535792, 1.260179], [43.545511, 1.255054], [43.552350, 1.237904],
-  [43.559138, 1.246428], [43.566990, 1.248595], [43.569306, 1.253111],
-  [43.566337, 1.271520], [43.572060, 1.292281], [43.577740, 1.288407],
-  [43.587319, 1.273441], [43.598155, 1.282156], [43.599208, 1.284129],
-  [43.594740, 1.304914], [43.584621, 1.292621], [43.577197, 1.293548],
-  [43.566939, 1.323687], [43.559157, 1.328584], [43.550705, 1.314868],
-  [43.538340, 1.311065], [43.536668, 1.310472]
-];
-
-export default function CodesPostauxPage() {
-  const [codes, setCodes] = useState<CodePostal[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ColonieEuropePage() {
+  const [territoires, setTerritoires] = useState<Territoire[]>([]);
+  const [isReady, setIsReady] = useState(false);
   const [L, setL] = useState<any>(null);
 
   useEffect(() => {
-    // Importation de Leaflet pour les icônes
+    // 1. Chargement de l'objet Leaflet pour les icônes personnalisées
     import("leaflet").then((leaflet) => {
       setL(leaflet.default);
+      setIsReady(true);
     });
 
-    fetch("/api/codes-postaux")
-      .then(res => res.json())
-      .then(data => {
-        if (!Array.isArray(data)) return;
-        const sorted = data.sort((a, b) => a.code_postal.localeCompare(b.code_postal, "fr", { numeric: true }));
-
-        let num = 0;
-        const processed: CodePostal[] = sorted.map(code => {
-          if (code.code_postal === "31820") return { ...code, numero: 20 };
-          num++;
-          const numero = num < 20 ? num : num + 1;
-          return { ...code, numero };
-        });
-
-        setCodes(processed);
-        setLoading(false);
+    // 2. Fetch des données
+    fetch("/api/colonieeurope")
+      .then(async (res) => {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const sorted = data.sort((a, b) => 
+            a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' })
+          );
+          setTerritoires(sorted);
+        }
       })
       .catch(console.error);
   }, []);
 
-  // Définition de la couleur pour Pibrac
-  const colorPibrac = useMemo(() => {
-    const indexPibrac = codes.findIndex(c => c.code_postal === "31820");
-    return indexPibrac >= 0 ? COLORS[indexPibrac % COLORS.length] : "#2563eb";
-  }, [codes]);
-
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+      
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -85,106 +59,81 @@ export default function CodesPostauxPage() {
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-extrabold mb-4 text-blue-700">
-        📮 Codes postaux de Toulouse Métropole ({codes[codes.length - 1]?.numero ?? codes.length})
-      </h1>
+      <header className="mb-8 border-b pb-6 text-center">
+        <h1 className="text-4xl font-black text-blue-900 uppercase tracking-tighter">
+          Empire Français : Territoires Annexés
+        </h1>
+        <p className="text-gray-600 mt-2 italic">L'Europe sous Napoléon Ier et la Révolution (Période 1792 - 1815)</p>
+      </header>
 
       {/* --- CARTE LEAFLET --- */}
-      <div className="mb-8 border rounded-lg bg-gray-100 h-[70vh] relative overflow-hidden shadow-inner">
-        {loading || !L ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-[1000]">
-            <Loader2 className="animate-spin text-blue-600" size={40} />
+      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden h-[60vh] relative">
+        {!isReady || territoires.length === 0 ? (
+          <div className="flex items-center justify-center h-full bg-slate-100">
+             <div className="flex flex-col items-center gap-3">
+              <Loader2 className="animate-spin text-blue-600" size={32} />
+              <p className="font-bold text-blue-600">Chargement de la carte impériale...</p>
+            </div>
           </div>
         ) : (
-          <MapContainer center={[43.6045, 1.444]} zoom={11} style={{ height: "100%", width: "100%" }}>
+          <MapContainer 
+            center={[47.5, 7.5]} 
+            zoom={5} 
+            style={{ height: "100%", width: "100%" }}
+          >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; OpenStreetMap'
+              attribution='&copy; OpenStreetMap contributors'
             />
             
-            {codes.map((code, index) => {
-              const color = code.code_postal === "31820" ? colorPibrac : COLORS[index % COLORS.length];
-              const numero = code.numero ?? index + 1;
-
-              // 1. Rendu des Polygones (GeoShape)
-              const polygons = [];
-              if (code.geo_shape?.geometry?.coordinates) {
-                const coords = code.geo_shape.geometry.coordinates;
-                const type = code.geo_shape.geometry.type;
-
-                // Leaflet utilise [lat, lng] alors que GeoJSON utilise [lng, lat]
-                if (type === "Polygon") {
-                  coords.forEach((ring: any) => {
-                    polygons.push(ring.map((c: any) => [c[1], c[0]]));
-                  });
-                } else if (type === "MultiPolygon") {
-                  coords.forEach((poly: any) => {
-                    poly.forEach((ring: any) => {
-                      polygons.push(ring.map((c: any) => [c[1], c[0]]));
-                    });
-                  });
-                }
-              }
-
-              // 2. Icône personnalisée pour le Marker
+            {territoires.map((t, index) => {
+              // Création d'une icône personnalisée style "Bleu Empire"
               const customIcon = L.divIcon({
-                className: "custom-marker",
-                html: `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 10px; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${numero}</div>`,
+                className: "custom-div-icon",
+                html: `<div style="background-color: #1e3a8a; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${index + 1}</div>`,
                 iconSize: [24, 24],
                 iconAnchor: [12, 12]
               });
 
               return (
-                <div key={code.id}>
-                  {/* Tracé des contours */}
-                  {polygons.map((path, pIdx) => (
-                    <Polygon 
-                      key={`${code.id}-poly-${pIdx}`} 
-                      positions={path} 
-                      pathOptions={{ fillColor: color, fillOpacity: 0.25, color: color, weight: 2 }} 
-                    />
-                  ))}
-
-                  {/* Polygone manuel Plaisance */}
-                  {code.communes.includes("Plaisance-du-Touch") && (
-                    <Polygon positions={PATH_PLAISANCE} pathOptions={{ fillColor: color, fillOpacity: 0.25, color: color, weight: 2 }} />
-                  )}
-
-                  {/* Marqueur au centre */}
-                  {code.geo_point_2d && (
-                    <Marker position={[code.geo_point_2d.lat, code.geo_point_2d.lon]} icon={customIcon}>
-                      <Popup>
-                        <strong>#${numero} – ${code.code_postal}</strong><br/>
-                        ${code.communes.join(", ")}
-                      </Popup>
-                    </Marker>
-                  )}
-                </div>
+                <Marker key={t.nom} position={[t.lat, t.lng]} icon={customIcon}>
+                  <Popup>
+                    <div style={{ color: 'black', padding: '2px', maxWidth: '200px' }}>
+                      <strong style={{ fontSize: '14px' }}>#${index + 1} - ${t.nom}</strong><br />
+                      <span style={{ color: '#b91c1c', fontSize: '10px', fontWeight: 'bold' }}>${t.date_debut} — ${t.date_fin}</span><br />
+                      <span style={{ color: '#666', fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold' }}>${t.statut}</span>
+                      <p style={{ marginTop: '8px', fontSize: '12px', lineHeight: '1.4', marginBottom: 0 }}>${t.description}</p>
+                    </div>
+                  </Popup>
+                </Marker>
               );
             })}
           </MapContainer>
         )}
       </div>
 
-      {/* --- TABLEAU (CONSERVÉ À L'IDENTIQUE) --- */}
-      <table className="w-full border border-collapse shadow-sm">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="border p-2">#</th>
-            <th className="border p-2">Code postal</th>
-            <th className="border p-2">Communes</th>
-          </tr>
-        </thead>
-        <tbody>
-          {codes.map(code => (
-            <tr key={code.id} className="hover:bg-blue-50 transition-colors">
-              <td className="border p-2 font-bold text-center">{code.numero}</td>
-              <td className="border p-2 font-bold">{code.code_postal}</td>
-              <td className="border p-2">{code.communes.join(", ")}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* --- GRILLE DES TERRITOIRES (Inchangée) --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {territoires.map((t, index) => (
+          <div key={t.nom} className="group p-5 bg-white rounded-2xl shadow-sm border border-slate-200 hover:bg-blue-900 transition-all duration-300 flex gap-4">
+            <span className="text-3xl font-black text-slate-200 group-hover:text-blue-400/30 transition-colors">
+              {(index + 1).toString().padStart(2, '0')}
+            </span>
+            <div>
+              <h3 className="font-bold text-slate-900 group-hover:text-white transition-colors">{t.nom}</h3>
+              <div className="text-xs font-bold text-red-600 group-hover:text-red-300 mt-1">
+                {t.date_debut} — {t.date_fin}
+              </div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 group-hover:text-blue-200 mt-1">
+                {t.statut}
+              </div>
+              <p className="text-sm text-gray-600 group-hover:text-blue-50 mt-3 leading-snug">
+                {t.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
