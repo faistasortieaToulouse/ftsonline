@@ -707,6 +707,37 @@ const starHorizon = Astronomy.Horizon(
   </div>
 </div>
 
+    {/* Ligne 7 : EXPLICATIONS SOLSTICES TOULOUSE */}
+    <div className="bg-blue-700 text-white py-4 px-6 border-t border-blue-500/30">
+      <div className="max-w-4xl mx-auto">
+        <h3 className="text-xs uppercase font-black tracking-widest text-yellow-400 mb-3 text-center md:text-left">
+          ☀️ Variations saisonnières à Toulouse
+        </h3>
+        <p className="text-sm leading-relaxed mb-4 text-slate-100">
+          À Toulouse, les variations de la durée du jour sont marquées par les deux solstices :
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-blue-800/40 p-3 rounded-lg border border-yellow-500/20">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-lg">🌻</span>
+              <span className="font-bold text-yellow-300 text-sm">Le jour le plus long</span>
+            </div>
+            <p className="text-[11px] text-slate-200">
+              <span className="font-bold">Solstice d'été (v. 21 juin) :</span> La durée du jour atteint environ <span className="text-white font-bold">15h 25min</span>. Lever à 6h05, coucher à 21h30.
+            </p>
+          </div>
+          <div className="bg-blue-800/40 p-3 rounded-lg border border-cyan-500/20">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-lg">❄️</span>
+              <span className="font-bold text-cyan-300 text-sm">Le jour le plus court</span>
+            </div>
+            <p className="text-[11px] text-slate-200">
+              <span className="font-bold">Solstice d'hiver (v. 21 décembre) :</span> La durée du jour descend à environ <span className="text-white font-bold">8h 56min</span>. Lever à 8h20, coucher à 17h20.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </div>
 
