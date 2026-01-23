@@ -1,9 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Mountain, ArrowLeft } from "lucide-react";
+// Import dynamique de Leaflet pour éviter les erreurs SSR de Next.js
+import dynamic from "next/dynamic";
+import "leaflet/dist/leaflet.css";
+
+// Import dynamique de la carte
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
+const MapController = dynamic(() => Promise.resolve(({ center }: { center: [number, number] }) => {
+  const { useMap } = require("react-leaflet");
+  const map = useMap();
+  useEffect(() => { map.flyTo(center, 15); }, [center, map]);
+  return null;
+}), { ssr: false });
 
 interface AltitudePoint {
   id: number;
@@ -15,94 +29,45 @@ interface AltitudePoint {
 }
 
 export default function AltitudesPage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
-
   const [points, setPoints] = useState<AltitudePoint[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([43.6045, 1.4442]);
+  const [L, setL] = useState<any>(null);
 
-  // 1. Chargement des données
   useEffect(() => {
+    // Charger Leaflet côté client pour les icônes
+    import("leaflet").then((leaflet) => {
+      setL(leaflet);
+    });
+
     fetch("/api/altitudes")
       .then((res) => res.json())
       .then(setPoints)
       .catch((err) => console.error("Erreur API:", err));
   }, []);
 
-  // 2. Initialisation de la carte
-  useEffect(() => {
-    if (!isReady || !mapRef.current || mapInstance.current) return;
-
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 12,
-      center: { lat: 43.6045, lng: 1.4442 },
-      gestureHandling: "greedy",
-      styles: [
-        { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
-      ]
-    });
-  }, [isReady]);
-
-  // 3. Gestion des marqueurs
-  useEffect(() => {
-    if (!mapInstance.current) return;
-
-    markersRef.current.forEach((m) => m.setMap(null));
-    markersRef.current = [];
-
-    points.forEach((point) => {
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: { lat: point.lat, lng: point.lng },
-        label: {
-          text: `${point.altitude}m`,
-          color: "white",
-          fontSize: "10px",
-          fontWeight: "bold",
-        },
-        title: point.nom,
-      });
-
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <div style="color:#1e293b;padding:6px;">
-            <strong style="font-size:14px;">${point.nom}</strong><br/>
-            <div style="font-weight:bold; color:#2563eb; margin: 4px 0;"> Altitude : ${point.altitude} mètres</div>
-            <p style="font-size:12px;color:#64748b;margin-top:4px;">${point.description}</p>
-          </div>
-        `,
-      });
-
-      marker.addListener("click", () => {
-        infowindow.open(mapInstance.current, marker);
-      });
-
-      markersRef.current.push(marker);
-    });
-  }, [points]);
-
   const focusOnPoint = (point: AltitudePoint) => {
-    if (!mapInstance.current) return;
-    mapInstance.current.setZoom(15);
-    mapInstance.current.panTo({ lat: point.lat, lng: point.lng });
+    setMapCenter([point.lat, point.lng]);
+  };
+
+  // Correction de l'icône par défaut de Leaflet
+  const getIcon = (alt: number) => {
+    if (!L) return null;
+    return L.divIcon({
+      className: "custom-div-icon",
+      html: `<div style="background-color:#059669; color:white; padding:2px 5px; border-radius:4px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap;">${alt}m</div>`,
+      iconSize: [30, 20],
+      iconAnchor: [15, 10]
+    });
   };
 
   return (
     <div className="flex flex-col h-screen p-4 gap-4 bg-slate-50">
-
-      <nav className="mb-6">
+      <nav>
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
 
       <header className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm border">
         <div className="bg-emerald-600 p-2 rounded-lg text-white">
@@ -110,7 +75,7 @@ export default function AltitudesPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-slate-800">Altitudes de Toulouse</h1>
-          <p className="text-xs text-slate-500">Relief et topographie par quartier</p>
+          <p className="text-xs text-slate-500">Relief et topographie par quartier (Leaflet)</p>
         </div>
       </header>
 
@@ -146,9 +111,28 @@ export default function AltitudesPage() {
           </table>
         </div>
 
-        {/* CARTE */}
-        <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border">
-          <div ref={mapRef} className="h-full w-full" />
+        {/* CARTE LEAFLET */}
+        <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative z-0">
+          <MapContainer center={[43.6045, 1.4442]} zoom={12} style={{ height: "100%", width: "100%" }}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {points.map((point) => (
+              L && (
+                <Marker key={point.id} position={[point.lat, point.lng]} icon={getIcon(point.altitude)}>
+                  <Popup>
+                    <div className="p-1">
+                      <strong className="text-sm">{point.nom}</strong><br/>
+                      <span className="text-blue-600 font-bold">Altitude : {point.altitude}m</span>
+                      <p className="text-xs text-gray-500 mt-1">{point.description}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              )
+            ))}
+            <MapController center={mapCenter} />
+          </MapContainer>
         </div>
       </div>
     </div>
