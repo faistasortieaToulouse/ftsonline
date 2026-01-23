@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function Cinemas31Page() {
   const [loading, setLoading] = useState(false);
@@ -78,6 +80,14 @@ export default function Cinemas31Page() {
 
   return (
     <div className="container mx-auto py-8">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-3xl font-bold mb-2">🎬 Cinémas en Haute-Garonne</h1>
       <p className="text-muted-foreground mb-6">
         Données publiques — source : Data.haute-garonne.fr
