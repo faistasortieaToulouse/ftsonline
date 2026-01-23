@@ -153,28 +153,35 @@ export default function AriegeMapPage() {
       {/* Tableau (Inchangé) */}
       <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({sitesData.length} marqueurs)</h2> 
 
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}> 
-        <thead style={{ backgroundColor: "#e0e0e0" }}> 
-          <tr> 
-            <th style={tableHeaderStyle}>#</th>
-            <th style={tableHeaderStyle}>Commune</th> 
-            <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
-            <th style={tableHeaderStyle}>Niveau</th> 
-            <th style={tableHeaderStyle}>Catégorie</th> 
-          </tr> 
-        </thead> 
-        <tbody> 
-          {sitesData.map((site, i) => ( 
-            <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
-              <td style={tableCellStyle}>{i + 1}</td>
-              <td style={tableCellStyle}>{site.commune}</td> 
-              <td style={tableCellStyle}>{site.description}</td> 
-              <td style={tableCellStyleCenter}>{site.niveau}</td> 
-              <td style={tableCellStyle}>{site.categorie}</td> 
-            </tr> 
-          ))} 
-        </tbody> 
-      </table> 
+{/* 1. On ouvre le conteneur de scroll ici */}
+<div style={{ overflowX: "auto", width: "100%", borderRadius: "8px" }}>
+  
+  <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px", minWidth: "700px" }}> 
+    <thead style={{ backgroundColor: "#e0e0e0" }}> 
+      <tr> 
+        <th style={tableHeaderStyle}>#</th>
+        <th style={tableHeaderStyle}>Commune</th> 
+        <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
+        <th style={tableHeaderStyle}>Niveau</th> 
+        <th style={tableHeaderStyle}>Catégorie</th> 
+      </tr> 
+    </thead> 
+    <tbody> 
+      {sitesData.map((site, i) => ( 
+        <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
+          <td style={tableCellStyle}>{i + 1}</td>
+          <td style={tableCellStyle}>{site.commune}</td> 
+          <td style={tableCellStyle}>{site.description}</td> 
+          <td style={tableCellStyleCenter}>{site.niveau}</td> 
+          <td style={tableCellStyle}>{site.categorie}</td> 
+        </tr> 
+      ))} 
+    </tbody> 
+  </table>
+
+</div> 
+{/* 2. On ferme le conteneur ici */}
+      
     </div> 
   ); 
 }
