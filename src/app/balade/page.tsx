@@ -1,7 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import dynamic from "next/dynamic";
+import "leaflet/dist/leaflet.css";
 
 /* ================= TYPES ================= */
 
@@ -12,7 +15,7 @@ interface GeoPoint {
 
 interface GeoShape {
   geometry: {
-    coordinates: number[][][];
+    coordinates: number[][]; // Leaflet préfère souvent un tableau simple de coordonnées pour les polylines
   };
 }
 
@@ -23,7 +26,7 @@ interface Balade {
   accessibilite: string;
   duree: string;
   distance: number;
-  remarques: string;
+  remarks: string;
   lien: string;
   geo_point_2d: GeoPoint;
   geo_shape: GeoShape;
@@ -31,84 +34,54 @@ interface Balade {
 
 type GroupedBalades = Record<string, Balade[]>;
 
+/* ================= COMPOSANTS DYNAMIQUES ================= */
+
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
+const Polyline = dynamic(() => import("react-leaflet").then((mod) => mod.Polyline), { ssr: false });
+
 /* ================= PAGE ================= */
 
 export default function BaladePage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-
   const [balades, setBalades] = useState<Balade[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [L, setL] = useState<any>(null);
 
   /* ---------- Chargement des données ---------- */
   useEffect(() => {
+    import("leaflet").then((leaflet) => {
+      setL(leaflet);
+    });
+
     fetch('/api/balade')
       .then(res => {
         if (!res.ok) throw new Error("Erreur API");
         return res.json();
       })
       .then((data) => {
-        if (!Array.isArray(data)) {
-          console.error("Données invalides :", data);
-          return;
-        }
-
+        if (!Array.isArray(data)) return;
         data.sort((a, b) => a.lieu.localeCompare(b.lieu));
         setBalades(data);
+        setIsLoading(false);
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        setIsLoading(false);
+      });
   }, []);
 
-  /* ---------- Google Maps ---------- */
-  useEffect(() => {
-    if (!isReady || !mapRef.current || balades.length === 0) return;
-
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 11,
-      center: { lat: 43.6045, lng: 1.444 },
-      gestureHandling: 'greedy',
+  /* ---------- Icône personnalisée Leaflet ---------- */
+  const createIcon = (id: string) => {
+    if (!L) return null;
+    return L.divIcon({
+      className: 'custom-balade-icon',
+      html: `<div style="background-color: #15803d; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">${id}</div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
-
-    balades.forEach((balade) => {
-      /* 📍 Marker */
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: {
-          lat: balade.geo_point_2d.lat,
-          lng: balade.geo_point_2d.lon,
-        },
-        label: balade.id,
-        title: balade.nom,
-      });
-
-      /* 🧭 Tracé */
-      balade.geo_shape?.geometry?.coordinates?.forEach(segment => {
-        const path = segment.map(([lng, lat]) => ({ lat, lng }));
-
-        new google.maps.Polyline({
-          map: mapInstance.current!,
-          path,
-          strokeColor: "#16a34a",
-          strokeOpacity: 0.9,
-          strokeWeight: 3,
-        });
-      });
-
-      /* ℹ️ Info */
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <strong>${balade.nom}</strong><br/>
-          <em>${balade.lieu}</em><br/>
-          ⏱ ${balade.duree} — 📏 ${balade.distance} km<br/>
-          ${balade.lien ? `<a href="${balade.lien}" target="_blank">Voir →</a>` : ''}
-        `,
-      });
-
-      marker.addListener('click', () =>
-        infowindow.open(mapInstance.current, marker)
-      );
-    });
-  }, [isReady, balades]);
+  };
 
   /* ---------- Regroupement par lieu ---------- */
   const groupedBalades: GroupedBalades = balades.reduce((acc, balade) => {
@@ -117,26 +90,71 @@ export default function BaladePage() {
     return acc;
   }, {} as GroupedBalades);
 
-  /* ================= RENDER ================= */
-
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
 
       <h1 className="text-3xl font-extrabold mb-4 text-green-700">
         🚶 Balades nature ({balades.length})
       </h1>
 
-      <div
-        ref={mapRef}
-        style={{ height: '70vh', width: '100%' }}
-        className="mb-8 border rounded-lg bg-gray-100"
-      />
+      {/* ---------- CARTE LEAFLET ---------- */}
+      <div className="mb-8 border rounded-lg bg-gray-100 overflow-hidden" style={{ height: '70vh', width: '100%' }}>
+        {!isLoading && typeof window !== 'undefined' ? (
+          <MapContainer center={[43.6045, 1.444]} zoom={11} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            
+            {balades.map((balade) => {
+              const icon = createIcon(balade.id);
+              
+              // Préparation des coordonnées du tracé (Polyline)
+              // Note: Dans GeoJSON c'est [lng, lat], Leaflet veut [lat, lng]
+              const polylinePoints = balade.geo_shape?.geometry?.coordinates?.map(coord => [coord[1], coord[0]]) as [number, number][];
 
+              return (
+                <div key={balade.id}>
+                  {/* Marqueur 📍 */}
+                  {icon && (
+                    <Marker position={[balade.geo_point_2d.lat, balade.geo_point_2d.lon]} icon={icon}>
+                      <Popup>
+                        <div style={{ fontFamily: 'sans-serif' }}>
+                          <strong>{balade.nom}</strong><br/>
+                          <em>{balade.lieu}</em><br/>
+                          ⏱ {balade.duree} — 📏 {balade.distance} km<br/>
+                          {balade.lien && <a href={balade.lien} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>Voir →</a>}
+                        </div>
+                      </Popup>
+                    </Marker>
+                  )}
+
+                  {/* Tracé de la balade 🧭 */}
+                  {polylinePoints && (
+                    <Polyline 
+                      positions={polylinePoints} 
+                      pathOptions={{ color: '#16a34a', weight: 3, opacity: 0.7 }} 
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </MapContainer>
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-500">
+            Chargement de la carte...
+          </div>
+        )}
+      </div>
+
+      {/* ---------- LISTE DES BALADES (Inchangée) ---------- */}
       <div className="space-y-12">
         {Object.entries(groupedBalades).map(([lieu, items]) => (
           <div key={lieu}>
