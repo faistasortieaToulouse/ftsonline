@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { ExternalLink, Users, MapPin } from "lucide-react";
+import { ExternalLink, Users, MapPin, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface HelloAssoSource {
   id: number;
@@ -28,6 +29,14 @@ export default function AssoToulousePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl mb-4">
