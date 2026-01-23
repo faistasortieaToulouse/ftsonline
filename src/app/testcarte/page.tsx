@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Library, MapPin, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import "leaflet/dist/leaflet.css";
+import Script from "next/script";
+import { Library, MapPin } from "lucide-react";
 
 interface CulturePoint {
   id: number;
@@ -19,11 +18,12 @@ interface CulturePoint {
 
 export default function EcoleCulturePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<any>(null); // Instance Leaflet
+  const mapInstance = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
 
   const [points, setPoints] = useState<CulturePoint[]>([]);
+  const [isReady, setIsReady] = useState(false);
 
-  // 1. Fetch des données
   useEffect(() => {
     fetch("/api/ecoleculture")
       .then((res) => res.json())
@@ -31,77 +31,67 @@ export default function EcoleCulturePage() {
       .catch((err) => console.error("Erreur API:", err));
   }, []);
 
-  // 2. Initialisation et mise à jour de la carte Leaflet
   useEffect(() => {
-    const initMap = async () => {
-      if (!mapRef.current || points.length === 0) return;
+    if (!isReady || !mapRef.current || mapInstance.current) return;
 
-      // Import dynamique de Leaflet
-      const L = (await import("leaflet")).default;
+    mapInstance.current = new google.maps.Map(mapRef.current, {
+      zoom: 13,
+      center: { lat: 43.6045, lng: 1.4442 },
+      styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
+    });
+  }, [isReady]);
 
-      // Éviter de réinitialiser si l'instance existe déjà
-      if (!mapInstance.current) {
-        mapInstance.current = L.map(mapRef.current).setView([43.6045, 1.4442], 13);
+  useEffect(() => {
+    if (!mapInstance.current) return;
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: '&copy; OpenStreetMap contributors',
-        }).addTo(mapInstance.current);
-      }
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
 
-      const map = mapInstance.current;
+    points.forEach((point) => {
+      if (point.lat === null || point.lng === null) return;
 
-      // Nettoyage des marqueurs existants avant d'en ajouter de nouveaux
-      map.eachLayer((layer: any) => {
-        if (layer instanceof L.Marker) map.removeLayer(layer);
+      const marker = new google.maps.Marker({
+        map: mapInstance.current!,
+        position: { lat: point.lat, lng: point.lng },
+        // Ajout du numéro sur le marqueur
+        label: {
+          text: point.id.toString(),
+          color: "white",
+          fontWeight: "bold",
+          fontSize: "12px"
+        },
+        title: point.nom,
       });
 
-      // Ajout des marqueurs numérotés
-      points.forEach((point) => {
-        if (point.lat === null || point.lng === null) return;
-
-        const customIcon = L.divIcon({
-          className: "custom-marker",
-          html: `<div style="background-color: #4f46e5; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">${point.id}</div>`,
-          iconSize: [26, 26],
-          iconAnchor: [13, 13],
-        });
-
-        const marker = L.marker([point.lat, point.lng], { icon: customIcon }).addTo(map);
-
-        marker.bindPopup(`
-          <div style="color:#1e293b;padding:4px;font-family:sans-serif;max-width:200px;">
+      const infowindow = new google.maps.InfoWindow({
+        content: `
+          <div style="color:#1e293b;padding:8px;font-family:sans-serif;max-width:200px;">
             <div style="font-size:10px; font-weight:bold; color:#6366f1;">#${point.id} - ${point.quartier}</div>
             <strong style="font-size:14px;color:#1e293b;display:block;margin-bottom:4px;">${point.nom}</strong>
             <div style="color:#64748b; font-size:12px; margin-bottom:4px;">${point.adresse}</div>
             <div style="font-size:12px; font-weight:bold;">Tel: ${point.telephone}</div>
           </div>
-        `);
+        `,
       });
-    };
 
-    initMap();
-
-    return () => {
-      // Pas de suppression immédiate ici pour éviter les clignotements, 
-      // Leaflet gère bien le remplacement via le code ci-dessus.
-    };
+      marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
+      markersRef.current.push(marker);
+    });
   }, [points]);
 
-  // Fonction de focus lors du clic sur le tableau
   const focusOnPoint = (point: CulturePoint) => {
     if (!mapInstance.current || point.lat === null || point.lng === null) return;
-    mapInstance.current.setView([point.lat, point.lng], 17, { animate: true });
+    mapInstance.current.setZoom(17);
+    mapInstance.current.panTo({ lat: point.lat, lng: point.lng });
   };
 
   return (
     <div className="flex flex-col h-screen p-4 gap-4 bg-slate-50">
-      
-      <nav>
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
-        </Link>
-      </nav>
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+        strategy="afterInteractive"
+        onLoad={() => setIsReady(true)}
+      />
 
       <header className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm border">
         <div className="bg-indigo-600 p-2 rounded-lg text-white">
@@ -114,7 +104,7 @@ export default function EcoleCulturePage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
-        {/* LISTE TRIÉE */}
+        {/* LISTE TRIÉE PAR QUARTIER */}
         <div className="lg:col-span-4 bg-white rounded-xl shadow-sm border overflow-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50 sticky top-0 z-10">
@@ -147,9 +137,9 @@ export default function EcoleCulturePage() {
           </table>
         </div>
 
-        {/* CARTE LEAFLET */}
+        {/* CARTE */}
         <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative">
-          <div ref={mapRef} className="h-full w-full z-0" />
+          <div ref={mapRef} className="h-full w-full" />
         </div>
       </div>
     </div>
