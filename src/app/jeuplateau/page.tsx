@@ -3,6 +3,8 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 // --- Fonctions d'aide et Types ---
 
@@ -115,6 +117,14 @@ export default function JeuPlateauPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-3xl font-bold mb-4">📰 {events.length > 0 ? events[0].source : 'Actualités Jeux de Plateau'}</h1>
       <p className="text-muted-foreground mb-6">
         Articles récents (Actualités uniquement) de JeuxOnline.
