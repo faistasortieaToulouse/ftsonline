@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement";
 
@@ -77,6 +79,14 @@ export default function AgendaToulousePage() {
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-3xl font-bold mb-4">Agenda Toulouse – Tous les événements</h1>
 
       {/* Barre de recherche */}
