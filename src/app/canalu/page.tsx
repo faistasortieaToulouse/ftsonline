@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Clock, Video } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface Event {
 id: string;
@@ -79,7 +81,15 @@ events.filter(ev =>
 );
 }, [searchQuery, events]);
 
-return ( <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8"> <h1 className="text-3xl font-bold mb-4">Événements UT2-Min</h1> <p className="text-muted-foreground mb-6">
+return ( <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+  
+  <h1 className="text-3xl font-bold mb-4">Événements UT2-Min</h1> <p className="text-muted-foreground mb-6">
 Liste des événements et conférences issus de la chaîne UT2-Min (Canal-U). </p>
 
 
