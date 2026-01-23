@@ -1,4 +1,3 @@
-// src/app/ariege/page.tsx
 'use client'; 
 
 import { useEffect, useState, CSSProperties } from "react"; 
@@ -18,13 +17,13 @@ interface SiteAriege {
   lng: number;
 } 
 
-// --- Imports dynamiques pour Leaflet (Client-side uniquement) ---
+// --- Imports dynamiques pour Leaflet ---
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
-// --- Gestion des couleurs Leaflet ---
+// --- Gestion des couleurs ---
 const getMarkerColor = (categorie: SiteAriege['categorie']): string => {
   switch (categorie) {
     case 'incontournable': return '#ef4444'; // Rouge
@@ -45,7 +44,6 @@ export default function AriegeMapPage() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [L, setL] = useState<any>(null);
 
-  // ---- 1. Récupération des données & Initialisation Leaflet ----
   useEffect(() => {
     import("leaflet").then((leaflet) => {
       setL(leaflet);
@@ -67,7 +65,6 @@ export default function AriegeMapPage() {
     fetchSites();
   }, []);
 
-  // Fonction pour générer l'icône personnalisée Leaflet
   const createCustomIcon = (index: number, categorie: SiteAriege['categorie']) => {
     if (!L) return null;
     return L.divIcon({
@@ -111,19 +108,14 @@ export default function AriegeMapPage() {
         Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Légende */}
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+      <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', flexWrap: 'wrap' }}>
         <strong>Légende :</strong>
-        <span style={{ color: 'red', fontWeight: 'bold' }}>🔴 Incontournable (1)</span>
-        <span style={{ color: 'orange', fontWeight: 'bold' }}>🟠 Remarquable (2)</span>
-        <span style={{ color: 'blue', fontWeight: 'bold' }}>🔵 Suggéré (3)</span>
+        <span style={{ color: '#ef4444', fontWeight: 'bold' }}>🔴 Incontournable (1)</span>
+        <span style={{ color: '#f97316', fontWeight: 'bold' }}>🟠 Remarquable (2)</span>
+        <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>🔵 Suggéré (3)</span>
       </div>
 
-      {/* Carte Leaflet */}
-      <div 
-        style={{ height: "70vh", width: "100%" }} 
-        className="mb-8 border rounded-lg bg-gray-100 relative z-0"
-      > 
+      <div style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 relative z-0"> 
         {isLoadingData ? (
           <div className="flex items-center justify-center h-full">Chargement de la carte et des données…</div>
         ) : (
@@ -137,10 +129,10 @@ export default function AriegeMapPage() {
               return icon && (
                 <Marker key={site.id} position={[site.lat, site.lng]} icon={icon}>
                   <Popup>
-                    <div style={{ font_family: 'Arial', fontSize: '14px' }}> 
-                      <strong>${i + 1}. ${site.commune}</strong> (${site.categorie})<br/> 
-                      <b>Description :</b> ${site.description}<br/>
-                      <b>Niveau :</b> ${site.niveau}
+                    <div style={{ fontFamily: 'Arial', fontSize: '14px' }}> 
+                      <strong>{i + 1}. {site.commune}</strong> ({site.categorie})<br/> 
+                      <b>Description :</b> {site.description}<br/>
+                      <b>Niveau :</b> {site.niveau}
                     </div>
                   </Popup>
                 </Marker>
@@ -150,43 +142,42 @@ export default function AriegeMapPage() {
         )}
       </div>
 
-      {/* Tableau (Inchangé) */}
       <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({sitesData.length} marqueurs)</h2> 
 
-{/* 1. On ouvre le conteneur de scroll ici */}
-<div style={{ overflowX: "auto", width: "100%", borderRadius: "8px" }}>
-  
-  <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px", minWidth: "700px" }}> 
-    <thead style={{ backgroundColor: "#e0e0e0" }}> 
-      <tr> 
-        <th style={tableHeaderStyle}>#</th>
-        <th style={tableHeaderStyle}>Commune</th> 
-        <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
-        <th style={tableHeaderStyle}>Niveau</th> 
-        <th style={tableHeaderStyle}>Catégorie</th> 
-      </tr> 
-    </thead> 
-    <tbody> 
-      {sitesData.map((site, i) => ( 
-        <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
-          <td style={tableCellStyle}>{i + 1}</td>
-          <td style={tableCellStyle}>{site.commune}</td> 
-          <td style={tableCellStyle}>{site.description}</td> 
-          <td style={tableCellStyleCenter}>{site.niveau}</td> 
-          <td style={tableCellStyle}>{site.categorie}</td> 
-        </tr> 
-      ))} 
-    </tbody> 
-  </table>
-
-</div> 
-{/* 2. On ferme le conteneur ici */}
-      
+      <div style={{ overflowX: "auto", width: "100%", borderRadius: "8px" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px", minWidth: "700px" }}> 
+          <thead style={{ backgroundColor: "#e0e0e0" }}> 
+            <tr> 
+              <th style={tableHeaderStyle}>#</th>
+              <th style={tableHeaderStyle}>Commune</th> 
+              <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
+              <th style={tableHeaderStyle}>Niveau</th> 
+              <th style={tableHeaderStyle}>Catégorie</th> 
+            </tr> 
+          </thead> 
+          <tbody> 
+            {sitesData.map((site, i) => ( 
+              <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
+                <td style={tableCellStyle}>{i + 1}</td>
+                <td style={tableCellStyle}>{site.commune}</td> 
+                <td style={tableCellStyle}>{site.description}</td> 
+                {/* Niveau avec couleur dynamique */}
+                <td style={{ ...tableCellStyleCenter, color: getMarkerColor(site.categorie), fontWeight: 'bold' }}>
+                  {site.niveau}
+                </td> 
+                {/* Catégorie avec couleur dynamique */}
+                <td style={{ ...tableCellStyle, color: getMarkerColor(site.categorie), fontWeight: 'bold', textTransform: 'capitalize' }}>
+                  {site.categorie}
+                </td> 
+              </tr> 
+            ))} 
+          </tbody> 
+        </table>
+      </div> 
     </div> 
   ); 
 }
 
-// Styles table
 const tableHeaderStyle: CSSProperties = { padding: "10px", border: "1px solid #ccc", textAlign: "left" };
 const tableCellStyle: CSSProperties = { padding: "8px", border: "1px solid #ddd" };
 const tableCellStyleCenter: CSSProperties = { padding: "8px", border: "1px solid #ddd", textAlign: "center" };
