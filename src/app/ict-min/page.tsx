@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 // import { getEventImage } from "@/utils/eventImages"; // Supprimé
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 // Chemin de l'image spécifique à utiliser pour tous les événements ICT sur cette page.
 // Le chemin est relatif au dossier /public.
@@ -106,6 +108,14 @@ export default function IctEventsPage() {
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-3xl font-bold mb-4">Événements ICT Toulouse</h1>
       <p className="text-muted-foreground mb-6">
         Cette page affiche les {MAX_EVENTS} prochains événements culturels de l’ICT.
