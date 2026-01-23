@@ -1,139 +1,152 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Mountain, ArrowLeft } from "lucide-react";
-// Import dynamique de Leaflet pour éviter les erreurs SSR de Next.js
+import { ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
-// Import dynamique de la carte
+// Imports dynamiques pour Leaflet (pas de SSR)
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
-const MapController = dynamic(() => Promise.resolve(({ center }: { center: [number, number] }) => {
-  const { useMap } = require("react-leaflet");
-  const map = useMap();
-  useEffect(() => { map.flyTo(center, 15); }, [center, map]);
-  return null;
-}), { ssr: false });
 
-interface AltitudePoint {
-  id: number;
+interface Departement {
   nom: string;
-  altitude: number;
-  description: string;
+  pays: string;
+  statut: string;
   lat: number;
   lng: number;
+  description: string;
+  date_debut: number;
+  date_fin: number;
 }
 
-export default function AltitudesPage() {
-  const [points, setPoints] = useState<AltitudePoint[]>([]);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([43.6045, 1.4442]);
+export default function AnciensDepartementsPage() {
+  const [departements, setDepartements] = useState<Departement[]>([]);
   const [L, setL] = useState<any>(null);
 
   useEffect(() => {
-    // Charger Leaflet côté client pour les icônes
+    // Chargement de l'objet Leaflet pour les icônes personnalisées
     import("leaflet").then((leaflet) => {
       setL(leaflet);
     });
 
-    fetch("/api/altitudes")
-      .then((res) => res.json())
-      .then(setPoints)
-      .catch((err) => console.error("Erreur API:", err));
+    fetch("/api/anciensdepartements")
+      .then(async (res) => {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const sorted = data.sort((a, b) => 
+            a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' })
+          );
+          setDepartements(sorted);
+        }
+      })
+      .catch(console.error);
   }, []);
 
-  const focusOnPoint = (point: AltitudePoint) => {
-    setMapCenter([point.lat, point.lng]);
-  };
-
-  // Correction de l'icône par défaut de Leaflet
-  const getIcon = (alt: number) => {
+  // Fonction pour créer l'icône "Bleu de France" avec le numéro
+  const createIcon = (index: number) => {
     if (!L) return null;
     return L.divIcon({
-      className: "custom-div-icon",
-      html: `<div style="background-color:#059669; color:white; padding:2px 5px; border-radius:4px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap;">${alt}m</div>`,
-      iconSize: [30, 20],
-      iconAnchor: [15, 10]
+      className: 'custom-marker',
+      html: `
+        <div style="
+          background-color: #002395;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 2px solid white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 10px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        ">
+          ${index + 1}
+        </div>
+      `,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
   };
 
   return (
-    <div className="flex flex-col h-screen p-4 gap-4 bg-slate-50">
-      <nav>
+    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+      <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
 
-      <header className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm border">
-        <div className="bg-emerald-600 p-2 rounded-lg text-white">
-          <Mountain size={20} />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-slate-800">Altitudes de Toulouse</h1>
-          <p className="text-xs text-slate-500">Relief et topographie par quartier (Leaflet)</p>
-        </div>
+      <header className="mb-8 border-b pb-6 text-center">
+        <h1 className="text-4xl font-black text-blue-900 uppercase tracking-tighter">
+          Anciens Départements Français
+        </h1>
+        <p className="text-gray-600 mt-2 italic">Hors frontières actuelles : Europe Napoléonienne et Algérie Française</p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
-        {/* TABLEAU */}
-        <div className="lg:col-span-4 bg-white rounded-xl shadow-sm border overflow-auto">
-          <table className="w-full text-left">
-            <thead className="bg-slate-50 sticky top-0 z-10">
-              <tr>
-                <th className="p-4 border-b text-xs text-slate-400 uppercase font-bold">Quartier</th>
-                <th className="p-4 border-b text-xs text-slate-400 uppercase font-bold text-right">Alt.</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {[...points].sort((a, b) => b.altitude - a.altitude).map((point) => (
-                <tr
-                  key={point.id}
-                  onClick={() => focusOnPoint(point)}
-                  className="hover:bg-emerald-50 cursor-pointer transition-colors group"
-                >
-                  <td className="p-4">
-                    <div className="font-semibold text-slate-700">{point.nom}</div>
-                    <div className="text-[11px] text-slate-400 line-clamp-1">{point.description}</div>
-                  </td>
-                  <td className="p-4 text-right">
-                    <span className="px-2 py-1 rounded-md bg-slate-100 text-slate-600 font-mono font-bold group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                      {point.altitude}m
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* CARTE LEAFLET */}
-        <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative z-0">
-          <MapContainer center={[43.6045, 1.4442]} zoom={12} style={{ height: "100%", width: "100%" }}>
+      {/* ZONE CARTE LEAFLET */}
+      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden" style={{ height: "60vh" }}>
+        {typeof window !== "undefined" && (
+          <MapContainer 
+            center={[42.0, 12.0]} 
+            zoom={4} 
+            scrollWheelZoom={true} 
+            style={{ height: "100%", width: "100%", zIndex: 0 }}
+          >
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {points.map((point) => (
-              L && (
-                <Marker key={point.id} position={[point.lat, point.lng]} icon={getIcon(point.altitude)}>
+            {departements.map((d, index) => {
+              const icon = createIcon(index);
+              return icon ? (
+                <Marker key={d.nom} position={[d.lat, d.lng]} icon={icon}>
                   <Popup>
-                    <div className="p-1">
-                      <strong className="text-sm">{point.nom}</strong><br/>
-                      <span className="text-blue-600 font-bold">Altitude : {point.altitude}m</span>
-                      <p className="text-xs text-gray-500 mt-1">{point.description}</p>
+                    <div style={{ color: 'black', padding: '5px', fontFamily: 'sans-serif', maxWidth: '220px' }}>
+                      <strong style={{ fontSize: '14px' }}>#${index + 1} - ${d.nom}</strong><br />
+                      <span style={{ color: '#002395', fontSize: '11px', font_weight: 'bold' }}>{d.pays.toUpperCase()}</span><br />
+                      <span style={{ color: '#b91c1c', fontSize: '10px', font_weight: 'bold' }}>{d.date_debut} — {d.date_fin}</span><br />
+                      <p style={{ marginTop: '8px', fontSize: '12px', lineHeight: '1.4', color: '#333' }}>{d.description}</p>
                     </div>
                   </Popup>
                 </Marker>
-              )
-            ))}
-            <MapController center={mapCenter} />
+              ) : null;
+            })}
           </MapContainer>
-        </div>
+        )}
+      </div>
+
+      {/* GRILLE DE DEPARTEMENTS (Inchangée) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {departements.map((d, index) => (
+          <div key={d.nom} className="group p-5 bg-white rounded-2xl shadow-sm border border-slate-200 hover:bg-blue-900 transition-all duration-300 flex gap-4">
+            <span className="text-3xl font-black text-slate-200 group-hover:text-blue-400/30 transition-colors">
+              {(index + 1).toString().padStart(2, '0')}
+            </span>
+            <div>
+              <h3 className="font-bold text-slate-900 group-hover:text-white transition-colors leading-tight">
+                {d.nom}
+              </h3>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700 group-hover:bg-blue-800 group-hover:text-blue-100 transition-colors">
+                  {d.pays}
+                </span>
+                <span className="text-xs font-bold text-red-600 group-hover:text-red-300">
+                  {d.date_debut} — {d.date_fin}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 group-hover:text-blue-50 mt-3 leading-snug">
+                {d.description}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
