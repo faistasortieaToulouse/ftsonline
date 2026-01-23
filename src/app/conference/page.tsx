@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import "leaflet/dist/leaflet.css";
 import { ArrowLeft } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
