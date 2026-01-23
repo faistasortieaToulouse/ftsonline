@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-// Importation dynamique de Leaflet car il nécessite l'objet 'window'
-import L from "leaflet";
+// 1. SUPPRIMER : import L from "leaflet";
+// Garder uniquement le CSS (le CSS ne pose pas de problème au build)
 import "leaflet/dist/leaflet.css";
 
 interface Conference {
@@ -25,9 +25,8 @@ export default function ConferencePage() {
   const [conferences, setConferences] = useState<Conference[]>([]);
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<L.Map | null>(null);
+  const mapInstance = useRef<any>(null); // Changé en any car L n'est plus global au début
 
-  // 1. Fetch et tri alphabétique
   useEffect(() => {
     fetch("/api/conference")
       .then((res) => res.json())
@@ -42,48 +41,53 @@ export default function ConferencePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // 2. Initialisation de la carte Leaflet
+  // 2. Initialisation de la carte Leaflet avec IMPORT DYNAMIQUE
   useEffect(() => {
-    if (!mapRef.current || conferences.length === 0 || mapInstance.current) return;
+    // Cette fonction ne s'exécutera que dans le navigateur
+    const initMap = async () => {
+      if (!mapRef.current || conferences.length === 0 || mapInstance.current) return;
 
-    // Fix pour les icônes par défaut de Leaflet dans Next.js
-    const DefaultIcon = L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-    });
-    L.Marker.prototype.options.icon = DefaultIcon;
+      // CHARGEMENT DYNAMIQUE DE LEAFLET
+      const L = (await import("leaflet")).default;
 
-    // Création de la carte
-    const map = L.map(mapRef.current).setView([43.6045, 1.444], 12);
-    mapInstance.current = map;
+      // Fix pour les icônes par défaut
+      const DefaultIcon = L.icon({
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+      });
+      L.Marker.prototype.options.icon = DefaultIcon;
 
-    // Ajout de la couche OpenStreetMap
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+      // Création de la carte
+      const map = L.map(mapRef.current).setView([43.6045, 1.444], 12);
+      mapInstance.current = map;
 
-    // Ajout des marqueurs
-    conferences.forEach((c, i) => {
-      if (c.geo_point_2d) {
-        const marker = L.marker([c.geo_point_2d.lat, c.geo_point_2d.lon])
-          .addTo(map)
-          .bindPopup(`
-            <div style="font-family: sans-serif;">
-              <strong>${i + 1}. ${c.nom_equipement}</strong><br/>
-              ${c.lib_off}, ${c.ville}<br/>
-              <small>Gestionnaire : ${c.gestionnaire}</small><br/>
-              <small>Tél : ${c.telephone ?? "-"}</small>
-            </div>
-          `);
-      }
-    });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap contributors',
+      }).addTo(map);
 
-    // Nettoyage au démontage
+      conferences.forEach((c, i) => {
+        if (c.geo_point_2d) {
+          L.marker([c.geo_point_2d.lat, c.geo_point_2d.lon])
+            .addTo(map)
+            .bindPopup(`
+              <div style="font-family: sans-serif;">
+                <strong>${i + 1}. ${c.nom_equipement}</strong><br/>
+                ${c.lib_off}, ${c.ville}
+              </div>
+            `);
+        }
+      });
+    };
+
+    initMap();
+
     return () => {
-      map.remove();
-      mapInstance.current = null;
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
     };
   }, [conferences]);
 
@@ -103,14 +107,12 @@ export default function ConferencePage() {
         🎭 Centres culturels et salles de conférences à Toulouse
       </h1>
 
-      {/* Conteneur de la carte */}
       <div
         ref={mapRef}
         style={{ height: "60vh", width: "100%" }}
         className="mb-8 border-4 border-blue-200 rounded-xl bg-gray-50 z-0" 
       />
 
-      {/* Tableau (Mise en page conservée à l'identique) */}
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border-collapse border border-gray-300">
           <thead>
