@@ -1,86 +1,97 @@
-'use client'; 
+'use client';
 
-import { useEffect, useState, CSSProperties } from "react"; 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
-// Import du type directement depuis la route API Aveyron
-import type { SiteAveyron } from '../api/aveyron/route'; 
+/* ================= TYPES ================= */
 
-// --- Imports dynamiques pour Leaflet (SSR: false) ---
+interface GeoPoint {
+  lat: number;
+  lon: number;
+}
+
+interface GeoShape {
+  geometry: {
+    coordinates: number[][]; // Leaflet préfère souvent un tableau simple de coordonnées pour les polylines
+  };
+}
+
+interface Balade {
+  id: string;
+  nom: string;
+  lieu: string;
+  accessibilite: string;
+  duree: string;
+  distance: number;
+  remarks: string;
+  lien: string;
+  geo_point_2d: GeoPoint;
+  geo_shape: GeoShape;
+}
+
+type GroupedBalades = Record<string, Balade[]>;
+
+/* ================= COMPOSANTS DYNAMIQUES ================= */
+
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
+const Polyline = dynamic(() => import("react-leaflet").then((mod) => mod.Polyline), { ssr: false });
 
-// --- Gestion des couleurs thématiques ---
-const getThemeColor = (categorie: SiteAveyron['categorie']): string => {
-  switch (categorie) {
-    case 'incontournable': return '#E91E63'; // Rose/Rouge
-    case 'remarquable':    return '#FF9800'; // Orange
-    case 'suggéré':       return '#2196F3'; // Bleu
-    default:               return '#2196F3';
-  }
-};
+/* ================= PAGE ================= */
 
-const getLabelColor = (categorie: SiteAveyron['categorie']): string => {
-  return (categorie === 'remarquable') ? 'white' : 'yellow';
-};
-
-const AVEYRON_CENTER: [number, number] = [44.35, 2.60]; 
-
-export default function AveyronMapPage() { 
-  const [sitesData, setSitesData] = useState<SiteAveyron[]>([]);
-  const [isLoadingData, setIsLoadingData] = useState(true);
+export default function BaladePage() {
+  const [balades, setBalades] = useState<Balade[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [L, setL] = useState<any>(null);
 
+  /* ---------- Chargement des données ---------- */
   useEffect(() => {
-    // Import de Leaflet pour les icônes personnalisées
     import("leaflet").then((leaflet) => {
       setL(leaflet);
     });
 
-    async function fetchSites() {
-      try {
-        const response = await fetch('/api/aveyron'); 
-        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-        let data: SiteAveyron[] = await response.json();
-        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
-        setSitesData(data);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des sites:", error);
-      } finally {
-        setIsLoadingData(false);
-      }
-    }
-    fetchSites();
+    fetch('/api/balade')
+      .then(res => {
+        if (!res.ok) throw new Error("Erreur API");
+        return res.json();
+      })
+      .then((data) => {
+        if (!Array.isArray(data)) return;
+        data.sort((a, b) => a.lieu.localeCompare(b.lieu));
+        setBalades(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setIsLoading(false);
+      });
   }, []);
 
-  const createCustomIcon = (index: number, categorie: SiteAveyron['categorie']) => {
+  /* ---------- Icône personnalisée Leaflet ---------- */
+  const createIcon = (id: string) => {
     if (!L) return null;
     return L.divIcon({
-      className: 'custom-marker-aveyron',
-      html: `
-        <div style="
-          background-color: ${getThemeColor(categorie)};
-          width: 28px; height: 28px;
-          border-radius: 50%; border: 2px solid white;
-          display: flex; align-items: center; justify-content: center;
-          color: ${getLabelColor(categorie)}; font-weight: bold; font-size: 12px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        ">
-          ${index + 1}
-        </div>
-      `,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14]
+      className: 'custom-balade-icon',
+      html: `<div style="background-color: #15803d; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">${id}</div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
   };
 
-  return ( 
-    <div className="p-4 max-w-7xl mx-auto"> 
+  /* ---------- Regroupement par lieu ---------- */
+  const groupedBalades: GroupedBalades = balades.reduce((acc, balade) => {
+    acc[balade.lieu] = acc[balade.lieu] || [];
+    acc[balade.lieu].push(balade);
+    return acc;
+  }, {} as GroupedBalades);
+
+  return (
+    <div className="p-4 max-w-7xl mx-auto">
       
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
@@ -89,86 +100,100 @@ export default function AveyronMapPage() {
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-extrabold mb-6">🗺️ Sites Touristiques en Aveyron sur la Carte</h1> 
+      <h1 className="text-3xl font-extrabold mb-4 text-green-700">
+        🚶 Balades nature ({balades.length})
+      </h1>
 
-      <p className="font-semibold text-lg mb-4">
-        Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
-      </p>
-
-      {/* Légende Responsive */}
-      <div style={{ display: 'flex', gap: '10px 20px', flexWrap: 'wrap', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
-        <strong>Légende des marqueurs :</strong>
-        <span style={{ color: '#E91E63', fontWeight: 'bold' }}>🔴 Incontournable (1)</span>
-        <span style={{ color: '#FF9800', fontWeight: 'bold' }}>🟠 Remarquable (2)</span>
-        <span style={{ color: '#2196F3', fontWeight: 'bold' }}>🔵 Suggéré (3)</span>
-      </div>
-
-      {/* Carte Leaflet */}
-      <div style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 relative z-0"> 
-        {isLoadingData ? (
-          <div className="flex items-center justify-center h-full">Chargement de la carte et des données…</div>
-        ) : (
-          <MapContainer center={AVEYRON_CENTER} zoom={9} style={{ height: "100%", width: "100%" }}>
+      {/* ---------- CARTE LEAFLET ---------- */}
+      <div className="mb-8 border rounded-lg bg-gray-100 overflow-hidden" style={{ height: '70vh', width: '100%' }}>
+        {!isLoading && typeof window !== 'undefined' ? (
+          <MapContainer center={[43.6045, 1.444]} zoom={11} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {sitesData.map((site, i) => {
-              const icon = createCustomIcon(i, site.categorie);
-              return icon && (
-                <Marker key={site.id} position={[site.lat, site.lng]} icon={icon}>
-                  <Popup>
-                    <div style={{ fontFamily: 'Arial', fontSize: '14px' }}> 
-                      <strong>{i + 1}. {site.commune}</strong> ({site.categorie})<br/> 
-                      <b>Description :</b> {site.description}<br/>
-                      <b>Niveau :</b> {site.niveau}
-                    </div>
-                  </Popup>
-                </Marker>
+            
+            {balades.map((balade) => {
+              const icon = createIcon(balade.id);
+              
+              // Préparation des coordonnées du tracé (Polyline)
+              // Note: Dans GeoJSON c'est [lng, lat], Leaflet veut [lat, lng]
+              const polylinePoints = balade.geo_shape?.geometry?.coordinates?.map(coord => [coord[1], coord[0]]) as [number, number][];
+
+              return (
+                <div key={balade.id}>
+                  {/* Marqueur 📍 */}
+                  {icon && (
+                    <Marker position={[balade.geo_point_2d.lat, balade.geo_point_2d.lon]} icon={icon}>
+                      <Popup>
+                        <div style={{ fontFamily: 'sans-serif' }}>
+                          <strong>{balade.nom}</strong><br/>
+                          <em>{balade.lieu}</em><br/>
+                          ⏱ {balade.duree} — 📏 {balade.distance} km<br/>
+                          {balade.lien && <a href={balade.lien} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>Voir →</a>}
+                        </div>
+                      </Popup>
+                    </Marker>
+                  )}
+
+                  {/* Tracé de la balade 🧭 */}
+                  {polylinePoints && (
+                    <Polyline 
+                      positions={polylinePoints} 
+                      pathOptions={{ color: '#16a34a', weight: 3, opacity: 0.7 }} 
+                    />
+                  )}
+                </div>
               );
             })}
           </MapContainer>
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-500">
+            Chargement de la carte...
+          </div>
         )}
       </div>
 
-      <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({sitesData.length} marqueurs)</h2> 
+      {/* ---------- LISTE DES BALADES (Inchangée) ---------- */}
+      <div className="space-y-12">
+        {Object.entries(groupedBalades).map(([lieu, items]) => (
+          <div key={lieu}>
+            <h2 className="text-2xl font-bold mb-4 border-b-2 border-green-400">
+              {lieu} ({items.length})
+            </h2>
 
-      {/* Conteneur de scroll pour le tableau */}
-      <div style={{ overflowX: "auto", width: "100%", borderRadius: "8px" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px", minWidth: "700px" }}> 
-          <thead style={{ backgroundColor: "#e0e0e0" }}> 
-            <tr> 
-              <th style={tableHeaderStyle}>#</th>
-              <th style={tableHeaderStyle}>Commune</th> 
-              <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
-              <th style={tableHeaderStyle}>Niveau</th> 
-              <th style={tableHeaderStyle}>Catégorie</th> 
-            </tr> 
-          </thead> 
-          <tbody> 
-            {sitesData.map((site, i) => ( 
-              <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
-                <td style={tableCellStyle}>{i + 1}</td>
-                <td style={tableCellStyle}>{site.commune}</td> 
-                <td style={tableCellStyle}>{site.description}</td> 
-                {/* Niveau avec couleur dynamique */}
-                <td style={{ ...tableCellStyleCenter, color: getThemeColor(site.categorie), fontWeight: 'bold' }}>
-                  {site.niveau}
-                </td> 
-                {/* Catégorie avec couleur dynamique */}
-                <td style={{ ...tableCellStyle, color: getThemeColor(site.categorie), fontWeight: 'bold', textTransform: 'capitalize' }}>
-                  {site.categorie}
-                </td> 
-              </tr> 
-            ))} 
-          </tbody> 
-        </table>
-      </div> 
-    </div> 
-  ); 
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {items.map(balade => (
+                <li
+                  key={balade.id}
+                  className="p-4 bg-white rounded-lg shadow border"
+                >
+                  <p className="font-bold text-lg">
+                    {balade.id}. {balade.nom}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    ⏱ {balade.duree} — 📏 {balade.distance} km
+                  </p>
+                  <p className="text-sm italic">
+                    {balade.accessibilite}
+                  </p>
+
+                  {balade.lien && (
+                    <a
+                      href={balade.lien}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 text-sm"
+                    >
+                      Voir →
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
-
-// Styles table
-const tableHeaderStyle: CSSProperties = { padding: "10px", border: "1px solid #ccc", textAlign: "left" };
-const tableCellStyle: CSSProperties = { padding: "8px", border: "1px solid #ddd" };
-const tableCellStyleCenter: CSSProperties = { padding: "8px", border: "1px solid #ddd", textAlign: "center" };
