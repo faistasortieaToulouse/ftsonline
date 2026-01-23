@@ -2,74 +2,50 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import type { ClocherMurSite } from '../../../api/clochermur/route';
+import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import "leaflet/dist/leaflet.css";
 
-// --- Imports dynamiques pour éviter les erreurs SSR ---
+// --- Imports dynamiques pour Leaflet (SSR Safe) ---
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
-interface Cinema {
-  name: string;
-  address: string;
-  url: string;
-  category: string;
-  lat?: number;
-  lng?: number;
-}
+const CENTER_LAURAGAIS: [number, number] = [43.48, 1.65];
 
-export default function CinemasToulousePage() {
-  const [cinemas, setCinemas] = useState<Cinema[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ClocherMurMapPage() {
+  const [sitesData, setSitesData] = useState<ClocherMurSite[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [L, setL] = useState<any>(null);
 
-  // --- 1. Charger les données et l'objet Leaflet ---
+  // 1. Fetch des données et chargement de l'objet Leaflet
   useEffect(() => {
-    // Charger Leaflet pour les icônes personnalisées
+    // Importation de Leaflet pour les icônes personnalisées
     import("leaflet").then((leaflet) => {
       setL(leaflet.default);
     });
 
-    fetch("/api/cinemastoulouse")
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Erreur lors de la récupération");
-        const data: Cinema[] = await res.json();
-        const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
-        
-        // Géocodage des adresses (Nominatim)
-        // Note: Dans un vrai projet, il vaut mieux stocker lat/lng en BDD
-        const geocodeAll = async () => {
-          const updated = await Promise.all(sortedData.map(async (cinema, i) => {
-            try {
-              // Petit délai pour respecter les limites de Nominatim
-              await new Promise(resolve => setTimeout(resolve, i * 200)); 
-              const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cinema.address + ", Toulouse")}`);
-              const results = await response.json();
-              if (results.length > 0) {
-                return { ...cinema, lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) };
-              }
-            } catch (err) {
-              console.error("Geocoding error", err);
-            }
-            return cinema;
-          }));
-          setCinemas(updated);
-          setLoading(false);
-        };
-
-        geocodeAll();
-      })
-      .catch((err) => {
+    async function fetchSites() {
+      try {
+        const response = await fetch('/api/clochermur');
+        if (!response.ok) throw new Error('Erreur API');
+        let data: ClocherMurSite[] = await response.json();
+        // Tri par ordre alphabétique des communes
+        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr'));
+        setSitesData(data);
+      } catch (err) {
         console.error(err);
-        setLoading(false);
-      });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchSites();
   }, []);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto min-h-screen bg-slate-50">
+    <div className="p-4 max-w-7xl mx-auto">
       
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
@@ -77,55 +53,52 @@ export default function CinemasToulousePage() {
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <header className="mb-8">
-        <h1 className="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tight">
-          🎬 Cinémas <span className="text-rose-600">Toulouse</span>
-        </h1>
-        <p className="text-slate-600 italic">Carte interactive des salles obscures de la ville rose.</p>
-      </header>
 
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">🔔 Églises à clochers-murs de style midi-toulousain</h1>
+        
+        {!isLoading && (
+          <p className="text-gray-600 mt-2 font-medium">
+            Total : <span className="text-blue-600">{sitesData.length}</span> églises répertoriées
+          </p>
+        )}
+      </div>
+      
       {/* --- Zone de la Carte Leaflet --- */}
-      <div className="mb-10 border-4 border-white shadow-xl rounded-2xl bg-gray-200 overflow-hidden h-[60vh] relative">
-        {loading && (
-          <div className="absolute inset-0 z-[1000] flex items-center justify-center bg-slate-100/80 backdrop-blur-sm">
-            <div className="flex flex-col items-center gap-2">
-              <Loader2 className="animate-spin text-rose-600" size={40} />
-              <p className="font-bold text-slate-500">Géolocalisation des cinémas...</p>
+      <div className="rounded-xl border shadow-inner bg-slate-50 mb-6 h-[60vh] overflow-hidden relative">
+        {isLoading || !L ? (
+          <div className="flex h-full items-center justify-center bg-slate-50">
+            <div className="flex flex-col items-center gap-2 text-slate-400">
+              <Loader2 className="animate-spin" />
+              <p>Chargement de la carte...</p>
             </div>
           </div>
-        )}
-
-        {L && (
+        ) : (
           <MapContainer 
-            center={[43.6045, 1.444]} 
-            zoom={13} 
+            center={CENTER_LAURAGAIS} 
+            zoom={10} 
             style={{ height: "100%", width: "100%" }}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; OpenStreetMap contributors'
             />
-            {cinemas.map((cinema, i) => {
-              if (!cinema.lat || !cinema.lng) return null;
-
-              const customMarker = L.divIcon({
-                className: 'custom-div-icon',
-                html: `<div style="background-color: #e11d48; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${i + 1}</div>`,
+            {sitesData.map((site, index) => {
+              // Création d'un marqueur numéroté (similaire au label Google Maps)
+              const icon = L.divIcon({
+                className: 'custom-icon',
+                html: `<div style="background-color: #2563eb; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${index + 1}</div>`,
                 iconSize: [24, 24],
                 iconAnchor: [12, 12]
               });
 
               return (
-                <Marker key={i} position={[cinema.lat, cinema.lng]} icon={customMarker}>
+                <Marker key={site.id} position={[site.lat, site.lng]} icon={icon}>
                   <Popup>
-                    <div className="p-1">
-                      <strong className="text-rose-600">{i + 1}. {cinema.name}</strong><br />
-                      <p className="text-xs text-slate-600 my-1">{cinema.address}</p>
-                      <span className="text-[10px] bg-slate-100 px-1 rounded font-bold uppercase">{cinema.category}</span>
-                      <div className="mt-2">
-                        <a href={cinema.url} target="_blank" className="text-xs font-bold text-blue-600 hover:underline">Voir le programme →</a>
-                      </div>
+                    <div className="text-sm">
+                      <strong className="text-blue-700">{site.commune} (${site.dept})</strong><br/>
+                      <p className="my-1 leading-tight">{site.description}</p>
+                      <small className="text-gray-500 font-medium">${site.secteur} - ${site.distanceKm}km de Toulouse</small>
                     </div>
                   </Popup>
                 </Marker>
@@ -135,44 +108,30 @@ export default function CinemasToulousePage() {
         )}
       </div>
 
-      {/* --- Liste des cinémas (Inchangée) --- */}
-      <h2 className="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2">
-        <span className="bg-rose-600 text-white px-3 py-1 rounded-lg text-sm">{cinemas.length}</span>
-        Salles répertoriées
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cinemas.map((cinema, i) => (
-          <div 
-            key={i} 
-            className="group p-5 border border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-md hover:border-rose-200 transition-all cursor-pointer"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <span className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 text-white font-black">
-                {i + 1}
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest bg-rose-50 text-rose-600 px-2 py-1 rounded">
-                {cinema.category}
-              </span>
-            </div>
-            
-            <h3 className="text-xl font-bold text-slate-900 mb-1 group-hover:text-rose-600 transition-colors">
-              {cinema.name}
-            </h3>
-            <p className="text-sm text-slate-500 mb-6 italic flex items-center gap-1">
-              📍 {cinema.address}
-            </p>
-
-            <a 
-              href={cinema.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block w-full text-center py-2 rounded-xl bg-slate-100 text-slate-800 font-bold text-sm hover:bg-rose-600 hover:text-white transition-colors"
-            >
-              Programme officiel
-            </a>
-          </div>
-        ))}
+      {/* --- Tableau (Contenu et mise en page conservés) --- */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border p-2 text-left">#</th>
+              <th className="border p-2 text-left">Commune</th>
+              <th className="border p-2 text-center">Dépt</th>
+              <th className="border p-2 text-left">Description</th>
+              <th className="border p-2 text-center">Distance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sitesData.map((site, i) => (
+              <tr key={site.id} className="hover:bg-blue-50 transition-colors">
+                <td className="border p-2">{i + 1}</td>
+                <td className="border p-2 font-medium">{site.commune}</td>
+                <td className="border p-2 text-center text-gray-600">{site.dept}</td>
+                <td className="border p-2">{site.description}</td>
+                <td className="border p-2 text-center">{site.distanceKm} km</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
