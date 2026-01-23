@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Tree, { RawNodeDatum } from 'react-d3-tree';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface Personne {
   personne: string;
@@ -123,6 +125,14 @@ export default function HierarchieMaltePage() {
 
   return (
     <div className="p-4 max-w-full mx-auto">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-3xl font-extrabold mb-6 text-center">🏰 Hiérarchie de l'ordre de Malte</h1>
 
       {data.length > 0 && (
