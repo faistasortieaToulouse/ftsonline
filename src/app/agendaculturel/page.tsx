@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                    */
@@ -117,6 +119,14 @@ export default function AgendaCulturelPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      
+            <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       {/* Styles pour la barre de défilement fine */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
