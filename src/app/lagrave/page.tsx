@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface Cour {
   id: number;
@@ -19,6 +21,14 @@ export default function LaGravePage() {
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-3xl font-bold mb-6 text-red-800">Plan des Cours - Hôpital La Grave</h1>
       
       {/* Simulation visuelle du plan en grille */}
