@@ -1,7 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import dynamic from "next/dynamic";
+import "leaflet/dist/leaflet.css";
+
+// --- Imports dynamiques pour Leaflet (pas de SSR) ---
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
 interface Territoire {
   nom: string;
@@ -13,14 +22,12 @@ interface Territoire {
 }
 
 export default function AssociesEuropePage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-
   const [territoires, setTerritoires] = useState<Territoire[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [L, setL] = useState<any>(null); // Pour stocker l'instance Leaflet (icônes)
 
   useEffect(() => {
-    fetch("/api/associeseurope") // Appel à votre nouvelle route
+    // Chargement des données
+    fetch("/api/associeseurope")
       .then(async (res) => {
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -35,64 +42,49 @@ export default function AssociesEuropePage() {
         }
       })
       .catch(console.error);
+
+    // Chargement de Leaflet pour les icônes personnalisées
+    import("leaflet").then((leaflet) => {
+      setL(leaflet);
+    });
   }, []);
 
-  useEffect(() => {
-    if (!isReady || !mapRef.current || territoires.length === 0) return;
-
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 3,
-      center: { lat: 25, lng: 10 },
-      scrollwheel: true,
-      gestureHandling: "greedy",
-      mapTypeId: 'terrain',
-      styles: [{ featureType: "administrative.country", elementType: "geometry.stroke", stylers: [{ color: "#1e3a8a" }, { weight: 1 }] }]
+  // Fonction pour créer l'icône personnalisée (Cercle bleu avec numéro)
+  const createCustomIcon = (index: number) => {
+    if (!L) return null;
+    return L.divIcon({
+      className: 'custom-icon',
+      html: `
+        <div style="
+          background-color: #1e3a8a;
+          color: white;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 2px solid white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          font-weight: bold;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        ">
+          ${index + 1}
+        </div>
+      `,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
     });
-
-    territoires.forEach((t, index) => {
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: { lat: t.lat, lng: t.lng },
-        title: t.nom,
-        label: {
-          text: (index + 1).toString(),
-          color: "white",
-          fontSize: "10px",
-          fontWeight: "bold"
-        },
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 11,
-          fillColor: "#1e3a8a", 
-          fillOpacity: 1,
-          strokeWeight: 2,
-          strokeColor: "#ffffff",
-        }
-      });
-
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <div style="color: black; padding: 5px; font-family: sans-serif; max-width: 200px;">
-            <strong style="font-size: 14px;">#${index + 1} - ${t.nom}</strong><br>
-            <span style="color: #1e3a8a; font-size: 10px; text-transform: uppercase; font-weight: bold;">${t.statut}</span>
-            <p style="margin-top:8px; font-size: 12px; line-height: 1.4;">${t.description}</p>
-          </div>
-        `,
-      });
-
-      marker.addListener("click", () => {
-        infowindow.open(mapInstance.current, marker);
-      });
-    });
-  }, [isReady, territoires]);
+  };
 
   return (
     <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
 
       <header className="mb-8 border-b pb-6">
         <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3">
@@ -101,8 +93,33 @@ export default function AssociesEuropePage() {
         <p className="text-gray-600 mt-2 italic">Analyse des statuts fiscaux et douaniers des dépendances européennes</p>
       </header>
 
-      <div ref={mapRef} style={{ height: "60vh", width: "100%" }} className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden" />
+      {/* --- ZONE CARTE LEAFLET --- */}
+      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden" style={{ height: "60vh", width: "100%" }}>
+        {typeof window !== "undefined" && L && (
+          <MapContainer center={[25, 10]} zoom={3} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {territoires.map((t, index) => {
+              const icon = createCustomIcon(index);
+              return icon ? (
+                <Marker key={t.nom} position={[t.lat, t.lng]} icon={icon}>
+                  <Popup>
+                    <div style={{ color: 'black', padding: '5px', fontFamily: 'sans-serif', maxWidth: '200px' }}>
+                      <strong style={{ fontSize: '14px' }}>#${index + 1} - ${t.nom}</strong><br />
+                      <span style={{ color: '#1e3a8a', fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold' }}>{t.statut}</span>
+                      <p style={{ marginTop: '8px', fontSize: '12px', lineHeight: '1.4' }}>{t.description}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              ) : null;
+            })}
+          </MapContainer>
+        )}
+      </div>
 
+      {/* --- ZONE CONTENU (Inchangée) --- */}
       <div className="space-y-12">
         {["Europe", "Afrique", "Amérique", "Asie", "Antarctique", "Océanie"].map((continent) => {
           const list = territoires.filter(t => t.continent === continent);
