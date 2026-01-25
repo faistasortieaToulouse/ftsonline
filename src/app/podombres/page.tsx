@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import Link from "next/link";
 import debounce from "lodash.debounce";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
