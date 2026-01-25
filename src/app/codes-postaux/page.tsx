@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import Link from "next/link";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
 interface GeoPoint { lat: number; lon: number }
 interface GeoShape { geometry: { coordinates: any; type: string } }
@@ -19,19 +21,18 @@ const COLORS = ["#2563eb","#16a34a","#dc2626","#7c3aed","#ea580c","#0891b2"];
 
 export default function CodesPostauxPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
+  const mapInstance = useRef<any>(null);
   const [codes, setCodes] = useState<CodePostal[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch et tri
+  // 1. Fetch et Traitement des données
   useEffect(() => {
     fetch("/api/codes-postaux")
       .then(res => res.json())
       .then(data => {
         if (!Array.isArray(data)) return;
-        const sorted = data.sort((a,b)=>a.code_postal.localeCompare(b.code_postal,"fr",{numeric:true}));
+        const sorted = data.sort((a,b) => a.code_postal.localeCompare(b.code_postal,"fr",{numeric:true}));
 
-        // Numérotation
         let num = 0;
         const processed: CodePostal[] = sorted.map(code => {
           if (code.code_postal === "31820") return { ...code, numero: 20 };
@@ -41,146 +42,131 @@ export default function CodesPostauxPage() {
         });
 
         setCodes(processed);
+        setLoading(false);
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
+  // 2. Initialisation de Leaflet (Méthode OTAN)
   useEffect(() => {
-    if (!isReady || !mapRef.current || codes.length === 0) return;
+    if (typeof window === "undefined" || !mapRef.current || codes.length === 0) return;
 
-    const map = new google.maps.Map(mapRef.current, {
-      zoom: 11,
-      center: { lat: 43.6045, lng: 1.444 },
-      gestureHandling: "greedy"
-    });
-    mapInstance.current = map;
-    const infoWindow = new google.maps.InfoWindow();
-    const polygons: google.maps.Polygon[] = [];
+    let L: any;
 
-    // Index de Pibrac pour couleur
-    const indexPibrac = codes.findIndex(c => c.code_postal === "31820" && c.communes.includes("Pibrac"));
-    const colorPibrac = indexPibrac >= 0 ? COLORS[indexPibrac % COLORS.length] : "#2563eb";
+    const initMap = async () => {
+      L = (await import("leaflet")).default;
 
-    codes.forEach((code, index) => {
-      const color = code.code_postal === "31820" ? colorPibrac : COLORS[index % COLORS.length];
-      const numero = code.numero ?? index + 1;
+      if (mapInstance.current) return;
 
-      // Marker
-      if (code.geo_point_2d) {
-        const marker = new google.maps.Marker({
-          map,
-          position: { lat: code.geo_point_2d.lat, lng: code.geo_point_2d.lon },
-          label: String(numero),
-          title: `#${numero} – ${code.code_postal}`
-        });
-        marker.addListener("click", () => {
-          polygons.forEach(p => p.setOptions({ fillOpacity: 0.25 }));
-          const poly = polygons[index]; if (poly) poly.setOptions({ fillOpacity: 0.55 });
-          infoWindow.setContent(`<strong>#${numero} – ${code.code_postal}</strong><br/>${code.communes.join(", ")}`);
-          infoWindow.open(map, marker);
-        });
-      }
+      // Création de la carte
+      const map = L.map(mapRef.current).setView([43.6045, 1.444], 11);
+      mapInstance.current = map;
 
-      // Polygon depuis JSON avec sécurité
-      if (code.geo_shape?.geometry?.coordinates) {
-        const coords = code.geo_shape.geometry.coordinates;
-        (Array.isArray(coords) ? coords : []).forEach((multi: any) => {
-          if (!Array.isArray(multi)) return;
-          multi.forEach((ring: any) => {
-            if (!Array.isArray(ring)) return;
-            const path = ring.map((coord: any) => {
-              if (!Array.isArray(coord) || coord.length < 2) return { lat: 0, lng: 0 };
-              const [lng, lat] = coord;
-              return { lat, lng };
-            });
-            const polygon = new google.maps.Polygon({
-              map,
-              paths: path,
-              strokeColor: color,
-              strokeOpacity: 0.9,
-              strokeWeight: 2,
-              fillColor: color,
-              fillOpacity: 0.25
-            });
-            polygons.push(polygon);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      // Ajout des données (Marqueurs et Polygones)
+      codes.forEach((code, index) => {
+        const color = COLORS[index % COLORS.length];
+        const numero = code.numero ?? index + 1;
+
+        // A. Ajout du Marqueur Numéroté
+        if (code.geo_point_2d) {
+          const customIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${numero}</div>`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
           });
-        });
-      }
 
-      // Polygon manuel pour Plaisance-du-Touch si nécessaire
-      if (code.communes.includes("Plaisance-du-Touch")) {
-        const path = [
-          { lat: 43.536668191723, lng: 1.3104729777505 },
-          { lat: 43.535392912206, lng: 1.299290995075 },
-          { lat: 43.525987758073, lng: 1.2896157438668 },
-          { lat: 43.535792549921, lng: 1.2601798552868 },
-          { lat: 43.545511565693, lng: 1.2550540493933 },
-          { lat: 43.552350442615, lng: 1.2379040886319 },
-          { lat: 43.559138282872, lng: 1.2464289596589 },
-          { lat: 43.566990322517, lng: 1.24859517653 },
-          { lat: 43.569306691334, lng: 1.2531115639794 },
-          { lat: 43.566337149566, lng: 1.2715206897709 },
-          { lat: 43.572060902268, lng: 1.2922817977817 },
-          { lat: 43.577740748936, lng: 1.28840775057 },
-          { lat: 43.587319788355, lng: 1.2734417028742 },
-          { lat: 43.598155947613, lng: 1.2821568320575 },
-          { lat: 43.599208588125, lng: 1.2841290027456 },
-          { lat: 43.594740762403, lng: 1.3049145097859 },
-          { lat: 43.584621590669, lng: 1.2926211572073 },
-          { lat: 43.577197083679, lng: 1.293548848081 },
-          { lat: 43.566939997447, lng: 1.3236877266691 },
-          { lat: 43.559157183116, lng: 1.3285840219722 },
-          { lat: 43.550705296115, lng: 1.3148681827284 },
-          { lat: 43.538340491075, lng: 1.3110658142251 },
-          { lat: 43.536668191723, lng: 1.3104729777505 }
-        ];
-        const polygon = new google.maps.Polygon({
-          map,
-          paths: path,
-          strokeColor: color,
-          strokeOpacity: 0.9,
-          strokeWeight: 2,
-          fillColor: color,
-          fillOpacity: 0.25
-        });
-        polygons.push(polygon);
+          L.marker([code.geo_point_2d.lat, code.geo_point_2d.lon], { icon: customIcon })
+            .addTo(map)
+            .bindPopup(`<strong>#${numero} – ${code.code_postal}</strong><br/>${code.communes.join(", ")}`);
+        }
+
+        // B. Ajout du Polygone (GeoShape)
+        if (code.geo_shape?.geometry?.coordinates) {
+          const type = code.geo_shape.geometry.type;
+          const coords = code.geo_shape.geometry.coordinates;
+
+          // Fonction pour inverser [lng, lat] en [lat, lng] pour Leaflet
+          const formatCoords = (c: any[]) => c.map(pt => [pt[1], pt[0]]);
+
+          if (type === "Polygon") {
+            L.polygon(formatCoords(coords[0]), {
+              color: color, fillOpacity: 0.2, weight: 2
+            }).addTo(map);
+          } else if (type === "MultiPolygon") {
+            coords.forEach((poly: any) => {
+              L.polygon(formatCoords(poly[0]), {
+                color: color, fillOpacity: 0.2, weight: 2
+              }).addTo(map);
+            });
+          }
+        }
+      });
+    };
+
+    initMap();
+
+    // NETTOYAGE : Détruit la carte pour éviter le bug "Map container already initialized"
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
       }
-    });
-  }, [isReady, codes]);
+    };
+  }, [codes]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
+    <div className="p-4 max-w-7xl mx-auto min-h-screen bg-slate-50">
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 font-bold group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
 
       <h1 className="text-3xl font-extrabold mb-4 text-blue-700">
-        📮 Codes postaux de Toulouse Métropole ({codes[codes.length-1]?.numero ?? codes.length})
-
+        📮 Codes postaux de Toulouse Métropole ({codes.length > 0 ? codes[codes.length-1].numero : "..."})
       </h1>
 
-      <div ref={mapRef} style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100" />
+      {/* Conteneur de la Carte */}
+      <div className="relative mb-8 border-4 border-white shadow-xl rounded-2xl overflow-hidden h-[70vh] bg-slate-200">
+        <div ref={mapRef} className="h-full w-full z-0" />
+        
+        {loading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-100/60 backdrop-blur-sm">
+            <Loader2 className="animate-spin text-blue-600" size={48} />
+          </div>
+        )}
+      </div>
 
-      <table className="w-full border border-collapse">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="border p-2">#</th>
-            <th className="border p-2">Code postal</th>
-            <th className="border p-2">Communes</th>
-          </tr>
-        </thead>
-        <tbody>
-          {codes.map(code => (
-            <tr key={code.id}>
-              <td className="border p-2 font-bold text-center">{code.numero}</td>
-              <td className="border p-2 font-bold">{code.code_postal}</td>
-              <td className="border p-2">{code.communes.join(", ")}</td>
+      {/* Tableau des données */}
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <table className="w-full border-collapse text-left text-sm">
+          <thead className="bg-slate-50">
+            <tr>
+              <th className="p-4 font-bold border-b">#</th>
+              <th className="p-4 font-bold border-b">Code postal</th>
+              <th className="p-4 font-bold border-b">Communes</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {codes.map((code) => (
+              <tr key={code.id} className="hover:bg-slate-50 transition-colors">
+                <td className="p-4 font-black text-blue-600">{code.numero}</td>
+                <td className="p-4 font-bold text-slate-700">{code.code_postal}</td>
+                <td className="p-4 text-slate-600">{code.communes.join(", ")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

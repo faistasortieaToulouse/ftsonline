@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
 /* ================= TYPES ================= */
@@ -15,7 +14,7 @@ interface GeoPoint {
 
 interface GeoShape {
   geometry: {
-    coordinates: number[][]; // Leaflet préfère souvent un tableau simple de coordonnées pour les polylines
+    coordinates: number[][];
   };
 }
 
@@ -34,27 +33,19 @@ interface Balade {
 
 type GroupedBalades = Record<string, Balade[]>;
 
-/* ================= COMPOSANTS DYNAMIQUES ================= */
-
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
-const Polyline = dynamic(() => import("react-leaflet").then((mod) => mod.Polyline), { ssr: false });
-
 /* ================= PAGE ================= */
 
 export default function BaladePage() {
   const [balades, setBalades] = useState<Balade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [L, setL] = useState<any>(null);
+  
+  // Refs pour Leaflet (Méthode OTAN)
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
-  /* ---------- Chargement des données ---------- */
+  /* ---------- 1. Chargement des données ---------- */
   useEffect(() => {
-    import("leaflet").then((leaflet) => {
-      setL(leaflet);
-    });
-
     fetch('/api/balade')
       .then(res => {
         if (!res.ok) throw new Error("Erreur API");
@@ -72,16 +63,78 @@ export default function BaladePage() {
       });
   }, []);
 
-  /* ---------- Icône personnalisée Leaflet ---------- */
-  const createIcon = (id: string) => {
-    if (!L) return null;
-    return L.divIcon({
-      className: 'custom-balade-icon',
-      html: `<div style="background-color: #15803d; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">${id}</div>`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
-    });
-  };
+  /* ---------- 2. Initialisation sécurisée de la carte ---------- */
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || isLoading) return;
+
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+
+      if (mapInstance.current) return; // Empêche le doublon
+
+      // Création de l'instance
+      mapInstance.current = L.map(mapRef.current).setView([43.6045, 1.444], 11);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
+
+      setIsMapReady(true);
+    };
+
+    initMap();
+
+    // NETTOYAGE CRUCIAL (Evite l'erreur "already initialized")
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoading]);
+
+  /* ---------- 3. Ajout des Marqueurs et Tracés (Polylines) ---------- */
+  useEffect(() => {
+    if (!isMapReady || !mapInstance.current || balades.length === 0) return;
+
+    const updateLayers = async () => {
+      const L = (await import('leaflet')).default;
+
+      balades.forEach((balade) => {
+        // Icône personnalisée
+        const customIcon = L.divIcon({
+          className: 'custom-balade-icon',
+          html: `<div style="background-color: #15803d; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">${balade.id}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        // Marqueur
+        const marker = L.marker([balade.geo_point_2d.lat, balade.geo_point_2d.lon], { icon: customIcon });
+        marker.bindPopup(`
+          <div style="font-family: sans-serif; color: black;">
+            <strong>${balade.nom}</strong><br/>
+            <em>${balade.lieu}</em><br/>
+            ⏱ ${balade.duree} — 📏 ${balade.distance} km<br/>
+            ${balade.lien ? `<a href="${balade.lien}" target="_blank" style="color: #3b82f6;">Voir →</a>` : ''}
+          </div>
+        `);
+        marker.addTo(mapInstance.current);
+
+        // Tracé (Polyline)
+        if (balade.geo_shape?.geometry?.coordinates) {
+          const polylinePoints = balade.geo_shape.geometry.coordinates.map(coord => [coord[1], coord[0]]) as [number, number][];
+          L.polyline(polylinePoints, { 
+            color: '#16a34a', 
+            weight: 3, 
+            opacity: 0.7 
+          }).addTo(mapInstance.current);
+        }
+      });
+    };
+
+    updateLayers();
+  }, [isMapReady, balades]);
 
   /* ---------- Regroupement par lieu ---------- */
   const groupedBalades: GroupedBalades = balades.reduce((acc, balade) => {
@@ -92,7 +145,6 @@ export default function BaladePage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -104,57 +156,17 @@ export default function BaladePage() {
         🚶 Balades nature ({balades.length})
       </h1>
 
-      {/* ---------- CARTE LEAFLET ---------- */}
-      <div className="mb-8 border rounded-lg bg-gray-100 overflow-hidden" style={{ height: '70vh', width: '100%' }}>
-        {!isLoading && typeof window !== 'undefined' ? (
-          <MapContainer center={[43.6045, 1.444]} zoom={11} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            
-            {balades.map((balade) => {
-              const icon = createIcon(balade.id);
-              
-              // Préparation des coordonnées du tracé (Polyline)
-              // Note: Dans GeoJSON c'est [lng, lat], Leaflet veut [lat, lng]
-              const polylinePoints = balade.geo_shape?.geometry?.coordinates?.map(coord => [coord[1], coord[0]]) as [number, number][];
-
-              return (
-                <div key={balade.id}>
-                  {/* Marqueur 📍 */}
-                  {icon && (
-                    <Marker position={[balade.geo_point_2d.lat, balade.geo_point_2d.lon]} icon={icon}>
-                      <Popup>
-                        <div style={{ fontFamily: 'sans-serif' }}>
-                          <strong>{balade.nom}</strong><br/>
-                          <em>{balade.lieu}</em><br/>
-                          ⏱ {balade.duree} — 📏 {balade.distance} km<br/>
-                          {balade.lien && <a href={balade.lien} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>Voir →</a>}
-                        </div>
-                      </Popup>
-                    </Marker>
-                  )}
-
-                  {/* Tracé de la balade 🧭 */}
-                  {polylinePoints && (
-                    <Polyline 
-                      positions={polylinePoints} 
-                      pathOptions={{ color: '#16a34a', weight: 3, opacity: 0.7 }} 
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </MapContainer>
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            Chargement de la carte...
+      {/* ZONE CARTE (DIV REF) */}
+      <div className="mb-8 border rounded-lg bg-gray-100 overflow-hidden relative" style={{ height: '70vh', width: '100%' }}>
+        <div ref={mapRef} className="h-full w-full z-0" />
+        {(isLoading || !isMapReady) && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+            <p className="animate-pulse text-green-700 font-bold">Chargement de la carte des balades...</p>
           </div>
         )}
       </div>
 
-      {/* ---------- LISTE DES BALADES (Inchangée) ---------- */}
+      {/* LISTE DES BALADES */}
       <div className="space-y-12">
         {Object.entries(groupedBalades).map(([lieu, items]) => (
           <div key={lieu}>
@@ -164,27 +176,12 @@ export default function BaladePage() {
 
             <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {items.map(balade => (
-                <li
-                  key={balade.id}
-                  className="p-4 bg-white rounded-lg shadow border"
-                >
-                  <p className="font-bold text-lg">
-                    {balade.id}. {balade.nom}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    ⏱ {balade.duree} — 📏 {balade.distance} km
-                  </p>
-                  <p className="text-sm italic">
-                    {balade.accessibilite}
-                  </p>
-
+                <li key={balade.id} className="p-4 bg-white rounded-lg shadow border">
+                  <p className="font-bold text-lg">{balade.id}. {balade.nom}</p>
+                  <p className="text-sm text-gray-600">⏱ {balade.duree} — 📏 {balade.distance} km</p>
+                  <p className="text-sm italic">{balade.accessibilite}</p>
                   {balade.lien && (
-                    <a
-                      href={balade.lien}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 text-sm"
-                    >
+                    <a href={balade.lien} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-sm">
                       Voir →
                     </a>
                   )}

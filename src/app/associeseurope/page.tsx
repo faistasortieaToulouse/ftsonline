@@ -1,16 +1,8 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
-
-// --- Imports dynamiques pour Leaflet (pas de SSR) ---
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
 interface Territoire {
   nom: string;
@@ -23,10 +15,12 @@ interface Territoire {
 
 export default function AssociesEuropePage() {
   const [territoires, setTerritoires] = useState<Territoire[]>([]);
-  const [L, setL] = useState<any>(null); // Pour stocker l'instance Leaflet (icônes)
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
 
+  // 1. Charger les données
   useEffect(() => {
-    // Chargement des données
     fetch("/api/associeseurope")
       .then(async (res) => {
         const data = await res.json();
@@ -42,40 +36,85 @@ export default function AssociesEuropePage() {
         }
       })
       .catch(console.error);
-
-    // Chargement de Leaflet pour les icônes personnalisées
-    import("leaflet").then((leaflet) => {
-      setL(leaflet);
-    });
   }, []);
 
-  // Fonction pour créer l'icône personnalisée (Cercle bleu avec numéro)
-  const createCustomIcon = (index: number) => {
-    if (!L) return null;
-    return L.divIcon({
-      className: 'custom-icon',
-      html: `
-        <div style="
-          background-color: #1e3a8a;
-          color: white;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          border: 2px solid white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 10px;
-          font-weight: bold;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        ">
-          ${index + 1}
-        </div>
-      `,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
-    });
-  };
+  // 2. Initialisation de la carte (Méthode OTAN robuste)
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current) return;
+
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      await import('leaflet/dist/leaflet.css');
+
+      if (mapInstance.current) return; // Sécurité anti-double-initialisation
+
+      // Création de l'instance sur la div ref
+      mapInstance.current = L.map(mapRef.current).setView([25, 10], 3);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
+
+      setIsReady(true);
+    };
+
+    initMap();
+
+    // NETTOYAGE CRUCIAL au démontage
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, []);
+
+  // 3. Ajout des marqueurs une fois la map et les données prêtes
+  useEffect(() => {
+    if (!isReady || !mapInstance.current || territoires.length === 0) return;
+
+    const updateMarkers = async () => {
+      const L = (await import('leaflet')).default;
+
+      territoires.forEach((t, index) => {
+        const customIcon = L.divIcon({
+          className: 'custom-icon',
+          html: `
+            <div style="
+              background-color: #1e3a8a;
+              color: white;
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+              border: 2px solid white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 10px;
+              font-weight: bold;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            ">
+              ${index + 1}
+            </div>
+          `,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker([t.lat, t.lng], { icon: customIcon });
+        marker.bindPopup(`
+          <div style="color: black; padding: 5px; font-family: sans-serif; max-width: 200px;">
+            <strong style="font-size: 14px;">#${index + 1} - ${t.nom}</strong><br />
+            <span style="color: #1e3a8a; fontSize: 10px; text-transform: uppercase; font-weight: bold;">${t.statut}</span>
+            <p style="margin-top: 8px; font-size: 12px; line-height: 1.4;">${t.description}</p>
+          </div>
+        `);
+        marker.addTo(mapInstance.current);
+      });
+    };
+
+    updateMarkers();
+  }, [isReady, territoires]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
@@ -93,33 +132,16 @@ export default function AssociesEuropePage() {
         <p className="text-gray-600 mt-2 italic">Analyse des statuts fiscaux et douaniers des dépendances européennes</p>
       </header>
 
-      {/* --- ZONE CARTE LEAFLET --- */}
-      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden" style={{ height: "60vh", width: "100%" }}>
-        {typeof window !== "undefined" && L && (
-          <MapContainer center={[25, 10]} zoom={3} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {territoires.map((t, index) => {
-              const icon = createCustomIcon(index);
-              return icon ? (
-                <Marker key={t.nom} position={[t.lat, t.lng]} icon={icon}>
-                  <Popup>
-                    <div style={{ color: 'black', padding: '5px', fontFamily: 'sans-serif', maxWidth: '200px' }}>
-                      <strong style={{ fontSize: '14px' }}>#${index + 1} - ${t.nom}</strong><br />
-                      <span style={{ color: '#1e3a8a', fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold' }}>{t.statut}</span>
-                      <p style={{ marginTop: '8px', fontSize: '12px', lineHeight: '1.4' }}>{t.description}</p>
-                    </div>
-                  </Popup>
-                </Marker>
-              ) : null;
-            })}
-          </MapContainer>
+      {/* ZONE CARTE (DIV REF) */}
+      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden relative" style={{ height: "60vh", width: "100%" }}>
+        <div ref={mapRef} className="h-full w-full z-0" />
+        {!isReady && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-100 z-10">
+             <p className="animate-pulse text-blue-900 font-bold">Initialisation de la carte mondiale...</p>
+          </div>
         )}
       </div>
 
-      {/* --- ZONE CONTENU (Inchangée) --- */}
       <div className="space-y-12">
         {["Europe", "Afrique", "Amérique", "Asie", "Antarctique", "Océanie"].map((continent) => {
           const list = territoires.filter(t => t.continent === continent);

@@ -1,22 +1,37 @@
 import { NextResponse } from "next/server";
 import xml2js from "xml2js";
 
-const BISON_XML_URL = "https://url-du-xml-bisonfute.xml";
+// On utilise l'URL officielle pour le Sud-Ouest (inclut Toulouse)
+const BISON_XML_URL = "https://www.bison-fute.gouv.fr/opendata/Datex2/SudOuest/Situation.xml";
 
 export async function GET() {
-  const res = await fetch(BISON_XML_URL);
-  const xmlText = await res.text();
+  try {
+    const res = await fetch(BISON_XML_URL, {
+      next: { revalidate: 300 } // Rafraîchir toutes les 5 minutes
+    });
 
-  const parser = new xml2js.Parser();
-  const data = await parser.parseStringPromise(xmlText);
+    if (!res.ok) {
+      return NextResponse.json({ error: "Lien Bison Futé indisponible" }, { status: res.status });
+    }
 
-  // Ici tu dois adapter selon la structure XML exacte
-  const axes = data?.TrafficData?.Axes?.[0]?.Axe || [];
+    const xmlText = await res.text();
+    const parser = new xml2js.Parser({ explicitArray: false });
+    const data = await parser.parseStringPromise(xmlText);
 
-  // Filtrer pour Toulouse si possible
-  const toulouseAxes = axes.filter((a: any) =>
-    a.Name?.[0]?.includes("Toulouse")
-  );
+    // Extraction des situations (Structure Datex2 officielle)
+    // On descend dans l'arborescence : d2LogicalModel -> payloadPublication -> situation
+    const situations = data?.d2LogicalModel?.payloadPublication?.situation;
 
-  return NextResponse.json(toulouseAxes);
+    // On s'assure de toujours renvoyer un tableau
+    let events = [];
+    if (situations) {
+      events = Array.isArray(situations) ? situations : [situations];
+    }
+
+    return NextResponse.json(events);
+  } catch (error: any) {
+    console.error("Erreur API BisonFute:", error);
+    // On renvoie un tableau vide pour éviter que le front-end ne plante avec JSON.parse
+    return NextResponse.json([]);
+  }
 }
