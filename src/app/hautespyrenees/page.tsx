@@ -1,67 +1,63 @@
 'use client';
 
-import { useEffect, useRef, useState, CSSProperties } from "react";
-import Script from "next/script";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useState, useRef, CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react"; // <--- Corrigé ici : lucide-react
 
-// --- Interface de type ---
+// --- Interface de type (Identique à Aude) ---
 interface SiteHP {
   id: number;
   commune: string;
-  site: string; // "description" dans votre modèle Lot
+  description: string;
   niveau: number;
-  categorie: 'incontournable' | 'remarquable' | 'suggéré';
+  categorie: 'Incontournable' | 'Remarquable' | 'Suggéré'; 
   lat: number;
   lng: number;
 }
 
-// --- Fonctions utilitaires pour les marqueurs ---
-const getMarkerIcon = (categorie: SiteHP['categorie']): string => {
+const HP_CENTER: [number, number] = [43.05, 0.15];
+
+// --- Couleurs thématiques ---
+const getThemeColor = (categorie: SiteHP['categorie']): string => {
   switch (categorie) {
-    case 'incontournable':
-      return 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-    case 'remarquable':
-      return 'http://maps.google.com/mapfiles/ms/icons/orange-dot.png';
-    case 'suggéré':
-    default:
-      return 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+    case 'Incontournable': return '#ef4444'; // Rouge
+    case 'Remarquable':    return '#f97316'; // Orange
+    case 'Suggéré':        return '#3b82f6'; // Bleu
+    default:               return '#3b82f6';
   }
 };
 
 const getLabelColor = (categorie: SiteHP['categorie']): string => {
-  return categorie === 'remarquable' ? 'white' : 'yellow';
+  return (categorie === 'Remarquable') ? 'white' : 'yellow';
 };
 
-// --- Centre de la carte : Hautes-Pyrénées (proche de Tarbes/Bagnères) ---
-const HP_CENTER = { lat: 43.05, lng: 0.15 };
-
 export default function HautesPyreneesMapPage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-
   const [sitesData, setSitesData] = useState<SiteHP[]>([]);
-  const [markersCount, setMarkersCount] = useState(0);
-  const [isReady, setIsReady] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
 
-  // ---- 1. Récupération et tri des données ----
+  // 1. Charger les données API
   useEffect(() => {
     async function fetchSites() {
       try {
-        const response = await fetch('/api/hautespyrenees');
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP : ${response.status}`);
-        }
-        const data: SiteHP[] = await response.json();
+        const response = await fetch('/api/hautespyrenees'); 
+        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+        let data = await response.json();
+        
+        // Normalisation pour correspondre aux types 'Incontournable' | 'Remarquable' | 'Suggéré'
+        const formattedData: SiteHP[] = data.map((item: any) => ({
+          ...item,
+          description: item.site || item.description,
+          categorie: (item.categorie.charAt(0).toUpperCase() + item.categorie.slice(1)) as SiteHP['categorie']
+        }));
 
-        // --- Tri alphabétique par commune ---
-        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
-
-        setSitesData(data);
+        formattedData.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
+        setSitesData(formattedData);
       } catch (error) {
-        console.error("Erreur lors de la récupération des sites des Hautes-Pyrénées :", error);
+        console.error("Erreur lors de la récupération des sites:", error);
       } finally {
         setIsLoadingData(false);
       }
@@ -69,177 +65,142 @@ export default function HautesPyreneesMapPage() {
     fetchSites();
   }, []);
 
-  // ---- 2. Initialisation carte & marqueurs ----
+  // 2. Initialisation de la carte
   useEffect(() => {
-    if (!isReady || !mapRef.current || !window.google?.maps || sitesData.length === 0) return;
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
 
-    const map = new google.maps.Map(mapRef.current, {
-      zoom: 9,
-      center: HP_CENTER,
-      gestureHandling: "greedy",
-    });
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      await import('leaflet/dist/leaflet.css');
 
-    mapInstance.current = map;
-    let count = 0;
+      if (mapInstance.current) return;
 
-    sitesData.forEach(site => {
-      count++;
-      const position = new google.maps.LatLng(site.lat, site.lng);
+      mapInstance.current = L.map(mapRef.current).setView(HP_CENTER, 9);
 
-      const marker = new google.maps.Marker({
-        map,
-        position,
-        title: `${site.commune} - ${site.site}`,
-        label: {
-          text: String(count),
-          color: getLabelColor(site.categorie),
-          fontWeight: 'bold',
-        },
-        icon: getMarkerIcon(site.categorie),
-      });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
 
-      const info = new google.maps.InfoWindow({
-        content: `
-          <div style="font-family: Arial; font-size: 14px; color: #333; padding: 5px;">
-            <strong>${count}. ${site.commune}</strong><br/>
-            <span style="color: #666; font-style: italic;">${site.categorie}</span><br/>
-            <hr style="margin: 5px 0;"/>
-            <b>Site :</b> ${site.site}<br/>
+      setIsReady(true);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoadingData]);
+
+  // 3. Ajout des marqueurs
+  useEffect(() => {
+    if (!isReady || !mapInstance.current || sitesData.length === 0) return;
+
+    const addMarkers = async () => {
+      const L = (await import('leaflet')).default;
+
+      sitesData.forEach((site, i) => {
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              background-color: ${getThemeColor(site.categorie)};
+              width: 28px; height: 28px;
+              border-radius: 50%; border: 2px solid white;
+              display: flex; align-items: center; justify-content: center;
+              color: ${getLabelColor(site.categorie)}; font-weight: bold; font-size: 12px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            ">
+              ${i + 1}
+            </div>
+          `,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        const marker = L.marker([site.lat, site.lng], { icon: customIcon });
+        marker.bindPopup(`
+          <div style="font-family: Arial; font-size: 14px; color: black;"> 
+            <strong>${i + 1}. ${site.commune}</strong> (${site.categorie})<br/> 
+            <b>Description :</b> ${site.description}<br/>
             <b>Niveau :</b> ${site.niveau}
           </div>
-        `,
+        `);
+        marker.addTo(mapInstance.current);
       });
+    };
 
-      marker.addListener("click", () =>
-        info.open({ anchor: marker, map })
-      );
-    });
-
-    setMarkersCount(count);
+    addMarkers();
   }, [isReady, sitesData]);
 
-  return (
-    <div className="p-4 max-w-7xl mx-auto">
-      
+  return ( 
+    <div className="p-4 max-w-7xl mx-auto"> 
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      {/* Google Maps API */}
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
 
-      <h1 className="text-3xl font-extrabold mb-6 text-blue-900">
-        🏔️ Patrimoine des Hautes-Pyrénées sur la carte
-      </h1>
+      <h1 className="text-3xl font-extrabold mb-6">🏔️ Sites Touristiques dans les Hautes-Pyrénées</h1> 
 
-      <p className="font-semibold text-lg mb-4 text-gray-700">
-        Statut : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites répertoriés.`}
+      <p className="font-semibold text-lg mb-4 text-slate-700">
+        Statut : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Légende */}
-      <div style={legendStyle}>
+      <div style={{ display: 'flex', gap: '10px 20px', flexWrap: 'wrap', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', backgroundColor: 'white' }}>
         <strong>Légende :</strong>
-        <span style={{ color: '#dc2626', fontWeight: 'bold' }}>🔴 Incontournable (Niveau 1)</span>
-        <span style={{ color: '#ea580c', fontWeight: 'bold' }}>🟠 Remarquable (Niveau 2)</span>
-        <span style={{ color: '#2563eb', fontWeight: 'bold' }}>🔵 Suggéré (Niveau 3)</span>
+        <span style={{ color: '#ef4444', fontWeight: 'bold' }}>🔴 Incontournable</span>
+        <span style={{ color: '#f97316', fontWeight: 'bold' }}>🟠 Remarquable</span>
+        <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>🔵 Suggéré</span>
       </div>
 
-      {/* Carte */}
-      <div
-        ref={mapRef}
-        style={{ height: "70vh", width: "100%" }}
-        className="mb-8 border-2 border-blue-100 rounded-xl bg-gray-50 flex items-center justify-center shadow-lg"
-      >
-        {(!isReady || isLoadingData) && <p className="animate-pulse">Initialisation de la carte des sommets…</p>}
-        {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucun site trouvé.</p>}
+      <div style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 relative z-0 overflow-hidden shadow-inner"> 
+        <div ref={mapRef} className="h-full w-full" />
+        {isLoadingData && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+            <p className="animate-pulse">Initialisation de la carte...</p>
+          </div>
+        )}
       </div>
 
-      {/* Tableau */}
-      <h2 className="text-2xl font-semibold mb-4 text-blue-800">
-        Liste exhaustive des sites ({markersCount} points d'intérêt)
-      </h2>
+      <h2 className="text-2xl font-semibold mb-4 text-slate-800">Liste complète des sites</h2> 
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead style={{ backgroundColor: "#f1f5f9" }}>
-            <tr>
-              <th style={th}>#</th>
-              <th style={th}>Commune</th>
-              <th style={th}>Site ou Monument</th>
-              <th style={th}>Niveau</th>
-              <th style={th}>Catégorie</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sitesData.map((site, i) => (
-              <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f8fafc" }}>
-                <td style={td}>{i + 1}</td>
-                <td style={{ ...td, fontWeight: 'bold' }}>{site.commune}</td>
-                <td style={td}>{site.site}</td>
-                <td style={tdCenter}>
-                  <span
-                    style={{
-                      padding: '4px 10px',
-                      borderRadius: '12px',
-                      fontWeight: 'bold',
-                      fontSize: '0.85em',
-                      backgroundColor:
-                        site.niveau === 1 ? '#fee2e2' : site.niveau === 2 ? '#ffedd5' : '#dbeafe',
-                      color:
-                        site.niveau === 1 ? '#dc2626' : site.niveau === 2 ? '#ea580c' : '#2563eb',
-                    }}
-                  >
-                    {site.niveau}
-                  </span>
-                </td>
-                <td style={td}>
-                  <span className="capitalize">{site.categorie}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+      <div style={{ overflowX: "auto", width: "100%", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "700px", backgroundColor: "white" }}> 
+          <thead style={{ backgroundColor: "#f1f5f9" }}> 
+            <tr> 
+              <th style={tableHeaderStyle}>#</th>
+              <th style={tableHeaderStyle}>Commune</th> 
+              <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
+              <th style={tableHeaderStyleCenter}>Niveau</th> 
+              <th style={tableHeaderStyle}>Catégorie</th> 
+            </tr> 
+          </thead> 
+          <tbody> 
+            {sitesData.map((site, i) => ( 
+              <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f8fafc" }}> 
+                <td style={tableCellStyle}>{i + 1}</td>
+                <td style={tableCellStyle}>{site.commune}</td> 
+                <td style={tableCellStyle}>{site.description}</td> 
+                <td style={{ ...tableCellStyleCenter, color: getThemeColor(site.categorie), fontWeight: 'bold' }}>
+                  {site.niveau}
+                </td> 
+                <td style={{ ...tableCellStyle, color: getThemeColor(site.categorie), fontWeight: 'bold' }}>
+                  {site.categorie}
+                </td> 
+              </tr> 
+            ))} 
+          </tbody> 
         </table>
-      </div>
-    </div>
-  );
+      </div> 
+    </div> 
+  ); 
 }
 
-// --- Styles CSS ---
-const legendStyle: CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '20px',
-  marginBottom: '20px',
-  padding: '15px',
-  border: '1px solid #e2e8f0',
-  borderRadius: '10px',
-  backgroundColor: '#ffffff',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-};
-
-const th: CSSProperties = { 
-  padding: "12px", 
-  borderBottom: "2px solid #e2e8f0", 
-  textAlign: "left",
-  color: "#475569",
-  fontSize: "0.9rem"
-};
-
-const td: CSSProperties = { 
-  padding: "12px", 
-  borderBottom: "1px solid #f1f5f9",
-  fontSize: "0.95rem"
-};
-
-const tdCenter: CSSProperties = { 
-  padding: "12px", 
-  borderBottom: "1px solid #f1f5f9", 
-  textAlign: "center" 
-};
+const tableHeaderStyle: CSSProperties = { padding: "12px", border: "1px solid #e2e8f0", textAlign: "left", fontSize: "14px" };
+const tableHeaderStyleCenter: CSSProperties = { padding: "12px", border: "1px solid #e2e8f0", textAlign: "center", fontSize: "14px" };
+const tableCellStyle: CSSProperties = { padding: "10px", border: "1px solid #e2e8f0", fontSize: "14px" };
+const tableCellStyleCenter: CSSProperties = { padding: "10px", border: "1px solid #e2e8f0", textAlign: "center", fontSize: "14px" };

@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
-import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
 interface Terminus {
   geo_point: { lon: number; lat: number };
@@ -18,101 +17,108 @@ interface Terminus {
 
 export default function TerminusPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const map = useRef<google.maps.Map | null>(null);
+  const mapInstance = useRef<any>(null); // Leaflet Map
+  const markersRef = useRef<Map<string, any>>(new Map()); // Leaflet Markers
+  
   const [terminus, setTerminus] = useState<Terminus[]>([]);
-  const [isMapReady, setIsMapReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const markersRef = useRef<Map<string, google.maps.Marker>>(new Map());
-  const infoWindowsRef = useRef<Map<string, google.maps.InfoWindow>>(new Map());
-
+  // 1. Récupération des données
   useEffect(() => {
     fetch("/api/terminus")
-      .then(res => res.json())
-      .then(data => {
-        // Tri par nom alphabétique puis par année (SPECIAL à la fin)
+      .then((res) => res.json())
+      .then((data) => {
         const sorted = data.sort((a: Terminus, b: Terminus) => {
           const nameCompare = (a.nom ?? "").localeCompare(b.nom ?? "");
           if (nameCompare !== 0) return nameCompare;
-
           const aYear = a.annee_reference === "SPECIAL" ? Infinity : parseInt(a.annee_reference);
           const bYear = b.annee_reference === "SPECIAL" ? Infinity : parseInt(b.annee_reference);
           return aYear - bYear;
         });
         setTerminus(sorted);
+        setIsLoading(false);
       })
       .catch(console.error);
   }, []);
 
+  // 2. Initialisation de Leaflet (Méthode OTAN / Import dynamique)
   useEffect(() => {
-    if (!isMapReady || !mapRef.current) return;
+    if (typeof window === "undefined" || !mapRef.current || isLoading) return;
 
-    map.current = new google.maps.Map(mapRef.current, {
-      center: { lat: 43.6045, lng: 1.444 },
-      zoom: 12,
-      mapTypeId: "roadmap",
-      gestureHandling: "greedy",
-      scrollwheel: true,
-    });
-  }, [isMapReady]);
+    let L: any;
+    const initMap = async () => {
+      L = (await import("leaflet")).default;
 
-  useEffect(() => {
-    if (!map.current || terminus.length === 0) return;
+      if (mapInstance.current) return;
 
-    terminus.forEach((t, index) => {
-      const position = { lat: t.geo_point.lat, lng: t.geo_point.lon };
+      // Initialisation de la carte
+      mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.444], 12);
 
-      // Marker avec numéro de ligne
-      const marker = new google.maps.Marker({
-        position,
-        map: map.current!,
-        title: `${t.nom} (${t.annee_reference})`,
-        label: {
-          text: `${index + 1}`,
-          color: "white",
-          fontSize: "12px",
-          fontWeight: "bold",
-        },
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 20,
-          fillColor: "#7c3aed",
-          fillOpacity: 0.8,
-          strokeWeight: 1,
-          strokeColor: "#a78bfa",
-        },
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '© OpenStreetMap contributors',
+      }).addTo(mapInstance.current);
+
+      // Ajout des marqueurs une fois la carte prête
+      terminus.forEach((t, index) => {
+        const key = `${t.ref}-${t.annee_reference}-${index}`;
+        
+        // Création d'une icône circulaire personnalisée (comme votre SVG Google)
+        const customIcon = L.divIcon({
+          className: "custom-div-icon",
+          html: `
+            <div style="
+              background-color: #7c3aed;
+              color: white;
+              width: 30px;
+              height: 30px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              border: 2px solid #a78bfa;
+              font-size: 11px;
+              box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            ">
+              ${index + 1}
+            </div>`,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+          popupAnchor: [0, -15]
+        });
+
+        const marker = L.marker([t.geo_point.lat, t.geo_point.lon], { icon: customIcon })
+          .bindPopup(`<strong>${t.nom}</strong><br/>Année : ${t.annee_reference}<br/>Ref : ${t.ref}`)
+          .addTo(mapInstance.current);
+
+        markersRef.current.set(key, marker);
       });
+    };
 
-      const info = new google.maps.InfoWindow({
-        content: `<strong>${t.nom}</strong><br/>Année : ${t.annee_reference}<br/>Ref : ${t.ref}`,
-      });
+    initMap();
 
-      marker.addListener("click", () => {
-        info.open(map.current, marker);
-      });
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [terminus, isLoading]);
 
-      const key = `${t.ref}-${t.annee_reference}-${index}`;
-      markersRef.current.set(key, marker);
-      infoWindowsRef.current.set(key, info);
-    });
-  }, [terminus, isMapReady]);
-
+  // 3. Interaction Tableau -> Carte
   const handleRowClick = (t: Terminus, index: number) => {
     const key = `${t.ref}-${t.annee_reference}-${index}`;
     const marker = markersRef.current.get(key);
-    const info = infoWindowsRef.current.get(key);
-    if (!map.current || !marker || !info) return;
 
-    map.current.panTo(marker.getPosition()!);
-    map.current.setZoom(15);
-    info.open(map.current, marker);
-
-    // Faire défiler vers la carte
-    mapRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (mapInstance.current && marker) {
+      mapInstance.current.setView(marker.getLatLng(), 15, { animate: true });
+      marker.openPopup();
+      mapRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -120,23 +126,19 @@ export default function TerminusPage() {
         </Link>
       </nav>
 
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsMapReady(true)}
-      />
-
       <h1 className="text-3xl font-extrabold mb-6 text-center text-purple-800">
         🚌 Terminus des transports en commun à Toulouse
       </h1>
 
-      <div ref={mapRef} className="h-[600px] w-full border rounded-lg bg-gray-100">
-        {!isMapReady && <p className="p-4">Chargement de la carte…</p>}
-      </div>
+      {/* Conteneur de la carte */}
+      <div 
+        ref={mapRef} 
+        className="h-[600px] w-full border rounded-lg bg-gray-100 z-0" 
+      />
 
       {/* Tableau des terminus */}
       <div className="mt-8 overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse border border-gray-300">
+        <table className="min-w-full table-auto border-collapse border border-gray-300 shadow-sm">
           <thead>
             <tr className="bg-purple-100">
               <th className="border p-2">#</th>
@@ -149,18 +151,24 @@ export default function TerminusPage() {
             {terminus.map((t, index) => (
               <tr
                 key={`${t.ref}-${t.annee_reference}-${index}`}
-                className="hover:bg-purple-50 cursor-pointer"
+                className="hover:bg-purple-50 cursor-pointer transition-colors"
                 onClick={() => handleRowClick(t, index)}
               >
-                <td className="border p-2">{index + 1}</td>
+                <td className="border p-2 text-center font-bold text-purple-700">{index + 1}</td>
                 <td className="border p-2">{t.nom}</td>
-                <td className="border p-2">{t.annee_reference}</td>
-                <td className="border p-2">{t.ref}</td>
+                <td className="border p-2 text-center">{t.annee_reference}</td>
+                <td className="border p-2 text-sm text-gray-600">{t.ref}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      
+      {isLoading && (
+        <div className="text-center mt-4">
+          <p className="animate-pulse">Chargement des données...</p>
+        </div>
+      )}
     </div>
   );
 }

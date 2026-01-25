@@ -1,111 +1,209 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
-import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
 interface Establishment {
   name: string;
   address: string;
+  lat?: number; // Requis dans l'API pour éviter le géocodage
+  lng?: number; // Requis dans l'API pour éviter le géocodage
 }
 
-export default function VisiteSaintMichelPage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const [establishments, setEstablishments] = useState<Establishment[]>([]);
-  const [isReady, setIsReady] = useState(false);
+const ST_MICHEL_CENTER: [number, number] = [43.5925, 1.444];
 
+export default function VisiteSaintMichelPage() {
+  // ----------------------------------------------------
+  // 1. ÉTATS ET RÉFÉRENCES
+  // ----------------------------------------------------
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [establishments, setEstablishments] = useState<Establishment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [L, setL] = useState<any>(null);
+  const [openDetailsId, setOpenDetailsId] = useState<number | null>(null);
+
+  const toggleDetails = (id: number) => {
+    setOpenDetailsId((prevId) => (prevId === id ? null : id));
+  };
+
+  // ----------------------------------------------------
+  // 2. RÉCUPÉRATION DES DONNÉES
+  // ----------------------------------------------------
   useEffect(() => {
     fetch("/api/visitesaintmichel")
       .then((res) => res.json())
-      .then((data: Establishment[]) => setEstablishments(data))
-      .catch(console.error);
+      .then((data: Establishment[]) => {
+        setEstablishments(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Erreur API:", err);
+        setLoading(false);
+      });
   }, []);
 
+  // ----------------------------------------------------
+  // 3. INITIALISATION LEAFLET (MÉTHODE OTAN)
+  // ----------------------------------------------------
   useEffect(() => {
-    if (!isReady || !mapRef.current) return;
+    if (typeof window === "undefined" || !mapRef.current || loading) return;
 
-    // 🔥 anti pixelisation mobile
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 14,
-      center: { lat: 43.5925, lng: 1.444 }, // Toulouse Saint-Michel
-      scrollwheel: true,
-      gestureHandling: "greedy",
-    });
+    const initMap = async () => {
+      const Leaflet = (await import("leaflet")).default;
+      setL(Leaflet);
 
-    const geocoder = new google.maps.Geocoder();
+      if (mapInstance.current) return;
+
+      // Création de la carte
+      mapInstance.current = Leaflet.map(mapRef.current!).setView(ST_MICHEL_CENTER, 15);
+
+      Leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap contributors',
+      }).addTo(mapInstance.current);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [loading]);
+
+  // ----------------------------------------------------
+  // 4. MARQUEURS (SANS GÉOCODAGE)
+  // ----------------------------------------------------
+  useEffect(() => {
+    if (!L || !mapInstance.current || establishments.length === 0) return;
 
     establishments.forEach((est, i) => {
-      geocoder.geocode({ address: `Toulouse ${est.address}` }, (results, status) => {
-        if (status !== "OK" || !results?.[0]) return;
+      if (est.lat === undefined || est.lng === undefined) return;
 
-        const marker = new google.maps.Marker({
-          map: mapInstance.current!,
-          position: results[0].geometry.location,
-          label: `${i + 1}`,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: "red",
-            fillOpacity: 1,
-            strokeWeight: 1,
-            strokeColor: "black",
-          },
+      const id = i + 1;
+      const customIcon = L.divIcon({
+        className: "custom-marker-stmichel",
+        html: `
+          <div style="
+            background-color: #ef4444;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          ">
+            ${id}
+          </div>
+        `,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+
+      const marker = L.marker([est.lat, est.lng], { icon: customIcon })
+        .addTo(mapInstance.current!)
+        .bindPopup(`<strong>${id}. ${est.name}</strong>`);
+
+      marker.on("click", () => {
+        toggleDetails(id);
+        mapInstance.current.setView([est.lat, est.lng], 16);
+        document.getElementById(`est-item-${id}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
         });
-
-        const infowindow = new google.maps.InfoWindow({
-          content: `<strong>${i + 1}. ${est.name}</strong><br>${est.address}`,
-        });
-
-        marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
       });
     });
-  }, [isReady, establishments]);
+  }, [L, establishments]);
 
-
+  // ----------------------------------------------------
+  // 5. RENDU
+  // ----------------------------------------------------
   return (
     <div className="p-4 max-w-7xl mx-auto">
-
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group"
+        >
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           Retour à l'accueil
         </Link>
       </nav>
 
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
-
-      <h1 className="text-3xl font-extrabold mb-6">
-        🏛️ Visite Saint-Michel — Parcours historique
+      <h1 className="text-3xl font-extrabold mb-6 text-slate-900">
+        🏛️ Visite Saint-Michel — Parcours historique ({establishments.length} Lieux)
       </h1>
 
+      {/* Conteneur Carte */}
       <div
         ref={mapRef}
-        style={{ height: "70vh", width: "100%" }}
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
+        style={{ height: "65vh", width: "100%" }}
+        className="mb-8 border-4 border-slate-200 rounded-xl bg-gray-100 flex items-center justify-center relative z-0 overflow-hidden shadow-xl"
       >
-        {!isReady && <p>Chargement de la carte…</p>}
+        {loading && (
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-gray-500 font-medium font-bold">Chargement de la carte…</p>
+          </div>
+        )}
       </div>
 
-      <h2 className="text-2xl font-semibold mb-4">
-        Liste des lieux ({establishments.length})
+      <h2 className="text-2xl font-bold mb-4 border-b pb-2 text-slate-800">
+        Liste des lieux détaillés
       </h2>
 
+      {/* Liste en Grille / Accordéon */}
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {establishments.map((est, i) => (
-          <li key={i} className="p-4 border rounded bg-white shadow">
-            <p className="text-lg font-bold">
-              {i + 1}. {est.name}
-            </p>
-            <p>{est.address}</p>
-          </li>
-        ))}
+        {establishments.map((est, i) => {
+          const id = i + 1;
+          const isDetailsOpen = openDetailsId === id;
+
+          return (
+            <li
+              key={i}
+              id={`est-item-${id}`}
+              className={`p-5 border rounded-xl transition-all duration-300 cursor-pointer flex flex-col ${
+                isDetailsOpen
+                  ? "bg-red-50 border-red-400 shadow-md ring-1 ring-red-100"
+                  : "bg-white border-slate-200 shadow hover:shadow-lg"
+              }`}
+              onClick={() => toggleDetails(id)}
+            >
+              <div className="flex justify-between items-start">
+                <p className="text-lg font-bold text-slate-900">
+                  <span className="text-red-600 mr-2">{id}.</span> {est.name}
+                </p>
+                {/* Triangle noir et gras */}
+                <span
+                  className={`text-xl text-black font-bold transition-transform duration-300 ${
+                    isDetailsOpen ? "rotate-180" : "rotate-0"
+                  }`}
+                >
+                  ▼
+                </span>
+              </div>
+
+              <p className="text-sm italic text-slate-600 mt-1">📍 {est.address}</p>
+
+              {isDetailsOpen && (
+                <div className="mt-3 pt-3 border-t border-red-200 animate-in fade-in slide-in-from-top-1 duration-300">
+                  <p className="text-sm text-slate-700 leading-relaxed">
+                    Ce lieu historique emblématique du quartier Saint-Michel fait partie de notre circuit de visite.
+                  </p>
+                </div>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

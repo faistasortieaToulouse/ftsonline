@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import { useEffect, useRef, useState, useMemo } from "react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-// Types basés sur votre structure JSON
+// Types
 interface Civilisation {
   culture: string;
   periode: string;
@@ -23,14 +22,13 @@ interface DataStructure {
 
 export default function VisitePrecolombiennePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  // Référence pour stocker les marqueurs et pouvoir interagir avec eux (centrage)
-  const markersRef = useRef<{ [key: number]: google.maps.Marker }>({});
+  const mapInstance = useRef<any>(null);
+  const markersRef = useRef<{ [key: number]: any }>({});
 
   const [data, setData] = useState<DataStructure | null>(null);
   const [isReady, setIsReady] = useState(false);
 
-  // 1. Charger les données (Liste aplatie pour garantir la numérotation)
+  // 1. Charger les données
   useEffect(() => {
     fetch("/api/precolombien")
       .then((res) => res.json())
@@ -38,80 +36,68 @@ export default function VisitePrecolombiennePage() {
       .catch(console.error);
   }, []);
 
-  // 2. Préparer la liste unique pour la numérotation 1, 2, 3...
-  const civilisationsList = data 
-    ? Object.values(data.civilisations_precolombiennes).flat() 
-    : [];
+  // 2. STABILISATION : On utilise useMemo pour que la référence du tableau 
+  // ne change pas à chaque rendu si les données sont les mêmes.
+  const civilisationsList = useMemo(() => {
+    if (!data) return [];
+    return Object.values(data.civilisations_precolombiennes).flat();
+  }, [data]);
 
-  // 3. Carte et Marqueurs
+  // 3. Initialisation Leaflet (Méthode OTAN)
   useEffect(() => {
-    if (!isReady || !mapRef.current || civilisationsList.length === 0) return;
+    if (typeof window === "undefined" || !mapRef.current || civilisationsList.length === 0) return;
 
-    // Initialisation de la carte
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 4,
-      center: { lat: 15, lng: -85 },
-      scrollwheel: true,
-      gestureHandling: "greedy",
-      styles: [{ featureType: "poi", visibility: "off" }] // Masque les points d'intérêt inutiles
-    });
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
 
-    const infowindow = new google.maps.InfoWindow();
+      // Création de l'instance si elle n'existe pas
+      if (!mapInstance.current) {
+        mapInstance.current = L.map(mapRef.current!).setView([15, -85], 4);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapInstance.current);
+      }
 
-    civilisationsList.forEach((civ, i) => {
-      const numero = i + 1;
-      
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: { lat: civ.coordonnees.lat, lng: civ.coordonnees.lon },
-        label: {
-          text: `${numero}`,
-          color: "white",
-          fontWeight: "bold",
-          fontSize: "12px"
-        },
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 12,
-          fillColor: "#78350f", // Couleur terre/antique
-          fillOpacity: 1,
-          strokeWeight: 2,
-          strokeColor: "white",
-        },
-        title: civ.culture,
+      // Nettoyer les marqueurs existants
+      Object.values(markersRef.current).forEach(m => m.remove());
+      markersRef.current = {};
+
+      civilisationsList.forEach((civ, i) => {
+        const numero = i + 1;
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="background-color: #78350f; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${numero}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker([civ.coordonnees.lat, civ.coordonnees.lon], { icon: customIcon })
+          .addTo(mapInstance.current)
+          .bindPopup(`<strong>${numero}. ${civ.culture}</strong><br><small>${civ.periode}</small>`);
+
+        markersRef.current[numero] = marker;
       });
 
-      // Stocker le marqueur pour y accéder depuis la liste
-      markersRef.current[numero] = marker;
+      setIsReady(true);
+    };
 
-      marker.addListener("click", () => {
-        infowindow.setContent(`
-          <div style="padding:5px; font-family: sans-serif;">
-            <strong>${numero}. ${civ.culture}</strong><br>
-            <small>${civ.periode}</small>
-          </div>
-        `);
-        infowindow.open(mapInstance.current, marker);
-        mapInstance.current?.panTo(marker.getPosition()!);
-      });
-    });
-  }, [isReady, civilisationsList]);
+    initMap();
 
-  // Fonction pour centrer la carte quand on clique sur un item de la liste
+    // On ne supprime pas mapInstance.current.remove() ici car sinon la carte 
+    // clignote/disparaît dès que la liste change. On le garde pour le démontage réel.
+  }, [civilisationsList]); // Dépendance stable grâce au useMemo
+
   const handleFocusPlace = (numero: number) => {
     const marker = markersRef.current[numero];
     if (marker && mapInstance.current) {
-      mapInstance.current.setZoom(8);
-      mapInstance.current.panTo(marker.getPosition()!);
-      google.maps.event.trigger(marker, 'click');
-      // Scroll vers la carte pour voir le résultat (optionnel)
+      mapInstance.current.setView(marker.getLatLng(), 8, { animate: true });
+      marker.openPopup();
       mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
 
   return (
     <div className="p-4 max-w-7xl mx-auto bg-[#fdfcf8] min-h-screen">
-
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -119,26 +105,22 @@ export default function VisitePrecolombiennePage() {
         </Link>
       </nav>
 
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
-
       <h1 className="text-3xl font-extrabold mb-6 text-amber-900 border-b-4 border-amber-700 inline-block">
         🗺️ Carte des Civilisations Anciennes des Amériques
       </h1>
 
-      {/* --- Conteneur Carte --- */}
       <div
         ref={mapRef}
-        style={{ height: "65vh", width: "100%" }}
+        style={{ height: "65vh", width: "100%", zIndex: 0 }}
         className="mb-8 border-4 border-white rounded-xl shadow-2xl bg-gray-200"
       >
-        {!isReady && <div className="flex items-center justify-center h-full italic">Chargement des données géographiques...</div>}
+        {!isReady && (
+          <div className="flex items-center justify-center h-full italic text-amber-900">
+            Chargement de la carte et des cultures...
+          </div>
+        )}
       </div>
 
-      {/* --- Liste des Civilisations --- */}
       <h2 className="text-2xl font-bold mb-6 text-amber-800">
         Sites et Cultures ({civilisationsList.length})
       </h2>
@@ -148,7 +130,7 @@ export default function VisitePrecolombiennePage() {
           const numero = i + 1;
           return (
             <div 
-              key={i} 
+              key={`${civ.culture}-${i}`} 
               onClick={() => handleFocusPlace(numero)}
               className="p-5 border border-amber-100 rounded-lg bg-white shadow-sm hover:shadow-md hover:border-amber-500 transition-all cursor-pointer group"
             >
@@ -165,10 +147,6 @@ export default function VisitePrecolombiennePage() {
                 <p className="font-semibold text-amber-700">{civ.periode}</p>
                 <p className="italic">📍 {civ.localisation}</p>
                 {civ.description && <p className="mt-3 text-gray-600 line-clamp-3">{civ.description}</p>}
-              </div>
-              
-              <div className="mt-4 text-[10px] font-mono text-gray-400 uppercase">
-                {civ.coordonnees.lat.toFixed(4)} / {civ.coordonnees.lon.toFixed(4)}
               </div>
             </div>
           );

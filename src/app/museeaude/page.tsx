@@ -1,163 +1,121 @@
-// src/app/museeaude/page.tsx
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { MuseeAude } from '../museeaude/museeaude'; // Importation du type MuseeAude
+import { useEffect, useState, useRef, CSSProperties } from 'react';
+import { MuseeAude } from '../museeaude/museeaude';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-// Déclaration pour que TypeScript reconnaisse google.maps
-declare global {
-  interface Window {
-    initMap: () => void;
-    google: typeof google;
-  }
-}
+// CENTRE DE L'AUDE (Carcassonne environ)
+const AUDE_CENTER: [number, number] = [43.15, 2.35];
+const THEME_COLOR = '#e11d48'; // Rouge/Rose pour l'identité visuelle de l'Aude
 
-// Styles pour le tableau
-const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
-const tableCellStyle = { padding: '12px' };
-
-// Composant de la carte (Basé sur la méthode simple de chargement de script)
-const GoogleMap = ({ musees }: { musees: MuseeAude[] }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  const initMap = useCallback(() => {
-    if (!mapRef.current || !window.google) return;
-
-    // Calculer le centre de la carte (Moyenne des coordonnées)
-    if (musees.length === 0) return;
-
-    const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
-    const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
-
-    const map = new window.google.maps.Map(mapRef.current, {
-      center: { lat: centerLat, lng: centerLng },
-      zoom: 9, // Zoom pour couvrir l'Aude
-      scrollwheel: true, // Permet le zoom avec la molette de la souris
-    });
-
-    // Ajouter des marqueurs pour chaque musée
-    musees.forEach((musee, index) => {
-      const numero = index + 1; // Numéro du musée
-      
-      const marker = new window.google.maps.Marker({
-        position: { lat: musee.lat, lng: musee.lng },
-        map,
-        title: `${numero}. ${musee.nom}`, // Ajout du numéro dans le titre (au survol)
-        // Ajout de l'option 'label' pour afficher le numéro sur le marqueur lui-même
-        label: {
-          text: String(numero),
-          color: 'white', 
-          fontWeight: 'bold', 
-        }
-      });
-
-      // Construction du contenu de l'infowindow
-      const urlContent = musee.url ? 
-        `<p><a href="${musee.url}" target="_blank">Site web</a></p>` :
-        `<p><em>Site web non disponible</em></p>`;
-
-      const infowindow = new window.google.maps.InfoWindow({
-        content: `
-          <h3>${numero}. ${musee.nom}</h3>
-          <p><strong>Commune :</strong> ${musee.commune}</p>
-          <p><strong>Catégorie :</strong> ${musee.categorie}</p>
-          <p><strong>Adresse :</strong> ${musee.adresse}</p>
-          ${urlContent}
-        `,
-      });
-
-      marker.addListener('click', () => {
-        infowindow.open(map, marker);
-      });
-    });
-  }, [musees]);
-
-  useEffect(() => {
-    // Vérifie si l'API Google Maps est déjà chargée
-    if (window.google && window.google.maps) {
-      initMap();
-      return;
-    }
-
-    // Charge dynamiquement le script de l'API Google Maps
-    const script = document.createElement('script');
-    // Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini dans .env.local
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    
-    // Attache la fonction initMap à la fenêtre globale
-    window.initMap = initMap;
-    document.head.appendChild(script);
-
-    // Nettoyage lors du démontage du composant
-    return () => {
-      script.remove();
-    };
-  }, [initMap]);
-
-  return <div ref={mapRef} style={{ height: '500px', width: '100%', borderRadius: '8px', marginBottom: '32px' }} />;
-};
-
-
-// Composant principal de la page
 export default function MuseeAudePage() {
   const [musees, setMusees] = useState<MuseeAude[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Refs Leaflet (Méthode OTAN)
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
+
+  // 1. Fetch des données
   useEffect(() => {
     async function fetchMusees() {
       try {
-        // Changement de l'endpoint API
         const response = await fetch('/api/museeaude');
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération des données de l'API pour l'Aude.");
-        }
+        if (!response.ok) throw new Error("Erreur lors de la récupération des données de l'Aude.");
         const data: MuseeAude[] = await response.json();
+        // Tri par commune
+        data.sort((a, b) => a.commune.localeCompare(b.commune));
         setMusees(data);
       } catch (err) {
-        if (err instanceof Error) {
-            setError(err.message);
-        } else {
-            setError("Une erreur inattendue est survenue.");
-        }
+        setError(err instanceof Error ? err.message : "Une erreur est survenue");
       } finally {
-        setIsLoading(false);
+        setIsLoadingData(false);
       }
     }
-
     fetchMusees();
   }, []);
 
-  if (isLoading) {
-    return (
-      <div style={{ padding: '20px' }}>
+  // 2. Initialisation Carte
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
 
-        <h1>Musées de l'Aude (11)</h1>
-        <p>Chargement des données...</p>
-      </div>
-    );
-  }
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      await import('leaflet/dist/leaflet.css');
 
-  if (error) {
-    return (
-      <div style={{ padding: '20px', color: 'red' }}>
-        <h1>Musées de l'Aude (11)</h1>
-        <p>Erreur : {error}</p>
-        <p>Vérifiez que vous avez bien une clé Google Maps définie dans .env.local et que l'API /api/museeaude est fonctionnelle.</p>
-      </div>
-    );
-  }
+      if (mapInstance.current) return;
 
-  const totalMusees = musees.length; 
+      mapInstance.current = L.map(mapRef.current).setView(AUDE_CENTER, 9);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
+
+      setIsReady(true);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoadingData]);
+
+  // 3. Marqueurs
+  useEffect(() => {
+    if (!isReady || !mapInstance.current || musees.length === 0) return;
+
+    const addMarkers = async () => {
+      const L = (await import('leaflet')).default;
+
+      musees.forEach((m, i) => {
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              background-color: ${THEME_COLOR};
+              width: 28px; height: 28px;
+              border-radius: 50%; border: 2px solid white;
+              display: flex; align-items: center; justify-content: center;
+              color: white; font-weight: bold; font-size: 11px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            ">
+              ${i + 1}
+            </div>
+          `,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        const popupContent = `
+          <div style="font-family: Arial; font-size: 14px;">
+            <strong style="color:${THEME_COLOR}">${i + 1}. ${m.nom}</strong><br/>
+            <b>Ville :</b> ${m.commune}<br/>
+            <b>Catégorie :</b> ${m.categorie}<br/>
+            ${m.url ? `<a href="${m.url}" target="_blank" style="color:blue; text-decoration:underline;">Site web</a>` : '<i>Pas de site web</i>'}
+          </div>
+        `;
+
+        L.marker([m.lat, m.lng], { icon: customIcon })
+          .bindPopup(popupContent)
+          .addTo(mapInstance.current);
+      });
+    };
+
+    addMarkers();
+  }, [isReady, musees]);
+
+  if (error) return <div className="p-10 text-red-500">Erreur : {error}</div>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-
+    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen">
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -165,54 +123,72 @@ export default function MuseeAudePage() {
         </Link>
       </nav>
 
-      <h1>🗺️ Musées de l'Aude (11)</h1>
-      {/* AFFICHAGE DU COMPTEUR TOTAL */}
-      <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>
-        Total de lieux culturels listés : {totalMusees}
-      </p>
-      <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des sites du patrimoine audois.</p>
+      <header className="mb-8">
+        <h1 className="text-3xl font-extrabold text-slate-900">🗺️ Musées et Patrimoine de l'Aude (11)</h1>
+        <p className="text-slate-600 mt-2">
+          {isLoadingData ? 'Chargement des sites...' : `Total de lieux culturels : ${musees.length}`}
+        </p>
+      </header>
 
-      {/* Carte Google Maps */}
-      <GoogleMap musees={musees} />
+      {/* ZONE CARTE */}
+      <div style={{ height: "55vh", width: "100%" }} className="mb-8 border rounded-xl bg-gray-100 relative z-0 overflow-hidden shadow-md border-rose-100"> 
+        <div ref={mapRef} className="h-full w-full" />
+        {isLoadingData && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+            <p className="animate-pulse font-bold text-rose-600">Chargement de la carte audoise...</p>
+          </div>
+        )}
+      </div>
 
-      <h2>Liste Détaillée des Sites</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f4f4f4' }}>
-            <th style={tableHeaderStyle}>N°</th> {/* Colonne Numéro */}
-            <th style={tableHeaderStyle}>Commune</th>
-            <th style={tableHeaderStyle}>Nom du Site/Musée</th>
-            <th style={tableHeaderStyle}>Catégorie</th>
-            <th style={tableHeaderStyle}>Adresse</th>
-            <th style={tableHeaderStyle}>URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {musees.map((musee, index) => (
-            <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={tableCellStyle}><strong>{index + 1}</strong></td> {/* Affichage du numéro */}
-              <td style={tableCellStyle}>{musee.commune}</td>
-              <td style={tableCellStyle}>{musee.nom}</td>
-              <td style={tableCellStyle}>{musee.categorie}</td>
-              <td style={tableCellStyle}>{musee.adresse}</td>
-              <td style={tableCellStyle}>
-                {musee.url ? (
-                  <a 
-                    href={musee.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    style={{ color: 'blue', textDecoration: 'underline' }} 
-                  >
-                    Voir le site
-                  </a>
-                ) : (
-                  <span style={{ color: '#aaa' }}>N/A</span>
-                )}
-              </td>
+      <h2 className="text-2xl font-bold mb-4 text-slate-800">Liste Détaillée des Sites</h2>
+
+      <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+        <table className="w-full border-collapse bg-white text-left">
+          <thead className="bg-slate-100">
+            <tr>
+              <th style={tableHeaderStyle}>N°</th>
+              <th style={tableHeaderStyle}>Commune</th>
+              <th style={tableHeaderStyle}>Nom du Site</th>
+              <th style={tableHeaderStyle}>Catégorie</th>
+              <th style={tableHeaderStyle}>Adresse</th>
+              <th style={tableHeaderStyle}>Lien</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {musees.map((m, i) => (
+              <tr key={i} className="border-t hover:bg-rose-50 transition-colors">
+                <td className="p-4 font-bold text-rose-600">{i + 1}</td>
+                <td className="p-4 font-semibold text-slate-700">{m.commune}</td>
+                <td className="p-4 font-bold text-slate-900">{m.nom}</td>
+                <td className="p-4">
+                  <span className="text-xs font-bold px-2 py-1 rounded-full bg-slate-200 text-slate-700 uppercase">
+                    {m.categorie}
+                  </span>
+                </td>
+                <td className="p-4 text-sm text-slate-600">{m.adresse}</td>
+                <td className="p-4">
+                  {m.url ? (
+                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">
+                      Visiter
+                    </a>
+                  ) : (
+                    <span className="text-slate-300">N/A</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
+const tableHeaderStyle: CSSProperties = { 
+  padding: '12px 16px', 
+  fontSize: '13px', 
+  fontWeight: 'bold', 
+  color: '#475569',
+  textTransform: 'uppercase',
+  letterSpacing: '0.025em'
+};

@@ -1,207 +1,214 @@
-// /src/app/visitefontaines/page.tsx - CARTE + ACCORDÉON DES DÉTAILS
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
-import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-
-// Variable pour la clé API Google Maps
-const GMAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+import "leaflet/dist/leaflet.css";
 
 interface Establishment {
     name: string;
     address: string;
     description: string;
-    details: string; // Doit être présent pour l'accordéon
+    details: string;
+    lat?: number; // Optionnel pour éviter les crashs si absent
+    lng?: number; // Optionnel pour éviter les crashs si absent
 }
+
+const TOULOUSE_CENTER: [number, number] = [43.6047, 1.4442];
 
 export default function VisiteFontainesPage() {
     // ----------------------------------------------------
-    // 1. DÉCLARATIONS DES ÉTATS ET RÉFÉRENCES
+    // 1. ÉTATS ET RÉFÉRENCES
     // ----------------------------------------------------
     const mapRef = useRef<HTMLDivElement | null>(null);
-    const mapInstance = useRef<google.maps.Map | null>(null);
+    const mapInstance = useRef<any>(null);
     const [establishments, setEstablishments] = useState<Establishment[]>([]);
-    const [isReady, setIsReady] = useState(false);
-    
-    // ÉTAT POUR L'ACCORDÉON : stocke l'ID (index + 1) de la fontaine sélectionnée
+    const [loading, setLoading] = useState(true);
+    const [L, setL] = useState<any>(null);
     const [openDetailsId, setOpenDetailsId] = useState<number | null>(null); 
 
-    // Fonction pour basculer l'affichage des détails
     const toggleDetails = (id: number) => {
         setOpenDetailsId(prevId => (prevId === id ? null : id));
     };
 
     // ----------------------------------------------------
-    // 2. CHARGEMENT DES DONNÉES (useEffect de fetch)
+    // 2. CHARGEMENT DES DONNÉES
     // ----------------------------------------------------
     useEffect(() => {
         fetch("/api/visitefontaines")
             .then((res) => res.json())
-            .then((data: Establishment[]) => setEstablishments(data))
-            .catch(console.error);
+            .then((data: Establishment[]) => {
+                setEstablishments(Array.isArray(data) ? data : []);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Erreur fetch:", err);
+                setLoading(false);
+            });
     }, []);
 
     // ----------------------------------------------------
-    // 3. INITIALISATION ET MARQUEURS DE LA CARTE
+    // 3. INITIALISATION LEAFLET (MÉTHODE OTAN)
     // ----------------------------------------------------
     useEffect(() => {
-        if (!isReady || !mapRef.current || establishments.length === 0) return;
+        if (typeof window === "undefined" || !mapRef.current || loading) return;
 
-        if (mapInstance.current) {
-            return;
-        }
+        const initMap = async () => {
+            const Leaflet = (await import('leaflet')).default;
+            setL(Leaflet);
 
-        // Initialisation de la carte
-        mapInstance.current = new google.maps.Map(mapRef.current, {
-            zoom: 13, 
-            center: { lat: 43.6047, lng: 1.4442 }, 
-            scrollwheel: true,
-            gestureHandling: "greedy",
-        });
+            if (mapInstance.current) return;
 
-        const geocoder = new google.maps.Geocoder();
-        const map = mapInstance.current;
-        const infowindows: google.maps.InfoWindow[] = [];
+            mapInstance.current = Leaflet.map(mapRef.current!).setView(TOULOUSE_CENTER, 14);
 
-        // Ajout des marqueurs
-        establishments.forEach((est, i) => {
-            const id = i + 1; // ID basé sur l'index (correspond à l'ID de l'accordéon)
-            const labelNumber = est.name.split('.')[0]; 
+            Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(mapInstance.current);
+        };
 
-            setTimeout(() => {
-                geocoder.geocode({ address: est.address + ", Toulouse" }, (results, status) => {
-                    
-                    if (status !== "OK" || !results?.[0]) {
-                        console.error(`Erreur de géocodage pour ${est.name} (Statut: ${status}).`);
-                        return;
-                    }
+        initMap();
 
-                    const marker = new google.maps.Marker({
-                        map: map,
-                        position: results[0].geometry.location,
-                        label: labelNumber, 
-                        icon: {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            scale: 10,
-                            fillColor: "#FF6600",
-                            fillOpacity: 1,
-                            strokeWeight: 1.5,
-                            strokeColor: "black",
-                        },
-                    });
-
-                    // MODIFICATION IMPORTANTE : Ajout du listener pour l'accordéon au clic sur le marqueur
-                    marker.addListener("click", () => {
-                        // Bascule l'accordéon
-                        toggleDetails(id);
-                        
-                        // Centre la carte et fait défiler la page vers l'élément de la liste
-                        map.setCenter(marker.getPosition() as google.maps.LatLng);
-                        document.getElementById(`fontaine-item-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                        // Logique de l'InfoWindow
-                        infowindows.forEach(iw => iw.close());
-                        infowindow.open(map, marker);
-                    });
-
-                    // Infowindow (simple affichage d'informations)
-                    const infowindow = new google.maps.InfoWindow({
-                        content: `
-                            <div style="font-family: Arial, sans-serif;">
-                                <strong>${est.name.replace(`${labelNumber}. `, '')} (${labelNumber})</strong>
-                                <br><small>${est.address}</small>
-                                <hr style="margin: 5px 0;">
-                                <p style="margin: 0;">${est.description}</p>
-                            </div>
-                        `,
-                    });
-                    
-                    infowindows.push(infowindow);
-
-                });
-            }, i * 300);
-        });
-    }, [isReady, establishments]);
-
+        return () => {
+            if (mapInstance.current) {
+                mapInstance.current.remove();
+                mapInstance.current = null;
+            }
+        };
+    }, [loading]);
 
     // ----------------------------------------------------
-    // 4. RENDU JSX
+    // 4. MARQUEURS (SÉCURISÉS CONTRE LES UNDEFINED)
+    // ----------------------------------------------------
+    useEffect(() => {
+        if (!L || !mapInstance.current || establishments.length === 0) return;
+
+        // On nettoie les anciens marqueurs si nécessaire avant de reboucler
+        // (Optionnel selon votre usage, ici on boucle simplement)
+        
+        establishments.forEach((est, i) => {
+            // SÉCURITÉ : On vérifie que lat et lng existent bien avant de créer le marqueur
+            if (est.lat === undefined || est.lng === undefined || est.lat === null) {
+                console.warn(`⚠️ Coordonnées manquantes pour : ${est.name}`);
+                return; 
+            }
+
+            const id = i + 1;
+            const labelNumber = est.name.split('.')[0];
+
+            const customIcon = L.divIcon({
+                className: 'marker-fontaine',
+                html: `
+                    <div style="
+                        background-color: #FF6600;
+                        width: 26px;
+                        height: 26px;
+                        border-radius: 50%;
+                        border: 2px solid black;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: bold;
+                        font-size: 11px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    ">
+                        ${labelNumber}
+                    </div>
+                `,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13]
+            });
+
+            const marker = L.marker([est.lat, est.lng], { icon: customIcon })
+                .addTo(mapInstance.current!)
+                .bindPopup(`<strong>${est.name}</strong><br><small>${est.address}</small>`);
+
+            marker.on('click', () => {
+                toggleDetails(id);
+                mapInstance.current.setView([est.lat, est.lng], 16);
+                document.getElementById(`fontaine-item-${id}`)?.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            });
+        });
+    }, [L, establishments]);
+
+    // ----------------------------------------------------
+    // 5. RENDU
     // ----------------------------------------------------
     return (
         <div className="p-4 max-w-7xl mx-auto">
+            <nav className="mb-6">
+                <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+                    Retour à l'accueil
+                </Link>
+            </nav>
 
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
-        </Link>
-      </nav>
-
-            {/* Script de chargement de Google Maps */}
-            {GMAPS_API_KEY && (
-                <Script
-                    src={`https://maps.googleapis.com/maps/api/js?key=${GMAPS_API_KEY}&libraries=places`}
-                    strategy="afterInteractive"
-                    onLoad={() => setIsReady(true)}
-                />
-            )}
-
-            <h1 className="text-3xl font-extrabold mb-6 text-center">
+            <h1 className="text-3xl font-extrabold mb-6 text-center text-slate-900 uppercase tracking-tight">
                 ⛲ Visite des Fontaines de Toulouse — ({establishments.length} Lieux)
             </h1>
 
-            {/* Conteneur de la Carte */}
             <div
                 ref={mapRef}
-                style={{ height: "70vh", width: "100%" }}
-                className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center shadow-xl"
+                style={{ height: "65vh", width: "100%" }}
+                className="mb-8 border-2 border-slate-200 rounded-3xl bg-slate-50 flex items-center justify-center relative z-0 overflow-hidden shadow-xl"
             >
-                {!isReady && <p className="text-xl text-gray-500">Chargement de la carte…</p>}
+                {loading && (
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-orange-600 font-bold animate-pulse uppercase text-xs tracking-widest">Initialisation de la carte...</p>
+                    </div>
+                )}
             </div>
 
-            {/* Liste des Fontaines avec Accordéon */}
-            <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
-                Liste détaillée des fontaines (Cliquez sur l'élément ou le marqueur)
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-slate-800 border-b pb-4">
+                Liste détaillée des fontaines
             </h2>
 
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {establishments.map((est, i) => {
-                    const id = i + 1; // L'ID pour l'accordéon
-                    const isDetailsOpen = openDetailsId === id; // Vérifie si l'accordéon doit être ouvert
+                    const id = i + 1;
+                    const isDetailsOpen = openDetailsId === id;
 
                     return (
                         <li 
                             key={i} 
-                            id={`fontaine-item-${id}`} // ID pour le défilement
-                            className="p-4 border rounded bg-white shadow hover:shadow-lg transition-all duration-300 cursor-pointer"
-                            onClick={() => toggleDetails(id)} // Clic bascule l'affichage
+                            id={`fontaine-item-${id}`} 
+                            className={`group p-5 border rounded-2xl transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                                isDetailsOpen 
+                                ? 'bg-orange-50 border-orange-300 shadow-md ring-1 ring-orange-200' 
+                                : 'bg-white border-slate-200 shadow-sm hover:shadow-lg hover:border-orange-200'
+                            }`}
+                            onClick={() => toggleDetails(id)}
                         >
-                            <p className="text-lg font-bold flex justify-between items-center text-red-700">
-                                <span>{est.name}</span>
-                                {/* Indicateur de déploiement */}
-                                <span className={`text-xl transition-transform duration-300 ${isDetailsOpen ? 'rotate-180' : 'rotate-0'}`}>
-                                    ▼
-                                </span>
-                            </p>
-                            <p className="text-sm">{est.address}</p>
-                            <p className="text-sm text-gray-600 italic mt-1">{est.description}</p>
-                            
-                            {/* NOUVEAU: Zone de description détaillée (Déploiement) */}
-                            {isDetailsOpen && est.details && (
-                                <div className="mt-4 pt-4 border-t border-gray-200 text-gray-800 transition-all duration-500 overflow-hidden">
-                                    <h4 className="font-semibold mb-2 text-red-700">Détails Historiques et Artistiques:</h4>
-                                    <div 
-                                        className="prose max-w-none text-sm leading-relaxed" 
-                                        dangerouslySetInnerHTML={{ 
-                                            __html: est.details.replace(/\n/g, '<br/>') 
-                                        }}
-                                    />
+                            <div>
+                                <div className="flex justify-between items-start mb-2">
+                                    <h3 className={`text-lg font-bold transition-colors ${isDetailsOpen ? 'text-orange-700' : 'text-slate-900'}`}>
+                                        {est.name}
+                                    </h3>
+                                    <span className={`text-xl transition-transform duration-300 ${isDetailsOpen ? 'rotate-180 text-orange-600' : 'rotate-0 text-slate-300'}`}>
+                                        ▼
+                                    </span>
                                 </div>
-                            )}
+                                <p className="text-sm font-medium text-slate-500 mb-1 italic flex items-center gap-1">
+                                    📍 {est.address}
+                                </p>
+                                <p className="text-sm text-slate-600 leading-relaxed italic">{est.description}</p>
+                                
+                                {isDetailsOpen && est.details && (
+                                    <div className="mt-4 pt-4 border-t border-orange-200 text-slate-800 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <h4 className="font-bold mb-2 text-orange-800 text-xs uppercase tracking-wider">Détails Historiques:</h4>
+                                        <div 
+                                            className="prose prose-sm max-w-none text-sm leading-relaxed text-slate-700" 
+                                            dangerouslySetInnerHTML={{ 
+                                                __html: est.details.replace(/\n/g, '<br/>') 
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </li>
                     );
                 })}

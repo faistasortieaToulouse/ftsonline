@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
-import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
+// Importation du CSS à l'extérieur pour garantir sa disponibilité
+import "leaflet/dist/leaflet.css";
 
 interface PaysEurope {
   nom: string;
@@ -14,8 +14,8 @@ interface PaysEurope {
   capitale: string;
   population: string;
   superficie: string;
-  lat?: number;
-  lng?: number;
+  lat: number;
+  lng: number;
 }
 
 interface EuropeData {
@@ -26,7 +26,7 @@ interface EuropeData {
 
 export default function EuropePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
+  const mapInstance = useRef<any>(null);
   const [data, setData] = useState<EuropeData | null>(null);
   const [isReady, setIsReady] = useState(false);
 
@@ -40,118 +40,136 @@ export default function EuropePage() {
       .catch(console.error);
   }, []);
 
-  // 2. Initialisation sécurisée de la carte
+  // 2. Initialisation de la carte et des marqueurs
   useEffect(() => {
-    // CONDITION DE SÉCURITÉ CRITIQUE : vérifier typeof window.google
-    if (!isReady || !mapRef.current || !data || typeof window.google === 'undefined') {
-      return;
-    }
+    // On n'exécute QUE si on a le DOM (mapRef) et les DONNÉES (data)
+    if (typeof window === "undefined" || !mapRef.current || !data) return;
 
-    // Éviter les ré-initialisations multiples
-    if (mapInstance.current) return;
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
 
-    try {
-      const map = new google.maps.Map(mapRef.current, {
+      // Éviter de réinitialiser si l'instance existe déjà
+      if (mapInstance.current) return;
+
+      // Création de l'instance centrée sur l'Europe centrale
+      const map = L.map(mapRef.current, {
+        center: [48.5, 12],
         zoom: 4,
-        center: { lat: 48.5, lng: 12 },
-        mapTypeId: 'terrain',
-        styles: [
-          { featureType: "administrative.country", elementType: "geometry.stroke", stylers: [{ color: "#1e293b" }, { weight: 1 }] }
-        ]
+        zoomControl: true
       });
-
+      
       mapInstance.current = map;
 
-      data.pays_europe.forEach((p) => {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      // Ajout des marqueurs numérotés
+      data.pays_europe.forEach((p, index) => {
         if (p.lat && p.lng) {
-          const marker = new google.maps.Marker({
-            map: map,
-            position: { lat: p.lat, lng: p.lng },
-            title: p.nom,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 8,
-              fillColor: p.ue ? "#1d4ed8" : "#64748b",
-              fillOpacity: 1,
-              strokeWeight: 2,
-              strokeColor: "#ffffff",
-            }
+          const markerColor = p.ue ? "#1d4ed8" : "#64748b";
+
+          const customIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="
+              background-color: ${markerColor}; 
+              color: white; 
+              border-radius: 50%; 
+              width: 24px; 
+              height: 24px; 
+              display: flex; 
+              align-items: center; 
+              justify-content: center; 
+              font-weight: bold; 
+              border: 2px solid white; 
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3); 
+              font-size: 10px;
+            ">${index + 1}</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
           });
 
-          const infowindow = new google.maps.InfoWindow({
-            content: `
-              <div style="color: black; padding: 10px; font-family: sans-serif; min-width: 150px;">
-                <strong style="font-size: 16px;">${p.nom}</strong><br>
-                <p style="margin: 5px 0; color: #64748b;">${p.capitale}</p>
-                <div style="font-size: 12px; border-top: 1px solid #eee; padding-top: 5px;">
-                  👥 Pop: <b>${p.population}</b><br>
-                  📏 Surf: <b>${p.superficie}</b>
-                </div>
+          L.marker([p.lat, p.lng], { icon: customIcon })
+            .addTo(map)
+            .bindPopup(`
+              <div style="color: black; padding: 2px;">
+                <strong style="font-size: 14px;">#${index + 1} ${p.nom}</strong><br>
+                <span style="font-size: 12px;">Capitale : ${p.capitale}</span>
               </div>
-            `,
-          });
-
-          marker.addListener("click", () => infowindow.open(map, marker));
+            `);
         }
       });
-    } catch (e) {
-      console.error("Erreur lors de l'init de la carte:", e);
-    }
-  }, [isReady, data]);
 
-  if (!data) return <div className="p-10 text-center">Chargement des données...</div>;
+      // RÉGLAGE CRITIQUE : Forcer Leaflet à recalculer sa taille après le rendu initial
+      setTimeout(() => {
+        map.invalidateSize();
+        setIsReady(true);
+      }, 250);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [data]); // Se déclenche dès que 'data' arrive
+
+  if (!data) return (
+    <div className="h-screen flex flex-col items-center justify-center bg-slate-50">
+      <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+      <p className="text-slate-600 font-medium">Chargement des pays d'Europe...</p>
+    </div>
+  );
 
   return (
-    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
       
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => {
-          // On s'assure que google est bien là avant de passer à true
-          if (typeof window.google !== 'undefined') {
-            setIsReady(true);
-          }
-        }}
-      />
 
-      <header className="mb-8 border-b border-slate-200 pb-6">
-        <h1 className="text-4xl font-black text-slate-900 flex items-center gap-3">
+      <header className="mb-8 border-b-2 border-slate-200 pb-6">
+        <h1 className="text-3xl md:text-5xl font-black text-slate-900">
           🌍 {data.nom_liste}
         </h1>
-        <p className="text-gray-600 mt-2 italic">Informations générales et géographie</p>
       </header>
 
-      <div 
-        ref={mapRef} 
-        style={{ height: "50vh", width: "100%" }} 
-        className="mb-8 border-4 border-white shadow-xl rounded-3xl bg-slate-200 overflow-hidden" 
-      />
+      {/* CONTENEUR CARTE */}
+      <div className="relative w-full mb-10 border-4 border-white shadow-xl rounded-3xl bg-slate-200 overflow-hidden z-0" style={{ height: "60vh" }}>
+        <div ref={mapRef} className="h-full w-full" />
+        
+        {/* Overlay de chargement interne à la carte */}
+        {!isReady && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-100 z-10">
+             <div className="flex flex-col items-center gap-2">
+                <Loader2 className="animate-spin text-blue-600" size={32} />
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Génération de la carte</span>
+             </div>
+          </div>
+        )}
+      </div>
 
+      {/* GRILLE DES PAYS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {data.pays_europe.map((p, idx) => (
-          <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="font-bold text-slate-900 text-lg">{p.nom}</h3>
-              {p.ue && <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-1 rounded">UE</span>}
-            </div>
-            <p className="text-xs text-slate-500 mb-4">{p.capitale}</p>
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between text-gray-400">
-                <span>Population:</span>
-                <span className="text-slate-700 font-semibold">{p.population}</span>
-              </div>
-              <div className="flex justify-between text-gray-400">
-                <span>Superficie:</span>
-                <span className="text-slate-700 font-semibold">{p.superficie}</span>
-              </div>
+        {data.pays_europe.map((p, index) => (
+          <div key={index} className="group p-5 bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-blue-500 transition-all duration-300 flex gap-4">
+            <span className="text-2xl font-black text-slate-200 group-hover:text-blue-100 transition-colors">
+              {(index + 1).toString().padStart(2, '0')}
+            </span>
+            <div className="min-w-0">
+              <h3 className="font-bold text-slate-900 text-lg truncate">{p.nom}</h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600">{p.capitale}</p>
+              {p.ue && (
+                <span className="inline-block mt-2 text-[9px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold uppercase">
+                  Union Européenne
+                </span>
+              )}
             </div>
           </div>
         ))}

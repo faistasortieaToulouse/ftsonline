@@ -1,126 +1,125 @@
-// src/app/ecrivainsaude/page.tsx
-'use client'; 
+'use client';
 
-import { useEffect, useRef, useState } from "react"; 
-import Script from "next/script"; 
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
-interface Ecrivain { 
-  nom: string; 
-  commune: string; 
-  dates?: string; 
-  description?: string; 
-} 
+// Import direct des données (contenant lat et lng)
+import { ecrivainsData } from "@/app/api/ecrivainsaude/route";
 
-// Données importées (liste avec communes) 
-import { ecrivainsData } from "@/app/api/ecrivainsaude/route"; 
+export default function EcrivainsAudePage() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
-export default function EcrivainsAudePage() { 
-  const mapRef = useRef<HTMLDivElement | null>(null); 
-  const mapInstance = useRef<google.maps.Map | null>(null); 
-  const [markersCount, setMarkersCount] = useState(0); 
-  const [isReady, setIsReady] = useState(false); 
+  // 1. Initialisation de Leaflet (Méthode OTAN)
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current) return;
 
-  useEffect(() => { 
-    if (!isReady || !mapRef.current || !window.google?.maps) return; 
-
-    const map = new google.maps.Map(mapRef.current, { 
-      zoom: 9, 
-      center: { lat: 43.15, lng: 2.3 }, // centre de l'Aude 
-      gestureHandling: "greedy", 
-    }); 
-    mapInstance.current = map; 
-
-    const geocoder = new google.maps.Geocoder(); 
-    let count = 0; 
-
-    ecrivainsData.forEach((e) => { 
-      geocoder.geocode({ address: e.commune + ", France" }, (results, status) => { 
-        if (status !== "OK" || !results?.[0] || !mapInstance.current) return; 
-
-        count++; 
-        const marker = new google.maps.Marker({ 
-          map: mapInstance.current, 
-          position: results[0].geometry.location, 
-          title: e.nom, 
-          label: String(count), 
-        }); 
-
-        const info = new google.maps.InfoWindow({ 
-          content: ` 
-            <div style="font-family: Arial; font-size: 14px;"> 
-              <strong>${count}. ${e.nom}</strong><br/> 
-              <b>Commune :</b> ${e.commune}<br/> 
-              <b>Dates :</b> ${e.dates || "N/A"}<br/> 
-              <b>Description :</b> ${e.description || "Écrivain"} 
-            </div> 
-          `, 
-        }); 
-
-        marker.addListener("click", () => info.open({ anchor: marker, map: mapInstance.current! })); 
-
-        setMarkersCount(count); 
-      }); 
-    }); 
-  }, [isReady]); 
-
-  return ( 
-    <div className="p-4 max-w-7xl mx-auto"> 
+    const initMap = async () => {
+      const L = (await import("leaflet")).default;
       
+      if (mapInstance.current) return;
+
+      // Création de la carte centrée sur l'Aude
+      const map = L.map(mapRef.current).setView([43.15, 2.3], 9);
+      mapInstance.current = map;
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      // 2. Ajout des marqueurs à partir des coordonnées directes
+      ecrivainsData.forEach((e, index) => {
+        // Vérification si les coordonnées existent
+        if (e.lat && e.lng) {
+          const customIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div style="background-color: #1d4ed8; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; shadow: 0 2px 4px rgba(0,0,0,0.3);">${index + 1}</div>`,
+            iconSize: [26, 26],
+            iconAnchor: [13, 13]
+          });
+
+          L.marker([e.lat, e.lng], { icon: customIcon })
+            .addTo(map)
+            .bindPopup(`
+              <div style="font-family: sans-serif; min-width: 160px;">
+                <strong style="color: #1d4ed8; font-size: 14px;">${index + 1}. ${e.nom}</strong><br/>
+                <p style="font-size: 12px; margin-top: 5px;">
+                  <b>Commune :</b> ${e.commune}<br/>
+                  <b>Dates :</b> ${e.dates || "N/A"}<br/>
+                  <b>Bio :</b> ${e.description || "Écrivain"}
+                </p>
+              </div>
+            `);
+        }
+      });
+
+      setIsMapReady(true);
+    };
+
+    initMap();
+
+    // Nettoyage pour éviter l'erreur "Map container already initialized"
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <div className="p-4 max-w-7xl mx-auto min-h-screen bg-white">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 font-bold group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      {/* Chargement de l'API Google Maps */} 
-      <Script 
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`} 
-        strategy="afterInteractive" 
-        onLoad={() => setIsReady(true)} 
-      /> 
 
-      <h1 className="text-3xl font-extrabold mb-6">🖋️ Écrivains de l'Aude sur la carte</h1> 
+      <h1 className="text-3xl font-extrabold mb-4 text-slate-900">🖋️ Écrivains de l'Aude</h1>
+      <p className="text-lg font-medium text-blue-800 mb-6 italic">
+        {ecrivainsData.length} écrivains répertoriés sur la carte
+      </p>
 
-      <p className="font-semibold text-lg mb-4"> 
-        {markersCount} lieux affichés sur {ecrivainsData.length} entrées. 
-      </p> 
+      {/* Zone de la Carte */}
+      <div className="mb-10 border-4 border-slate-100 shadow-xl rounded-2xl overflow-hidden h-[70vh] relative bg-slate-100">
+        <div ref={mapRef} className="h-full w-full z-0" />
+        {!isMapReady && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-50/50">
+            <Loader2 className="animate-spin text-blue-600" size={40} />
+          </div>
+        )}
+      </div>
 
-      <div 
-        ref={mapRef} 
-        style={{ height: "70vh", width: "100%" }} 
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center" 
-      > 
-        {!isReady && <p>Chargement de la carte…</p>} 
-      </div> 
+      <h2 className="text-2xl font-bold mb-6 text-slate-800">Liste complète des écrivains</h2>
 
-      <h2 className="text-2xl font-semibold mb-4">Liste complète des écrivains</h2> 
-
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}> 
-        <thead style={{ backgroundColor: "#f0f0f0" }}> 
-          <tr> 
-            <th style={{ padding: "8px", border: "1px solid #ddd", width: "5%", textAlign: "left" }}>#</th> {/* Nouvelle colonne pour le numéro */}
-            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Nom</th> 
-            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Commune</th> 
-            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Dates</th> 
-            <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Description</th> 
-          </tr> 
-        </thead> 
-        <tbody> 
-          {ecrivainsData.map((ev, i) => ( 
-            <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
-              <td style={{ padding: "8px", border: "1px solid #ddd", fontWeight: 'bold' }}>{i + 1}</td> {/* Affichage du numéro de ligne */}
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.nom}</td> 
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.commune}</td> 
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.dates || "N/A"}</td> 
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{ev.description || "-"}</td> 
-            </tr> 
-          ))} 
-        </tbody> 
-      </table> 
-    </div> 
-  ); 
+      <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+        <table className="w-full border-collapse text-left text-sm">
+          <thead className="bg-slate-50">
+            <tr>
+              <th className="p-4 border-b font-bold w-12 text-center">#</th>
+              <th className="p-4 border-b font-bold">Nom</th>
+              <th className="p-4 border-b font-bold">Commune</th>
+              <th className="p-4 border-b font-bold">Dates</th>
+              <th className="p-4 border-b font-bold">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ecrivainsData.map((ev, i) => (
+              <tr key={i} className="hover:bg-blue-50/50 transition-colors border-b border-slate-100">
+                <td className="p-4 font-bold text-blue-600 text-center">{i + 1}</td>
+                <td className="p-4 font-semibold text-slate-900">{ev.nom}</td>
+                <td className="p-4 text-slate-600">{ev.commune}</td>
+                <td className="p-4 text-slate-500">{ev.dates || "N/A"}</td>
+                <td className="p-4 text-slate-700 italic">{ev.description || "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }

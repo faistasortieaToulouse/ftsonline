@@ -1,176 +1,226 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
-import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
-// Interface correspondant aux données de /api/visitemonument
 interface Monument {
-  nom: string;
-  numero: string | number;
-  voie: string;
-  rue: string;
-  type: string;
-  note: string;
+    nom: string;
+    numero: string | number;
+    voie: string;
+    rue: string;
+    type: string;
+    note: string;
+    lat?: number; // Requis pour éviter le géocodage
+    lng?: number; // Requis pour éviter le géocodage
 }
 
+const TOULOUSE_CENTER: [number, number] = [43.6045, 1.444];
+
 export default function VisiteMonumentPage() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
+    // ----------------------------------------------------
+    // 1. ÉTATS ET RÉFÉRENCES
+    // ----------------------------------------------------
+    const mapRef = useRef<HTMLDivElement | null>(null);
+    const mapInstance = useRef<any>(null);
+    const [places, setPlaces] = useState<Monument[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [L, setL] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [openDetailsId, setOpenDetailsId] = useState<number | null>(null);
 
-  const [places, setPlaces] = useState<Monument[]>([]);
-  const [isReady, setIsReady] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+    const toggleDetails = (id: number) => {
+        setOpenDetailsId(prevId => (prevId === id ? null : id));
+    };
 
-  // ────────────────────────────────────────────
-  // 1. Récupération API
-  // ────────────────────────────────────────────
-  useEffect(() => {
-    fetch("/api/visitemonument")
-      .then(async (res) => {
-        const text = await res.text();
-        try {
-          const data: Monument[] = JSON.parse(text);
-          setPlaces(data);
-        } catch (err) {
-          console.error("Erreur JSON /api/visitemonument :", text, err);
-          setError("Erreur lors de la lecture des données de l'API.");
-        }
-      })
-      .catch((err) => {
-        console.error("Erreur Fetch /api/visitemonument :", err);
-        setError("Impossible de contacter l'API des monuments.");
-      });
-  }, []);
+    // ----------------------------------------------------
+    // 2. RÉCUPÉRATION DES DONNÉES
+    // ----------------------------------------------------
+    useEffect(() => {
+        fetch("/api/visitemonument")
+            .then(async (res) => {
+                if (!res.ok) throw new Error("Erreur réseau");
+                const data: Monument[] = await res.json();
+                setPlaces(data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Erreur Fetch :", err);
+                setError("Impossible de charger les monuments.");
+                setLoading(false);
+            });
+    }, []);
 
-  // ────────────────────────────────────────────
-  // 2. Création de la carte + marqueurs
-  // ────────────────────────────────────────────
-  useEffect(() => {
-    if (!isReady || !mapRef.current || places.length === 0) return;
-    if (error) return;
+    // ----------------------------------------------------
+    // 3. INITIALISATION LEAFLET (MÉTHODE OTAN)
+    // ----------------------------------------------------
+    useEffect(() => {
+        if (typeof window === "undefined" || !mapRef.current || loading) return;
 
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 13.5,
-      center: { lat: 43.6045, lng: 1.444 },
-      scrollwheel: true,
-      gestureHandling: "greedy",
-    });
+        const initMap = async () => {
+            try {
+                const Leaflet = (await import('leaflet')).default;
+                setL(Leaflet);
 
-    const geocoder = new google.maps.Geocoder();
+                if (mapInstance.current) return;
 
-    places.forEach((place, i) => {
-      if (!place.rue) return;
+                mapInstance.current = Leaflet.map(mapRef.current!).setView(TOULOUSE_CENTER, 14);
 
-      const numero =
-        place.numero && place.numero !== 0 ? `${place.numero} ` : "";
-      const adresse = `Toulouse, ${numero}${place.voie} ${place.rue}`;
+                Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap'
+                }).addTo(mapInstance.current);
+            } catch (e) {
+                console.error("Erreur Leaflet :", e);
+            }
+        };
 
-      setTimeout(() => {
-        geocoder.geocode({ address: adresse }, (results, status) => {
-          if (status !== "OK" || !results?.[0]) {
-            console.warn(
-              `Adresse non trouvée : "${adresse}" — status: ${status}`
-            );
-            return;
-          }
+        initMap();
 
-          const marker = new google.maps.Marker({
-            map: mapInstance.current!,
-            position: results[0].geometry.location,
-            label: `${i + 1}`,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 10,
-              fillColor: "red",
-              fillOpacity: 1,
-              strokeWeight: 1,
-              strokeColor: "black",
-            },
-            title: place.nom,
-          });
+        return () => {
+            if (mapInstance.current) {
+                mapInstance.current.remove();
+                mapInstance.current = null;
+            }
+        };
+    }, [loading]);
 
-          const infowindow = new google.maps.InfoWindow({
-            content: `
-              <strong>${i + 1}. ${place.nom}</strong><br>
-              ${numero}${place.voie} ${place.rue}<br>
-              Type : ${place.type}<br>
-              Note : ${place.note || ""}
-            `,
-          });
+    // ----------------------------------------------------
+    // 4. MARQUEURS (SANS GÉOCODAGE)
+    // ----------------------------------------------------
+    useEffect(() => {
+        if (!L || !mapInstance.current || places.length === 0) return;
 
-          marker.addListener("click", () =>
-            infowindow.open(mapInstance.current, marker)
-          );
+        places.forEach((place, i) => {
+            // On vérifie la présence des coordonnées
+            if (place.lat === undefined || place.lng === undefined) return;
+
+            const id = i + 1;
+            const customIcon = L.divIcon({
+                className: 'marker-monument',
+                html: `
+                    <div style="
+                        background-color: #ef4444;
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        border: 2px solid black;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: bold;
+                        font-size: 11px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    ">
+                        ${id}
+                    </div>
+                `,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+
+            const marker = L.marker([place.lat, place.lng], { icon: customIcon })
+                .addTo(mapInstance.current!)
+                .bindPopup(`<strong>${id}. ${place.nom}</strong>`);
+
+            marker.on('click', () => {
+                toggleDetails(id);
+                mapInstance.current.setView([place.lat, place.lng], 16);
+                document.getElementById(`monument-item-${id}`)?.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            });
         });
-      }, i * 250);
-    });
-  }, [isReady, places, error]);
+    }, [L, places]);
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    // ----------------------------------------------------
+    // 5. RENDU
+    // ----------------------------------------------------
+    return (
+        <div className="p-4 max-w-7xl mx-auto">
+            <nav className="mb-6">
+                <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+                    Retour à l'accueil
+                </Link>
+            </nav>
 
-  // ────────────────────────────────────────────
-  // Rendu
-  // ────────────────────────────────────────────
-  return (
-    <div className="p-4 max-w-7xl mx-auto">
+            <h1 className="text-3xl font-extrabold mb-6 text-slate-900">
+                🗺️ Monuments militaires, religieux & civils par quartier — ({places.length} Lieux)
+            </h1>
 
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
-        </Link>
-      </nav>
+            {/* Carte */}
+            <div
+                ref={mapRef}
+                style={{ height: "65vh", width: "100%" }}
+                className="mb-8 border-4 border-slate-200 rounded-xl bg-gray-100 flex items-center justify-center relative z-0 overflow-hidden shadow-xl"
+            >
+                {error && <p className="text-red-600 font-bold">{error}</p>}
+                {loading && !error && (
+                    <div className="flex flex-col items-center gap-2">
+                        <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-gray-500 font-medium">Chargement de la carte...</p>
+                    </div>
+                )}
+            </div>
 
-      {/* Script Google Maps */}
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&async=1`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
+            <h2 className="text-2xl font-bold mb-4 border-b pb-2 text-slate-800">
+                Liste des monuments ({places.length})
+            </h2>
 
-      <h1 className="text-3xl font-extrabold mb-6">
-        🗺️ Monuments militaires, religieux & civils par quartier
-      </h1>
+            {/* Liste en Grille avec Accordéon */}
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {places.map((place, i) => {
+                    const id = i + 1;
+                    const isDetailsOpen = openDetailsId === id;
+                    const numeroStr = place.numero && place.numero !== "0" ? `${place.numero} ` : "";
 
-      {/* Carte */}
-      <div
-        ref={mapRef}
-        style={{ height: "70vh", width: "100%" }}
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
-      >
-        {error && <p className="text-red-600">Erreur : {error}</p>}
-        {!error && !isReady && <p>Chargement de la carte…</p>}
-        {isReady && !error && places.length === 0 && (
-          <p>Chargement des monuments…</p>
-        )}
-      </div>
+                    return (
+                        <li 
+                            key={i} 
+                            id={`monument-item-${id}`} 
+                            className={`p-5 border rounded-xl transition-all duration-300 cursor-pointer flex flex-col ${
+                                isDetailsOpen 
+                                ? 'bg-red-50 border-red-300 shadow-md ring-1 ring-red-100' 
+                                : 'bg-white border-slate-200 shadow hover:shadow-lg'
+                            }`}
+                            onClick={() => toggleDetails(id)}
+                        >
+                            <div className="flex justify-between items-start">
+                                <p className="text-lg font-bold text-slate-900">
+                                    <span className="text-red-600 mr-2">{id}.</span> {place.nom}
+                                </p>
+                                <span className={`text-xl text-black font-bold transition-transform duration-300 ${isDetailsOpen ? 'rotate-180' : 'rotate-0'}`}>
+                                    ▼
+                                </span>
+                            </div>
 
-      <h2 className="text-2xl font-semibold mb-4">
-        Liste des monuments ({places.length})
-      </h2>
+                            <p className="text-sm italic text-slate-600 mt-1">
+                                📍 {numeroStr}{place.voie} {place.rue}
+                            </p>
 
-      {/* Liste */}
-      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {places.map((place, i) => (
-          <li key={i} className="p-4 border rounded bg-white shadow">
-            <p className="text-lg font-bold">
-              {i + 1}. {place.nom}
+                            {isDetailsOpen && (
+                                <div className="mt-3 pt-3 border-t border-red-200 animate-in fade-in slide-in-from-top-1 duration-300">
+                                    <p className="text-sm text-slate-800">
+                                        <span className="font-bold">Type :</span> {place.type}
+                                    </p>
+                                    {place.note && (
+                                        <div className="mt-2 p-3 bg-white/50 rounded-lg border border-red-100 italic text-sm text-slate-700">
+                                            {place.note}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </li>
+                    );
+                })}
+            </ul>
+
+            <p className="mt-8 text-center font-medium text-slate-400 text-sm">
+                Propulsé par Leaflet & OpenStreetMap
             </p>
-            <p className="italic">
-              {place.numero} {place.voie} {place.rue}
-            </p>
-            <p>Type : {place.type}</p>
-            {place.note && <p>Note : {place.note}</p>}
-          </li>
-        ))}
-      </ul>
-
-      <p className="mt-6 text-center font-semibold text-gray-500">
-        Informations géolocalisées via Google Maps.
-      </p>
-    </div>
-  );
+        </div>
+    );
 }

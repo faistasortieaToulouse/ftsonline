@@ -1,157 +1,119 @@
-// src/app/museeariege/page.tsx
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-// Importe le type depuis la nouvelle API que nous venons de créer
+import { useEffect, useState, useRef, CSSProperties } from 'react';
 import { Musee } from '../api/museeariege/route';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-// Déclaration pour que TypeScript reconnaisse google.maps
-declare global {
-  interface Window {
-    initMap: () => void;
-    google: typeof google;
-  }
-}
+// COORDONNÉES CENTRALES DE L'ARIÈGE
+const ARIEGE_CENTER: [number, number] = [42.96, 1.60];
+const THEME_COLOR = '#8b5cf6'; // Violet pour la culture/musées
 
-// Styles pour le tableau
-const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
-const tableCellStyle = { padding: '12px' };
-
-// Composant de la carte
-const GoogleMap = ({ musees }: { musees: Musee[] }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  const initMap = useCallback(() => {
-    if (!mapRef.current || !window.google || musees.length === 0) return;
-
-    // Calculer le centre de la carte (Ariège)
-    const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
-    const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
-
-    const map = new window.google.maps.Map(mapRef.current, {
-      center: { lat: centerLat, lng: centerLng },
-      zoom: 9, // Zoom initial pour l'Ariège
-      scrollwheel: true, // Zoom avec la molette de la souris
-    });
-
-    // Ajouter des marqueurs pour chaque musée
-    musees.forEach((musee, index) => {
-      // Le numéro du musée dans la liste (index + 1)
-      const numero = index + 1;
-      
-      const marker = new window.google.maps.Marker({
-        position: { lat: musee.lat, lng: musee.lng },
-        map,
-        title: `${numero}. ${musee.nom}`, // Afficher le numéro dans le titre du marqueur (au survol)
-        // Ajout du label pour afficher le numéro sur le marqueur
-        label: {
-          text: String(numero),
-          color: 'white',
-          fontWeight: 'bold',
-        }
-      });
-
-      const infowindow = new window.google.maps.InfoWindow({
-        content: `
-          <h3>${numero}. ${musee.nom}</h3>
-          <p><strong>Commune :</strong> ${musee.commune}</p>
-          <p><strong>Catégorie :</strong> ${musee.categorie}</p>
-          <p><strong>Adresse :</strong> ${musee.adresse}</p>
-          <p><a href="${musee.url}" target="_blank">Site web</a></p>
-        `,
-      });
-
-      marker.addListener('click', () => {
-        infowindow.open(map, marker);
-      });
-    });
-  }, [musees]);
-
-  useEffect(() => {
-    // Vérifie si l'API Google Maps est déjà chargée
-    if (window.google && window.google.maps) {
-      initMap();
-      return;
-    }
-
-    // Charge dynamiquement le script de l'API Google Maps
-    const script = document.createElement('script');
-    // Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    
-    // Attache la fonction initMap à la fenêtre globale
-    window.initMap = initMap;
-    document.head.appendChild(script);
-
-    return () => {
-      script.remove();
-    };
-  }, [initMap]);
-
-  return <div ref={mapRef} style={{ height: '500px', width: '100%', borderRadius: '8px', marginBottom: '32px' }} />;
-};
-
-
-// Composant principal de la page
 export default function MuseeAriegePage() {
   const [musees, setMusees] = useState<Musee[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Refs pour la gestion Leaflet (Méthode OTAN)
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
+
+  // 1. Charger les données API
   useEffect(() => {
     async function fetchMusees() {
       try {
-        // Appel à la nouvelle API
         const response = await fetch('/api/museeariege'); 
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération des données de l'API.");
-        }
+        if (!response.ok) throw new Error("Erreur lors de la récupération des données.");
         const data: Musee[] = await response.json();
+        // Tri par commune
+        data.sort((a, b) => a.commune.localeCompare(b.commune));
         setMusees(data);
       } catch (err) {
-        if (err instanceof Error) {
-            setError(err.message);
-        } else {
-            setError("Une erreur inattendue est survenue.");
-        }
+        setError(err instanceof Error ? err.message : "Erreur inconnue");
       } finally {
-        setIsLoading(false);
+        setIsLoadingData(false);
       }
     }
-
     fetchMusees();
   }, []);
 
-  if (isLoading) {
-    return (
-      <div style={{ padding: '20px' }}>
+  // 2. Initialisation de la carte
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
 
-        <h1>Musées et Patrimoine de l'Ariège (09)</h1>
-        <p>Chargement des données...</p>
-      </div>
-    );
-  }
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      await import('leaflet/dist/leaflet.css');
 
-  if (error) {
-    return (
-      <div style={{ padding: '20px', color: 'red' }}>
-        <h1>Musées et Patrimoine de l'Ariège (09)</h1>
-        <p>Erreur : {error}</p>
-        <p>Vérifiez que vous avez bien une clé Google Maps définie dans .env.local.</p>
-      </div>
-    );
-  }
+      if (mapInstance.current) return;
 
-  const totalMusees = musees.length; 
+      mapInstance.current = L.map(mapRef.current).setView(ARIEGE_CENTER, 9);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
+
+      setIsReady(true);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoadingData]);
+
+  // 3. Ajout des marqueurs numérotés
+  useEffect(() => {
+    if (!isReady || !mapInstance.current || musees.length === 0) return;
+
+    const addMarkers = async () => {
+      const L = (await import('leaflet')).default;
+
+      musees.forEach((musee, i) => {
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              background-color: ${THEME_COLOR};
+              width: 28px; height: 28px;
+              border-radius: 50%; border: 2px solid white;
+              display: flex; align-items: center; justify-content: center;
+              color: white; font-weight: bold; font-size: 12px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            ">
+              ${i + 1}
+            </div>
+          `,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        const marker = L.marker([musee.lat, musee.lng], { icon: customIcon });
+        marker.bindPopup(`
+          <div style="font-family: Arial; font-size: 14px; color: black;"> 
+            <strong style="color:${THEME_COLOR};">${i + 1}. ${musee.nom}</strong><br/> 
+            <b>Commune :</b> ${musee.commune}<br/>
+            <b>Catégorie :</b> ${musee.categorie}<br/>
+            <a href="${musee.url}" target="_blank" style="color:blue; text-decoration:underline;">Visiter le site</a>
+          </div>
+        `);
+        marker.addTo(mapInstance.current);
+      });
+    };
+
+    addMarkers();
+  }, [isReady, musees]);
+
+  if (error) return <div className="p-10 text-red-500">Erreur : {error}</div>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-
+    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen">
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -159,50 +121,73 @@ export default function MuseeAriegePage() {
         </Link>
       </nav>
 
-      <h1>⛰️ Musées et Patrimoine de l'Ariège (09)</h1>
-      
-      <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>
-        Total de Sites listés : {totalMusees}
-      </p>
-      <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des lieux culturels et historiques.</p>
+      <header className="mb-8">
+        <h1 className="text-3xl font-extrabold text-slate-900">⛰️ Musées et Patrimoine de l'Ariège (09)</h1>
+        <p className="text-slate-600 mt-2 font-medium">
+          {isLoadingData ? 'Chargement...' : `${musees.length} sites culturels et historiques répertoriés.`}
+        </p>
+      </header>
 
-      {/* Carte Google Maps */}
-      <GoogleMap musees={musees} />
+      {/* ZONE CARTE */}
+      <div style={{ height: "60vh", width: "100%" }} className="mb-8 border rounded-xl bg-gray-100 relative z-0 overflow-hidden shadow-md border-violet-100"> 
+        <div ref={mapRef} className="h-full w-full" />
+        {isLoadingData && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+            <p className="animate-pulse font-bold text-violet-600">Initialisation de la carte...</p>
+          </div>
+        )}
+      </div>
 
-      <h2>Liste Détaillée des Sites</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f4f4f4' }}>
-            <th style={tableHeaderStyle}>N°</th> 
-            <th style={tableHeaderStyle}>Commune</th>
-            <th style={tableHeaderStyle}>Nom du Site</th>
-            <th style={tableHeaderStyle}>Catégorie</th>
-            <th style={tableHeaderStyle}>Adresse</th>
-            <th style={tableHeaderStyle}>URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {musees.map((musee, index) => (
-            <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={tableCellStyle}><strong>{index + 1}</strong></td> 
-              <td style={tableCellStyle}>{musee.commune}</td>
-              <td style={tableCellStyle}>{musee.nom}</td>
-              <td style={tableCellStyle}>{musee.categorie}</td>
-              <td style={tableCellStyle}>{musee.adresse}</td>
-              <td style={tableCellStyle}>
-                <a 
-                  href={musee.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ color: 'blue', textDecoration: 'underline' }} 
-                >
-                  Voir le site
-                </a>
-              </td>
+      <h2 className="text-2xl font-bold mb-4 text-slate-800">Liste Détaillée des Sites</h2>
+
+      <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+        <table className="w-full border-collapse bg-white text-left">
+          <thead className="bg-slate-100">
+            <tr>
+              <th style={tableHeaderStyle}>N°</th> 
+              <th style={tableHeaderStyle}>Commune</th>
+              <th style={tableHeaderStyle}>Nom du Site</th>
+              <th style={tableHeaderStyle}>Catégorie</th>
+              <th style={tableHeaderStyle}>Adresse</th>
+              <th style={tableHeaderStyle}>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {musees.map((m, i) => (
+              <tr key={i} className="border-t hover:bg-violet-50 transition-colors">
+                <td className="p-4 font-bold text-violet-600">{i + 1}</td> 
+                <td className="p-4 font-semibold text-slate-700">{m.commune}</td>
+                <td className="p-4 font-bold text-slate-900">{m.nom}</td>
+                <td className="p-4">
+                    <span className="text-xs font-bold px-2 py-1 rounded-full bg-slate-200 text-slate-700 uppercase">
+                        {m.categorie}
+                    </span>
+                </td>
+                <td className="p-4 text-sm text-slate-600">{m.adresse}</td>
+                <td className="p-4">
+                  <a 
+                    href={m.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-blue-600 font-bold hover:underline inline-flex items-center gap-1"
+                  >
+                    Site web
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
+const tableHeaderStyle: CSSProperties = { 
+    padding: '12px 16px', 
+    fontSize: '14px', 
+    fontWeight: 'bold', 
+    color: '#475569',
+    textTransform: 'uppercase',
+    letterSpacing: '0.025em'
+};

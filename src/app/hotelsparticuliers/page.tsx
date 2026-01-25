@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Script from 'next/script';
-import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 interface Hotel {
   id: number;
@@ -18,59 +16,100 @@ interface Hotel {
 
 export default function HotelsMapPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
+  const mapInstance = useRef<any>(null);
 
   const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [isMapReady, setIsMapReady] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // --- Charger les données ---
+  // --- 1. Charger les données ---
   useEffect(() => {
-    fetch('/api/hotelsparticuliers')
-      .then(res => res.json())
-      .then(data => setHotels(data))
-      .catch(console.error);
+    async function fetchHotels() {
+      try {
+        const res = await fetch('/api/hotelsparticuliers');
+        if (!res.ok) throw new Error(`Erreur HTTP: ${res.status}`);
+        const data = await res.json();
+        setHotels(data);
+      } catch (error) {
+        console.error("Erreur chargement hôtels:", error);
+      } finally {
+        setIsLoadingData(false);
+      }
+    }
+    fetchHotels();
   }, []);
 
-  // --- Carte Google Maps ---
+  // --- 2. Initialisation de Leaflet (Méthode OTAN) ---
   useEffect(() => {
-    if (!isReady || !mapRef.current || hotels.length === 0) return;
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData || hotels.length === 0) return;
 
-    const center = {
-      lat: hotels[0].lat || 43.6045,
-      lng: hotels[0].lng || 1.444,
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      await import('leaflet/dist/leaflet.css');
+
+      if (mapInstance.current) return;
+
+      // Centre sur le premier hôtel ou Toulouse par défaut
+      const center: [number, number] = [hotels[0].lat || 43.6045, hotels[0].lng || 1.444];
+
+      const map = L.map(mapRef.current).setView(center, 14);
+      mapInstance.current = map;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Ajout des marqueurs
+      hotels.forEach((hotel, i) => {
+        if (!hotel.lat || !hotel.lng) return;
+
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              background-color: #3b82f6;
+              width: 24px; height: 24px;
+              border-radius: 50%; border: 2px solid white;
+              display: flex; align-items: center; justify-content: center;
+              color: white; font-weight: bold; font-size: 11px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            ">
+              ${i + 1}
+            </div>
+          `,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker([hotel.lat, hotel.lng], { icon: customIcon }).addTo(map);
+        
+        marker.bindPopup(`
+          <div style="font-family: sans-serif;">
+            <strong>${i + 1}. ${hotel.nom}</strong><br>
+            <span style="font-size: 12px;">${hotel.adresse}</span><br>
+            <hr style="margin: 5px 0;">
+            <span style="font-size: 11px;">Propriétaire : ${hotel.profession_proprietaire}</span><br>
+            <span style="font-size: 11px;">Siècle : ${hotel.siecle}ᵉ</span>
+          </div>
+        `);
+      });
+
+      // Correction de l'affichage
+      setTimeout(() => {
+        map.invalidateSize();
+        setIsMapReady(true);
+      }, 200);
     };
 
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 14,
-      center,
-      scrollwheel: true,
-      gestureHandling: 'greedy',
-    });
+    initMap();
 
-    hotels.forEach((hotel, i) => {
-      if (typeof hotel.lat !== 'number' || typeof hotel.lng !== 'number') return;
-
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: { lat: hotel.lat, lng: hotel.lng },
-        label: `${i + 1}`,
-        title: hotel.nom,
-      });
-
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <strong>${i + 1}. ${hotel.nom}</strong><br>
-          ${hotel.adresse}<br>
-          Propriétaire : ${hotel.profession_proprietaire}<br>
-          Siècle : ${hotel.siecle}ᵉ
-        `,
-      });
-
-      marker.addListener('click', () =>
-        infowindow.open(mapInstance.current!, marker)
-      );
-    });
-  }, [isReady, hotels]);
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoadingData, hotels]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
@@ -81,38 +120,39 @@ export default function HotelsMapPage() {
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
 
       <h1 className="text-3xl font-extrabold mb-6">
         🗺️ Hôtels particuliers de Toulouse
       </h1>
 
+      {/* ZONE CARTE */}
       <div
-        ref={mapRef}
         style={{ height: '70vh', width: '100%' }}
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
+        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center relative z-0 overflow-hidden"
       >
-        {!isReady && <p>Chargement de la carte…</p>}
+        <div ref={mapRef} className="h-full w-full" />
+        {(!isMapReady || isLoadingData) && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 z-10">
+            <Loader2 className="animate-spin text-blue-600 mb-2" size={32} />
+            <p className="text-gray-500 font-medium">Chargement de la carte…</p>
+          </div>
+        )}
       </div>
 
       <h2 className="text-2xl font-semibold mb-4">
         Liste des hôtels ({hotels.length})
       </h2>
 
+      {/* GRILLE DES HOTELS (Mise en page conservée) */}
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {hotels.map((h, i) => (
           <li key={h.id} className="p-4 border rounded bg-white shadow">
             <p className="text-lg font-bold">
               {i + 1}. {h.nom}
             </p>
-            <p className="italic">{h.adresse}</p>
-            <p>Propriétaire : {h.profession_proprietaire}</p>
-            <p>Siècle : {h.siecle}ᵉ</p>
+            <p className="italic text-gray-600">{h.adresse}</p>
+            <p className="mt-2 text-sm">Propriétaire : {h.profession_proprietaire}</p>
+            <p className="text-sm">Siècle : {h.siecle}ᵉ</p>
           </li>
         ))}
       </ul>

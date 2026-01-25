@@ -1,221 +1,208 @@
-// src/app/museeaveyron/page.tsx
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-// Importation du type MuseeAveyron depuis la route API
+import { useEffect, useState, useRef, CSSProperties } from 'react';
 import { Musee as MuseeAveyron } from '../api/museeaveyron/route'; 
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-// Déclaration pour que TypeScript reconnaisse google.maps
-declare global {
-  interface Window {
-    initMap: () => void;
-    google: typeof google;
-  }
-}
+// CENTRE DE L'AVEYRON (Rodez environ)
+const AVEYRON_CENTER: [number, number] = [44.35, 2.57];
+const THEME_COLOR = '#4f46e5'; // Indigo/Bleu pour l'Aveyron
 
-// Styles pour le tableau
-const tableHeaderStyle: React.CSSProperties = { 
-  padding: '12px', 
-  borderBottom: '2px solid #ddd',
-  backgroundColor: '#f4f4f4'
-};
-const tableCellStyle: React.CSSProperties = { padding: '12px' };
-
-// Composant de la carte (Basé sur la méthode simple de chargement de script)
-const GoogleMap = ({ musees }: { musees: MuseeAveyron[] }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  const initMap = useCallback(() => {
-    if (!mapRef.current || !window.google || musees.length === 0) return;
-
-    // Calculer le centre de la carte (Moyenne des coordonnées)
-    const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
-    const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
-
-    const map = new window.google.maps.Map(mapRef.current, {
-      center: { lat: centerLat, lng: centerLng },
-      zoom: 9, // Zoom pour couvrir l'Aveyron
-      scrollwheel: true, // Permet le zoom avec la molette de la souris
-    });
-
-    // Ajouter des marqueurs pour chaque musée
-    const museesTriesPourMarqueur = [...musees].sort((a, b) => a.commune.localeCompare(b.commune));
-
-    museesTriesPourMarqueur.forEach((musee, index) => {
-      const numero = index + 1; // Numéro du musée dans la liste triée
-      
-      const marker = new window.google.maps.Marker({
-        position: { lat: musee.lat, lng: musee.lng },
-        map,
-        title: `${numero}. ${musee.nom}`, 
-        label: {
-          text: String(numero),
-          color: 'white', 
-          fontWeight: 'bold', 
-        }
-      });
-
-      // Construction du contenu de l'infowindow
-      const urlContent = musee.url ? 
-        `<p><a href="${musee.url}" target="_blank">Site web</a></p>` :
-        `<p><em>Site web non disponible</em></p>`;
-
-      const infowindow = new window.google.maps.InfoWindow({
-        content: `
-          <h3>${numero}. ${musee.nom}</h3>
-          <p><strong>Commune :</strong> ${musee.commune}</p>
-          <p><strong>Catégorie :</strong> ${musee.categorie}</p>
-          <p><strong>Adresse :</strong> ${musee.adresse}</p>
-          ${urlContent}
-        `,
-      });
-
-      marker.addListener('click', () => {
-        infowindow.open(map, marker);
-      });
-    });
-  }, [musees]);
-
-  useEffect(() => {
-    // Vérifie si l'API Google Maps est déjà chargée
-    if (window.google && window.google.maps) {
-      initMap();
-      return;
-    }
-
-    // Charge dynamiquement le script de l'API Google Maps
-    const script = document.createElement('script');
-    // Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini dans .env.local
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    
-    // Attache la fonction initMap à la fenêtre globale
-    window.initMap = initMap;
-    document.head.appendChild(script);
-
-    // Nettoyage lors du démontage du composant
-    return () => {
-      script.remove();
-    };
-  }, [initMap]);
-
-  return <div ref={mapRef} style={{ height: '500px', width: '100%', borderRadius: '8px', marginBottom: '32px' }} />;
-};
-
-
-// Composant principal de la page
 export default function MuseeAveyronPage() {
   const [musees, setMusees] = useState<MuseeAveyron[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Refs pour Leaflet (Méthode OTAN)
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
+
+  // 1. Récupération des données
   useEffect(() => {
     async function fetchMusees() {
       try {
         const response = await fetch('/api/museeaveyron');
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération des données de l'API pour l'Aveyron.");
-        }
+        if (!response.ok) throw new Error("Erreur lors de la récupération des données de l'Aveyron.");
         const data: MuseeAveyron[] = await response.json();
-        setMusees(data);
+        
+        // Tri par commune dès la réception
+        const sorted = data.sort((a, b) => a.commune.localeCompare(b.commune));
+        setMusees(sorted);
       } catch (err) {
-        if (err instanceof Error) {
-            setError(err.message);
-        } else {
-            setError("Une erreur inattendue est survenue.");
-        }
+        setError(err instanceof Error ? err.message : "Erreur inattendue");
       } finally {
-        setIsLoading(false);
+        setIsLoadingData(false);
       }
     }
-
     fetchMusees();
   }, []);
 
-  if (isLoading) {
-    return (
-      <div style={{ padding: '20px' }}>
-        <h1>Musées de l'Aveyron (12)</h1>
-        <p>Chargement des données...</p>
-      </div>
-    );
-  }
+  // 2. Initialisation Leaflet
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
 
-  if (error) {
-    return (
-      <div style={{ padding: '20px', color: 'red' }}>
-        <h1>Musées de l'Aveyron (12)</h1>
-        <p>Erreur : {error}</p>
-        <p>Vérifiez que vous avez bien une clé Google Maps définie dans .env.local et que l'API /api/museeaveyron est fonctionnelle.</p>
-      </div>
-    );
-  }
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      if (mapInstance.current) return;
 
-  const museesTries = [...musees].sort((a, b) => a.commune.localeCompare(b.commune));
-  const totalMusees = museesTries.length; 
+      mapInstance.current = L.map(mapRef.current).setView(AVEYRON_CENTER, 9);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
+
+      setIsReady(true);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoadingData]);
+
+  // 3. Ajout des marqueurs numérotés
+  useEffect(() => {
+    if (!isReady || !mapInstance.current || musees.length === 0) return;
+
+    const addMarkers = async () => {
+      const L = (await import('leaflet')).default;
+
+      musees.forEach((m, i) => {
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              background-color: ${THEME_COLOR};
+              width: 28px; height: 28px;
+              border-radius: 50%; border: 2px solid white;
+              display: flex; align-items: center; justify-content: center;
+              color: white; font-weight: bold; font-size: 11px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            ">
+              ${i + 1}
+            </div>
+          `,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        const popupContent = `
+          <div style="font-family: sans-serif; font-size: 14px; color: #1e293b;">
+            <strong style="color:${THEME_COLOR}">${i + 1}. ${m.nom}</strong><br/>
+            <b>Ville :</b> ${m.commune}<br/>
+            <b>Type :</b> ${m.categorie}<br/>
+            ${m.url ? `<a href="${m.url}" target="_blank" style="color:#4f46e5; text-decoration:underline; font-weight:bold;">Voir le site</a>` : ''}
+          </div>
+        `;
+
+        L.marker([m.lat, m.lng], { icon: customIcon })
+          .bindPopup(popupContent)
+          .addTo(mapInstance.current);
+      });
+    };
+
+    addMarkers();
+  }, [isReady, musees]);
+
+  if (error) return <div className="p-10 text-red-500 font-bold">Erreur : {error}</div>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-
+    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen font-sans">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
 
-      <h1>🐑 Musées et Patrimoine de l'Aveyron (12)</h1>
-      
-      <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>
-        Total de lieux culturels listés : {totalMusees}
-      </p>
-      <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des sites du patrimoine aveyronnais.</p>
+      <header className="mb-8">
+        <h1 className="text-3xl font-black text-slate-900">🐑 Musées et Patrimoine de l'Aveyron (12)</h1>
+        <div className="flex items-center gap-4 mt-2">
+          <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-bold">
+            {isLoadingData ? 'Chargement...' : `${musees.length} lieux référencés`}
+          </span>
+          <p className="text-slate-500 italic text-sm">Carte interactive du patrimoine aveyronnais.</p>
+        </div>
+      </header>
 
-      {/* Carte Google Maps */}
-      <GoogleMap musees={museesTries} />
+      {/* ZONE CARTE */}
+      <div style={{ height: "55vh", width: "100%" }} className="mb-10 border-4 border-white shadow-xl rounded-2xl bg-slate-200 relative z-0 overflow-hidden"> 
+        <div ref={mapRef} className="h-full w-full" />
+        {isLoadingData && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-100 z-10">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+              <p className="font-bold text-slate-600">Chargement de la carte...</p>
+            </div>
+          </div>
+        )}
+      </div>
 
-      <h2>Liste Détaillée des Sites</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f4f4f4' }}>
-            <th style={tableHeaderStyle}>N°</th> {/* Colonne Numéro */}
-            <th style={tableHeaderStyle}>Commune</th>
-            <th style={tableHeaderStyle}>Nom du Site/Musée</th>
-            <th style={tableHeaderStyle}>Catégorie</th>
-            <th style={tableHeaderStyle}>Adresse</th>
-            <th style={tableHeaderStyle}>URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {museesTries.map((musee, index) => (
-            <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={tableCellStyle}><strong>{index + 1}</strong></td> {/* Affichage du numéro */}
-              <td style={tableCellStyle}>{musee.commune}</td>
-              <td style={tableCellStyle}>{musee.nom}</td>
-              <td style={tableCellStyle}>{musee.categorie}</td>
-              <td style={tableCellStyle}>{musee.adresse}</td>
-              <td style={tableCellStyle}>
-                {musee.url ? (
-                  <a 
-                    href={musee.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    style={{ color: '#6a5acd', textDecoration: 'underline' }} 
-                  >
-                    Voir le site
-                  </a>
-                ) : (
-                  <span style={{ color: '#aaa' }}>N/A</span>
-                )}
-              </td>
+      <h2 className="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2">
+        <span className="w-8 h-1 bg-indigo-600 rounded"></span>
+        Liste Détaillée des Sites
+      </h2>
+
+      <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-200">
+              <th style={tableHeaderStyle}>N°</th>
+              <th style={tableHeaderStyle}>Commune</th>
+              <th style={tableHeaderStyle}>Nom du Site / Musée</th>
+              <th style={tableHeaderStyle}>Catégorie</th>
+              <th style={tableHeaderStyle}>Adresse</th>
+              <th style={tableHeaderStyle}>Lien</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {musees.map((m, i) => (
+              <tr key={i} className="border-b border-slate-100 hover:bg-indigo-50/50 transition-colors group">
+                <td className="p-4 font-bold text-indigo-600">{i + 1}</td>
+                <td className="p-4 font-semibold text-slate-700">{m.commune}</td>
+                <td className="p-4 font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">{m.nom}</td>
+                <td className="p-4">
+                  <span className="text-[10px] font-black px-2 py-1 rounded-md bg-slate-100 text-slate-600 uppercase tracking-wider">
+                    {m.categorie}
+                  </span>
+                </td>
+                <td className="p-4 text-sm text-slate-500">{m.adresse}</td>
+                <td className="p-4">
+                  {m.url ? (
+                    <a 
+                      href={m.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="inline-flex items-center px-3 py-1 rounded bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-shadow shadow-sm"
+                    >
+                      Voir le site
+                    </a>
+                  ) : (
+                    <span className="text-slate-300 text-xs italic">Non disponible</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
+// Styles pour les en-têtes du tableau
+const tableHeaderStyle: CSSProperties = { 
+  padding: '16px', 
+  fontSize: '12px', 
+  fontWeight: '800', 
+  color: '#64748b',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em'
+};

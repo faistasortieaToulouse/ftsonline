@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -17,11 +16,13 @@ interface Equipement {
   lng: number;
 }
 
-const API_BASE = "/api/sport"; // Ton API qui lit le JSON
+const API_BASE = "/api/sport";
 
 export default function SportPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
+  const mapInstance = useRef<any>(null);
+  const markersGroupRef = useRef<any>(null);
+
   const [items, setItems] = useState<Equipement[]>([]);
   const [markersCount, setMarkersCount] = useState(0);
   const [isMapReady, setIsMapReady] = useState(false);
@@ -59,45 +60,78 @@ export default function SportPage() {
     );
   });
 
+  // INITIALISATION CARTE ET MARQUEURS (MÉTHODE OTAN)
   useEffect(() => {
-    if (!isMapReady || !mapRef.current || !window.google?.maps || filteredItems.length === 0) return;
+    if (typeof window === "undefined" || !mapRef.current || filteredItems.length === 0) return;
 
-    const map = new google.maps.Map(mapRef.current, {
-      zoom: 12,
-      center: { lat: 43.6045, lng: 1.444 },
-      gestureHandling: "greedy",
-    });
-    mapInstance.current = map;
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
 
-    filteredItems.forEach((item, i) => {
-      const marker = new google.maps.Marker({
-        map: mapInstance.current,
-        position: { lat: item.lat, lng: item.lng },
-        title: item.name,
-        label: String(i + 1),
-      });
+      if (!mapInstance.current) {
+        // Initialisation de la carte sur Toulouse
+        mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.444], 12);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapInstance.current);
 
-      const info = new google.maps.InfoWindow({
-        content: `
+        markersGroupRef.current = L.layerGroup().addTo(mapInstance.current);
+      }
+
+      // Nettoyage et ajout des marqueurs
+      markersGroupRef.current.clearLayers();
+
+      filteredItems.forEach((item, i) => {
+        const count = i + 1;
+
+        // Icône personnalisée numérotée
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="
+            background-color: #2563eb;
+            color: white;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: bold;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          ">${count}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const popupContent = `
           <div style="font-family: Arial; font-size: 14px;">
-            <strong>${i + 1}. ${item.name}</strong><br/>
+            <strong>${count}. ${item.name}</strong><br/>
             <b>Installation :</b> ${item.installation}<br/>
             <b>Famille :</b> ${item.famille}<br/>
             <b>Type :</b> ${item.type}<br/>
             <b>Adresse :</b> ${item.adresse}
           </div>
-        `,
+        `;
+
+        L.marker([item.lat, item.lng], { icon: customIcon })
+          .addTo(markersGroupRef.current)
+          .bindPopup(popupContent);
       });
 
-      marker.addListener("click", () => info.open({ anchor: marker, map: mapInstance.current! }));
-    });
+      setMarkersCount(filteredItems.length);
+      setIsMapReady(true);
+    };
 
-    setMarkersCount(filteredItems.length);
-  }, [isMapReady, filteredItems]);
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [filteredItems]);
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -105,58 +139,70 @@ export default function SportPage() {
         </Link>
       </nav>
 
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsMapReady(true)}
-      />
+      <h1 className="text-3xl font-bold mb-4 text-slate-800">Équipements sportifs de Toulouse</h1>
 
-      <h1 className="text-3xl font-bold mb-4">Équipements sportifs de Toulouse</h1>
-
-      <p className="mb-4 font-semibold">{markersCount} lieux affichés sur {filteredItems.length} équipements.</p>
+      <p className="mb-4 font-semibold text-slate-600">
+        {markersCount} lieux affichés sur {filteredItems.length} équipements filtrés.
+      </p>
 
       <input
         type="text"
         placeholder="Rechercher un équipement..."
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
-        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-blue-300"
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
       />
 
-      {error && <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded"><strong>Erreur :</strong> {error}</div>}
+      {error && (
+        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
+          <strong>Erreur :</strong> {error}
+        </div>
+      )}
 
+      {/* ZONE CARTE */}
       <div
-        ref={mapRef}
-        style={{ height: "60vh", width: "100%" }}
-        className="mb-6 border rounded-lg bg-gray-100 flex items-center justify-center"
+        style={{ height: "60vh", width: "100%", zIndex: 0 }}
+        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center shadow-inner relative overflow-hidden"
       >
-        {!isMapReady && <p>Chargement de la carte…</p>}
+        <div ref={mapRef} className="h-full w-full" />
+        {(!isMapReady || loading) && (
+          <div className="absolute inset-0 bg-gray-50 flex items-center justify-center z-10">
+            <p className="animate-pulse text-gray-500 font-medium">Chargement de la carte et des données…</p>
+          </div>
+        )}
       </div>
 
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead style={{ backgroundColor: "#f0f0f0" }}>
-          <tr>
-            <th style={{ padding: "8px", border: "1px solid #ddd", width: "5%" }}>#</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Nom</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Installation</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Famille</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Type</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Adresse</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredItems.map((item, i) => (
-            <tr key={item.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}>
-              <td style={{ padding: "8px", border: "1px solid #ddd", fontWeight: 'bold' }}>{i + 1}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{item.name}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{item.installation}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{item.famille}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{item.type}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{item.adresse}</td>
+      {/* TABLEAU */}
+      <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead style={{ backgroundColor: "#f8fafc" }}>
+            <tr>
+              <th style={thStyle}>#</th>
+              <th style={thStyle}>Nom</th>
+              <th style={thStyle}>Installation</th>
+              <th style={thStyle}>Famille</th>
+              <th style={thStyle}>Type</th>
+              <th style={thStyle}>Adresse</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredItems.map((item, i) => (
+              <tr key={item.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
+                <td style={{ ...tdStyle, fontWeight: 'bold' }}>{i + 1}</td>
+                <td style={tdStyle}>{item.name}</td>
+                <td style={tdStyle}>{item.installation}</td>
+                <td style={tdStyle}>{item.famille}</td>
+                <td style={tdStyle}>{item.type}</td>
+                <td style={tdStyle}>{item.adresse}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
+// Styles réutilisables
+const thStyle = { padding: "12px 8px", border: "1px solid #e2e8f0", textAlign: "left" as const, fontSize: "14px", color: "#64748b" };
+const tdStyle = { padding: "10px 8px", border: "1px solid #e2e8f0", fontSize: "14px" };

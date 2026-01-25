@@ -1,8 +1,6 @@
-// src/app/patrimoine31/page.tsx
 'use client'; 
 
 import { useEffect, useRef, useState, CSSProperties } from "react"; 
-import Script from "next/script"; 
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -10,18 +8,18 @@ import { ArrowLeft } from "lucide-react";
 // Import du type mis à jour depuis la route API
 import type { SitePatrimoine31 } from '../api/patrimoine31/route'; 
 
-// Définition du type pour l'usage local
 type Site = SitePatrimoine31;
 
 // Coordonnées pour centrer la carte sur la zone Est de la Haute-Garonne
-const HAUTE_GARONNE_CENTER = { lat: 43.73, lng: 1.55 }; 
+const HAUTE_GARONNE_CENTER: [number, number] = [43.73, 1.55]; 
 
 export default function Patrimoine31MapPage() { 
   const mapRef = useRef<HTMLDivElement | null>(null); 
-  const mapInstance = useRef<google.maps.Map | null>(null); 
+  const mapInstance = useRef<any>(null); 
+  const markersLayer = useRef<any>(null);
+
   const [sitesData, setSitesData] = useState<Site[]>([]);
-  const [markersCount, setMarkersCount] = useState(0); 
-  const [isReady, setIsReady] = useState(false); 
+  const [isMapReady, setIsMapReady] = useState(false); 
   const [isLoadingData, setIsLoadingData] = useState(true);
 
   // ---- 1. Récupération des données (API) ----
@@ -30,10 +28,8 @@ export default function Patrimoine31MapPage() {
       try {
         const response = await fetch('/api/patrimoine31'); 
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-        
         const data: Site[] = await response.json();
         setSitesData(data);
-
       } catch (error) {
         console.error("Erreur lors de la récupération des sites:", error);
       } finally {
@@ -43,54 +39,81 @@ export default function Patrimoine31MapPage() {
     fetchSites();
   }, []);
 
-  // ---- 2. Initialisation de la carte & marqueurs ----
-  useEffect(() => { 
-    if (!isReady || !mapRef.current || !window.google?.maps || sitesData.length === 0) return;
+  // ---- 2. Initialisation de la carte (Méthode OTAN) ----
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || sitesData.length === 0) return;
 
-    const map = new google.maps.Map(mapRef.current, { 
-      zoom: 11, // Zoom ajusté pour la petite zone
-      center: HAUTE_GARONNE_CENTER, 
-      gestureHandling: "greedy", 
-    }); 
+    const initLeaflet = async () => {
+      const L = (await import('leaflet')).default;
 
-    mapInstance.current = map; 
-    let count = 0;
-
-    sitesData.forEach((site) => { 
-      count++; 
-
-      const position = new google.maps.LatLng(site.lat, site.lng);
-
-      const marker = new google.maps.Marker({ 
-        map: mapInstance.current, 
-        position, 
-        title: `${site.commune} - ${site.description}`,
-        label: {
-          text: String(count),
-          color: 'white', 
-          fontWeight: 'bold' as const
-        },
+      // Correction des icônes par défaut de Leaflet
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
       });
 
-      // Info-bulle affichée au clic - Nettoyage des retours à la ligne du template string
-      const info = new google.maps.InfoWindow({ 
-        content: `
-          <div style="font-family: Arial; font-size: 14px;"> 
-            <strong>${count}. ${site.commune}</strong><br/> 
-            <b>Description :</b> ${site.description}<br/>
-            <b>Secteur :</b> ${site.secteur}<br/>
-            <b>Distance de Toulouse :</b> ${site.distanceKm} km
+      if (!mapInstance.current) {
+        mapInstance.current = L.map(mapRef.current!).setView(HAUTE_GARONNE_CENTER, 11);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapInstance.current);
+
+        markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+        setIsMapReady(true);
+      }
+
+      // Nettoyage et ajout des marqueurs
+      markersLayer.current.clearLayers();
+
+      sitesData.forEach((site, i) => {
+        const count = i + 1;
+
+        // Création d'une icône personnalisée avec numéro (style Google Maps)
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              background-color: #1d4ed8;
+              width: 26px; height: 26px;
+              border-radius: 50%; border: 2px solid white;
+              display: flex; align-items: center; justify-content: center;
+              color: white; font-weight: bold; font-size: 11px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            ">
+              ${count}
+            </div>
+          `,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
+        });
+
+        const popupContent = `
+          <div style="font-family: Arial; font-size: 13px; min-width: 150px;"> 
+            <strong style="color: #1d4ed8;">${count}. ${site.commune}</strong><br/> 
+            <p style="margin: 5px 0;"><b>Description :</b> ${site.description}</p>
+            <p style="margin: 2px 0;"><b>Secteur :</b> ${site.secteur}</p>
+            <p style="margin: 2px 0;"><b>Distance :</b> ${site.distanceKm} km</p>
           </div>
-        `.trim(), // Utilisation de .trim() pour supprimer les espaces/retours à la ligne inutiles
+        `;
+
+        L.marker([site.lat, site.lng], { icon: customIcon })
+          .bindPopup(popupContent)
+          .addTo(markersLayer.current);
       });
+    };
 
-      marker.addListener("click", () => 
-        info.open({ anchor: marker, map: mapInstance.current! })
-      );
-    });
+    initLeaflet();
 
-    setMarkersCount(count); 
-  }, [isReady, sitesData]);
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [sitesData]);
 
   return ( 
     <div className="p-4 max-w-7xl mx-auto">
@@ -102,32 +125,26 @@ export default function Patrimoine31MapPage() {
         </Link>
       </nav> 
 
-      {/* Google Maps API (Vérifiez la clé API dans .env.local) */}
-      <Script 
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`} 
-        strategy="afterInteractive" 
-        onLoad={() => setIsReady(true)} 
-      /> 
-
       <h1 className="text-3xl font-extrabold mb-6">🏰 Sites de Patrimoine en Haute-Garonne (31)</h1> 
 
       <p className="font-semibold text-lg mb-4">
         Statut des données : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
       </p>
 
-      {/* Carte */}
+      {/* Carte Leaflet */}
       <div 
         ref={mapRef} 
-        style={{ height: "70vh", width: "100%" }} 
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
+        style={{ height: "70vh", width: "100%", zIndex: 0 }} 
+        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center relative"
       > 
-        {(!isReady || isLoadingData) && <p>Chargement de la carte et des données…</p>} 
-        {isReady && sitesData.length === 0 && !isLoadingData && <p>Aucune donnée de site à afficher. (Vérifiez la route API /api/patrimoine31)</p>}
+        {(!isMapReady || isLoadingData) && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+            <p className="animate-pulse text-blue-600 font-medium">Chargement de la carte et des données…</p>
+          </div>
+        )}
       </div>
-      
 
-{/* Tableau */}
-      <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({markersCount} marqueurs)</h2> 
+      <h2 className="text-2xl font-semibold mb-4">Liste complète des sites ({sitesData.length} marqueurs)</h2> 
 
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}> 
         <thead style={{ backgroundColor: "#e0e0e0" }}> 
@@ -139,9 +156,8 @@ export default function Patrimoine31MapPage() {
             <th style={tableHeaderStyle}>Secteur</th> 
           </tr> 
         </thead> 
-        
-        {/* CORRECTION HYDRATATION FINALE : Suppression de tous les retours à la ligne autour du map dans tbody */}
-        <tbody>{sitesData.map((site, i) => ( 
+        <tbody>
+          {sitesData.map((site, i) => ( 
             <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}> 
               <td style={tableCellStyle}>{i + 1}</td>
               <td style={tableCellStyle}>{site.commune}</td> 
@@ -149,7 +165,8 @@ export default function Patrimoine31MapPage() {
               <td style={tableCellStyleCenter}>{site.distanceKm}</td> 
               <td style={tableCellStyle}>{site.secteur}</td> 
             </tr> 
-          ))}</tbody>
+          ))}
+        </tbody>
       </table> 
     </div> 
   ); 

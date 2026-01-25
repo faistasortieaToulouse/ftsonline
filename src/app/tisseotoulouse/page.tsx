@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -15,14 +14,13 @@ const STATIONS = [
 
 export default function TisseoPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const markerRef = useRef<google.maps.Marker | null>(null);
+  const mapInstance = useRef<any>(null);
+  const markerInstance = useRef<any>(null);
   
   const [selectedStation, setSelectedStation] = useState(STATIONS[0]);
   const [schedules, setSchedules] = useState<any[]>([]);
-  const [isMapReady, setIsMapReady] = useState(false);
 
-  // Récupération des horaires
+  // 1. Récupération des horaires (inchangé)
   useEffect(() => {
     fetch(`/api/tisseotoulouse?stopPointId=${selectedStation.id}`)
       .then(res => res.json())
@@ -30,28 +28,57 @@ export default function TisseoPage() {
       .catch(err => console.error("Erreur horaires:", err));
   }, [selectedStation]);
 
-  // Mise à jour de la carte
+  // 2. Initialisation de Leaflet (Méthode OTAN)
   useEffect(() => {
-    if (!isMapReady || !mapRef.current || typeof window.google === 'undefined') return;
+    if (typeof window === 'undefined' || !mapRef.current) return;
 
-    if (!mapInstance.current) {
-      mapInstance.current = new google.maps.Map(mapRef.current, {
-        zoom: 15,
-        center: { lat: selectedStation.lat, lng: selectedStation.lng },
-        mapId: "TISSEO_MAP"
+    const initMap = async () => {
+      const L = (await import("leaflet")).default;
+
+      // Création de l'icône personnalisée (Leaflet a besoin d'aide pour les icônes en Next.js)
+      const DefaultIcon = L.icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
       });
-    } else {
-      mapInstance.current.panTo({ lat: selectedStation.lat, lng: selectedStation.lng });
-    }
 
-    if (markerRef.current) markerRef.current.setMap(null);
-    markerRef.current = new google.maps.Marker({
-      position: { lat: selectedStation.lat, lng: selectedStation.lng },
-      map: mapInstance.current,
-      title: selectedStation.name,
-      animation: google.maps.Animation.DROP
-    });
-  }, [isMapReady, selectedStation]);
+      if (!mapInstance.current) {
+        mapInstance.current = L.map(mapRef.current!).setView(
+          [selectedStation.lat, selectedStation.lng], 
+          15
+        );
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '© OpenStreetMap'
+        }).addTo(mapInstance.current);
+
+        markerInstance.current = L.marker(
+          [selectedStation.lat, selectedStation.lng], 
+          { icon: DefaultIcon }
+        ).addTo(mapInstance.current);
+      }
+    };
+
+    initMap();
+
+    // Cleanup
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, []);
+
+  // 3. Mise à jour de la position sans recharger toute la carte
+  useEffect(() => {
+    if (mapInstance.current && markerInstance.current) {
+      const coords: [number, number] = [selectedStation.lat, selectedStation.lng];
+      mapInstance.current.flyTo(coords, 15);
+      markerInstance.current.setLatLng(coords);
+    }
+  }, [selectedStation]);
 
   return (
     <div className="p-4 max-w-6xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
@@ -63,17 +90,11 @@ export default function TisseoPage() {
         </Link>
       </nav>
 
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsMapReady(true)}
-      />
-
       <header className="mb-6 bg-indigo-900 p-8 rounded-3xl shadow-2xl text-white">
         <h1 className="text-4xl font-black mb-2 flex items-center gap-3">
           <span>🚇</span> Tisséo Live
         </h1>
-        <p className="text-indigo-200 font-medium">Temps réel - Métro, Tram et Bus Toulouse</p>
+        <p className="text-indigo-200 font-medium">Temps réel - Métro, Tram et Bus Toulouse (via Leaflet)</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -98,7 +119,12 @@ export default function TisseoPage() {
             </div>
           </div>
 
-          <div ref={mapRef} style={{ height: "300px" }} className="rounded-2xl shadow-md border-4 border-white overflow-hidden" />
+          {/* Div de la carte Leaflet */}
+          <div 
+            ref={mapRef} 
+            style={{ height: "300px" }} 
+            className="rounded-2xl shadow-md border-4 border-white overflow-hidden z-0" 
+          />
         </div>
 
         {/* Colonne Droite : Horaires */}
@@ -139,7 +165,7 @@ export default function TisseoPage() {
                   }) : (
                     <tr>
                       <td colSpan={3} className="px-6 py-20 text-center text-slate-400 italic">
-                        Aucun passage détecté. Vérifiez la connexion à l'API.
+                        Chargement des horaires...
                       </td>
                     </tr>
                   )}

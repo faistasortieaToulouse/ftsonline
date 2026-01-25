@@ -1,3 +1,4 @@
+je veux ici supprimer Google Map, mettre Leaftlet avec la méthode OTAN, pas de géocodage, le veux la même mise en page pour le tableau :
 'use client';
 
 import { useEffect, useRef, useState } from 'react';

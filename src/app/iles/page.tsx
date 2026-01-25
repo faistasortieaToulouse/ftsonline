@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
-import { MapPin, Info, ArrowLeft } from "lucide-react";
+import { MapPin, ArrowLeft, Loader2 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 
@@ -16,89 +15,117 @@ interface Ile {
 
 export default function IlesPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
+  const mapInstance = useRef<any>(null);
 
   const [iles, setIles] = useState<Ile[]>([]);
   const [isReady, setIsReady] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   // 1. Charger les données
   useEffect(() => {
     fetch('/api/iles')
       .then(res => res.json())
-      .then(data => setIles(data))
-      .catch(err => console.error("Erreur API:", err));
+      .then(data => {
+        setIles(data);
+        setIsLoadingData(false);
+      })
+      .catch(err => {
+        console.error("Erreur API:", err);
+        setIsLoadingData(false);
+      });
   }, []);
 
-  // 2. Initialiser la carte
+  // 2. Initialiser la carte (Méthode OTAN)
   useEffect(() => {
-    if (!isReady || !mapRef.current || iles.length === 0) return;
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData || iles.length === 0) return;
 
-    // Création de la carte
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 13.5,
-      center: { lat: 43.585, lng: 1.435 },
-      gestureHandling: 'greedy',
-      mapId: 'DEMO_MAP_ID', // Optionnel
-    });
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
 
-    // Nettoyage des anciens marqueurs
-    markersRef.current.forEach(m => m.setMap(null));
-    markersRef.current = [];
+      if (mapInstance.current) return;
 
-    // Ajout des marqueurs pour chaque île
-    iles.forEach((ile) => {
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: { lat: ile.lat, lng: ile.lng },
-        label: {
-            text: ile.id.toString(),
-            color: "white",
-            fontWeight: "bold"
-        },
-        title: ile.nom,
-      });
+      // Création de l'instance
+      const map = L.map(mapRef.current).setView([43.585, 1.435], 13);
+      mapInstance.current = map;
 
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <div style="color: #1e293b; padding: 5px;">
-            <strong style="font-size: 14px;">${ile.nom}</strong><br/>
-            <p style="font-size: 12px; margin-top: 5px; color: #64748b;">${ile.description}</p>
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Ajout des marqueurs
+      iles.forEach((ile) => {
+        const customIcon = L.divIcon({
+          className: 'custom-div-icon',
+          html: `
+            <div style="
+              background-color: #2563eb;
+              color: white;
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              border: 2px solid white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              font-size: 11px;
+              box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            ">
+              ${ile.id}
+            </div>
+          `,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        const marker = L.marker([ile.lat, ile.lng], { icon: customIcon }).addTo(map);
+
+        marker.bindPopup(`
+          <div style="color: #1e293b; padding: 5px; font-family: sans-serif;">
+            <strong style="font-size: 14px; color: #2563eb;">${ile.nom}</strong><br/>
+            <p style="font-size: 12px; margin-top: 5px; color: #64748b; line-height: 1.4;">
+              ${ile.description}
+            </p>
           </div>
-        `,
+        `);
       });
 
-      marker.addListener('click', () => {
-        infowindow.open(mapInstance.current, marker);
-      });
+      // Correction de la taille au rendu
+      setTimeout(() => {
+        map.invalidateSize();
+        setIsReady(true);
+      }, 300);
+    };
 
-      markersRef.current.push(marker);
-    });
-  }, [isReady, iles]);
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoadingData, iles]);
 
   // Fonction pour centrer sur une île via le tableau
   const focusOnIle = (ile: Ile) => {
     if (mapInstance.current) {
-      mapInstance.current.setZoom(16);
-      mapInstance.current.panTo({ lat: ile.lat, lng: ile.lng });
+      mapInstance.current.setView([ile.lat, ile.lng], 16, {
+        animate: true,
+        duration: 1
+      });
     }
   };
 
   return (
     <div className="flex flex-col h-screen p-4 gap-4 bg-slate-50">
       
-      <nav className="mb-6">
+      <nav>
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
 
       <header className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm border">
         <div className="bg-blue-600 p-2 rounded-lg text-white">
@@ -111,7 +138,7 @@ export default function IlesPage() {
         {/* Tableau */}
         <div className="lg:col-span-4 bg-white rounded-xl shadow-sm border overflow-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 sticky top-0">
+            <thead className="bg-slate-50 sticky top-0 z-10">
               <tr>
                 <th className="p-4 border-b text-xs text-slate-400 uppercase font-bold text-center">#</th>
                 <th className="p-4 border-b text-xs text-slate-400 uppercase font-bold">Îlot</th>
@@ -139,9 +166,15 @@ export default function IlesPage() {
           </table>
         </div>
 
-        {/* Carte Google Maps */}
-        <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border">
-          <div ref={mapRef} className="h-full w-full" />
+        {/* Carte Leaflet */}
+        <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative">
+          <div ref={mapRef} className="h-full w-full z-0" />
+          {!isReady && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-10">
+              <Loader2 className="animate-spin text-blue-600 mb-2" size={32} />
+              <p className="text-slate-500 text-sm font-medium">Chargement de la carte...</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

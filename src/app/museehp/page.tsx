@@ -1,213 +1,203 @@
-// src/app/museehp/page.tsx
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-// Importe le type depuis l'API des Hautes-Pyrénées (HP)
+import { useEffect, useState, useRef, CSSProperties } from 'react';
 import { Musee } from '../api/museehp/route'; 
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-// Déclaration pour que TypeScript reconnaisse google.maps
-declare global {
-  interface Window {
-    initMap: () => void;
-    google: typeof google;
-  }
-}
+// CENTRE DES HAUTES-PYRÉNÉES (Tarbes environ)
+const HP_CENTER: [number, number] = [43.23, 0.07];
+const THEME_COLOR = '#0369a1'; // Bleu montagne pour les HP
 
-// Styles pour le tableau
-const tableHeaderStyle = { padding: '12px', borderBottom: '2px solid #ddd' };
-const tableCellStyle = { padding: '12px' };
-
-// Composant de la carte (non modifié, car le tri se fait sur les données avant l'envoi)
-const GoogleMap = ({ musees }: { musees: Musee[] }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  const initMap = useCallback(() => {
-    // Vérification pour s'assurer que l'API Google Maps et les données sont disponibles
-    if (!mapRef.current || !window.google || musees.length === 0) return;
-
-    // Calculer le centre de la carte (Hautes-Pyrénées - estimation basée sur la moyenne des coordonnées)
-    const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
-    const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
-
-    const map = new window.google.maps.Map(mapRef.current, {
-      center: { lat: centerLat, lng: centerLng },
-      zoom: 9, // Zoom initial pour les Hautes-Pyrénées
-      scrollwheel: true,
-    });
-
-    // Ajouter des marqueurs pour chaque musée
-    musees.forEach((musee, index) => {
-      const numero = index + 1;
-      
-      const marker = new window.google.maps.Marker({
-        position: { lat: musee.lat, lng: musee.lng },
-        map,
-        title: `${numero}. ${musee.nom}`,
-        label: {
-          text: String(numero),
-          color: 'white',
-          fontWeight: 'bold',
-        }
-      });
-
-      const infowindow = new window.google.maps.InfoWindow({
-        content: `
-          <h3>${numero}. ${musee.nom}</h3>
-          <p><strong>Commune :</strong> ${musee.commune}</p>
-          <p><strong>Catégorie :</strong> ${musee.categorie}</p>
-          <p><strong>Adresse :</strong> ${musee.adresse}</p>
-          <p><a href="${musee.url}" target="_blank">Site web</a></p>
-        `,
-      });
-
-      marker.addListener('click', () => {
-        infowindow.open(map, marker);
-      });
-    });
-  }, [musees]);
-
-  useEffect(() => {
-    // Vérifie si l'API Google Maps est déjà chargée
-    if (window.google && window.google.maps) {
-      initMap();
-      return;
-    }
-
-    // Charge dynamiquement le script de l'API Google Maps
-    const script = document.createElement('script');
-    // Assurez-vous que NEXT_PUBLIC_GOOGLE_MAPS_API_KEY est défini
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    
-    // Attache la fonction initMap à la fenêtre globale
-    window.initMap = initMap;
-    document.head.appendChild(script);
-
-    return () => {
-      script.remove();
-    };
-  }, [initMap]);
-
-  return <div ref={mapRef} style={{ height: '500px', width: '100%', borderRadius: '8px', marginBottom: '32px' }} />;
-};
-
-
-// Composant principal de la page
 export default function MuseeHPPage() {
   const [musees, setMusees] = useState<Musee[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Refs pour Leaflet (Méthode OTAN)
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
+
+  // 1. Récupération et tri des données
   useEffect(() => {
     async function fetchMusees() {
       try {
-        // Appel à l'API des Hautes-Pyrénées
         const response = await fetch('/api/museehp'); 
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération des données de l'API des Hautes-Pyrénées.");
-        }
+        if (!response.ok) throw new Error("Erreur lors de la récupération des données des Hautes-Pyrénées.");
         const data: Musee[] = await response.json();
         
-        // --- LOGIQUE DE TRI PAR COMMUNE ---
-        const sortedData = data.sort((a, b) => {
-          return a.commune.localeCompare(b.commune);
-        });
-        // ---------------------------------
-        
+        // Tri par commune
+        const sortedData = data.sort((a, b) => a.commune.localeCompare(b.commune));
         setMusees(sortedData);
       } catch (err) {
-        if (err instanceof Error) {
-            setError(err.message);
-        } else {
-            setError("Une erreur inattendue est survenue.");
-        }
+        setError(err instanceof Error ? err.message : "Erreur inattendue");
       } finally {
-        setIsLoading(false);
+        setIsLoadingData(false);
       }
     }
-
     fetchMusees();
   }, []);
 
-  if (isLoading) {
-    return (
-      <div style={{ padding: '20px' }}>
-        <h1>Musées et Patrimoine des Hautes-Pyrénées (65)</h1>
-        <p>Chargement des données...</p>
-      </div>
-    );
-  }
+  // 2. Initialisation de la carte (Import dynamique)
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
 
-  if (error) {
-    return (
-      <div style={{ padding: '20px', color: 'red' }}>
-        <h1>Musées et Patrimoine des Hautes-Pyrénées (65)</h1>
-        <p>Erreur : {error}</p>
-        <p>Vérifiez que vous avez bien une clé Google Maps définie dans .env.local.</p>
-      </div>
-    );
-  }
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      if (mapInstance.current) return;
 
-  const totalMusees = musees.length; 
+      mapInstance.current = L.map(mapRef.current).setView(HP_CENTER, 9);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
+
+      setIsReady(true);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoadingData]);
+
+  // 3. Ajout des marqueurs synchronisés avec le tableau
+  useEffect(() => {
+    if (!isReady || !mapInstance.current || musees.length === 0) return;
+
+    const addMarkers = async () => {
+      const L = (await import('leaflet')).default;
+
+      musees.forEach((m, i) => {
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              background-color: ${THEME_COLOR};
+              width: 28px; height: 28px;
+              border-radius: 50%; border: 2px solid white;
+              display: flex; align-items: center; justify-content: center;
+              color: white; font-weight: bold; font-size: 11px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            ">
+              ${i + 1}
+            </div>
+          `,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+
+        const popupContent = `
+          <div style="font-family: sans-serif; font-size: 14px; min-width: 150px;">
+            <strong style="color:${THEME_COLOR}">${i + 1}. ${m.nom}</strong><br/>
+            <b>Commune :</b> ${m.commune}<br/>
+            <b>Catégorie :</b> ${m.categorie}<br/>
+            <a href="${m.url}" target="_blank" style="color:#0369a1; text-decoration:underline; font-weight:bold;">Visiter le site</a>
+          </div>
+        `;
+
+        L.marker([m.lat, m.lng], { icon: customIcon })
+          .bindPopup(popupContent)
+          .addTo(mapInstance.current);
+      });
+    };
+
+    addMarkers();
+  }, [isReady, musees]);
+
+  if (error) return <div className="p-10 text-red-600 font-bold">Erreur : {error}</div>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-
+    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-sky-700 hover:text-sky-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
 
-      <h1>🏔️ Musées et Patrimoine des Hautes-Pyrénées (65)</h1>
-      
-      <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>
-        Total de Sites listés : {totalMusees}
-      </p>
-      <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des lieux culturels et historiques du département, triée par commune.</p>
+      <header className="mb-8">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">🏔️ Musées et Patrimoine des Hautes-Pyrénées (65)</h1>
+        <div className="flex items-center gap-4 mt-2">
+          <span className="bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-sm font-bold border border-sky-200">
+            {isLoadingData ? 'Chargement...' : `${musees.length} lieux listés`}
+          </span>
+          <p className="text-slate-500 text-sm">Culture et histoire au cœur des Pyrénées, triées par commune.</p>
+        </div>
+      </header>
 
-      {/* Carte Google Maps */}
-      <GoogleMap musees={musees} />
+      {/* ZONE CARTE */}
+      <div style={{ height: "500px", width: "100%" }} className="mb-10 border-4 border-white shadow-xl rounded-2xl bg-slate-200 relative z-0 overflow-hidden"> 
+        <div ref={mapRef} className="h-full w-full" />
+        {isLoadingData && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-100 z-10">
+            <div className="flex flex-col items-center gap-2 text-sky-700 font-bold uppercase tracking-widest text-xs">
+              <div className="w-8 h-8 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+              Chargement de la carte...
+            </div>
+          </div>
+        )}
+      </div>
 
-      <h2>Liste Détaillée des Sites</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f4f4f4' }}>
-            <th style={tableHeaderStyle}>N°</th> 
-            <th style={tableHeaderStyle}>Commune</th>
-            <th style={tableHeaderStyle}>Nom du Site</th>
-            <th style={tableHeaderStyle}>Catégorie</th>
-            <th style={tableHeaderStyle}>Adresse</th>
-            <th style={tableHeaderStyle}>URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {musees.map((musee, index) => (
-            <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={tableCellStyle}><strong>{index + 1}</strong></td> 
-              <td style={tableCellStyle}>**{musee.commune}**</td> {/* Mise en gras pour accentuer le tri */}
-              <td style={tableCellStyle}>{musee.nom}</td>
-              <td style={tableCellStyle}>{musee.categorie}</td>
-              <td style={tableCellStyle}>{musee.adresse}</td>
-              <td style={tableCellStyle}>
-                <a 
-                  href={musee.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ color: 'blue', textDecoration: 'underline' }} 
-                >
-                  Voir le site
-                </a>
-              </td>
+      <h2 className="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2">
+        <span className="w-8 h-1 bg-sky-600 rounded"></span>
+        Liste Détaillée des Sites
+      </h2>
+
+      <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white">
+        <table className="w-full border-collapse text-left">
+          <thead className="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th style={tableHeaderStyle}>N°</th>
+              <th style={tableHeaderStyle}>Commune</th>
+              <th style={tableHeaderStyle}>Nom du Site</th>
+              <th style={tableHeaderStyle}>Catégorie</th>
+              <th style={tableHeaderStyle}>Adresse</th>
+              <th style={tableHeaderStyle}>URL</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {musees.map((m, i) => (
+              <tr key={i} className="border-b border-slate-100 hover:bg-sky-50/50 transition-colors group">
+                <td className="p-4 font-bold text-sky-600">{i + 1}</td>
+                <td className="p-4 font-bold text-slate-800">{m.commune}</td>
+                <td className="p-4 font-semibold text-slate-900 group-hover:text-sky-700 transition-colors">{m.nom}</td>
+                <td className="p-4">
+                  <span className="text-[10px] font-black px-2 py-1 rounded-md bg-slate-100 text-slate-600 uppercase">
+                    {m.categorie}
+                  </span>
+                </td>
+                <td className="p-4 text-sm text-slate-500 italic">{m.adresse}</td>
+                <td className="p-4 text-right">
+                  <a 
+                    href={m.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="inline-flex items-center px-4 py-2 rounded-lg bg-sky-700 text-white text-xs font-bold hover:bg-sky-800 transition-all shadow-sm"
+                  >
+                    Voir le site
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
+
+const tableHeaderStyle: CSSProperties = { 
+  padding: '16px', 
+  fontSize: '11px', 
+  fontWeight: '800', 
+  color: '#64748b',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em'
+};

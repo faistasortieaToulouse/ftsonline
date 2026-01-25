@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -13,95 +12,99 @@ interface MuseePlace {
   num: string;
   typeRue: string;
   nomRue: string;
-  site: string;
-  quartier: string;
-  établissement: string;
-  sigles: string;
-  signification: string;
-  ville: string; // ✅ Toulouse ou Banlieue
+  signification: string; 
+  ville: string; 
+  lat: number; 
+  lng: number; 
 }
 
 type GroupedPlaces = Record<string, MuseePlace[]>;
 
 export default function MuseesToulousePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
+  const mapInstance = useRef<any>(null);
 
   const [places, setPlaces] = useState<MuseePlace[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // --- Chargement des données ---
   useEffect(() => {
     fetch('/api/museestoulouse')
       .then(res => res.json())
       .then((data: MuseePlace[]) => {
         data.sort((a, b) => a.catégorie.localeCompare(b.catégorie));
         setPlaces(data);
+        setIsLoading(false);
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error(err);
+        setIsLoading(false);
+      });
   }, []);
 
-  // --- Google Maps ---
   useEffect(() => {
-    if (!isReady || !mapRef.current || places.length === 0) return;
+    if (typeof window === "undefined" || !mapRef.current || isLoading || places.length === 0) return;
 
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 12,
-      center: { lat: 43.6045, lng: 1.444 },
-      scrollwheel: true,
-      gestureHandling: 'greedy',
-    });
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
 
-    const geocoder = new google.maps.Geocoder();
+      if (!mapInstance.current) {
+        mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.444], 12);
 
-    places.forEach((place, i) => {
-      if (!place.nomRue || place.nomRue === 'Divers') return;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapInstance.current);
+      }
 
-      const numero = place.num && place.num !== '0' ? `${place.num} ` : '';
-      const ville = place.ville && place.ville !== 'Toulouse'
-        ? place.ville
-        : 'Toulouse';
+      mapInstance.current.eachLayer((layer: any) => {
+        if (layer instanceof L.Marker) mapInstance.current.removeLayer(layer);
+      });
 
-      const adresse = `${numero}${place.typeRue} ${place.nomRue}, ${ville}`;
+      places.forEach((place) => {
+        if (!place.lat || !place.lng) return;
 
-      setTimeout(() => {
-        geocoder.geocode({ address: adresse }, (results, status) => {
-          if (status !== 'OK' || !results?.[0]) return;
+        const isBanlieue = place.ville !== 'Toulouse';
+        // ✅ CHANGEMENT : Bleu (#3b82f6) pour la banlieue, Rouge pour Toulouse
+        const markerColor = isBanlieue ? '#3b82f6' : '#ef4444'; 
 
-          const isBanlieue = place.ville !== 'Toulouse';
-
-          const marker = new google.maps.Marker({
-            map: mapInstance.current!,
-            position: results[0].geometry.location,
-            label: `${place.id}`,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 9,
-              fillColor: isBanlieue ? 'green' : 'red', // ✅ Couleur
-              fillOpacity: 1,
-              strokeWeight: 1,
-              strokeColor: 'black',
-            },
-            title: place.nomLieu,
-          });
-
-          const infowindow = new google.maps.InfoWindow({
-            content: `
-              <strong>${place.id}. ${place.nomLieu}</strong><br/>
-              ${numero}${place.typeRue} ${place.nomRue}<br/>
-              <em>${place.ville}</em><br/>
-              Catégorie : <strong>${place.catégorie}</strong><br/>
-              ${place.signification ? `<a href="${place.signification}" target="_blank">Site officiel</a>` : ''}
-            `,
-          });
-
-          marker.addListener('click', () => infowindow.open(mapInstance.current, marker));
+        const customIcon = L.divIcon({
+          className: 'custom-div-icon',
+          html: `<div style="
+            background-color: ${markerColor};
+            width: 24px; height: 24px;
+            border-radius: 50%; border: 2px solid white;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: bold; font-size: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          ">${place.id}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
         });
-      }, i * 250);
-    });
-  }, [isReady, places]);
 
-  // --- Regroupement par catégorie ---
+        const popupContent = `
+          <div style="font-family: sans-serif;">
+            <strong style="color: ${markerColor}">${place.id}. ${place.nomLieu}</strong><br/>
+            ${place.num || ''} ${place.typeRue} ${place.nomRue}<br/>
+            <em>${place.ville}</em><br/>
+            <a href="${place.signification}" target="_blank" style="color:blue; font-weight:bold;">Site officiel</a>
+          </div>
+        `;
+
+        L.marker([place.lat, place.lng], { icon: customIcon })
+          .addTo(mapInstance.current)
+          .bindPopup(popupContent);
+      });
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoading, places]);
+
   const groupedPlaces: GroupedPlaces = places.reduce((acc, place) => {
     acc[place.catégorie] = acc[place.catégorie] || [];
     acc[place.catégorie].push(place);
@@ -110,14 +113,6 @@ export default function MuseesToulousePage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
-
-      <h1 className="text-3xl font-extrabold mb-2 text-indigo-700">
-
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -125,23 +120,27 @@ export default function MuseesToulousePage() {
         </Link>
       </nav>
 
+      <h1 className="text-3xl font-extrabold mb-2 text-indigo-700">
         🏛️ Musées & sites d'exposition de Toulouse et sa banlieue ({places.length})
       </h1>
 
-      <p className="mb-4 text-gray-600">
-        🔴 Toulouse : {places.filter(p => p.ville === 'Toulouse').length} — 🟢 Banlieue : {places.filter(p => p.ville !== 'Toulouse').length}
+      <p className="mb-4 text-gray-600 font-semibold">
+        <span className="text-red-600">🔴 Toulouse : {places.filter(p => p.ville === 'Toulouse').length}</span>
+        <span className="mx-2">—</span>
+        {/* ✅ CHANGEMENT : Indicateur Bleu pour la banlieue */}
+        <span className="text-blue-600">🔵 Banlieue : {places.filter(p => p.ville !== 'Toulouse').length}</span>
       </p>
 
       <div
         ref={mapRef}
-        style={{ height: '70vh', width: '100%' }}
-        className="mb-8 border rounded-lg bg-gray-100"
+        style={{ height: '60vh', width: '100%', zIndex: 0 }}
+        className="mb-8 border rounded-lg bg-gray-100 shadow-inner"
       />
 
       <div className="space-y-12">
         {Object.entries(groupedPlaces).map(([category, items]) => (
           <div key={category}>
-            <h2 className="text-2xl font-bold mb-4 border-b-2 border-indigo-400">
+            <h2 className="text-2xl font-bold mb-4 border-b-2 border-indigo-400 text-slate-800">
               {category} ({items.length})
             </h2>
 
@@ -149,28 +148,34 @@ export default function MuseesToulousePage() {
               {items.map(place => (
                 <li
                   key={place.id}
-                  className={`p-4 bg-white rounded-lg shadow border-2 ${place.ville !== 'Toulouse' ? 'border-green-500' : 'border-red-500'}`}
+                  className={`p-4 bg-white rounded-lg shadow-sm border-2 transition-transform hover:scale-[1.02] ${
+                    /* ✅ CHANGEMENT : Bordure Bleue pour la banlieue */
+                    place.ville !== 'Toulouse' ? 'border-blue-500' : 'border-red-500'
+                  }`}
                 >
-                  <p className={`font-bold text-lg ${place.ville !== 'Toulouse' ? 'text-blue-600' : 'text-gray-800'}`}>
-                    <span className={`mr-2 font-bold ${place.ville !== 'Toulouse' ? 'text-green-600' : 'text-red-600'}`}>
+                  <p className="font-bold text-lg text-gray-900 leading-tight">
+                    <span className={`mr-2 ${place.ville !== 'Toulouse' ? 'text-blue-600' : 'text-red-600'}`}>
                       {place.id}.
                     </span>
                     {place.nomLieu}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 mt-1">
                     {place.num && place.num !== '0' ? place.num + ' ' : ''}
                     {place.typeRue} {place.nomRue}
                   </p>
-                  <p className="text-sm italic">{place.ville}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mt-1">{place.ville}</p>
+                  
                   {place.signification && (
-                    <a
-                      href={place.signification}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 text-xs"
-                    >
-                      Site →
-                    </a>
+                    <div className="mt-3">
+                      <a
+                        href={place.signification}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 text-sm font-bold hover:underline"
+                      >
+                        Voir le site officiel →
+                      </a>
+                    </div>
                   )}
                 </li>
               ))}
