@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
+import "leaflet/dist/leaflet.css";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface MuseePlace {
   id: number;
@@ -114,6 +117,14 @@ export default function MuseesToulousePage() {
       />
 
       <h1 className="text-3xl font-extrabold mb-2 text-indigo-700">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
         🏛️ Musées & sites d'exposition de Toulouse et sa banlieue ({places.length})
       </h1>
 

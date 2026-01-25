@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Bus, Loader2 } from "lucide-react";
+import { AlertTriangle, Bus, Loader2, ArrowLeft } from "lucide-react";
+import "leaflet/dist/leaflet.css";
+import Link from "next/link";
 
 type TisseoMessage = {
   id: string;
@@ -56,6 +58,14 @@ export default function TisseoPage() {
 
   return (
     <div className="container mx-auto py-10 px-4">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <div className="flex items-center gap-3 mb-6">
         <Bus className="h-8 w-8 text-primary" />
         <h1 className="text-3xl font-bold">Info trafic Tisséo</h1>

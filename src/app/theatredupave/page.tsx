@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { getEventImage } from "@/utils/eventImages";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 const MAX_EVENTS = 100;
 
@@ -78,6 +80,14 @@ export default function TheatreDuPavePage() {
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <h1 className="text-3xl font-bold mb-4">Théâtre du Pavé — Événements</h1>
       <p className="text-muted-foreground mb-6">
         Retrouvez ici tous les prochains spectacles du Théâtre du Pavé (flux iCal officiel).

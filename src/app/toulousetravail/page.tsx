@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { Briefcase, ExternalLink, CalendarDays, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { Briefcase, ExternalLink, CalendarDays, ArrowUpRight, ArrowLeft } from "lucide-react";
 
 interface TravailSource {
   id: number;
@@ -28,6 +29,14 @@ export default function ToulouseTravailPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <div className="max-w-5xl mx-auto">
         
         {/* Header Professionnel */}

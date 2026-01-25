@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface PodcastEpisode {
   titre: string;
@@ -105,6 +107,13 @@ export default function PodLibrairiesPage() {
 
   return (
     <div className="container mx-auto py-10 px-4 min-h-screen bg-gray-50">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
 
       {/* HEADER */}
       <div className="mb-8">

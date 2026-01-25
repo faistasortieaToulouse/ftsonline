@@ -4,6 +4,9 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 // Importe le type depuis l'API du Gers
 import { Musee } from '../api/museegers/route'; 
+import "leaflet/dist/leaflet.css";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 // Déclaration pour que TypeScript reconnaisse google.maps
 declare global {
@@ -146,6 +149,14 @@ export default function MuseeGersPage() {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <h1>🍷 Musées et Patrimoine du Gers (32)</h1>
       
       <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>

@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
+import "leaflet/dist/leaflet.css";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 // Types basés sur votre structure JSON
 interface Civilisation {
@@ -108,6 +111,14 @@ export default function VisitePrecolombiennePage() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto bg-[#fdfcf8] min-h-screen">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
         strategy="afterInteractive"

@@ -4,6 +4,9 @@
 import { useEffect, useRef, useState, CSSProperties } from "react"; 
 import Script from "next/script"; 
 import type { MontCirquePOI } from '../api/montcirque/route'; 
+import "leaflet/dist/leaflet.css";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 // 🚨 La déclaration globale reste NECESSAIRE pour TypeScript (résout l'erreur de compilation)
 declare global {
@@ -186,6 +189,13 @@ export default function MontCirqueMapPage() {
 
   return ( 
     <div className="p-4 max-w-7xl mx-auto"> 
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
 
       {/* Google Maps API */}
       <Script 

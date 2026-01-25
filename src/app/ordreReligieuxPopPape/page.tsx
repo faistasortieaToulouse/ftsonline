@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 type OrdreReligieuxPopPape = {
   id: number;
@@ -21,6 +23,14 @@ export default function OrdreReligieuxPopPapePage() {
 
   return (
     <main className="p-6">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <h1 className="text-2xl font-bold mb-6">Le Pape d'Occident et Pops d'Orient</h1>
 
       <div className="overflow-auto border rounded">

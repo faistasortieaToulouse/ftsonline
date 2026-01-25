@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface Establishment {
   nomLieu: string;
@@ -122,6 +124,14 @@ export default function TestLeaflet() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto font-sans bg-gray-50 min-h-screen">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <h1 className="text-3xl font-black mb-6 text-gray-800 tracking-tight">📍 Toulouse Explorer</h1>
 
       {/* Filtres */}

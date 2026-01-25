@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 type PaysData = {
   pays: string;
@@ -34,6 +36,14 @@ export default function ReligionsMondePage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <h1 className="text-4xl font-bold mb-8 text-center">Religions dans le monde (2024)</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
