@@ -1,16 +1,8 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
-
-// Imports dynamiques pour Leaflet (pas de SSR)
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
 interface Departement {
   nom: string;
@@ -25,14 +17,12 @@ interface Departement {
 
 export default function AnciensDepartementsPage() {
   const [departements, setDepartements] = useState<Departement[]>([]);
-  const [L, setL] = useState<any>(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
 
+  // 1. Charger les données
   useEffect(() => {
-    // Chargement de l'objet Leaflet pour les icônes personnalisées
-    import("leaflet").then((leaflet) => {
-      setL(leaflet);
-    });
-
     fetch("/api/anciensdepartements")
       .then(async (res) => {
         const data = await res.json();
@@ -46,33 +36,87 @@ export default function AnciensDepartementsPage() {
       .catch(console.error);
   }, []);
 
-  // Fonction pour créer l'icône "Bleu de France" avec le numéro
-  const createIcon = (index: number) => {
-    if (!L) return null;
-    return L.divIcon({
-      className: 'custom-marker',
-      html: `
-        <div style="
-          background-color: #002395;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          border: 2px solid white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-          font-size: 10px;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        ">
-          ${index + 1}
-        </div>
-      `,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
-    });
-  };
+  // 2. Initialisation manuelle de Leaflet (Comme pour l'OTAN)
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current) return;
+
+    const initMap = async () => {
+      // Import dynamique de Leaflet
+      const L = (await import('leaflet')).default;
+      await import('leaflet/dist/leaflet.css');
+
+      if (mapInstance.current) return; // Évite la double initialisation
+
+      // Création de la map sur la div ref
+      mapInstance.current = L.map(mapRef.current).setView([42.0, 12.0], 4);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
+
+      setIsReady(true);
+    };
+
+    initMap();
+
+    // Nettoyage au démontage
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, []);
+
+  // 3. Ajout des marqueurs quand la carte et les données sont prêtes
+  useEffect(() => {
+    if (!isReady || !mapInstance.current || departements.length === 0) return;
+
+    const addMarkers = async () => {
+      const L = (await import('leaflet')).default;
+
+      departements.forEach((d, index) => {
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `
+            <div style="
+              background-color: #002395;
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+              border: 2px solid white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: white;
+              font-weight: bold;
+              font-size: 10px;
+              box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            ">
+              ${index + 1}
+            </div>
+          `,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker([d.lat, d.lng], { icon: customIcon });
+        
+        marker.bindPopup(`
+          <div style="color: black; padding: 5px; font-family: sans-serif; max-width: 220px;">
+            <strong style="font-size: 14px;">#${index + 1} - ${d.nom}</strong><br />
+            <span style="color: #002395; font-size: 11px; font-weight: bold;">${d.pays.toUpperCase()}</span><br />
+            <span style="color: #b91c1c; font-size: 10px; font-weight: bold;">${d.date_debut} — ${d.date_fin}</span><br />
+            <p style="margin-top: 8px; font-size: 12px; line-height: 1.4; color: #333;">${d.description}</p>
+          </div>
+        `);
+
+        marker.addTo(mapInstance.current);
+      });
+    };
+
+    addMarkers();
+  }, [isReady, departements]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
@@ -90,42 +134,19 @@ export default function AnciensDepartementsPage() {
         <p className="text-gray-600 mt-2 italic">Hors frontières actuelles : Europe Napoléonienne et Algérie Française</p>
       </header>
 
-      {/* ZONE CARTE LEAFLET */}
-      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden" style={{ height: "60vh" }}>
-        {typeof window !== "undefined" && (
-          <MapContainer 
-            center={[42.0, 12.0]} 
-            zoom={4} 
-            scrollWheelZoom={true} 
-            style={{ height: "100%", width: "100%", zIndex: 0 }}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {departements.map((d, index) => {
-              const icon = createIcon(index);
-              return icon ? (
-                <Marker key={d.nom} position={[d.lat, d.lng]} icon={icon}>
-                  <Popup>
-                    <div style={{ color: 'black', padding: '5px', fontFamily: 'sans-serif', maxWidth: '220px' }}>
-                      <strong style={{ fontSize: '14px' }}>#${index + 1} - ${d.nom}</strong><br />
-                      <span style={{ color: '#002395', fontSize: '11px', font_weight: 'bold' }}>{d.pays.toUpperCase()}</span><br />
-                      <span style={{ color: '#b91c1c', fontSize: '10px', font_weight: 'bold' }}>{d.date_debut} — {d.date_fin}</span><br />
-                      <p style={{ marginTop: '8px', fontSize: '12px', lineHeight: '1.4', color: '#333' }}>{d.description}</p>
-                    </div>
-                  </Popup>
-                </Marker>
-              ) : null;
-            })}
-          </MapContainer>
+      {/* ZONE CARTE (DIV REF AU LIEU DE MAPCONTAINER) */}
+      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden relative" style={{ height: "60vh" }}>
+        <div ref={mapRef} className="h-full w-full z-0" />
+        {!isReady && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-100 z-10">
+            <p className="animate-pulse font-bold text-blue-900">Chargement de la carte historique...</p>
+          </div>
         )}
       </div>
 
-      {/* GRILLE DE DEPARTEMENTS (Inchangée) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {departements.map((d, index) => (
-          <div key={d.nom} className="group p-5 bg-white rounded-2xl shadow-sm border border-slate-200 hover:bg-blue-900 transition-all duration-300 flex gap-4">
+          <div key={`${d.nom}-${index}`} className="group p-5 bg-white rounded-2xl shadow-sm border border-slate-200 hover:bg-blue-900 transition-all duration-300 flex gap-4">
             <span className="text-3xl font-black text-slate-200 group-hover:text-blue-400/30 transition-colors">
               {(index + 1).toString().padStart(2, '0')}
             </span>

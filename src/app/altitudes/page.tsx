@@ -1,23 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Mountain, ArrowLeft } from "lucide-react";
-// Import dynamique de Leaflet pour éviter les erreurs SSR de Next.js
-import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
-
-// Import dynamique de la carte
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
-const MapController = dynamic(() => Promise.resolve(({ center }: { center: [number, number] }) => {
-  const { useMap } = require("react-leaflet");
-  const map = useMap();
-  useEffect(() => { map.flyTo(center, 15); }, [center, map]);
-  return null;
-}), { ssr: false });
 
 interface AltitudePoint {
   id: number;
@@ -30,34 +15,84 @@ interface AltitudePoint {
 
 export default function AltitudesPage() {
   const [points, setPoints] = useState<AltitudePoint[]>([]);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([43.6045, 1.4442]);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const markersLayerRef = useRef<any>(null);
   const [L, setL] = useState<any>(null);
 
+  // 1. Charger les données API
   useEffect(() => {
-    // Charger Leaflet côté client pour les icônes
-    import("leaflet").then((leaflet) => {
-      setL(leaflet);
-    });
-
     fetch("/api/altitudes")
       .then((res) => res.json())
       .then(setPoints)
       .catch((err) => console.error("Erreur API:", err));
   }, []);
 
-  const focusOnPoint = (point: AltitudePoint) => {
-    setMapCenter([point.lat, point.lng]);
-  };
+  // 2. Initialisation de la carte (une seule fois)
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current) return;
 
-  // Correction de l'icône par défaut de Leaflet
-  const getIcon = (alt: number) => {
-    if (!L) return null;
-    return L.divIcon({
-      className: "custom-div-icon",
-      html: `<div style="background-color:#059669; color:white; padding:2px 5px; border-radius:4px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap;">${alt}m</div>`,
-      iconSize: [30, 20],
-      iconAnchor: [15, 10]
+    const initMap = async () => {
+      const Leaflet = (await import('leaflet')).default;
+      await import('leaflet/dist/leaflet.css');
+      setL(Leaflet);
+
+      if (mapInstance.current) return; // Sécurité anti-double-initialisation
+
+      // Création de l'instance
+      mapInstance.current = Leaflet.map(mapRef.current).setView([43.6045, 1.4442], 12);
+
+      Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(mapInstance.current);
+
+      // Création d'un calque pour les marqueurs afin de pouvoir les vider/remplir facilement
+      markersLayerRef.current = Leaflet.layerGroup().addTo(mapInstance.current);
+    };
+
+    initMap();
+
+    // NETTOYAGE CRUCIAL : Détruit la carte quand on quitte la page
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, []);
+
+  // 3. Mise à jour des marqueurs quand les points ou Leaflet sont chargés
+  useEffect(() => {
+    if (!L || !markersLayerRef.current || points.length === 0) return;
+
+    // Vider les anciens marqueurs s'ils existent
+    markersLayerRef.current.clearLayers();
+
+    points.forEach((point) => {
+      const customIcon = L.divIcon({
+        className: "custom-div-icon",
+        html: `<div style="background-color:#059669; color:white; padding:2px 5px; border-radius:4px; font-weight:bold; font-size:10px; border:1px solid white; white-space:nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">${point.altitude}m</div>`,
+        iconSize: [30, 20],
+        iconAnchor: [15, 10]
+      });
+
+      const marker = L.marker([point.lat, point.lng], { icon: customIcon });
+      marker.bindPopup(`
+        <div style="font-family: sans-serif;">
+          <strong style="font-size:14px;">${point.nom}</strong><br/>
+          <span style="color:#059669; font-weight:bold;">Altitude : ${point.altitude}m</span>
+          <p style="font-size:11px; color:#666; margin-top:4px;">${point.description}</p>
+        </div>
+      `);
+      marker.addTo(markersLayerRef.current);
     });
+  }, [L, points]);
+
+  // Fonction pour centrer la carte sur un point
+  const focusOnPoint = (point: AltitudePoint) => {
+    if (mapInstance.current) {
+      mapInstance.current.flyTo([point.lat, point.lng], 15);
+    }
   };
 
   return (
@@ -75,7 +110,7 @@ export default function AltitudesPage() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-slate-800">Altitudes de Toulouse</h1>
-          <p className="text-xs text-slate-500">Relief et topographie par quartier (Leaflet)</p>
+          <p className="text-xs text-slate-500">Relief et topographie par quartier (Pure Leaflet)</p>
         </div>
       </header>
 
@@ -111,28 +146,9 @@ export default function AltitudesPage() {
           </table>
         </div>
 
-        {/* CARTE LEAFLET */}
+        {/* CARTE (Utilisation d'une simple DIV avec ref) */}
         <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative z-0">
-          <MapContainer center={[43.6045, 1.4442]} zoom={12} style={{ height: "100%", width: "100%" }}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {points.map((point) => (
-              L && (
-                <Marker key={point.id} position={[point.lat, point.lng]} icon={getIcon(point.altitude)}>
-                  <Popup>
-                    <div className="p-1">
-                      <strong className="text-sm">{point.nom}</strong><br/>
-                      <span className="text-blue-600 font-bold">Altitude : {point.altitude}m</span>
-                      <p className="text-xs text-gray-500 mt-1">{point.description}</p>
-                    </div>
-                  </Popup>
-                </Marker>
-              )
-            ))}
-            <MapController center={mapCenter} />
-          </MapContainer>
+          <div ref={mapRef} className="h-full w-full" />
         </div>
       </div>
     </div>
