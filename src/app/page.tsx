@@ -12,7 +12,8 @@ import {
   PartyPopper, Church, GraduationCap, Lightbulb, BookOpen,
   Library, Flower, TrainFront, TramFront, Car, Bike, Plane,
   Amphora, CalendarDays, Trees, Hexagon, Languages, PenTool,
-  Trophy, Medal, Award, Job, Ticket, Briefcase
+  Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
+  Newspaper, Speech, Users, UserGroup, Smile, Handshake
 } from "lucide-react";
 
 import { getSaintDuJour } from "../lib/saints";
@@ -37,7 +38,7 @@ import * as Astronomy from 'astronomy-engine';
 // --- DONNÉES DES CATÉGORIES ---
 const categories = [
   { title: "Agenda des événements à Toulouse", href: "/agendatoulouse", icon: Calendar, isAgenda: true },
-  { title: "Actualités nationale et locale", href: "/actualites", icon: Globe, isActualites: true, actualitesSources: [
+  { title: "Actualités nationale et locale", href: "/actualites", icon: Newspaper, isActualites: true, actualitesSources: [
     { title: "Presse", href: "/presse" }
   ]},
 
@@ -102,6 +103,17 @@ const categories = [
   { title: "Facebook FTS", href: "/facebookfts", icon: Facebook },
   { title: "Fais Ta Sortie FTS", href: "/ftsfts", icon: Globe },
 
+  // --- Communautés : Sorties et Culture ---
+  { 
+    title: "Communautés : Sorties et Culture", 
+    href: "/communautes", 
+    icon: Users, 
+    isCommuSorties: true, 
+    commuSortiesSources: [
+      { title: "Agenda des Communautés", href: "/communautes" },
+    ]
+  },
+
   { title: "Culture, sport à Toulouse", href: "/air", icon: Palette, isSites: true, sitesSources: [
     { title: "Bibliothèques à Toulouse", href: "/bibliomap" },
     { title: "Cinémas de Toulouse et sa banlieue", href: "/cinemas31" },
@@ -161,11 +173,25 @@ const categories = [
   { title: "Transports & Trafic", href: "/transports-tisseo", icon: Bus, isTransport: true, transportSources: [
     { title: "Tisséo Toulouse", href: "/tisseotoulouse" },
     { title: "Bison Futé 31", href: "/bisonfute" },
+    { title: "train 1 euro Occitanie", href: "/train1euro" },
+    { title: "Voyage", href: "/voyagetoulouse" },
+    { title: "Automobile", href: "/automobile" },
   ]},
 
 
   /* ---------------- TOULOUSE ---------------- */
 
+
+  // --- Toulouse : Café des langues ---
+  { 
+    title: "Toulouse : Café des langues", 
+    href: "/langue", 
+    icon: Coffee, 
+    isCafeLangues: true, 
+    cafeLanguesSources: [
+      { title: "Café des Langues", href: "/langue" },
+    ]
+  },
 
   { title: "Toulouse : Consommation", href: "/marches", icon: Apple, isOccitanie: true, occitanieSources: [
     { title: "Marchés", href: "/marches" },
@@ -178,7 +204,8 @@ const categories = [
     icon: Briefcase, 
     isEmploi: true, 
     emploiSources: [
-      { title: "Evènements Emploi", href: "/toulousetravail" }
+      { title: "Evènements Emploi", href: "/toulousetravail" },
+      { title: "Atelier Emploi", href: "/atelieremploi" },
     ] 
   },
 
@@ -364,6 +391,28 @@ const categories = [
     { title: "Royaumes France Simple", href: "/royaumes_france_simple" },
     { title: "Entrée des Etats aux USA", href: "/EtatsUSA" },
   ]},
+
+  // --- SAVOIRS : LANGUES ---
+  { 
+    title: "Savoirs : Langues", 
+    href: "/langues", 
+    icon: Speech, 
+    isSavoirsLangues: true, 
+    savoirsLanguesSources: [
+      { title: "Les Langues", href: "/langues" },
+    ]
+  },
+
+  // --- SAVOIRS : MONDE ---
+  { 
+    title: "Savoirs : Monde", 
+    href: "/pib", 
+    icon: Globe, 
+    isSavoirsMonde: true, 
+    savoirsMondeSources: [
+      { title: "PIB (PPA/Nominal)", href: "/pib" },
+    ]
+  },
 
   { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
     { title: "Religion Chine", href: "/religionchine" },
@@ -797,37 +846,43 @@ const starHorizon = Astronomy.Horizon(
   </section>
 </div>
 
-      {/* Catégories */}
+{/* Catégories */}
       <section id="categories" className="py-8 px-4 container mx-auto">
         <h2 className="text-3xl font-bold mb-10 text-center text-purple-700">Nos rubriques</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {categories.map((cat) => {
             const Icon = cat.icon;
-               const sources =
-                (cat.isAgenda && eventSources) ||
-                (cat.isMeetup && (cat as any).meetupSources) ||
-                ((cat as any).isToulouseEvents && (cat as any).toulouseEventsSources) ||
-                (cat.isCulture && (cat as any).cultureSources) ||
-                (cat.isLibrairie && (cat as any).librairieSources) ||
-                (cat.isCinema && (cat as any).cinemaSources) ||
-                (cat.isJeux && (cat as any).jeuxSources) ||
-                (cat.isSites && (cat as any).sitesSources) ||
-                (cat.isMusee && (cat as any).museeSources) ||
-                (cat.isActualites && (cat as any).actualitesSources) ||
-                (cat.isVisites && (cat as any).visitesSources) ||
-                   // Ajouts pour vos nouvelles rubriques
-                (cat.isSpectacle && (cat as any).spectacleSources) ||
-                (cat.isEmploi && (cat as any).emploiSources) ||
-		(cat.isTransport && (cat as any).transportSources) ||
-                (cat.isEurope && (cat as any).savoirsEuropeSources) ||
-                   // Fin des ajouts
-                (cat.isOccitanie && (cat as any).occitanieSources) ||
-                (cat.savoirSources && (cat as any).savoirSources) ||
-                (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
-                (cat.isLitteratureFrancaise && (cat as any).litteratureFrancaiseSources) ||
-                (cat.isLivresPrix && (cat as any).livresPrixSources) ||
-                (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
-                [];
+            const sources =
+              (cat.isAgenda && eventSources) ||
+              (cat.isMeetup && (cat as any).meetupSources) ||
+              ((cat as any).isToulouseEvents && (cat as any).toulouseEventsSources) ||
+              (cat.isCulture && (cat as any).cultureSources) ||
+              (cat.isLibrairie && (cat as any).librairieSources) ||
+              (cat.isCinema && (cat as any).cinemaSources) ||
+              (cat.isJeux && (cat as any).jeuxSources) ||
+              (cat.isSites && (cat as any).sitesSources) ||
+              (cat.isMusee && (cat as any).museeSources) ||
+              (cat.isActualites && (cat as any).actualitesSources) ||
+              (cat.isVisites && (cat as any).visitesSources) ||
+              
+              // --- NOUVELLES CATÉGORIES AJOUTÉES ICI ---
+              (cat.isCafeLangues && (cat as any).cafeLanguesSources) ||
+              (cat.isCommuSorties && (cat as any).commuSortiesSources) ||
+              (cat.isSavoirsLangues && (cat as any).savoirsLanguesSources) ||
+              (cat.isSavoirsMonde && (cat as any).savoirsMondeSources) ||
+              // -----------------------------------------
+
+              (cat.isSpectacle && (cat as any).spectacleSources) ||
+              (cat.isEmploi && (cat as any).emploiSources) ||
+              (cat.isTransport && (cat as any).transportSources) ||
+              (cat.isEurope && (cat as any).savoirsEuropeSources) ||
+              (cat.isOccitanie && (cat as any).occitanieSources) ||
+              (cat.savoirSources && (cat as any).savoirSources) ||
+              (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
+              (cat.isLitteratureFrancaise && (cat as any).litteratureFrancaiseSources) ||
+              (cat.isLivresPrix && (cat as any).livresPrixSources) ||
+              (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
+              [];
 
             return (
               <div key={cat.href} className="flex flex-col h-full p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100">
