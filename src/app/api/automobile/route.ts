@@ -20,7 +20,7 @@ export async function GET() {
     },
     {
       id: 3,
-      title: "Critères Location Voiture",
+      title: "Critères Location Voiture sur le Drive",
       url: "https://drive.google.com/drive/folders/1R1ArgHXyCokp8DPhOv4pnBS-VUdKbRfT?usp=drive_link",
       description: "Consultez les points essentiels à vérifier lors de l'état des lieux d'une location.",
       category: "Location / Google Drive",
@@ -28,7 +28,7 @@ export async function GET() {
     },
     {
       id: 4,
-      title: "Conseils Location Voiture",
+      title: "Conseils Location Voiture sur le Drive",
       url: "https://drive.google.com/drive/folders/13QFsVRUBgQDFmGwMpfbuHyVjyZH-wkCx?usp=drive_link",
       description: "Guide et astuces pour éviter les pièges lors de la location d'un véhicule.",
       category: "Location / Google Drive",
