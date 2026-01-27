@@ -1,127 +1,201 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef } from 'react';
-import Tree, { RawNodeDatum } from 'react-d3-tree';
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Landmark } from "lucide-react";
 
-interface Personne {
+/* =========================
+    TYPES
+========================= */
+
+type Personne = {
   id: number;
   section: string;
   titre: string;
   description: string;
+  enfants?: Personne[];
+};
+
+type Position = {
+  x: number;
+  y: number;
+  noeud: Personne;
+};
+
+/* =========================
+    COMPOSANT ARBRE SVG
+========================= */
+
+const LARGEUR_NOEUD = 260;
+const HAUTEUR_NOEUD = 80;
+const ESPACE_VERTICAL = 50;
+
+function calculLayoutVertical(
+  noeud: Personne,
+  x: number,
+  y: number,
+  positions: Position[]
+): number {
+  positions.push({ x, y, noeud });
+  let currentY = y;
+
+  if (noeud.enfants && noeud.enfants.length > 0) {
+    noeud.enfants.forEach((enfant) => {
+      const nextY = currentY + HAUTEUR_NOEUD + ESPACE_VERTICAL;
+      currentY = calculLayoutVertical(enfant, x, nextY, positions);
+    });
+  }
+  return currentY;
 }
 
-interface TreeNodeDatum extends RawNodeDatum {
-  children?: TreeNodeDatum[];
-  attributes?: { section?: string; description?: string };
-}
+/* =========================
+    PAGE PRINCIPALE
+========================= */
 
 export default function HierarchieMogholPage() {
-  const [data, setData] = useState<Personne[]>([]);
-  const [treeData, setTreeData] = useState<TreeNodeDatum[]>([]);
-  const treeContainer = useRef<HTMLDivElement>(null);
-  const [translate, setTranslate] = useState({ x: 0, y: 50 });
+  const [arbre, setArbre] = useState<Personne[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // --- Charger les données ---
   useEffect(() => {
     fetch('/api/hierarchieMoghol')
       .then(res => res.json())
-      .then(setData)
-      .catch(console.error);
+      .then((data: Personne[]) => {
+        if (!data || data.length === 0) return;
+
+        // Construction de la structure linéaire (Parent -> Enfant)
+        const nodes = data.map(d => ({ ...d, enfants: [] }));
+        for (let i = 0; i < nodes.length - 1; i++) {
+          nodes[i].enfants = [nodes[i + 1]];
+        }
+
+        setArbre([nodes[0]]);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
-  // --- Construire arbre linéaire ---
-  useEffect(() => {
-    if (data.length === 0) return;
-
-    let root: TreeNodeDatum | null = null;
-    let current: TreeNodeDatum | null = null;
-
-    data.forEach(p => {
-      const node: TreeNodeDatum = {
-        name: p.titre,
-        attributes: { section: p.section, description: p.description },
-        children: []
-      };
-
-      if (!root) {
-        root = node;
-        current = node;
-      } else {
-        current!.children!.push(node);
-        current = node;
-      }
-    });
-
-    if (root) setTreeData([root]);
-  }, [data]);
-
-  // --- Centrage ---
-  useEffect(() => {
-    if (treeContainer.current) {
-      setTranslate({ x: treeContainer.current.offsetWidth / 2, y: 50 });
-    }
-  }, [treeContainer.current, treeData]);
+  // Calcul des positions pour le SVG
+  const positions: Position[] = [];
+  let hauteurMax = 500;
+  if (arbre.length > 0) {
+    const finalY = calculLayoutVertical(arbre[0], 20, 20, positions);
+    hauteurMax = finalY + HAUTEUR_NOEUD + 40;
+  }
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+    <main className="p-6 min-h-screen bg-white">
+      <nav className="mb-6 max-w-7xl mx-auto">
+        <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-bold group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <h1 className="text-3xl font-extrabold mb-6 text-center">🏯 Hiérarchie de l'Empire Moghol (Ourdou)</h1>
 
-      <div ref={treeContainer} style={{ width: '100%', height: '400px', border: '1px solid #ccc', borderRadius: '8px' }} className="mb-8 relative bg-gray-50">
-        {treeData.length > 0 && (
-          <Tree
-            data={treeData}
-            translate={translate}
-            orientation="vertical"
-            nodeSize={{ x: 200, y: 100 }}
-            separation={{ siblings: 1.5, nonSiblings: 2 }}
-            zoomable
-            collapsible={false}
-            renderCustomNodeElement={({ nodeDatum }) => (
-              <g>
-                <circle r={20} fill="#2563EB" />
-                <text fill="white" x={0} y={5} textAnchor="middle" fontSize="12" fontWeight="bold">
-                  {nodeDatum.name}
-                </text>
-                {nodeDatum.attributes?.section && (
-                  <text fill="#000" x={0} y={25} textAnchor="middle" fontSize="10">{nodeDatum.attributes.section}</text>
-                )}
-              </g>
-            )}
-          />
-        )}
-      </div>
+      <header className="mb-12 text-center max-w-7xl mx-auto">
+        <h1 className="text-4xl font-black text-slate-900 mb-4 flex justify-center items-center gap-4">
+          <Landmark size={40} className="text-emerald-600" />
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-800 to-teal-600 uppercase">
+            Hiérarchie Moghol
+          </span>
+        </h1>
+        <div className="h-1 w-24 bg-emerald-500 mx-auto rounded-full"></div>
+        <p className="mt-4 text-slate-500 font-medium italic">Structure administrative et titres de l'Empire de l'Inde</p>
+      </header>
 
-      <h2 className="text-2xl font-semibold mb-4">Tableau des niveaux</h2>
-      <table className="w-full table-auto border-collapse border border-gray-300 text-sm">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-2 py-1">#</th>
-            <th className="border px-2 py-1">Titre</th>
-            <th className="border px-2 py-1">Section</th>
-            <th className="border px-2 py-1">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(p => (
-            <tr key={p.id} className="hover:bg-gray-50">
-              <td className="border px-2 py-1 text-center">{p.id}</td>
-              <td className="border px-2 py-1">{p.titre}</td>
-              <td className="border px-2 py-1">{p.section}</td>
-              <td className="border px-2 py-1">{p.description}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      {loading ? (
+        <div className="text-center py-20 italic text-slate-400">Ouverture des chroniques impériales...</div>
+      ) : (
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          
+          {/* COLONNE GAUCHE : Tableau */}
+          <section className="order-2 lg:order-1 bg-white border border-emerald-100 rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-emerald-50 px-4 py-3 border-b border-emerald-100">
+              <h3 className="text-emerald-800 font-bold uppercase text-xs tracking-widest text-center">Registres des Titres</h3>
+            </div>
+            <div className="overflow-auto max-h-[700px]">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] sticky top-0">
+                  <tr>
+                    <th className="px-4 py-3 text-center">Rang</th>
+                    <th className="px-4 py-3">Titre (Ourdou)</th>
+                    <th className="px-4 py-3">Fonction</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-emerald-50">
+                  {positions.map((p) => (
+                    <tr key={p.noeud.id} className="hover:bg-emerald-50/30 transition-colors">
+                      <td className="px-4 py-4 text-center font-bold text-emerald-700">{p.noeud.id}</td>
+                      <td className="px-4 py-4">
+                        <div className="font-bold text-slate-900">{p.noeud.titre}</div>
+                        <div className="text-[10px] text-emerald-600 font-semibold uppercase">{p.noeud.section}</div>
+                      </td>
+                      <td className="px-4 py-4 text-slate-600 leading-relaxed italic">{p.noeud.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* COLONNE DROITE : Arbre SVG */}
+          <section className="order-1 lg:order-2 bg-emerald-50/30 rounded-xl border border-emerald-100 p-4 shadow-inner max-h-[750px] overflow-auto">
+            <svg width={LARGEUR_NOEUD + 40} height={hauteurMax} className="mx-auto">
+              {/* Liens parent-enfant */}
+              {positions.map((parent) =>
+                parent.noeud.enfants?.map((enfant) => {
+                  const enfantPos = positions.find((p) => p.noeud.id === enfant.id);
+                  if (!enfantPos) return null;
+                  return (
+                    <g key={`${parent.noeud.id}-${enfant.id}`}>
+                      <line
+                        x1={parent.x + LARGEUR_NOEUD / 2}
+                        y1={parent.y + HAUTEUR_NOEUD}
+                        x2={enfantPos.x + LARGEUR_NOEUD / 2}
+                        y2={enfantPos.y}
+                        stroke="#059669"
+                        strokeWidth="2"
+                        strokeDasharray="5"
+                      />
+                      <circle cx={enfantPos.x + LARGEUR_NOEUD / 2} cy={enfantPos.y} r={4} fill="#059669" />
+                    </g>
+                  );
+                })
+              )}
+
+              {/* Nœuds */}
+              {positions.map((p) => (
+                <g key={p.noeud.id}>
+                  <rect
+                    x={p.x}
+                    y={p.y}
+                    width={LARGEUR_NOEUD}
+                    height={HAUTEUR_NOEUD}
+                    rx={12}
+                    fill="white"
+                    stroke="#064e3b"
+                    strokeWidth="1.5"
+                    className="drop-shadow-sm"
+                  />
+                  <text x={p.x + 15} y={p.y + 25} fontSize={10} fontWeight="bold" fill="#059669" className="uppercase tracking-widest">
+                    {p.noeud.section}
+                  </text>
+                  <text x={p.x + 15} y={p.y + 50} fontSize={15} fontWeight="900" fill="#0f172a">
+                    {p.noeud.titre}
+                  </text>
+                  <rect x={p.x + LARGEUR_NOEUD - 35} y={p.y + 10} width={25} height={18} rx={4} fill="#ecfdf5" />
+                  <text x={p.x + LARGEUR_NOEUD - 28} y={p.y + 22} fontSize={10} fontWeight="bold" fill="#059669">
+                    {p.noeud.id}
+                  </text>
+                </g>
+              ))}
+            </svg>
+          </section>
+
+        </div>
+      )}
+    </main>
   );
 }
