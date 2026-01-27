@@ -1,26 +1,44 @@
 [
   {
     "id": 1,
-    "section": "Haute Autorité",
-    "titre": "Ayatollah",
-    "description": "Signe de Dieu. Un érudit de haut rang expert en droit islamique, en éthique et en philosophie, ayant l'autorité de rendre ses propres jugements juridiques."
+    "section": "Autorité Suprême",
+    "titre": "Grand Ayatollah (Marja-e-Taqlid)",
+    "description": "Le plus haut rang du clergé chiite. Une 'Source d'imitation' qui a publié un traité de jurisprudence et que les fidèles suivent pour leurs questions religieuses et juridiques."
   },
   {
     "id": 2,
-    "section": "Clergé",
-    "titre": "Clergé chiite",
-    "description": "L'ensemble des dignitaires religieux organisés au sein d'une structure hiérarchique, incluant les Hojatoleslam et les Mullahs."
+    "section": "Haute Autorité",
+    "titre": "Ayatollah",
+    "description": "Signe de Dieu. Un érudit de haut rang ayant atteint le stade de l'Ijtihad, lui permettant d'interpréter les textes de manière indépendante pour rendre ses propres jugements juridiques."
   },
   {
     "id": 3,
-    "section": "Études et Savoir",
-    "titre": "Islamologue",
-    "description": "Chercheur ou expert spécialisé dans l'étude scientifique et historique de l'islam, de ses textes et de ses civilisations."
+    "section": "Clergé Intermédiaire",
+    "titre": "Hojatoleslam",
+    "description": "Preuve de l'Islam. Rang intermédiaire du clergé ayant complété des études religieuses supérieures, mais n'ayant pas encore l'autorité de l'Ijtihad."
   },
   {
     "id": 4,
     "section": "Érudition",
     "titre": "Érudit musulman (Ouléma)",
-    "description": "Un savant reconnu pour sa connaissance approfondie des sciences religieuses et de la jurisprudence islamique."
+    "description": "Terme générique désignant un savant reconnu pour sa connaissance approfondie des sciences religieuses. Englobe l'ensemble des dignitaires du clergé."
+  },
+  {
+    "id": 5,
+    "section": "Études et Savoir",
+    "titre": "Islamologue",
+    "description": "Chercheur ou universitaire spécialisé dans l'étude scientifique, historique et sociologique de l'islam. Contrairement aux titres précédents, il s'agit d'un statut académique et non d'un rang religieux."
+  },
+  {
+    "id": 6,
+    "section": "Clergé",
+    "titre": "Clergé chiite (Mullah)",
+    "description": "L'ensemble des dignitaires religieux organisés au sein d'une structure hiérarchique, incluant les Hojatoleslam et les Mullahs."
+  },
+  {
+    "id": 7,
+    "section": "Études et Savoir",
+    "titre": "Tholbé (Étudiant)",
+    "description": "L'élève qui suit des cours à la Hawza (le séminaire religieux). C'est la base de la pyramide."
   }
 ]
