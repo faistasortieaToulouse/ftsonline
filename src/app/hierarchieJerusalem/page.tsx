@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Star, Users, Briefcase, ChevronRight } from "lucide-react";
+import { ArrowLeft, Star, Users, Briefcase } from "lucide-react";
 
 /* =========================
     TYPES
@@ -22,7 +22,7 @@ type Position = {
 };
 
 /* =========================
-    CONFIGURATIONS & MAPPINGS
+    CONFIGURATIONS
 ========================= */
 
 const ORDRES_CONFIG = [
@@ -43,8 +43,9 @@ const ORDRES_CONFIG = [
   }
 ];
 
+// On augmente la hauteur pour le confort du texte multi-ligne
 const LARGEUR_NOEUD = 250;
-const HAUTEUR_NOEUD = 70;
+const HAUTEUR_NOEUD = 100; 
 const ESPACE_V = 40;
 
 /* =========================
@@ -63,11 +64,10 @@ function calculLayout(noeud: Personne, x: number, y: number, positions: Position
 }
 
 /* =========================
-    COMPOSANT SECTION INDIVIDUELLE
+    COMPOSANT SECTION
 ========================= */
 
 function SectionJerusalem({ titre, icon, items, data }: { titre: string, icon: any, items: string[], data: Personne[] }) {
-  // Construction de la branche linéaire
   const sectionNodes = items.map(name => {
     const found = data.find(p => p.personne === name);
     return { 
@@ -94,7 +94,7 @@ function SectionJerusalem({ titre, icon, items, data }: { titre: string, icon: a
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 items-start">
         
-        {/* COLONNE GAUCHE : TABLEAU */}
+        {/* TABLEAU */}
         <div className="order-2 xl:order-1 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
           <div className="bg-slate-900 px-6 py-4">
             <h3 className="text-white text-xs font-bold uppercase tracking-widest">Registres de Jérusalem</h3>
@@ -110,7 +110,7 @@ function SectionJerusalem({ titre, icon, items, data }: { titre: string, icon: a
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {sectionNodes.map((node, idx) => (
-                  <tr key={idx} className="hover:bg-blue-50/50 transition-colors group">
+                  <tr key={idx} className="hover:bg-blue-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <span className="flex items-center justify-center w-7 h-7 rounded-md bg-slate-100 text-slate-500 font-bold text-[10px]">
                         {idx + 1}
@@ -118,7 +118,7 @@ function SectionJerusalem({ titre, icon, items, data }: { titre: string, icon: a
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-bold text-slate-900">{node.personne}</div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">Sup: {node.superieur}</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5 italic">Supérieur: {node.superieur}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 text-[10px] font-bold uppercase">
@@ -132,7 +132,7 @@ function SectionJerusalem({ titre, icon, items, data }: { titre: string, icon: a
           </div>
         </div>
 
-        {/* COLONNE DROITE : ARBRE SVG */}
+        {/* ARBRE AVEC TEXTE AUTOMATIQUE (FOREIGN OBJECT) */}
         <div className="order-1 xl:order-2 bg-slate-100/50 border-2 border-dashed border-slate-200 rounded-2xl p-6 overflow-auto max-h-[650px]">
           <svg width={LARGEUR_NOEUD + 40} height={hMax} className="mx-auto">
             {positions.map((p, i) => (
@@ -143,19 +143,24 @@ function SectionJerusalem({ titre, icon, items, data }: { titre: string, icon: a
                     stroke="#94a3b8" strokeWidth="2" fill="none" strokeDasharray="6 4"
                   />
                 )}
-                <rect x={p.x} y={p.y} width={LARGEUR_NOEUD} height={HAUTEUR_NOEUD} rx={12} fill="white" stroke="#2563eb" strokeWidth="2" />
-                <text x={p.x + 15} y={p.y + 25} fontSize="9" fontWeight="bold" fill="#3b82f6" className="uppercase">
-                  {p.noeud.institution}
-                </text>
-                <text x={p.x + 15} y={p.y + 48} fontSize="13" fontWeight="800" fill="#0f172a">
-                  {p.noeud.personne}
-                </text>
+                
+                {/* Le ForeignObject permet au HTML/Tailwind de gérer le texte proprement */}
+                <foreignObject x={p.x} y={p.y} width={LARGEUR_NOEUD} height={HAUTEUR_NOEUD}>
+                  <div className="w-full h-full bg-white border-2 border-blue-600 rounded-xl p-3 shadow-sm flex flex-col justify-center text-center">
+                    <p className="text-[9px] font-bold text-blue-500 uppercase tracking-tighter mb-1 truncate">
+                      {p.noeud.institution}
+                    </p>
+                    <h4 className="text-[12px] font-extrabold text-slate-900 leading-tight">
+                      {p.noeud.personne}
+                    </h4>
+                  </div>
+                </foreignObject>
+
                 <circle cx={p.x + LARGEUR_NOEUD/2} cy={p.y + HAUTEUR_NOEUD} r={4} fill="#2563eb" />
               </g>
             ))}
           </svg>
         </div>
-
       </div>
     </div>
   );
