@@ -88,6 +88,16 @@
   width: 12px;              /* largeur de la barre */
 }
 
+/* === Masquage et réduction du widget Google Translate === */
+.goog-te-combo,
+.goog-te-menu-value,
+.goog-te-gadget-icon,
+.goog-logo-link,
+.goog-te-overlay {
+  display: none !important;
+  visibility: hidden !important;
+}
+
 .scrollable::-webkit-scrollbar-track {
   background: hsl(var(--muted)); /* couleur du fond */
 }
