@@ -1,246 +1,226 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef } from 'react';
-import Tree, { RawNodeDatum } from 'react-d3-tree';
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Star, Users, Briefcase, ChevronRight } from "lucide-react";
+
+/* =========================
+    TYPES
+========================= */
 
 interface Personne {
   personne: string;
   institution: string;
   superieur: string | null;
-  niveau_equivalent?: string | null;
+  enfants?: Personne[];
 }
 
-interface TreeNodeDatum extends RawNodeDatum {
-  children?: TreeNodeDatum[];
-  attributes?: { institution?: string };
+type Position = {
+  x: number;
+  y: number;
+  noeud: Personne;
+};
+
+/* =========================
+    CONFIGURATIONS & MAPPINGS
+========================= */
+
+const ORDRES_CONFIG = [
+  {
+    titre: "Dignitaires",
+    icon: <Star className="text-amber-500" />,
+    items: ['Grand Maître','Baillis conventuels','Trésorier','Grand commandeur ou Grand précepteur','Grand hospitalier à la langue de France','Grand maréchal','Grand drapier','Grand hospitalier','Grand amiral','Turcoplier']
+  },
+  {
+    titre: "Fonctions & Organisation",
+    icon: <Briefcase className="text-blue-500" />,
+    items: ['Frère prieur conventuel','Frère pilier','Frère commandeur','Frère bailli capitulaire','Frère prieur provincial','Les charges dans l\'Ordre','Officiers','Conseillers','Prud\'hommes','Commissaires','Les grands dignitaires','Grand Maître','Frère bailli conventuel','Les grands offices','Organisation de l\'Ordre','Les organes du pouvoir','Les frères chevaliers','Les sergents d\'armes','Les sergents d\'office','Frères prêtres / Chapelains conventuels']
+  },
+  {
+    titre: "Classes & Statuts",
+    icon: <Users className="text-emerald-500" />,
+    items: ['Frères prêtres / Chapelains conventuels','Frères prêtres d\'obédience','Frères chevaliers profès','Frères chevaliers de grâce','Servants hospitaliers','Sergents d\'armes','Confrères donats (Grand\'croix, Demi-croix, Médaillers)','Nos seigneurs les malades','La familia','Les dépendants']
+  }
+];
+
+const LARGEUR_NOEUD = 250;
+const HAUTEUR_NOEUD = 70;
+const ESPACE_V = 40;
+
+/* =========================
+    LOGIQUE DE CALCUL
+========================= */
+
+function calculLayout(noeud: Personne, x: number, y: number, positions: Position[]): number {
+  positions.push({ x, y, noeud });
+  let currentY = y;
+  if (noeud.enfants && noeud.enfants.length > 0) {
+    noeud.enfants.forEach(e => {
+      currentY = calculLayout(e, x, currentY + HAUTEUR_NOEUD + ESPACE_V, positions);
+    });
+  }
+  return currentY;
 }
 
-// --- Ordres pour les arbres ---
-const ordreDignitaires = [
-  'Grand Maître','Baillis conventuels','Trésorier','Grand commandeur ou Grand précepteur',
-  'Grand hospitalier à la langue de France','Grand maréchal','Grand drapier','Grand hospitalier',
-  'Grand amiral','Turcoplier'
-];
+/* =========================
+    COMPOSANT SECTION INDIVIDUELLE
+========================= */
 
-const ordreFonctions = [
-  'Frère prieur conventuel','Frère pilier','Frère commandeur','Frère bailli capitulaire','Frère prieur provincial',
-  'Les charges dans l\'Ordre','Officiers','Conseillers','Prud\'hommes','Commissaires','Les grands dignitaires',
-  'Grand Maître','Frère bailli conventuel','Les grands offices','Organisation de l\'Ordre','Les organes du pouvoir',
-  'Les frères chevaliers','Les sergents d\'armes','Les sergents d\'office','Frères prêtres / Chapelains conventuels'
-];
+function SectionJerusalem({ titre, icon, items, data }: { titre: string, icon: any, items: string[], data: Personne[] }) {
+  // Construction de la branche linéaire
+  const sectionNodes = items.map(name => {
+    const found = data.find(p => p.personne === name);
+    return { 
+      personne: name, 
+      institution: found?.institution || 'Ordre', 
+      superieur: found?.superieur || '-',
+      enfants: [] 
+    } as Personne;
+  });
 
-const ordreFonctionsTable = [
-  'Frère prieur conventuel','Frère pilier','Frère commandeur','Frère bailli capitulaire','Frère prieur provincial',
-  'Les charges dans l\'Ordre','Officiers','Conseillers','Prud\'hommes','Commissaires','Les grands dignitaires',
-  'Grand Maître','Frère bailli conventuel','Les grands offices','Organisation de l\'Ordre','Les organes du pouvoir',
-  'les frères chevalier','les sergents d\'armes','les sergents d\'office','les frères prêtres ou chapelain'
-];
+  for (let i = 0; i < sectionNodes.length - 1; i++) {
+    sectionNodes[i].enfants = [sectionNodes[i + 1]];
+  }
 
-// Mapping JSON -> affichage exact pour le tableau 2
-const mappingFonctions: Record<string,string> = {
-  'Frères prêtres / Chapelains conventuels': 'les frères prêtres ou chapelain',
-  'Frères chevaliers': 'les frères chevalier',
-  'Sergents d\'armes': 'les sergents d\'armes',
-  'Sergents d\'office': 'les sergents d\'office'
-};
+  const positions: Position[] = [];
+  const hMax = sectionNodes.length > 0 ? calculLayout(sectionNodes[0], 10, 20, positions) + HAUTEUR_NOEUD + 40 : 200;
 
-const ordreClasses = [
-  'Frères prêtres / Chapelains conventuels','Frères prêtres d\'obédience','Frères chevaliers profès','Frères chevaliers de grâce',
-  'Servants hospitaliers','Sergents d\'armes','Confrères donats (Grand\'croix, Demi-croix, Médaillers)',
-  'Nos seigneurs les malades','La familia','Les dépendants'
-];
+  return (
+    <div className="mb-20">
+      <div className="flex items-center gap-4 mb-8">
+        <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">{icon}</div>
+        <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">{titre}</h2>
+      </div>
 
-const ordreClassesTable = [
-  // Les frères clercs
-  'les frères prêtres','les frères chapelains conventuels','les frères prêtres d\'obédience','les frères chevaliers',
-  'Les frères chevaliers profès','les frères chevaliers de grâce',
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 items-start">
+        
+        {/* COLONNE GAUCHE : TABLEAU */}
+        <div className="order-2 xl:order-1 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-slate-900 px-6 py-4">
+            <h3 className="text-white text-xs font-bold uppercase tracking-widest">Registres de Jérusalem</h3>
+          </div>
+          <div className="overflow-auto max-h-[650px]">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] sticky top-0">
+                <tr>
+                  <th className="px-6 py-4 border-b">Rang</th>
+                  <th className="px-6 py-4 border-b">Titre / Personne</th>
+                  <th className="px-6 py-4 border-b">Institution</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {sectionNodes.map((node, idx) => (
+                  <tr key={idx} className="hover:bg-blue-50/50 transition-colors group">
+                    <td className="px-6 py-4">
+                      <span className="flex items-center justify-center w-7 h-7 rounded-md bg-slate-100 text-slate-500 font-bold text-[10px]">
+                        {idx + 1}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-bold text-slate-900">{node.personne}</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5">Sup: {node.superieur}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="px-2 py-1 rounded bg-blue-50 text-blue-700 text-[10px] font-bold uppercase">
+                        {node.institution}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-  // Les laïcs
-  'les servants','les servants hospitaliers','les sergents d\'armes','les confrères donats',
+        {/* COLONNE DROITE : ARBRE SVG */}
+        <div className="order-1 xl:order-2 bg-slate-100/50 border-2 border-dashed border-slate-200 rounded-2xl p-6 overflow-auto max-h-[650px]">
+          <svg width={LARGEUR_NOEUD + 40} height={hMax} className="mx-auto">
+            {positions.map((p, i) => (
+              <g key={i}>
+                {i < positions.length - 1 && (
+                  <path 
+                    d={`M ${p.x + LARGEUR_NOEUD/2} ${p.y + HAUTEUR_NOEUD} L ${p.x + LARGEUR_NOEUD/2} ${positions[i+1].y}`} 
+                    stroke="#94a3b8" strokeWidth="2" fill="none" strokeDasharray="6 4"
+                  />
+                )}
+                <rect x={p.x} y={p.y} width={LARGEUR_NOEUD} height={HAUTEUR_NOEUD} rx={12} fill="white" stroke="#2563eb" strokeWidth="2" />
+                <text x={p.x + 15} y={p.y + 25} fontSize="9" fontWeight="bold" fill="#3b82f6" className="uppercase">
+                  {p.noeud.institution}
+                </text>
+                <text x={p.x + 15} y={p.y + 48} fontSize="13" fontWeight="800" fill="#0f172a">
+                  {p.noeud.personne}
+                </text>
+                <circle cx={p.x + LARGEUR_NOEUD/2} cy={p.y + HAUTEUR_NOEUD} r={4} fill="#2563eb" />
+              </g>
+            ))}
+          </svg>
+        </div>
 
-  // Ces donats
-  'les grand\'croix','les demi-croix','les médaillers de dévotion',
+      </div>
+    </div>
+  );
+}
 
-  // Autour de l’Ordre
-  '« nos seigneurs les malades »','la familia','les dépendants'
-];
-
-// Mapping JSON -> affichage exact pour le tableau 3
-const mappingClasses: Record<string,string> = {
-  'Frères prêtres': 'les frères prêtres',
-  'Frères chapelains conventuels': 'les frères chapelains conventuels',
-  'Frères prêtres d\'obédience': 'les frères prêtres d\'obédience',
-  'Frères chevaliers profès': 'Les frères chevaliers profès',
-  'Frères chevaliers de grâce': 'les frères chevaliers de grâce',
-  'Servants': 'les servants',
-  'Servants hospitaliers': 'les servants hospitaliers',
-  'Sergents d\'armes': 'les sergents d\'armes',
-  'Confrères donats (Grand\'croix, Demi-croix, Médaillers)': 'les confrères donats',
-  'Nos seigneurs les malades': '« nos seigneurs les malades »',
-  'La familia': 'la familia',
-  'Les dépendants': 'les dépendants'
-};
+/* =========================
+    PAGE PRINCIPALE
+========================= */
 
 export default function HierarchieJerusalemPage() {
-  const [data, setData] = useState<{
-    hierarchie_dignitaires: Personne[];
-    fonctions_et_organisation: Personne[];
-    classes_et_statuts: Personne[];
-  } | null>(null);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const [trees, setTrees] = useState<TreeNodeDatum[][]>([[], [], []]);
-  const [translates, setTranslates] = useState([{ x: 0, y: 50 }, { x: 0, y: 50 }, { x: 0, y: 50 }]);
-
-  const treeNodeSize = { x: 180, y: 100 };
-  const containerRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
-
-  // --- Charger JSON ---
   useEffect(() => {
     fetch('/api/hierarchieJerusalem')
       .then(res => res.json())
-      .then(setData)
-      .catch(console.error);
+      .then(d => { setData(d); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
-  // --- Construire arbres ---
-  useEffect(() => {
-    if (!data) return;
-
-    const buildLinearTree = (liste: Personne[], ordre: string[]): TreeNodeDatum[] => {
-      const map = new Map<string, Personne>();
-      liste.forEach(p => map.set(p.personne, p));
-
-      let root: TreeNodeDatum | null = null;
-      let current: TreeNodeDatum | null = null;
-
-      ordre.forEach(name => {
-        if (!map.has(name)) return;
-        const p = map.get(name)!;
-        const node: TreeNodeDatum = {
-          name: p.personne,
-          attributes: { institution: p.institution },
-          children: [],
-        };
-        if (!root) {
-          root = node;
-          current = node;
-        } else {
-          current!.children!.push(node);
-          current = node;
-        }
-      });
-
-      return root ? [root] : [];
-    };
-
-    setTrees([
-      buildLinearTree(data.hierarchie_dignitaires, ordreDignitaires),
-      buildLinearTree(data.fonctions_et_organisation, ordreFonctions),
-      buildLinearTree(data.classes_et_statuts, ordreClasses),
-    ]);
-  }, [data]);
-
-  // --- Centrer chaque arbre ---
-  useEffect(() => {
-    const newTranslates = containerRefs.map(ref => {
-      if (ref.current) return { x: ref.current.offsetWidth / 2, y: 50 };
-      return { x: 300, y: 50 };
-    });
-    setTranslates(newTranslates);
-  }, [trees]);
-
-  // --- Fonction pour générer tableau avec mapping ---
-  const renderTable = (i: number) => {
-    let ordreTable: string[] = [];
-    let mapping: Record<string,string> = {};
-    let list: Personne[] = [];
-
-    if (i === 0) { ordreTable = ordreDignitaires; list = data!.hierarchie_dignitaires; }
-    if (i === 1) { ordreTable = ordreFonctionsTable; list = data!.fonctions_et_organisation; mapping = mappingFonctions; }
-    if (i === 2) { ordreTable = ordreClassesTable; list = data!.classes_et_statuts; mapping = mappingClasses; }
-
-    return (
-      <tbody>
-        {ordreTable.map((name, idx) => {
-          let p = list.find(p => p.personne === name);
-          if (!p) {
-            // Vérifier mapping
-            const key = Object.keys(mapping).find(k => mapping[k] === name);
-            if (key) p = list.find(p => p.personne === key);
-          }
-          return (
-            <tr key={idx} className="hover:bg-gray-50">
-              <td className="border px-2 py-1 text-center">{idx + 1}</td>
-              <td className="border px-2 py-1">{name}</td>
-              <td className="border px-2 py-1">{p?.institution || '-'}</td>
-              <td className="border px-2 py-1">{p?.superieur || '-'}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    );
-  };
+  const allData = data ? [
+    ...data.hierarchie_dignitaires,
+    ...data.fonctions_et_organisation,
+    ...data.classes_et_statuts
+  ] : [];
 
   return (
-    <div className="p-4 max-w-full mx-auto">
-      
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+    <main className="p-8 min-h-screen bg-slate-50">
+      <nav className="mb-10 max-w-7xl mx-auto">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-bold group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+          Retour au portail
         </Link>
       </nav>
-      
-      <h1 className="text-3xl font-extrabold mb-6 text-center">✡️ Hiérarchie de Jérusalem</h1>
 
-      {data && (
-        <div className="grid grid-cols-3 gap-8">
-          {['Dignitaires', 'Fonctions & Organisation', 'Classes & Statuts'].map((title, i) => (
-            <div key={title} className="bg-white p-4 rounded shadow flex flex-col items-center">
-              <h2 className="text-xl font-semibold mb-4 text-center">{title}</h2>
+      <header className="mb-20 text-center max-w-7xl mx-auto">
+        <div className="inline-block p-2 px-4 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-widest mb-4">
+          Archives de la Terre Sainte
+        </div>
+        <h1 className="text-5xl font-black text-slate-900 mb-6 flex justify-center items-center gap-5">
+          <span className="text-amber-500 text-6xl">✡</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-br from-blue-900 to-slate-700">
+            Hiérarchie de Jérusalem
+          </span>
+        </h1>
+        <div className="h-1.5 w-32 bg-amber-400 mx-auto rounded-full"></div>
+      </header>
 
-              <div ref={containerRefs[i]} style={{ width: '100%', height: '500px' }}>
-                {trees[i] && trees[i].length > 0 && (
-                  <Tree
-                    data={trees[i]}
-                    orientation="vertical"
-                    nodeSize={treeNodeSize}
-                    separation={{ siblings: 1.5, nonSiblings: 2 }}
-                    zoomable
-                    collapsible={false}
-                    translate={translates[i]}
-                    renderCustomNodeElement={({ nodeDatum }) => (
-                      <g>
-                        <circle r={22} fill="#2563EB" />
-                        <text fill="white" x={0} y={5} textAnchor="middle" fontSize="11" fontWeight="600">{nodeDatum.name}</text>
-                        {nodeDatum.attributes?.institution && (
-                          <text fill="#000" x={0} y={30} textAnchor="middle" fontSize="9">{nodeDatum.attributes.institution}</text>
-                        )}
-                      </g>
-                    )}
-                  />
-                )}
-              </div>
-
-              {/* Tableau sous l'arbre */}
-              <table className="w-full table-auto border-collapse border border-gray-300 mt-4 text-sm">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border px-2 py-1">#</th>
-                    <th className="border px-2 py-1">Nom</th>
-                    <th className="border px-2 py-1">Institution</th>
-                    <th className="border px-2 py-1">Supérieur</th>
-                  </tr>
-                </thead>
-                {renderTable(i)}
-              </table>
-
-            </div>
+      {loading ? (
+        <div className="text-center py-24 text-slate-400 font-medium animate-pulse">
+          Éveil des scribes et compilation des registres...
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto">
+          {ORDRES_CONFIG.map((config, idx) => (
+            <SectionJerusalem 
+              key={idx} 
+              titre={config.titre} 
+              icon={config.icon} 
+              items={config.items} 
+              data={allData} 
+            />
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }
