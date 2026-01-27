@@ -11,7 +11,7 @@ export async function GET() {
     },
     {
       id: 2,
-      title: "300 Communautés WhatsApp",
+      title: "300 Groupes WhatsApp",
       url: "https://drive.google.com/drive/folders/1IKdbnEYLYZre8xonDkVRmcz0BavYAU55?usp=drive_link",
       description: "Le répertoire ultime des groupes WhatsApp toulousains.",
       category: "Réseaux Sociaux"
