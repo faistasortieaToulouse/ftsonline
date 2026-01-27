@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import Tree, { RawNodeDatum } from 'react-d3-tree';
+import { useEffect, useState } from 'react';
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Church, ScrollText, Mountain } from "lucide-react";
 
+/* =========================
+    TYPES & CONFIG
+========================= */
 interface Personne {
   id: number;
   personne: string;
@@ -15,171 +17,161 @@ interface Personne {
   niveau_equivalent: string | null;
 }
 
-interface TreeNodeDatum extends RawNodeDatum {
-  numero: number;
-  children?: TreeNodeDatum[];
+type Position = {
+  x: number;
+  y: number;
+  noeud: Personne;
+};
+
+const LARGEUR_NOEUD = 260;
+const HAUTEUR_VISUELLE = 110; 
+const DISTANCE_ENTRE_NOEUDS = 180; 
+
+function calculLayout(liste: Personne[], x: number, y: number, positions: Position[]) {
+  liste.forEach((item, index) => {
+    positions.push({ x, y: y + (index * DISTANCE_ENTRE_NOEUDS), noeud: item });
+  });
 }
 
 export default function HierarchieChartreuxPage() {
   const [personnes, setPersonnes] = useState<Personne[]>([]);
-  const [treeData, setTreeData] = useState<TreeNodeDatum[]>([]);
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
-
-  const treeContainer = useRef<HTMLDivElement | null>(null);
-  const [translate, setTranslate] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-
-  // --- Charger les données ---
+  const [loading, setLoading] = useState(true);
+  const positions: Position[] = [];
+  
   useEffect(() => {
     fetch('/api/hierarchieChartreux')
       .then(res => res.json())
       .then((data: Personne[]) => {
-        // On force les ID si pas présent
+        // Maintien de l'ordre hiérarchique strict
         setPersonnes(data.map((p, i) => ({ ...p, id: i + 1 })));
+        setLoading(false);
       })
-      .catch(console.error);
+      .catch(() => setLoading(false));
   }, []);
 
-  // --- Construire l'arbre linéaire en suivant l'ordre d'ID ---
-  useEffect(() => {
-    if (personnes.length === 0) return;
+  if (!loading) {
+    calculLayout(personnes, 20, 20, positions);
+  }
 
-    // Racine = premier niveau
-    const rootNode: TreeNodeDatum = {
-      name: personnes[0].personne,
-      numero: personnes[0].id,
-      children: [],
-    };
-
-    let currentNode = rootNode;
-
-    for (let i = 1; i < personnes.length; i++) {
-      const node: TreeNodeDatum = {
-        name: personnes[i].personne,
-        numero: personnes[i].id,
-        children: [],
-      };
-      currentNode.children!.push(node);
-      currentNode = node;
-    }
-
-    setTreeData([rootNode]);
-  }, [personnes]);
-
-  // --- Centrer le conteneur ---
-  useEffect(() => {
-    if (treeContainer.current) {
-      const { offsetWidth } = treeContainer.current;
-      setTranslate({ x: offsetWidth / 2, y: 50 });
-    }
-  }, [treeContainer.current]);
+  const hMax = positions.length * DISTANCE_ENTRE_NOEUDS + 60;
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <main className="p-8 min-h-screen bg-[#f2f4f5]">
       
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+      <nav className="mb-10 max-w-7xl mx-auto">
+        <Link href="/" className="inline-flex items-center gap-2 text-slate-700 hover:text-blue-900 font-bold group transition-colors">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+          Retour au Monastère
         </Link>
       </nav>
-      
-      <h1 className="text-3xl font-extrabold mb-6">
-        ⛪ Hiérarchie des Chartreux
-      </h1>
 
-      {/* --- Arbre --- */}
-      <div
-        ref={treeContainer}
-        style={{ width: '100%', height: '60vh', border: '1px solid #ccc', borderRadius: '8px' }}
-        className="mb-8 relative bg-gray-50"
-      >
-        {treeData.length > 0 && (
-          <Tree
-            data={treeData}
-            translate={translate}
-            nodeSize={{ x: 200, y: 100 }}
-            separation={{ siblings: 1.5, nonSiblings: 2 }}
-            orientation="vertical"
-            renderCustomNodeElement={({ nodeDatum, toggleNode }) => {
-              return (
-                <g
-                  key={`${nodeDatum.numero}-${nodeDatum.name}`}
-                  onMouseEnter={(e) =>
-                    setTooltip({ x: e.clientX + 10, y: e.clientY + 10, text: nodeDatum.name })
-                  }
-                  onMouseLeave={() => setTooltip(null)}
-                  style={{ cursor: 'default' }}
-                >
-                  <circle
-                    r={20}
-                    fill="#2563EB"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <text
-                    fill="white"
-                    stroke="none"
-                    x={0}
-                    y={5}
-                    textAnchor="middle"
-                    fontSize="12"
-                    fontWeight="bold"
-                  >
-                    {nodeDatum.numero}
-                  </text>
-                </g>
-              );
-            }}
-          />
-        )}
+      <header className="mb-16 text-center max-w-7xl mx-auto">
+        <div className="flex justify-center mb-4 text-slate-400">
+          <Mountain size={48} />
+        </div>
+        <h1 className="text-4xl font-black text-slate-800 mb-2 tracking-tighter uppercase">
+          ⛪ Hiérarchie des Chartreux
+        </h1>
+        <p className="text-slate-500 italic font-serif tracking-wide text-sm">Statuts de l'Ordre de Saint Bruno</p>
+        <div className="mt-4 flex justify-center items-center gap-2">
+          <span className="h-[1px] w-20 bg-slate-300"></span>
+          <div className="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
+          <span className="h-[1px] w-20 bg-slate-300"></span>
+        </div>
+      </header>
 
-        {tooltip && (
-          <div
-            style={{
-              position: 'fixed',
-              top: tooltip.y,
-              left: tooltip.x,
-              backgroundColor: 'white',
-              border: '1px solid #ccc',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              pointerEvents: 'none',
-              fontSize: '12px',
-              zIndex: 10,
-            }}
-          >
-            {tooltip.text}
+      {loading ? (
+        <div className="text-center py-20 animate-pulse text-slate-600 font-serif italic uppercase tracking-widest text-xs">
+          Silence... Lecture des statuts en cours...
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-12 items-start">
+          
+          {/* TABLEAU DES NIVEAUX */}
+          <div className="order-2 xl:order-1 bg-white border-l-4 border-l-slate-800 rounded-r-2xl shadow-xl overflow-hidden border-y border-r border-slate-200">
+            <div className="bg-slate-50 border-b p-4 flex items-center gap-2">
+              <ScrollText size={18} className="text-slate-600" />
+              <h3 className="text-slate-800 font-bold uppercase text-[10px] tracking-[0.2em]">Registres Conventuels</h3>
+            </div>
+            <div className="overflow-auto max-h-[750px]">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold sticky top-0">
+                  <tr>
+                    <th className="px-6 py-4 text-left">Rang</th>
+                    <th className="px-6 py-4 text-left">Personne / Titre</th>
+                    <th className="px-6 py-4 text-left">Institution / Lieu</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {personnes.map((p) => (
+                    <tr key={p.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 text-center font-bold text-slate-800 bg-slate-50/50">{p.id}</td>
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-slate-900">{p.personne}</div>
+                        <div className="text-[10px] text-slate-400 italic">Sup: {p.superieur || 'Chapitre Général'}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-xs font-semibold text-blue-900 uppercase tracking-tighter">{p.institution || 'Ordre'}</div>
+                        <div className="text-[10px] text-slate-500 font-serif italic">{p.lieu || 'Grande Chartreuse'}</div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* --- Tableau --- */}
-      <h2 className="text-2xl font-semibold mb-4">Tableau des niveaux</h2>
-      <table className="w-full table-auto border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-300 px-2 py-1">#</th>
-            <th className="border border-gray-300 px-2 py-1">Personne</th>
-            <th className="border border-gray-300 px-2 py-1">Lieu</th>
-            <th className="border border-gray-300 px-2 py-1">Institution</th>
-            <th className="border border-gray-300 px-2 py-1">Ordre</th>
-            <th className="border border-gray-300 px-2 py-1">Supérieur</th>
-            <th className="border border-gray-300 px-2 py-1">Équivalent</th>
-          </tr>
-        </thead>
-        <tbody>
-          {personnes.map((p) => (
-            <tr key={p.id} className="hover:bg-gray-50">
-              <td className="border border-gray-300 px-2 py-1 text-center">{p.id}</td>
-              <td className="border border-gray-300 px-2 py-1">{p.personne}</td>
-              <td className="border border-gray-300 px-2 py-1">{p.lieu || '-'}</td>
-              <td className="border border-gray-300 px-2 py-1">{p.institution || '-'}</td>
-              <td className="border border-gray-300 px-2 py-1">{p.ordre || '-'}</td>
-              <td className="border border-gray-300 px-2 py-1">{p.superieur || '-'}</td>
-              <td className="border border-gray-300 px-2 py-1">{p.niveau_equivalent || '-'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          {/* ARBRE VISUEL SVG */}
+          <div className="order-1 xl:order-2 bg-[#e9ecef] border-2 border-slate-200 rounded-3xl p-8 overflow-auto max-h-[750px] shadow-inner relative">
+            <svg width={LARGEUR_NOEUD + 40} height={hMax} className="mx-auto overflow-visible">
+              {positions.map((p, i) => (
+                <g key={i}>
+                  {/* Lignes de structure */}
+                  {i < positions.length - 1 && (
+                    <line 
+                      x1={p.x + LARGEUR_NOEUD/2} y1={p.y + HAUTEUR_VISUELLE} 
+                      x2={p.x + LARGEUR_NOEUD/2} y2={positions[i+1].y} 
+                      stroke="#94a3b8" strokeWidth="1" strokeDasharray="3 3"
+                    />
+                  )}
+                  
+                  <foreignObject 
+                    x={p.x} 
+                    y={p.y} 
+                    width={LARGEUR_NOEUD} 
+                    height={DISTANCE_ENTRE_NOEUDS - 20}
+                    className="overflow-visible"
+                  >
+                    <div className="
+                      min-h-[110px] w-full 
+                      bg-white border border-slate-200 rounded-lg 
+                      p-4 shadow-sm flex flex-col items-center justify-center 
+                      text-center transition-all hover:border-slate-800 hover:shadow-md relative
+                    ">
+                      <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold px-3 py-0.5 rounded uppercase tracking-widest">
+                        Niveau {p.noeud.id}
+                      </div>
+                      
+                      <p className="text-[9px] text-blue-800 font-bold uppercase mb-1 tracking-widest break-words w-full">
+                        {p.noeud.institution || "Règle de l'Ordre"}
+                      </p>
+                      
+                      <h4 className="text-[14px] font-bold text-slate-800 leading-tight break-words w-full px-2">
+                        {p.noeud.personne}
+                      </h4>
+
+                      <p className="text-[9px] text-slate-400 mt-2 font-serif">
+                        {p.noeud.lieu}
+                      </p>
+                    </div>
+                  </foreignObject>
+                </g>
+              ))}
+            </svg>
+          </div>
+
+        </div>
+      )}
+    </main>
   );
 }
