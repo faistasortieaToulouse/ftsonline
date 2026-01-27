@@ -57,6 +57,7 @@ const LARGEUR_NOEUD = 260;
 const HAUTEUR_NOEUD = 80;
 const ESPACE_VERTICAL = 60;
 
+// CORRECTION : Calcul sur TOUS les enfants pour ne pas interrompre l'arbre
 function calculLayoutVertical(
   noeud: Personne,
   x: number,
@@ -64,14 +65,16 @@ function calculLayoutVertical(
   positions: Position[]
 ): number {
   positions.push({ x, y, noeud });
-  let maxY = y;
+  let currentY = y;
 
   if (noeud.enfants && noeud.enfants.length > 0) {
-    const nextY = y + HAUTEUR_NOEUD + ESPACE_VERTICAL;
-    maxY = calculLayoutVertical(noeud.enfants[0], x, nextY, positions);
+    noeud.enfants.forEach((enfant) => {
+      const nextY = currentY + HAUTEUR_NOEUD + ESPACE_VERTICAL;
+      currentY = calculLayoutVertical(enfant, x, nextY, positions);
+    });
   }
 
-  return maxY;
+  return currentY;
 }
 
 function ArbreSVGVertical({ racine }: { racine: Personne }) {
@@ -79,14 +82,21 @@ function ArbreSVGVertical({ racine }: { racine: Personne }) {
   const startX = 20;
   const startY = 20;
 
-  calculLayoutVertical(racine, startX, startY, positions);
+  // Récupération de la hauteur maximale atteinte
+  const finalY = calculLayoutVertical(racine, startX, startY, positions);
 
-  const largeurMax = Math.max(...positions.map((p) => p.x + LARGEUR_NOEUD)) + 40;
-  const hauteurMax = Math.max(...positions.map((p) => p.y + HAUTEUR_NOEUD)) + 40;
+  const largeurMax = LARGEUR_NOEUD + 40;
+  // CORRECTION : Hauteur dynamique basée sur le dernier nœud calculé
+  const hauteurMax = finalY + HAUTEUR_NOEUD + 40;
 
   return (
     <div className="bg-slate-50 rounded-xl border border-slate-200 shadow-inner p-4 overflow-auto h-full">
-      <svg width={largeurMax} height={hauteurMax} className="mx-auto">
+      <svg 
+        width={largeurMax} 
+        height={hauteurMax} 
+        className="mx-auto"
+        viewBox={`0 0 ${largeurMax} ${hauteurMax}`}
+      >
         {/* Liens parent → enfants */}
         {positions.map((parent) =>
           parent.noeud.enfants?.map((enfant) => {
@@ -94,7 +104,6 @@ function ArbreSVGVertical({ racine }: { racine: Personne }) {
             if (!enfantPos) return null;
             return (
               <g key={`${parent.noeud.id}-${enfant.id}`}>
-                {/* Ligne principale */}
                 <line
                   x1={parent.x + LARGEUR_NOEUD / 2}
                   y1={parent.y + HAUTEUR_NOEUD}
@@ -104,7 +113,6 @@ function ArbreSVGVertical({ racine }: { racine: Personne }) {
                   strokeWidth="2"
                   strokeDasharray="4"
                 />
-                {/* Flèche de direction */}
                 <polygon 
                   points={`${enfantPos.x + LARGEUR_NOEUD / 2 - 5},${enfantPos.y} ${enfantPos.x + LARGEUR_NOEUD / 2 + 5},${enfantPos.y} ${enfantPos.x + LARGEUR_NOEUD / 2},${enfantPos.y + 8}`}
                   fill="#94a3b8"
@@ -127,15 +135,12 @@ function ArbreSVGVertical({ racine }: { racine: Personne }) {
               stroke="#1e293b"
               strokeWidth="1.5"
             />
-            {/* Badge de Section */}
             <text x={p.x + 15} y={p.y + 25} fontSize={10} fontWeight="bold" fill="#2563eb" className="uppercase tracking-tighter">
               {p.noeud.section}
             </text>
-            {/* Titre */}
             <text x={p.x + 15} y={p.y + 50} fontSize={15} fontWeight="800" fill="#0f172a">
               {p.noeud.titre}
             </text>
-            {/* ID / Niveau indicateur */}
             <circle cx={p.x + LARGEUR_NOEUD - 20} cy={p.y + 20} r={8} fill="#f1f5f9" />
             <text x={p.x + LARGEUR_NOEUD - 23} y={p.y + 24} fontSize={9} fontWeight="bold" fill="#64748b">
               {p.noeud.id}
@@ -159,16 +164,15 @@ export default function HierarchieOttomanPage() {
     fetch("/api/hierarchieOttoman")
       .then((res) => res.json())
       .then((data: Personne[]) => {
-        if (data.length === 0) return;
+        if (!data || data.length === 0) return;
 
-        // Transformation en structure linéaire (chaque élément pointe vers le suivant)
-        const shallowCopy = [...data];
-        for (let i = 0; i < shallowCopy.length - 1; i++) {
-          shallowCopy[i].enfants = [shallowCopy[i + 1]];
+        // CORRECTION : Reconstruction propre de la chaîne linéaire
+        const nodes = data.map(d => ({ ...d, enfants: [] }));
+        for (let i = 0; i < nodes.length - 1; i++) {
+          nodes[i].enfants = [nodes[i + 1]];
         }
-        shallowCopy[shallowCopy.length - 1].enfants = [];
 
-        setArbre([shallowCopy[0]]);
+        setArbre([nodes[0]]);
         setLoading(false);
       })
       .catch(err => {
@@ -195,11 +199,10 @@ export default function HierarchieOttomanPage() {
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center italic text-slate-400">
-          Chargement de l'arbre généalogique du pouvoir...
+          Chargement de l'arbre...
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-[calc(100%-8rem)]">
-          {/* GAUCHE : liste détaillée */}
           <section className="overflow-auto pr-4 scrollbar-thin scrollbar-thumb-slate-200">
             <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 tracking-widest">Détails des fonctions</h3>
             <ul className="pb-10">
@@ -209,8 +212,7 @@ export default function HierarchieOttomanPage() {
             </ul>
           </section>
 
-          {/* DROITE : arbre SVG */}
-          <section className="h-full">
+          <section className="h-full overflow-hidden">
              <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 tracking-widest text-center">Visualisation schématique</h3>
             {arbre[0] && <ArbreSVGVertical racine={arbre[0]} />}
           </section>
