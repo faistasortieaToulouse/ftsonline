@@ -1,13 +1,5 @@
 [
   {
-    "personne": "Moine-soldat",
-    "lieu": "Ordre Militaire",
-    "institution": "Sommet de l'Ordre",
-    "ordre": "clergé régulier",
-    "superieur": "Grand Maître",
-    "niveau_equivalent": "Hôspitaliers"
-  },
-  {
     "personne": "Grand hospitalier",
     "lieu": "Hôpital de l'Ordre",
     "institution": "Administration Centrale",
@@ -134,5 +126,13 @@
     "ordre": "Militaire",
     "superieur": "Chevalier (Marine)",
     "niveau_equivalent": null
+  },
+  {
+    "personne": "Moine-soldat",
+    "lieu": "Ordre Militaire",
+    "institution": "Sommet de l'Ordre",
+    "ordre": "clergé régulier",
+    "superieur": "Grand Maître",
+    "niveau_equivalent": "Hôspitaliers"
   }
 ]
