@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from '@/components/Footer';
+import GoogleTranslate from '@/components/GoogleTranslate';
 
 // 1. Configuration du Viewport pour Next.js 14+
 export const viewport: Viewport = {
@@ -50,7 +51,26 @@ export default function RootLayout({
         />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="font-body antialiased flex flex-col min-h-screen">
+      <body className="font-body antialiased flex flex-col min-h-screen bg-background text-foreground">
+        
+        {/* Barre de navigation supérieure avec Traducteur */}
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4">
+            {/* Logo ou Titre à gauche */}
+            <div className="flex items-center gap-2 font-bold text-xl tracking-tighter">
+              <span className="text-primary">FTS</span>
+              <span className="hidden sm:inline">Online</span>
+            </div>
+
+            {/* Google Translate aligné à droite */}
+            <div className="flex items-center">
+              <div className="w-48 sm:w-64">
+                <GoogleTranslate />
+              </div>
+            </div>
+          </div>
+        </header>
+
         {/* Contenu principal */}
         <main className="flex-1">
             {children}
@@ -59,8 +79,6 @@ export default function RootLayout({
         {/* Composants globaux */}
         <Footer />
         <Toaster />
-        
-        {/* NOTE: Le script Google Translate a été supprimé pour corriger l'erreur ProjectDeniedMapError */}
       </body>
     </html>
   );
