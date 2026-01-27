@@ -4,7 +4,7 @@ export async function GET() {
   const data = [
     {
       id: 1,
-      title: "Atelier Lecture",
+      title: "Atelier Lecture (sur le Drive)",
       url: "https://drive.google.com/drive/folders/1fZGhpWjlAXdFJRXPtukU5Ihntg36zfdC?usp=drive_link",
       description: "Club de lecture : ressources et partages autour des livres.",
       category: "Culture"
