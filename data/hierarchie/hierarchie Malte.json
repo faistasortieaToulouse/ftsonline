@@ -1,13 +1,5 @@
 [
   {
-    "personne": "Moine-soldat (Grand Maître)",
-    "lieu": "Palais Magistral",
-    "institution": "Ordre de Malte",
-    "ordre": "clergé régulier",
-    "superieur": "Pape",
-    "niveau_equivalent": null
-  },
-  {
     "personne": "Chevaliers de justice",
     "lieu": "Ordre de Malte",
     "institution": "Première classe",
@@ -117,6 +109,14 @@
     "institution": "Troisième classe",
     "ordre": "Laïcs",
     "superieur": "Chevaliers et dames de grâce magistrale",
+    "niveau_equivalent": null
+  },
+  {
+    "personne": "Moine-soldat (Grand Maître)",
+    "lieu": "Palais Magistral",
+    "institution": "Ordre de Malte",
+    "ordre": "clergé régulier",
+    "superieur": "Pape",
     "niveau_equivalent": null
   }
 ]
