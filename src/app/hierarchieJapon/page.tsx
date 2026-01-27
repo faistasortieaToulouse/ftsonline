@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import Tree, { RawNodeDatum } from 'react-d3-tree';
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Landmark, ScrollText } from "lucide-react";
+
+/* =========================
+    TYPES
+========================= */
 
 interface HierarchieJapon {
   id: number;
@@ -12,169 +15,160 @@ interface HierarchieJapon {
   description: string;
 }
 
-interface TreeNodeDatum extends RawNodeDatum {
-  numero: number;
-  children?: TreeNodeDatum[];
+type Position = {
+  x: number;
+  y: number;
+  noeud: HierarchieJapon;
+};
+
+/* =========================
+    CONFIGURATIONS
+========================= */
+
+const LARGEUR_NOEUD = 220;
+const HAUTEUR_NOEUD = 90;
+const ESPACE_V = 50;
+
+/* =========================
+    LOGIQUE LAYOUT
+========================= */
+
+function calculLayout(liste: HierarchieJapon[], x: number, y: number, positions: Position[]) {
+  liste.forEach((item, index) => {
+    positions.push({ x, y: y + (index * (HAUTEUR_NOEUD + ESPACE_V)), noeud: item });
+  });
 }
+
+/* =========================
+    COMPOSANT PRINCIPAL
+========================= */
 
 export default function HierarchieJaponPage() {
   const [personnes, setPersonnes] = useState<HierarchieJapon[]>([]);
-  const [treeData, setTreeData] = useState<TreeNodeDatum[]>([]);
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
-
-  const treeContainer = useRef<HTMLDivElement | null>(null);
-  const [translate, setTranslate] = useState({ x: 0, y: 0 });
-
-  // --- Charger les données ---
+  const [loading, setLoading] = useState(true);
+  
+  const positions: Position[] = [];
+  
   useEffect(() => {
     fetch('/api/hierarchieJapon')
       .then(res => res.json())
       .then((data: HierarchieJapon[]) => {
-        // on conserve l'ordre du JSON
         setPersonnes(data);
+        setLoading(false);
       })
-      .catch(console.error);
+      .catch(() => setLoading(false));
   }, []);
 
-  // --- Construire l'arbre linéaire ---
-  useEffect(() => {
-    if (personnes.length === 0) return;
+  if (!loading) {
+    calculLayout(personnes, 20, 20, positions);
+  }
 
-    const rootNode: TreeNodeDatum = {
-      name: personnes[0].titre,
-      numero: personnes[0].id,
-      children: [],
-    };
-
-    let currentNode = rootNode;
-
-    for (let i = 1; i < personnes.length; i++) {
-      const node: TreeNodeDatum = {
-        name: personnes[i].titre,
-        numero: personnes[i].id,
-        children: [],
-      };
-      currentNode.children!.push(node);
-      currentNode = node;
-    }
-
-    setTreeData([rootNode]);
-  }, [personnes]);
-
-  // --- Centrage ---
-  useEffect(() => {
-    if (treeContainer.current) {
-      const { offsetWidth } = treeContainer.current;
-      setTranslate({ x: offsetWidth / 2, y: 50 });
-    }
-  }, [treeContainer.current]);
+  const hMax = positions.length * (HAUTEUR_NOEUD + ESPACE_V) + 40;
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <main className="p-8 min-h-screen bg-[#fdfbf7]"> {/* Fond papier washi */}
       
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+      <nav className="mb-10 max-w-7xl mx-auto">
+        <Link href="/" className="inline-flex items-center gap-2 text-red-800 hover:text-red-600 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+          Retour au Shogunat
         </Link>
       </nav>
-      
-      <h1 className="text-3xl font-extrabold mb-6">
-        🗾 Hiérarchie japonaise
-      </h1>
 
-      <div
-        ref={treeContainer}
-        style={{ width: '100%', height: '60vh', border: '1px solid #ccc', borderRadius: '8px' }}
-        className="mb-8 relative bg-gray-50"
-      >
-        {treeData.length > 0 && (
-          <Tree
-            data={treeData}
-            translate={translate}
-            nodeSize={{ x: 230, y: 100 }}
-            separation={{ siblings: 1.5, nonSiblings: 2 }}
-            orientation="vertical"
-            renderCustomNodeElement={({ nodeDatum, toggleNode }) => {
-              const hasChildren = nodeDatum.children && nodeDatum.children.length > 0;
+      <header className="mb-16 text-center max-w-7xl mx-auto">
+        <div className="flex justify-center mb-4">
+          <Landmark size={48} className="text-red-700" />
+        </div>
+        <h1 className="text-4xl font-black text-slate-900 mb-2 tracking-tighter uppercase">
+          🗾 Hiérarchie du Soleil Levant
+        </h1>
+        <p className="text-slate-500 italic">Structure sociale et protocolaire du Japon féodal</p>
+        <div className="mt-4 flex justify-center items-center gap-2">
+          <span className="h-[1px] w-20 bg-red-200"></span>
+          <div className="w-3 h-3 border-2 border-red-600 rotate-45"></div>
+          <span className="h-[1px] w-20 bg-red-200"></span>
+        </div>
+      </header>
 
-              return (
-                <g
-                  onMouseEnter={(e) =>
-                    setTooltip({
-                      x: e.clientX + 10,
-                      y: e.clientY + 10,
-                      text: nodeDatum.name,
-                    })
-                  }
-                  onMouseLeave={() => setTooltip(null)}
-                  style={{ cursor: hasChildren ? 'pointer' : 'default' }}
-                >
-                  <circle
-                    r={20}
-                    fill="#2563EB"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (hasChildren) toggleNode?.();
-                    }}
-                  />
-                  <text
-                    fill="white"
-                    x={0}
-                    y={5}
-                    textAnchor="middle"
-                    fontSize="12"
-                    fontWeight="bold"
-                  >
-                    {nodeDatum.numero}
-                  </text>
-                </g>
-              );
-            }}
-          />
-        )}
-
-        {tooltip && (
-          <div
-            style={{
-              position: 'fixed',
-              top: tooltip.y,
-              left: tooltip.x,
-              backgroundColor: 'white',
-              border: '1px solid #ccc',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              pointerEvents: 'none',
-              fontSize: '12px',
-              zIndex: 10,
-            }}
-          >
-            {tooltip.text}
+      {loading ? (
+        <div className="text-center py-20 animate-pulse text-red-800 font-serif italic">
+          Ouverture des parchemins impériaux...
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-12 items-start">
+          
+          {/* TABLEAU DES NIVEAUX (GAUCHE) */}
+          <div className="order-2 xl:order-1 bg-white border-l-4 border-l-red-700 border-y border-r border-slate-200 rounded-r-2xl shadow-xl overflow-hidden">
+            <div className="bg-slate-50 border-b border-slate-200 px-6 py-4 flex items-center gap-2">
+              <ScrollText size={18} className="text-red-700" />
+              <h3 className="text-slate-800 font-bold uppercase text-xs tracking-widest">Tableau des Rangs</h3>
+            </div>
+            <div className="overflow-auto max-h-[700px]">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold sticky top-0">
+                  <tr>
+                    <th className="px-6 py-4">Niveau</th>
+                    <th className="px-6 py-4">Titre & Section</th>
+                    <th className="px-6 py-4">Description</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {personnes.map((p) => (
+                    <tr key={p.id} className="hover:bg-red-50/30 transition-colors">
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-700 font-bold border border-red-100">
+                          {p.id}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-slate-900">{p.titre}</div>
+                        <div className="text-[10px] text-slate-400 uppercase tracking-tighter">{p.section}</div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-600 text-xs leading-relaxed">
+                        {p.description}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        )}
-      </div>
 
-      <h2 className="text-2xl font-semibold mb-4">Tableau des niveaux</h2>
-      <table className="w-full table-auto border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-2 py-1">#</th>
-            <th className="border px-2 py-1">Section</th>
-            <th className="border px-2 py-1">Titre</th>
-            <th className="border px-2 py-1">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {personnes.map((p) => (
-            <tr key={p.id} className="hover:bg-gray-50">
-              <td className="border px-2 py-1 text-center">{p.id}</td>
-              <td className="border px-2 py-1">{p.section}</td>
-              <td className="border px-2 py-1">{p.titre}</td>
-              <td className="border px-2 py-1">{p.description}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          {/* ARBRE VISUEL (DROITE) */}
+          <div className="order-1 xl:order-2 bg-[#f4f1ea] border-2 border-slate-200 rounded-3xl p-8 overflow-auto max-h-[700px] shadow-inner relative">
+            <svg width={LARGEUR_NOEUD + 40} height={hMax} className="mx-auto">
+              {positions.map((p, i) => (
+                <g key={i}>
+                  {/* Ligne de connexion */}
+                  {i < positions.length - 1 && (
+                    <line 
+                      x1={p.x + LARGEUR_NOEUD/2} y1={p.y + HAUTEUR_NOEUD} 
+                      x2={p.x + LARGEUR_NOEUD/2} y2={positions[i+1].y} 
+                      stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4"
+                    />
+                  )}
+                  
+                  {/* Encart du nœud */}
+                  <foreignObject x={p.x} y={p.y} width={LARGEUR_NOEUD} height={HAUTEUR_NOEUD}>
+                    <div className="w-full h-full bg-white border border-slate-300 rounded-lg p-3 shadow-sm flex flex-col items-center justify-center text-center group hover:border-red-600 transition-colors">
+                      <div className="absolute -top-3 bg-red-700 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                        Rang {p.noeud.id}
+                      </div>
+                      <p className="text-[9px] text-slate-400 uppercase font-medium mb-1 tracking-tighter">
+                        {p.noeud.section}
+                      </p>
+                      <h4 className="text-[13px] font-black text-slate-900 leading-tight">
+                        {p.noeud.titre}
+                      </h4>
+                    </div>
+                  </foreignObject>
+                </g>
+              ))}
+            </svg>
+          </div>
+
+        </div>
+      )}
+    </main>
   );
 }
