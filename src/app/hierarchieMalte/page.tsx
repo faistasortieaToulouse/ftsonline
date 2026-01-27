@@ -41,8 +41,8 @@ const ORDRES = [
   }
 ];
 
-const LARGEUR_NOEUD = 240;
-const HAUTEUR_NOEUD = 80;
+const LARGEUR_NOEUD = 260; // Légèrement élargi pour Malte
+const HAUTEUR_NOEUD = 100; // Hauteur fixe pour le multi-ligne
 const ESPACE_V = 40;
 
 /* =========================
@@ -65,7 +65,6 @@ function calculLayout(noeud: Personne, x: number, y: number, positions: Position
 ========================= */
 
 function SectionMalte({ titre, items, data }: { titre: string, items: string[], data: Personne[] }) {
-  // Construire la branche linéaire pour cette section
   const sectionNodes = items.map(name => {
     const found = data.find(p => p.personne === name);
     return { 
@@ -85,33 +84,33 @@ function SectionMalte({ titre, items, data }: { titre: string, items: string[], 
   const hMax = sectionNodes.length > 0 ? calculLayout(sectionNodes[0], 10, 20, positions) + HAUTEUR_NOEUD + 40 : 200;
 
   return (
-    <div className="mb-16">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="h-10 w-1 bg-red-600 rounded-full"></div>
-        <h2 className="text-2xl font-bold text-slate-800">{titre}</h2>
+    <div className="mb-20">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="h-10 w-1.5 bg-red-600 rounded-full"></div>
+        <h2 className="text-3xl font-black text-slate-800 tracking-tight uppercase">{titre}</h2>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
-        {/* TABLEAU À GAUCHE */}
-        <div className="order-2 xl:order-1 overflow-hidden border border-slate-200 rounded-xl shadow-sm bg-white">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 items-start">
+        {/* TABLEAU */}
+        <div className="order-2 xl:order-1 overflow-hidden border border-slate-200 rounded-2xl shadow-xl bg-white">
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold">
+            <thead className="bg-slate-900 text-white uppercase text-[10px] font-bold">
               <tr>
-                <th className="px-4 py-3 border-b">Rang</th>
-                <th className="px-4 py-3 border-b">Désignation</th>
-                <th className="px-4 py-3 border-b">Détails</th>
+                <th className="px-6 py-4">Rang</th>
+                <th className="px-6 py-4">Désignation</th>
+                <th className="px-6 py-4">Localisation & Supérieur</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {sectionNodes.map((node, idx) => (
-                <tr key={idx} className="hover:bg-red-50/30 transition-colors">
-                  <td className="px-4 py-4 font-mono text-slate-400">{(idx + 1).toString().padStart(2, '0')}</td>
-                  <td className="px-4 py-4">
-                    <div className="font-bold text-slate-900">{node.personne}</div>
-                    <div className="text-[10px] text-red-600 font-semibold">{node.institution}</div>
+                <tr key={idx} className="hover:bg-red-50/50 transition-colors">
+                  <td className="px-6 py-4 font-mono text-slate-400">{(idx + 1).toString().padStart(2, '0')}</td>
+                  <td className="px-6 py-4">
+                    <div className="font-bold text-slate-900 leading-tight mb-1">{node.personne}</div>
+                    <div className="text-[10px] text-red-600 font-bold uppercase">{node.institution}</div>
                   </td>
-                  <td className="px-4 py-4 text-slate-500 text-xs">
-                    <div className="flex items-center gap-1"><MapPin size={10}/> {node.lieu}</div>
+                  <td className="px-6 py-4 text-slate-500 text-xs">
+                    <div className="flex items-center gap-1 font-medium"><MapPin size={12} className="text-red-500"/> {node.lieu}</div>
                     <div className="mt-1 opacity-70">Sup: {node.superieur}</div>
                   </td>
                 </tr>
@@ -120,26 +119,35 @@ function SectionMalte({ titre, items, data }: { titre: string, items: string[], 
           </table>
         </div>
 
-        {/* ARBRE À DROITE */}
-        <div className="order-1 xl:order-2 bg-slate-50 border border-slate-200 rounded-xl p-4 overflow-auto max-h-[600px] shadow-inner">
+        {/* ARBRE AVEC FOREIGN OBJECT */}
+        <div className="order-1 xl:order-2 bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 overflow-auto max-h-[700px] shadow-inner">
           <svg width={LARGEUR_NOEUD + 40} height={hMax} className="mx-auto">
             {positions.map((p, i) => (
               <g key={i}>
                 {i < positions.length - 1 && (
-                  <line 
-                    x1={p.x + LARGEUR_NOEUD/2} y1={p.y + HAUTEUR_NOEUD} 
-                    x2={p.x + LARGEUR_NOEUD/2} y2={positions[i+1].y} 
-                    stroke="#ef4444" strokeWidth="2" strokeDasharray="4 2"
+                  <path 
+                    d={`M ${p.x + LARGEUR_NOEUD/2} ${p.y + HAUTEUR_NOEUD} L ${p.x + LARGEUR_NOEUD/2} ${positions[i+1].y}`} 
+                    stroke="#dc2626" strokeWidth="2" fill="none" strokeDasharray="5 5"
                   />
                 )}
-                <rect x={p.x} y={p.y} width={LARGEUR_NOEUD} height={HAUTEUR_NOEUD} rx={6} fill="white" stroke="#dc2626" strokeWidth="1.5" />
-                <text x={p.x + 12} y={p.y + 25} fontSize="10" fontWeight="bold" fill="#dc2626" className="uppercase tracking-tighter">
-                  {p.noeud.institution?.slice(0, 30)}
-                </text>
-                <text x={p.x + 12} y={p.y + 50} fontSize="13" fontWeight="800" fill="#1e293b">
-                  {p.noeud.personne}
-                </text>
-                <circle cx={p.x + LARGEUR_NOEUD/2} cy={p.y + HAUTEUR_NOEUD} r={3} fill="#dc2626" />
+                
+                <foreignObject x={p.x} y={p.y} width={LARGEUR_NOEUD} height={HAUTEUR_NOEUD}>
+                  <div className="w-full h-full bg-white border-2 border-red-600 rounded-xl p-3 shadow-md flex flex-col justify-center text-center">
+                    <p className="text-[9px] font-bold text-red-600 uppercase tracking-widest mb-1 truncate">
+                      {p.noeud.institution}
+                    </p>
+                    <h4 className="text-[12px] font-black text-slate-900 leading-tight">
+                      {p.noeud.personne}
+                    </h4>
+                    {p.noeud.lieu !== '-' && (
+                      <p className="text-[9px] text-slate-400 mt-1 italic">
+                        {p.noeud.lieu}
+                      </p>
+                    )}
+                  </div>
+                </foreignObject>
+
+                <circle cx={p.x + LARGEUR_NOEUD/2} cy={p.y + HAUTEUR_NOEUD} r={4} fill="#dc2626" />
               </g>
             ))}
           </svg>
@@ -165,29 +173,39 @@ export default function HierarchieMaltePage() {
   }, []);
 
   return (
-    <main className="p-6 min-h-screen bg-slate-50/30">
-      <nav className="mb-8 max-w-7xl mx-auto">
+    <main className="p-8 min-h-screen bg-slate-50">
+      <nav className="mb-10 max-w-7xl mx-auto">
         <Link href="/" className="inline-flex items-center gap-2 text-red-700 hover:text-red-900 font-bold group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
 
-      <header className="mb-16 text-center max-w-7xl mx-auto">
-        <h1 className="text-4xl font-black text-slate-900 mb-4 flex justify-center items-center gap-4">
-          <ShieldCheck size={44} className="text-red-600" />
-          <span className="uppercase tracking-tight">Souverain Ordre de Malte</span>
+      <header className="mb-20 text-center max-w-7xl mx-auto">
+        <div className="flex justify-center mb-6">
+          <div className="relative">
+            <ShieldCheck size={60} className="text-red-600" />
+            <div className="absolute inset-0 animate-ping opacity-20 bg-red-600 rounded-full"></div>
+          </div>
+        </div>
+        <h1 className="text-5xl font-black text-slate-900 mb-4 tracking-tighter">
+          SOUVERAIN ORDRE DE MALTE
         </h1>
-        <p className="text-slate-500 italic">Organisation hiérarchique, militaire et hospitalière</p>
-        <div className="mt-4 flex justify-center gap-2">
-          <span className="h-1 w-8 bg-red-600 rounded-full"></span>
-          <span className="h-1 w-24 bg-red-600 rounded-full"></span>
-          <span className="h-1 w-8 bg-red-600 rounded-full"></span>
+        <p className="text-slate-500 font-medium italic text-lg tracking-wide">
+          Organisation hospitalière, militaire et religieuse
+        </p>
+        <div className="mt-6 flex justify-center gap-3">
+          <span className="h-1.5 w-12 bg-red-600 rounded-full"></span>
+          <span className="h-1.5 w-12 bg-slate-200 rounded-full"></span>
+          <span className="h-1.5 w-12 bg-red-600 rounded-full"></span>
         </div>
       </header>
 
       {loading ? (
-        <div className="text-center py-20 animate-pulse text-slate-400">Chargement des archives de l'Ordre...</div>
+        <div className="flex flex-col items-center justify-center py-32 space-y-4">
+          <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-slate-400 font-bold animate-pulse uppercase tracking-widest text-xs">Extraction des registres hospitaliers...</p>
+        </div>
       ) : (
         <div className="max-w-7xl mx-auto">
           {ORDRES.map((o, idx) => (
