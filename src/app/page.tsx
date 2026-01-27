@@ -586,11 +586,19 @@ const starHorizon = Astronomy.Horizon(
               Vous y trouverez les événements de Meetup à Toulouse, l'actualité culturelle et les initiatives de diffusion du savoir.
               Découvrez les sorties en librairie, au cinéma et les activités de jeux de société.
               <br /><br />
+              Prenez vos billets pour les spectacles à Toulouse et en banlieue. Rejoignez nos communautés WhatsApp à partir de l’Aegnda des Communautés ou salons Discord pour organiser les sorties ou l’application Sortir à Toulouse.
+              <br /><br />
+              Explorez les sites culturels de Toulouse et de sa banlieue, les parcs et jardins, ainsi que les équipements sportifs de la métropole. Partez à la découverte des galeries d'art et des visites thématiques à Toulouse : l'exil espagnol, l'occupation allemande et la résistance, les quartiers Saint-Michel et Jolimont, les fontaines et le centre-ville historique, ainsi que tous les quartiers de la ville.
+              <br /><br />
+              Découvrez les cafés des langues à Toulouse, aidez-vous de nos ressources en matière d’Emploi, parcourez les données sur Toulouse.
+              <br /><br />
               Explorez les sites culturels de Toulouse et de sa banlieue, les parcs et jardins, ainsi que les équipements sportifs de la métropole.
               Partez à la découverte des galeries d'art et des visites thématiques à Toulouse : l'exil espagnol, l'occupation allemande et la résistance, les quartiers Saint-Michel et Jolimont, les fontaines et le centre-ville historique, ainsi que tous les quartiers de la ville.
               <br /><br />
               En Occitanie, profitez des itinéraires littéraires dans l'Aude, des randonnées en Ariège, des châteaux cathares, des cirques et sommets régionaux, et explorez chaque département : Ariège, Aude, Aveyron, Gers, Haute-Garonne, Hautes-Pyrénées, Lot, Pyrénées-Orientales, Tarn et Tarn-et-Garonne.
               Enfin, restez informé sur les transports Tisséo et la circulation en Haute-Garonne.
+              <br /><br />
+              Et complétez vos connaissances en matière de livres à lire à travers les documents sur la Littérature française ou étrangère. Les Savoirs sur la France, l’Europe et le Monde.
             </p>
           </div>
           {/* Petit indicateur visuel qu'il y a du texte en dessous */}
