@@ -1,164 +1,221 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef } from 'react';
-import Tree, { RawNodeDatum } from 'react-d3-tree';
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-interface Personne {
+/* =========================
+    TYPES
+========================= */
+
+type Personne = {
   id: number;
   section: string;
   titre: string;
   description: string;
+  enfants?: Personne[];
+};
+
+type Position = {
+  x: number;
+  y: number;
+  noeud: Personne;
+};
+
+/* =========================
+    COMPOSANT LISTE (GAUCHE)
+========================= */
+
+function NoeudHierarchie({ noeud }: { noeud: Personne }) {
+  return (
+    <li className="ml-4 border-l border-slate-200 pl-4 mt-4">
+      <div className="flex flex-col">
+        <span className="text-xs font-bold uppercase text-blue-600 tracking-wider">
+          {noeud.section}
+        </span>
+        <span className="font-bold text-lg text-slate-900">{noeud.titre}</span>
+        <p className="text-sm text-slate-600 leading-relaxed italic">
+          {noeud.description}
+        </p>
+      </div>
+      {noeud.enfants && noeud.enfants.length > 0 && (
+        <ul className="mt-2">
+          {noeud.enfants.map((enfant) => (
+            <NoeudHierarchie key={enfant.id} noeud={enfant} />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
 }
 
-interface TreeNodeDatum extends RawNodeDatum {
-  children?: TreeNodeDatum[];
-  attributes?: { section?: string; description?: string };
+/* =========================
+    ARBRE SVG VERTICAL (DROITE)
+========================= */
+
+const LARGEUR_NOEUD = 260;
+const HAUTEUR_NOEUD = 80;
+const ESPACE_VERTICAL = 60;
+
+function calculLayoutVertical(
+  noeud: Personne,
+  x: number,
+  y: number,
+  positions: Position[]
+): number {
+  positions.push({ x, y, noeud });
+  let maxY = y;
+
+  if (noeud.enfants && noeud.enfants.length > 0) {
+    const nextY = y + HAUTEUR_NOEUD + ESPACE_VERTICAL;
+    maxY = calculLayoutVertical(noeud.enfants[0], x, nextY, positions);
+  }
+
+  return maxY;
 }
 
-export default function HierarchieOttomanPage() {
-  const [data, setData] = useState<Personne[]>([]);
-  const [treeData, setTreeData] = useState<TreeNodeDatum[]>([]);
-  const treeContainer = useRef<HTMLDivElement>(null);
-  const [translate, setTranslate] = useState({ x: 0, y: 50 });
+function ArbreSVGVertical({ racine }: { racine: Personne }) {
+  const positions: Position[] = [];
+  const startX = 20;
+  const startY = 20;
 
-  // --- Charger les données ---
-  useEffect(() => {
-    fetch('/api/hierarchieOttoman')
-      .then(res => res.json())
-      .then(setData)
-      .catch(console.error);
-  }, []);
+  calculLayoutVertical(racine, startX, startY, positions);
 
-  // --- Construire arbre linéaire vertical ---
-  useEffect(() => {
-    if (data.length === 0) return;
-
-    let root: TreeNodeDatum | null = null;
-    let current: TreeNodeDatum | null = null;
-
-    data.forEach(p => {
-      const node: TreeNodeDatum = {
-        name: p.titre,
-        attributes: {
-          section: p.section,
-          description: p.description
-        },
-        children: []
-      };
-
-      if (!root) {
-        root = node;
-        current = node;
-      } else {
-        current!.children!.push(node);
-        current = node;
-      }
-    });
-
-    if (root) setTreeData([root]);
-  }, [data]);
-
-  // --- Centrage ---
-  useEffect(() => {
-    if (treeContainer.current) {
-      setTranslate({
-        x: treeContainer.current.offsetWidth / 2,
-        y: 50
-      });
-    }
-  }, [treeContainer.current, treeData]);
+  const largeurMax = Math.max(...positions.map((p) => p.x + LARGEUR_NOEUD)) + 40;
+  const hauteurMax = Math.max(...positions.map((p) => p.y + HAUTEUR_NOEUD)) + 40;
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      
-      <nav className="mb-6">
+    <div className="bg-slate-50 rounded-xl border border-slate-200 shadow-inner p-4 overflow-auto h-full">
+      <svg width={largeurMax} height={hauteurMax} className="mx-auto">
+        {/* Liens parent → enfants */}
+        {positions.map((parent) =>
+          parent.noeud.enfants?.map((enfant) => {
+            const enfantPos = positions.find((p) => p.noeud.id === enfant.id);
+            if (!enfantPos) return null;
+            return (
+              <g key={`${parent.noeud.id}-${enfant.id}`}>
+                {/* Ligne principale */}
+                <line
+                  x1={parent.x + LARGEUR_NOEUD / 2}
+                  y1={parent.y + HAUTEUR_NOEUD}
+                  x2={enfantPos.x + LARGEUR_NOEUD / 2}
+                  y2={enfantPos.y}
+                  stroke="#94a3b8"
+                  strokeWidth="2"
+                  strokeDasharray="4"
+                />
+                {/* Flèche de direction */}
+                <polygon 
+                  points={`${enfantPos.x + LARGEUR_NOEUD / 2 - 5},${enfantPos.y} ${enfantPos.x + LARGEUR_NOEUD / 2 + 5},${enfantPos.y} ${enfantPos.x + LARGEUR_NOEUD / 2},${enfantPos.y + 8}`}
+                  fill="#94a3b8"
+                />
+              </g>
+            );
+          })
+        )}
+
+        {/* Nœuds */}
+        {positions.map((p) => (
+          <g key={p.noeud.id} className="drop-shadow-sm">
+            <rect
+              x={p.x}
+              y={p.y}
+              width={LARGEUR_NOEUD}
+              height={HAUTEUR_NOEUD}
+              rx={12}
+              fill="white"
+              stroke="#1e293b"
+              strokeWidth="1.5"
+            />
+            {/* Badge de Section */}
+            <text x={p.x + 15} y={p.y + 25} fontSize={10} fontWeight="bold" fill="#2563eb" className="uppercase tracking-tighter">
+              {p.noeud.section}
+            </text>
+            {/* Titre */}
+            <text x={p.x + 15} y={p.y + 50} fontSize={15} fontWeight="800" fill="#0f172a">
+              {p.noeud.titre}
+            </text>
+            {/* ID / Niveau indicateur */}
+            <circle cx={p.x + LARGEUR_NOEUD - 20} cy={p.y + 20} r={8} fill="#f1f5f9" />
+            <text x={p.x + LARGEUR_NOEUD - 23} y={p.y + 24} fontSize={9} fontWeight="bold" fill="#64748b">
+              {p.noeud.id}
+            </text>
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+/* =========================
+    PAGE PRINCIPALE
+========================= */
+
+export default function HierarchieOttomanPage() {
+  const [arbre, setArbre] = useState<Personne[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/hierarchieOttoman")
+      .then((res) => res.json())
+      .then((data: Personne[]) => {
+        if (data.length === 0) return;
+
+        // Transformation en structure linéaire (chaque élément pointe vers le suivant)
+        const shallowCopy = [...data];
+        for (let i = 0; i < shallowCopy.length - 1; i++) {
+          shallowCopy[i].enfants = [shallowCopy[i + 1]];
+        }
+        shallowCopy[shallowCopy.length - 1].enfants = [];
+
+        setArbre([shallowCopy[0]]);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
+  return (
+    <main className="p-6 h-screen flex flex-col bg-white overflow-hidden">
+      <nav className="mb-4">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <h1 className="text-3xl font-extrabold mb-6 text-center">
-        🕌 Hiérarchie de l’Empire Ottoman
-      </h1>
 
-      {/* ---------- Arbre ---------- */}
-      <div
-        ref={treeContainer}
-        style={{
-          width: '100%',
-          height: '450px',
-          border: '1px solid #ccc',
-          borderRadius: '8px'
-        }}
-        className="mb-8 relative bg-gray-50"
-      >
-        {treeData.length > 0 && (
-          <Tree
-            data={treeData}
-            translate={translate}
-            orientation="vertical"
-            nodeSize={{ x: 200, y: 100 }}
-            separation={{ siblings: 1.5, nonSiblings: 2 }}
-            zoomable
-            collapsible={false}
-            renderCustomNodeElement={({ nodeDatum }) => (
-              <g>
-                <circle r={20} fill="#2563EB" />
-                <text
-                  fill="white"
-                  x={0}
-                  y={5}
-                  textAnchor="middle"
-                  fontSize="12"
-                  fontWeight="bold"
-                >
-                  {nodeDatum.name}
-                </text>
-                {nodeDatum.attributes?.section && (
-                  <text
-                    fill="#000"
-                    x={0}
-                    y={25}
-                    textAnchor="middle"
-                    fontSize="10"
-                  >
-                    {nodeDatum.attributes.section}
-                  </text>
-                )}
-              </g>
-            )}
-          />
-        )}
-      </div>
+      <header className="mb-8 border-b pb-4">
+        <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+          🕌 <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-900">Hiérarchie de l'Empire Ottoman</span>
+        </h1>
+        <p className="text-slate-500 font-medium">Structure verticale des pouvoirs de la Sublime Porte</p>
+      </header>
 
-      {/* ---------- Tableau ---------- */}
-      <h2 className="text-2xl font-semibold mb-4">
-        Tableau des niveaux hiérarchiques
-      </h2>
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center italic text-slate-400">
+          Chargement de l'arbre généalogique du pouvoir...
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-[calc(100%-8rem)]">
+          {/* GAUCHE : liste détaillée */}
+          <section className="overflow-auto pr-4 scrollbar-thin scrollbar-thumb-slate-200">
+            <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 tracking-widest">Détails des fonctions</h3>
+            <ul className="pb-10">
+              {arbre.map((racine) => (
+                <NoeudHierarchie key={racine.id} noeud={racine} />
+              ))}
+            </ul>
+          </section>
 
-      <table className="w-full table-auto border-collapse border border-gray-300 text-sm">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-2 py-1">#</th>
-            <th className="border px-2 py-1">Titre</th>
-            <th className="border px-2 py-1">Section</th>
-            <th className="border px-2 py-1">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(p => (
-            <tr key={p.id} className="hover:bg-gray-50">
-              <td className="border px-2 py-1 text-center">{p.id}</td>
-              <td className="border px-2 py-1">{p.titre}</td>
-              <td className="border px-2 py-1">{p.section}</td>
-              <td className="border px-2 py-1">{p.description}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          {/* DROITE : arbre SVG */}
+          <section className="h-full">
+             <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 tracking-widest text-center">Visualisation schématique</h3>
+            {arbre[0] && <ArbreSVGVertical racine={arbre[0]} />}
+          </section>
+        </div>
+      )}
+    </main>
   );
 }
