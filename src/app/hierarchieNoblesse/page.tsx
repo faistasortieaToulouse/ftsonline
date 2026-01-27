@@ -62,8 +62,28 @@ function ArbreSVGVertical({ racine, sectionNom }: { racine: Personne, sectionNom
       </h2>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Visualisation SVG */}
-        <div className="overflow-auto bg-white rounded-lg border border-slate-100 p-4 shadow-inner max-h-[600px]">
+        {/* COLONNE GAUCHE : Tableau détaillé */}
+        <div className="overflow-auto max-h-[600px] border rounded-lg bg-white shadow-sm order-2 lg:order-1">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-slate-50 text-slate-600 uppercase text-xs sticky top-0 border-b">
+              <tr>
+                <th className="px-4 py-3">Titre</th>
+                <th className="px-4 py-3">Description</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {positions.map((p) => (
+                <tr key={p.noeud.id} className="hover:bg-blue-50/50 transition-colors">
+                  <td className="px-4 py-3 font-bold text-blue-900">{p.noeud.titre}</td>
+                  <td className="px-4 py-3 text-slate-600 leading-relaxed italic">{p.noeud.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* COLONNE DROITE : Visualisation SVG */}
+        <div className="overflow-auto bg-white rounded-lg border border-slate-100 p-4 shadow-inner max-h-[600px] order-1 lg:order-2">
           <svg width={largeurMax} height={hauteurMax} className="mx-auto">
             {positions.map((parent) =>
               parent.noeud.enfants?.map((enfant) => {
@@ -105,26 +125,6 @@ function ArbreSVGVertical({ racine, sectionNom }: { racine: Personne, sectionNom
             ))}
           </svg>
         </div>
-
-        {/* Tableau détaillé */}
-        <div className="overflow-auto max-h-[600px] border rounded-lg bg-white">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 text-slate-600 uppercase text-xs sticky top-0">
-              <tr>
-                <th className="px-4 py-3">Titre</th>
-                <th className="px-4 py-3">Description</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {positions.map((p) => (
-                <tr key={p.noeud.id} className="hover:bg-blue-50/50 transition-colors">
-                  <td className="px-4 py-3 font-bold text-blue-900">{p.noeud.titre}</td>
-                  <td className="px-4 py-3 text-slate-600 leading-relaxed">{p.noeud.description}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   );
@@ -157,7 +157,6 @@ export default function HierarchieNoblessePage() {
         arbreSections.forEach(secNom => {
           const filtered = data.filter(p => p.section.startsWith(secNom));
           if (filtered.length > 0) {
-            // Transformer en structure linéaire
             const nodes = filtered.map(d => ({ ...d, enfants: [] }));
             for (let i = 0; i < nodes.length - 1; i++) {
               nodes[i].enfants = [nodes[i + 1]];
