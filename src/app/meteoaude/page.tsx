@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { 
-  ArrowLeft, Wind, Sun, Droplets, Info, 
+  ArrowLeft, Wind, Sun, Info, 
   Cloud, CloudSun, CloudRain, CloudLightning, CloudFog, Thermometer 
 } from "lucide-react";
 
@@ -77,7 +77,7 @@ export default function MeteoAudePage() {
         <div className="bg-indigo-600 p-8 text-white text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10"><Sun size={120} /></div>
           <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 italic">Observatoire de l'Aude</h2>
-          <p className="text-indigo-100 opacity-90 font-medium">Comparatif des stations : Ouest • Centre • Littoral</p>
+          <p className="text-indigo-100 opacity-90 font-medium">Temps réel vs Normales Climatiques</p>
         </div>
 
         {/* Grille Principale */}
@@ -126,9 +126,9 @@ export default function MeteoAudePage() {
                 <div className="bg-indigo-900/5 rounded-2xl p-4 border border-indigo-100 space-y-4">
                   <div className="flex items-center justify-between border-b border-indigo-200/50 pb-2">
                     <h4 className="text-[10px] font-black uppercase text-indigo-500 flex items-center gap-1">
-                      <Info size={12} /> Bilans Annuels
+                      <Info size={12} /> Bilans vs Normales
                     </h4>
-                    <span className="text-[9px] font-bold text-indigo-400 italic">Données 1991-2020</span>
+                    <span className="text-[9px] font-bold text-indigo-400 italic text-right">Moy. 1991-2020</span>
                   </div>
                   
                   <div className="space-y-3">
@@ -174,33 +174,31 @@ export default function MeteoAudePage() {
           })}
         </div>
 
-        {/* Nouveau Bloc : Focus sur les vents */}
-        
+        {/* Section Vents */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-indigo-100/50 border-t border-indigo-200">
-          <div className="bg-white/80 p-4 rounded-2xl border border-indigo-200">
+          <div className="bg-white/80 p-4 rounded-2xl border border-indigo-200 shadow-sm">
             <h4 className="text-indigo-600 font-black uppercase text-xs mb-2 flex items-center gap-2">
               <Wind size={16} /> La Cers (Nord-Ouest)
             </h4>
             <p className="text-[11px] leading-relaxed">
-              Vent dominant à <b>Carcassonne</b> et <b>Lézignan</b>. Froid en hiver, il dégage parfaitement le ciel mais possède un fort pouvoir asséchant pour les sols et les cultures.
+              Vent froid et sec, dominant à <b>Carcassonne</b> et <b>Lézignan</b>. Il dégage parfaitement le ciel mais possède un fort pouvoir asséchant pour les sols.
             </p>
           </div>
-          <div className="bg-white/80 p-4 rounded-2xl border border-indigo-200">
+          <div className="bg-white/80 p-4 rounded-2xl border border-indigo-200 shadow-sm">
             <h4 className="text-orange-600 font-black uppercase text-xs mb-2 flex items-center gap-2">
               <Wind size={16} /> L'Autan (Sud-Est)
             </h4>
             <p className="text-[11px] leading-relaxed">
-              Surnommé "le vent des fous". Il est chaud, turbulent et humide. Il souffle principalement dans le Lauragais et annonce souvent l'arrivée de la pluie par la mer.
+              Le "vent des fous", chaud et humide. Il souffle principalement vers l'Ouest du département et annonce souvent l'arrivée de la pluie.
             </p>
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer Info */}
         <div className="bg-indigo-950 text-indigo-300 p-6 flex items-center gap-4">
           <Thermometer className="text-cyan-400 shrink-0" size={30} />
           <p className="text-[10px] leading-relaxed italic">
-            <b>Note scientifique :</b> Les normales saisonnières sont basées sur les moyennes trentenaires Météo-France. 
-            Les jours estivaux à <b>Lézignan</b> (95j) illustrent son climat de "chaufferie" des Corbières, moins tempéré par la mer que <b>Narbonne</b>.
+            <b>Note :</b> L'influence maritime à <b>Narbonne</b> prolonge souvent l'été en arrière-saison (normale de 105j estivaux), tandis que <b>Lézignan</b> subit une chaleur plus continentale.
           </p>
         </div>
       </section>
