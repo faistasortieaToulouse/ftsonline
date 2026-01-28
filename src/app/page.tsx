@@ -14,7 +14,8 @@ import {
   Amphora, CalendarDays, Trees, Hexagon, Languages, PenTool,
   Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
   Newspaper, Speech, Users, UserGroup, Smile, Handshake,
-  ChevronDown, Wind, Droplets, Sun as SunIcon
+  ChevronDown, Wind, Droplets, Sun as SunIcon, Navigation,
+  Timer
 } from "lucide-react";
 
 import { getSaintDuJour } from "../lib/saints";
@@ -687,11 +688,7 @@ useEffect(() => {
     {/* --- Bloc unique : Éphéméride, Environnement & Bilan --- */}
     <div className="bg-indigo-900/10 border-t border-purple-200 py-3 px-6">
       <div className="flex flex-wrap justify-around items-center gap-y-3 gap-x-6 text-[11px] font-medium text-indigo-800">
-        
-{/* --- Bloc unique : Éphéméride & Environnement --- */}
-<div className="bg-indigo-900/10 border-t border-purple-200 py-3 px-6">
-  <div className="flex flex-wrap justify-around items-center gap-y-4 gap-x-6 text-[11px] font-medium text-indigo-800">
-    
+            
     {/* 1. SECTION LUMIÈRE & PHOTO */}
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-1.5">
@@ -742,8 +739,9 @@ useEffect(() => {
   </div>
 </div>
 
-        {/* 3. BILAN ANNUEL */}
-<div className="flex flex-wrap items-center gap-3 border-l-2 border-indigo-300 pl-4 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm">
+{/* 3. BILAN ANNUEL */}
+<div className="flex flex-wrap items-center justify-center gap-3 border-l-2 md:border-l-0 md:border-t-2 border-indigo-300 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm mx-auto w-fit">
+
   <div className="flex flex-col leading-none border-r border-indigo-200 pr-3 mr-1">
     <span className="text-[9px] uppercase font-black text-indigo-500 tracking-tighter">Bilan Toulouse</span>
     <span className="text-[10px] font-bold text-indigo-900 italic tracking-tight">Depuis le 1er janv.</span>
@@ -787,6 +785,14 @@ useEffect(() => {
     </div>
     </div>
 	    </div>
+
+{/* --- AJOUT DE TA PHRASE DE RÉFÉRENCE --- */}
+  <div className="w-full text-center mb-1">
+    <p className="text-[10px] font-medium text-indigo-700/80">
+      Moyennes Toulouse : <span className="font-bold">2 112.3 h/an</span> d'ensoleillement • <span className="font-bold">600.1 mm/an</span> de pluie
+    </p>
+  </div>
+  {/* ---------------------------------------- */}
 
     {/* Ligne 4 : Astro (Zodiaque) */}
     <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
@@ -902,8 +908,8 @@ useEffect(() => {
       </div>
     </div>
 
-    {/* Ligne 7 : EXPLICATIONS SOLSTICES TOULOUSE */}
-    <div className="bg-blue-700 text-white py-4 px-6 border-t border-blue-500/30">
+{/* Ligne 7 : EXPLICATIONS SOLSTICES TOULOUSE */}
+    <div className="bg-blue-700 text-white py-6 px-6 border-t border-blue-500/30">
       <div className="max-w-4xl mx-auto">
         <h3 className="text-xs uppercase font-black tracking-widest text-yellow-400 mb-3 text-center md:text-left">
           ☀️ Variations saisonnières à Toulouse
@@ -930,6 +936,71 @@ useEffect(() => {
               <span className="font-bold">Solstice d'hiver (v. 21 décembre) :</span> La durée du jour descend à environ <span className="text-white font-bold">8h 56min</span>. Lever à 8h20, coucher à 17h20.
             </p>
           </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Ligne 8 : NAVIGATION RAPIDE VERS LES MÉTÉOS SPÉCIFIQUES */}
+    <div className="bg-slate-900 border-t border-white/10 py-10 px-6">
+      <div className="max-w-6xl mx-auto">
+        <h3 className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-500 mb-8 text-center">
+          Accès rapide aux météos thématiques
+        </h3>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          {/* Bouton Météo Aude */}
+          <Link href="/meteoaude" className="group">
+            <div className="bg-purple-600/10 hover:bg-purple-600 border border-purple-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] group-hover:-translate-y-1">
+              <div className="bg-purple-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-purple-600 transition-colors">
+                <Navigation size={22} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-purple-400 group-hover:text-white text-[10px] font-bold uppercase tracking-tight">Météo</span>
+                <span className="text-white font-black text-lg">Aude (11)</span>
+              </div>
+            </div>
+          </Link>
+
+          {/* Bouton Météo des Lacs */}
+          <Link href="/meteolac" className="group">
+            <div className="bg-emerald-600/10 hover:bg-emerald-600 border border-emerald-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] group-hover:-translate-y-1">
+              <div className="bg-emerald-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-emerald-600 transition-colors">
+                <Navigation size={22} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-emerald-400 group-hover:text-white text-[10px] font-bold uppercase tracking-tight">Météo des</span>
+                <span className="text-white font-black text-lg">Lacs</span>
+              </div>
+            </div>
+          </Link>
+
+          {/* Bouton Météo Montagne */}
+          <Link href="/meteomontagne" className="group">
+            <div className="bg-blue-600/10 hover:bg-blue-600 border border-blue-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.3)] group-hover:-translate-y-1">
+              <div className="bg-blue-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-blue-600 transition-colors">
+                <Navigation size={22} className="rotate-45" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-blue-400 group-hover:text-white text-[10px] font-bold uppercase tracking-tight">Météo de</span>
+                <span className="text-white font-black text-lg">Montagne</span>
+              </div>
+            </div>
+          </Link>
+
+          {/* Bouton Météo Plage */}
+          <Link href="/meteoplage" className="group">
+            <div className="bg-orange-600/10 hover:bg-orange-600 border border-orange-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] group-hover:-translate-y-1">
+              <div className="bg-orange-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-orange-600 transition-colors">
+                <Sun size={22} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-orange-400 group-hover:text-white text-[10px] font-bold uppercase tracking-tight">Météo de</span>
+                <span className="text-white font-black text-lg">Plage</span>
+              </div>
+            </div>
+          </Link>
+
         </div>
       </div>
     </div>
