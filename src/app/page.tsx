@@ -549,44 +549,41 @@ const starHorizon = Astronomy.Horizon(
   const ascendant = getAscendant(heure);
 
 useEffect(() => {
-    // Garde le timer pour l'horloge
-    const timer = setInterval(() => setHeure(new Date()), 60000);
-    
-    // Ta nouvelle fonction qui fait tout d'un coup
+    // 1. Gestion de l'horloge (mise à jour toutes les minutes)
+    const timer = setInterval(() => {
+      setHeure(new Date());
+    }, 60000);
+
+    // 2. Fonction unique pour récupérer toutes les données
     const fetchData = async () => {
       try {
-        // 1. Appel pour la météo du moment (température en haut à droite)
-        const resWeather = await fetch('/api/weather');
-        if (resWeather.ok) {
-          const w = await resWeather.json();
-          setMeteo({ temperature: `${Math.round(w.temp)}°C`, condition: w.description });
-        }
+        // Appel pour le bilan et la météo détaillée
+        const resMeteo = await fetch('/api/meteo');
         
-const fetchData = async () => {
-  try {
-    // ... tes autres appels (saint, etc.)
+        if (resMeteo.ok) {
+          const m = await resMeteo.json();
+          
+          // Mise à jour des stats annuelles (Bloc Indigo)
+          setAnnuelData(m); 
+          
+          // Mise à jour de la météo (Haut à droite + Vent)
+          setMeteo({
+            temperature: `${m.stats?.avgTemp || '--'}°C`,
+            condition: m.condition || 'Ensoleillé',
+            vitesseVent: m.vitesseVent || 0
+          });
+        }
+      } catch (e) {
+        console.error("Erreur lors de la récupération des données:", e);
+      }
+    };
 
-    // 2. Appel pour le bilan de l'année (bloc Indigo)
-    const resMeteo = await fetch('/api/meteo');
-    if (resMeteo.ok) {
-      const m = await resMeteo.json();
-      
-      // 1. Alimente le bloc Indigo (Bilan annuel et vent)
-      setAnnuelData(m); 
-      
-      // 2. Alimente aussi le petit bloc météo en haut à droite
-      setMeteo({
-        temperature: `${m.stats.avgTemp}°C`,
-        condition: m.condition,
-        vitesseVent: m.vitesseVent 
-      });
-    }
-  } catch (e) {
-    console.error("Erreur lors de la récupération des données:", e);
-  }
-};
+    // Lancement de la récupération des données
+    fetchData();
 
-fetchData(); // L'appel de la fonction doit être ici
+    // 3. Nettoyage lors de la fermeture du composant
+    return () => clearInterval(timer);
+  }, []); // Fin du useEffect
 
     // Nettoyage à la fermeture de la page
     return () => clearInterval(timer);
