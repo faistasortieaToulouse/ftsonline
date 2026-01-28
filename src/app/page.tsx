@@ -785,9 +785,6 @@ useEffect(() => {
       </b></span>
       <span className="text-[8px] text-slate-400 font-bold uppercase">{parseFloat(annuelData?.stats?.waterBalance) < 0 ? "Déficit" : "Excédent"}</span>
     </div>
-        </div>
-      </div>
-    </div>
 
     {/* Ligne 4 : Astro (Zodiaque) */}
     <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
