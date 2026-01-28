@@ -1,5 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 // ... (tes imports d'icônes lucide-react)
 
 export default function MeteoAudePage() {
@@ -24,6 +26,14 @@ export default function MeteoAudePage() {
 
   return (
     <div className="px-4 max-w-6xl mx-auto mb-12">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <section className="bg-indigo-50 text-indigo-900 rounded-3xl shadow-xl border border-indigo-200 overflow-hidden">
         
         {/* En-tête de la section Aude */}
