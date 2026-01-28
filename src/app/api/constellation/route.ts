@@ -1,29 +1,26 @@
 import { NextResponse } from 'next/server';
+import stars from '@/data/constellation/stars.json';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const lat = parseFloat(searchParams.get('lat') || '43.6047'); // Toulouse par défaut
-  const month = parseInt(searchParams.get('month') || new Date().getMonth().toString());
+  const month = parseInt(searchParams.get('month') || "0");
 
-  const hemisphere = lat >= 0 ? 'Nord' : 'Sud';
+  // Le ciel se décale de 2h d'Ascension Droite (RA) par mois.
+  // À minuit, la RA visible est à l'opposé du Soleil.
+  const solarRA = (month * 2) % 24;
+  const midnightRA = (solarRA + 12) % 24;
 
-  // Base de données simplifiée (données astronomiques standards)
-  const constellationsData = [
-    { name: "Grande Ourse", bestMonth: [3, 4, 5], hemisphere: "Nord" },
-    { name: "Orion", bestMonth: [11, 12, 0, 1], hemisphere: "Both" },
-    { name: "Croix du Sud", bestMonth: [3, 4, 5], hemisphere: "Sud" },
-    { name: "Cassiopée", bestMonth: [8, 9, 10], hemisphere: "Nord" },
-    { name: "Scorpion", bestMonth: [5, 6, 7], hemisphere: "Both" },
-  ];
+  const processedStars = stars.map((s: any) => {
+    // Calcul de visibilité : si l'étoile est à +/- 6h de la RA de minuit
+    let diff = Math.abs(s.ra - midnightRA);
+    if (diff > 12) diff = 24 - diff;
+    const isVisible = diff < 7; // Fenêtre de visibilité large
 
-  const visible = constellationsData.filter(c => 
-    (c.hemisphere === hemisphere || c.hemisphere === "Both") && 
-    c.bestMonth.includes(month)
-  );
-
-  return NextResponse.json({
-    hemisphere,
-    month: month + 1,
-    constellations: visible
+    return {
+      ...s,
+      visible: isVisible
+    };
   });
+
+  return NextResponse.json(processedStars);
 }
