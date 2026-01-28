@@ -685,37 +685,70 @@ useEffect(() => {
     <div className="bg-indigo-900/10 border-t border-purple-200 py-3 px-6">
       <div className="flex flex-wrap justify-around items-center gap-y-3 gap-x-6 text-[11px] font-medium text-indigo-800">
         
-        {/* 1. Lumière & Photo */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">📈</span> 
-            <span>Lumière : <b className="text-indigo-900">En augmentation</b></span>
-          </div>
-          <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
-            <span className="text-sm" title="Heure Dorée">📷</span> 
-            <span>Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
-          </div>
-          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-            <span className="text-sm" title="Heure Bleue">🌃</span>
-            <span>Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
-          </div>
-        </div>
+{/* --- Bloc unique : Éphéméride & Environnement --- */}
+<div className="bg-indigo-900/10 border-t border-purple-200 py-3 px-6">
+  <div className="flex flex-wrap justify-around items-center gap-y-4 gap-x-6 text-[11px] font-medium text-indigo-800">
+    
+    {/* 1. SECTION LUMIÈRE & PHOTO */}
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1.5">
+        <span className="text-sm">📈</span> 
+        <span>Lumière : <b className="text-indigo-900">En augmentation</b></span>
+      </div>
+      <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
+        <span className="text-sm" title="Heure Dorée">📷</span> 
+        <span>Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
+      </div>
+      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+        <span className="text-sm" title="Heure Bleue">🌃</span>
+        <span>Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
+      </div>
+    </div>
 
-        {/* 2. Environnement & Santé */}
-        <div className="flex items-center gap-4 border-l border-indigo-200 pl-4">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">💨</span>
-            <span>Vent d'Autan : <b className="text-indigo-900">{meteo.condition.includes("Vent") ? "Actif" : "Calme"}</b></span>
-          </div>
-          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-            <span className="text-sm">🍃</span>
-            <span>Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span></span>
-          </div>
-          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-            <span className="text-sm">🕶️</span>
-            <span>UV : <b className="text-indigo-900">{indiceUV}</b></span>
-          </div>
+    {/* 2. SECTION ENVIRONNEMENT (Vent, Air, UV) */}
+    <div className="flex items-center gap-4 border-l border-indigo-300 pl-4">
+      
+      {/* Vent : Vitesse du jour + Statut Autan */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-sm">💨</span>
+        <div className="flex flex-col leading-tight">
+          <span>Vent : <b className="text-indigo-900">{meteo.vitesseVent || '--'} km/h</b></span>
+          <span className="text-[9px] opacity-70 italic">
+            Autan : {meteo.condition.includes("Vent") ? "Actif" : "Calme"}
+          </span>
         </div>
+      </div>
+
+      {/* Qualité de l'Air */}
+      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+        <span className="text-sm">🍃</span>
+        <span>Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span></span>
+      </div>
+
+      {/* Indice UV */}
+      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+        <span className="text-sm">🕶️</span>
+        <span>UV : <b className="text-indigo-900">{indiceUV}</b></span>
+      </div>
+    </div>
+
+    {/* 3. SECTION BILAN ANNUEL (Le bloc blanc/gris) */}
+    <div className="flex flex-wrap items-center gap-3 border-l-2 border-indigo-300 pl-4 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm">
+      <div className="flex flex-col leading-none border-r border-indigo-200 pr-3 mr-1">
+        <span className="text-[9px] uppercase font-black text-indigo-500 tracking-tighter">Bilan Toulouse</span>
+        <span className="text-[10px] font-bold text-indigo-900 italic tracking-tight">Depuis le 1er janv.</span>
+      </div>
+      
+      {/* ... Tes stats annuelles (Soleil, Pluie, Vent Max, Sol) ici ... */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-sm">☀️</span>
+        <span>Soleil : <b className="text-indigo-900">{annuelData?.stats?.totalSunshine || '--'}h</b></span>
+      </div>
+      {/* etc... */}
+    </div>
+
+  </div>
+</div>
 
         {/* 3. BILAN ANNUEL */}
         <div className="flex flex-wrap items-center gap-3 border-l-2 border-indigo-300 pl-4 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm">
