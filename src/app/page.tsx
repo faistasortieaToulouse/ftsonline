@@ -473,7 +473,8 @@ const WeatherIcon = ({ condition }: { condition: string }) => {
 // --- COMPOSANT PRINCIPAL ---
 export default function HomePage() {
   const [heure, setHeure] = useState(new Date());
-  const [meteo, setMeteo] = useState({ temperature: "25°C", condition: "Ensoleillé" });
+  const [meteo, setMeteo] = useState({ temperature: "--", condition: "--", vitesseVent: "--" // On prépare la case pour le vent
+});
 
 // --- AJOUT : État pour les statistiques annuelles ---
   const [annuelData, setAnnuelData] = useState<any>(null);
@@ -561,18 +562,31 @@ useEffect(() => {
           setMeteo({ temperature: `${Math.round(w.temp)}°C`, condition: w.description });
         }
         
-        // 2. Appel pour le bilan de l'année (bloc Indigo)
-        const resMeteo = await fetch('/api/meteo');
-        if (resMeteo.ok) {
-          const m = await resMeteo.json();
-          setAnnuelData(m); // Très important : c'est ce qui alimente tes nouvelles valeurs
-        }
-      } catch (e) { 
-        console.error("Erreur lors de la récupération des données:", e); 
-      }
-    };
+const fetchData = async () => {
+  try {
+    // ... tes autres appels (saint, etc.)
 
-    fetchData();
+    // 2. Appel pour le bilan de l'année (bloc Indigo)
+    const resMeteo = await fetch('/api/meteo');
+    if (resMeteo.ok) {
+      const m = await resMeteo.json();
+      
+      // 1. Alimente le bloc Indigo (Bilan annuel et vent)
+      setAnnuelData(m); 
+      
+      // 2. Alimente aussi le petit bloc météo en haut à droite
+      setMeteo({
+        temperature: `${m.stats.avgTemp}°C`,
+        condition: m.condition,
+        vitesseVent: m.vitesseVent 
+      });
+    }
+  } catch (e) {
+    console.error("Erreur lors de la récupération des données:", e);
+  }
+};
+
+fetchData(); // L'appel de la fonction doit être ici
 
     // Nettoyage à la fermeture de la page
     return () => clearInterval(timer);
