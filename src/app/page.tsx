@@ -734,10 +734,6 @@ useEffect(() => {
 
     {/* 3. SECTION BILAN ANNUEL (Le bloc blanc/gris) */}
     <div className="flex flex-wrap items-center gap-3 border-l-2 border-indigo-300 pl-4 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm">
-      <div className="flex flex-col leading-none border-r border-indigo-200 pr-3 mr-1">
-        <span className="text-[9px] uppercase font-black text-indigo-500 tracking-tighter">Bilan Toulouse</span>
-        <span className="text-[10px] font-bold text-indigo-900 italic tracking-tight">Depuis le 1er janv.</span>
-      </div>
       
       {/* ... Tes stats annuelles (Soleil, Pluie, Vent Max, Sol) ici ... */}
       <div className="flex items-center gap-1.5">
