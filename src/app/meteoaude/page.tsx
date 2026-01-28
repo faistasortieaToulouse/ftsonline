@@ -7,7 +7,7 @@ import {
   Cloud, CloudSun, CloudRain, CloudLightning, CloudFog, Thermometer 
 } from "lucide-react";
 
-// Données fixes enrichies : Normales Climatiques (1991-2020)
+// Données fixes enrichies : Normales Climatiques Annuelles (1991-2020)
 const NORMALES_CLIMAT = {
   carcassonne: { 
     pluie: 640, soleil: 2120, joursVent: 75, 
@@ -73,11 +73,11 @@ export default function MeteoAudePage() {
       </nav>
       
       <section className="bg-indigo-50 text-indigo-900 rounded-3xl shadow-2xl border border-indigo-200 overflow-hidden">
-        {/* Header */}
+        {/* Header avec période */}
         <div className="bg-indigo-600 p-8 text-white text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10"><Sun size={120} /></div>
           <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 italic">Observatoire de l'Aude</h2>
-          <p className="text-indigo-100 opacity-90 font-medium">Temps réel vs Normales Climatiques</p>
+          <p className="text-indigo-100 opacity-90 font-medium">Cumuls depuis le 1er Janvier vs Normales Annuelles</p>
         </div>
 
         {/* Grille Principale */}
@@ -99,34 +99,37 @@ export default function MeteoAudePage() {
                   </div>
                   <div className="text-right">
                     <span className="text-4xl font-black text-indigo-600 leading-none">{ville.temp}°</span>
-                    <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase">Moy. An : {normale.moyAn}</p>
+                    <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase">Normales: {normale.moyAn}</p>
                   </div>
                 </div>
 
-                {/* Compteurs Annuels Dynamiques */}
+                {/* Compteurs Annuels (Réel depuis 01/01) */}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="bg-white p-2 rounded-xl border border-indigo-100 shadow-sm text-center">
-                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1">Jours Vent{">"}57</p>
+                    <p className="text-[7px] font-black text-indigo-400 uppercase leading-none mb-1 italic">Depuis 01/01</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1">Vent{">"}57</p>
                     <p className="text-sm font-black text-indigo-700">{ville.stats.joursVentes}j</p>
-                    <p className="text-[7px] text-slate-300">Norme: {normale.joursVent}j</p>
+                    <p className="text-[7px] text-slate-300">Norme An: {normale.joursVent}j</p>
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-indigo-100 shadow-sm text-center">
+                    <p className="text-[7px] font-black text-orange-400 uppercase leading-none mb-1 italic">Depuis 01/01</p>
                     <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1">Jours {">"}25°</p>
                     <p className="text-sm font-black text-orange-600">{ville.stats.joursChaleur}j</p>
-                    <p className="text-[7px] text-slate-300">Norme: {normale.estivaux}j</p>
+                    <p className="text-[7px] text-slate-300">Norme An: {normale.estivaux}j</p>
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-indigo-100 shadow-sm text-center">
-                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1">Record An</p>
+                    <p className="text-[7px] font-black text-red-400 uppercase leading-none mb-1 italic">Depuis 01/01</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1">Max An.</p>
                     <p className="text-sm font-black text-red-600">{ville.stats.recordChaleur}</p>
-                    <p className="text-[7px] text-slate-300">Hiver: {normale.froid}</p>
+                    <p className="text-[7px] text-slate-300">Normal: {normale.chaud}</p>
                   </div>
                 </div>
 
-                {/* Bloc Bilan vs Normales */}
+                {/* Bloc Bilan vs Normales Annuelles */}
                 <div className="bg-indigo-900/5 rounded-2xl p-4 border border-indigo-100 space-y-4">
                   <div className="flex items-center justify-between border-b border-indigo-200/50 pb-2">
                     <h4 className="text-[10px] font-black uppercase text-indigo-500 flex items-center gap-1">
-                      <Info size={12} /> Bilans vs Normales
+                      <Info size={12} /> Bilans vs Objectifs Annuels
                     </h4>
                     <span className="text-[9px] font-bold text-indigo-400 italic text-right">Moy. 1991-2020</span>
                   </div>
@@ -134,25 +137,31 @@ export default function MeteoAudePage() {
                   <div className="space-y-3">
                     {/* Soleil */}
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-indigo-700/70">☀️ Ensoleillement</span>
+                      <div>
+                        <span className="text-xs font-bold text-indigo-700/70">☀️ Ensoleillement</span>
+                        <p className="text-[8px] text-indigo-400 italic">Depuis le 1er janv.</p>
+                      </div>
                       <div className="text-right">
                         <span className="text-xs font-black block">{ville.stats.totalSunshine}</span>
-                        <span className="text-[8px] text-slate-400">Normal: {normale.soleil}h</span>
+                        <span className="text-[8px] text-slate-400">Cible Annuelle: {normale.soleil}h</span>
                       </div>
                     </div>
                     
                     {/* Pluie */}
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-indigo-700/70">💧 Cumul Pluie</span>
+                      <div>
+                        <span className="text-xs font-bold text-indigo-700/70">💧 Cumul Pluie</span>
+                        <p className="text-[8px] text-indigo-400 italic">Depuis le 1er janv.</p>
+                      </div>
                       <div className="text-right">
                         <span className="text-xs font-black block">{ville.stats.totalRain} mm</span>
-                        <span className="text-[8px] text-slate-400">Normal: {normale.pluie}mm</span>
+                        <span className="text-[8px] text-slate-400">Cible Annuelle: {normale.pluie}mm</span>
                       </div>
                     </div>
 
                     {/* Hydrométrie Sol */}
                     <div className="pt-2 border-t border-indigo-200/40">
-                      <div className="flex justify-between items-center mb-2">
+                      <div className="flex justify-between items-center mb-1">
                         <span className="text-[10px] font-black uppercase text-indigo-800">Bilan Sol (Pluie-Evap)</span>
                         <span className={`text-[10px] font-black px-2 py-0.5 rounded shadow-sm ${
                           ville.stats.waterBalance < 0 ? "bg-orange-100 text-orange-700" : "bg-emerald-100 text-emerald-700"
@@ -198,7 +207,7 @@ export default function MeteoAudePage() {
         <div className="bg-indigo-950 text-indigo-300 p-6 flex items-center gap-4">
           <Thermometer className="text-cyan-400 shrink-0" size={30} />
           <p className="text-[10px] leading-relaxed italic">
-            <b>Note :</b> L'influence maritime à <b>Narbonne</b> prolonge souvent l'été en arrière-saison (normale de 105j estivaux), tandis que <b>Lézignan</b> subit une chaleur plus continentale.
+            <b>Note :</b> Les données réelles sont calculées depuis le 1er janvier. Les normales (1991-2020) servent de référence pour l'année complète. Narbonne bénéficie d'une influence maritime qui tempère les extrêmes.
           </p>
         </div>
       </section>
