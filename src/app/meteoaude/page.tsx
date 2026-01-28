@@ -4,14 +4,23 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { 
   ArrowLeft, Wind, Sun, Droplets, Info, 
-  Cloud, CloudSun, CloudRain, CloudLightning, CloudFog, Thermometer, navigation
+  Cloud, CloudSun, CloudRain, CloudLightning, CloudFog, Thermometer 
 } from "lucide-react";
 
-// Données fixes des normales saisonnières (Moyennes annuelles officielles)
+// Données fixes enrichies : Normales Climatiques (1991-2020)
 const NORMALES_CLIMAT = {
-  carcassonne: { pluie: 640, soleil: 2120, joursVent: 75 },
-  lezignan: { pluie: 580, soleil: 2350, joursVent: 95 },
-  narbonne: { pluie: 550, soleil: 2500, joursVent: 120 }
+  carcassonne: { 
+    pluie: 640, soleil: 2120, joursVent: 75, 
+    estivaux: 85, moyAn: "14,5°C", froid: "6,8°C", chaud: "23,2°C" 
+  },
+  lezignan: { 
+    pluie: 580, soleil: 2350, joursVent: 95, 
+    estivaux: 95, moyAn: "14,8°C", froid: "7,0°C", chaud: "23,5°C" 
+  },
+  narbonne: { 
+    pluie: 550, soleil: 2500, joursVent: 120, 
+    estivaux: 105, moyAn: "15,4°C", froid: "8,2°C", chaud: "23,8°C" 
+  }
 };
 
 export default function MeteoAudePage() {
@@ -48,11 +57,11 @@ export default function MeteoAudePage() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] text-indigo-600">
       <div className="animate-spin mb-4 text-4xl">🌀</div>
-      <p className="font-bold tracking-tight">Analyse climatique de l'Aude...</p>
+      <p className="font-bold tracking-tight text-xl text-center">Analyse des données climatiques<br/> de l'Aude en cours...</p>
     </div>
   );
 
-  if (!audeData) return <div className="p-10 text-center text-red-500">Service indisponible.</div>;
+  if (!audeData) return <div className="p-10 text-center text-red-500 font-bold">Service météorologique indisponible.</div>;
 
   return (
     <div className="px-4 max-w-6xl mx-auto mb-12">
@@ -63,91 +72,89 @@ export default function MeteoAudePage() {
         </Link>
       </nav>
       
-      <section className="bg-indigo-50 text-indigo-900 rounded-3xl shadow-xl border border-indigo-200 overflow-hidden">
+      <section className="bg-indigo-50 text-indigo-900 rounded-3xl shadow-2xl border border-indigo-200 overflow-hidden">
+        {/* Header */}
         <div className="bg-indigo-600 p-8 text-white text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10"><Sun size={120} /></div>
-          <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 italic text-white">Météo de l'Aude</h2>
-          <p className="text-indigo-100 opacity-90 font-medium tracking-wide">Carcassonne • Lézignan-Corbières • Narbonne</p>
+          <h2 className="text-4xl font-black uppercase tracking-tighter mb-2 italic">Observatoire de l'Aude</h2>
+          <p className="text-indigo-100 opacity-90 font-medium">Comparatif des stations : Ouest • Centre • Littoral</p>
         </div>
 
+        {/* Grille Principale */}
         <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-indigo-200 bg-white/30">
           {Object.entries(audeData).map(([key, ville]: [string, any], idx: number) => {
             const normale = NORMALES_CLIMAT[key as keyof typeof NORMALES_CLIMAT];
             
             return (
-              <div key={idx} className="p-8 flex flex-col gap-6 hover:bg-white/60 transition-all duration-300">
+              <div key={idx} className="p-6 flex flex-col gap-6 hover:bg-white/60 transition-all duration-300">
                 
-                {/* 1. ENTETE : VILLE & TEMPÉRATURE */}
+                {/* Entête Ville */}
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-2xl font-black text-indigo-950 tracking-tight">{ville.ville}</h3>
+                    <h3 className="text-2xl font-black text-indigo-950 tracking-tight leading-tight">{ville.ville}</h3>
                     <div className="flex items-center gap-2 mt-2">
                       {getWeatherIcon(ville.iconCode)}
-                      <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{ville.condition}</span>
+                      <span className="text-[10px] font-black text-indigo-500 uppercase">{ville.condition}</span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end">
+                  <div className="text-right">
                     <span className="text-4xl font-black text-indigo-600 leading-none">{ville.temp}°</span>
-                    <span className="text-[9px] font-bold text-green-500 uppercase mt-2 animate-pulse">● Direct</span>
+                    <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase">Moy. An : {normale.moyAn}</p>
                   </div>
                 </div>
 
-                {/* 2. COMPTEURS DYNAMIQUES (Calculés par l'API) */}
+                {/* Compteurs Annuels Dynamiques */}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="bg-white p-2 rounded-xl border border-indigo-100 shadow-sm text-center">
-                    <p className="text-[8px] font-black text-slate-400 uppercase">Jours Vent</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1">Jours Vent{">"}57</p>
                     <p className="text-sm font-black text-indigo-700">{ville.stats.joursVentes}j</p>
+                    <p className="text-[7px] text-slate-300">Norme: {normale.joursVent}j</p>
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-indigo-100 shadow-sm text-center">
-                    <p className="text-[8px] font-black text-slate-400 uppercase">Jours {">"}25°</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1">Jours {">"}25°</p>
                     <p className="text-sm font-black text-orange-600">{ville.stats.joursChaleur}j</p>
+                    <p className="text-[7px] text-slate-300">Norme: {normale.estivaux}j</p>
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-indigo-100 shadow-sm text-center">
-                    <p className="text-[8px] font-black text-slate-400 uppercase">Record An</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1">Record An</p>
                     <p className="text-sm font-black text-red-600">{ville.stats.recordChaleur}</p>
+                    <p className="text-[7px] text-slate-300">Hiver: {normale.froid}</p>
                   </div>
                 </div>
 
-                {/* 3. BILAN CUMULÉ VS NORMALES (Fixes) */}
-                <div className="bg-indigo-900/5 rounded-2xl p-5 border border-indigo-100 space-y-4">
-                  <div className="flex items-center gap-2 border-b border-indigo-200/50 pb-2">
-                    <Info size={14} className="text-indigo-400" />
-                    <h4 className="text-[10px] font-black uppercase text-indigo-500 tracking-wider">État Climatique Annuel</h4>
+                {/* Bloc Bilan vs Normales */}
+                <div className="bg-indigo-900/5 rounded-2xl p-4 border border-indigo-100 space-y-4">
+                  <div className="flex items-center justify-between border-b border-indigo-200/50 pb-2">
+                    <h4 className="text-[10px] font-black uppercase text-indigo-500 flex items-center gap-1">
+                      <Info size={12} /> Bilans Annuels
+                    </h4>
+                    <span className="text-[9px] font-bold text-indigo-400 italic">Données 1991-2020</span>
                   </div>
                   
                   <div className="space-y-3">
                     {/* Soleil */}
-                    <div className="flex justify-between items-end">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-indigo-700/60 uppercase">Soleil</span>
-                        <span className="text-xs font-black text-indigo-900">{ville.stats.totalSunshine}</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold text-indigo-700/70">☀️ Ensoleillement</span>
+                      <div className="text-right">
+                        <span className="text-xs font-black block">{ville.stats.totalSunshine}</span>
+                        <span className="text-[8px] text-slate-400">Normal: {normale.soleil}h</span>
                       </div>
-                      <span className="text-[9px] text-slate-400 italic font-medium">Norme: {normale.soleil}h</span>
                     </div>
                     
                     {/* Pluie */}
-                    <div className="flex justify-between items-end">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-indigo-700/60 uppercase">Cumul Pluie</span>
-                        <span className="text-xs font-black text-indigo-900">{ville.stats.totalRain} mm</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold text-indigo-700/70">💧 Cumul Pluie</span>
+                      <div className="text-right">
+                        <span className="text-xs font-black block">{ville.stats.totalRain} mm</span>
+                        <span className="text-[8px] text-slate-400">Normal: {normale.pluie}mm</span>
                       </div>
-                      <span className="text-[9px] text-slate-400 italic font-medium">Norme: {normale.pluie}mm</span>
-                    </div>
-
-                    {/* Vent */}
-                    <div className="flex justify-between items-end">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-indigo-700/60 uppercase">Rafale Max</span>
-                        <span className="text-xs font-black text-indigo-900">{ville.stats.maxWind}</span>
-                      </div>
-                      <span className="text-[9px] text-slate-400 italic font-medium">Vent {">"}57: {normale.joursVent}j/an</span>
                     </div>
 
                     {/* Hydrométrie Sol */}
                     <div className="pt-2 border-t border-indigo-200/40">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] font-black uppercase text-indigo-800 tracking-widest text-xs">Bilan Hydrique</span>
-                        <span className={`text-[11px] font-black px-2 py-0.5 rounded shadow-sm ${
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-[10px] font-black uppercase text-indigo-800">Bilan Sol (Pluie-Evap)</span>
+                        <span className={`text-[10px] font-black px-2 py-0.5 rounded shadow-sm ${
                           ville.stats.waterBalance < 0 ? "bg-orange-100 text-orange-700" : "bg-emerald-100 text-emerald-700"
                         }`}>
                           {ville.stats.waterBalance} mm
@@ -167,15 +174,33 @@ export default function MeteoAudePage() {
           })}
         </div>
 
-        {/* Note régionale explicative */}
-        <div className="bg-indigo-950 text-indigo-300 p-6 flex flex-col md:flex-row items-center gap-4">
-          <div className="bg-indigo-800/50 p-3 rounded-full border border-indigo-700">
-            <Thermometer className="text-cyan-400" size={24} />
+        {/* Nouveau Bloc : Focus sur les vents */}
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-indigo-100/50 border-t border-indigo-200">
+          <div className="bg-white/80 p-4 rounded-2xl border border-indigo-200">
+            <h4 className="text-indigo-600 font-black uppercase text-xs mb-2 flex items-center gap-2">
+              <Wind size={16} /> La Cers (Nord-Ouest)
+            </h4>
+            <p className="text-[11px] leading-relaxed">
+              Vent dominant à <b>Carcassonne</b> et <b>Lézignan</b>. Froid en hiver, il dégage parfaitement le ciel mais possède un fort pouvoir asséchant pour les sols et les cultures.
+            </p>
           </div>
-          <p className="text-[11px] leading-relaxed italic text-center md:text-left">
-            <b>Comprendre les normales :</b> Les "Normes" indiquent les moyennes annuelles de référence (1991-2020). 
-            Le nombre de <b>jours ventés</b> comptabilise les rafales supérieures à 57 km/h (Beaufort 7), caractéristiques du couloir de l'Aude.
-            Un <b>bilan hydrique négatif</b> signale une évaporation supérieure aux précipitations, accentuant le risque de sécheresse agricole.
+          <div className="bg-white/80 p-4 rounded-2xl border border-indigo-200">
+            <h4 className="text-orange-600 font-black uppercase text-xs mb-2 flex items-center gap-2">
+              <Wind size={16} /> L'Autan (Sud-Est)
+            </h4>
+            <p className="text-[11px] leading-relaxed">
+              Surnommé "le vent des fous". Il est chaud, turbulent et humide. Il souffle principalement dans le Lauragais et annonce souvent l'arrivée de la pluie par la mer.
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-indigo-950 text-indigo-300 p-6 flex items-center gap-4">
+          <Thermometer className="text-cyan-400 shrink-0" size={30} />
+          <p className="text-[10px] leading-relaxed italic">
+            <b>Note scientifique :</b> Les normales saisonnières sont basées sur les moyennes trentenaires Météo-France. 
+            Les jours estivaux à <b>Lézignan</b> (95j) illustrent son climat de "chaufferie" des Corbières, moins tempéré par la mer que <b>Narbonne</b>.
           </p>
         </div>
       </section>
