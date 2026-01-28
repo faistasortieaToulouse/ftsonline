@@ -743,33 +743,48 @@ useEffect(() => {
 </div>
 
         {/* 3. BILAN ANNUEL */}
-        <div className="flex flex-wrap items-center gap-3 border-l-2 border-indigo-300 pl-4 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm">
-          <div className="flex flex-col leading-none border-r border-indigo-200 pr-3 mr-1">
-            <span className="text-[9px] uppercase font-black text-indigo-500 tracking-tighter">Bilan Toulouse</span>
-            <span className="text-[10px] font-bold text-indigo-900 italic tracking-tight">Depuis le 1er janv.</span>
-          </div>
+<div className="flex flex-wrap items-center gap-3 border-l-2 border-indigo-300 pl-4 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm">
+  <div className="flex flex-col leading-none border-r border-indigo-200 pr-3 mr-1">
+    <span className="text-[9px] uppercase font-black text-indigo-500 tracking-tighter">Bilan Toulouse</span>
+    <span className="text-[10px] font-bold text-indigo-900 italic tracking-tight">Depuis le 1er janv.</span>
+  </div>
 
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">☀️</span>
-            <span>Soleil : <b className="text-indigo-900">{annuelData?.stats?.totalSunshine || '--'}h</b></span>
-          </div>
+  {/* Soleil : Réel vs Normale */}
+  <div className="flex items-center gap-1.5">
+    <span className="text-sm">☀️</span>
+    <div className="flex flex-col leading-none">
+      <span className="text-[11px]">Soleil : <b className="text-indigo-900">{annuelData?.stats?.totalSunshine || '--'}h</b></span>
+      <span className="text-[8px] text-slate-400 font-bold">Normale : 2 112.3h</span>
+    </div>
+  </div>
 
-          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
-            <span className="text-sm">💧</span>
-            <span>Pluie : <b className="text-indigo-900">{annuelData?.stats?.totalRain || '--'}mm</b></span>
-          </div>
+  {/* Pluie : Réel vs Normale */}
+  <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
+    <span className="text-sm">💧</span>
+    <div className="flex flex-col leading-none">
+      <span className="text-[11px]">Pluie : <b className="text-indigo-900">{annuelData?.stats?.totalRain || '--'}mm</b></span>
+      <span className="text-[8px] text-slate-400 font-bold">Normale : 600.1mm</span>
+    </div>
+  </div>
 
-          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
-            <span className="text-sm">🌪️</span>
-            <span>Vent Max : <b className="text-indigo-900">{annuelData?.stats?.maxWind || '--'}km/h</b></span>
-          </div>
+  {/* Vent Max */}
+  <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
+    <span className="text-sm">🌪️</span>
+    <div className="flex flex-col leading-none">
+      <span className="text-[11px]">Vent Max : <b className="text-indigo-900">{annuelData?.stats?.maxWind || '--'}km/h</b></span>
+      <span className="text-[8px] text-slate-400 font-bold italic">Records 2026</span>
+    </div>
+  </div>
 
-          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
-            <span className="text-sm">🌱</span>
-            <span>Sol : <b className={parseFloat(annuelData?.stats?.waterBalance) < 0 ? "text-orange-700" : "text-emerald-700"}>
-              {annuelData?.stats?.waterBalance || '--'}mm
-            </b></span>
-          </div>
+  {/* État du Sol */}
+  <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
+    <span className="text-sm">🌱</span>
+    <div className="flex flex-col leading-none">
+      <span className="text-[11px]">Sol : <b className={parseFloat(annuelData?.stats?.waterBalance) < 0 ? "text-orange-700" : "text-emerald-700"}>
+        {annuelData?.stats?.waterBalance || '--'}mm
+      </b></span>
+      <span className="text-[8px] text-slate-400 font-bold uppercase">{parseFloat(annuelData?.stats?.waterBalance) < 0 ? "Déficit" : "Excédent"}</span>
+    </div>
         </div>
       </div>
     </div>
