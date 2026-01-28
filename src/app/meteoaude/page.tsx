@@ -192,8 +192,35 @@ export default function MeteoAudePage() {
           })}
         </div>
         
-        {/* ... (Reste du code : Sections Vents et Footer inchangés) */}
+        {/* Section Vents */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-indigo-100/50 border-t border-indigo-200">
+          <div className="bg-white/80 p-4 rounded-2xl border border-indigo-200 shadow-sm">
+            <h4 className="text-indigo-600 font-black uppercase text-xs mb-2 flex items-center gap-2">
+              <Wind size={16} /> La Cers (Nord-Ouest)
+            </h4>
+            <p className="text-[11px] leading-relaxed">
+              Vent froid et sec, dominant à <b>Carcassonne</b> et <b>Lézignan</b>. Il dégage parfaitement le ciel mais possède un fort pouvoir asséchant pour les sols.
+            </p>
+          </div>
+          <div className="bg-white/80 p-4 rounded-2xl border border-indigo-200 shadow-sm">
+            <h4 className="text-orange-600 font-black uppercase text-xs mb-2 flex items-center gap-2">
+              <Wind size={16} /> L'Autan (Sud-Est)
+            </h4>
+            <p className="text-[11px] leading-relaxed">
+              Le "vent des fous", chaud et humide. Il souffle principalement vers l'Ouest du département et annonce souvent l'arrivée de la pluie.
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Info */}
+        <div className="bg-indigo-950 text-indigo-300 p-6 flex items-center gap-4">
+          <Thermometer className="text-cyan-400 shrink-0" size={30} />
+          <p className="text-[10px] leading-relaxed italic">
+            <b>Note :</b> Les données réelles sont calculées depuis le 1er janvier. Les normales (1991-2020) servent de référence pour l'année complète. Narbonne bénéficie d'une influence maritime qui tempère les extrêmes.
+          </p>
+        </div>
       </section>
     </div>
   );
 }
+
