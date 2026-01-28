@@ -732,17 +732,6 @@ useEffect(() => {
       </div>
     </div>
 
-    {/* 3. SECTION BILAN ANNUEL (Le bloc blanc/gris) */}
-    <div className="flex flex-wrap items-center gap-3 border-l-2 border-indigo-300 pl-4 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm">
-      
-      {/* ... Tes stats annuelles (Soleil, Pluie, Vent Max, Sol) ici ... */}
-      <div className="flex items-center gap-1.5">
-        <span className="text-sm">☀️</span>
-        <span>Soleil : <b className="text-indigo-900">{annuelData?.stats?.totalSunshine || '--'}h</b></span>
-      </div>
-      {/* etc... */}
-    </div>
-
   </div>
 </div>
 
