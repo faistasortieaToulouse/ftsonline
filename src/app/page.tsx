@@ -761,7 +761,7 @@ useEffect(() => {
 
           <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
             <span className="text-sm">🌪️</span>
-            <span>Vent : <b className="text-indigo-900">{annuelData?.stats?.maxWind || '--'}km/h</b></span>
+            <span>Vent Max : <b className="text-indigo-900">{annuelData?.stats?.maxWind || '--'}km/h</b></span>
           </div>
 
           <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
