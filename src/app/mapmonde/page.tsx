@@ -1,112 +1,271 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import * as topojson from 'topojson-client';
-import 'leaflet/dist/leaflet.css';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
-const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
-const GeoJSON = dynamic(() => import('react-leaflet').then(mod => mod.GeoJSON), { ssr: false });
+const PLACEHOLDER_IMAGE =
+  "https://via.placeholder.com/400x200?text=Événement+Meetup";
 
-export default function MapMondePage() {
-  const [data, setData] = useState<any>(null);
+type MeetupEvent = {
+  title: string;
+  link: string;
+  startDate: Date;
+  location: string;
+  description: string;
+  dateFormatted: string;
+  fullAddress: string;
+  image?: string;
+};
 
-  useEffect(() => {
-    fetch('/api/mapmonde')
-      .then(res => res.json())
-      .then(topology => {
-        // Conversion légère en mémoire
-        const geojson = topojson.feature(topology, topology.objects.data);
-        setData(geojson);
+export default function MeetupFullPage() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = useState<MeetupEvent[]>([]);
+
+  // Recherche
+  const [search, setSearch] = useState("");
+  const [filteredEvents, setFilteredEvents] = useState<MeetupEvent[]>([]);
+
+  // Vue (plein écran / liste)
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+
+  async function fetchAllEvents() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const endpoints = [
+        "/api/meetup-events",
+        "/api/meetup-expats",
+        "/api/meetup-coloc",
+        "/api/meetup-sorties",
+      ];
+
+      const responses = await Promise.all(
+        endpoints.map((ep) => fetch(ep).then((res) => res.json()))
+      );
+
+      const all = responses.flatMap((r) => r.events || []);
+
+      // 🔥 Suppression des doublons
+      const unique = new Map();
+      all.forEach((ev: any) => {
+        const key = `${ev.title}-${ev.startDate}`;
+        if (!unique.has(key)) unique.set(key, ev);
       });
+
+      const cleanEvents = Array.from(unique.values()).map((ev: any) => {
+        const date = ev.startDate ? new Date(ev.startDate) : null;
+
+        return {
+          title: ev.title,
+          link: ev.link,
+          startDate: date,
+          dateFormatted: date
+            ? date.toLocaleString("fr-FR", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "Date inconnue",
+          description: ev.description,
+          fullAddress: ev.fullAddress || ev.location,
+          image: ev.coverImage || PLACEHOLDER_IMAGE,
+        };
+      });
+
+      // Trie chronologique
+      cleanEvents.sort(
+        (a: any, b: any) => a.startDate.getTime() - b.startDate.getTime()
+      );
+
+      setEvents(cleanEvents);
+      setFilteredEvents(cleanEvents);
+    } catch (err: any) {
+      setError(err.message || "Erreur lors du chargement.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Chargement initial
+  useEffect(() => {
+    fetchAllEvents();
   }, []);
 
-  const countryStyle = {
-    fillColor: "#0f172a",
-    weight: 0.8,
-    opacity: 1,
-    color: '#334155', // Gris bleuté discret
-    fillOpacity: 0.6
-  };
-
-  const onEachCountry = (feature: any, layer: any) => {
-    // Ajout de l'étiquette volante
-    if (feature.properties && feature.properties.name) {
-      layer.bindTooltip(feature.properties.name, {
-        sticky: true, // Suit la souris
-        className: 'custom-tooltip', // Pour le style CSS
-        direction: 'top',
-        opacity: 0.9
-      });
+  // 🔎 Filtrage des évènements
+  useEffect(() => {
+    if (!search.trim()) {
+      setFilteredEvents(events);
+      return;
     }
 
-    layer.on({
-      mouseover: (e: any) => {
-        const target = e.target;
-        target.setStyle({
-          fillColor: "#1e3a8a",
-          color: "#fde047", // Jaune constellation au survol
-          fillOpacity: 0.8,
-          weight: 2
-        });
-        target.bringToFront(); // Met les frontières au premier plan
-      },
-      mouseout: (e: any) => {
-        const target = e.target;
-        target.setStyle(countryStyle);
-      },
-      click: (e: any) => {
-        // Zoom sur le pays au clic
-        const map = e.target._map;
-        map.fitBounds(e.target.getBounds());
-      }
-    });
-  };
+    const query = search.toLowerCase();
 
-  if (!data) return (
-    <div className="bg-[#020617] h-screen flex items-center justify-center">
-      <div className="text-blue-500 animate-pulse font-mono tracking-tighter">CHARGEMENT DES DONNÉES TERRESTRES...</div>
-    </div>
-  );
+    const result = events.filter((ev) => {
+      const text = `${ev.title} ${ev.description} ${ev.fullAddress}`.toLowerCase();
+      const dateText = ev.dateFormatted.toLowerCase();
+      return text.includes(query) || dateText.includes(query);
+    });
+
+    setFilteredEvents(result);
+  }, [search, events]);
 
   return (
-    <div className="h-screen w-full bg-[#020617] p-4 relative">
-      {/* Styles CSS injectés pour le tooltip */}
-      <style jsx global>{`
-        .custom-tooltip {
-          background: #1e293b !important;
-          border: 1px solid #3b82f6 !important;
-          color: #fde047 !important;
-          font-weight: bold !important;
-          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
-          padding: 4px 10px !important;
-          border-radius: 4px !important;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
-        }
-        .leaflet-container {
-          background: #020617 !important;
-        }
-      `}</style>
+    <div className="container mx-auto py-10 px-4">
 
-      <div className="h-full w-full rounded-2xl overflow-hidden border border-slate-800">
-        {/* @ts-ignore */}
-        <MapContainer 
-          center={[20, 0]} 
-          zoom={2.5} 
-          style={{ height: '100%', width: '100%' }}
-          zoomControl={false}
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
+      <h1 className="text-3xl font-bold mb-2">
+        Tous les événements Meetup Toulouse
+      </h1>
+
+      <p className="text-muted-foreground mb-6">
+        Fusion des groupes Meetup de loisirs — {filteredEvents.length} évènement(s)
+      </p>
+
+      {/* 🔍 Barre de recherche */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Rechercher un évènement (titre, lieu, description, date...)"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
+        />
+      </div>
+
+      {/* 🔄 Bouton refresh */}
+      <Button
+        onClick={fetchAllEvents}
+        disabled={loading}
+        className="mb-6 bg-red-600 hover:bg-red-700"
+      >
+        {loading ? "Chargement..." : "🔄 Rafraîchir les événements"}
+      </Button>
+
+      {/* 🟦 Choix du mode d’affichage */}
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={() => setViewMode("card")}
+          className={`px-4 py-2 rounded transition ${
+            viewMode === "card"
+              ? "bg-red-600 text-white shadow"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
         >
-          <GeoJSON 
-            data={data} 
-            style={countryStyle}
-            onEachFeature={onEachCountry}
-          />
-        </MapContainer>
+          🗂️ Plein écran
+        </button>
+
+        <button
+          onClick={() => setViewMode("list")}
+          className={`px-4 py-2 rounded transition ${
+            viewMode === "list"
+              ? "bg-red-600 text-white shadow"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          📋 Vignette
+        </button>
       </div>
 
-      <div className="absolute bottom-10 left-10 pointer-events-none">
-        <h1 className="text-slate-500 text-xs font-black uppercase tracking-[0.5em]">Global / Planisphère</h1>
-      </div>
+      {error && (
+        <div className="p-4 mb-4 border border-red-500 bg-red-50 text-red-700 rounded">
+          Erreur : {error}
+        </div>
+      )}
+
+      {/* 🟥 MODE PLEIN ÉCRAN */}
+      {viewMode === "card" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredEvents.map((ev, index) => (
+            <div
+              key={ev.link || index}
+              className="bg-white rounded-xl shadow overflow-hidden border"
+            >
+              <img
+                src={ev.image}
+                alt={ev.title}
+                className="w-full aspect-[16/9] object-cover"
+              />
+
+              <div className="p-4 flex flex-col flex-1">
+                <h2 className="text-xl font-semibold text-red-700 mb-2">
+                  {ev.title}
+                </h2>
+
+                <p className="font-medium text-sm mb-1">📍 {ev.fullAddress}</p>
+                <p className="text-gray-600 text-sm mb-3">
+                  {ev.dateFormatted}
+                </p>
+
+                <p className="text-sm mb-3 line-clamp-4 whitespace-pre-wrap">
+                  {ev.description}
+                </p>
+
+                <a
+                  href={ev.link}
+                  target="_blank"
+                  className="bg-red-600 text-white py-2 px-3 rounded text-center hover:bg-red-700"
+                >
+                  🔗 Voir l’événement
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 🟨 MODE LISTE */}
+      {viewMode === "list" && (
+        <div className="space-y-4">
+          {filteredEvents.map((ev, index) => (
+            <div
+              key={ev.link || index}
+              className="flex items-start gap-4 p-3 border rounded-lg bg-white shadow-sm"
+            >
+              <img
+                src={ev.image}
+                className="w-24 h-24 rounded object-cover flex-shrink-0"
+                alt={ev.title}
+              />
+
+              <div className="flex flex-col flex-1">
+                <h2 className="text-lg font-semibold text-red-700 line-clamp-2">
+                  {ev.title}
+                </h2>
+
+                <p className="text-sm font-medium">📍 {ev.fullAddress}</p>
+                <p className="text-sm text-gray-600">{ev.dateFormatted}</p>
+
+                <a
+                  href={ev.link}
+                  target="_blank"
+                  className="mt-2 text-red-600 underline"
+                >
+                  Voir →
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!loading && filteredEvents.length === 0 && (
+        <p className="mt-6 text-xl text-gray-500 text-center p-8 border border-dashed rounded">
+          Aucun événement trouvé.
+        </p>
+      )}
     </div>
   );
 }
