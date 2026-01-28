@@ -2,77 +2,99 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, MoonStars } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export default function ConstellationPage() {
-  const [stars, setStars] = useState([]);
+  const [data, setData] = useState<any>(null);
   const [month, setMonth] = useState(new Date().getMonth());
   const [view, setView] = useState<'Nord' | 'Sud'>('Nord');
 
   useEffect(() => {
     fetch(`/api/constellation?month=${month}`)
       .then(res => res.json())
-      .then(setStars);
+      .then(setData);
   }, [month]);
 
-  // Projection mathématique des coordonnées Dec/RA en pixels X/Y
   const project = (ra: number, dec: number) => {
-    const angle = (ra / 24) * 2 * Math.PI;
-    // Pour le Nord, le centre est Dec=90. Pour le Sud, Dec=-90.
-    const r = view === 'Nord' ? (90 - dec) * 2.5 : (90 + dec) * 2.5;
-    const x = 250 + r * Math.cos(angle);
-    const y = 250 + r * Math.sin(angle);
-    return { x, y };
+    const angle = (ra / 24) * 2 * Math.PI - Math.PI / 2;
+    // Rayon : 90-dec pour le nord, 90+dec pour le sud. Multiplié par 5 pour un cercle de 500px de rayon.
+    const r = view === 'Nord' ? (90 - dec) * 5 : (90 + dec) * 5;
+    return { x: 500 + r * Math.cos(angle), y: 500 + r * Math.sin(angle) };
   };
 
+  if (!data) return <div className="bg-[#020617] min-h-screen text-white flex items-center justify-center">Chargement du ciel...</div>;
+
   return (
-    <div className="min-h-screen bg-[#020617] text-white p-6">
-      <header className="max-w-5xl mx-auto flex justify-between items-center mb-8">
-        <Link href="/" className="text-blue-400 flex items-center gap-2 hover:underline">
-          <ArrowLeft size={18} /> Accueil
-        </Link>
-        <div className="flex bg-slate-800 rounded-lg p-1">
-          <button onClick={() => setView('Nord')} className={`px-4 py-1 rounded ${view === 'Nord' ? 'bg-blue-600' : ''}`}>Nord</button>
-          <button onClick={() => setView('Sud')} className={`px-4 py-1 rounded ${view === 'Sud' ? 'bg-blue-600' : ''}`}>Sud</button>
+    <div className="min-h-screen bg-[#020617] text-white p-4">
+      <header className="flex justify-between items-center mb-8 max-w-6xl mx-auto">
+        <Link href="/" className="flex items-center gap-2 text-blue-400"><ArrowLeft size={20}/> Retour</Link>
+        <div className="flex gap-4">
+            <button onClick={() => setView(view === 'Nord' ? 'Sud' : 'Nord')} className="bg-blue-600 px-4 py-1 rounded">
+                Vue {view === 'Nord' ? 'Sud' : 'Nord'}
+            </button>
+            <select value={month} onChange={(e) => setMonth(parseInt(e.target.value))} className="bg-slate-800 rounded px-2">
+                {["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"].map((m, i) => (
+                    <option key={i} value={i}>{m}</option>
+                ))}
+            </select>
         </div>
-        <select 
-          value={month} 
-          onChange={(e) => setMonth(parseInt(e.target.value))}
-          className="bg-slate-800 border-none rounded-lg text-sm"
-        >
-          {["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"].map((m, i) => (
-            <option key={i} value={i}>{m}</option>
-          ))}
-        </select>
       </header>
 
-      <div className="flex justify-center relative">
-        <div className="w-[500px] h-[500px] rounded-full border border-blue-900/50 bg-[radial-gradient(circle_at_center,_#0f172a_0%,_#020617_100%)] relative overflow-hidden shadow-[0_0_100px_rgba(30,64,175,0.3)]">
-          <svg viewBox="0 0 500 500" className="w-full h-full">
-            {stars.map((star: any, i: number) => {
-              // On ne projette que les étoiles de l'hémisphère choisi
-              if ((view === 'Nord' && star.dec < -10) || (view === 'Sud' && star.dec > 10)) return null;
+      <div className="flex justify-center">
+        <div className="relative w-full max-w-[800px] aspect-square rounded-full border border-blue-900/30 bg-[#030712] overflow-hidden">
+          <svg viewBox="0 0 1000 1000" className="w-full h-full">
+            {/* 1. DESSIN DES LIGNES DES CONSTELLATIONS */}
+            {data.lines.map((con: any, i: number) => (
+              <g key={i}>
+                {con.paths.map((path: any, j: number) => {
+                    // On ne dessine que si au moins un point est dans l'hémisphère visible
+                    const isVisible = path.some((p: any) => view === 'Nord' ? p[1] > -20 : p[1] < 20);
+                    if (!isVisible) return null;
+                    
+                    return (
+                        <polyline
+                            key={j}
+                            points={path.map((p: any) => {
+                                const {x, y} = project(p[0], p[1]);
+                                return `${x},${y}`;
+                            }).join(' ')}
+                            fill="none"
+                            stroke="#3b82f6"
+                            strokeWidth="1"
+                            opacity="0.25"
+                        />
+                    );
+                })}
+              </g>
+            ))}
+
+            {/* 2. DESSIN DES ÉTOILES */}
+            {data.stars.map((star: any, i: number) => {
+              if (view === 'Nord' && star.dec < -15) return null;
+              if (view === 'Sud' && star.dec > 15) return null;
               
               const { x, y } = project(star.ra, star.dec);
-              const size = Math.max(0.5, (6 - star.mag) * 0.8);
+              const size = Math.max(0.6, (6 - star.mag) * 0.8);
               
               return (
-                <circle 
-                  key={i} 
-                  cx={x} cy={y} r={size} 
-                  fill={star.visible ? "white" : "#1e293b"}
-                  className={star.visible ? "animate-pulse" : ""}
-                  opacity={star.visible ? 1 : 0.3}
-                />
+                <circle key={i} cx={x} cy={y} r={size} fill={star.visible ? "white" : "#1e293b"} opacity={star.visible ? 1 : 0.3} />
               );
+            })}
+
+            {/* 3. DESSIN DES NOMS DES CONSTELLATIONS */}
+            {data.names.map((n: any, i: number) => {
+                if (view === 'Nord' && n.dec < 0) return null;
+                if (view === 'Sud' && n.dec > 0) return null;
+                const { x, y } = project(n.ra, n.dec);
+                return (
+                    <text key={i} x={x} y={y} fontSize="10" fill="#60a5fa" opacity="0.4" textAnchor="middle" className="pointer-events-none select-none uppercase font-bold tracking-widest">
+                        {n.name}
+                    </text>
+                );
             })}
           </svg>
         </div>
       </div>
-      
-      <p className="text-center mt-6 text-slate-500 text-sm italic">
-        Affichage des étoiles de magnitude &lt; 6.0 à minuit. Les points brillants sont visibles ce mois-ci.
-      </p>
     </div>
   );
 }
