@@ -7,32 +7,46 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const month = parseInt(searchParams.get('month') || "0");
 
-    // Chemin dynamique vers le dossier public
-    const filePath = path.join(process.cwd(), 'public', 'constellation', 'stars.json');
+    const publicDir = path.join(process.cwd(), 'public', 'constellation');
     
-    const fileContent = await fs.readFile(filePath, 'utf8');
-    const stars = JSON.parse(fileContent);
+    // Lecture des 3 fichiers en parallèle
+    const [starsData, linesData, namesData] = await Promise.all([
+      fs.readFile(path.join(publicDir, 'stars.json'), 'utf-8'),
+      fs.readFile(path.join(publicDir, 'constellations.lines.json'), 'utf-8'),
+      fs.readFile(path.join(publicDir, 'constellations.json'), 'utf-8')
+    ]);
 
-    // Calcul de la RA de minuit (décalage de 2h par mois)
+    const stars = JSON.parse(starsData);
+    const lines = JSON.parse(linesData); // Format GeoJSON de d3-celestial
+    const names = JSON.parse(namesData);
+
+    // Calcul de la RA de minuit
     const solarRA = (month * 2) % 24;
     const midnightRA = (solarRA + 12) % 24;
 
-    const processedStars = stars.map((s: any) => {
-      let diff = Math.abs(s.ra - midnightRA);
-      if (diff > 12) diff = 24 - diff;
-      
-      // Une étoile est "visible" si elle est à +/- 6h de la RA de minuit
-      const isVisible = diff < 6;
-
-      return {
-        ...s,
-        visible: isVisible
-      };
+    return NextResponse.json({
+      stars: stars.map((s: any) => {
+        let diff = Math.abs(s.ra - midnightRA);
+        if (diff > 12) diff = 24 - diff;
+        return { ...s, visible: diff < 6.5 };
+      }),
+      // On simplifie les lignes GeoJSON pour le frontend
+      lines: lines.features.map((f: any) => ({
+        id: f.id,
+        // Conversion Degrés [0,360] -> Heures [0,24]
+        paths: f.geometry.coordinates.map((path: any) => 
+          path.map((p: any) => [p[0] / 15, p[1]])
+        )
+      })),
+      // On prépare les noms avec leurs coordonnées centrales
+      names: names.features.map((f: any) => ({
+        name: f.properties.name,
+        ra: f.geometry.coordinates[0] / 15,
+        dec: f.geometry.coordinates[1]
+      }))
     });
-
-    return NextResponse.json(processedStars);
   } catch (error) {
-    console.error("Erreur de lecture du fichier stars.json:", error);
-    return NextResponse.json({ error: "Fichier de données introuvable" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Erreur de chargement des données" }, { status: 500 });
   }
 }
