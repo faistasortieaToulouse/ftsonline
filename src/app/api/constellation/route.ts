@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import stars from '@/data/constellation/stars.json';
+import stars from '../../../data/constellation/stars.json';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
