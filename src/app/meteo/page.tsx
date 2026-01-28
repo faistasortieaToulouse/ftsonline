@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { CloudRain, Thermometer, Sun, Wind, Droplets, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { CloudRain, Thermometer, Sun, Wind, Droplets, TrendingUp, TrendingDown, Minus, Gauge } from 'lucide-react';
 
 export default function MeteoPage() {
   const [data, setData] = useState<any>(null);
@@ -20,12 +20,9 @@ export default function MeteoPage() {
     </div>
   );
 
-  // Petit composant interne pour afficher les tendances (Différence N vs N-1)
   const TrendIndicator = ({ value, unit, inverse = false }: { value: number, unit: string, inverse?: boolean }) => {
     const isPositive = value > 0;
     const isZero = value === 0;
-    
-    // Pour la pluie, positif = bien (bleu), pour la temp, positif = plus chaud (rouge)
     const colorClass = isZero ? "text-slate-500" : (isPositive ? (inverse ? "text-blue-400" : "text-red-400") : (inverse ? "text-red-400" : "text-blue-400"));
 
     return (
@@ -48,7 +45,7 @@ export default function MeteoPage() {
         <div className="flex justify-between items-end">
           <div>
             <h1 className="text-5xl font-black tracking-tighter mb-2 italic">TOULOUSE<span className="text-blue-500">.METEO</span></h1>
-            <p className="text-slate-500 font-mono uppercase text-sm tracking-widest">Analyse comparative {new Date().getFullYear()} vs {new Date().getFullYear() - 1}</p>
+            <p className="text-slate-500 font-mono uppercase text-sm tracking-widest">Analyse comparative 2026 vs 2025</p>
           </div>
           <div className="hidden md:block text-right">
             <p className="text-slate-600 text-xs font-bold">COORDONNÉES</p>
@@ -57,7 +54,9 @@ export default function MeteoPage() {
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Grille des statistiques - Changée en 5 colonnes sur desktop */}
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        
         {/* Température */}
         <div className="bg-slate-900/40 p-5 rounded-3xl border border-slate-800 backdrop-blur-sm">
           <Thermometer className="text-red-400 mb-3" size={24} />
@@ -74,7 +73,17 @@ export default function MeteoPage() {
           <TrendIndicator value={parseFloat(data.stats.diffRain)} unit="mm" inverse={true} />
         </div>
 
-        {/* Vent */}
+        {/* NOUVEAU : Vent du Jour (Temps réel) */}
+        <div className="bg-blue-600/20 p-5 rounded-3xl border border-blue-500/30 backdrop-blur-sm">
+          <Gauge className="text-blue-400 mb-3" size={24} />
+          <p className="text-blue-300 text-xs font-bold uppercase">Vent Actuel</p>
+          <p className="text-3xl font-black text-white">{data.vitesseVent} <span className="text-sm">km/h</span></p>
+          <p className="text-[10px] text-blue-400 mt-2 uppercase font-bold tracking-tighter">
+            État : {data.condition === "Vent" ? "🌬️ Vent d'Autan" : "🕊️ Calme"}
+          </p>
+        </div>
+
+        {/* Vent : Rafale Max (Record Annuel) */}
         <div className="bg-slate-900/40 p-5 rounded-3xl border border-slate-800 backdrop-blur-sm">
           <Wind className="text-teal-400 mb-3" size={24} />
           <p className="text-slate-500 text-xs font-bold uppercase">Rafale Max</p>
@@ -93,13 +102,11 @@ export default function MeteoPage() {
         </div>
       </div>
 
-      {/* Graphique d'ensoleillement */}
+      {/* Graphique */}
       <div className="max-w-6xl mx-auto bg-slate-900/40 p-6 rounded-3xl border border-slate-800 h-[400px]">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-slate-300 font-bold flex items-center gap-2 uppercase text-sm tracking-widest">
-            <Sun size={18} className="text-yellow-400" /> Ensoleillement cumulé : {data.stats.totalSunshine}h
-          </h2>
-        </div>
+        <h2 className="text-slate-300 font-bold flex items-center gap-2 uppercase text-sm tracking-widest mb-6">
+          <Sun size={18} className="text-yellow-400" /> Ensoleillement cumulé : {data.stats.totalSunshine}h
+        </h2>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
@@ -111,10 +118,8 @@ export default function MeteoPage() {
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
             <XAxis dataKey="date" stroke="#475569" fontSize={10} tickLine={false} axisLine={false} />
             <YAxis stroke="#475569" fontSize={10} tickLine={false} axisLine={false} unit="h" />
-            <Tooltip 
-              contentStyle={{ backgroundColor: '#020617', borderRadius: '12px', border: '1px solid #1e293b', color: '#fff' }}
-            />
-            <Area type="monotone" dataKey="soleil" stroke="#fbbf24" strokeWidth={2} fill="url(#colorSun)" name="Heures de soleil" />
+            <Tooltip contentStyle={{ backgroundColor: '#020617', borderRadius: '12px', border: '1px solid #1e293b', color: '#fff' }} />
+            <Area type="monotone" dataKey="soleil" stroke="#fbbf24" strokeWidth={2} fill="url(#colorSun)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
