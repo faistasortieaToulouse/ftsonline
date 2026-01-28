@@ -3,26 +3,26 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { 
-  ArrowLeft, Wind, Sun, Info, 
-  Cloud, CloudSun, CloudRain, CloudLightning, CloudFog, Thermometer, Snowflake, Mountain
+  ArrowLeft, Sun, Info, 
+  Cloud, CloudSun, CloudRain, CloudLightning, Thermometer, Snowflake, Mountain
 } from "lucide-react";
 
-// Normales Climatiques pour les Pyrénées (Modèle calqué sur l'Aude)
+// Normales Climatiques pour les Pyrénées
 const NORMALES_CLIMAT = {
   luchon: { 
-    pluie: 950, soleil: 1850, joursVent: 45, 
-    estivaux: 65, moyAn: "11,2°C", froid: "3,1°C", chaud: "21,5°C",
-    neigeAn: 180 // Objectif annuel en cm
+    pluie: 950, soleil: 1850, 
+    moyAn: "11,2°C", froid: "3,1°C", chaud: "21,5°C",
+    neigeAn: 180, joursGel: 90
   },
   saintlary: { 
-    pluie: 1100, soleil: 1900, joursVent: 55, 
-    estivaux: 50, moyAn: "10,5°C", froid: "2,2°C", chaud: "20,1°C",
-    neigeAn: 220
+    pluie: 1100, soleil: 1900, 
+    moyAn: "10,5°C", froid: "2,2°C", chaud: "20,1°C",
+    neigeAn: 220, joursGel: 110
   },
   ax: { 
-    pluie: 1050, soleil: 1950, joursVent: 50, 
-    estivaux: 55, moyAn: "10,8°C", froid: "2,5°C", chaud: "20,8°C",
-    neigeAn: 200
+    pluie: 1050, soleil: 1950, 
+    moyAn: "10,8°C", froid: "2,5°C", chaud: "20,8°C",
+    neigeAn: 200, joursGel: 105
   }
 };
 
@@ -95,7 +95,7 @@ export default function MeteoPyreneesPage() {
                   <div>
                     <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">{station.ville}</h3>
                     <div className="flex items-center gap-2 mt-2">
-                      {getWeatherIcon(station.iconCode)}
+                      {getWeatherIcon(station.iconCode || station.condition)}
                       <span className={`text-[10px] font-black uppercase ${station.isSnowing ? "text-cyan-500 animate-pulse" : "text-slate-500"}`}>
                         {station.isSnowing ? "❄️ Neige en direct" : "Calme"}
                       </span>
@@ -125,7 +125,7 @@ export default function MeteoPyreneesPage() {
                     </div>
                 </div>
 
-                {/* Compteurs Annuels (Inclus Neige) */}
+                {/* Compteurs Annuels */}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="bg-white p-2 rounded-xl border border-blue-100 shadow-sm text-center">
                     <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1 italic">Cumul Neige</p>
@@ -139,12 +139,12 @@ export default function MeteoPyreneesPage() {
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-blue-100 shadow-sm text-center">
                     <p className="text-[8px] font-black text-slate-400 uppercase leading-none mb-1 italic text-red-500">Record Froid</p>
-                    <p className="text-sm font-black text-red-600">{station.stats.recordFroid}°</p>
+                    <p className="text-sm font-black text-red-600">{station.stats.recordFroid}</p>
                     <p className="text-[7px] text-slate-300">En 2026</p>
                   </div>
                 </div>
 
-                {/* Bloc Bilan vs Normales Annuelles */}
+                {/* Bloc Bilan détaillé */}
                 <div className="bg-slate-900/5 rounded-2xl p-4 border border-blue-100 space-y-4">
                   <div className="flex items-center justify-between border-b border-blue-200/50 pb-2">
                     <h4 className="text-[10px] font-black uppercase text-blue-600 flex items-center gap-1">
@@ -155,22 +155,22 @@ export default function MeteoPyreneesPage() {
                   
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-slate-600">❄️ Taux d'enneigement</span>
+                      <span className="text-xs font-bold text-slate-600">❄️ Taux d'objectif Neige</span>
                       <div className="text-right">
                         <span className="text-xs font-black block">{Math.round((station.stats.cumulNeige / normale.neigeAn) * 100)}%</span>
-                        <span className="text-[8px] text-slate-400">de l'objectif annuel</span>
+                        <span className="text-[8px] text-slate-400">du cumul annuel visé</span>
                       </div>
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-slate-600">💧 Précipitations</span>
+                      <span className="text-xs font-bold text-slate-600">💧 Pluie (liquide)</span>
                       <div className="text-right">
-                        <span className="text-xs font-black block">{station.stats.totalRain || 0} mm</span>
+                        <span className="text-xs font-black block">{station.stats.totalRain} mm</span>
                         <span className="text-[8px] text-slate-400">Normal /an: {normale.pluie}mm</span>
                       </div>
                     </div>
 
-                    {/* Jauge Enneigement */}
+                    {/* Jauge Visuelle d'enneigement */}
                     <div className="pt-2 border-t border-blue-200/40">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-[10px] font-black uppercase text-blue-800 italic">État des sommets</span>
@@ -180,7 +180,7 @@ export default function MeteoPyreneesPage() {
                       </div>
                       <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                         <div 
-                          className="h-full transition-all duration-1000 bg-cyan-400"
+                          className="h-full transition-all duration-1000 bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]"
                           style={{ width: `${Math.min((station.stats.cumulNeige / normale.neigeAn) * 100, 100)}%` }}
                         ></div>
                       </div>
@@ -194,9 +194,10 @@ export default function MeteoPyreneesPage() {
         
         {/* Footer Info Montagne */}
         <div className="bg-slate-900 text-slate-300 p-6 flex items-center gap-4">
-          <Snowflake className="text-cyan-400 shrink-0" size={30} />
+          <Snowflake className="text-cyan-400 shrink-0 animate-spin-slow" size={30} />
           <p className="text-[10px] leading-relaxed italic">
-            <b>Note :</b> Les données d'enneigement sont estimées par modèle météorologique Open-Meteo pour les altitudes moyennes des stations. En direct, le statut "Neige" se base sur le code météo temps réel (71-77).
+            <b>Note Scientifique :</b> Les précipitations sont divisées entre pluie liquide et chutes de neige (en cm). 
+            Le taux d'enneigement compare le cumul actuel à la moyenne historique annuelle de la station.
           </p>
         </div>
       </section>
