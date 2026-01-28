@@ -557,16 +557,13 @@ useEffect(() => {
     // 2. Fonction unique pour récupérer toutes les données
     const fetchData = async () => {
       try {
-        // Appel pour le bilan et la météo détaillée
         const resMeteo = await fetch('/api/meteo');
         
         if (resMeteo.ok) {
           const m = await resMeteo.json();
           
-          // Mise à jour des stats annuelles (Bloc Indigo)
           setAnnuelData(m); 
           
-          // Mise à jour de la météo (Haut à droite + Vent)
           setMeteo({
             temperature: `${m.stats?.avgTemp || '--'}°C`,
             condition: m.condition || 'Ensoleillé',
@@ -578,12 +575,7 @@ useEffect(() => {
       }
     };
 
-    // Lancement de la récupération des données
     fetchData();
-
-    // 3. Nettoyage lors de la fermeture du composant
-    return () => clearInterval(timer);
-  }, []); // Fin du useEffect
 
     // Nettoyage à la fermeture de la page
     return () => clearInterval(timer);
