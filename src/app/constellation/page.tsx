@@ -90,9 +90,9 @@ export default function ConstellationPage() {
                                 return `${x},${y}`;
                             }).join(' ')}
                             fill="none"
-                            stroke="#3b82f6"
-                            strokeWidth="1.2"
-                            opacity="0.3"
+                            stroke="#fde047" /* Jaune vif */
+                            strokeWidth="1.8" /* Plus épais */
+                            opacity="0.6" /* Plus opaque */
                         />
                     );
                 })}
