@@ -708,16 +708,20 @@ useEffect(() => {
     {/* 2. SECTION ENVIRONNEMENT (Vent, Air, UV) */}
     <div className="flex items-center gap-4 border-l border-indigo-300 pl-4">
       
-      {/* Vent : Vitesse du jour + Statut Autan */}
-      <div className="flex items-center gap-1.5">
-        <span className="text-sm">💨</span>
-        <div className="flex flex-col leading-tight">
-          <span>Vent : <b className="text-indigo-900">{meteo.vitesseVent || '--'} km/h</b></span>
-          <span className="text-[9px] opacity-70 italic">
-            Autan : {meteo.condition.includes("Vent") ? "Actif" : "Calme"}
-          </span>
-        </div>
-      </div>
+{/* Vent : Vitesse du jour + Statut Autan */}
+  <div className="flex items-center gap-1.5">
+    <span className="text-sm">💨</span>
+    <div className="flex flex-col leading-tight">
+      <span className="whitespace-nowrap">
+        {/* On utilise ?. pour éviter les erreurs si meteo est en train de charger */}
+        Vent : <b className="text-indigo-900">{meteo?.vitesseVent || '--'} km/h</b>
+      </span>
+      <span className="text-[9px] opacity-70 italic">
+        {/* On vérifie si "Vent" est dans la condition envoyée par l'API */}
+        Autan : {meteo?.condition?.includes("Vent") ? "Actif" : "Calme"}
+      </span>
+    </div>
+  </div>
 
       {/* Qualité de l'Air */}
       <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
