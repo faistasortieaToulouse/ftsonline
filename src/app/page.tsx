@@ -13,7 +13,8 @@ import {
   Library, Flower, TrainFront, TramFront, Car, Bike, Plane,
   Amphora, CalendarDays, Trees, Hexagon, Languages, PenTool,
   Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
-  Newspaper, Speech, Users, UserGroup, Smile, Handshake
+  Newspaper, Speech, Users, UserGroup, Smile, Handshake,
+  ChevronDown, Wind, Droplets, Sun as SunIcon
 } from "lucide-react";
 
 import { getSaintDuJour } from "../lib/saints";
@@ -30,7 +31,6 @@ import saintsData from "../../data/celebration/celebrations_saints.json";
 import bienheureuxData from "../../data/celebration/celebrations_bienheureux.json";
 import orthodoxesData from "../../data/celebration/celebrations_orthodoxes.json";
 import prenomsData from "../../data/celebration/prenoms_du_jour.json";
-import { ChevronDown } from "lucide-react";
 
 import SunCalc from 'suncalc';
 import * as Astronomy from 'astronomy-engine';
@@ -475,6 +475,9 @@ export default function HomePage() {
   const [heure, setHeure] = useState(new Date());
   const [meteo, setMeteo] = useState({ temperature: "25°C", condition: "Ensoleillé" });
 
+// --- AJOUT : État pour les statistiques annuelles ---
+  const [annuelData, setAnnuelData] = useState<any>(null);
+
   // 1. Coordonnées de Toulouse
   const lat = 43.6045;
   const lng = 1.4442;
@@ -544,27 +547,43 @@ const starHorizon = Astronomy.Horizon(
   const signeZodiaque = getSigneZodiaque(heure);
   const ascendant = getAscendant(heure);
 
-  useEffect(() => {
+useEffect(() => {
+    // Garde le timer pour l'horloge
     const timer = setInterval(() => setHeure(new Date()), 60000);
-    const fetchWeather = async () => {
+    
+    // Ta nouvelle fonction qui fait tout d'un coup
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/weather');
-        if (response.ok) {
-          const data = await response.json();
-          setMeteo({ temperature: `${Math.round(data.temp)}°C`, condition: data.description });
+        // 1. Appel pour la météo du moment (température en haut à droite)
+        const resWeather = await fetch('/api/weather');
+        if (resWeather.ok) {
+          const w = await resWeather.json();
+          setMeteo({ temperature: `${Math.round(w.temp)}°C`, condition: w.description });
         }
-      } catch (e) { console.error("Erreur météo:", e); }
+        
+        // 2. Appel pour le bilan de l'année (bloc Indigo)
+        const resMeteo = await fetch('/api/meteo');
+        if (resMeteo.ok) {
+          const m = await resMeteo.json();
+          setAnnuelData(m); // Très important : c'est ce qui alimente tes nouvelles valeurs
+        }
+      } catch (e) { 
+        console.error("Erreur lors de la récupération des données:", e); 
+      }
     };
-    fetchWeather();
+
+    fetchData();
+
+    // Nettoyage à la fermeture de la page
     return () => clearInterval(timer);
-  }, []);
+  }, []); // Le tableau vide [] signifie "exécuter une seule fois au chargement"
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-purple-50">
       {/* Hero Section */}
       <section className="text-center py-16 px-4 bg-pink-500 text-white rounded-b-3xl shadow-lg">
         <h1 className="text-5xl sm:text-6xl font-bold mb-4 drop-shadow-lg text-white">
-          Bienvenue sur <span className="text-purple-200">FTS Online</span>
+          Bienvenue sur <span className="text-purple-200">FTS Toulouse</span>
         </h1>
         <div className="flex justify-center gap-4 flex-wrap">
           <Link href="#categories" className="bg-purple-700 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg transition">
@@ -611,7 +630,7 @@ const starHorizon = Astronomy.Horizon(
 {/* Barre d'informations */}
 <div className="px-4 max-w-6xl mx-auto mb-12">
   <section className="bg-purple-100 text-purple-700 rounded-2xl shadow-md border border-purple-200 overflow-hidden flex flex-col">
-    
+
     {/* Ligne 1 : Date, Heure, Saint, Dicton et Météo */}
     <div className="py-4 px-6 flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="flex flex-col items-center text-center min-w-[200px]">
@@ -662,48 +681,73 @@ const starHorizon = Astronomy.Horizon(
       </div>
     </div>
 
-{/* --- Bloc unique : Éphéméride & Environnement --- */}
-<div className="bg-indigo-900/10 border-t border-purple-200 py-2 px-6">
-  <div className="flex flex-wrap justify-around items-center gap-y-3 gap-x-6 text-[11px] font-medium text-indigo-800">
-    
-    {/* 1. Tendance Lumière */}
-    <div className="flex items-center gap-1.5">
-      <span className="text-sm">📈</span> 
-      <span>Lumière : <b className="text-indigo-900">En augmentation</b></span>
-    </div>
+    {/* --- Bloc unique : Éphéméride, Environnement & Bilan --- */}
+    <div className="bg-indigo-900/10 border-t border-purple-200 py-3 px-6">
+      <div className="flex flex-wrap justify-around items-center gap-y-3 gap-x-6 text-[11px] font-medium text-indigo-800">
+        
+        {/* 1. Lumière & Photo */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">📈</span> 
+            <span>Lumière : <b className="text-indigo-900">En augmentation</b></span>
+          </div>
+          <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
+            <span className="text-sm" title="Heure Dorée">📷</span> 
+            <span>Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
+          </div>
+          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+            <span className="text-sm" title="Heure Bleue">🌃</span>
+            <span>Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
+          </div>
+        </div>
 
-    {/* 2. Groupe Photo (Dorée & Bleue) */}
-    <div className="flex items-center gap-4 border-l border-indigo-200 pl-4">
-      <div className="flex items-center gap-1.5">
-        <span className="text-sm" title="Heure Dorée (Lumière chaude)">📷</span> 
-        <span>Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
-      </div>
-      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-        <span className="text-sm" title="Heure Bleue (Crépuscule)">🌃</span>
-        <span>Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
+        {/* 2. Environnement & Santé */}
+        <div className="flex items-center gap-4 border-l border-indigo-200 pl-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">💨</span>
+            <span>Vent d'Autan : <b className="text-indigo-900">{meteo.condition.includes("Vent") ? "Actif" : "Calme"}</b></span>
+          </div>
+          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+            <span className="text-sm">🍃</span>
+            <span>Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span></span>
+          </div>
+          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+            <span className="text-sm">🕶️</span>
+            <span>UV : <b className="text-indigo-900">{indiceUV}</b></span>
+          </div>
+        </div>
+
+        {/* 3. BILAN ANNUEL */}
+        <div className="flex flex-wrap items-center gap-3 border-l-2 border-indigo-300 pl-4 bg-white/40 py-1.5 px-3 rounded-xl shadow-sm">
+          <div className="flex flex-col leading-none border-r border-indigo-200 pr-3 mr-1">
+            <span className="text-[9px] uppercase font-black text-indigo-500 tracking-tighter">Bilan Toulouse</span>
+            <span className="text-[10px] font-bold text-indigo-900 italic tracking-tight">Depuis le 1er janv.</span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">☀️</span>
+            <span>Soleil : <b className="text-indigo-900">{annuelData?.stats?.totalSunshine || '--'}h</b></span>
+          </div>
+
+          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
+            <span className="text-sm">💧</span>
+            <span>Pluie : <b className="text-indigo-900">{annuelData?.stats?.totalRain || '--'}mm</b></span>
+          </div>
+
+          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
+            <span className="text-sm">🌪️</span>
+            <span>Vent : <b className="text-indigo-900">{annuelData?.stats?.maxWind || '--'}km/h</b></span>
+          </div>
+
+          <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-3">
+            <span className="text-sm">🌱</span>
+            <span>Sol : <b className={parseFloat(annuelData?.stats?.waterBalance) < 0 ? "text-orange-700" : "text-emerald-700"}>
+              {annuelData?.stats?.waterBalance || '--'}mm
+            </b></span>
+          </div>
+        </div>
       </div>
     </div>
-
-    {/* 3. Environnement (Vent & Air) */}
-    <div className="flex items-center gap-4 border-l border-indigo-200 pl-4">
-      <div className="flex items-center gap-1.5">
-        <span className="text-sm" title="Vent d'Autan">💨</span>
-        <span>Vent d'Autan : <b className="text-indigo-900">{meteo.condition.includes("Vent") ? "Actif" : "Calme"}</b></span>
-      </div>
-      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-        <span className="text-sm" title="Qualité de l'air">🍃</span>
-        <span>Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span></span>
-      </div>
-    </div>
-
-    {/* 4. Santé (UV) */}
-    <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
-      <span className="text-sm" title="Indice UV">🕶️</span>
-      <span>UV : <b className="text-indigo-900">{indiceUV}</b></span>
-    </div>
-
-  </div>
-</div>
 
     {/* Ligne 4 : Astro (Zodiaque) */}
     <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
@@ -725,7 +769,7 @@ const starHorizon = Astronomy.Horizon(
     {/* Ligne 5 : MENUS DÉROULANTS */}
     <div className="bg-white/40 border-t border-purple-200 py-3 px-6">
       <div className="flex flex-wrap justify-center gap-3">
-        <span className="text-sm font-bold text-purple-900/60 uppercase tracking-wider mr-2">
+        <span className="text-sm font-bold text-purple-900/60 uppercase tracking-wider mr-2 self-center">
           Célébrations :
         </span>
 
@@ -779,46 +823,45 @@ const starHorizon = Astronomy.Horizon(
       </div>
     </div>
 
-{/* Ligne 6 : ÉPHÉMÉRIDES ASTRONOMIQUES */}
-<div className="bg-blue-600 text-yellow-400 border-t border-purple-200 py-3 px-6">
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-    
-    {/* Soleil */}
-    <div className="flex items-center gap-3 justify-center md:justify-start">
-      <span className="text-yellow-400 text-xl">☀️</span>
-      <div className="flex flex-col">
-        <span className="text-[10px] uppercase font-bold text-yellow-400">Soleil (Toulouse)</span>
-        <div className="text-xs font-bold text-slate-200">
-          {sunTimes.sunrise.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})} 
-          <span className="mx-2 text-slate-600">|</span>
-          {sunTimes.sunset.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}
+    {/* Ligne 6 : ÉPHÉMÉRIDES ASTRONOMIQUES */}
+    <div className="bg-blue-600 text-yellow-400 border-t border-purple-200 py-3 px-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+        {/* Soleil */}
+        <div className="flex items-center gap-3 justify-center md:justify-start">
+          <span className="text-yellow-400 text-xl">☀️</span>
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase font-bold text-yellow-400">Soleil (Toulouse)</span>
+            <div className="text-xs font-bold text-slate-200">
+              {sunTimes.sunrise.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})} 
+              <span className="mx-2 text-slate-600">|</span>
+              {sunTimes.sunset.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}
+            </div>
+            <span className="text-[10px] italic text-yellow-200/50">Jour : {dureeHeures}h {dureeMinutes}min</span>
+          </div>
         </div>
-        <span className="text-[10px] italic text-yellow-200/50">Jour : {dureeHeures}h {dureeMinutes}min</span>
-      </div>
-    </div>
 
-    {/* Lune & Sirius */}
-    <div className="flex items-center gap-3 justify-center border-y md:border-y-0 md:border-x border-slate-800 py-2 md:py-0">
-      <span className="text-2xl">{emojiLune}</span>
-      <div className="flex flex-col">
-        <span className="text-[10px] uppercase font-bold text-yellow-400">Lune & Étoiles</span>
-        <span className="text-xs text-slate-200">Phase : <b>{(moonIllum.fraction * 100).toFixed(0)}%</b></span>
-        <span className={`text-[10px] font-medium ${siriusVisible ? 'text-cyan-400' : 'text-red-400'}`}>
-          ✨ Sirius : {siriusVisible ? `Visible (${starHorizon.altitude.toFixed(0)}°)` : "Sous l'horizon"}
-        </span>
-      </div>
-    </div>
+        {/* Lune & Sirius */}
+        <div className="flex items-center gap-3 justify-center border-y md:border-y-0 md:border-x border-slate-800 py-2 md:py-0">
+          <span className="text-2xl">{emojiLune}</span>
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase font-bold text-yellow-400">Lune & Étoiles</span>
+            <span className="text-xs text-slate-200">Phase : <b>{(moonIllum.fraction * 100).toFixed(0)}%</b></span>
+            <span className={`text-[10px] font-medium ${siriusVisible ? 'text-cyan-400' : 'text-red-400'}`}>
+              ✨ Sirius : {siriusVisible ? `Visible (${starHorizon.altitude.toFixed(0)}°)` : "Sous l'horizon"}
+            </span>
+          </div>
+        </div>
 
-    {/* Constellations */}
-    <div className="flex flex-col items-center md:items-end">
-      <span className="text-[10px] uppercase font-bold text-yellow-400 mb-1">Ciel du mois</span>
-      <div className="flex flex-col gap-1 text-[10px] text-center md:text-right">
-        <div><span className="text-blue-400 font-bold">Nord:</span> {constMonth.n}</div>
-        <div><span className="text-emerald-400 font-bold">Sud:</span> {constMonth.s}</div>
+        {/* Constellations */}
+        <div className="flex flex-col items-center md:items-end">
+          <span className="text-[10px] uppercase font-bold text-yellow-400 mb-1">Ciel du mois</span>
+          <div className="flex flex-col gap-1 text-[10px] text-center md:text-right">
+            <div><span className="text-blue-400 font-bold">Nord:</span> {constMonth.n}</div>
+            <div><span className="text-emerald-400 font-bold">Sud:</span> {constMonth.s}</div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
     {/* Ligne 7 : EXPLICATIONS SOLSTICES TOULOUSE */}
     <div className="bg-blue-700 text-white py-4 px-6 border-t border-blue-500/30">
