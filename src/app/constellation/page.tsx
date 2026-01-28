@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Compass } from 'lucide-react';
 
 export default function ConstellationPage() {
   const [data, setData] = useState<any>(null);
@@ -21,11 +21,11 @@ export default function ConstellationPage() {
     
     let r;
     if (view === 'Nord') {
-      // Pour le Nord, le centre est +90°, on s'éloigne quand dec diminue
-      r = (90 - dec) * 5.5; 
+      // Centre = Pôle Nord (+90°). On s'éloigne du centre quand Dec diminue.
+      r = (90 - dec) * 5.2; 
     } else {
-      // Pour le Sud, le centre est -90°, on s'éloigne quand dec augmente
-      r = (dec + 90) * 5.5;
+      // Centre = Pôle Sud (-90°). On s'éloigne du centre quand Dec augmente.
+      r = (dec + 90) * 5.2;
     }
     
     return { 
@@ -36,50 +36,72 @@ export default function ConstellationPage() {
 
   if (!data) return (
     <div className="bg-[#020617] min-h-screen text-white flex items-center justify-center font-mono">
-      <div className="animate-pulse">CHARGEMENT DU CIEL...</div>
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="animate-pulse tracking-widest text-blue-400">CARTOGRAPHIE CÉLESTE...</p>
+      </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white p-4">
-      <header className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 max-w-6xl mx-auto">
-        <Link href="/" className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors">
-          <ArrowLeft size={20}/> Retour
+    <div className="min-h-screen bg-[#020617] text-white p-4 md:p-8">
+      <header className="flex flex-col lg:flex-row justify-between items-center gap-6 mb-12 max-w-6xl mx-auto">
+        <Link href="/" className="group flex items-center gap-2 text-slate-400 hover:text-blue-400 transition-all font-medium">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour au tableau de bord
         </Link>
         
-        <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setView(view === 'Nord' ? 'Sud' : 'Nord')} 
-              className="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-full font-bold transition-all shadow-lg shadow-blue-900/20"
-            >
-              VOIR CIEL {view === 'Nord' ? 'SUD' : 'NORD'}
-            </button>
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+            {/* Double Bouton Nord / Sud */}
+            <div className="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800 backdrop-blur-sm">
+                <button 
+                  onClick={() => setView('Nord')}
+                  className={`px-6 py-2 rounded-lg font-bold transition-all ${view === 'Nord' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                >
+                  CIEL NORD
+                </button>
+                <button 
+                  onClick={() => setView('Sud')}
+                  className={`px-6 py-2 rounded-lg font-bold transition-all ${view === 'Sud' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                >
+                  CIEL SUD
+                </button>
+            </div>
             
-            <select 
-              value={month} 
-              onChange={(e) => setMonth(parseInt(e.target.value))} 
-              className="bg-slate-800 border-none rounded-lg px-4 py-2 text-blue-400 font-bold outline-none"
-            >
-              {["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"].map((m, i) => (
-                  <option key={i} value={i}>{m}</option>
-              ))}
-            </select>
+            <div className="flex items-center gap-2 bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-800">
+                <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Mois</span>
+                <select 
+                  value={month} 
+                  onChange={(e) => setMonth(parseInt(e.target.value))} 
+                  className="bg-transparent border-none text-blue-400 font-bold outline-none cursor-pointer"
+                >
+                  {["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"].map((m, i) => (
+                      <option key={i} value={i} className="bg-[#020617]">{m}</option>
+                  ))}
+                </select>
+            </div>
         </div>
       </header>
 
       <div className="flex justify-center items-center">
-        <div className="relative w-full max-w-[850px] aspect-square rounded-full border border-blue-900/40 bg-[#030712] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.5)]">
-          <svg viewBox="0 0 1000 1000" className="w-full h-full">
-            {/* Grilles de repère */}
-            <circle cx="500" cy="500" r="495" fill="none" stroke="#1e293b" strokeWidth="1" strokeDasharray="5,5" />
-            <circle cx="500" cy="500" r="250" fill="none" stroke="#1e293b" strokeWidth="1" strokeDasharray="5,5" />
+        <div className="relative w-full max-w-[850px] aspect-square rounded-full border border-white/5 bg-[#030712] overflow-hidden shadow-[0_0_150px_rgba(30,58,138,0.3)]">
+          {/* Boussole flottante */}
+          <div className="absolute top-8 left-1/2 -translate-x-1/2 text-slate-700 font-black text-xl tracking-[1em] pointer-events-none opacity-20">NORD</div>
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-700 font-black text-xl tracking-[1em] pointer-events-none opacity-20">SUD</div>
 
-            {/* 1. LIGNES DES CONSTELLATIONS */}
+          <svg viewBox="0 0 1000 1000" className="w-full h-full">
+            {/* Grilles de repère (Méridiens et Parallèles) */}
+            <circle cx="500" cy="500" r="495" fill="none" stroke="#ffffff" strokeWidth="0.5" opacity="0.1" />
+            <circle cx="500" cy="500" r="330" fill="none" stroke="#ffffff" strokeWidth="0.5" opacity="0.05" />
+            <circle cx="500" cy="500" r="165" fill="none" stroke="#ffffff" strokeWidth="0.5" opacity="0.05" />
+            <line x1="500" y1="0" x2="500" y2="1000" stroke="#ffffff" strokeWidth="0.5" opacity="0.05" />
+            <line x1="0" y1="500" x2="1000" y2="500" stroke="#ffffff" strokeWidth="0.5" opacity="0.05" />
+
+            {/* 1. LIGNES DES CONSTELLATIONS (JAUNE VIF) */}
             {data.lines.map((con: any, i: number) => (
               <g key={i}>
                 {con.paths.map((path: any, j: number) => {
-                    // Filtrage des lignes : on accepte un débordement de 20° sur l'équateur
-                    const isVisible = path.some((p: any) => view === 'Nord' ? p[1] > -20 : p[1] < 20);
+                    const isVisible = path.some((p: any) => view === 'Nord' ? p[1] > -25 : p[1] < 25);
                     if (!isVisible) return null;
                     
                     return (
@@ -90,9 +112,11 @@ export default function ConstellationPage() {
                                 return `${x},${y}`;
                             }).join(' ')}
                             fill="none"
-                            stroke="#fde047" /* Jaune vif */
-                            strokeWidth="1.8" /* Plus épais */
-                            opacity="0.6" /* Plus opaque */
+                            stroke="#fde047" 
+                            strokeWidth="1.8"
+                            opacity="0.6"
+                            strokeLinejoin="round"
+                            strokeLinecap="round"
                         />
                     );
                 })}
@@ -101,12 +125,11 @@ export default function ConstellationPage() {
 
             {/* 2. ÉTOILES */}
             {data.stars.map((star: any, i: number) => {
-              // Filtrage des étoiles selon l'hémisphère
               if (view === 'Nord' && star.dec < -20) return null;
               if (view === 'Sud' && star.dec > 20) return null;
               
               const { x, y } = project(star.ra, star.dec);
-              const size = Math.max(0.7, (6 - star.mag) * 0.9);
+              const size = Math.max(0.8, (6 - star.mag) * 0.9);
               
               return (
                 <circle 
@@ -114,7 +137,8 @@ export default function ConstellationPage() {
                   cx={x} cy={y} 
                   r={size} 
                   fill={star.visible ? "white" : "#1e293b"} 
-                  opacity={star.visible ? 1 : 0.3} 
+                  opacity={star.visible ? 1 : 0.2} 
+                  className={star.visible && star.mag < 1 ? "animate-pulse" : ""}
                 />
               );
             })}
@@ -130,8 +154,8 @@ export default function ConstellationPage() {
                       key={i} 
                       x={x} y={y} 
                       fontSize="9" 
-                      fill="#60a5fa" 
-                      opacity="0.5" 
+                      fill="#94a3b8" 
+                      opacity="0.6" 
                       textAnchor="middle" 
                       className="pointer-events-none select-none uppercase font-bold tracking-widest"
                     >
@@ -143,9 +167,15 @@ export default function ConstellationPage() {
         </div>
       </div>
       
-      <footer className="mt-8 text-center text-slate-500 text-sm italic">
-        Vue centrée sur le pôle céleste {view === 'Nord' ? 'Nord' : 'Sud'}. Les étoiles brillantes sont visibles à minuit.
-      </footer>
+      <div className="mt-12 flex flex-col items-center gap-4">
+        <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 px-6 py-3 rounded-2xl max-w-lg">
+            <Compass className="text-blue-500" size={24} />
+            <p className="text-sm text-slate-400">
+                Vous visualisez actuellement le ciel de **minuit** pour l'hémisphère **{view.toUpperCase()}**. 
+                Les points les plus brillants sont les étoiles majeures visibles ce mois-ci.
+            </p>
+        </div>
+      </div>
     </div>
   );
 }
