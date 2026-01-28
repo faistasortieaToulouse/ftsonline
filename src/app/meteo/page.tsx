@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { CloudRain, Thermometer, Sun, Wind, Droplets, TrendingUp, TrendingDown, Minus, Gauge } from 'lucide-react';
+import { CloudRain, Thermometer, Sun, Wind, Droplets, TrendingUp, TrendingDown, Minus, Gauge, ArrowLeft } from 'lucide-react';
+import Link from "next/link";
 
 export default function MeteoPage() {
   const [data, setData] = useState<any>(null);
@@ -41,6 +42,14 @@ export default function MeteoPage() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-white p-4 md:p-8">
+      
+       <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+    
       <header className="mb-12 max-w-6xl mx-auto">
         <div className="flex justify-between items-end">
           <div>
