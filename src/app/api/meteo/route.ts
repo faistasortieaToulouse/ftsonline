@@ -3,34 +3,60 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const today = new Date();
   const year = today.getFullYear();
-  const startDate = `${year}-01-01`;
-  const endDate = today.toISOString().split('T')[0];
-
-  // Coordonnées de Toulouse
   const lat = 43.6043;
   const lon = 1.4437;
 
-  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_mean,precipitation_sum&timezone=Europe%2FBerlin`;
+  // 1. Dates pour l'année en cours
+  const startDate = `${year}-01-01`;
+  const endDate = today.toISOString().split('T')[0];
+
+  // 2. Dates pour l'année précédente (même période)
+  const lastYearStart = `${year - 1}-01-01`;
+  const lastYearEnd = new Date(today.setFullYear(year - 1)).toISOString().split('T')[0];
+
+  const params = `daily=temperature_2m_mean,precipitation_sum,sunshine_duration,wind_speed_10m_max,et0_fao_evapotranspiration&timezone=Europe%2FBerlin`;
+
+  const urlCurrent = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&${params}`;
+  const urlPast = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${lastYearStart}&end_date=${lastYearEnd}&${params}`;
 
   try {
-    const response = await fetch(url);
-    const data = await response.json();
+    // On lance les deux appels en même temps pour gagner du temps
+    const [resCurrent, resPast] = await Promise.all([
+      fetch(urlCurrent).then(r => r.json()),
+      fetch(urlPast).then(r => r.json())
+    ]);
 
-    if (!data.daily) throw new Error("Données non disponibles");
+    if (!resCurrent.daily || !resPast.daily) throw new Error("Données non disponibles");
 
-    // Calcul des statistiques cumulées
-    const totalRain = data.daily.precipitation_sum.reduce((a: number, b: number) => a + (b || 0), 0);
-    const avgTemp = data.daily.temperature_2m_mean.reduce((a: number, b: number) => a + (b || 0), 0) / data.daily.temperature_2m_mean.length;
+    // --- ANALYSE ANNÉE EN COURS ---
+    const daily = resCurrent.daily;
+    const totalRain = daily.precipitation_sum.reduce((a: any, b: any) => a + (b || 0), 0);
+    const avgTemp = daily.temperature_2m_mean.reduce((a: any, b: any) => a + (b || 0), 0) / daily.time.length;
+    const totalSunshineHours = Math.round(daily.sunshine_duration.reduce((a: any, b: any) => a + (b || 0), 0) / 3600);
+    const maxWind = Math.max(...daily.wind_speed_10m_max.filter((v: any) => v != null));
+    const totalEvapo = daily.et0_fao_evapotranspiration.reduce((a: any, b: any) => a + (b || 0), 0);
+
+    // --- ANALYSE ANNÉE PRÉCÉDENTE (Comparaison) ---
+    const pastDaily = resPast.daily;
+    const pastAvgTemp = pastDaily.temperature_2m_mean.reduce((a: any, b: any) => a + (b || 0), 0) / pastDaily.time.length;
+    const pastTotalRain = pastDaily.precipitation_sum.reduce((a: any, b: any) => a + (b || 0), 0);
 
     return NextResponse.json({
-      history: data.daily, // Pour le graphique
+      history: daily,
       stats: {
         totalRain: totalRain.toFixed(1),
         avgTemp: avgTemp.toFixed(1),
-        daysCount: data.daily.time.length
+        totalSunshine: totalSunshineHours,
+        maxWind: maxWind.toFixed(1),
+        waterBalance: (totalRain - totalEvapo).toFixed(1),
+        daysCount: daily.time.length,
+        // Tendances par rapport à l'an dernier
+        diffTemp: (avgTemp - pastAvgTemp).toFixed(1),
+        diffRain: (totalRain - pastTotalRain).toFixed(1)
       }
     });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "Erreur météo" }, { status: 500 });
   }
 }
