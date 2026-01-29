@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'; // Pour charger la carte sans SSR
 import { Sun, Cloud, CloudRain, CloudLightning, ArrowLeft, Thermometer, MapPin } from 'lucide-react';
 
 // Chargement dynamique du composant Map (on désactive le rendu côté serveur)
-const MapWithNoSSR = dynamic(() => import('@/app/components/Map'), { 
+const MapWithNoSSR = dynamic(() => import('@/components/Map'), { 
   ssr: false,
   loading: () => <div className="h-[400px] w-full bg-slate-200 animate-pulse rounded-2xl flex items-center justify-center text-slate-400">Chargement de la carte...</div>
 });
