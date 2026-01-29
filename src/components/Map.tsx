@@ -16,7 +16,12 @@ const PREFECTURES = [
   { id: "mende", name: "Mende", dept: "48", nom: "Lozère", coords: [44.5181, 3.5000] },
   { id: "tarbes", name: "Tarbes", dept: "65", nom: "Hautes-Pyrénées", coords: [43.2320, 0.0789] },
   { id: "auch", name: "Auch", dept: "32", nom: "Gers", coords: [43.6465, 0.5855] },
-  { id: "foix", name: "Foix", dept: "09", nom: "Ariège", coords: [42.9639, 1.6054] }
+  { id: "foix", name: "Foix", dept: "09", nom: "Ariège", coords: [42.9639, 1.6054] },
+  // À ajouter dans le tableau PREFECTURES de Map.tsx
+  { id: "pamiers", name: "Pamiers", dept: "09", nomDept: "Ariège", coords: [43.1167, 1.6167] },
+  { id: "narbonne", name: "Narbonne", dept: "11", nomDept: "Aude", coords: [43.1833, 3.0000] },
+  { id: "beziers", name: "Béziers", dept: "34", nomDept: "Hérault", coords: [43.3444, 3.2158] },
+  { id: "lezignan", name: "Lézignan-C.", dept: "11", nomDept: "Corbières", coords: [43.2031, 2.7592] }
 ];
 
 // Correction du label (on vérifie que nom existe)
