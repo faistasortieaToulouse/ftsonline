@@ -41,17 +41,31 @@ export default function CuisineToulousePage() {
         </div>
       </nav>
 
-      {/* En-tête Style Menu de Restaurant */}
-      <header className="py-16 px-4 text-center border-b-2 border-double border-orange-200 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')]">
-        <ChefHat className="w-12 h-12 mx-auto text-orange-800 mb-6" />
-        <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-4 tracking-tighter uppercase">
-          Carte des <span className="text-orange-800">Saveurs</span>
-        </h1>
-        <div className="w-24 h-1 bg-orange-800 mx-auto mb-6"></div>
-        <p className="max-w-xl mx-auto text-lg text-slate-600 italic">
-          "De la saucisse au cassoulet, découvrez l'âme gourmande du Pays de Cocagne."
-        </p>
-      </header>
+{/* En-tête Style Menu de Restaurant */}
+<header className="py-16 px-4 text-center border-b-2 border-double border-orange-200 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')]">
+  <ChefHat className="w-12 h-12 mx-auto text-orange-800 mb-6" />
+  
+  <p className="text-orange-800 font-sans font-bold uppercase tracking-[0.3em] text-xs mb-2">
+    Les spécialités culinaires à Toulouse
+  </p>
+
+  <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-4 tracking-tighter uppercase">
+    Carte des <span className="text-orange-800">Saveurs</span>
+  </h1>
+  
+  <div className="w-24 h-1 bg-orange-800 mx-auto mb-6"></div>
+
+  {/* Ta question intégrée ici */}
+  <div className="mb-4">
+    <span className="text-orange-700/60 font-serif italic text-sm">
+      Connais-tu la cuisine à Toulouse ?
+    </span>
+  </div>
+  
+  <p className="max-w-xl mx-auto text-lg text-slate-600 italic">
+    "De la saucisse au cassoulet, découvrez l'âme gourmande du Pays de Cocagne."
+  </p>
+</header>
 
       {/* Recherche */}
       <div className="max-w-md mx-auto -mt-6 px-4">
