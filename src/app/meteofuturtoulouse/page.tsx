@@ -2,10 +2,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { Sun, Cloud, CloudRain, CloudLightning, ArrowLeft, Thermometer, ChevronRight } from 'lucide-react';
+import { Sun, Cloud, CloudRain, CloudLightning, ArrowLeft, Thermometer, ChevronRight, Wind, MapPin } from 'lucide-react';
 
-// --- 1. DÉFINITION DES DONNÉES (À l'extérieur du composant pour la stabilité) ---
-
+// --- 1. DÉFINITION DES DONNÉES ---
 const VILLES_PAR_DEPT: Record<string, { id: string, label: string, dept: string }[]> = {
   "Ariège (09)": [
     { id: "foix", label: "Foix", dept: "09" },
@@ -109,8 +108,7 @@ const VILLES_PAR_DEPT: Record<string, { id: string, label: string, dept: string 
   ]
 };
 
-// --- 2. HELPERS (À l'extérieur également) ---
-
+// --- 2. HELPERS ---
 const getCityLabel = (id: string) => {
   for (const group of Object.values(VILLES_PAR_DEPT)) {
     const city = group.find(v => v.id === id);
@@ -132,11 +130,10 @@ const icons: Record<number, React.ReactNode> = {
 
 const MapWithNoSSR = dynamic(() => import('@/components/Map'), { 
   ssr: false,
-  loading: () => <div className="h-[550px] w-full bg-slate-200 animate-pulse rounded-3xl flex items-center justify-center text-slate-400 font-bold">Initialisation de la carte Occitanie...</div>
+  loading: () => <div className="h-[400px] w-full bg-slate-100 animate-pulse rounded-3xl flex items-center justify-center text-slate-400 font-bold">Chargement de la carte...</div>
 });
 
 // --- 3. COMPOSANT PRINCIPAL ---
-
 export default function MeteoFuturPage() {
   const [ville, setVille] = useState('toulouse');
   const [activeDept, setActiveDept] = useState("Haute-Garonne (31)");
@@ -160,115 +157,145 @@ export default function MeteoFuturPage() {
   }, [ville]);
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-10 font-sans text-slate-900">
+      <div className="max-w-7xl mx-auto space-y-8">
         
-        <Link href="/" className="flex items-center gap-2 text-indigo-600 mb-6 font-bold hover:translate-x-[-4px] transition-transform w-fit">
-          <ArrowLeft size={18} /> Retour Accueil
-        </Link>
-
-        <header className="mb-10 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">
+        {/* Navigation & Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <Link href="/" className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:translate-x-[-4px] transition-transform mb-2">
+              <ArrowLeft size={18} /> Retour
+            </Link>
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-slate-900">
               Météo <span className="text-indigo-600">Occitanie</span>
             </h1>
-            <p className="text-slate-500 font-medium text-lg mt-2">Cliquez sur la carte ou choisissez une ville ci-dessous.</p>
           </div>
-          <div className="bg-indigo-100 text-indigo-700 px-6 py-3 rounded-2xl font-black text-lg shadow-sm border border-indigo-200 animate-in fade-in slide-in-from-right-4">
-             📍 {getCityLabel(ville)}
+          
+          <div className="flex items-center gap-4 bg-white p-4 rounded-3xl shadow-sm border border-slate-200">
+            <div className="bg-indigo-50 p-3 rounded-2xl text-indigo-600">
+              <MapPin size={24} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ville sélectionnée</p>
+              <p className="text-xl font-bold text-slate-800">{getCityLabel(ville)}</p>
+            </div>
           </div>
-        </header>
+        </div>
 
-        <div className="mb-12 shadow-2xl rounded-3xl border-4 border-white overflow-hidden">
+        {/* Section Carte */}
+        <div className="bg-white p-2 rounded-[2.5rem] shadow-xl shadow-indigo-100/50 border border-slate-100 overflow-hidden">
           <MapWithNoSSR onCityChange={(id: string) => setVille(id)} />
         </div>
 
-        {/* SÉLECTEUR DE DÉPARTEMENT ET VILLE */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
-          <div className="lg:col-span-1 space-y-2 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 mb-3">Départements</h2>
-            {departements.map((dept) => (
-              <button
-                key={dept}
-                onClick={() => setActiveDept(dept)}
-                className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between group ${
-                  activeDept === dept 
-                  ? 'bg-indigo-600 text-white shadow-lg' 
-                  : 'bg-white text-slate-600 hover:bg-indigo-50 border border-slate-100 shadow-sm'
-                }`}
-              >
-                {dept}
-                <ChevronRight size={14} className={activeDept === dept ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} />
-              </button>
-            ))}
+        {/* Section Sélecteurs : Alignement amélioré */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Colonne Départements (4/12) */}
+          <div className="lg:col-span-4 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
+            <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+               Départements
+            </h2>
+            <div className="grid grid-cols-1 gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+              {departements.map((dept) => (
+                <button
+                  key={dept}
+                  onClick={() => setActiveDept(dept)}
+                  className={`w-full text-left px-5 py-3.5 rounded-2xl text-[13px] font-bold transition-all flex items-center justify-between group ${
+                    activeDept === dept 
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' 
+                    : 'bg-slate-50 text-slate-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200'
+                  }`}
+                >
+                  {dept}
+                  <ChevronRight size={16} className={`${activeDept === dept ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all`} />
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="lg:col-span-3 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm min-h-[200px]">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Villes disponibles</h2>
-            <div className="flex flex-wrap gap-2">
+          {/* Colonne Villes (8/12) : Suppression du blanc */}
+          <div className="lg:col-span-8 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 self-stretch flex flex-col">
+            <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+               Villes dans le secteur
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
               {VILLES_PAR_DEPT[activeDept].map((v) => (
                 <button
                   key={v.id}
                   onClick={() => setVille(v.id)}
-                  className={`px-5 py-3 rounded-xl text-sm font-extrabold transition-all border ${
+                  className={`px-4 py-4 rounded-2xl text-sm font-bold transition-all border text-center ${
                     ville === v.id 
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg scale-105' 
-                    : 'bg-slate-50 text-slate-600 border-transparent hover:border-indigo-200 hover:bg-white'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-100 scale-[1.02]' 
+                    : 'bg-white text-slate-600 border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30'
                   }`}
                 >
                   {v.label}
                 </button>
               ))}
             </div>
+            
+            {/* Petit indicateur visuel en bas pour combler élégamment si besoin */}
+            <div className="mt-auto pt-10 text-center opacity-30 grayscale pointer-events-none hidden md:block">
+               <Sun size={40} className="mx-auto text-slate-300" />
+            </div>
           </div>
         </div>
 
-        <section className="bg-white p-6 md:p-10 rounded-[2.5rem] shadow-xl border border-slate-100 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-8 opacity-5">
-            <Thermometer size={120} />
+        {/* Section Météo 7 Jours */}
+        <section className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-white relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 opacity-[0.03] rotate-12">
+            <Thermometer size={300} />
           </div>
 
-          <h3 className="text-2xl font-black text-slate-800 mb-8 capitalize flex items-center gap-3">
-            <div className="w-2 h-8 bg-indigo-600 rounded-full"></div>
-            Météo 7 jours : {getCityLabel(ville)}
-          </h3>
+          <div className="flex items-center gap-4 mb-10">
+            <div className="w-1.5 h-10 bg-indigo-600 rounded-full"></div>
+            <h3 className="text-3xl font-black text-slate-800">
+              Prévisions <span className="text-indigo-600">7 jours</span>
+            </h3>
+          </div>
 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-              <p className="text-indigo-400 font-bold animate-pulse">Synchronisation avec les stations météo...</p>
+              <div className="w-12 h-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+              <p className="text-slate-400 font-bold animate-pulse">Mise à jour des prévisions...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
-              {forecast?.time?.map((date: string, i: number) => (
-                <div key={date} className="bg-slate-50/50 p-5 rounded-3xl border border-transparent hover:border-indigo-100 hover:bg-white hover:shadow-lg transition-all flex flex-col items-center group">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">
-                    {new Date(date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
-                  </span>
-                  
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">
-                    {icons[forecast.weathercode[i]] || <Cloud className="text-slate-300" />}
-                  </div>
-
-                  <div className="text-center mb-4">
-                    <div className="text-2xl font-black text-slate-900 leading-none">{Math.round(forecast.temperature_2m_max[i])}°</div>
-                    <div className="text-xs font-bold text-indigo-400 mt-1">{Math.round(forecast.temperature_2m_min[i])}°</div>
-                  </div>
-
-                  <div className="w-full pt-4 border-t border-slate-100 space-y-2">
-                    <div className="flex justify-between items-center text-[9px] font-bold">
-                      <span className="text-slate-400 uppercase">Pluie</span>
-                      <span className="text-blue-500">{forecast.precipitation_sum[i]}mm</span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
+              {forecast?.time?.map((date: string, i: number) => {
+                const windSpeed = Math.round(forecast?.windspeed_10m_max?.[i] || 0);
+                return (
+                  <div key={date} className="bg-slate-50/50 p-6 rounded-[2rem] border border-transparent hover:border-indigo-100 hover:bg-white hover:shadow-xl transition-all flex flex-col items-center group">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">
+                      {new Date(date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
+                    </span>
+                    
+                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                      {icons[forecast.weathercode[i]] || <Cloud className="text-slate-300" />}
                     </div>
-                    <div className="flex justify-between items-center text-[9px] font-bold">
-                      <span className="text-slate-400 uppercase">Indice UV</span>
-                      <span className={forecast.uv_index_max[i] > 5 ? 'text-orange-500' : 'text-emerald-500'}>
-                        {forecast.uv_index_max[i]}
-                      </span>
+
+                    <div className="text-center mb-6">
+                      <div className="text-3xl font-black text-slate-900 leading-none">{Math.round(forecast.temperature_2m_max[i])}°</div>
+                      <div className="text-sm font-bold text-indigo-400 mt-2">{Math.round(forecast.temperature_2m_min[i])}°</div>
+                    </div>
+
+                    <div className="w-full pt-4 border-t border-slate-200/60 space-y-3">
+                      <div className="flex justify-between items-center text-[10px] font-bold">
+                        <span className="text-slate-400 uppercase">Pluie</span>
+                        <span className="text-blue-500 font-black">{forecast.precipitation_sum[i]}mm</span>
+                      </div>
+                      
+                      <div className="flex justify-between items-center text-[10px] font-bold pt-2 border-t border-slate-100">
+                        <span className="text-slate-400 uppercase flex items-center gap-1">
+                          <Wind size={12} className={windSpeed > 40 ? 'text-orange-500' : 'text-slate-300'} /> Vent
+                        </span>
+                        <span className={windSpeed > 40 ? 'text-orange-600 font-black' : 'text-slate-700 font-black'}>
+                          {windSpeed} <span className="text-[8px]">km/h</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
