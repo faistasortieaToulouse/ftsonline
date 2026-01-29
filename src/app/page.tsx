@@ -1041,6 +1041,19 @@ useEffect(() => {
             </div>
           </Link>
 
+			{/* Bouton Météo Espagne */}
+          <Link href="/meteoespagne" className="group">
+            <div className="bg-amber-600/10 hover:bg-amber-600 border border-amber-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(217,119,6,0.4)] group-hover:-translate-y-1">
+              <div className="bg-amber-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-amber-600 transition-colors">
+                <Navigation size={22} className="rotate-90" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-amber-400 group-hover:text-white text-[10px] font-bold uppercase tracking-tight">Météo en</span>
+                <span className="text-white font-black text-lg">Espagne</span>
+              </div>
+            </div>
+          </Link>
+
         </div>
       </div>
     </div>
