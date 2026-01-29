@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { Sun, Cloud, CloudRain, CloudLightning, Wind, Thermometer, MapPin } from 'lucide-react';
+import Link from 'next/link';
+import { Sun, Cloud, CloudRain, CloudLightning, Wind, Thermometer, MapPin, ArrowLeft } from 'lucide-react';
 
 const icons: Record<number, React.ReactNode> = {
   0: <Sun className="text-orange-400" />, 1: <Sun className="text-orange-300" />,
@@ -23,6 +24,14 @@ export default function MeteoToulouseAvenir() {
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
+
+      <nav className="mb-6 mt-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-indigo-700 hover:text-indigo-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
       <div className="max-w-5xl mx-auto space-y-8">
         
         {/* En-tête Toulouse */}
