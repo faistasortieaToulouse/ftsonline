@@ -735,7 +735,6 @@ useEffect(() => {
             Autan : {meteo?.condition?.includes("Vent") ? "Actif" : "Calme"}
           </span>
         </div>
-      </div>
 
       {/* Qualité de l'Air */}
       <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
