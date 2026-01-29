@@ -4,43 +4,52 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react';
 
-// Correction pour les icônes par défaut de Leaflet dans Next.js
-const icon = L.icon({
+// Configuration de l'icône par défaut (obligatoire pour corriger le bug d'affichage Leaflet/Next.js)
+const DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
 
-// Petit composant pour recentrer la carte quand on change de ville
-function RecenterMap({ center }: { center: [number, number] }) {
+L.Marker.prototype.options.icon = DefaultIcon;
+
+// Composant pour déplacer la vue de la carte
+function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
   useEffect(() => {
-    map.setView(center, 9);
+    map.setView(center, 10);
   }, [center, map]);
   return null;
 }
 
 const COORDS = {
   toulouse: [43.6045, 1.4442],
-  carcassonne: [43.2122, 2.3537], // L'Aude
-  montpellier: [43.6108, 3.8767]  // Occitanie
+  carcassonne: [43.2122, 2.3537],
+  montpellier: [43.6108, 3.8767]
 };
 
 export default function Map({ ville }: { ville: string }) {
-  const center = COORDS[ville as keyof typeof COORDS] || COORDS.toulouse;
+  const position = (COORDS[ville as keyof typeof COORDS] || COORDS.toulouse) as [number, number];
 
   return (
-    <div className="h-[400px] w-full rounded-2xl overflow-hidden border-4 border-white shadow-xl z-0">
-      <MapContainer center={center as any} zoom={9} style={{ height: '100%', width: '100%' }}>
+    <div className="h-[400px] w-full z-0">
+      <MapContainer 
+        center={position} 
+        zoom={10} 
+        scrollWheelZoom={false} 
+        style={{ height: '100%', width: '100%' }}
+      >
         <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={center as any} icon={icon}>
-          <Popup className="capitalize">{ville}</Popup>
+        <Marker position={position}>
+          <Popup className="capitalize">
+            Météo actuelle : {ville}
+          </Popup>
         </Marker>
-        <RecenterMap center={center as any} />
+        <ChangeView center={position} />
       </MapContainer>
     </div>
   );
