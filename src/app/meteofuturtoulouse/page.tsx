@@ -24,11 +24,13 @@ const icons: Record<number, React.ReactNode> = {
 const VILLES_OCCITANIE = [
   { id: 'toulouse', label: 'Toulouse', dept: '31' },
   { id: 'montpellier', label: 'Montpellier', dept: '34' },
+  { id: 'beziers', label: 'Béziers', dept: '34' },   // Nouveau
   { id: 'nimes', label: 'Nîmes', dept: '30' },
   { id: 'perpignan', label: 'Perpignan', dept: '66' },
   { id: 'beziers', label: 'Béziers', dept: '34' }, // Optionnel
   { id: 'carcassonne', label: 'Carcassonne', dept: '11' },
-  { id: 'narbonne', label: 'Narbonne', dept: '11' }, // Optionnel
+  { id: 'lezignan', label: 'Lézignan', dept: '11' }, // Nouveau
+  { id: 'narbonne', label: 'Narbonne', dept: '11' }, // Nouveau
   { id: 'albi', label: 'Albi', dept: '81' },
   { id: 'montauban', label: 'Montauban', dept: '82' },
   { id: 'tarbes', label: 'Tarbes', dept: '65' },
