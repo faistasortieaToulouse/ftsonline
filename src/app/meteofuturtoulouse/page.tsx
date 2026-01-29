@@ -251,13 +251,28 @@ export default function MeteoFuturPage() {
                     <div className="text-xs font-bold text-indigo-400 mt-1">{Math.round(forecast.temperature_2m_min[i])}°</div>
                   </div>
                   <div className="w-full pt-3 border-t border-slate-200/60 space-y-2">
-                     <div className="flex justify-between items-center text-[9px] font-bold">
+                    {/* BLOC PLUIE */}
+                    <div className="flex justify-between items-center text-[9px] font-bold">
                       <span className="text-slate-400 uppercase">Pluie</span>
                       <span className="text-blue-500">{forecast.precipitation_sum[i]}mm</span>
                     </div>
+
+                    {/* BLOC UV - Corrigé pour fonctionner sans variable 'const' */}
                     <div className="flex justify-between items-center text-[9px] font-bold">
-                      <span className="text-slate-400 uppercase flex items-center gap-1"><Wind size={10} /> Vent</span>
-                      <span className="text-slate-700">{Math.round(forecast.windspeed_10m_max[i] || 0)}km/h</span>
+                      <span className="text-slate-400 uppercase tracking-tighter">Indice UV</span>
+                      <span className={forecast?.uv_index_max?.[i] > 5 ? 'text-orange-500' : 'text-emerald-500'}>
+                        {forecast?.uv_index_max?.[i] || 0}
+                      </span>
+                    </div>
+
+                    {/* BLOC VENT */}
+                    <div className="flex justify-between items-center text-[9px] font-bold">
+                      <span className="text-slate-400 uppercase flex items-center gap-1">
+                        <Wind size={10} /> Vent
+                      </span>
+                      <span className="text-slate-700">
+                        {Math.round(forecast.windspeed_10m_max[i] || 0)}km/h
+                      </span>
                     </div>
                   </div>
                 </div>
