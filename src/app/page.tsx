@@ -196,6 +196,7 @@ const categories = [
 
   { title: "Toulouse : Consommation", href: "/marches", icon: Apple, isOccitanie: true, occitanieSources: [
     { title: "Marchés", href: "/marches" },
+	{ title: "Cuisine de Toulouse", href: "/cuisinetoulouse" },
   ]},
 
 /* 3. Toulouse : Emploi */
