@@ -39,7 +39,7 @@ export default function MeteoToulouseAvenir() {
           <div className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
             <MapPin size={12} /> Haute-Garonne
           </div>
-          <h1 className="text-4xl font-black text-slate-900 uppercase">Toulouse <span className="text-indigo-600">Avenir</span></h1>
+          <h1 className="text-4xl font-black text-slate-900 uppercase">Toulouse <span className="text-indigo-600"></span></h1>
           <p className="text-slate-500 font-medium text-sm italic">Prévisions locales précises à 7 jours</p>
         </div>
 

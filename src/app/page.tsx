@@ -15,7 +15,7 @@ import {
   Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
   Newspaper, Speech, Users, UserGroup, Smile, Handshake,
   ChevronDown, Wind, Droplets, Sun as SunIcon, Navigation,
-  Timer
+  Timer, Mountain
 } from "lucide-react";
 
 import { getSaintDuJour } from "../lib/saints";
@@ -1040,6 +1040,19 @@ useEffect(() => {
               </div>
             </div>
           </Link>
+
+{/* Bouton Météo Andorre */}
+<Link href="/meteoandorre" className="group">
+  <div className="bg-orange-600/10 hover:bg-orange-600 border border-orange-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] group-hover:-translate-y-1">
+    <div className="bg-orange-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-orange-600 transition-colors">
+      <Mountain size={22} />
+    </div>
+    <div className="flex flex-col">
+      <span className="text-orange-400 group-hover:text-white text-[10px] font-bold uppercase tracking-tight">Météo en</span>
+      <span className="text-white font-black text-lg">Andorre</span>
+    </div>
+  </div>
+</Link>
 
 			{/* Bouton Météo Espagne */}
           <Link href="/meteoespagne" className="group">
