@@ -962,6 +962,19 @@ useEffect(() => {
         </h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+		{/* Bouton Météo Occitanie */}
+          <Link href="/meteofuturtoulouse" className="group">
+            <div className="bg-indigo-600/10 hover:bg-indigo-600 border border-indigo-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] group-hover:-translate-y-1">
+              <div className="bg-indigo-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-indigo-600 transition-colors">
+                <Navigation size={22} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-indigo-400 group-hover:text-white text-[10px] font-bold uppercase tracking-tight">Météo en</span>
+                <span className="text-white font-black text-lg">Occitanie</span>
+              </div>
+            </div>
+          </Link>
           
           {/* Bouton Météo Aude */}
           <Link href="/meteoaude" className="group">
