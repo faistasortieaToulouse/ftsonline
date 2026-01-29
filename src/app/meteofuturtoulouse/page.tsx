@@ -4,11 +4,6 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Sun, Cloud, CloudRain, CloudLightning, ArrowLeft, Thermometer, ChevronRight } from 'lucide-react';
 
-const MapWithNoSSR = dynamic(() => import('@/components/Map'), { 
-  ssr: false,
-  loading: () => <div className="h-[550px] w-full bg-slate-200 animate-pulse rounded-3xl flex items-center justify-center text-slate-400 font-bold">Chargement de la carte...</div>
-});
-
 const VILLES_PAR_DEPT: Record<string, { id: string, label: string, dept: string }[]> = {
   "Ariège (09)": [
     { id: "foix", label: "Foix", dept: "09" },
@@ -111,6 +106,11 @@ const VILLES_PAR_DEPT: Record<string, { id: string, label: string, dept: string 
     { id: "canillo", label: "Canillo", dept: "AD" },
   ]
 };
+
+const MapWithNoSSR = dynamic(() => import('@/components/Map'), { 
+  ssr: false,
+  loading: () => <div className="h-[550px] w-full bg-slate-200 animate-pulse rounded-3xl flex items-center justify-center text-slate-400 font-bold">Chargement de la carte...</div>
+});
 
 export default function MeteoFuturPage() {
   const [ville, setVille] = useState('toulouse');
