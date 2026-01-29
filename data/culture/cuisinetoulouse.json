@@ -1,0 +1,219 @@
+{
+  "cuisine_toulousaine": {
+    "plats_emblematiques_et_viandes": {
+      "toulousains_classiques": [
+        "Saucisse de Toulouse",
+        "Ris de veau à la Toulousaine",
+        "Oeufs à la toulousaine",
+        "Navarin Toulousain",
+        "Bouchées à la Toulousaine",
+        "Poulet à la Toulousaine",
+        "Cassoulet"
+      ],
+      "volailles_et_creme": [
+        "Poêlée à la crème",
+        "Coquelet à la crème",
+        "Poule au pot des mousquetaires",
+        "Poule au pot farcie",
+        "Poule à l'espagnole",
+        "Dinde farcie à l'Esquirol",
+        "Ballotine de dinde",
+        "Pigeons aux petits pois",
+        "Pigeons à l'espagnol"
+      ],
+      "viandes_rouges_et_gibier": [
+        "Entrecôte de Mirabeau",
+        "Gigot d'agneau à l'ail",
+        "Gigot à la Saint-Sernin",
+        "Agneau en croûte",
+        "Daube d'oie",
+        "Daube de boeuf du gendarme",
+        "Langue de boeuf à l'occitane",
+        "Jarret de porc au vin rouge",
+        "Rôti de boeuf",
+        "Coeur de veau à la bourgeoise",
+        "Lapin à la moutarde"
+      ]
+    },
+    "specialites_violette": [
+      "Violettes cristalisées",
+      "Gelée de violette",
+      "Confiture de violettes",
+      "Sirop de violettes",
+      "Liqueur de violettes",
+      "Violettes en salade"
+    ],
+    "specialites_ail_et_condiments": {
+      "ail_rose_de_lautrec": [
+        "Ail rose de Lautrec et aillade",
+        "Soupe à l'ail",
+        "Pain à l'ail et à la tomate",
+        "Civet d'escargots à la Lautrec"
+      ],
+      "condiments": [
+        "Citrons confits (salés)",
+        "Coulis de tomates"
+      ]
+    },
+    "canard_et_oie": {
+      "canard": [
+        "Confit de canard, pommes paillasson à l'ail",
+        "Salade au confit de canard et aux noix",
+        "Pot au feu de canard",
+        "Fricassée de canard aux haricots",
+        "Fritons de canard"
+      ],
+      "oie": [
+        "Cuisses d'oie",
+        "Confit d'oie",
+        "Oie en ragoût",
+        "Rillettes d'oie",
+        "Oie en daube",
+        "Terrine de foie gras d'oie",
+        "Oie farcie aux marrons",
+        "Foie gras de Gascogne"
+      ]
+    },
+    "legumes_et_accompagnements": {
+      "pommes_de_terre": [
+        "Pommes de terre en robe des champs",
+        "Pommes de terre sautées",
+        "Pommes de terre au four",
+        "Pommes de terre frites",
+        "Pommes de terre en purée",
+        "Pommes de terre farcies du lundi",
+        "Pommes de terre au sucre",
+        "Pommes de terre aux cèpes",
+        "Pommes de terre au vin blanc"
+      ],
+      "autres_legumes": [
+        "Fenouils farcis à la sauce tomate",
+        "Tomates à la paysanne",
+        "Chou farci aux légumes",
+        "Tarte aux courgettes",
+        "Salade de tomates à l'ail",
+        "Jardinière de légumes",
+        "Gratin de légumes",
+        "Courgettes et poivrons farcis à la paysanne",
+        "Fricassé de champignons et châtaignes",
+        "Estouffade de maïs"
+      ]
+    },
+    "poissons": [
+      "Truite à la Mollau",
+      "Quiche à la truite aux poireaux et aux tomates",
+      "Filets de carpe, sauce et vin",
+      "Morue au vin blanc",
+      "Cake au poisson"
+    ],
+    "tartes_quiches_et_oeufs": [
+      "Quiche au roquefort et aux noix",
+      "Tourte aux lardons",
+      "Tourte à la Clovis",
+      "Tourte aux escargots",
+      "Omelette à la Montastruc",
+      "Omelette aux oignons",
+      "Oeufs à la flamenca",
+      "Galettes au lard",
+      "Feuilleté jambon champignons"
+    ],
+    "soupes_et_bouillons": [
+      "Gabure citoyenne",
+      "Soupe de lentilles de la Saint-Martin",
+      "Soupe au fromage",
+      "Soupe de potiron",
+      "Soupe aux petits poids",
+      "Soupe occitane",
+      "Pot au feu au jarret de porc"
+    ],
+    "sauces_et_accompagnements_liquides": [
+      "Sauce au vin rouge",
+      "Sauce au vin blanc",
+      "Sauce pour steak et pour pâtes",
+      "Sauce aux crevettes",
+      "Crème fraîche et mayonnaise",
+      "Mayonnaise express"
+    ],
+    "boissons_vins_et_liqueurs": {
+      "vins_et_derives": [
+        "Saucisses au vin",
+        "Vin d'orange",
+        "Vin médiéval",
+        "Vin aux pruneaux",
+        "Poulet sauté au vinaigre de vin",
+        "Vin chaud"
+      ],
+      "liqueurs_et_digestifs": [
+        "Liqueur de framboise",
+        "Liqueur de genièvre",
+        "Liqueur de café et orange",
+        "Liqueur de thym",
+        "Liqueur de figues",
+        "Liqueur de vieux garçon",
+        "Liqueur de chocolat",
+        "Liqueur de citron",
+        "Liqueur de oranges",
+        "Liqueur de pêches"
+      ]
+    },
+    "desserts_et_douceurs": {
+      "gateaux_et_tartes": [
+        "Tarte aux pommes maison",
+        "Gâteau aux pommes du Carême",
+        "Gâteau maison",
+        "Gâteau aux noisettes et aux amandes",
+        "Cake au poisson",
+        "Tarte aux noix",
+        "Tarte aux fruits rouges",
+        "Millas",
+        "Flan d'abricots",
+        "Bûche de Noël",
+        "Gâteaux de Noël"
+      ],
+      "petites_douceurs_et_biscuits": [
+        "Croquants aux noisettes et amandes",
+        "Nougat croquant au sésame",
+        "Fondant au chocolat",
+        "Carrés de chocolat aux fruits confits",
+        "Chocolat de Pâques",
+        "Oreillettes",
+        "Beignets de carnaval",
+        "Pain perdu des jours heureux",
+        "Riz des Capitouls",
+        "Riz au lait",
+        "Mousse marrons amandes"
+      ],
+      "fruits_et_compotes": [
+        "Poires au vin",
+        "Compote pommes poires",
+        "Croustade aux abricots",
+        "Salade fraîcheur",
+        "Salade d'été"
+      ]
+    },
+    "confitures_et_pates_de_fruits": {
+      "confitures": [
+        "Confiture de poires aux figues",
+        "Confiture d'abricots",
+        "Confiture de fraises",
+        "Confiture de poires à la cannelle",
+        "Confiture de rhubarbe",
+        "Confiture de Noël"
+      ],
+      "pates_de_fruits": [
+        "Pâte de fruits aux coings",
+        "Pâte de fruits vanille",
+        "Pâte de fruits abricots",
+        "Pâte de fruits orange",
+        "Pâte de fruits aux fruits confits"
+      ]
+    },
+    "divers": [
+      "Pieds de mouton de Grisolles au gratin",
+      "Terrine aux foies de volaille",
+      "Pain aux noix",
+      "Confits aux cèpes",
+      "Conservation des cèpes"
+    ]
+  }
+}
