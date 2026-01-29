@@ -708,49 +708,18 @@ useEffect(() => {
       Lumière : <b className="text-indigo-900">{tendanceLumiere}</b>
     </span>
   </div>
-      
       <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
         <span className="text-sm" title="Heure Dorée">📷</span> 
-        <span className="whitespace-nowrap">Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
+        <span>Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
       </div>
-      
       <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
         <span className="text-sm" title="Heure Bleue">🌃</span>
-        <span className="whitespace-nowrap">Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
+        <span>Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
       </div>
     </div>
 
     {/* 2. SECTION ENVIRONNEMENT (Vent, Air, UV) */}
-    {/* On n'affiche la bordure de séparation que sur tablette/ordinateur (md:border-l) */}
-    <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 md:border-l md:border-indigo-300 md:pl-6">
-      
-      {/* Vent : Vitesse du jour + Statut Autan */}
-      <div className="flex items-center gap-1.5">
-        <span className="text-sm">💨</span>
-        <div className="flex flex-col leading-tight">
-          <span className="whitespace-nowrap">
-            Vent : <b className="text-indigo-900">{meteo?.vitesseVent || '--'} km/h</b>
-          </span>
-          <span className="text-[9px] opacity-70 italic">
-            Autan : {meteo?.condition?.includes("Vent") ? "Actif" : "Calme"}
-          </span>
-        </div>
-
-      {/* Qualité de l'Air */}
-      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-        <span className="text-sm">🍃</span>
-        <span className="whitespace-nowrap">Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span></span>
-      </div>
-
-      {/* Indice UV */}
-      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-        <span className="text-sm">🕶️</span>
-        <span className="whitespace-nowrap">UV : <b className="text-indigo-900">{indiceUV}</b></span>
-      </div>
-    </div>
-
-  </div>
-</div>
+    <div className="flex items-center gap-4 border-l border-indigo-300 pl-4">
       
 {/* Vent : Vitesse du jour + Statut Autan */}
   <div className="flex items-center gap-1.5">
