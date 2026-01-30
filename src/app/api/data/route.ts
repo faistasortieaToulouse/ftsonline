@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60; // Indispensable pour l'agrégation longue
+export const maxDuration = 60; 
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,37 +21,34 @@ export async function GET(request: NextRequest) {
     const totalArticlesManuel = Object.values(manuel).reduce((a, b) => a + (b as number), 0);
     const origin = request.nextUrl.origin;
 
-    // Utilisation de cache: 'no-store' pour forcer la récupération des vraies données
-    const fetchOptions = { 
-      cache: 'no-store' as RequestCache,
-      headers: { 'Accept': 'application/json' }
-    };
-
+    // Appel des APIs
     const [resAgenda, resMeetup, resCinema, resJeux] = await Promise.allSettled([
-      fetch(`${origin}/api/agendatoulouse`, fetchOptions).then(r => r.json()),
-      fetch(`${origin}/api/meetup-full`, fetchOptions).then(r => r.json()),
-      fetch(`${origin}/api/cinematoulouse`, fetchOptions).then(r => r.json()),
-      fetch(`${origin}/api/trictracphilibert`, fetchOptions).then(r => r.json()),
+      fetch(`${origin}/api/agendatoulouse`, { cache: 'no-store' }).then(r => r.json()),
+      fetch(`${origin}/api/meetup-full`, { cache: 'no-store' }).then(r => r.json()),
+      fetch(`${origin}/api/cinematoulouse`, { cache: 'no-store' }).then(r => r.json()),
+      fetch(`${origin}/api/trictracphilibert`, { cache: 'no-store' }).then(r => r.json()),
     ]);
 
-    // --- LOGIQUE D'EXTRACTION AVEC FALLBACKS ---
-    
-    // Agenda : regarde .total, sinon .events.length, sinon .length
+    // --- ANALYSE DE L'AGENDA ---
     let countAgenda = 0;
     if (resAgenda.status === 'fulfilled') {
-      const val = resAgenda.value;
-      countAgenda = val.total || (Array.isArray(val.events) ? val.events.length : 0) || (Array.isArray(val) ? val.length : 0);
+      const d = resAgenda.value;
+      // On cherche partout : dans .total, dans .events, ou si c'est directement un tableau
+      countAgenda = d.total || (d.events ? d.events.length : 0) || (Array.isArray(d) ? d.length : 0);
     }
 
-    // Meetup : regarde .events.length, sinon .length
+    // --- ANALYSE DE MEETUP ---
     let countMeetup = 0;
     if (resMeetup.status === 'fulfilled') {
-      const val = resMeetup.value;
-      countMeetup = (Array.isArray(val.events) ? val.events.length : 0) || (Array.isArray(val) ? val.length : 0);
+      const d = resMeetup.value;
+      // Idem : on cherche .events ou si c'est un tableau direct
+      countMeetup = (d.events ? d.events.length : 0) || (Array.isArray(d) ? d.length : 0);
     }
 
     const countCinema = resCinema.status === 'fulfilled' ? (resCinema.value.results?.length || 0) : 0;
     const countJeux   = resJeux.status === 'fulfilled' ? (resJeux.value.count || 0) : 0;
+
+    const totalGlobal = totalArticlesManuel + countAgenda + countMeetup + countCinema + countJeux;
 
     return NextResponse.json({
       totalRessourcesManuel: totalArticlesManuel,
@@ -61,15 +58,15 @@ export async function GET(request: NextRequest) {
         cinema: countCinema,
         jeux: countJeux
       },
-      totalGlobal: totalArticlesManuel + countAgenda + countMeetup + countCinema + countJeux,
+      totalGlobal: totalGlobal
     }, {
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'no-store, must-revalidate'
+        'Cache-Control': 'no-store'
       }
     });
 
   } catch (error) {
-    return NextResponse.json({ error: "Erreur lors de l'agrégation" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur" }, { status: 500 });
   }
 }
