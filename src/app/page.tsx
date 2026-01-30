@@ -46,6 +46,47 @@ const nbCulture = 2;
 const nbLibrairie = 5;
 const nbCinema = 2;
 const nbJeux = 3;
+const nbDiscord = 1;
+const nbFacebook = 1;
+const nbFS = 1;
+const nbCommunaute = 2;
+const nbSport = 5;
+const nbMusee = 13;
+const nbVisite = 11;
+const nbOccitanie = 15;
+const nbTransport = 5;
+const nbCafeLangue = 1;
+const nbConsomamtion = 2;
+const nbEmploi = 2;
+const nbFlore = 1;
+const nbEquipement = 3;
+const nbGeographie = 5;
+const nbHistoire = 3;
+const nbMonument = 2;
+const nbLittératureEt = 7;
+const nbLittératureFr = 22;
+const nbPrix = 21;
+const nbArchitecture = 1;
+const nbEurope = 5;
+const nbFete = 1;
+const nbFrancais = 3;
+const nbHierarchie = 23;
+const nbSaHistoire = 12;
+const nbLangue = 1;
+const nbMonde = 1;
+const nbReligion = 3;
+const nbTerritoire = 4;
+const totalArticles = 
+  nbAgenda + nbActualites + nbMeetup + nbToulouseEvents + 
+  nbSpectacles + nbCulture + nbLibrairie + nbCinema + 
+  nbJeux + nbDiscord + nbFacebook + nbFS + 
+  nbCommunaute + nbSport + nbMusee + nbVisite + 
+  nbOccitanie + nbTransport + nbCafeLangue + nbConsomamtion + 
+  nbEmploi + nbFlore + nbEquipement + nbGeographie + 
+  nbHistoire + nbMonument + nbLittératureEt + nbLittératureFr + 
+  nbPrix + nbArchitecture + nbEurope + nbFete + 
+  nbFrancais + nbHierarchie + nbSaHistoire + nbLangue + 
+  nbMonde + nbReligion + nbTerritoire;
 
 // --- DONNÉES DES CATÉGORIES ---
 const categories = [
@@ -78,7 +119,8 @@ const categories = [
       { title: "Évènements à l'université", href: "/universites" },
     ] 
   },
-
+	// const nbToulouseEvents = 2;
+	
 /* 2. Billet spectacle */
   { 
     title: "Billets spectacle", 
@@ -90,11 +132,13 @@ const categories = [
       { title: "Billèterie Spectacles", href: "/billetticket" }
     ] 
   },
+// const nbSpectacles = 2;	
 
   { title: "Actualités culturelles et scientifiques", href: "/culture", icon: Theater, isCulture: true, cultureSources: [
     { title: "Actualités culturelles", href: "/cotetoulouse" },
     { title: "Actualités scientifiques", href: "/canalu" },
   ]},
+// const nbCulture = 2;	
 
   { title: "Sorties en librairie", href: "/librairie", icon: Book, isLibrairie: true, librairieSources: [
     { title: "Sorties en librairie", href: "/podlibrairies" },
@@ -103,21 +147,29 @@ const categories = [
     { title: "Librairie Ombrs Blanches", href: "/podombres" },
     { title: "Librairie Terra Nova", href: "/podterra" },
   ]},
+// const nbLibrairie = 5;	
 
   { title: "Sorties cinéma", href: "/cinema", icon: Film, isCinema: true, cinemaSources: [
 	{ title: "Sorties cinéma", href: "/cinematoulouse" },
 	{ title: "Programmes cinéma", href: "/cinemastoulouse" }
   ] },
+// const nbCinema = 2;	
 
   { title: "Sorties jeux de société", href: "/jeux", icon: Gamepad, isJeux: true, jeuxSources: [
     { title: "Tric Trac", href: "/trictracphilibert" },
     { title: "Philibert", href: "/philibertnet" },
     { title: "Jeu de Plateau", href: "/jeuplateau" },
   ]},
+// const nbJeux = 3;	
 
   { title: "Discord FTS", href: "/discordfts", icon: MessageSquare },
+//  const nbDiscord = 1;
+	
   { title: "Facebook FTS", href: "/facebookfts", icon: Facebook },
+//  const nbFacebook = 1;
+	
   { title: "Fais Ta Sortie FTS", href: "/ftsfts", icon: Globe },
+//  const nbFS = 1;
 
   // --- Communautés : Sorties et Culture ---
   { 
@@ -129,6 +181,7 @@ const categories = [
       { title: "Agenda des Communautés", href: "/communautes" },
     ]
   },
+//  const nbCommunaute = 2;
 
   { title: "Culture, sport à Toulouse", href: "/air", icon: Palette, isSites: true, sitesSources: [
     { title: "Bibliothèques à Toulouse", href: "/bibliomap" },
@@ -137,6 +190,7 @@ const categories = [
     { title: "Équipements de sport à Toulouse", href: "/sport" },
     { title: "Parcs et jardins de Toulouse", href: "/parcjardin" },
   ]},
+//  const nbSport = 5;
 
   { title: "Musées à Toulouse et en banlieue", href: "/musee", icon: Archive, isMusee: true, museeSources: [
     { title: "Occitanie", href: "/museeoccitanie" },
@@ -153,6 +207,7 @@ const categories = [
     { title: "Tarn", href: "/museetarn" },
     { title: "Tarn-et-Garonne", href: "/museetarngaronne" },
   ]},
+//  const nbMusee = 13;
 
   { title: "Visites de Toulouse", href: "/visites-toulouse", icon: Building, isVisites: true, visitesSources: [
     { title: "Centre de Toulouse", href: "/visitetoulouse" },
@@ -165,8 +220,9 @@ const categories = [
     { title: "Hôtels particuliers de Toulouse", href: "/hotelsparticuliers" },
     { title: "Monuments actuels et disparus de Toulouse", href: "/visitetoulousetotal" },
     { title: "Circuits à Toulouse", href: "/balade" },
-    { title: "RAndo-vélo à Toulouse", href: "/randovelos" },
+    { title: "Rando-vélo à Toulouse", href: "/randovelos" },
   ]},
+//  const nbVisite = 11;
 
   { title: "Visites en Occitanie", href: "/visites-occitanie", icon: MapPin, isOccitanie: true, occitanieSources: [
     { title: "Ariège", href: "/ariege" },
@@ -185,6 +241,7 @@ const categories = [
     { title: "Tarn-Garonne", href: "/tarngaronne" },
     { title: "Cirque et sommet", href: "/montcirque" },
   ]},
+//  const nbOccitanie = 15;
 
   { title: "Transports & Trafic", href: "/transports-tisseo", icon: Bus, isTransport: true, transportSources: [
     { title: "Tisséo Toulouse", href: "/tisseotoulouse" },
@@ -193,6 +250,7 @@ const categories = [
     { title: "Voyage", href: "/voyagetoulouse" },
     { title: "Automobile", href: "/automobile" },
   ]},
+//  const nbTransport = 5;
 
 
   /* ---------------- TOULOUSE ---------------- */
@@ -208,11 +266,13 @@ const categories = [
       { title: "Café des Langues", href: "/langue" },
     ]
   },
+//  const nbCafeLangue = 1;
 
   { title: "Toulouse : Consommation", href: "/marches", icon: Apple, isOccitanie: true, occitanieSources: [
     { title: "Marchés", href: "/marches" },
 	{ title: "Cuisine de Toulouse", href: "/cuisinetoulouse" },
   ]},
+//  const nbConsomamtion = 2;
 
 /* 3. Toulouse : Emploi */
   { 
@@ -225,16 +285,19 @@ const categories = [
       { title: "Atelier Emploi", href: "/atelieremploi" },
     ] 
   },
+//  const nbEmploi = 2;
 
   { title: "Toulouse : Environnement", href: "/flore", icon: Flower, isOccitanie: true, occitanieSources: [
     { title: "Flore", href: "/flore" },
   ]},
+//  const nbFlore = 1;
 
   { title: "Toulouse : Equipements", href: "/administration", icon: Home, isOccitanie: true, occitanieSources: [
     { title: "Administration", href: "/administration" },
     { title: "Salles de conférences", href: "/conference" },
     { title: "École & Culture", href: "/ecoleculture" },
   ]},
+//  const nbEquipement = 3;
 
   { title: "Toulouse : Géographie", href: "/altitudes", icon: Map, isOccitanie: true, occitanieSources: [
     { title: "Altitudes", href: "/altitudes" },
@@ -243,17 +306,20 @@ const categories = [
     { title: "Quartiers", href: "/quartiertoulouse" },
     { title: "Voies (carte)", href: "/voiesmap" },
   ]},
+//  const nbGeographie = 5;
 
   { title: "Toulouse : Histoire", href: "/parcellaire", icon: History, isOccitanie: true, occitanieSources: [
     { title: "Capitale", href: "/capitale_toulouse" },
     { title: "Parcellaire de 1830", href: "/parcellaire" },
     { title: "Terminus des transports en 1863 et 1957", href: "/terminus" },
   ]},
+//  const nbHistoire = 3;
 
   { title: "Toulouse : Monuments", href: "/lagrave", icon: Castle, isOccitanie: true, occitanieSources: [
     { title: "Hôpital de la Grave", href: "/lagrave" },
     { title: "Hôtel-Dieu", href: "/hoteldieu" },
   ]},
+//  const nbMonument = 2;
 
 
   /* ---------------- LITTERATURE ---------------- */
@@ -273,6 +339,7 @@ const categories = [
       { title: "Littérature Suédoise", href: "/LitteratureSuedoise" }
     ]
   },
+//  const nbLittératureEt = 7;
 
 { 
     title: "Littérature française", 
@@ -304,6 +371,7 @@ const categories = [
       { title: "Littérature de Voyage", href: "/LitteratureVoyage" }
     ]
   },
+//  const nbLittératureFr = 22;
 
   { 
     title: "Livres : Prix littéraires", 
@@ -334,6 +402,7 @@ const categories = [
       { title: "Prix Total par écrivains", href: "/TotalPrixEcrivain" }
     ]
   },
+//  const nbPrix = 21;
 
 
   /* ---------------- SAVOIRS ---------------- */
@@ -342,6 +411,7 @@ const categories = [
   { title: "Savoirs : Architecture", href: "/architecture", icon: DraftingCompass, isOccitanie: true, occitanieSources: [
     { title: "Architecture", href: "/architecture" },
   ]},
+//  const nbArchitecture = 1;
 
 /* 4. Savoirs : Europe */
   { 
@@ -357,16 +427,19 @@ const categories = [
       { title: "Partenaires de l'OTAN", href: "/OTANsup" }
     ] 
   },
+//  const nbEurope = 5;
 
   { title: "Savoirs : Fêtes", href: "/datefetes", icon: PartyPopper, isOccitanie: true, occitanieSources: [
     { title: "Dates des fêtes", href: "/datefetes" },
   ]},
+//  const nbFete = 1;
 
   { title: "Savoirs : Français", href: "/francais", icon: GraduationCap, isOccitanie: true, occitanieSources: [
     { title: "Français", href: "/francais" },
     { title: "Francophonie", href: "/francophonie" },
     { title: "Français Autres", href: "/francaisautres" },
   ]},
+//  const nbFrancais = 3;
 
   { title: "Savoirs : Hiérarchie", href: "/hierarchie", icon: Library, isOccitanie: true, occitanieSources: [
     { title: "Abyssinien", href: "/hierarchieAbyssinien" },
@@ -393,6 +466,7 @@ const categories = [
     { title: "Pape et Pops", href: "/ordreReligieuxPopPape" },
     { title: "type de Noblesse", href: "/typeNoblesse" },
   ]},
+//  const nbHierarchie = 23;
 
   { title: "Savoirs : Histoire", href: "/histoire", icon: Car, isOccitanie: true, occitanieSources: [
     { title: "Dynastie Islam", href: "/dynastieislam" },
@@ -408,6 +482,7 @@ const categories = [
     { title: "Royaumes France Simple", href: "/royaumes_france_simple" },
     { title: "Entrée des Etats aux USA", href: "/EtatsUSA" },
   ]},
+//  const nbSaHistoire = 12;
 
   // --- SAVOIRS : LANGUES ---
   { 
@@ -419,6 +494,7 @@ const categories = [
       { title: "Les Langues", href: "/langues" },
     ]
   },
+//  const nbLangue = 1;
 
   // --- SAVOIRS : MONDE ---
   { 
@@ -430,12 +506,14 @@ const categories = [
       { title: "PIB (PPA/Nominal)", href: "/pib" },
     ]
   },
+//  const nbMonde = 1;
 
   { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
     { title: "Religion Chine", href: "/religionchine" },
     { title: "Religions Monde", href: "/religionsmonde" },
     { title: "Religions Part", href: "/religionspart" },
   ]},
+//  const nbReligion = 3;
 
   { title: "Savoirs : Territoires français", href: "/territoires-francais", icon: Hexagon,
     isSavoirsTerritoires: true,
@@ -445,6 +523,7 @@ const categories = [
 	{ title: "Colonies en Europe", href: "/colonieeurope" },
 	{ title: "Colonies dans le Monde", href: "/coloniefrance" }
   ]},
+//  const nbTerritoire = 4;
 
 
   /* ---------------- FTS ---------------- */
@@ -1091,6 +1170,10 @@ useEffect(() => {
 {/* Catégories */}
       <section id="categories" className="py-8 px-4 container mx-auto">
         <h2 className="text-3xl font-bold mb-10 text-center text-purple-700">Nos rubriques</h2>
+		  {/* TON COMPTEUR ICI */}
+		    <div className="text-center mb-8 font-medium text-slate-500 italic">
+ 		     Nombre total de ressources : <span className="font-bold text-purple-600">{totalArticles}</span> articles
+		    </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {categories.map((cat) => {
             const Icon = cat.icon;
