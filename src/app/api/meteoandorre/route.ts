@@ -18,7 +18,8 @@ export async function GET(request: Request) {
   if (!coords) return NextResponse.json({ error: "Paroisse non trouvée" }, { status: 404 });
 
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max,windspeed_10m_max&timezone=Europe%2FBerlin`;
+    // AJOUT de snowfall_sum dans la requête
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max,windspeed_10m_max,snowfall_sum&timezone=Europe%2FBerlin`;
     const res = await fetch(url);
     const data = await res.json();
     return NextResponse.json(data);

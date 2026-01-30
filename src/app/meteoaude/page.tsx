@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { ArrowLeft, Wind, Sun, Cloud, CloudRain, CloudSun, CloudFog, CloudLightning, Info } from 'lucide-react';
+import { ArrowLeft, Wind, Sun, Cloud, CloudRain, CloudSun, CloudFog, CloudLightning, Info, Droplets, Thermometer, Calendar, Zap } from 'lucide-react';
 
 const MapAude = dynamic(() => import('@/components/MapAude'), { 
   ssr: false,
-  loading: () => <div className="h-[400px] w-full bg-slate-200 animate-pulse rounded-3xl flex items-center justify-center text-slate-400 font-bold">Chargement de la carte de l'Aude...</div>
+  loading: () => <div className="h-[400px] w-full bg-slate-200 animate-pulse rounded-[2.5rem] flex items-center justify-center text-slate-400 font-bold">Chargement de la carte de l'Aude...</div>
 });
 
 const icons: Record<number, React.ReactNode> = {
@@ -23,15 +23,15 @@ const icons: Record<number, React.ReactNode> = {
 };
 
 const VILLES_LIST = [
-  { id: "lezignan", name: "Lézignan" },
   { id: "carcassonne", name: "Carcassonne" },
+  { id: "lezignan", name: "Lézignan-Corbières" },
   { id: "narbonne", name: "Narbonne" },
 ];
 
 const NORMALES_CLIMAT = {
-  carcassonne: { pluie: 640, soleil: 2120, moyAn: "14,5°C" },
-  lezignan: { pluie: 580, soleil: 2350, moyAn: "14,8°C" },
-  narbonne: { pluie: 550, soleil: 2500, moyAn: "15,4°C" }
+  carcassonne: { pluie: 640, soleil: 2120, moyAn: "14,5°C", moyJan: "6,8°C", moyEte: "23,2°C", ventNorm: 75, joursChauds: 85 },
+  lezignan: { pluie: 580, soleil: 2350, moyAn: "14,8°C", moyJan: "7,0°C", moyEte: "23,5°C", ventNorm: 95, joursChauds: 95 },
+  narbonne: { pluie: 550, soleil: 2500, moyAn: "15,4°C", moyJan: "8,2°C", moyEte: "23,8°C", ventNorm: 120, joursChauds: 105 }
 };
 
 export default function MeteoAudePage() {
@@ -45,147 +45,187 @@ export default function MeteoAudePage() {
 
   useEffect(() => {
     if (!isMounted) return;
-
     async function getData() {
       setLoading(true);
       try {
         const res = await fetch(`/api/meteoaude?ville=${ville}`);
-        if (!res.ok) throw new Error("Erreur réseau");
         const data = await res.json();
-        
         setAudeStats(data.stats);
         setForecast(data.daily);
-      } catch (err) {
-        console.error("Erreur:", err);
-      } finally {
-        setLoading(false);
-      }
+      } catch (err) { console.error(err); }
+      finally { setLoading(false); }
     }
     getData();
   }, [ville, isMounted]);
 
   if (!isMounted) return null;
-
   const normale = NORMALES_CLIMAT[ville as keyof typeof NORMALES_CLIMAT];
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-[#f4f7ff] p-4 md:p-8 font-sans">
+      <div className="max-w-7xl mx-auto">
         
-        <Link href="/" className="flex items-center gap-2 text-indigo-600 mb-6 font-bold hover:translate-x-[-4px] transition-transform w-fit">
-          <ArrowLeft size={18} /> Retour Accueil
+        <Link href="/" className="flex items-center gap-2 text-indigo-600 mb-6 font-bold hover:underline w-fit uppercase text-xs">
+          <ArrowLeft size={16} /> Retour à l'accueil
         </Link>
 
-        <header className="mb-8">
-          <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">
-            Observatoire <span className="text-indigo-600">Aude</span>
+        {/* HEADER */}
+        <header className="bg-indigo-600 rounded-[2.5rem] p-10 text-center text-white mb-10 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-10 opacity-10"><Sun size={120} /></div>
+          <h1 className="text-5xl font-black uppercase italic tracking-tighter mb-2 italic">
+            Observatoire de l'Aude
           </h1>
-          <p className="text-slate-500 italic font-medium">Données en temps réel — Corbières, Minervois et Littoral</p>
+          <p className="text-indigo-100 font-bold opacity-80 uppercase tracking-widest text-sm">
+            Cumuls depuis le 1er Janvier vs Normales de Saison
+          </p>
         </header>
 
-        <div className="mb-10 shadow-2xl rounded-[2rem] overflow-hidden border-4 border-white bg-white">
+        {/* CARTE */}
+        <div className="mb-10 shadow-2xl rounded-[3rem] overflow-hidden border-[12px] border-white bg-white">
           <MapAude onCityChange={(id: string) => setVille(id)} />
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-8">
-          {VILLES_LIST.map((v) => (
-            <button
-              key={v.id}
-              onClick={() => setVille(v.id)}
-              className={`px-6 py-3 rounded-2xl text-sm font-black transition-all border ${
-                ville === v.id ? 'bg-indigo-600 text-white shadow-lg scale-105' : 'bg-white text-slate-500 border-slate-200'
-              }`}
-            >
-              {v.name}
-            </button>
-          ))}
-        </div>
+        {/* DASHBOARD PRINCIPAL */}
+        <div className="bg-[#eef2ff] rounded-[3rem] p-8 border border-indigo-100 shadow-sm space-y-8">
+          
+          {/* HEADER VILLE ET TEMPÉRATURES */}
+          <div className="flex flex-col md:flex-row justify-between items-center px-4">
+             <div className="flex flex-col">
+                <h2 className="text-4xl font-black text-slate-800 uppercase tracking-tight italic">
+                  {VILLES_LIST.find(v => v.id === ville)?.name}
+                </h2>
+                <div className="flex items-center gap-2 mt-1">
+                   {icons[forecast?.weather_code[0]] || <Cloud className="text-slate-300" size={24} />}
+                   <span className="text-indigo-600 font-black uppercase text-[10px]">Aujourd'hui</span>
+                </div>
+             </div>
+             <div className="text-right flex items-baseline gap-4">
+                <span className="text-7xl font-black text-indigo-700">{forecast ? Math.round(forecast.temperature_2m_max[0]) : '--'}°</span>
+                <div className="text-right">
+                  <p className="text-[10px] font-black text-slate-400 uppercase leading-none">Moy. Annuelle</p>
+                  <p className="text-sm font-black text-slate-600 tracking-tighter">{normale.moyAn}</p>
+                </div>
+             </div>
+          </div>
 
-        <section className="bg-white p-6 md:p-10 rounded-[2.5rem] shadow-xl border border-slate-100 mb-8">
-          <h3 className="text-2xl font-black text-slate-800 capitalize flex items-center gap-3 mb-8">
-            <Sun className="text-orange-400" /> Prévisions 7 jours : {ville}
-          </h3>
-
-          {loading ? (
-            <div className="py-10 text-center animate-pulse text-indigo-300 font-bold">Analyse météo en cours...</div>
-          ) : forecast ? (
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
-              {forecast.time.map((date: string, i: number) => (
-                <div key={date} className="bg-slate-50 p-5 rounded-3xl flex flex-col items-center border border-transparent hover:border-indigo-100 transition-all group">
-                  <span className="text-[10px] font-black text-slate-400 uppercase mb-3">
-                    {new Date(date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
-                  </span>
-                  
-                  <div className="text-3xl mb-3 group-hover:scale-110 transition-transform">
-                    {/* CORRECTION ICI : weather_code avec underscore */}
-                    {icons[forecast.weather_code[i]] || <Cloud className="text-slate-300" />}
-                  </div>
-                  
-                  <div className="text-xl font-black text-slate-900 leading-none">
-                    {Math.round(forecast.temperature_2m_max[i])}°
-                  </div>
-                  <div className="text-xs font-bold text-indigo-400 mt-1 mb-4">
-                    {Math.round(forecast.temperature_2m_min[i])}°
-                  </div>
-
-                  <div className="w-full pt-4 border-t border-slate-200 space-y-2">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <Wind size={14} className="text-blue-400" />
-                      <span className="text-[10px] font-bold text-slate-600">
-                        {/* CORRECTION ICI : wind_speed_10m_max */}
-                        {Math.round(forecast.wind_speed_10m_max[i])} <span className="opacity-60">km/h</span>
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1.5">
-                      <Sun size={14} className="text-orange-400" />
-                      <span className="text-[10px] font-bold text-slate-600 uppercase">
-                        UV {Math.round(forecast.uv_index_max[i])}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </section>
-
-        {!loading && audeStats && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-indigo-900 text-white rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden">
-              <h4 className="text-xs font-black uppercase tracking-widest text-indigo-300 mb-6 flex items-center gap-2">
-                <Info size={16} /> Bilan cumulé 2026 : {ville}
-              </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-                <div>
-                  <p className="text-3xl font-black">{audeStats.totalRain}mm</p>
-                  <p className="text-[9px] uppercase font-bold text-indigo-300">Pluie / Norm: {normale.pluie}mm</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-black">{audeStats.totalSunshine}h</p>
-                  <p className="text-[9px] uppercase font-bold text-indigo-300">Soleil / Norm: {normale.soleil}h</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-black">{audeStats.joursVentes}j</p>
-                  <p className="text-[9px] uppercase font-bold text-indigo-300">Jours de Vent Fort</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-black">{audeStats.waterBalance}mm</p>
-                  <p className="text-[9px] uppercase font-bold text-indigo-300">Bilan Hydrique Sol</p>
-                </div>
+          {/* STATS VENT ET MOYENNES */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex justify-around items-center">
+              <div className="text-center">
+                <p className="text-[9px] font-black text-blue-500 uppercase flex items-center gap-1 justify-center mb-1">
+                  <Thermometer size={10}/> Moy. Janvier
+                </p>
+                <p className="text-xl font-black text-slate-800">{normale.moyJan}</p>
+              </div>
+              <div className="h-8 w-[1px] bg-slate-100"></div>
+              <div className="text-center">
+                <p className="text-[9px] font-black text-orange-400 uppercase flex items-center gap-1 justify-center mb-1">
+                  <Sun size={10}/> Moy. Été
+                </p>
+                <p className="text-xl font-black text-slate-800">{normale.moyEte}</p>
               </div>
             </div>
-            
-            <div className="bg-white rounded-[2.5rem] p-8 flex flex-col justify-center border border-slate-200">
-               <span className="text-[10px] font-black text-indigo-400 uppercase mb-2 tracking-widest text-center">Climatologie locale</span>
-               <p className="text-sm text-slate-600 leading-relaxed italic text-center">
-                 {ville === 'lezignan' 
-                   ? "Lézignan bénéficie d'un ensoleillement exceptionnel, idéal pour les vignobles du Corbières, mais reste soumise aux vents dominants."
-                   : "Ce secteur présente des normales climatiques caractéristiques de l'Aude, entre influences méditerranéennes et vents de terre."
-                 }
-               </p>
+
+            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex justify-around items-center">
+              <div className="text-center">
+                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Vent {'>'} 57 km/h</p>
+                <p className="text-2xl font-black text-indigo-700">{audeStats?.joursVentes || 0}j</p>
+                <p className="text-[8px] font-bold text-slate-300 uppercase leading-none tracking-tight">Normal: {normale.ventNorm}j</p>
+              </div>
+              <div className="text-center">
+                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Jours {'>'} 25°C</p>
+                <p className="text-2xl font-black text-orange-500">0j</p>
+                <p className="text-[8px] font-bold text-slate-300 uppercase leading-none tracking-tight">Normal: {normale.joursChauds}j</p>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 text-center flex flex-col justify-center">
+              <p className="text-[9px] font-black text-slate-400 uppercase leading-none mb-1">Record 2026</p>
+              <p className="text-2xl font-black text-red-500">{forecast ? Math.max(...forecast.temperature_2m_max) : '--'}°C</p>
+              <p className="text-[8px] font-bold text-slate-300 uppercase">Temp. Max Hebdo</p>
             </div>
           </div>
-        )}
+
+          {/* GRILLE 7 JOURS CORRIGÉE (Icônes + UV) */}
+          <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
+            {forecast?.time.map((date: string, i: number) => (
+              <div key={date} className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center border-2 border-transparent hover:border-indigo-100 transition-all">
+                <span className="text-[10px] font-black text-slate-400 uppercase mb-3">
+                  {new Date(date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
+                </span>
+                
+                {/* Icône de l'état du ciel */}
+                <div className="mb-3">
+                  {icons[forecast.weather_code[i]] || <Cloud className="text-slate-300" size={32} />}
+                </div>
+
+                <div className="text-2xl font-black text-slate-800">{Math.round(forecast.temperature_2m_max[i])}°</div>
+                <div className="text-xs font-bold text-indigo-400 mb-4">{Math.round(forecast.temperature_2m_min[i])}°</div>
+                
+                {/* Détails Vent et UV */}
+                <div className="w-full pt-3 border-t border-slate-50 space-y-2">
+                   <div className="flex justify-between items-center text-[9px] font-black uppercase text-slate-400">
+                      <span className="flex items-center gap-1"><Wind size={10} className="text-blue-300"/> Vent</span>
+                      <span className="text-slate-700">{Math.round(forecast.wind_speed_10m_max[i])} <small>km/h</small></span>
+                   </div>
+                   <div className="flex justify-between items-center text-[9px] font-black uppercase text-slate-400">
+                      <span className="flex items-center gap-1"><Zap size={10} className="text-orange-300"/> Indice UV</span>
+                      <span className="text-slate-700">{Math.round(forecast.uv_index_max[i])}</span>
+                   </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* BILAN CUMULÉ BAS DE PAGE */}
+          {!loading && audeStats && (
+            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-indigo-50">
+               <div className="flex justify-between items-center mb-8">
+                  <h4 className="font-black text-indigo-900 uppercase tracking-tighter flex items-center gap-2 italic">
+                    <Calendar size={18} className="text-indigo-400" /> Cumuls vs Normales <span className="text-slate-400 font-medium normal-case italic ml-2">Année 2026</span>
+                  </h4>
+               </div>
+
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-4">
+                      <Sun className="text-orange-400" size={28} />
+                      <div>
+                        <p className="text-sm font-black text-slate-800 uppercase tracking-tighter">Ensoleillement</p>
+                        <p className="text-2xl font-black text-indigo-900">{audeStats.totalSunshine}h</p>
+                      </div>
+                    </div>
+                    <div className="h-2 bg-slate-50 rounded-full overflow-hidden mt-4">
+                      <div className="h-full bg-orange-400" style={{ width: `${Math.min((audeStats.totalSunshine / normale.soleil) * 100, 100)}%` }}></div>
+                    </div>
+                    <p className="text-[9px] text-right font-bold text-slate-400 uppercase tracking-widest mt-1">Normal: {normale.soleil}h</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-4">
+                      <Droplets className="text-blue-500" size={28} />
+                      <div>
+                        <p className="text-sm font-black text-slate-800 uppercase tracking-tighter">Cumul Pluie</p>
+                        <p className="text-2xl font-black text-indigo-900">{audeStats.totalRain} mm</p>
+                      </div>
+                    </div>
+                    <div className="h-2 bg-slate-50 rounded-full overflow-hidden mt-4">
+                      <div className="h-full bg-blue-500" style={{ width: `${Math.min((audeStats.totalRain / normale.pluie) * 100, 100)}%` }}></div>
+                    </div>
+                    <p className="text-[9px] text-right font-bold text-slate-400 uppercase tracking-widest mt-1">Normal: {normale.pluie}mm</p>
+                  </div>
+
+                  <div className="bg-emerald-50/50 border border-emerald-100 p-5 rounded-[2rem] flex flex-col justify-between">
+                     <p className="text-[10px] font-black text-emerald-600 uppercase">Bilan Sol (Hydrique)</p>
+                     <div className="flex justify-between items-end mt-2">
+                        <p className="text-3xl font-black text-emerald-700">+{audeStats.waterBalance} mm</p>
+                        <span className="text-[8px] font-black text-emerald-500 bg-white px-2 py-1 rounded-full border border-emerald-100 uppercase italic">Stable</span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
