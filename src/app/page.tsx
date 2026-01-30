@@ -36,12 +36,26 @@ import prenomsData from "../../data/celebration/prenoms_du_jour.json";
 import SunCalc from 'suncalc';
 import * as Astronomy from 'astronomy-engine';
 
+// --- COMPTEURS MANUELS ---
+const nbAgenda = 16;
+const nbActualites = 1;
+const nbMeetup = 6;
+const nbToulouseEvents = 2;
+const nbSpectacles = 2;
+const nbCulture = 2;
+const nbLibrairie = 5;
+const nbCinema = 2;
+const nbJeux = 3;
+
 // --- DONNÉES DES CATÉGORIES ---
 const categories = [
   { title: "Agenda des événements à Toulouse", href: "/agendatoulouse", icon: Calendar, isAgenda: true },
+// const nbAgenda = 16;
+	
   { title: "Actualités nationale et locale", href: "/actualites", icon: Newspaper, isActualites: true, actualitesSources: [
     { title: "Presse", href: "/presse" }
   ]},
+// const nbActualites = 1;	
 
   { title: "Événements Meetup à Toulouse", href: "/meetup-full", icon: Music, isMeetup: true, meetupSources: [
     { title: "Les évènements Meetup", href: "/meetup-full" },
@@ -51,7 +65,8 @@ const categories = [
     { title: "Évènements de nos groupes - Expats", href: "/meetup-expats" },
     { title: "Évènements de nos groupes - Sorties", href: "/meetup-sorties" },
   ]},
-
+// const nbMeetup = 6;
+	
 /* 1. Évènements Toulouse */
 { 
     title: "Evènements Toulouse", 
