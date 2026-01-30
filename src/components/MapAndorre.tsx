@@ -1,57 +1,76 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-
-// --- Icône Andorre ---
-const iconAndorre = L.icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-});
 
 const PAROISSES = [
   { id: "andorra-la-vella", pos: [42.5063, 1.5218], label: "Andorra la Vella" },
   { id: "canillo", pos: [42.5676, 1.5976], label: "Canillo" },
   { id: "encamp", pos: [42.5361, 1.5828], label: "Encamp" },
-  { id: "escaldes-engordany", pos: [42.5072, 1.5341], label: "Escaldes-Engordany" },
+  { id: "escaldes-engordany", pos: [42.5072, 1.5341], label: "Escaldes" },
   { id: "la-massana", pos: [42.5449, 1.5148], label: "La Massana" },
   { id: "ordino", pos: [42.5562, 1.5332], label: "Ordino" },
-  { id: "sant-julia-de-loria", pos: [42.4637, 1.4913], label: "Sant Julià de Lòria" },
+  { id: "sant-julia-de-loria", pos: [42.4637, 1.4913], label: "Sant Julià" },
 ];
 
 export default function MapAndorre({ onCityChange }: { onCityChange: (id: string) => void }) {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<L.Map | null>(null);
+  const mapInstance = useRef<any>(null);
 
   useEffect(() => {
-    // Sécurité : Si le div n'est pas prêt ou si la carte est déjà là, on ne fait rien
-    if (!mapRef.current || mapInstance.current) return;
+    // 1. Vérification de sécurité pour éviter la double initialisation
+    if (!mapRef.current) return;
+    
+    // Si l'instance existe déjà ou si le DOM contient déjà une carte Leaflet
+    if (mapInstance.current || (mapRef.current as any)._leaflet_id) return;
 
-    // 1. Initialisation de la carte (Focus sur Andorre)
-    mapInstance.current = L.map(mapRef.current).setView([42.54, 1.56], 11);
+    import('leaflet').then((L) => {
+      // Re-vérification après l'import dynamique au cas où le composant aurait été démonté
+      if (!mapRef.current || (mapRef.current as any)._leaflet_id) return;
 
-    // 2. Couche OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(mapInstance.current);
+      // Supprimer les punaises par défaut
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
 
-    // 3. Ajout des paroisses
-    PAROISSES.forEach((p) => {
-      const marker = L.marker(p.pos as [number, number], { icon: iconAndorre })
-        .addTo(mapInstance.current!)
-        .bindPopup(`<div style="font-weight: bold; font-family: sans-serif;">${p.label}</div>`);
+      const createTextLabel = (name: string) => {
+        return L.divIcon({
+          className: 'custom-label-andorre',
+          html: `
+            <div style="display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%);">
+              <div style="background-color: white; padding: 3px 8px; border-radius: 5px; border: 1.5px solid #4f46e5; box-shadow: 0 2px 5px rgba(0,0,0,0.1); min-width: 80px; text-align: center;">
+                <div style="font-weight: 800; font-size: 10px; color: #1e1b4b; font-family: sans-serif;">${name}</div>
+                <div style="font-size: 7px; color: #6366f1; font-weight: bold; text-transform: uppercase; font-family: sans-serif;">Andorre</div>
+              </div>
+              <div style="width: 2px; height: 5px; background-color: #4f46e5;"></div>
+            </div>`,
+          iconSize: [0, 0]
+        });
+      };
 
-      // Événement au clic
-      marker.on('click', () => {
-        onCityChange(p.id);
+      // Initialisation de la carte
+      const map = L.map(mapRef.current).setView([42.54, 1.56], 11);
+      mapInstance.current = map;
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      PAROISSES.forEach((p) => {
+        const marker = L.marker(p.pos as [number, number], { 
+          icon: createTextLabel(p.label) 
+        }).addTo(map);
+
+        marker.on('click', () => {
+          onCityChange(p.id);
+        });
       });
+
+      // Correction de l'affichage (tuiles grises)
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
     });
 
-    // 4. Cleanup (Nettoyage OTAN)
+    // Nettoyage au démontage
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -61,12 +80,14 @@ export default function MapAndorre({ onCityChange }: { onCityChange: (id: string
   }, [onCityChange]);
 
   return (
-    <div className="h-[400px] w-full rounded-[1.5rem] overflow-hidden border border-slate-200 shadow-inner">
-      <div 
-        ref={mapRef} 
-        className="h-full w-full"
-        style={{ zIndex: 0 }}
-      />
+    <div className="h-[400px] w-full rounded-[1.5rem] overflow-hidden border border-slate-200 shadow-inner relative">
+      <style jsx global>{`
+        .custom-label-andorre {
+          background: none !important;
+          border: none !important;
+        }
+      `}</style>
+      <div ref={mapRef} className="h-full w-full" style={{ zIndex: 0 }} />
     </div>
   );
 }

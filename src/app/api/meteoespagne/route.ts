@@ -36,11 +36,16 @@ export async function GET(request: Request) {
   if (!coords) return NextResponse.json({ error: "Ville non trouvée" }, { status: 404 });
 
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weathercode,temperature_2m_max,temperature_2m_min,uv_index_max,windspeed_10m_max&timezone=Europe%2FBerlin`;
+    // MODIFICATION ICI : weather_code et wind_speed_10m_max avec les underscores
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,wind_speed_10m_max&timezone=Europe%2FBerlin`;
+    
     const res = await fetch(url);
+    if (!res.ok) throw new Error("Erreur Open-Meteo");
+    
     const data = await res.json();
     return NextResponse.json(data);
   } catch (e) {
-    return NextResponse.json({ error: "Erreur API" }, { status: 500 });
+    console.error("Erreur API Meteo:", e);
+    return NextResponse.json({ error: "Erreur lors de la récupération des données" }, { status: 500 });
   }
 }

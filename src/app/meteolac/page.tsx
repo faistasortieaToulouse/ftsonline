@@ -1,15 +1,62 @@
 "use client";
+
 import React, { useEffect, useState } from 'react';
 import Link from "next/link";
-import { Sun, Wind, Cloud, CloudRain, Navigation, Timer, Calendar, ArrowLeft, MapPin } from 'lucide-react';
+import { Sun, Wind, Cloud, CloudRain, Navigation, Calendar, ArrowLeft, MapPin } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
 
+// --- 1. COMPOSANT CARTE (RECTANGLES BLANCS) ---
+const MapLacs = dynamic(() => Promise.resolve(({ data }: { data: any[] }) => {
+  const L = require('leaflet');
+  const { useEffect, useRef } = require('react');
+  const mapRef = useRef(null);
+  const mapInstance = useRef<any>(null);
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstance.current || data.length === 0) return;
+
+    // Centrage sur Toulouse
+    mapInstance.current = L.map(mapRef.current, { scrollWheelZoom: true }).setView([43.60, 1.44], 8);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(mapInstance.current);
+
+    const createLabel = (name: string, dist: string) => L.divIcon({
+      className: 'custom-marker',
+      html: `
+        <div style="display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%);">
+          <div style="background: white; border: 2px solid #059669; padding: 4px 8px; border-radius: 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 80px; text-align: center;">
+            <div style="font-weight: 800; font-size: 10px; color: #064e3b; white-space: nowrap;">${name}</div>
+            <div style="font-size: 8px; color: #10b981; font-weight: bold;">${dist}</div>
+          </div>
+          <div style="width: 2px; height: 6px; background: #059669;"></div>
+        </div>`,
+      iconSize: [0, 0],
+    });
+
+    data.forEach((lac) => {
+      if (lac.lat && lac.lng) {
+        L.marker([lac.lat, lac.lng], { icon: createLabel(lac.name, lac.dist) })
+          .addTo(mapInstance.current)
+          .on('click', () => {
+            const id = `lac-${lac.name.replace(/\s+/g, '')}`;
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          });
+      }
+    });
+
+    return () => { mapInstance.current?.remove(); mapInstance.current = null; };
+  }, [data]);
+
+  return <div ref={mapRef} className="h-full w-full rounded-[2.5rem] z-0" />;
+}), { ssr: false });
+
+// --- 2. PAGE PRINCIPALE ---
 export default function MeteoLac() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const dateAujourdhui = new Date().toLocaleDateString("fr-FR", {
-    weekday: "long", day: "numeric", month: "long", year: "numeric",
-  });
 
   useEffect(() => {
     fetch('/api/meteolac')
@@ -18,113 +65,83 @@ export default function MeteoLac() {
         setData(d);
         setLoading(false);
       })
-      .catch(err => console.error("Erreur:", err));
+      .catch(err => console.error("ERREUR TACTIQUE :", err));
   }, []);
 
-  const calculerDureeJour = (sunrise: string, sunset: string) => {
-    if (!sunrise || !sunset) return "--";
-    const [h1, m1] = sunrise.split(':').map(Number);
-    const [h2, m2] = sunset.split(':').map(Number);
-    let diffMinutes = (h2 * 60 + m2) - (h1 * 60 + m1);
-    return `${Math.floor(diffMinutes / 60)}h ${(diffMinutes % 60).toString().padStart(2, '0')}min`;
-  };
-
   const getIcon = (code: number) => {
-    if (code <= 3) return <Sun className="text-orange-500 fill-orange-100" size={32} />;
-    if (code <= 48) return <Cloud className="text-gray-400 fill-gray-100" size={32} />;
-    return <CloudRain className="text-blue-500" size={32} />;
+    if (code <= 3) return <Sun className="text-orange-500 fill-orange-100" size={28} />;
+    if (code <= 48) return <Cloud className="text-gray-400 fill-gray-100" size={28} />;
+    return <CloudRain className="text-blue-500" size={28} />;
   };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-        <p className="font-bold text-emerald-900 italic">Analyse des plans d'eau en cours...</p>
-      </div>
+      <p className="font-black animate-pulse text-emerald-800 uppercase tracking-widest">Initialisation du réseau...</p>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-      <nav className="mb-6 max-w-7xl mx-auto">
-        <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> Retour Accueil
-        </Link>
-      </nav>
-
-      <header className="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <header className="max-w-7xl mx-auto mb-10 flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 flex items-center gap-3">
-            <Navigation className="text-emerald-600 fill-emerald-600" size={36} /> Météo des Lacs
-          </h1>
-          <p className="text-slate-500 font-medium mt-1">Baignades et bases de loisirs autour de Toulouse</p>
+            <Link href="/" className="text-emerald-700 font-bold flex items-center gap-2 mb-4 hover:underline text-sm uppercase">
+                <ArrowLeft size={16} /> Retour
+            </Link>
+            <h1 className="text-4xl font-black text-slate-900 uppercase italic leading-none">Météo des Lacs <span className="text-emerald-600">7 Jours</span></h1>
         </div>
-        <div className="bg-white border border-slate-200 px-6 py-3 rounded-2xl shadow-sm flex items-center gap-3">
-          <Calendar className="text-emerald-600" size={20} />
-          <span className="text-slate-900 font-bold capitalize">{dateAujourdhui}</span>
+        <div className="hidden md:flex bg-white px-4 py-2 rounded-xl border border-slate-200 items-center gap-2 text-sm font-bold shadow-sm">
+          <Calendar size={18} className="text-emerald-600" /> {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* LA CARTE */}
+      <div className="max-w-7xl mx-auto mb-12 h-[400px] bg-white p-2 rounded-[3rem] shadow-xl border border-emerald-100 overflow-hidden">
+        <MapLacs data={data} />
+      </div>
+
+      {/* LES CARTES LACS AVEC 7 JOURS */}
+      <div className="max-w-7xl mx-auto space-y-12">
         {data.map((lac, idx) => (
-          <div key={idx} className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-xl transition-all group">
-            <div className="bg-emerald-700 p-5 text-white">
-              <div className="flex justify-between items-start mb-1">
-                <span className="font-bold text-lg tracking-tight">{lac.name}</span>
-                <span className="text-3xl font-black">{lac.temp}°C</span>
-              </div>
-              <div className="flex items-center gap-2 text-emerald-100 text-xs font-bold uppercase tracking-widest">
-                <MapPin size={12} /> {lac.city} ({lac.dept}) • {lac.dist}
-              </div>
+          <div key={idx} id={`lac-${lac.name.replace(/\s+/g, '')}`} className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
+            <div className="bg-emerald-800 p-6 text-white">
+              <h2 className="text-2xl font-black">{lac.name}</h2>
+              <p className="text-xs font-bold text-emerald-200 uppercase tracking-widest flex items-center gap-2">
+                <MapPin size={14} /> {lac.city} ({lac.dept}) • {lac.dist}
+              </p>
             </div>
 
-            <div className="p-5 space-y-5">
-              <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100">
-                <div className="flex justify-between items-start">
-                  <div className="flex flex-col">
-                    <span className="text-[11px] uppercase font-black text-amber-600 mb-1 tracking-wider">Soleil</span>
-                    <div className="text-lg font-bold text-amber-900">{lac.sunrise} | {lac.sunset}</div>
-                    <div className="text-xs font-medium text-amber-700 mt-1 flex items-center gap-1">
-                      <Timer size={14} /> Jour : {calculerDureeJour(lac.sunrise, lac.sunset)}
+            {/* SCROLL HORIZONTAL 7 JOURS */}
+            <div className="p-4 md:p-8 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-4 min-w-[900px]">
+                {lac.forecast?.map((jour: any, i: number) => (
+                  <div key={i} className={`flex-1 p-5 rounded-3xl border transition-all ${i === 0 ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-transparent hover:bg-white hover:border-slate-200'}`}>
+                    <div className="text-[10px] font-black text-slate-400 uppercase text-center mb-4">
+                      {new Date(jour.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
+                    </div>
+                    <div className="flex flex-col items-center gap-2 mb-4">
+                      {getIcon(jour.code)}
+                      <div className="text-center leading-tight">
+                        <span className="text-2xl font-black text-slate-900">{jour.tempMax}°</span>
+                        <span className="block text-xs font-bold text-emerald-600">{jour.tempMin}°</span>
+                      </div>
+                    </div>
+                    <div className="pt-4 border-t border-slate-200 space-y-2">
+                        <div className="flex justify-between text-[9px] font-black">
+                            <span className="text-slate-400 uppercase tracking-tighter text-left">Vent</span>
+                            <span className="text-slate-800 text-right">{jour.wind} km/h</span>
+                        </div>
+                        <div className="flex justify-between text-[9px] font-black">
+                            <span className="text-slate-400 uppercase tracking-tighter text-left">UV</span>
+                            <span className={jour.uv > 6 ? 'text-orange-600' : 'text-emerald-700'}>{Math.round(jour.uv)}</span>
+                        </div>
                     </div>
                   </div>
-                  <div className="bg-white p-2 rounded-xl shadow-sm border border-amber-100">
-                    {getIcon(lac.code)}
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                  <Wind size={20} className="text-emerald-500" />
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-bold text-slate-400">Vent</span>
-                    <span className="text-sm font-black text-slate-900">{lac.wind} <small className="font-normal">km/h</small></span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 bg-orange-50/50 p-3 rounded-xl border border-orange-100">
-                  <div className="w-6 h-6 rounded bg-orange-500 flex items-center justify-center text-[10px] font-black text-white">UV</div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-bold text-orange-400">Indice</span>
-                    <span className="text-sm font-black text-orange-900">{lac.uv}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex justify-between items-center">
-                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ciel</span>
-                 <span className="text-xs font-bold text-emerald-800">
-                   {lac.code === 0 ? "Pur" : lac.code < 50 ? "Variable" : "Risque pluie"}
-                 </span>
+                ))}
               </div>
             </div>
           </div>
         ))}
       </div>
-      
-      <footer className="max-w-7xl mx-auto mt-12 mb-8 text-center text-slate-400 text-[10px] uppercase tracking-widest">
-        Distances calculées au départ de Toulouse Centre. Données API rafraîchies toutes les 15 min.
-      </footer>
     </div>
   );
 }

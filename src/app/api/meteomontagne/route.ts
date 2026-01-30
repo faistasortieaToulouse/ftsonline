@@ -17,51 +17,33 @@ export async function GET() {
   try {
     const results = await Promise.all(
       STATIONS.map(async (station) => {
-        try {
-          // Simplification des paramètres pour garantir le succès
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${station.lat}&longitude=${station.lng}&current=temperature_2m,weather_code,wind_speed_10m,visibility&daily=sunrise,sunset,uv_index_max,snowfall_sum&timezone=auto`;
+        // Ajout de visibility dans current et uv_index_max dans daily
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${station.lat}&longitude=${station.lng}&current=temperature_2m,weather_code,wind_speed_10m,visibility&daily=temperature_2m_max,temperature_2m_min,weather_code,snowfall_sum,uv_index_max,wind_speed_10m_max&timezone=auto`;
+        
+        const res = await fetch(url);
+        const json = await res.json();
 
-          const res = await fetch(url, { next: { revalidate: 600 } });
+        const forecast = json.daily.time.map((date: string, i: number) => ({
+          date,
+          tempMax: Math.round(json.daily.temperature_2m_max[i]),
+          tempMin: Math.round(json.daily.temperature_2m_min[i]),
+          code: json.daily.weather_code[i],
+          snow: json.daily.snowfall_sum[i],
+          uv: json.daily.uv_index_max[i], // Index UV pour chaque jour
+          wind: Math.round(json.daily.wind_speed_10m_max[i])
+        }));
 
-          if (!res.ok) {
-            console.error(`API Error for ${station.name}: ${res.status}`);
-            return null;
-          }
-
-          const json = await res.json();
-
-          // Vérification si current et daily existent
-          if (!json.current || !json.daily) {
-            console.error(`Incomplete data for ${station.name}`);
-            return null;
-          }
-
-          return {
-            name: station.name,
-            temp: Math.round(json.current.temperature_2m ?? 0),
-            wind: Math.round(json.current.wind_speed_10m ?? 0),
-            uv: json.daily.uv_index_max?.[0] ?? 0,
-            code: json.current.weather_code ?? 0,
-            visibility: (json.current.visibility ?? 10000) / 1000,
-            snow: json.daily.snowfall_sum?.[0] ?? 0,
-            isotherme: 1500, // Mis en dur temporairement pour tester l'affichage
-            sunrise: (json.daily.sunrise?.[0] || "T08:00").split('T')[1],
-            sunset: (json.daily.sunset?.[0] || "T18:00").split('T')[1],
-          };
-        } catch (e) {
-          console.error(`Crash on ${station.name}:`, e);
-          return null;
-        }
+        return {
+          ...station,
+          currentTemp: Math.round(json.current.temperature_2m),
+          currentWind: Math.round(json.current.wind_speed_10m),
+          currentVisibility: Math.round((json.current.visibility || 10000) / 1000), // En km
+          forecast
+        };
       })
     );
-
-    const filteredData = results.filter(item => item !== null);
-    
-    // LOG DE DEBUG : Vérifie ton terminal VS Code !
-    console.log(`Nombre de stations récupérées : ${filteredData.length}`);
-
-    return NextResponse.json(filteredData);
-  } catch (globalError: any) {
-    return NextResponse.json({ error: "Fail", message: globalError.message }, { status: 500 });
+    return NextResponse.json(results);
+  } catch (e) {
+    return NextResponse.json({ error: "Erreur API" }, { status: 500 });
   }
 }

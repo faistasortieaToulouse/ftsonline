@@ -30,23 +30,39 @@ const PLAGES = [
 export async function GET() {
   try {
     const data = await Promise.all(PLAGES.map(async (plage) => {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${plage.lat}&longitude=${plage.lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&daily=sunrise,sunset,uv_index_max&timezone=auto`;
+      // 1. On demande les prévisions quotidiennes complètes sur 7 jours
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${plage.lat}&longitude=${plage.lng}&current=temperature_2m,weather_code,wind_speed_10m,visibility&daily=temperature_2m_max,temperature_2m_min,weather_code,uv_index_max,wind_speed_10m_max,sunrise,sunset&timezone=auto`;
+      
       const res = await fetch(url);
       const json = await res.json();
 
+      // 2. On transforme les données daily en un tableau de 7 objets "forecast"
+      const forecast = json.daily.time.map((date: string, i: number) => ({
+        date,
+        tempMax: Math.round(json.daily.temperature_2m_max[i]),
+        tempMin: Math.round(json.daily.temperature_2m_min[i]),
+        code: json.daily.weather_code[i],
+        uv: json.daily.uv_index_max[i],
+        windMax: Math.round(json.daily.wind_speed_10m_max[i]),
+        sunrise: json.daily.sunrise[i].split('T')[1],
+        sunset: json.daily.sunset[i].split('T')[1],
+      }));
+
+      // 3. On retourne l'objet complet pour la page
       return {
         name: plage.name,
-        temp: Math.round(json.current.temperature_2m),
-        wind: Math.round(json.current.wind_speed_10m),
-        uv: json.daily.uv_index_max[0],
-        code: json.current.weather_code,
-        sunrise: json.daily.sunrise[0].split('T')[1],
-        sunset: json.daily.sunset[0].split('T')[1],
+        lat: plage.lat,
+        lng: plage.lng,
+        currentTemp: Math.round(json.current.temperature_2m),
+        currentWind: Math.round(json.current.wind_speed_10m),
+        currentVisibility: Math.round((json.current.visibility || 10000) / 1000),
+        forecast // Ce tableau contient les 7 jours
       };
     }));
 
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Erreur API Plage:", error);
     return NextResponse.json({ error: "Erreur fetch" }, { status: 500 });
   }
 }

@@ -1,154 +1,175 @@
 "use client";
+
 import React, { useEffect, useState } from 'react';
 import Link from "next/link";
-import { Sun, Wind, Cloud, CloudRain, Navigation, Timer, Calendar, ArrowLeft } from 'lucide-react';
+import { Sun, Wind, Cloud, CloudRain, Navigation, Timer, Calendar, ArrowLeft, Eye, MapPin } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
 
+// --- 1. COMPOSANT CARTE ---
+const MapPlages = dynamic(() => Promise.resolve(({ data }: { data: any[] }) => {
+  const L = require('leaflet');
+  const { useEffect, useRef } = require('react');
+  const mapRef = useRef(null);
+  const mapInstance = useRef<any>(null);
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstance.current || data.length === 0) return;
+
+    // Centrage sur le littoral Occitan (Narbonne / Agde)
+    mapInstance.current = L.map(mapRef.current, { scrollWheelZoom: true }).setView([43.15, 3.15], 9);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(mapInstance.current);
+
+    const createLabel = (name: string, temp: number) => L.divIcon({
+      className: 'custom-marker',
+      html: `
+        <div style="display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); cursor: pointer;">
+          <div style="background: white; border: 2px solid #0284c7; padding: 4px 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+            <div style="font-weight: 800; font-size: 10px; color: #0c4a6e; white-space: nowrap;">${name}</div>
+            <div style="font-size: 11px; color: #0284c7; font-weight: 900;">${temp}°C</div>
+          </div>
+          <div style="width: 2px; height: 6px; background: #0284c7;"></div>
+        </div>`,
+      iconSize: [0, 0],
+    });
+
+    data.forEach((plage) => {
+      if (plage.lat && plage.lng) {
+        L.marker([plage.lat, plage.lng], { icon: createLabel(plage.name, plage.currentTemp) })
+          .addTo(mapInstance.current)
+          .on('click', () => {
+            const id = `plage-${plage.name.replace(/['\s]+/g, '')}`;
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          });
+      }
+    });
+
+    return () => { mapInstance.current?.remove(); mapInstance.current = null; };
+  }, [data]);
+
+  return <div ref={mapRef} className="h-full w-full rounded-[2.5rem] z-0" />;
+}), { ssr: false });
+
+// --- 2. PAGE PRINCIPALE ---
 export default function MeteoPlage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Date du jour formatée
-  const dateAujourdhui = new Date().toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
   useEffect(() => {
     fetch('/api/meteoplage')
       .then(res => res.json())
-      .then(d => {
-        setData(d);
-        setLoading(false);
-      })
-      .catch(err => console.error("Erreur chargement météo:", err));
+      .then(d => { setData(d); setLoading(false); })
+      .catch(err => console.error("Erreur:", err));
   }, []);
 
-  // Fonction pour calculer la durée du jour (ex: 9h 43min)
+  const getIcon = (code: number) => {
+    if (code <= 3) return <Sun className="text-orange-500 fill-orange-50" size={28} />;
+    if (code >= 51) return <CloudRain className="text-blue-500" size={28} />;
+    return <Cloud className="text-slate-400 fill-slate-50" size={28} />;
+  };
+
   const calculerDureeJour = (sunrise: string, sunset: string) => {
     if (!sunrise || !sunset) return "--";
     const [h1, m1] = sunrise.split(':').map(Number);
     const [h2, m2] = sunset.split(':').map(Number);
-    
-    let diffMinutes = (h2 * 60 + m2) - (h1 * 60 + m1);
-    const heures = Math.floor(diffMinutes / 60);
-    const minutes = diffMinutes % 60;
-    
-    return `${heures}h ${minutes.toString().padStart(2, '0')}min`;
-  };
-
-  const getIcon = (code: number) => {
-    if (code <= 3) return <Sun className="text-orange-500 fill-orange-100" size={32} />;
-    if (code <= 48) return <Cloud className="text-gray-400 fill-gray-100" size={32} />;
-    return <CloudRain className="text-blue-500" size={32} />;
+    let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+    return `${Math.floor(diff / 60)}h ${(diff % 60).toString().padStart(2, '0')}`;
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="font-bold text-blue-900">Calcul de l'éphéméride et météo des plages...</p>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 font-black text-blue-900 uppercase animate-pulse italic">
+      Chargement du littoral...
     </div>
   );
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-
-      <nav className="mb-6 mt-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-indigo-700 hover:text-indigo-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
-        </Link>
-      </nav>
-
-      {/* --- EN-TÊTE --- */}
-      <header className="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <header className="max-w-7xl mx-auto mb-10 flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3">
-            <Navigation className="fill-blue-900" /> Météo des Plages
+          <Link href="/" className="text-blue-700 font-bold flex items-center gap-2 mb-2 hover:underline text-xs uppercase">
+            <ArrowLeft size={14} /> Accueil
+          </Link>
+          <h1 className="text-4xl font-black text-slate-900 uppercase italic">
+            Météo <span className="text-blue-600">Plages</span>
           </h1>
-          <p className="text-slate-500 font-medium mt-1">État du ciel et durée d'ensoleillement en temps réel</p>
         </div>
-
-        {/* Badge Date du jour */}
-        <div className="bg-white border border-blue-200 px-6 py-3 rounded-2xl shadow-sm flex items-center gap-3 self-start md:self-auto">
-          <Calendar className="text-blue-600" size={20} />
-          <span className="text-blue-900 font-bold capitalize">
-            {dateAujourdhui}
-          </span>
+        <div className="hidden md:flex bg-white px-4 py-2 rounded-xl border border-slate-200 items-center gap-2 text-sm font-bold shadow-sm font-mono uppercase">
+          <Calendar size={18} className="text-blue-600" /> {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
         </div>
       </header>
 
-      {/* --- GRILLE DES PLAGES --- */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* LA CARTE */}
+      <div className="max-w-7xl mx-auto mb-12 h-[400px] bg-white p-2 rounded-[3rem] shadow-xl border border-blue-100 overflow-hidden">
+        <MapPlages data={data} />
+      </div>
+
+      {/* LES PLAGES */}
+      <div className="max-w-7xl mx-auto space-y-12">
         {data.map((plage, idx) => (
-          <div key={idx} className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
-            
-            {/* Header : Nom et Température */}
-            <div className="bg-blue-600 p-5 text-white flex justify-between items-center">
-              <span className="font-bold text-lg tracking-tight">{plage.name}</span>
-              <span className="text-3xl font-black">{plage.temp}°C</span>
+          <div 
+            key={idx} 
+            id={`plage-${plage.name.replace(/['\s]+/g, '')}`} 
+            className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden"
+          >
+            {/* Header Plage */}
+            <div className="bg-blue-700 p-6 text-white flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-black italic uppercase">{plage.name}</h2>
+                <div className="flex gap-4 mt-1 opacity-80">
+                  <p className="text-[10px] font-bold uppercase flex items-center gap-1">
+                    <Eye size={12} /> Visibilité: {plage.currentVisibility} km
+                  </p>
+                  <p className="text-[10px] font-bold uppercase flex items-center gap-1">
+                    <Wind size={12} /> Vent act.: {plage.currentWind} km/h
+                  </p>
+                </div>
+              </div>
+              <div className="text-4xl font-black">{plage.currentTemp}°</div>
             </div>
 
-            <div className="p-5 space-y-5">
-              
-              {/* BLOC SOLEIL (Format spécifique demandé) */}
-              <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100">
-                <div className="flex justify-between items-start">
-                  <div className="flex flex-col">
-                    <span className="text-[11px] uppercase font-black text-amber-600 mb-1 tracking-wider">Soleil</span>
-                    <div className="text-lg font-bold text-amber-900">
-                      {plage.sunrise} | {plage.sunset}
+            {/* Scroll 7 Jours */}
+            <div className="p-4 md:p-8 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-4 min-w-[1100px]">
+                {plage.forecast?.map((jour: any, i: number) => (
+                  <div key={i} className={`flex-1 p-5 rounded-3xl border transition-all ${i === 0 ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-transparent hover:bg-white hover:border-slate-200'}`}>
+                    <div className="text-[10px] font-black text-slate-400 uppercase text-center mb-4">
+                      {new Date(jour.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
                     </div>
-                    <div className="text-xs font-medium text-amber-700 mt-1 flex items-center gap-1">
-                      <Timer size={14} /> Jour : {calculerDureeJour(plage.sunrise, plage.sunset)}
+                    
+                    <div className="flex flex-col items-center gap-2 mb-4">
+                      {getIcon(jour.code)}
+                      <div className="text-center leading-tight">
+                        <span className="text-2xl font-black text-slate-900">{jour.tempMax}°</span>
+                        <span className="block text-xs font-bold text-blue-600">{jour.tempMin}°</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-200 space-y-3">
+                      <div className="flex justify-between text-[9px] font-black uppercase">
+                        <span className="text-slate-400">Vent Max</span>
+                        <span className="text-slate-800">{jour.windMax} km/h</span>
+                      </div>
+                      <div className="flex justify-between text-[9px] font-black uppercase">
+                        <span className="text-slate-400">Indice UV</span>
+                        <span className={jour.uv > 6 ? 'text-orange-600' : 'text-blue-800'}>{Math.round(jour.uv)}</span>
+                      </div>
+                      <div className="bg-white/50 p-2 rounded-xl border border-slate-100 mt-2">
+                        <div className="text-[8px] font-bold text-slate-400 uppercase mb-1">Éphéméride</div>
+                        <div className="text-[9px] font-black text-slate-700 flex justify-between">
+                          <span>{jour.sunrise}</span>
+                          <span className="text-orange-400 italic">{calculerDureeJour(jour.sunrise, jour.sunset)}</span>
+                          <span>{jour.sunset}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="bg-white p-2 rounded-xl shadow-sm border border-amber-100">
-                    {getIcon(plage.code)}
-                  </div>
-                </div>
+                ))}
               </div>
-
-              {/* SECTION VENT / UV */}
-              <div className="grid grid-cols-2 gap-4">
-                {/* Vent */}
-                <div className="flex items-center gap-3 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
-                  <Wind size={20} className="text-blue-500" />
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-bold text-blue-400">Vent</span>
-                    <span className="text-sm font-black text-blue-900">{plage.wind} <small className="text-[10px] font-normal">km/h</small></span>
-                  </div>
-                </div>
-
-                {/* UV */}
-                <div className="flex items-center gap-3 bg-orange-50/50 p-3 rounded-xl border border-orange-100">
-                  <div className="w-6 h-6 rounded bg-orange-500 flex items-center justify-center text-[10px] font-black text-white shadow-sm">UV</div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-bold text-orange-400">Indice</span>
-                    <span className="text-sm font-black text-orange-900">{plage.uv}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Statut du ciel (bas de carte) */}
-              <div className="pt-3 border-t border-slate-100 flex justify-between items-center">
-                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">État du ciel</span>
-                 <span className="text-xs font-bold text-slate-700 capitalize">
-                   {plage.code === 0 ? "Ciel parfaitement dégagé" : plage.code < 50 ? "Partiellement couvert" : "Risque de précipitations"}
-                 </span>
-              </div>
-
             </div>
           </div>
         ))}
       </div>
-      
-      <footer className="max-w-7xl mx-auto mt-12 mb-8 text-center text-slate-400 text-xs">
-        Données basées sur les coordonnées GPS exactes de chaque station balnéaire.
-      </footer>
     </div>
   );
 }

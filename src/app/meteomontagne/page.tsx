@@ -1,170 +1,167 @@
 "use client";
+
 import React, { useEffect, useState } from 'react';
 import Link from "next/link";
-import { Sun, Wind, Cloud, CloudRain, Timer, Calendar, ArrowLeft, Snowflake, Mountain, Eye, ThermometerSnowflake, AlertTriangle } from 'lucide-react';
+import { Sun, Wind, Cloud, CloudRain, Calendar, ArrowLeft, MapPin, Snowflake, Eye } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
 
+// --- 1. COMPOSANT CARTE (RECTANGLES BLANCS AVEC LIEN) ---
+const MapMontagne = dynamic(() => Promise.resolve(({ data }: { data: any[] }) => {
+  const L = require('leaflet');
+  const { useEffect, useRef } = require('react');
+  const mapRef = useRef(null);
+  const mapInstance = useRef<any>(null);
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstance.current || data.length === 0) return;
+
+    // Centrage sur les Pyrénées
+    mapInstance.current = L.map(mapRef.current, { scrollWheelZoom: true }).setView([42.85, 0.5], 8);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(mapInstance.current);
+
+    const createLabel = (name: string, temp: number) => L.divIcon({
+      className: 'custom-marker',
+      html: `
+        <div style="display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); cursor: pointer;">
+          <div style="background: white; border: 2px solid #4338ca; padding: 4px 8px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 70px; text-align: center;">
+            <div style="font-weight: 800; font-size: 10px; color: #1e1b4b; white-space: nowrap;">${name}</div>
+            <div style="font-size: 11px; color: #4338ca; font-weight: 900;">${temp}°C</div>
+          </div>
+          <div style="width: 2px; height: 6px; background: #4338ca;"></div>
+        </div>`,
+      iconSize: [0, 0],
+    });
+
+    data.forEach((station) => {
+      if (station.lat && station.lng) {
+        L.marker([station.lat, station.lng], { icon: createLabel(station.name, station.currentTemp) })
+          .addTo(mapInstance.current)
+          .on('click', () => {
+            // L'ID doit correspondre exactement à celui défini dans le render plus bas
+            const id = `station-${station.name.replace(/\s+/g, '')}`;
+            const element = document.getElementById(id);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          });
+      }
+    });
+
+    return () => { mapInstance.current?.remove(); mapInstance.current = null; };
+  }, [data]);
+
+  return <div ref={mapRef} className="h-full w-full rounded-[2.5rem] z-0" />;
+}), { ssr: false });
+
+// --- 2. PAGE PRINCIPALE ---
 export default function MeteoMontagne() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const dateAujourdhui = new Date().toLocaleDateString("fr-FR", {
-    weekday: "long", day: "numeric", month: "long", year: "numeric"
-  });
 
   useEffect(() => {
-    async function fetchMeteo() {
-      try {
-        const res = await fetch('/api/meteomontagne', { cache: 'no-store' });
-        
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          throw new Error(errorData.message || `Erreur serveur (${res.status})`);
-        }
-
-        const d = await res.json();
-        
-        if (Array.isArray(d)) {
-          setData(d);
-        } else {
-          throw new Error("Le format des données est incorrect.");
-        }
-      } catch (err: any) {
-        console.error("Erreur détaillée:", err.message);
-        setError(err.message || "Impossible de charger la météo.");
-      } finally {
+    fetch('/api/meteomontagne')
+      .then(res => res.json())
+      .then(d => {
+        setData(d);
         setLoading(false);
-      }
-    }
-
-    fetchMeteo();
+      })
+      .catch(err => console.error("ERREUR :", err));
   }, []);
 
-  const calculerDureeJour = (sunrise: string, sunset: string) => {
-    if (!sunrise || !sunset) return "--";
-    try {
-      const [h1, m1] = sunrise.split(':').map(Number);
-      const [h2, m2] = sunset.split(':').map(Number);
-      let diffMinutes = (h2 * 60 + m2) - (h1 * 60 + m1);
-      return `${Math.floor(diffMinutes / 60)}h ${(diffMinutes % 60).toString().padStart(2, '0')}min`;
-    } catch (e) { return "--"; }
-  };
-
   const getIcon = (code: number) => {
-    if (code <= 3) return <Sun className="text-amber-500 fill-amber-100" size={32} />;
-    if (code <= 48) return <Cloud className="text-slate-400 fill-slate-100" size={32} />;
-    return <CloudRain className="text-blue-500" size={32} />;
+    if (code <= 3) return <Sun className="text-orange-500 fill-orange-100" size={28} />;
+    if (code >= 71 && code <= 77) return <Snowflake className="text-blue-400" size={28} />;
+    if (code >= 51) return <CloudRain className="text-blue-500" size={28} />;
+    return <Cloud className="text-gray-400 fill-gray-100" size={28} />;
   };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-        <p className="font-bold text-indigo-900 italic">Connexion aux sommets...</p>
-      </div>
-    </div>
-  );
-
-  if (error) return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 font-sans">
-      <div className="bg-white p-8 rounded-3xl shadow-lg border border-red-100 text-center max-w-md">
-        <AlertTriangle className="text-red-500 mx-auto mb-4" size={48} />
-        <h2 className="text-xl font-bold text-slate-900 mb-2">Erreur de connexion</h2>
-        <p className="text-slate-500 mb-6 text-sm">{error}</p>
-        <button onClick={() => window.location.reload()} className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all">
-          Réessayer
-        </button>
-      </div>
+      <p className="font-black animate-pulse text-indigo-800 uppercase tracking-widest italic text-2xl">MÉTÉO SOMMETS...</p>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-      <nav className="mb-6 max-w-7xl mx-auto">
-        <Link href="/" className="inline-flex items-center gap-2 text-indigo-700 hover:text-indigo-900 font-bold group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> Retour Accueil
-        </Link>
-      </nav>
-
-      <header className="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <header className="max-w-7xl mx-auto mb-10 flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 flex items-center gap-3 bg-clip-text text-transparent bg-gradient-to-r from-blue-900 to-indigo-700">
-            <Mountain className="text-indigo-600" size={40} /> Météo Montagne
+          <Link href="/" className="text-indigo-700 font-bold flex items-center gap-2 mb-4 hover:underline text-sm uppercase">
+            <ArrowLeft size={16} /> Retour
+          </Link>
+          <h1 className="text-4xl font-black text-slate-900 uppercase italic leading-none">
+            Météo Sommets <span className="text-indigo-600">7 Jours</span>
           </h1>
-          <p className="text-slate-500 font-medium mt-1 uppercase tracking-tighter text-xs">Pyrénées : Ariège, Garonne & Hautes-Pyrénées</p>
         </div>
-        <div className="bg-white border border-slate-200 px-6 py-3 rounded-2xl shadow-sm flex items-center gap-3">
-          <Calendar className="text-indigo-600" size={20} />
-          <span className="text-slate-900 font-bold capitalize">{dateAujourdhui}</span>
+        <div className="hidden md:flex bg-white px-4 py-2 rounded-xl border border-slate-200 items-center gap-2 text-sm font-bold shadow-sm">
+          <Calendar size={18} className="text-indigo-600" /> {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* LA CARTE */}
+      <div className="max-w-7xl mx-auto mb-12 h-[450px] bg-white p-2 rounded-[3rem] shadow-xl border border-indigo-100 overflow-hidden">
+        <MapMontagne data={data} />
+      </div>
+
+      {/* LES CARTES STATIONS */}
+      <div className="max-w-7xl mx-auto space-y-12">
         {data.map((station, idx) => (
-          <div key={idx} className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl transition-all">
-            <div className="bg-indigo-900 p-5 text-white flex justify-between items-center">
-              <span className="font-bold text-lg">{station.name}</span>
-              <span className="text-3xl font-black">{station.temp}°C</span>
+          <div 
+            key={idx} 
+            id={`station-${station.name.replace(/\s+/g, '')}`} 
+            className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden"
+          >
+            <div className="bg-indigo-900 p-6 text-white flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-black italic uppercase">{station.name}</h2>
+                <div className="flex gap-6 mt-1 opacity-90">
+                  <p className="text-[10px] font-bold uppercase flex items-center gap-1">
+                    <Eye size={12} /> Visibilité: {station.currentVisibility} km
+                  </p>
+                  <p className="text-[10px] font-bold uppercase flex items-center gap-1">
+                    <Wind size={12} /> Vent act.: {station.currentWind} km/h
+                  </p>
+                </div>
+              </div>
+              <div className="text-4xl font-black">{station.currentTemp}°</div>
             </div>
 
-            <div className="p-5 space-y-4">
-              <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100">
-                <div className="flex justify-between items-start text-amber-900">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase text-amber-600 tracking-widest">Soleil</span>
-                    <div className="text-lg font-bold">{station.sunrise} | {station.sunset}</div>
-                    <div className="text-xs font-medium flex items-center gap-1 mt-1">
-                      <Timer size={14}/> Jour : {calculerDureeJour(station.sunrise, station.sunset)}
+            {/* SCROLL HORIZONTAL 7 JOURS */}
+            <div className="p-4 md:p-8 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-4 min-w-[1000px]">
+                {station.forecast?.map((jour: any, i: number) => (
+                  <div key={i} className={`flex-1 p-5 rounded-3xl border transition-all ${i === 0 ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-transparent hover:bg-white hover:border-slate-200'}`}>
+                    <div className="text-[10px] font-black text-slate-400 uppercase text-center mb-4">
+                      {new Date(jour.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
+                    </div>
+                    
+                    <div className="flex flex-col items-center gap-2 mb-4">
+                      {getIcon(jour.code)}
+                      <div className="text-center leading-tight">
+                        <span className="text-2xl font-black text-slate-900">{jour.tempMax}°</span>
+                        <span className="block text-xs font-bold text-indigo-600">{jour.tempMin}°</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-200 space-y-2">
+                      <div className="flex justify-between text-[9px] font-black uppercase">
+                        <span className="text-slate-400">Vent Max</span>
+                        <span className={jour.windMax > 40 ? 'text-red-500' : 'text-slate-800'}>{jour.windMax} km/h</span>
+                      </div>
+                      <div className="flex justify-between text-[9px] font-black uppercase">
+                        <span className="text-slate-400">Neige</span>
+                        <span className="text-blue-600 font-bold">{jour.snow} cm</span>
+                      </div>
+                      <div className="flex justify-between text-[9px] font-black uppercase">
+                        <span className="text-slate-400">UV</span>
+                        <span className={jour.uv > 6 ? 'text-orange-600' : 'text-indigo-800'}>{Math.round(jour.uv)}</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="bg-white p-2 rounded-xl shadow-sm border border-amber-100">
-                    {getIcon(station.code)}
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
-                  <span className="text-[9px] font-black text-blue-500 uppercase flex items-center gap-1">
-                    <Snowflake size={10}/> Neige (24h)
-                  </span>
-                  <div className="text-sm font-bold text-blue-900">
-                    {station.snow > 0 ? `${station.snow} cm` : "Néant"}
-                  </div>
-                </div>
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                  <span className="text-[9px] font-black text-slate-500 uppercase flex items-center gap-1">
-                    <ThermometerSnowflake size={10}/> Isotherme 0°C
-                  </span>
-                  <div className="text-sm font-bold text-slate-900">{station.isotherme} m</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center gap-2">
-                  <Wind size={18} className="text-indigo-400" />
-                  <div className="flex flex-col">
-                    <span className="text-[9px] font-bold text-slate-400 uppercase">Vent</span>
-                    <span className="text-sm font-black">{station.wind} <small className="text-[10px]">km/h</small></span>
-                  </div>
-                </div>
-                <div className={`p-3 rounded-xl border flex items-center gap-2 ${station.visibility < 2 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
-                  <Eye size={18} className={station.visibility < 2 ? 'text-red-600 animate-pulse' : 'text-green-600'} />
-                  <div className="flex flex-col">
-                    <span className="text-[9px] font-bold uppercase opacity-70">Visibilité</span>
-                    <span className="text-sm font-black uppercase">
-                      {station.visibility < 2 ? 'Jour Blanc' : `${Math.round(station.visibility)}km`}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex justify-between items-center">
-                <div className="flex items-center gap-2 bg-slate-50 px-2 py-1 rounded-lg">
-                   <div className="w-5 h-5 bg-orange-500 rounded text-[9px] text-white font-black flex items-center justify-center">UV</div>
-                   <span className="text-sm font-black text-slate-700">{station.uv}</span>
-                </div>
-                <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest italic">Station Ski</span>
+                ))}
               </div>
             </div>
           </div>

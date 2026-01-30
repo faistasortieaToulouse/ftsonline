@@ -32,7 +32,9 @@ const LACS = [
 export async function GET() {
   try {
     const data = await Promise.all(LACS.map(async (lac) => {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lac.lat}&longitude=${lac.lng}&current=temperature_2m,weather_code,wind_speed_10m&daily=sunrise,sunset,uv_index_max&timezone=auto`;
+      // CHANGEMENT : On bascule tout en "daily" pour obtenir le tableau de 7 jours
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lac.lat}&longitude=${lac.lng}&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,wind_speed_10m_max&timezone=auto`;
+      
       const res = await fetch(url, { next: { revalidate: 900 } });
       const json = await res.json();
 
@@ -41,16 +43,23 @@ export async function GET() {
         city: lac.city,
         dist: lac.dist,
         dept: lac.dept,
-        temp: Math.round(json.current.temperature_2m),
-        wind: Math.round(json.current.wind_speed_10m),
-        uv: json.daily.uv_index_max[0],
-        code: json.current.weather_code,
-        sunrise: json.daily.sunrise[0].split('T')[1],
-        sunset: json.daily.sunset[0].split('T')[1],
+        lat: lac.lat, // Crucial pour la carte
+        lng: lac.lng, // Crucial pour la carte
+        forecast: json.daily.time.map((date: string, i: number) => ({
+          date,
+          tempMax: Math.round(json.daily.temperature_2m_max[i]),
+          tempMin: Math.round(json.daily.temperature_2m_min[i]),
+          wind: Math.round(json.daily.wind_speed_10m_max[i]),
+          uv: json.daily.uv_index_max[i],
+          code: json.daily.weather_code[i],
+          sunrise: json.daily.sunrise[i].split('T')[1],
+          sunset: json.daily.sunset[i].split('T')[1],
+        }))
       };
     }));
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: "Erreur" }, { status: 500 });
+    console.error("Erreur Mission Lacs:", error);
+    return NextResponse.json({ error: "Échec de l'extraction des données" }, { status: 500 });
   }
 }
