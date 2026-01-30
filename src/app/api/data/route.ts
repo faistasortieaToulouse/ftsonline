@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // --- 1. TES CONSTANTES MANUELLES (Source: page.tsx) ---
     const manuel = {
       nbAgenda: 16, nbActualites: 1, nbMeetup: 6, nbToulouseEvents: 2,
       nbSpectacles: 2, nbCulture: 2, nbLibrairie: 5, nbCinema: 2,
@@ -15,32 +14,38 @@ export async function GET() {
       nbHierarchie: 23, nbSaHistoire: 12, nbLangue: 1, nbMonde: 1,
       nbReligion: 3, nbTerritoire: 4
     };
-    
-    // Calcul du total des constantes
+
     const totalArticlesManuel = Object.values(manuel).reduce((a, b) => a + (b as number), 0);
 
-    // --- 2. RÉCUPÉRATION DES DONNÉES DYNAMIQUES ---
-    // On définit l'URL de base de ton site
-    const baseUrl = 'https://ftstoulouse.vercel.app/api';
+    // DETERMINATION DE L'URL DE BASE DYNAMIQUE
+    // On utilise l'origine de la requête entrante pour éviter les erreurs de domaine
+    const origin = request.nextUrl.origin;
 
-    // On lance tous les appels en même temps pour gagner du temps
     const [resAgenda, resMeetup, resCinema, resJeux] = await Promise.allSettled([
-      fetch(`${baseUrl}/agendatoulouse`).then(r => r.json()),
-      fetch(`${baseUrl}/meetup-full`).then(r => r.json()),
-      fetch(`${baseUrl}/cinematoulouse`).then(r => r.json()),
-      fetch(`${baseUrl}/trictracphilibert`).then(r => r.json()),
+      fetch(`${origin}/api/agendatoulouse`).then(r => r.json()),
+      fetch(`${origin}/api/meetup-full`).then(r => r.json()),
+      fetch(`${origin}/api/cinematoulouse`).then(r => r.json()),
+      fetch(`${origin}/api/trictracphilibert`).then(r => r.json()),
     ]);
 
-    // Extraction des compteurs avec vérification des formats JSON spécifiques
-    const countAgenda = resAgenda.status === 'fulfilled' ? (resAgenda.value.total || 0) : 0;
+    // LOGS DE DEBUG (visibles dans les logs Vercel)
+    if (resAgenda.status === 'rejected') console.error("Agenda Fail:", resAgenda.reason);
+    if (resMeetup.status === 'rejected') console.error("Meetup Fail:", resMeetup.reason);
+
+    // EXTRACTION CORRIGÉE
+    // Pour l'agenda, on vérifie si .total existe, sinon on compte le tableau .events
+    const countAgenda = resAgenda.status === 'fulfilled' 
+      ? (resAgenda.value.total || resAgenda.value.events?.length || 0) 
+      : 0;
     
-    const countMeetup = resMeetup.status === 'fulfilled' ? (resMeetup.value.events?.length || 0) : 0;
+    // Pour Meetup
+    const countMeetup = resMeetup.status === 'fulfilled' 
+      ? (resMeetup.value.events?.length || resMeetup.value.length || 0) 
+      : 0;
     
     const countCinema = resCinema.status === 'fulfilled' ? (resCinema.value.results?.length || 0) : 0;
-    
     const countJeux   = resJeux.status === 'fulfilled' ? (resJeux.value.count || 0) : 0;
 
-    // --- 3. RÉPONSE FINALE CENTRALISÉE ---
     return NextResponse.json({
       totalRessourcesManuel: totalArticlesManuel,
       compteursDynamiques: {
@@ -49,19 +54,15 @@ export async function GET() {
         cinema: countCinema,
         jeux: countJeux
       },
-      // Le total global combine tout
       totalGlobal: totalArticlesManuel + countAgenda + countMeetup + countCinema + countJeux,
-      details: manuel 
     }, {
       headers: {
-        'Access-Control-Allow-Origin': 'https://faistasortieatoulouse31.vercel.app',
-        'Access-Control-Allow-Methods': 'GET',
-        'Cache-Control': 'no-store' // Évite que les navigateurs mettent les chiffres en cache
+        'Access-Control-Allow-Origin': '*', // Plus simple pour le debug
+        'Cache-Control': 'no-store, max-age=0'
       }
     });
 
   } catch (error) {
-    console.error("Erreur Super-Endpoint:", error);
-    return NextResponse.json({ error: "Erreur lors de l'agrégation des données" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
