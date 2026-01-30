@@ -3,7 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { ArrowLeft, Wind, Sun, Cloud, CloudRain, CloudSun, CloudFog, CloudLightning, Info, Droplets, Thermometer, Calendar, Zap, Compass, MapPin } from 'lucide-react';
+import { 
+  ArrowLeft, Wind, Sun, Cloud, CloudRain, CloudSun, CloudFog, 
+  CloudLightning, Droplets, Calendar, Compass, MapPin 
+} from 'lucide-react';
 
 const MapAude = dynamic(() => import('@/components/MapAude'), { 
   ssr: false,
@@ -32,6 +35,14 @@ const NORMALES_CLIMAT = {
   carcassonne: { pluie: 640, soleil: 2120, moyAn: "14,5°C", moyJan: "6,8°C", moyEte: "23,2°C", ventNorm: 75, joursChauds: 85 },
   lezignan: { pluie: 580, soleil: 2350, moyAn: "14,8°C", moyJan: "7,0°C", moyEte: "23,5°C", ventNorm: 95, joursChauds: 95 },
   narbonne: { pluie: 550, soleil: 2500, moyAn: "15,4°C", moyJan: "8,2°C", moyEte: "23,8°C", ventNorm: 120, joursChauds: 105 }
+};
+
+// Utilitaire pour la couleur et le libellé de l'UV
+const getUvStatus = (uv: number) => {
+  if (uv <= 2) return { label: 'Faible', color: 'bg-emerald-100 text-emerald-700' };
+  if (uv <= 5) return { label: 'Modéré', color: 'bg-amber-100 text-amber-700' };
+  if (uv <= 7) return { label: 'Élevé', color: 'bg-orange-100 text-orange-700' };
+  return { label: 'Très Élevé', color: 'bg-rose-100 text-rose-700' };
 };
 
 export default function MeteoAudePage() {
@@ -113,7 +124,7 @@ export default function MeteoAudePage() {
                   {VILLES_LIST.find(v => v.id === ville)?.name}
                 </h2>
                 <div className="flex items-center gap-2 mt-1">
-                   {icons[forecast?.weather_code[0]] || <Cloud className="text-slate-300" size={24} />}
+                   {icons[forecast?.weather_code?.[0]] || <Cloud className="text-slate-300" size={24} />}
                    <span className="text-indigo-600 font-black uppercase text-[10px]">Aujourd'hui</span>
                 </div>
              </div>
@@ -147,8 +158,10 @@ export default function MeteoAudePage() {
                 <p className="text-[8px] font-bold text-slate-300 uppercase leading-none tracking-tight">Normal: {normale.ventNorm}j</p>
               </div>
               <div className="text-center">
-                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Jours {'>'} 25°C</p>
-                <p className="text-2xl font-black text-orange-500">0j</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Indice UV Max</p>
+                <p className="text-2xl font-black text-orange-500">
+                  {forecast?.uv_index_max ? Math.round(Math.max(...forecast.uv_index_max)) : '--'}
+                </p>
                 <p className="text-[8px] font-bold text-slate-300 uppercase leading-none tracking-tight">Normal: {normale.joursChauds}j</p>
               </div>
             </div>
@@ -160,26 +173,37 @@ export default function MeteoAudePage() {
             </div>
           </div>
 
-          {/* PRÉVISIONS 7 JOURS */}
+          {/* PRÉVISIONS 7 JOURS AVEC UV */}
           <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
-            {forecast?.time.map((date: string, i: number) => (
-              <div key={date} className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center border-2 border-transparent hover:border-indigo-100 transition-all">
-                <span className="text-[10px] font-black text-slate-400 uppercase mb-3">
-                  {new Date(date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
-                </span>
-                <div className="mb-3">
-                  {icons[forecast.weather_code[i]] || <Cloud className="text-slate-300" size={32} />}
+            {forecast?.time.map((date: string, i: number) => {
+              const uvValue = forecast.uv_index_max ? forecast.uv_index_max[i] : 0;
+              const uvStatus = getUvStatus(uvValue);
+
+              return (
+                <div key={date} className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center border-2 border-transparent hover:border-indigo-100 transition-all">
+                  <span className="text-[10px] font-black text-slate-400 uppercase mb-3">
+                    {new Date(date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
+                  </span>
+                  <div className="mb-3">
+                    {icons[forecast.weather_code[i]] || <Cloud className="text-slate-300" size={32} />}
+                  </div>
+                  <div className="text-2xl font-black text-slate-800">{Math.round(forecast.temperature_2m_max[i])}°</div>
+                  <div className="text-xs font-bold text-indigo-400 mb-3">{Math.round(forecast.temperature_2m_min[i])}°</div>
+                  
+                  {/* BADGE UV */}
+                  <div className={`mb-4 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-tighter ${uvStatus.color}`}>
+                    UV {Math.round(uvValue)} • {uvStatus.label}
+                  </div>
+
+                  <div className="w-full pt-3 border-t border-slate-50 space-y-2">
+                     <div className="flex justify-between items-center text-[9px] font-black uppercase text-slate-400">
+                        <span className="flex items-center gap-1"><Wind size={10} className="text-blue-300"/> Vent</span>
+                        <span className="text-slate-700">{Math.round(forecast.wind_speed_10m_max[i])} <small className="lowercase">km/h</small></span>
+                     </div>
+                  </div>
                 </div>
-                <div className="text-2xl font-black text-slate-800">{Math.round(forecast.temperature_2m_max[i])}°</div>
-                <div className="text-xs font-bold text-indigo-400 mb-4">{Math.round(forecast.temperature_2m_min[i])}°</div>
-                <div className="w-full pt-3 border-t border-slate-50 space-y-2">
-                   <div className="flex justify-between items-center text-[9px] font-black uppercase text-slate-400">
-                      <span className="flex items-center gap-1"><Wind size={10} className="text-blue-300"/> Vent</span>
-                      <span className="text-slate-700">{Math.round(forecast.wind_speed_10m_max[i])} <small className="lowercase">km/h</small></span>
-                   </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* BILAN CUMULÉ */}
