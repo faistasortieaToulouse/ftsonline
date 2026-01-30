@@ -75,14 +75,13 @@ export default function GoogleTranslateCustom() {
       setScriptReady(true);
     }
 
-    // Intervalle pour supprimer les éléments bloquants de Google
     const interval = setInterval(() => {
       const frames = document.querySelectorAll('.goog-te-banner-frame, #goog-gt-tt, .goog-te-menu-frame, .skiptranslate');
       frames.forEach((f) => {
         const frame = f as HTMLElement;
         frame.style.display = 'none';
         frame.style.visibility = 'hidden';
-        frame.style.pointerEvents = 'none'; // Permet de cliquer à travers l'élément invisible
+        frame.style.pointerEvents = 'none';
       });
       
       if (document.body.style.top !== '0px') {
@@ -95,21 +94,36 @@ export default function GoogleTranslateCustom() {
 
   const changeLang = (lang: string) => {
     if (lang === selectedLang) return;
+
+    // Cas du retour au Français : Action immédiate
     if (lang === 'fr') {
       deleteCookie('googtrans');
       deleteCookie('googtrans_save');
       window.location.hash = ''; 
       window.location.reload();
-    } else {
+      return;
+    }
+
+    // --- SÉCURITÉ : Demande de confirmation ---
+    const allLangs = [...LANGS, ...EXTRA_LANGS];
+    const targetLabel = allLangs.find(l => l.code === lang)?.label || lang;
+    
+    const hasConfirmed = window.confirm(
+      `Traduire la page en ${targetLabel} ?\n\nNote : La page sera actualisée pour appliquer la traduction.`
+    );
+
+    if (hasConfirmed) {
       setCookie('googtrans', `/fr/${lang}`, 7);
       window.location.reload();
+    } else {
+      // On réinitialise l'affichage du select si l'utilisateur annule
+      setSelectedLang(selectedLang);
     }
   };
 
   return (
     <>
       <style jsx global>{`
-        /* Suppression radicale de l'interface Google native */
         iframe.goog-te-banner-frame,
         .goog-te-banner-frame,
         .goog-te-menu-frame,
@@ -121,16 +135,13 @@ export default function GoogleTranslateCustom() {
           opacity: 0 !important;
           pointer-events: none !important;
         }
-
         body {
           top: 0px !important;
           position: static !important;
         }
-
         .goog-te-gadget, .goog-logo-link {
           display: none !important;
         }
-        
         .goog-text-highlight {
           background: none !important;
           box-shadow: none !important;
