@@ -1,48 +1,57 @@
-import { NextRequest, NextResponse } from 'next/server';
+'use client';
 
-export const dynamic = "force-dynamic";
-export const maxDuration = 30; // Limite Vercel à 30s
+import { useEffect, useState } from 'react';
 
-export async function GET(request: NextRequest) {
-  // On récupère l'URL de base dynamiquement
-  const origin = request.nextUrl.origin;
+export default function HomePage() {
+  // On initialise à 0 ou à une valeur estimée le temps du chargement
+  const [totalDynamique, setTotalDynamique] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  try {
-    // Configuration d'un timeout de 8 secondes par appel pour éviter le crash global
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
+  useEffect(() => {
+    async function fetchGlobalCount() {
+      try {
+        // On appelle l'API centrale qui agrège les 4 sources
+        const res = await fetch('/api/data');
+        if (!res.ok) throw new Error("Erreur de récupération");
+        
+        const data = await res.json();
 
-    const fetchOptions = { 
-      signal: controller.signal,
-      cache: 'no-store' as RequestCache 
-    };
+        // On additionne les compteurs dynamiques reçus
+        // + les rubriques statiques (Discord, Facebook, etc. que tu estimes à environ 168 comme vu précédemment)
+        const NB_RUBRIQUES_STATIQUES = 168; 
+        
+        const countAgenda = data.agenda || 0;
+        const countMeetup = data.meetup || 0;
+        const countCinema = data.cinema || 0;
+        const countJeux   = data.jeux || 0;
 
-    // On lance les appels
-    const [resAge, resMeet, resCin, resJeux] = await Promise.allSettled([
-      fetch(`${origin}/api/agendatoulousain`, fetchOptions).then(r => r.json()),
-      fetch(`${origin}/api/meetup-full`, fetchOptions).then(r => r.json()),
-      fetch(`${origin}/api/cinematoulouse`, fetchOptions).then(r => r.json()),
-      fetch(`${origin}/api/trictracphilibert`, fetchOptions).then(r => r.json()),
-    ]);
+        setTotalDynamique(NB_RUBRIQUES_STATIQUES + countAgenda + countMeetup + countCinema + countJeux);
+      } catch (err) {
+        console.error("Erreur compteur:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-    clearTimeout(timeoutId);
+    fetchGlobalCount();
+  }, []);
 
-    // Extraction sécurisée (si une API a planté, on met 0 au lieu de crash)
-    const agendaCount = resAge.status === 'fulfilled' ? (resAge.value.events?.length || 0) : 0;
-    const meetupCount = resMeet.status === 'fulfilled' ? (resMeet.value.events?.length || 0) : 0;
-    const cinemaCount = resCin.status === 'fulfilled' ? (resCin.value.results?.length || 0) : 0;
-    const jeuxCount   = resJeux.status === 'fulfilled' ? (resJeux.value.count || 0) : 0;
+  return (
+    <main>
+      {/* ... Tes autres composants (Météo, Catégories, etc.) ... */}
 
-    return NextResponse.json({
-      totalRessources: agendaCount + meetupCount + cinemaCount + jeuxCount,
-      agenda: agendaCount,
-      meetup: meetupCount,
-      cinema: cinemaCount,
-      jeux: jeuxCount
-    });
+      <div className="text-center mb-8 font-medium text-slate-500 italic">
+        Nombre total de ressources : 
+        <span className="font-bold text-purple-600 ml-2">
+          {loading ? (
+            <span className="animate-pulse">Calcul...</span>
+          ) : (
+            totalDynamique
+          )}
+        </span> articles
+      </div>
 
-  } catch (error) {
-    console.error("Digest Error Prevention:", error);
-    return NextResponse.json({ totalRessources: 0, error: "Délai dépassé" }, { status: 200 });
-  }
+      {/* ... Le reste de ta grille de catégories ... */}
+    </main>
+  );
 }
