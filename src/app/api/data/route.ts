@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Indispensable pour l'agrégation longue
+
 export async function GET(request: NextRequest) {
   try {
     const manuel = {
@@ -16,33 +19,37 @@ export async function GET(request: NextRequest) {
     };
 
     const totalArticlesManuel = Object.values(manuel).reduce((a, b) => a + (b as number), 0);
-
-    // DETERMINATION DE L'URL DE BASE DYNAMIQUE
-    // On utilise l'origine de la requête entrante pour éviter les erreurs de domaine
     const origin = request.nextUrl.origin;
 
+    // Utilisation de cache: 'no-store' pour forcer la récupération des vraies données
+    const fetchOptions = { 
+      cache: 'no-store' as RequestCache,
+      headers: { 'Accept': 'application/json' }
+    };
+
     const [resAgenda, resMeetup, resCinema, resJeux] = await Promise.allSettled([
-      fetch(`${origin}/api/agendatoulouse`).then(r => r.json()),
-      fetch(`${origin}/api/meetup-full`).then(r => r.json()),
-      fetch(`${origin}/api/cinematoulouse`).then(r => r.json()),
-      fetch(`${origin}/api/trictracphilibert`).then(r => r.json()),
+      fetch(`${origin}/api/agendatoulouse`, fetchOptions).then(r => r.json()),
+      fetch(`${origin}/api/meetup-full`, fetchOptions).then(r => r.json()),
+      fetch(`${origin}/api/cinematoulouse`, fetchOptions).then(r => r.json()),
+      fetch(`${origin}/api/trictracphilibert`, fetchOptions).then(r => r.json()),
     ]);
 
-    // LOGS DE DEBUG (visibles dans les logs Vercel)
-    if (resAgenda.status === 'rejected') console.error("Agenda Fail:", resAgenda.reason);
-    if (resMeetup.status === 'rejected') console.error("Meetup Fail:", resMeetup.reason);
+    // --- LOGIQUE D'EXTRACTION AVEC FALLBACKS ---
+    
+    // Agenda : regarde .total, sinon .events.length, sinon .length
+    let countAgenda = 0;
+    if (resAgenda.status === 'fulfilled') {
+      const val = resAgenda.value;
+      countAgenda = val.total || (Array.isArray(val.events) ? val.events.length : 0) || (Array.isArray(val) ? val.length : 0);
+    }
 
-    // EXTRACTION CORRIGÉE
-    // Pour l'agenda, on vérifie si .total existe, sinon on compte le tableau .events
-    const countAgenda = resAgenda.status === 'fulfilled' 
-      ? (resAgenda.value.total || resAgenda.value.events?.length || 0) 
-      : 0;
-    
-    // Pour Meetup
-    const countMeetup = resMeetup.status === 'fulfilled' 
-      ? (resMeetup.value.events?.length || resMeetup.value.length || 0) 
-      : 0;
-    
+    // Meetup : regarde .events.length, sinon .length
+    let countMeetup = 0;
+    if (resMeetup.status === 'fulfilled') {
+      const val = resMeetup.value;
+      countMeetup = (Array.isArray(val.events) ? val.events.length : 0) || (Array.isArray(val) ? val.length : 0);
+    }
+
     const countCinema = resCinema.status === 'fulfilled' ? (resCinema.value.results?.length || 0) : 0;
     const countJeux   = resJeux.status === 'fulfilled' ? (resJeux.value.count || 0) : 0;
 
@@ -57,12 +64,12 @@ export async function GET(request: NextRequest) {
       totalGlobal: totalArticlesManuel + countAgenda + countMeetup + countCinema + countJeux,
     }, {
       headers: {
-        'Access-Control-Allow-Origin': '*', // Plus simple pour le debug
-        'Cache-Control': 'no-store, max-age=0'
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'no-store, must-revalidate'
       }
     });
 
   } catch (error) {
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur lors de l'agrégation" }, { status: 500 });
   }
 }
