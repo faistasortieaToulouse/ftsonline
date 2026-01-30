@@ -1,65 +1,71 @@
 "use client";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { ArrowLeft, Wind, Sun, Cloud, CloudRain } from 'lucide-react';
 
-const PAROISSES = [
-  { id: "andorra-la-vella", pos: [42.5063, 1.5218], label: "Andorra la Vella" },
-  { id: "canillo", pos: [42.5676, 1.5976], label: "Canillo" },
-  { id: "encamp", pos: [42.5361, 1.5828], label: "Encamp" },
-  { id: "escaldes-engordany", pos: [42.5072, 1.5341], label: "Escaldes-Engordany" },
-  { id: "la-massana", pos: [42.5449, 1.5148], label: "La Massana" },
-  { id: "ordino", pos: [42.5562, 1.5332], label: "Ordino" },
-  { id: "sant-julia-de-loria", pos: [42.4637, 1.4913], label: "Sant Julià de Lòria" },
-];
+// IMPORT DYNAMIQUE CRUCIAL POUR ÉVITER L'ERREUR WINDOW
+const MapAndorre = dynamic(() => import('@/components/MapAndorre'), { 
+  ssr: false,
+  loading: () => <div className="h-[400px] w-full bg-slate-200 animate-pulse rounded-3xl" />
+});
 
-export default function MapAndorre({ onCityChange }: { onCityChange: (id: string) => void }) {
-  const [showMap, setShowMap] = useState(false);
-  const [customIcon, setCustomIcon] = useState<L.Icon | null>(null);
+export default function MeteoAndorrePage() {
+  const [ville, setVille] = useState('andorra-la-vella');
+  const [forecast, setForecast] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. On vérifie qu'on est bien côté client (navigateur)
-    if (typeof window !== "undefined") {
-      // 2. On crée l'icône seulement ici
-      const icon = L.icon({
-        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-      });
-      setCustomIcon(icon);
-
-      // Nettoyage Leaflet
-      const container = L.DomUtil.get('map-container-andorre');
-      if (container !== null) { 
-        (container as any)._leaflet_id = null; 
-      }
-      
-      setShowMap(true);
-    }
-    return () => setShowMap(false);
-  }, []);
-
-  // Si on est sur le serveur, on affiche juste un cadre vide (pour éviter l'erreur window)
-  if (!showMap || !customIcon) {
-    return <div className="h-[400px] w-full bg-slate-100 rounded-[1.5rem] animate-pulse" />;
-  }
+    setLoading(true);
+    // On appelle ton route.ts
+    fetch(`/api/meteoandorre?ville=${ville}`)
+      .then(res => res.json())
+      .then(data => {
+        setForecast(data.daily);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [ville]);
 
   return (
-    <div id="map-container-andorre" className="h-[400px] w-full rounded-[1.5rem] overflow-hidden border border-slate-200">
-      <MapContainer center={[42.54, 1.56]} zoom={11} className="h-full w-full">
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {PAROISSES.map((p) => (
-          <Marker 
-            key={p.id} 
-            position={p.pos as [number, number]} 
-            icon={customIcon} // Utilisation de l'icône créée dans l'useEffect
-            eventHandlers={{ click: () => onCityChange(p.id) }}
-          >
-            <Popup><div className="font-bold">{p.label}</div></Popup>
-          </Marker>
-        ))}
-      </MapContainer>
+    <div className="min-h-screen bg-slate-50 p-6">
+      <div className="max-w-5xl mx-auto">
+        <Link href="/" className="flex items-center gap-2 text-indigo-600 mb-6 font-bold">
+          <ArrowLeft size={18} /> Retour
+        </Link>
+
+        <h1 className="text-3xl font-black mb-8 text-slate-800 uppercase">
+          Météo <span className="text-indigo-600">Andorre</span>
+        </h1>
+
+        <div className="mb-8">
+          <MapAndorre onCityChange={(id) => setVille(id)} />
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl shadow-lg border border-slate-100">
+          <h2 className="text-xl font-bold mb-6 capitalize text-indigo-900">
+            Prévisions : {ville.replace(/-/g, ' ')}
+          </h2>
+
+          {loading ? (
+            <div className="animate-pulse text-slate-400">Chargement des données pyrénéennes...</div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
+              {forecast?.time?.map((date: string, i: number) => (
+                <div key={date} className="flex flex-col items-center p-3 bg-slate-50 rounded-2xl">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase">
+                    {new Date(date).toLocaleDateString('fr-FR', { weekday: 'short' })}
+                  </span>
+                  <div className="text-xl font-black my-2">{Math.round(forecast.temperature_2m_max[i])}°</div>
+                  <div className="flex items-center gap-1 text-[9px] text-blue-500 font-bold">
+                    <Wind size={10} /> {forecast.windspeed_10m_max[i]} km/h
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
