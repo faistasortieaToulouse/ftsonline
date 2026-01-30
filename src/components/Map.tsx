@@ -1,5 +1,6 @@
 "use client";
-import { MapContainer, TileLayer, Marker, Tooltip } from 'react-leaflet';
+
+import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -46,43 +47,43 @@ const CITIES = [
   { id: "sete", name: "Sète", dept: "34", nomDept: "Hérault", coords: [43.4, 3.7] },
   { id: "agde", name: "Agde", dept: "34", nomDept: "Hérault", coords: [43.3108, 3.4758] },
   { id: "lunel", name: "Lunel", dept: "34", nomDept: "Hérault", coords: [43.675, 4.1347] },
-// --- LOT (46) ---
+  // LOT (46)
   { id: "cahors", name: "Cahors", dept: "46", nomDept: "Lot", coords: [44.4475, 1.4419] },
   { id: "figeac", name: "Figeac", dept: "46", nomDept: "Lot", coords: [44.6083, 2.0333] },
   { id: "gourdon", name: "Gourdon", dept: "46", nomDept: "Lot", coords: [44.7333, 1.3833] },
   { id: "gramat", name: "Gramat", dept: "46", nomDept: "Lot", coords: [44.7794, 1.7247] },
   { id: "souillac", name: "Souillac", dept: "46", nomDept: "Lot", coords: [44.8936, 1.4772] },
-  // --- LOZÈRE (48) ---
+  // LOZÈRE (48)
   { id: "mende", name: "Mende", dept: "48", nomDept: "Lozère", coords: [44.5181, 3.5000] },
   { id: "marvejols", name: "Marvejols", dept: "48", nomDept: "Lozère", coords: [44.5528, 3.2908] },
   { id: "st-chely", name: "St-Chély-d'Apcher", dept: "48", nomDept: "Lozère", coords: [44.8011, 3.2758] },
   { id: "langogne", name: "Langogne", dept: "48", nomDept: "Lozère", coords: [44.7261, 3.8550] },
   { id: "peyre-aubrac", name: "Peyre en Aubrac", dept: "48", nomDept: "Lozère", coords: [44.7, 3.2833] },
-  // --- HAUTES-PYRÉNÉES (65) ---
+  // HAUTES-PYRÉNÉES (65)
   { id: "tarbes", name: "Tarbes", dept: "65", nomDept: "H.-Pyrénées", coords: [43.2320, 0.0789] },
   { id: "lourdes", name: "Lourdes", dept: "65", nomDept: "H.-Pyrénées", coords: [43.0947, -0.0458] },
   { id: "aureilhan", name: "Aureilhan", dept: "65", nomDept: "H.-Pyrénées", coords: [43.2439, 0.1306] },
   { id: "bagneres-bigorre", name: "Bagnères-de-Bigorre", dept: "65", nomDept: "H.-Pyrénées", coords: [43.0658, 0.1492] },
   { id: "lannemezan", name: "Lannemezan", dept: "65", nomDept: "H.-Pyrénées", coords: [43.1267, 0.3850] },
-  // --- PYRÉNÉES-ORIENTALES (66) ---
+  // PYRÉNÉES-ORIENTALES (66)
   { id: "perpignan", name: "Perpignan", dept: "66", nomDept: "Pyr.-Orient.", coords: [42.6986, 2.8956] },
   { id: "canet", name: "Canet-en-R.", dept: "66", nomDept: "Pyr.-Orient.", coords: [42.7031, 3.0077] },
   { id: "st-esteve", name: "Saint-Estève", dept: "66", nomDept: "Pyr.-Orient.", coords: [42.7092, 2.8422] },
   { id: "st-cyprien", name: "Saint-Cyprien", dept: "66", nomDept: "Pyr.-Orient.", coords: [42.6186, 3.0336] },
   { id: "argeles", name: "Argelès-sur-Mer", dept: "66", nomDept: "Pyr.-Orient.", coords: [42.5461, 3.0233] },
-  // --- TARN (81) ---
+  // TARN (81)
   { id: "albi", name: "Albi", dept: "81", nomDept: "Tarn", coords: [43.9289, 2.1464] },
   { id: "castres", name: "Castres", dept: "81", nomDept: "Tarn", coords: [43.6044, 2.2428] },
   { id: "gaillac", name: "Gaillac", dept: "81", nomDept: "Tarn", coords: [43.9014, 1.8969] },
   { id: "graulhet", name: "Graulhet", dept: "81", nomDept: "Tarn", coords: [43.7608, 1.9908] },
   { id: "lavaur", name: "Lavaur", dept: "81", nomDept: "Tarn", coords: [43.6981, 1.8206] },
-  // --- TARN-ET-GARONNE (82) ---
+  // TARN-ET-GARONNE (82)
   { id: "montauban", name: "Montauban", dept: "82", nomDept: "T.-et-Garonne", coords: [44.0175, 1.3550] },
   { id: "castelsarrasin", name: "Castelsarrasin", dept: "82", nomDept: "T.-et-Garonne", coords: [44.0389, 1.1069] },
   { id: "moissac", name: "Moissac", dept: "82", nomDept: "T.-et-Garonne", coords: [44.1031, 1.0947] },
   { id: "caussade", name: "Caussade", dept: "82", nomDept: "T.-et-Garonne", coords: [44.1611, 1.5369] },
   { id: "montech", name: "Montech", dept: "82", nomDept: "T.-et-Garonne", coords: [43.9575, 1.2300] },
-  // --- ANDORRE (AD) ---
+  // ANDORRE (AD)
   { id: "andorra-vella", name: "Andorra la Vella", dept: "AD", nomDept: "Andorre", coords: [42.5063, 1.5218] },
   { id: "escaldes", name: "Escaldes-Eng.", dept: "AD", nomDept: "Andorre", coords: [42.5089, 1.5383] },
   { id: "encamp", name: "Encamp", dept: "AD", nomDept: "Andorre", coords: [42.5361, 1.5828] },
@@ -108,42 +109,59 @@ const createTextLabel = (name: string, dept: string, nomDept: string) => {
 };
 
 export default function Map({ onCityChange }: { onCityChange: (id: string) => void }) {
-  // On centre un peu plus à l'est pour inclure le Gard et l'Hérault correctement
-  const centerOccitanie: [number, number] = [43.6, 2.5];
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<L.Map | null>(null);
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstance.current) return;
+
+    // 1. Initialisation de la carte (Centrage Occitanie)
+    mapInstance.current = L.map(mapRef.current, {
+      center: [43.6, 2.5],
+      zoom: 7.5,
+      minZoom: 7,
+      maxZoom: 12,
+    });
+
+    // 2. Ajout des tuiles (CartoDB Light)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(mapInstance.current);
+
+    // 3. Ajout des marqueurs
+    CITIES.forEach((p) => {
+      const marker = L.marker(p.coords as [number, number], {
+        icon: createTextLabel(p.name, p.dept, p.nomDept)
+      }).addTo(mapInstance.current!);
+
+      // Tooltip Leaflet classique
+      marker.bindTooltip(`Météo : ${p.name}`, {
+        direction: "top",
+        offset: [0, -20]
+      });
+
+      // Événement Click
+      marker.on('click', () => {
+        onCityChange(p.id);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    // 4. Cleanup : Destruction de la carte au démontage
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [onCityChange]);
 
   return (
     <div className="h-[600px] w-full rounded-3xl overflow-hidden border-4 border-white shadow-2xl">
-      <MapContainer 
-        center={centerOccitanie} 
-        zoom={7.5} 
-        minZoom={7}
-        maxZoom={12}
-        style={{ height: '100%', width: '100%' }}
-      >
-        <TileLayer 
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" 
-          attribution='&copy; OpenStreetMap'
-        />
-        
-        {CITIES.map((p) => (
-          <Marker 
-            key={p.id} 
-            position={p.coords as [number, number]} 
-            icon={createTextLabel(p.name, p.dept, p.nomDept)}
-            eventHandlers={{
-              click: () => {
-                onCityChange(p.id);
-                // Petit scroll auto vers le haut pour voir le résultat météo si on est sur mobile
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              },
-            }}
-          >
-            <Tooltip direction="top" offset={[0, -20]}>
-              Météo : {p.name}
-            </Tooltip>
-          </Marker>
-        ))}
-      </MapContainer>
+      <div 
+        ref={mapRef} 
+        style={{ height: '100%', width: '100%' }} 
+      />
     </div>
   );
 }

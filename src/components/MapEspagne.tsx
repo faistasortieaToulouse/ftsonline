@@ -1,17 +1,8 @@
 "use client";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import { useEffect } from 'react';
 
-// --- Configuration de l'icône du marqueur ---
-const iconEspagne = L.icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-});
+import { useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // --- Liste des coordonnées pour les marqueurs ---
 const MARQUEURS = [
@@ -38,44 +29,62 @@ interface MapProps {
 }
 
 export default function MapEspagne({ onCityChange }: MapProps) {
-  // Correction pour éviter les bugs de rendu CSS Leaflet sur Next.js
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<L.Map | null>(null);
+
   useEffect(() => {
-    window.dispatchEvent(new Event('resize'));
-  }, []);
+    if (!mapRef.current || mapInstance.current) return;
+
+    // 1. Initialisation de la carte
+    mapInstance.current = L.map(mapRef.current).setView([42.3, 1.5], 8);
+
+    // 2. Couche de tuiles (OSM)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(mapInstance.current);
+
+    // 3. Configuration de l'icône
+    const iconEspagne = L.icon({
+      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+    });
+
+    // 4. Ajout des marqueurs
+    MARQUEURS.forEach((m) => {
+      const marker = L.marker(m.pos as [number, number], { icon: iconEspagne })
+        .addTo(mapInstance.current!)
+        .bindPopup(`
+          <div style="text-align: center; font-family: sans-serif;">
+            <p style="font-weight: bold; color: #1e293b; margin: 0;">${m.label}</p>
+            <p style="font-size: 10px; color: #ea580c; margin: 0; font-weight: bold; text-transform: uppercase;">
+              Cliquez pour la météo
+            </p>
+          </div>
+        `);
+
+      // Événement au clic
+      marker.on('click', () => {
+        onCityChange(m.id);
+      });
+    });
+
+    // 5. Cleanup : On détruit la carte quand le composant est démonté
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [onCityChange]);
 
   return (
-    <div className="h-[400px] w-full z-0">
-      <MapContainer 
-        center={[42.3, 1.5]} 
-        zoom={8} 
-        scrollWheelZoom={false}
-        className="h-full w-full rounded-[1.5rem]"
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        
-        {MARQUEURS.map((m) => (
-          <Marker 
-            key={m.id} 
-            position={m.pos as [number, number]} 
-            icon={iconEspagne}
-            eventHandlers={{
-              click: () => {
-                onCityChange(m.id);
-              },
-            }}
-          >
-            <Popup>
-              <div className="text-center">
-                <p className="font-bold text-slate-800 m-0">{m.label}</p>
-                <p className="text-[10px] text-orange-600 m-0 font-bold uppercase">Cliquez pour la météo</p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    </div>
+    <div 
+      ref={mapRef} 
+      className="h-[400px] w-full z-0 rounded-[1.5rem]" 
+      style={{ overflow: 'hidden' }}
+    />
   );
 }

@@ -1,13 +1,16 @@
 "use client";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import { useEffect, useState } from 'react';
 
+import { useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// --- Icône Andorre ---
 const iconAndorre = L.icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
 });
 
 const PAROISSES = [
@@ -21,28 +24,49 @@ const PAROISSES = [
 ];
 
 export default function MapAndorre({ onCityChange }: { onCityChange: (id: string) => void }) {
-  const [showMap, setShowMap] = useState(false);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<L.Map | null>(null);
 
   useEffect(() => {
-    const container = L.DomUtil.get('map-container-andorre');
-    if (container !== null) { (container as any)._leaflet_id = null; }
-    setShowMap(true);
-    return () => setShowMap(false);
-  }, []);
+    // Sécurité : Si le div n'est pas prêt ou si la carte est déjà là, on ne fait rien
+    if (!mapRef.current || mapInstance.current) return;
+
+    // 1. Initialisation de la carte (Focus sur Andorre)
+    mapInstance.current = L.map(mapRef.current).setView([42.54, 1.56], 11);
+
+    // 2. Couche OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(mapInstance.current);
+
+    // 3. Ajout des paroisses
+    PAROISSES.forEach((p) => {
+      const marker = L.marker(p.pos as [number, number], { icon: iconAndorre })
+        .addTo(mapInstance.current!)
+        .bindPopup(`<div style="font-weight: bold; font-family: sans-serif;">${p.label}</div>`);
+
+      // Événement au clic
+      marker.on('click', () => {
+        onCityChange(p.id);
+      });
+    });
+
+    // 4. Cleanup (Nettoyage OTAN)
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [onCityChange]);
 
   return (
-    <div id="map-container-andorre" className="h-[400px] w-full rounded-[1.5rem] overflow-hidden">
-      {showMap && (
-        <MapContainer center={[42.54, 1.56]} zoom={11} className="h-full w-full">
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {PAROISSES.map((p) => (
-            <Marker key={p.id} position={p.pos as [number, number]} icon={iconAndorre}
-              eventHandlers={{ click: () => onCityChange(p.id) }}>
-              <Popup><div className="font-bold">{p.label}</div></Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      )}
+    <div className="h-[400px] w-full rounded-[1.5rem] overflow-hidden border border-slate-200 shadow-inner">
+      <div 
+        ref={mapRef} 
+        className="h-full w-full"
+        style={{ zIndex: 0 }}
+      />
     </div>
   );
 }
