@@ -1,61 +1,37 @@
-'use client';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { useEffect, useState } from 'react';
+export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
-export default function TestDataPage() {
-  const [data, setData] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+export async function GET(request: NextRequest) {
+  const origin = request.nextUrl.origin;
 
-  useEffect(() => {
-    // On appelle l'API locale
-    fetch('/api/data')
-      .then((res) => {
-        if (!res.ok) throw new Error("Erreur lors de la récupération");
-        return res.json();
-      })
-      .then((json) => setData(json))
-      .catch((err) => setError(err.message));
-  }, []);
+  try {
+    // 1. On appelle tes 4 agrégateurs
+    const [resAge, resMeet, resCin, resJeux] = await Promise.allSettled([
+      fetch(`${origin}/api/agendatoulousain`, { cache: 'no-store' }).then(r => r.json()),
+      fetch(`${origin}/api/meetup-full`, { cache: 'no-store' }).then(r => r.json()),
+      fetch(`${origin}/api/cinematoulouse`, { cache: 'no-store' }).then(r => r.json()),
+      fetch(`${origin}/api/trictracphilibert`, { cache: 'no-store' }).then(r => r.json()),
+    ]);
 
-  return (
-    <div className="p-8 font-sans">
-      <h1 className="text-2xl font-bold mb-6 text-blue-600">Test de l'API Centrale</h1>
+    // 2. Extraction sécurisée des nombres
+    const agendaCount = resAge.status === 'fulfilled' ? (resAge.value.events?.length || 0) : 0;
+    const meetupCount = resMeet.status === 'fulfilled' ? (resMeet.value.events?.length || 0) : 0;
+    const cinemaCount = resCin.status === 'fulfilled' ? (resCin.value.results?.length || 0) : 0;
+    const jeuxCount   = resJeux.status === 'fulfilled' ? (resJeux.value.count || 0) : 0;
 
-      {error && (
-        <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
-          ❌ Erreur : {error}
-        </div>
-      )}
+    // 3. Réponse au format attendu par ton TestDataPage
+    return NextResponse.json({
+      totalRessources: agendaCount + meetupCount + cinemaCount + jeuxCount,
+      agenda: agendaCount,
+      meetup: meetupCount,
+      cinema: cinemaCount,
+      jeux: jeuxCount,
+      status: "success"
+    });
 
-      {!data && !error && <p className="animate-pulse">Calcul des données en cours...</p>}
-
-      {data && (
-        <div className="space-y-6">
-          {/* Résumé global */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-purple-100 border-2 border-purple-300 rounded-lg">
-              <p className="text-sm text-purple-700 uppercase font-bold">Total Ressources</p>
-              <p className="text-3xl font-black">{data.totalRessources}</p>
-            </div>
-            <div className="p-4 bg-green-100 border-2 border-green-300 rounded-lg">
-              <p className="text-sm text-green-700 uppercase font-bold">Agenda Toulouse</p>
-              <p className="text-3xl font-black">{data.agenda}</p>
-            </div>
-            <div className="p-4 bg-blue-100 border-2 border-blue-300 rounded-lg">
-              <p className="text-sm text-blue-700 uppercase font-bold">Films Cinéma</p>
-              <p className="text-3xl font-black">{data.cinema}</p>
-            </div>
-          </div>
-
-          {/* Affichage brut du JSON pour vérification technique */}
-          <div className="mt-10">
-            <h2 className="text-lg font-semibold mb-2 text-gray-700">Données brutes (JSON) :</h2>
-            <pre className="bg-gray-900 text-green-400 p-6 rounded-xl overflow-auto text-sm shadow-inner">
-              {JSON.stringify(data, null, 2)}
-            </pre>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  } catch (error) {
+    return NextResponse.json({ error: "Erreur lors du calcul" }, { status: 500 });
+  }
 }
