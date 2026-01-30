@@ -533,7 +533,7 @@ const categories = [
 // --- SOURCES ÉVÉNEMENTS ---
 const eventSources = [
   { title: "Agenda Toulouse", href: "/agendatoulouse" },
-  { title: "Agenda Trad Haute-Garonne", href: "/agenda-trad-haute-garonne" },
+  { title: "Agenda Trad Haute-Garonne", href: "/agenda-trad" },
   { title: "Agenda Culturel", href: "/agendaculturel" },
   { title: "Capitole Min", href: "/capitole-min" },
   { title: "Cinéma Toulouse", href: "/cinematoulouse" },
