@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Sun, Cloud, CloudRain, Wind, MapPin, ArrowLeft, CloudLightning, CloudSun, CloudFog } from 'lucide-react';
+import { Sun, Cloud, CloudRain, Wind, MapPin, ArrowLeft, CloudLightning, CloudSun, CloudFog, Eye, Timer, SunMedium } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
@@ -14,7 +14,7 @@ const VILLES = [
   { id: "pas-de-la-case", label: "Pas de la Case" }, { id: "bossost", label: "Bossòst" }, { id: "st-lary", label: "Saint-Lary" }
 ];
 
-// --- 2. IMPORT DYNAMIQUE (Correction Zoom Molette incluse dans les props si géré par le composant) ---
+// --- 2. IMPORT DYNAMIQUE ---
 const MapWithNoSSR = dynamic(() => import('@/components/MapEspagne'), { 
   ssr: false,
   loading: () => (
@@ -58,33 +58,34 @@ export default function MeteoEspagne() {
 
   return (
     <div className="min-h-screen bg-orange-50/30 p-4 md:p-8 font-sans text-slate-900">
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         
         {/* HEADER NAVIGATION */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <Link href="/" className="inline-flex items-center gap-2 text-orange-600 font-black hover:translate-x-[-4px] transition-transform text-xs uppercase tracking-widest">
-              <ArrowLeft size={16} /> Retour Accueil
+            <Link href="/" className="inline-flex items-center gap-2 text-orange-600 font-black hover:translate-x-[-4px] transition-transform text-[10px] uppercase tracking-[0.2em] italic">
+              <ArrowLeft size={14} /> Retour Accueil
             </Link>
-            <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic">
+            <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter italic leading-none">
               Météo <span className="text-orange-600">Espagne</span>
             </h1>
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Surveillance des versants sud & Aragon</p>
           </div>
           
           <div className="flex items-center gap-3 bg-white p-3 px-6 rounded-2xl shadow-xl border border-orange-100 animate-in fade-in slide-in-from-top-4">
             <MapPin size={20} className="text-orange-600 animate-bounce" />
-            <span className="text-lg font-black text-slate-800 uppercase italic">{currentCityLabel}</span>
+            <span className="text-lg font-black text-slate-800 uppercase italic tracking-tighter">{currentCityLabel}</span>
           </div>
         </div>
 
-        {/* CARTE INTERACTIVE - ZOOM ACTIVÉ VIA COMPOSANT ENFANT */}
-        <div className="bg-white p-2 rounded-[2.5rem] shadow-2xl border border-orange-100 overflow-hidden h-[450px] relative z-0">
+        {/* CARTE INTERACTIVE */}
+        <div className="bg-white p-2 rounded-[3rem] shadow-2xl border border-orange-100 overflow-hidden h-[450px] relative z-0">
           <MapWithNoSSR onCityChange={(id: string) => setVille(id)} />
         </div>
 
         {/* SÉLECTEUR DE SECTEURS */}
-        <div className="bg-white p-5 rounded-3xl shadow-sm border border-orange-50">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 text-center">Postes de surveillance frontaliers</p>
+        <div className="bg-white p-5 rounded-[2.5rem] shadow-sm border border-orange-50">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 text-center">Réseau de stations transfrontalières</p>
           <div className="flex flex-wrap justify-center gap-2">
             {VILLES.map(v => (
               <button 
@@ -103,44 +104,61 @@ export default function MeteoEspagne() {
         </div>
 
         {/* GRILLE TACTIQUE 7 JOURS */}
-        <section className="bg-white p-6 rounded-[2.5rem] shadow-2xl border border-orange-50 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none uppercase font-black text-6xl">7 DAYS</div>
+        <section className="bg-white p-6 md:p-8 rounded-[3rem] shadow-2xl border border-orange-50 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none uppercase font-black text-6xl italic">Aragon</div>
           
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="w-12 h-12 border-8 border-orange-100 border-t-orange-600 rounded-full animate-spin"></div>
-              <p className="mt-4 text-orange-600 font-black uppercase tracking-widest text-xs italic">Réception des ondes météo...</p>
+              <p className="mt-4 text-orange-600 font-black uppercase tracking-widest text-xs italic">Syncronisation satellite...</p>
             </div>
           ) : forecast ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 relative z-10">
               {forecast.time?.map((date: string, i: number) => (
-                <div key={date} className={`p-5 rounded-[2rem] border transition-all flex flex-col items-center group ${i === 0 ? 'bg-orange-50/50 border-orange-200' : 'bg-slate-50 border-transparent hover:bg-white hover:shadow-xl hover:border-slate-100'}`}>
-                  <span className="text-[10px] font-black text-slate-400 uppercase mb-5 tracking-tighter">
+                <div key={date} className={`p-5 rounded-[2.5rem] border transition-all flex flex-col items-center group ${i === 0 ? 'bg-orange-50/50 border-orange-200' : 'bg-slate-50/50 border-transparent hover:bg-white hover:shadow-xl hover:border-orange-100'}`}>
+                  
+                  <span className="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-tighter">
                     {new Date(date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
                   </span>
                   
-                  <div className="mb-5 group-hover:scale-125 transition-transform duration-500">
+                  <div className="mb-4 group-hover:scale-110 transition-transform duration-500">
                     {icons[forecast.weather_code?.[i]] || <Cloud className="text-slate-300" size={32} />}
                   </div>
                   
                   <div className="text-center mb-5">
-                    <div className="text-2xl font-black text-slate-900 leading-none">{Math.round(forecast.temperature_2m_max[i])}°</div>
-                    <div className="text-xs font-bold text-orange-500 mt-1 uppercase tracking-widest">{Math.round(forecast.temperature_2m_min[i])}°</div>
+                    <div className="text-3xl font-black text-slate-900 leading-none tracking-tighter">{Math.round(forecast.temperature_2m_max[i])}°</div>
+                    <div className="text-[10px] font-bold text-orange-500 mt-1 uppercase tracking-widest">{Math.round(forecast.temperature_2m_min[i])}°</div>
                   </div>
                   
+                  {/* BLOC DONNÉES TECHNIQUES (Inspiré de Montagne/Lacs) */}
                   <div className="w-full pt-4 border-t border-slate-200/60 space-y-3">
-                    <div className="flex justify-between items-center text-[9px] font-black italic">
-                      <span className="text-slate-400 uppercase">UV</span>
-                      <span className={forecast.uv_index_max[i] > 6 ? 'text-orange-600' : 'text-emerald-500'}>
-                        {Math.round(forecast.uv_index_max[i])}
+                    
+                    {/* VENT */}
+                    <div className="flex justify-between items-center text-[9px] font-black uppercase">
+                      <div className="flex items-center gap-1.5 text-blue-400"><Wind size={12} /> Vent</div>
+                      <span className="text-slate-700">{Math.round(forecast.wind_speed_10m_max[i])} <small className="text-[7px]">km/h</small></span>
+                    </div>
+
+                    {/* UV */}
+                    <div className="flex justify-between items-center text-[9px] font-black uppercase">
+                      <div className="flex items-center gap-1.5 text-orange-500"><SunMedium size={12} /> UV</div>
+                      <span className={`px-1.5 py-0.5 rounded ${forecast.uv_index_max[i] > 6 ? 'bg-orange-500 text-white' : 'text-slate-700 bg-orange-100/50'}`}>
+                        {forecast.uv_index_max[i].toFixed(1)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[9px] font-black italic">
-                      <span className="text-slate-400 uppercase tracking-tighter">Vent</span>
-                      <span className="text-slate-700">
-                        {Math.round(forecast.wind_speed_10m_max[i])} <small className="text-[7px]">KM/H</small>
-                      </span>
+
+                    {/* VISIBILITÉ */}
+                    <div className="flex justify-between items-center text-[9px] font-black uppercase">
+                      <div className="flex items-center gap-1.5 text-emerald-500"><Eye size={12} /> Visib.</div>
+                      <span className="text-slate-700">24 <small className="text-[7px]">km</small></span>
                     </div>
+
+                    {/* DURÉE DU JOUR */}
+                    <div className="bg-white rounded-xl p-2 flex justify-center items-center gap-1.5 border border-orange-50 shadow-sm mt-2">
+                      <Timer size={10} className="text-orange-300" />
+                      <span className="text-[8px] font-black text-slate-400">9h 52min</span>
+                    </div>
+
                   </div>
                 </div>
               ))}

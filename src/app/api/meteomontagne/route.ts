@@ -30,7 +30,7 @@ export async function GET() {
           code: json.daily.weather_code[i],
           snow: json.daily.snowfall_sum[i],
           uv: json.daily.uv_index_max[i], // Index UV pour chaque jour
-          wind: Math.round(json.daily.wind_speed_10m_max[i])
+          windMax: Math.round(json.daily.wind_speed_10m_max[i])
         }));
 
         return {

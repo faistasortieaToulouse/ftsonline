@@ -1071,7 +1071,7 @@ useEffect(() => {
           </Link>
 			
 		{/* Bouton Météo Occitanie */}
-          <Link href="/meteofuturtoulouse" className="group">
+          <Link href="/meteooccitanie" className="group">
             <div className="bg-indigo-600/10 hover:bg-indigo-600 border border-indigo-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] group-hover:-translate-y-1">
               <div className="bg-indigo-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-indigo-600 transition-colors">
                 <Navigation size={22} />

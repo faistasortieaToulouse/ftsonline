@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from "next/link";
 import { 
   ArrowLeft, Sun, Info, Cloud, CloudSun, CloudRain, 
-  Thermometer, Snowflake, Mountain, Calendar, Wind, SunMedium
+  Thermometer, Snowflake, Mountain, Calendar, Wind, SunMedium, Timer, Navigation, MapPin
 } from "lucide-react";
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
@@ -43,7 +43,8 @@ const MapPyrenees = dynamic(() => Promise.resolve(({ data }: { data: any[] }) =>
       L.marker([st.lat, st.lng], { icon: createLabel(st.ville, st.currentTemp) })
         .addTo(mapInstance.current)
         .on('click', () => {
-          document.getElementById(`station-${st.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const id = `station-${st.id}`;
+          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     });
     return () => { mapInstance.current?.remove(); mapInstance.current = null; };
@@ -98,7 +99,7 @@ export default function MeteoPyreneesPage() {
 
       <div className="max-w-7xl mx-auto space-y-16">
         {pyreneData.map((station, idx) => {
-          const normale = NORMALES_CLIMAT[station.id as keyof typeof NORMALES_CLIMAT];
+          const normale = NORMALES_CLIMAT[station.id as keyof typeof NORMALES_CLIMAT] || NORMALES_CLIMAT.ax;
           return (
             <div key={idx} id={`station-${station.id}`} className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
               
@@ -149,35 +150,57 @@ export default function MeteoPyreneesPage() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Petit rappel vent actuel */}
+                  <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                     <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-black text-blue-800 uppercase italic flex items-center gap-2"><Wind size={14}/> Rafales</span>
+                        <span className="text-lg font-black text-blue-900">{station.currentWind} <small className="text-[10px]">km/h</small></span>
+                     </div>
+                  </div>
                 </div>
 
                 {/* Forecast Droite - Scroll 7 Jours */}
                 <div className="lg:col-span-3 p-6 overflow-x-auto scrollbar-hide">
-                  <div className="flex gap-4 min-w-[850px]">
+                  <div className="flex gap-4 min-w-[900px]">
                     {station.forecast?.map((jour: any, i: number) => (
-                      <div key={i} className={`flex-1 p-4 rounded-3xl border transition-all ${i === 0 ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100 hover:border-blue-100'}`}>
-                        <p className="text-[9px] font-black text-slate-400 uppercase text-center mb-3">
+                      <div key={i} className={`flex-1 p-4 rounded-3xl border transition-all ${i === 0 ? 'bg-blue-50 border-blue-200 shadow-md' : 'bg-white border-slate-100 hover:border-blue-100'}`}>
+                        <p className="text-[9px] font-black text-slate-400 uppercase text-center mb-3 tracking-tighter">
                           {new Date(jour.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
                         </p>
-                        <div className="flex flex-col items-center gap-1 mb-3">
+                        <div className="flex flex-col items-center gap-1 mb-4">
                           {getWeatherIcon(jour.code)}
-                          <div className="text-center leading-tight">
+                          <div className="text-center leading-tight mt-1">
                             <span className="text-xl font-black text-slate-900">{jour.tempMax}°</span>
                             <span className="block text-[10px] font-bold text-blue-600">{jour.tempMin}°</span>
                           </div>
                         </div>
-                        <div className="pt-3 border-t border-slate-100 space-y-2">
+
+                        <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                          {/* NEIGE */}
                           <div className="flex justify-between items-center text-[9px] font-black uppercase">
-                            <span className="text-cyan-500 flex items-center gap-1"><Snowflake size={10}/> Neige</span>
-                            <span className="text-slate-700">{jour.snow} <small>cm</small></span>
+                            <span className="text-cyan-500 flex items-center gap-1"><Snowflake size={11}/> Neige</span>
+                            <span className="text-slate-700">{jour.snow || 0} <small>cm</small></span>
                           </div>
+                          
+                          {/* VENT MAX */}
                           <div className="flex justify-between items-center text-[9px] font-black uppercase">
-                            <span className="text-slate-400 flex items-center gap-1"><Wind size={10}/> Vent</span>
-                            <span className="text-slate-700">{jour.windMax || station.currentWind} <small>km/h</small></span>
+                            <span className="text-slate-400 flex items-center gap-1"><Wind size={11}/> Vent</span>
+                            <span className="text-slate-800 font-extrabold">{jour.windMax || jour.wind || 0} <small>km/h</small></span>
                           </div>
+
+                          {/* UV INDEX */}
                           <div className="flex justify-between items-center text-[9px] font-black uppercase">
-                            <span className="text-orange-400 flex items-center gap-1"><SunMedium size={10}/> UV</span>
-                            <span className={`px-1.5 rounded ${jour.uv > 5 ? 'bg-orange-100 text-orange-600' : 'text-slate-700'}`}>{Math.round(jour.uv)}</span>
+                            <span className="text-orange-400 flex items-center gap-1"><SunMedium size={11}/> UV</span>
+                            <span className={`px-1.5 py-0.5 rounded-md ${jour.uv > 5 ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-700'}`}>
+                                {jour.uv ? jour.uv.toFixed(1) : '0.0'}
+                            </span>
+                          </div>
+
+                          {/* Durée Jour (Optionnel / Style Plage) */}
+                          <div className="bg-slate-50 rounded-lg p-1.5 flex justify-center items-center gap-1 border border-slate-100">
+                             <Timer size={10} className="text-slate-400"/>
+                             <span className="text-[8px] font-bold text-slate-500 uppercase">9h 52m</span>
                           </div>
                         </div>
                       </div>

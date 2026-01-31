@@ -146,7 +146,7 @@ export default function MeteoFuturPage() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/meteofuturtoulouse?ville=${ville}`)
+    fetch(`/api/meteooccitanie?ville=${ville}`)
       .then(res => res.json())
       .then(data => {
         setForecast(data.daily);
