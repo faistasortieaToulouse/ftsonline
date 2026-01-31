@@ -1,82 +1,99 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from "react";
+import { Zap, Film, Bell, Gamepad2, Database, RefreshCw, LayoutGrid } from "lucide-react";
 
-export default function HomePage() {
+export default function MeetupSupPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const NB_BASE_MANUEL = 216;
 
-  useEffect(() => {
-    async function fetchCounts() {
+  const loadStats = async () => {
+    try {
       setLoading(true);
-      try {
-        const res = await fetch('/api/data', { cache: 'no-store' });
-        if (res.ok) {
-          const json = await res.json();
-          setData(json);
-        }
-      } catch (err) {
-        console.error("Erreur de récupération:", err);
-      } finally {
-        setLoading(false);
-      }
+      const res = await fetch("/api/testdata");
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error("Erreur de chargement:", err);
+    } finally {
+      setLoading(false);
     }
-    fetchCounts();
-  }, []);
+  };
 
-  const totalGlobal = NB_BASE_MANUEL + 
-    (data?.agenda || 0) + 
-    (data?.meetup || 0) + 
-    (data?.cinema || 0) + 
-    (data?.jeux || 0);
+  useEffect(() => { loadStats(); }, []);
+
+  if (loading) return (
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <RefreshCw className="animate-spin text-red-600" size={48} />
+    </div>
+  );
 
   return (
-    <main className="p-4 bg-slate-50 min-h-screen">
-      <div className="max-w-2xl mx-auto mb-10 p-6 bg-white rounded-2xl shadow-md border border-slate-100">
+    <div className="min-h-screen bg-[#050505] text-white p-8 font-sans">
+      <div className="max-w-5xl mx-auto">
         
-        {/* En-tête avec Total */}
-        <div className="text-center mb-6">
-          <h2 className="text-slate-500 italic mb-2">Nombre total de ressources</h2>
-          <div className="text-4xl font-black text-purple-600">
-            {loading ? (
-              <span className="animate-pulse opacity-50">Calcul en cours...</span>
-            ) : (
-              totalGlobal
-            )}
-            <span className="text-lg ml-2 font-normal text-slate-400">articles</span>
+        <header className="text-center mb-12">
+          <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-4">
+            Radar<span className="text-red-600">.Toulouse</span>
+          </h1>
+          <p className="text-slate-500 font-bold tracking-[0.3em] uppercase text-xs">Analyse globale de l'activité urbaine</p>
+        </header>
+
+        {/* SECTION DES GRANDS COMPTEURS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+          
+          {/* COMPTEUR ARTICLES (MANUEL) */}
+          <div className="text-center p-10 bg-slate-900/20 border border-white/5 rounded-[3rem] relative overflow-hidden group">
+            <Database className="absolute -right-4 -top-4 text-white/5 group-hover:text-white/10 transition-colors" size={160} />
+            <span className="relative z-10 text-[8rem] font-black leading-none bg-gradient-to-b from-slate-200 to-slate-600 bg-clip-text text-transparent">
+              {data?.totalArticles}
+            </span>
+            <p className="text-slate-400 font-black italic uppercase tracking-widest text-lg mt-4">Articles & Rubriques</p>
+            <p className="text-[10px] text-slate-600 uppercase font-bold tracking-widest mt-1">Base de données FTS</p>
           </div>
+
+          {/* COMPTEUR LIVE (DYNAMIQUE) */}
+          <div className="text-center p-10 bg-red-950/10 border border-red-900/20 rounded-[3rem] relative overflow-hidden group">
+            <Zap className="absolute -right-4 -top-4 text-red-600/5 group-hover:text-red-600/10 transition-colors" size={160} />
+            <span className="relative z-10 text-[8rem] font-black leading-none bg-gradient-to-b from-white to-red-600 bg-clip-text text-transparent">
+              {data?.totalLive}
+            </span>
+            <p className="text-red-600 font-black italic uppercase tracking-widest text-lg mt-4">Radar Live</p>
+            <p className="text-[10px] text-red-900 uppercase font-bold tracking-widest mt-1">Événements en temps réel</p>
+          </div>
+          
         </div>
 
-        {/* Grille des compteurs avec Skeleton loading */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <StatBox label="📚 Manuel" value={NB_BASE_MANUEL} color="bg-slate-50" textColor="text-slate-900" loading={false} />
-          <StatBox label="📅 Agenda" value={data?.agenda} color="bg-blue-50" textColor="text-blue-600" loading={loading} />
-          <StatBox label="🤝 Meetup" value={data?.meetup} color="bg-orange-50" textColor="text-orange-600" loading={loading} />
-          <StatBox label="🎬 Cinéma" value={data?.cinema} color="bg-red-50" textColor="text-red-600" loading={loading} />
-          <StatBox label="🎲 Jeux" value={data?.jeux} color="bg-yellow-50" textColor="text-yellow-600" loading={loading} />
+        {/* TITRE DE LA GRILLE */}
+        <div className="flex items-center gap-4 mb-8">
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+          <h2 className="text-xs font-black uppercase tracking-[0.5em] text-slate-500">Détails des flux détectés</h2>
+          <div className="h-[1px] flex-1 bg-white/10"></div>
         </div>
-        
-        {!loading && data?.updatedAt && (
-          <p className="text-[9px] text-center mt-6 text-slate-300 italic">
-            Dernière mise à jour : {new Date(data.updatedAt).toLocaleTimeString()}
-          </p>
-        )}
+
+        {/* GRILLE DES SOURCES LIVE */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard icon={<Zap />} label="Meetup" count={data?.detailsLive?.meetup} color="text-yellow-400" />
+          <StatCard icon={<Film />} label="Cinéma" count={data?.detailsLive?.cinema} color="text-blue-400" />
+          <StatCard icon={<Bell />} label="Agenda" count={data?.detailsLive?.agenda} color="text-red-400" />
+          <StatCard icon={<Gamepad2 />} label="Jeux RSS" count={data?.detailsLive?.jeux} color="text-emerald-400" />
+        </div>
+
       </div>
-    </main>
+    </div>
   );
 }
 
-// Petit composant interne pour les cases de stats
-function StatBox({ label, value, color, textColor, loading }: any) {
+function StatCard({ icon, label, count, color }: any) {
   return (
-    <div className={`flex flex-col items-center p-3 ${color} rounded-xl border border-white shadow-sm`}>
-      <span className="text-[10px] uppercase tracking-tighter font-bold text-slate-400 mb-1">{label}</span>
-      {loading ? (
-        <div className="h-6 w-10 bg-slate-200 animate-pulse rounded"></div>
-      ) : (
-        <span className={`text-xl font-black ${textColor}`}>{value || 0}</span>
-      )}
+    <div className="bg-slate-900/40 border border-white/5 p-8 rounded-[2rem] hover:bg-slate-800 transition-all group relative overflow-hidden">
+      <div className="relative z-10">
+        <div className={`${color} mb-4 transition-transform group-hover:scale-110`}>{icon}</div>
+        <div className="text-4xl font-black mb-1">{count}</div>
+        <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{label}</div>
+      </div>
+      {/* Petit effet de reflet au survol */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
     </div>
   );
 }
