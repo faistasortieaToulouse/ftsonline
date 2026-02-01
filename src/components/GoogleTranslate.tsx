@@ -195,14 +195,14 @@ export default function GoogleTranslateCustom() {
           onClick={() => setShowExtra(!showExtra)}
           className="text-[10px] uppercase tracking-wider font-bold text-blue-600 hover:text-blue-800"
         >
-          {showExtra ? 'Réduire' : 'Autres'}
+          {showExtra ? 'Réduire' : 'Autres Langues'}
         </button>
 
         <button
           onClick={() => setHelpOpen(true)}
           className="ml-auto p-1 text-slate-400 hover:text-slate-600 transition-colors"
         >
-          ❓
+          ❓ besoin d'aide
         </button>
       </div>
 

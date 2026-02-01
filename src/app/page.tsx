@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   Book, Film, MapPin, Music, Globe, Gamepad, Calendar, 
   Theater, Palette, Archive, Building, Bus,
@@ -15,8 +16,13 @@ import {
   Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
   Newspaper, Speech, Users, UserGroup, Smile, Handshake,
   ChevronDown, Wind, Droplets, Sun as SunIcon, Navigation,
-  Timer, Mountain
+  Timer, Mountain, Store, Share2
 } from "lucide-react";
+import APKDownloadModal from "@/components/APKDownloadModal";
+import InstallPWAiOS from "@/components/InstallPWAiOS";
+import DesktopOnly from "@/components/DesktopOnly";
+import DesktopQRCode from "@/components/DesktopQRCode";
+import { Button } from "@/components/ui/button";
 
 import { getSaintDuJour } from "../lib/saints";
 import { getDictonDuJour } from "../lib/dictons";
@@ -87,6 +93,31 @@ const totalArticles =
   nbPrix + nbArchitecture + nbEurope + nbFete + 
   nbFrancais + nbHierarchie + nbSaHistoire + nbLangue + 
   nbMonde + nbReligion + nbTerritoire;
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Mon Application TWA/PWA",
+          text: "Téléchargez Mon Application pour ne rien manquer de nos événements et discussions !",
+          url: "https://faistasortieatoulouse.online",
+        });
+        toast({ title: "Partage réussi 🎉", description: "Merci d'avoir partagé l'application !" });
+      } catch {
+        toast({
+          title: "Partage annulé",
+          description: "Le partage a été interrompu ou non supporté par le navigateur.",
+          variant: "destructive",
+        });
+      }
+    } else {
+      navigator.clipboard.writeText("https://faistasortieatoulouse.online");
+      toast({
+        title: "Lien copié !",
+        description: "Le lien de l'application a été copié dans votre presse-papiers.",
+      });
+    }
+  };
 
 // --- DONNÉES DES CATÉGORIES ---
 const categories = [
@@ -1239,6 +1270,53 @@ useEffect(() => {
           })}
         </div>
       </section>
+{/* Section téléchargement / partage */}
+<section className="flex flex-col items-center gap-6 p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl w-full overflow-hidden">
+  
+  {/* Ligne supérieure : Google Play + APK */}
+  <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 w-full">
+    <a
+      href="https://play.google.com/store/apps/details?id=com.votre.appli.android"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center space-x-2 p-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition"
+    >
+      <Store className="h-5 w-5" />
+      <Image
+        src="/images/google-play-badge.png"
+        alt="Disponible sur Google Play"
+        width={180}
+        height={53}
+        className="w-auto h-auto"
+      />
+    </a>
+
+    <APKDownloadModal />
+  </div>
+
+{/* Ligne inférieure : QR code + bouton partager */}
+<div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
+
+  <div className="flex flex-col items-center">
+    <InstallPWAiOS />
+  </div>
+
+  {/* QR code centré sous le bloc */}
+<DesktopOnly>
+  <div className="no-desktop">
+    <DesktopQRCode />
+  </div>
+</DesktopOnly>
+  
+  <Button
+    onClick={handleShare}
+    className="flex items-center justify-center space-x-2 p-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-lg transition w-full sm:w-auto"
+  >
+    <Share2 className="h-5 w-5" />
+    <span className="font-semibold">Partager l'application</span>
+  </Button>
+</div>
+</section>
     </div>
   );
 }
