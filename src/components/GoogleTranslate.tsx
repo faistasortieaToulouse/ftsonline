@@ -75,7 +75,9 @@ export default function GoogleTranslateCustom() {
     }
 
     const interval = setInterval(() => {
-      const frames = document.querySelectorAll('.goog-te-banner-frame, #goog-gt-tt, .goog-te-menu-frame, .skiptranslate');
+      const frames = document.querySelectorAll(
+        '.goog-te-banner-frame, #goog-gt-tt, .goog-te-menu-frame, .skiptranslate'
+      );
       frames.forEach((f) => {
         const frame = f as HTMLElement;
         frame.style.display = 'none';
@@ -103,7 +105,7 @@ export default function GoogleTranslateCustom() {
     }
 
     const allLangs = [...LANGS, ...EXTRA_LANGS];
-    const targetLabel = allLangs.find(l => l.code === lang)?.label || lang;
+    const targetLabel = allLangs.find((l) => l.code === lang)?.label || lang;
 
     const hasConfirmed = window.confirm(
       `Traduire la page en ${targetLabel} ?\n\nNote : La page sera actualisée pour appliquer la traduction.`
@@ -131,9 +133,18 @@ export default function GoogleTranslateCustom() {
           opacity: 0 !important;
           pointer-events: none !important;
         }
-        body { top: 0px !important; position: static !important; }
-        .goog-te-gadget, .goog-logo-link { display: none !important; }
-        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        body {
+          top: 0px !important;
+          position: static !important;
+        }
+        .goog-te-gadget,
+        .goog-logo-link {
+          display: none !important;
+        }
+        .goog-text-highlight {
+          background: none !important;
+          box-shadow: none !important;
+        }
       `}</style>
 
       <div id="google_translate_element" style={{ display: 'none' }} />
@@ -158,10 +169,10 @@ export default function GoogleTranslateCustom() {
         </>
       )}
 
-      {/* --- Container responsive amélioré --- */}
-      <div className="google-translate-custom flex flex-wrap gap-2">
+      {/* --- Layout mobile friendly --- */}
+      <div className="google-translate-custom flex flex-col gap-2">
 
-        {/* Ligne 1: Autres Langues à gauche, Besoin d'aide à droite */}
+        {/* Ligne 1: Autres Langues à gauche, ❓ besoin d'aide à droite */}
         <div className="w-full flex justify-between items-center">
           <button
             onClick={() => setShowExtra(!showExtra)}
@@ -178,16 +189,20 @@ export default function GoogleTranslateCustom() {
           </button>
         </div>
 
-        {/* Ligne 2: Sélecteur principal + FR si sélectionné */}
+        {/* Ligne 2: Sélecteur principal + FR */}
         <div className="w-full flex flex-wrap gap-2 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
             value={selectedLang}
             className="px-2 py-1 rounded border shadow-sm bg-white text-slate-900 hover:bg-slate-50 transition-colors text-sm font-medium outline-none flex-1 min-w-[120px]"
           >
-            <option value="" disabled>Traduire</option>
-            {LANGS.map(lang => (
-              <option key={lang.code} value={lang.code}>{lang.label}</option>
+            <option value="" disabled>
+              Traduire
+            </option>
+            {LANGS.map((lang) => (
+              <option key={lang.code} value={lang.code}>
+                {lang.label}
+              </option>
             ))}
           </select>
 
@@ -209,21 +224,40 @@ export default function GoogleTranslateCustom() {
           value={selectedLang}
           className="mt-2 px-2 py-1 rounded border shadow-sm bg-white text-slate-900 text-sm w-full transition-all focus:ring-2 focus:ring-blue-500"
         >
-          <option value="" disabled>Langues supplémentaires</option>
-          {EXTRA_LANGS.map(lang => (
-            <option key={lang.code} value={lang.code}>{lang.label}</option>
+          <option value="" disabled>
+            Langues supplémentaires
+          </option>
+          {EXTRA_LANGS.map((lang) => (
+            <option key={lang.code} value={lang.code}>
+              {lang.label}
+            </option>
           ))}
         </select>
       )}
 
       {/* --- Modale d'aide --- */}
       {helpOpen && (
-        <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setHelpOpen(false)}>
-          <div className="bg-white text-slate-900 p-6 rounded-2xl shadow-2xl max-w-md w-full relative" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm"
+          onClick={() => setHelpOpen(false)}
+        >
+          <div
+            className="bg-white text-slate-900 p-6 rounded-2xl shadow-2xl max-w-md w-full relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="text-lg font-bold mb-4">🧭 Aide à la traduction</h3>
-            <p className="text-sm mb-4 text-slate-600">En cas de problème, videz les cookies pour ce domaine :</p>
-            <div className="bg-slate-50 p-2 rounded mb-4 text-xs font-mono text-blue-600">{currentDomain}</div>
-            <button onClick={() => setHelpOpen(false)} className="w-full py-2 bg-blue-600 text-white rounded-xl font-bold">Continuer</button>
+            <p className="text-sm mb-4 text-slate-600">
+              En cas de problème, videz les cookies pour ce domaine :
+            </p>
+            <div className="bg-slate-50 p-2 rounded mb-4 text-xs font-mono text-blue-600">
+              {currentDomain}
+            </div>
+            <button
+              onClick={() => setHelpOpen(false)}
+              className="w-full py-2 bg-blue-600 text-white rounded-xl font-bold"
+            >
+              Continuer
+            </button>
           </div>
         </div>
       )}
