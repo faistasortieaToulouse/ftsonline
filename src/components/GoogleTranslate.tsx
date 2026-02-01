@@ -95,7 +95,6 @@ export default function GoogleTranslateCustom() {
   const changeLang = (lang: string) => {
     if (lang === selectedLang) return;
 
-    // Cas du retour au Français : Action immédiate
     if (lang === 'fr') {
       deleteCookie('googtrans');
       deleteCookie('googtrans_save');
@@ -104,7 +103,6 @@ export default function GoogleTranslateCustom() {
       return;
     }
 
-    // --- SÉCURITÉ : Demande de confirmation ---
     const allLangs = [...LANGS, ...EXTRA_LANGS];
     const targetLabel = allLangs.find(l => l.code === lang)?.label || lang;
     
@@ -116,13 +114,13 @@ export default function GoogleTranslateCustom() {
       setCookie('googtrans', `/fr/${lang}`, 7);
       window.location.reload();
     } else {
-      // On réinitialise l'affichage du select si l'utilisateur annule
       setSelectedLang(selectedLang);
     }
   };
 
   return (
     <>
+      {/* --- Masquer les éléments Google Translate --- */}
       <style jsx global>{`
         iframe.goog-te-banner-frame,
         .goog-te-banner-frame,
@@ -135,17 +133,9 @@ export default function GoogleTranslateCustom() {
           opacity: 0 !important;
           pointer-events: none !important;
         }
-        body {
-          top: 0px !important;
-          position: static !important;
-        }
-        .goog-te-gadget, .goog-logo-link {
-          display: none !important;
-        }
-        .goog-text-highlight {
-          background: none !important;
-          box-shadow: none !important;
-        }
+        body { top: 0px !important; position: static !important; }
+        .goog-te-gadget, .goog-logo-link { display: none !important; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
       `}</style>
 
       <div id="google_translate_element" style={{ display: 'none' }} />
@@ -170,7 +160,9 @@ export default function GoogleTranslateCustom() {
         </>
       )}
 
+      {/* --- Interface de sélection des langues --- */}
       <div className="google-translate-custom flex flex-wrap items-center gap-2">
+
         <select
           onChange={(e) => changeLang(e.target.value)}
           value={selectedLang}
@@ -193,19 +185,23 @@ export default function GoogleTranslateCustom() {
 
         <button
           onClick={() => setShowExtra(!showExtra)}
-          className="text-[10px] uppercase tracking-wider font-bold text-blue-600 hover:text-blue-800"
+          className="text-[10px] uppercase tracking-wider font-bold text-blue-600 hover:text-blue-800 flex-shrink-0"
         >
           {showExtra ? 'Réduire' : 'Autres Langues'}
         </button>
 
-        <button
-          onClick={() => setHelpOpen(true)}
-          className="ml-auto p-1 text-slate-400 hover:text-slate-600 transition-colors"
-        >
-          ❓ besoin d'aide
-        </button>
+        {/* ❓ Besoin d'aide passe à la ligne si nécessaire */}
+        <div className="w-full sm:w-auto flex justify-end sm:justify-start">
+          <button
+            onClick={() => setHelpOpen(true)}
+            className="p-1 text-slate-400 hover:text-slate-600 transition-colors text-xs"
+          >
+            ❓ besoin d'aide
+          </button>
+        </div>
       </div>
 
+      {/* --- Langues supplémentaires --- */}
       {showExtra && (
         <select
           onChange={(e) => changeLang(e.target.value)}
@@ -219,7 +215,7 @@ export default function GoogleTranslateCustom() {
         </select>
       )}
 
-      {/* MODALE D'AIDE */}
+      {/* --- Modale d'aide --- */}
       {helpOpen && (
         <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setHelpOpen(false)}>
           <div className="bg-white text-slate-900 p-6 rounded-2xl shadow-2xl max-w-md w-full relative" onClick={(e) => e.stopPropagation()}>
