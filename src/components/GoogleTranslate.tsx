@@ -107,6 +107,7 @@ export default function GoogleTranslateCustom() {
     const allLangs = [...LANGS, ...EXTRA_LANGS];
     const targetLabel = allLangs.find((l) => l.code === lang)?.label || lang;
 
+    // ✅ Confirmation pour éviter la traduction accidentelle
     const hasConfirmed = window.confirm(
       `Traduire la page en ${targetLabel} ?\n\nNote : La page sera actualisée pour appliquer la traduction.`
     );
@@ -170,10 +171,10 @@ export default function GoogleTranslateCustom() {
       )}
 
       {/* --- Layout mobile friendly --- */}
-      <div className="google-translate-custom flex flex-col gap-2">
+      <div className="google-translate-custom flex flex-col gap-2 pt-4">
 
-        {/* Ligne 1: Autres Langues à gauche, ❓ besoin d'aide à droite */}
-        <div className="w-full flex justify-between items-center">
+        {/* Ligne 1: Autres Langues + Besoin d'aide */}
+        <div className="w-full flex flex-wrap justify-between items-center gap-2">
           <button
             onClick={() => setShowExtra(!showExtra)}
             className="text-[10px] uppercase tracking-wider font-bold text-blue-600 hover:text-blue-800 flex-shrink-0"
