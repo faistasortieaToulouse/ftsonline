@@ -33,7 +33,6 @@ const EXTRA_LANGS = [
   { code: 'vi', label: 'Vietnamien' },
 ];
 
-/* --- UTILITAIRES COOKIES --- */
 function setCookie(name: string, value: string, days?: number) {
   if (typeof document === 'undefined') return;
   const host = window.location.hostname;
@@ -83,7 +82,7 @@ export default function GoogleTranslateCustom() {
         frame.style.visibility = 'hidden';
         frame.style.pointerEvents = 'none';
       });
-      
+
       if (document.body.style.top !== '0px') {
         document.body.style.top = '0px';
       }
@@ -98,14 +97,14 @@ export default function GoogleTranslateCustom() {
     if (lang === 'fr') {
       deleteCookie('googtrans');
       deleteCookie('googtrans_save');
-      window.location.hash = ''; 
+      window.location.hash = '';
       window.location.reload();
       return;
     }
 
     const allLangs = [...LANGS, ...EXTRA_LANGS];
     const targetLabel = allLangs.find(l => l.code === lang)?.label || lang;
-    
+
     const hasConfirmed = window.confirm(
       `Traduire la page en ${targetLabel} ?\n\nNote : La page sera actualisée pour appliquer la traduction.`
     );
@@ -120,7 +119,6 @@ export default function GoogleTranslateCustom() {
 
   return (
     <>
-      {/* --- Masquer les éléments Google Translate --- */}
       <style jsx global>{`
         iframe.goog-te-banner-frame,
         .goog-te-banner-frame,
@@ -160,44 +158,47 @@ export default function GoogleTranslateCustom() {
         </>
       )}
 
-      {/* --- Interface de sélection des langues --- */}
-      <div className="google-translate-custom flex flex-wrap items-center gap-2">
+      {/* --- Container responsive amélioré --- */}
+      <div className="google-translate-custom flex flex-wrap gap-2">
 
-        <select
-          onChange={(e) => changeLang(e.target.value)}
-          value={selectedLang}
-          className="px-2 py-1 rounded border shadow-sm bg-white text-slate-900 hover:bg-slate-50 transition-colors text-sm font-medium outline-none"
-        >
-          <option value="" disabled>Traduire</option>
-          {LANGS.map(lang => (
-            <option key={lang.code} value={lang.code}>{lang.label}</option>
-          ))}
-        </select>
-
-        {selectedLang !== 'fr' && (
+        {/* Ligne 1: Autres Langues à gauche, Besoin d'aide à droite */}
+        <div className="w-full flex justify-between items-center">
           <button
-            onClick={() => changeLang('fr')}
-            className="px-2 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border"
+            onClick={() => setShowExtra(!showExtra)}
+            className="text-[10px] uppercase tracking-wider font-bold text-blue-600 hover:text-blue-800 flex-shrink-0"
           >
-            FR
+            {showExtra ? 'Réduire' : 'Autres Langues'}
           </button>
-        )}
 
-        <button
-          onClick={() => setShowExtra(!showExtra)}
-          className="text-[10px] uppercase tracking-wider font-bold text-blue-600 hover:text-blue-800 flex-shrink-0"
-        >
-          {showExtra ? 'Réduire' : 'Autres Langues'}
-        </button>
-
-        {/* ❓ Besoin d'aide passe à la ligne si nécessaire */}
-        <div className="w-full sm:w-auto flex justify-end sm:justify-start">
           <button
             onClick={() => setHelpOpen(true)}
             className="p-1 text-slate-400 hover:text-slate-600 transition-colors text-xs"
           >
             ❓ besoin d'aide
           </button>
+        </div>
+
+        {/* Ligne 2: Sélecteur principal + FR si sélectionné */}
+        <div className="w-full flex flex-wrap gap-2 items-center">
+          <select
+            onChange={(e) => changeLang(e.target.value)}
+            value={selectedLang}
+            className="px-2 py-1 rounded border shadow-sm bg-white text-slate-900 hover:bg-slate-50 transition-colors text-sm font-medium outline-none flex-1 min-w-[120px]"
+          >
+            <option value="" disabled>Traduire</option>
+            {LANGS.map(lang => (
+              <option key={lang.code} value={lang.code}>{lang.label}</option>
+            ))}
+          </select>
+
+          {selectedLang !== 'fr' && (
+            <button
+              onClick={() => changeLang('fr')}
+              className="px-2 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border"
+            >
+              FR
+            </button>
+          )}
         </div>
       </div>
 
