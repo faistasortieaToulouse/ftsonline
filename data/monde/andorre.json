@@ -1,0 +1,24 @@
+{
+  "pays": "Andorre",
+  "paroisses": [
+    { "nom": "Andorre-la-Vieille", "capitale": "Andorre-la-Vieille", "population_capitale": "21 500", "population_totale": "24 800" },
+    { "nom": "Escaldes-Engordany", "capitale": "Escaldes-Engordany", "population_capitale": "15 800", "population_totale": "15 800" },
+    { "nom": "Encamp", "capitale": "Encamp", "population_capitale": "8 200", "population_totale": "12 500" },
+    { "nom": "La Massana", "capitale": "La Massana", "population_capitale": "5 900", "population_totale": "11 300" },
+    { "nom": "Sant Julià de Lòria", "capitale": "Sant Julià de Lòria", "population_capitale": "7 900", "population_totale": "9 800" },
+    { "nom": "Canillo", "capitale": "Canillo", "population_capitale": "2 400", "population_totale": "5 800" },
+    { "nom": "Ordino", "capitale": "Ordino", "population_capitale": "3 300", "population_totale": "5 400" }
+  ],
+  "classement_villes_et_localites": [
+    { "nom": "Andorre-la-Vieille", "paroisse": "Andorre-la-Vieille", "population": "21 500" },
+    { "nom": "Escaldes-Engordany", "paroisse": "Escaldes-Engordany", "population": "15 800" },
+    { "nom": "Encamp", "paroisse": "Encamp", "population": "8 200" },
+    { "nom": "Sant Julià de Lòria", "paroisse": "Sant Julià de Lòria", "population": "7 900" },
+    { "nom": "La Massana", "paroisse": "La Massana", "population": "5 900" },
+    { "nom": "Santa Coloma", "paroisse": "Andorre-la-Vieille", "population": "3 300" },
+    { "nom": "Ordino", "paroisse": "Ordino", "population": "3 300" },
+    { "nom": "Le Pas-de-la-Case", "paroisse": "Encamp", "population": "3 100" },
+    { "nom": "Canillo", "paroisse": "Canillo", "population": "2 400" },
+    { "nom": "Arinsal", "paroisse": "La Massana", "population": "2 100" }
+  ]
+}

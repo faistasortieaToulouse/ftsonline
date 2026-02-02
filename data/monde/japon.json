@@ -1,0 +1,61 @@
+{
+  "pays": "Japon",
+  "data_source": "Estimations 2026 - Préfectures",
+  "administration_territoriale": {
+    "grandes_metropoles_plus_5m": [
+      { "prefecture": "Tokyo (Metropolis)", "capitale": "Shinjuku (Tokyo)", "population": 14100000 },
+      { "prefecture": "Kanagawa", "capitale": "Yokohama", "population": 9200000 },
+      { "prefecture": "Osaka", "capitale": "Osaka", "population": 8700000 },
+      { "prefecture": "Aichi", "capitale": "Nagoya", "population": 7500000 },
+      { "prefecture": "Saitama", "capitale": "Saitama", "population": 7300000 },
+      { "prefecture": "Chiba", "capitale": "Chiba", "population": 6300000 },
+      { "prefecture": "Hyogo", "capitale": "Kobe", "population": 5300000 },
+      { "prefecture": "Hokkaido", "capitale": "Sapporo", "population": 5100000 },
+      { "prefecture": "Fukuoka", "capitale": "Fukuoka", "population": 5100000 }
+    ],
+    "regions_intermediaires_2m_5m": [
+      { "prefecture": "Shizuoka", "capitale": "Shizuoka", "population": 3500000 },
+      { "prefecture": "Ibaraki", "capitale": "Mito", "population": 2800000 },
+      { "prefecture": "Hiroshima", "capitale": "Hiroshima", "population": 2700000 },
+      { "prefecture": "Kyoto", "capitale": "Kyoto", "population": 2500000 },
+      { "prefecture": "Miyagi", "capitale": "Sendai", "population": 2200000 },
+      { "prefecture": "Niigata", "capitale": "Niigata", "population": 2100000 },
+      { "prefecture": "Nagano", "capitale": "Nagano", "population": 2000000 }
+    ],
+    "autres_prefectures": [
+      { "prefecture": "Gifu", "capitale": "Gifu", "population": 1900000 },
+      { "prefecture": "Gunma", "capitale": "Maebashi", "population": 1900000 },
+      { "prefecture": "Tochigi", "capitale": "Utsunomiya", "population": 1900000 },
+      { "prefecture": "Okayama", "capitale": "Okayama", "population": 1800000 },
+      { "prefecture": "Fukushima", "capitale": "Fukushima", "population": 1700000 },
+      { "prefecture": "Mie", "capitale": "Tsu", "population": 1700000 },
+      { "prefecture": "Kumamoto", "capitale": "Kumamoto", "population": 1700000 },
+      { "prefecture": "Kagoshima", "capitale": "Kagoshima", "population": 1500000 },
+      { "prefecture": "Okinawa", "capitale": "Naha", "population": 1500000 },
+      { "prefecture": "Yamaguchi", "capitale": "Yamaguchi", "population": 1300000 },
+      { "prefecture": "Ehime", "capitale": "Matsuyama", "population": 1300000 },
+      { "prefecture": "Nara", "capitale": "Nara", "population": 1300000 },
+      { "prefecture": "Nagasaki", "capitale": "Nagasaki", "population": 1200000 },
+      { "prefecture": "Aomori", "capitale": "Aomori", "population": 1100000 },
+      { "prefecture": "Iwate", "capitale": "Morioka", "population": 1100000 },
+      { "prefecture": "Oita", "capitale": "Oita", "population": 1100000 },
+      { "prefecture": "Ishikawa", "capitale": "Kanazawa", "population": 1100000 },
+      { "prefecture": "Yamagata", "capitale": "Yamagata", "population": 1000000 },
+      { "prefecture": "Toyama", "capitale": "Toyama", "population": 1000000 },
+      { "prefecture": "Miyazaki", "capitale": "Miyazaki", "population": 1000000 },
+      { "prefecture": "Akita", "capitale": "Akita", "population": 900000 },
+      { "prefecture": "Kagawa", "capitale": "Takamatsu", "population": 900000 },
+      { "prefecture": "Wakayama", "capitale": "Wakayama", "population": 880000 },
+      { "prefecture": "Saga", "capitale": "Saga", "population": 800000 },
+      { "prefecture": "Yamanashi", "capitale": "Kofu", "population": 790000 },
+      { "prefecture": "Tokushima", "capitale": "Tokushima", "population": 700000 },
+      { "prefecture": "Fukui", "capitale": "Fukui", "population": 740000 },
+      { "prefecture": "Kochi", "capitale": "Kochi", "population": 660000 },
+      { "prefecture": "Shimane", "capitale": "Matsue", "population": 650000 },
+      { "prefecture": "Tottori", "capitale": "Tottori", "population": 540000 },
+      { "ville": "Higashiosaka", "prefecture": "Osaka", "pop_est_2026": 495000 },
+      { "ville": "Ichikawa", "prefecture": "Chiba", "pop_est_2026": 492000 },
+      { "ville": "Fukuyama", "prefecture": "Hiroshima", "pop_est_2026": 460000 }
+    ]
+  }
+}

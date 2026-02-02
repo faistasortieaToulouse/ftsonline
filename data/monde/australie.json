@@ -1,0 +1,26 @@
+{
+  "pays": "Australie",
+  "etats_et_territoires": [
+    { "nom": "Nouvelle-Galles du Sud", "capitale": "Sydney", "population_capitale": "5 450 000", "population_totale": "8 550 000" },
+    { "nom": "Victoria", "capitale": "Melbourne", "population_capitale": "5 380 000", "population_totale": "7 020 000" },
+    { "nom": "Queensland", "capitale": "Brisbane", "population_capitale": "2 780 000", "population_totale": "5 650 000" },
+    { "nom": "Australie-Occidentale", "capitale": "Perth", "population_capitale": "2 350 000", "population_totale": "2 980 000" },
+    { "nom": "Australie-Méridionale", "capitale": "Adélaïde", "population_capitale": "1 450 000", "population_totale": "1 880 000" },
+    { "nom": "Territoire de la Capitale", "capitale": "Canberra", "population_capitale": "485 000", "population_totale": "485 000" },
+    { "nom": "Tasmanie", "capitale": "Hobart", "population_capitale": "260 000", "population_totale": "585 000" },
+    { "nom": "Territoire du Nord", "capitale": "Darwin", "population_capitale": "155 000", "population_totale": "258 000" }
+  ],
+  "classement_villes": [
+    { "ville": "Sydney", "etat": "Nouvelle-Galles du Sud", "population": "5 450 000" },
+    { "ville": "Melbourne", "etat": "Victoria", "population": "5 380 000" },
+    { "ville": "Brisbane", "etat": "Queensland", "population": "2 780 000" },
+    { "ville": "Perth", "etat": "Australie-Occidentale", "population": "2 350 000" },
+    { "ville": "Adélaïde", "etat": "Australie-Méridionale", "population": "1 450 000" },
+    { "ville": "Gold Coast", "etat": "Queensland", "population": "755 000" },
+    { "ville": "Canberra", "etat": "Territoire de la Capitale", "population": "485 000" },
+    { "ville": "Newcastle", "etat": "Nouvelle-Galles du Sud", "population": "475 000" },
+    { "ville": "Sunshine Coast", "etat": "Queensland", "population": "380 000" },
+    { "ville": "Central Coast", "etat": "Nouvelle-Galles du Sud", "population": "365 000" },
+    { "ville": "Wollongong", "etat": "Nouvelle-Galles du Sud", "population": "325 000" }
+  ]
+}

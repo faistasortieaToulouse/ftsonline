@@ -1,0 +1,30 @@
+{
+  "pays": "Chili",
+  "regions": [
+    { "nom": "Arica et Parinacota", "capitale": "Arica", "population_capitale": "235 000", "population_region": "260 000" },
+    { "nom": "Tarapacá", "capitale": "Iquique", "population_capitale": "205 000", "population_region": "410 000" },
+    { "nom": "Antofagasta", "capitale": "Antofagasta", "population_capitale": "395 000", "population_region": "730 000" },
+    { "nom": "Atacama", "capitale": "Copiapó", "population_capitale": "165 000", "population_region": "325 000" },
+    { "nom": "Coquimbo", "capitale": "La Serena", "population_capitale": "240 000", "population_region": "880 000" },
+    { "nom": "Valparaíso", "capitale": "Valparaíso", "population_capitale": "305 000", "population_region": "2 050 000" },
+    { "nom": "Métropolitaine", "capitale": "Santiago", "population_capitale": "5 350 000", "population_region": "8 550 000" },
+    { "nom": "O'Higgins", "capitale": "Rancagua", "population_capitale": "245 000", "population_region": "1 030 000" },
+    { "nom": "Maule", "capitale": "Talca", "population_capitale": "235 000", "population_region": "1 180 000" },
+    { "nom": "Ñuble", "capitale": "Chillán", "population_capitale": "195 000", "population_region": "525 000" },
+    { "nom": "Biobío", "capitale": "Concepción", "population_capitale": "230 000", "population_region": "1 700 000" },
+    { "nom": "Araucanie", "capitale": "Temuco", "population_capitale": "305 000", "population_region": "1 050 000" },
+    { "nom": "Los Ríos", "capitale": "Valdivia", "population_capitale": "170 000", "population_region": "415 000" },
+    { "nom": "Los Lagos", "capitale": "Puerto Montt", "population_capitale": "185 000", "population_region": "915 000" },
+    { "nom": "Aysén", "capitale": "Coyhaique", "population_capitale": "55 000", "population_region": "110 000" },
+    { "nom": "Magallanes", "capitale": "Punta Arenas", "population_capitale": "135 000", "population_region": "185 000" }
+  ],
+  "grandes_villes_et_agglomerations": [
+    { "ville": "Santiago (Agglomération)", "region": "Métropolitaine", "population": "6 450 000" },
+    { "ville": "Puente Alto", "region": "Métropolitaine (Grand Santiago)", "population": "670 000" },
+    { "ville": "Maipú", "region": "Métropolitaine (Grand Santiago)", "population": "595 000" },
+    { "ville": "Antofagasta", "region": "Antofagasta", "population": "395 000" },
+    { "ville": "Viña del Mar", "region": "Valparaíso", "population": "345 000" },
+    { "ville": "Valparaíso", "region": "Valparaíso", "population": "305 000" },
+    { "ville": "Temuco", "region": "Araucanie", "population": "305 000" }
+  ]
+}

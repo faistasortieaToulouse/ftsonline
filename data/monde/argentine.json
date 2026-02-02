@@ -1,0 +1,42 @@
+{
+  "pays": "Argentine",
+  "provinces": [
+    { "nom": "Ville Autonome de Buenos Aires", "capitale": "CABA", "population_capitale": "3 130 000", "population_totale": "3 130 000" },
+    { "nom": "Buenos Aires (Province)", "capitale": "La Plata", "population_capitale": "785 000", "population_totale": "17 800 000" },
+    { "nom": "Catamarca", "capitale": "San F. del Valle de Catamarca", "population_capitale": "165 000", "population_totale": "435 000" },
+    { "nom": "Chaco", "capitale": "Resistencia", "population_capitale": "305 000", "population_totale": "1 160 000" },
+    { "nom": "Chubut", "capitale": "Rawson", "population_capitale": "32 000", "population_totale": "610 000" },
+    { "nom": "Córdoba", "capitale": "Córdoba", "population_capitale": "1 520 000", "population_totale": "4 020 000" },
+    { "nom": "Corrientes", "capitale": "Corrientes", "population_capitale": "365 000", "population_totale": "1 140 000" },
+    { "nom": "Entre Ríos", "capitale": "Paraná", "population_capitale": "260 000", "population_totale": "1 450 000" },
+    { "nom": "Formosa", "capitale": "Formosa", "population_capitale": "240 000", "population_totale": "615 000" },
+    { "nom": "Jujuy", "capitale": "San Salvador de Jujuy", "population_capitale": "275 000", "population_totale": "830 000" },
+    { "nom": "La Pampa", "capitale": "Santa Rosa", "population_capitale": "108 000", "population_totale": "370 000" },
+    { "nom": "La Rioja", "capitale": "La Rioja", "population_capitale": "190 000", "population_totale": "390 000" },
+    { "nom": "Mendoza", "capitale": "Mendoza", "population_capitale": "125 000", "population_totale": "2 050 000" },
+    { "nom": "Misiones", "capitale": "Posadas", "population_capitale": "290 000", "population_totale": "1 300 000" },
+    { "nom": "Neuquén", "capitale": "Neuquén", "population_capitale": "245 000", "population_totale": "740 000" },
+    { "nom": "Río Negro", "capitale": "Viedma", "population_capitale": "55 000", "population_totale": "770 000" },
+    { "nom": "Salta", "capitale": "Salta", "population_capitale": "560 000", "population_totale": "1 460 000" },
+    { "nom": "San Juan", "capitale": "San Juan", "population_capitale": "115 000", "population_totale": "835 000" },
+    { "nom": "San Luis", "capitale": "San Luis", "population_capitale": "180 000", "population_totale": "550 000" },
+    { "nom": "Santa Cruz", "capitale": "Río Gallegos", "population_capitale": "100 000", "population_totale": "340 000" },
+    { "nom": "Santa Fe", "capitale": "Santa Fe", "population_capitale": "410 000", "population_totale": "3 600 000" },
+    { "nom": "Santiago del Estero", "capitale": "Santiago del Estero", "population_capitale": "265 000", "population_totale": "1 070 000" },
+    { "nom": "Terre de Feu", "capitale": "Ushuaia", "population_capitale": "85 000", "population_totale": "200 000" },
+    { "nom": "Tucumán", "capitale": "San Miguel de Tucumán", "population_capitale": "580 000", "population_totale": "1 760 000" }
+  ],
+  "grandes_villes_et_agglomerations": [
+    { "ville": "Buenos Aires (CABA)", "province": "District Fédéral", "population": "3 130 000" },
+    { "ville": "La Matanza", "province": "Buenos Aires", "population": "1 850 000" },
+    { "ville": "Córdoba", "province": "Córdoba", "population": "1 520 000" },
+    { "ville": "Rosario", "province": "Santa Fe", "population": "1 350 000" },
+    { "ville": "Mar del Plata", "province": "Buenos Aires", "population": "665 000" },
+    { "ville": "San Miguel de Tucumán", "province": "Tucumán", "population": "580 000" },
+    { "ville": "Salta", "province": "Salta", "population": "560 000" },
+    { "ville": "Santa Fe", "province": "Santa Fe", "population": "410 000" },
+    { "ville": "Corrientes", "province": "Corrientes", "population": "365 000" },
+    { "ville": "Bahía Blanca", "province": "Buenos Aires", "population": "315 000" },
+    { "ville": "Resistencia", "province": "Chaco", "population": "305 000" }
+  ]
+}
