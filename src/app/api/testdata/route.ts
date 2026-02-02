@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 // On importe le fichier généré par ton GitHub Workflow
-import statsHebdo from "@/data/stats-hebdo.json"; 
+import statsHebdo from "../../../../data/stats-hebdo.json"; 
 
 export const dynamic = "force-dynamic";
 
