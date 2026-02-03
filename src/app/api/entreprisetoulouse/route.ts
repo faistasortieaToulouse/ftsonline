@@ -10,8 +10,8 @@ export async function GET() {
       type: "Données Publiques"
     },
     {
-      id: "excellence  à Toulouse",
-      title: "Pôles d'Excellence",
+      id: "excellence",
+      title: "Pôles d'Excellence à Toulouse",
       description: "Le portail Invest in Toulouse présente les secteurs clés : aéronautique, spatial, santé et numérique.",
       url: "https://www.invest-in-toulouse.fr/",
       type: "Attractivité"
