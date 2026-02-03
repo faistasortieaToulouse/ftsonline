@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import lacsData from '../../../../data/occitanie/lacbaignade.json';
+import lacsData from '../../../data/occitanie/lacbaignade.json';
 // On importe directement le JSON. 
 // Next.js va l'inclure dans le bundle de l'API.
 
