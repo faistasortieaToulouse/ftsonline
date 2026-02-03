@@ -1,0 +1,104 @@
+[
+  {
+    "ville": "Johannesbourg",
+    "role": "Chef-lieu provincial / Centre économique",
+    "province": "Gauteng",
+    "population_agglo": 9500000
+  },
+  {
+    "ville": "Le Cap",
+    "role": "Capitale législative / Chef-lieu provincial",
+    "province": "Cap-Occidental",
+    "population_agglo": 4800000
+  },
+  {
+    "ville": "Durban",
+    "role": "Grand port métropolitain",
+    "province": "KwaZulu-Natal",
+    "population_agglo": 3400000
+  },
+  {
+    "ville": "Pretoria",
+    "role": "Capitale administrative",
+    "province": "Gauteng",
+    "population_agglo": 2600000
+  },
+  {
+    "ville": "Soweto",
+    "role": "Zone urbaine intégrée (Johannesbourg)",
+    "province": "Gauteng",
+    "population_agglo": 1700000
+  },
+  {
+    "ville": "Gqeberha",
+    "role": "Pôle industriel (ex-Port Elizabeth)",
+    "province": "Cap-Oriental",
+    "population_agglo": 1200000
+  },
+  {
+    "ville": "Soshanguve",
+    "role": "Zone urbaine (int. Pretoria)",
+    "province": "Gauteng",
+    "population_agglo": 850000
+  },
+  {
+    "ville": "Pietermaritzburg",
+    "role": "Chef-lieu provincial",
+    "province": "KwaZulu-Natal",
+    "population_agglo": 840000
+  },
+  {
+    "ville": "Mbombela",
+    "role": "Chef-lieu provincial (Nelspruit)",
+    "province": "Mpumalanga",
+    "population_agglo": 780000
+  },
+  {
+    "ville": "Vereeniging",
+    "role": "Centre industriel",
+    "province": "Gauteng",
+    "population_agglo": 750000
+  },
+  {
+    "ville": "Bloemfontein",
+    "role": "Capitale judiciaire / Chef-lieu provincial",
+    "province": "État-Libre",
+    "population_agglo": 560000
+  },
+  {
+    "ville": "Polokwane",
+    "role": "Chef-lieu provincial",
+    "province": "Limpopo",
+    "population_agglo": 450000
+  },
+  {
+    "ville": "East London",
+    "role": "Port et centre urbain",
+    "province": "Cap-Oriental",
+    "population_agglo": 480000
+  },
+  {
+    "ville": "Rustenburg",
+    "role": "Centre minier",
+    "province": "Nord-Ouest",
+    "population_agglo": 350000
+  },
+  {
+    "ville": "Kimberley",
+    "role": "Chef-lieu provincial",
+    "province": "Cap-Nord",
+    "population_agglo": 225000
+  },
+  {
+    "ville": "Bhisho",
+    "role": "Chef-lieu provincial",
+    "province": "Cap-Oriental",
+    "population_agglo": 150000
+  },
+  {
+    "ville": "Mahikeng",
+    "role": "Chef-lieu provincial",
+    "province": "Nord-Ouest",
+    "population_agglo": 900000
+  }
+]

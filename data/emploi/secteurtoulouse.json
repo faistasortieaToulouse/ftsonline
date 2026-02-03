@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "titre": "Aéronautique et Spatial",
+    "categorie": "Industrie Pilier",
+    "points_cles": "40 % des effectifs spatiaux français. Moteur historique de la région.",
+    "acteurs_evenements": "Airbus, Thales Alenia Space, ATR, CNES.",
+    "tendance_2026": "Avion hydrogène et New Space. Space Summit mondial en mai 2026."
+  },
+  {
+    "id": 2,
+    "titre": "Numérique et Intelligence Artificielle",
+    "categorie": "Haute Technologie",
+    "points_cles": "4 000 entreprises. Hub cybersécurité et systèmes embarqués.",
+    "acteurs_evenements": "Projet ANITI (IA certifiable et de confiance).",
+    "tendance_2026": "IA appliquée à l'industrie et à la confiance numérique."
+  },
+  {
+    "id": 3,
+    "titre": "Santé et Biotechnologies",
+    "categorie": "Sciences du Vivant",
+    "points_cles": "Campus de l'Oncopole. Lutte contre le cancer et pharmacie.",
+    "acteurs_evenements": "Pierre Fabre, Sanofi, TSN (Toulouse Santé Numérique).",
+    "tendance_2026": "Santé numérique et suivi via IA / objets connectés."
+  },
+  {
+    "id": 4,
+    "titre": "Mobilités de Demain",
+    "categorie": "Innovation Transport",
+    "points_cles": "Véhicules autonomes, drones et transports décarbonés.",
+    "acteurs_evenements": "Campus Francazal, Hyperloop (tests ultra-haute vitesse).",
+    "tendance_2026": "Investissement massif dans les sols et le futur du transport."
+  },
+  {
+    "id": 5,
+    "titre": "Agroalimentaire et Agriculture",
+    "categorie": "Force Régionale",
+    "points_cles": "1ère région agricole de France. 2ème MIN de France (Rungis du Sud).",
+    "acteurs_evenements": "Salon CFIA en septembre 2026.",
+    "tendance_2026": "Hub pour l'alimentation durable et les circuits courts."
+  },
+  {
+    "id": 6,
+    "titre": "Énergies Renouvelables et Hydrogène",
+    "categorie": "Transition Énergétique",
+    "points_cles": "Leader sur la production et les usages de l'hydrogène vert.",
+    "acteurs_evenements": "Projet HyPort, Technocampus hydrogène à Francazal.",
+    "tendance_2026": "Cadastre solaire massif et centrales en toiture (MEETT)."
+  },
+  {
+    "id": 7,
+    "titre": "Industrie Cosmétique",
+    "categorie": "Dermo-cosmétique",
+    "points_cles": "Pôle majeur de la santé de la peau et formulation.",
+    "acteurs_evenements": "Groupe Pierre Fabre (R&D Oncopole), Beauty Tech.",
+    "tendance_2026": "Personnalisation via IA et ingrédients biosourcés."
+  },
+  {
+    "id": 8,
+    "titre": "Construction Durable et Filière Bois",
+    "categorie": "Bâtiment",
+    "points_cles": "Structuration de l'usage du bois local et génie civil durable.",
+    "acteurs_evenements": "Fibois Occitanie, Université de Toulouse.",
+    "tendance_2026": "Chantiers 'bas carbone' généralisés dans les nouveaux quartiers."
+  },
+  {
+    "id": 9,
+    "titre": "Logistique et Transport",
+    "categorie": "Névralgie Économique",
+    "points_cles": "Carrefour logistique du Sud-Ouest. Supply chain industrielle.",
+    "acteurs_evenements": "Village des métiers du Transport (avril 2026).",
+    "tendance_2026": "Logistique du dernier kilomètre décarbonée et drones."
+  },
+  {
+    "id": 10,
+    "titre": "Économie Sociale et Solidaire (ESS)",
+    "categorie": "Social et Circulaire",
+    "points_cles": "10 % des salariés (36 000 pers.). Action sociale et mutuelles.",
+    "acteurs_evenements": "Halles de la Cartoucherie, Les Imaginations Fertiles.",
+    "tendance_2026": "Modèles hybrides mêlant commerce, culture et sport."
+  },
+  {
+    "id": 11,
+    "titre": "Commerce et Franchise",
+    "categorie": "Tertiaire Marchand",
+    "points_cles": "Plaque tournante commerciale régionale. Hub de distribution.",
+    "acteurs_evenements": "Franchise Expo Toulouse au MEETT (octobre 2026).",
+    "tendance_2026": "Terre d'accueil pour les nouveaux réseaux de services."
+  },
+  {
+    "id": 12,
+    "titre": "Culture et Tourisme d'Affaires",
+    "categorie": "Loisirs et Business",
+    "points_cles": "Cité de l'Espace (9M de visiteurs). Tourisme d'affaires moteur.",
+    "acteurs_evenements": "MEETT, Innovatech (mai 2026), Cinémathèque.",
+    "tendance_2026": "Rénovation des lieux culturels et conventions mondiales."
+  },
+  {
+    "id": 13,
+    "titre": "Banque, Assurance et Immobilier",
+    "categorie": "Finance",
+    "points_cles": "Sièges régionaux des grands groupes financiers.",
+    "acteurs_evenements": "Banque Populaire Occitane, Crédit Agricole 31.",
+    "tendance_2026": "Immobilier d'entreprise vers des bureaux 'bas carbone'."
+  },
+  {
+    "id": 14,
+    "titre": "Météorologie et Climatologie",
+    "categorie": "Expertise Unique",
+    "points_cles": "Seul centre de ce type en Europe. Data-science climatique.",
+    "acteurs_evenements": "Siège national de Météo-France.",
+    "tendance_2026": "Adaptation des villes au réchauffement climatique."
+  },
+  {
+    "id": 15,
+    "titre": "Enseignement Supérieur",
+    "categorie": "Formation",
+    "points_cles": "100 000 étudiants. Réservoir massif de talents et R&D.",
+    "acteurs_evenements": "Universités et Grandes Écoles toulousaines.",
+    "tendance_2026": "Création de cursus spécialisés en construction durable."
+  },
+  {
+    "id": 16,
+    "titre": "Gestion de l'Eau",
+    "categorie": "Environnement",
+    "points_cles": "Expertise européenne sur la gestion critique de l'eau.",
+    "acteurs_evenements": "Aqua-Valley, Suez, Veolia, Salon CYCL'EAU (mars 2026).",
+    "tendance_2026": "Réutilisation des eaux usées et capteurs de fuites intelligents."
+  },
+  {
+    "id": 17,
+    "titre": "Industries Culturelles",
+    "categorie": "Audiovisuel",
+    "points_cles": "Développement des tournages, de l'animation et du jeu vidéo.",
+    "acteurs_evenements": "ENSAV, Fonds de soutien métropolitain.",
+    "tendance_2026": "Serious gaming appliqué à l'industrie et effets spéciaux."
+  },
+  {
+    "id": 18,
+    "titre": "Robotique de Service",
+    "categorie": "Mécatronique",
+    "points_cles": "Robotique pour la santé, l'agriculture et l'accueil public.",
+    "acteurs_evenements": "Cluster Robotics Place, startup MecaBotiX.",
+    "tendance_2026": "Robots modulaires bio-inspirés pour la ville."
+  },
+  {
+    "id": 19,
+    "titre": "Économie du Patrimoine",
+    "categorie": "Artisanat d'Art",
+    "points_cles": "Restauration de monuments (brique) et filière Pastel.",
+    "acteurs_evenements": "Cité de l'Artisanat, Tailleurs de pierre.",
+    "tendance_2026": "Relance de l'or bleu (Pastel) pour luxe et cosmétique."
+  },
+  {
+    "id": 20,
+    "titre": "Loisirs et Expérience",
+    "categorie": "Divertissement Urbain",
+    "points_cles": "Plus forte concentration d'activités innovantes par habitant.",
+    "acteurs_evenements": "Tactisens, Dream Away, Air垂直 (chute libre).",
+    "tendance_2026": "Scénarisation des loisirs et VR haut de gamme."
+  },
+  {
+    "id": 21,
+    "titre": "Économie Circulaire",
+    "categorie": "Recyclage",
+    "points_cles": "Valorisation des déchets industriels et textiles.",
+    "acteurs_evenements": "Hycco, Recycl’Occ Textile, Waste2Build.",
+    "tendance_2026": "98 % de réemploi des matériaux sur les chantiers publics."
+  },
+  {
+    "id": 22,
+    "titre": "Sciences Humaines et Sociales",
+    "categorie": "Recherche",
+    "points_cles": "Expertise en ergonomie homme-machine et économie mondiale.",
+    "acteurs_evenements": "Toulouse School of Economics (Jean Tirole), Labos CLLE.",
+    "tendance_2026": "Recherche sur la cybersécurité comportementale."
+  },
+  {
+    "id": 23,
+    "titre": "Silver Économie",
+    "categorie": "Seniors",
+    "points_cles": "Référence mondiale pour l'autonomie et le bien-vieillir.",
+    "acteurs_evenements": "Gérontopôle du CHU, Cluster Silver Occ.",
+    "tendance_2026": "Télémédecine et robots compagnons domestiques."
+  },
+  {
+    "id": 24,
+    "titre": "Économie Bleue",
+    "categorie": "Océanographie",
+    "points_cles": "Cerveau de l'innovation maritime et observation spatiale.",
+    "acteurs_evenements": "Mercator Ocean International.",
+    "tendance_2026": "Design de navires décarbonés et électronique marine."
+  },
+  {
+    "id": 25,
+    "titre": "Biomimétisme",
+    "categorie": "Bio-matériaux",
+    "points_cles": "Recherche s'inspirant du vivant pour créer des matériaux.",
+    "acteurs_evenements": "Festival Art & Biomimétisme (avril 2026).",
+    "tendance_2026": "Isolants à base de mycélium et plastiques biosourcés."
+  }
+]

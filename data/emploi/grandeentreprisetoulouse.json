@@ -1,0 +1,802 @@
+[
+  {
+    "rang": 1,
+    "entreprise": "AIRBUS OPERATIONS",
+    "activite": "Fabrication d'autres matériels de transport",
+    "chiffre_affaires": 13183000000,
+    "resultat_net": 1760000000,
+    "effectif": "Plus de 10 000 salariés"
+  },
+  {
+    "rang": 2,
+    "entreprise": "YSALIA GARONNE HABITAT",
+    "activite": "Activités immobilières",
+    "chiffre_affaires": 5692710000,
+    "resultat_net": 327414000,
+    "effectif": "0 salarié"
+  },
+  {
+    "rang": 3,
+    "entreprise": "AIRBUS DEFENCE AND SPACE SAS",
+    "activite": "Fabrication d'autres matériels de transport",
+    "chiffre_affaires": 2366041000,
+    "resultat_net": -262813000,
+    "effectif": "Entre 5 000 et 9 999 salariés"
+  },
+  {
+    "rang": 4,
+    "entreprise": "THALES ALENIA SPACE FRANCE",
+    "activite": "Fabrication d'autres matériels de transport",
+    "chiffre_affaires": 1520990000,
+    "resultat_net": -7405000,
+    "effectif": "Entre 2 000 et 4 999 salariés"
+  },
+  {
+    "rang": 5,
+    "entreprise": "VITESCO TECHNOLOGIES FRANCE",
+    "activite": "Fabrication de produits informatiques, électroniques et optiques",
+    "chiffre_affaires": 677178571,
+    "resultat_net": 37546504,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 6,
+    "entreprise": "GXO LOGISTICS FRANCE",
+    "activite": "Entreposage et services auxiliaires des transports",
+    "chiffre_affaires": 566611815,
+    "resultat_net": 13214101,
+    "effectif": "Entre 2 000 et 4 999 salariés"
+  },
+  {
+    "rang": 7,
+    "entreprise": "SPIE INDUSTRIE",
+    "activite": "Travaux de construction spécialisés",
+    "chiffre_affaires": 558215935,
+    "resultat_net": 27467101,
+    "effectif": "Au moins 1 salarié"
+  },
+  {
+    "rang": 8,
+    "entreprise": "GENERAL LOGISTICS SYSTEMS FRANCE",
+    "activite": "Entreposage et services auxiliaires des transports",
+    "chiffre_affaires": 535196973,
+    "resultat_net": 47974,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 9,
+    "entreprise": "ACTIA GROUP",
+    "activite": "Services financiers",
+    "chiffre_affaires": 535124000,
+    "resultat_net": 18205000,
+    "effectif": "Entre 10 et 19 salariés"
+  },
+  {
+    "rang": 10,
+    "entreprise": "L P 2 C",
+    "activite": "Sièges sociaux ; conseil de gestion",
+    "chiffre_affaires": 506233000,
+    "resultat_net": 1952000,
+    "effectif": "Entre 3 et 5 salariés"
+  },
+  {
+    "rang": 11,
+    "entreprise": "AUMOVIO FRANCE",
+    "activite": "Recherche-développement scientifique",
+    "chiffre_affaires": 477700738,
+    "resultat_net": 36538381,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 12,
+    "entreprise": "LATECOERE",
+    "activite": "Fabrication d'autres matériels de transport",
+    "chiffre_affaires": 468276000,
+    "resultat_net": 10630000,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 13,
+    "entreprise": "CLIMATER HOLDCO",
+    "activite": "Services financiers",
+    "chiffre_affaires": 449866000,
+    "resultat_net": 25978000,
+    "effectif": "0 salarié"
+  },
+  {
+    "rang": 14,
+    "entreprise": "LP GROUPE",
+    "activite": "Construction de bâtiments",
+    "chiffre_affaires": 448932000,
+    "resultat_net": 0,
+    "effectif": "Entre 50 et 99 salariés"
+  },
+  {
+    "rang": 15,
+    "entreprise": "FRAM",
+    "activite": "Agences de voyage et réservation",
+    "chiffre_affaires": 420332041,
+    "resultat_net": 802464,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 16,
+    "entreprise": "HYDRO BUILDING SYSTEMS FRANCE",
+    "activite": "Commerce de gros",
+    "chiffre_affaires": 419517012,
+    "resultat_net": 15748766,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 17,
+    "entreprise": "CAISSE D'EPARGNE MIDI PYRENEES",
+    "activite": "Services financiers",
+    "chiffre_affaires": 385757000,
+    "resultat_net": 84848000,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 18,
+    "entreprise": "LATELEC",
+    "activite": "Fabrication d'équipements électriques",
+    "chiffre_affaires": 385279605,
+    "resultat_net": 10422906,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 19,
+    "entreprise": "VALIANTYS TOPCO",
+    "activite": "Services financiers",
+    "chiffre_affaires": 331089000,
+    "resultat_net": 0,
+    "effectif": "Entre 1 et 2 salariés"
+  },
+  {
+    "rang": 20,
+    "entreprise": "SPIE BATIGNOLLES MALET",
+    "activite": "Génie civil",
+    "chiffre_affaires": 319995798,
+    "resultat_net": 5705881,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 21,
+    "entreprise": "DODIN CAMPENON BERNARD",
+    "activite": "Génie civil",
+    "chiffre_affaires": 302494740,
+    "resultat_net": 19002676,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 22,
+    "entreprise": "ACTIA AUTOMOTIVE",
+    "activite": "Fabrication de produits informatiques et optiques",
+    "chiffre_affaires": 302487368,
+    "resultat_net": 8761464,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 23,
+    "entreprise": "TOPSCALE",
+    "activite": "Sièges sociaux ; conseil de gestion",
+    "chiffre_affaires": 298987000,
+    "resultat_net": 14179000,
+    "effectif": "Entre 1 et 2 salariés"
+  },
+  {
+    "rang": 24,
+    "entreprise": "ALTEN SUD OUEST",
+    "activite": "Ingénierie et contrôles techniques",
+    "chiffre_affaires": 282386000,
+    "resultat_net": 22032000,
+    "effectif": "Entre 2 000 et 4 999 salariés"
+  },
+  {
+    "rang": 25,
+    "entreprise": "CENTRAKOR STORES",
+    "activite": "Commerce de détail",
+    "chiffre_affaires": 280392686,
+    "resultat_net": 13823789,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 26,
+    "entreprise": "LFO LES FROMAGERIES OCCITANES",
+    "activite": "Industries alimentaires",
+    "chiffre_affaires": 279938482,
+    "resultat_net": -6163943,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 27,
+    "entreprise": "L.P.R. - LA PALETTE ROUGE",
+    "activite": "Services auxiliaires des transports",
+    "chiffre_affaires": 263943389,
+    "resultat_net": 14972476,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 28,
+    "entreprise": "PLEIN VENT",
+    "activite": "Agences de voyage",
+    "chiffre_affaires": 251248987,
+    "resultat_net": 16115154,
+    "effectif": "0 salarié"
+  },
+  {
+    "rang": 29,
+    "entreprise": "SCALIAN DS",
+    "activite": "Programmation et conseil informatique",
+    "chiffre_affaires": 244034315,
+    "resultat_net": 8510940,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 30,
+    "entreprise": "GA ENTREPRISE",
+    "activite": "Construction de bâtiments",
+    "chiffre_affaires": 227972969,
+    "resultat_net": 7464088,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 31,
+    "entreprise": "PROMOLOGIS",
+    "activite": "Activités immobilières",
+    "chiffre_affaires": 212930416,
+    "resultat_net": 4571657,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 32,
+    "entreprise": "SAFTI",
+    "activite": "Activités immobilières",
+    "chiffre_affaires": 210008850,
+    "resultat_net": 20368190,
+    "effectif": "Entre 50 et 99 salariés"
+  },
+  {
+    "rang": 33,
+    "entreprise": "GROUPE LA DEPECHE DU MIDI",
+    "activite": "Édition",
+    "chiffre_affaires": 198940577,
+    "resultat_net": 2980281,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 34,
+    "entreprise": "SOCIETE OCCITANE DE COMMUNICATION",
+    "activite": "Services financiers",
+    "chiffre_affaires": 198940577,
+    "resultat_net": 4241191,
+    "effectif": "Entre 1 et 2 salariés"
+  },
+  {
+    "rang": 35,
+    "entreprise": "SAFRAN POWER UNITS",
+    "activite": "Fabrication d'autres matériels de transport",
+    "chiffre_affaires": 193633125,
+    "resultat_net": 17015270,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 36,
+    "entreprise": "ONORE",
+    "activite": "Services financiers",
+    "chiffre_affaires": 186668000,
+    "resultat_net": 3428193,
+    "effectif": "Entre 6 et 9 salariés"
+  },
+  {
+    "rang": 37,
+    "entreprise": "INEO MIDI PYRENEES",
+    "activite": "Travaux de construction spécialisés",
+    "chiffre_affaires": 184285736,
+    "resultat_net": 4694448,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 38,
+    "entreprise": "RNO ETATS UNIS",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 180350463,
+    "resultat_net": 904923,
+    "effectif": "Entre 200 et 249 salariés"
+  },
+  {
+    "rang": 39,
+    "entreprise": "FINZZLE CAPITAL",
+    "activite": "Services financiers",
+    "chiffre_affaires": 173534000,
+    "resultat_net": 17927000,
+    "effectif": "Entre 3 et 5 salariés"
+  },
+  {
+    "rang": 40,
+    "entreprise": "AUTOBUY",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 172276473,
+    "resultat_net": 574216,
+    "effectif": "Entre 10 et 19 salariés"
+  },
+  {
+    "rang": 41,
+    "entreprise": "LATFI1",
+    "activite": "Commerce de gros",
+    "chiffre_affaires": 167633069,
+    "resultat_net": 0,
+    "effectif": "0 salarié"
+  },
+  {
+    "rang": 42,
+    "entreprise": "GARONOVA",
+    "activite": "Sièges sociaux ; conseil de gestion",
+    "chiffre_affaires": 162945126,
+    "resultat_net": 8529922,
+    "effectif": "0 salarié"
+  },
+  {
+    "rang": 43,
+    "entreprise": "INFOMIL",
+    "activite": "Édition",
+    "chiffre_affaires": 159867113,
+    "resultat_net": 2952707,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 44,
+    "entreprise": "CLINIQUE PASTEUR",
+    "activite": "Santé humaine",
+    "chiffre_affaires": 153464000,
+    "resultat_net": 4330000,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 45,
+    "entreprise": "F.M.F.D NOGA",
+    "activite": "Soutien aux entreprises",
+    "chiffre_affaires": 147531464,
+    "resultat_net": 7675641,
+    "effectif": "Entre 1 et 2 salariés"
+  },
+  {
+    "rang": 46,
+    "entreprise": "EVOTEC (FRANCE) SAS",
+    "activite": "Recherche-développement scientifique",
+    "chiffre_affaires": 146132104,
+    "resultat_net": 33728602,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 47,
+    "entreprise": "F.C.F",
+    "activite": "Services financiers (Redressement)",
+    "chiffre_affaires": 145648000,
+    "resultat_net": 3650000,
+    "effectif": "Entre 1 et 2 salariés"
+  },
+  {
+    "rang": 48,
+    "entreprise": "GSC GACHES CHIMIE",
+    "activite": "Commerce de gros",
+    "chiffre_affaires": 145496233,
+    "resultat_net": 15876783,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 49,
+    "entreprise": "ESPACE TOY",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 145121408,
+    "resultat_net": 978874,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 50,
+    "entreprise": "DBF TOULOUSE AUTOMOBILES",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 143193820,
+    "resultat_net": 1743694,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 51,
+    "entreprise": "PELRAS SA",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 141360080,
+    "resultat_net": 1379427,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 52,
+    "entreprise": "VALIANTYS GROUP",
+    "activite": "Services financiers",
+    "chiffre_affaires": 138264000,
+    "resultat_net": 7980603,
+    "effectif": "Entre 20 et 49 salariés"
+  },
+  {
+    "rang": 53,
+    "entreprise": "MI-GSO",
+    "activite": "Ingénierie et contrôle technique",
+    "chiffre_affaires": 138245000,
+    "resultat_net": 10830000,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 54,
+    "entreprise": "FINANCIERE TMG",
+    "activite": "Services financiers",
+    "chiffre_affaires": 134103000,
+    "resultat_net": 3761000,
+    "effectif": "Entre 6 et 9 salariés"
+  },
+  {
+    "rang": 55,
+    "entreprise": "HABITATIONS DES CHALETS",
+    "activite": "Activités immobilières",
+    "chiffre_affaires": 127590977,
+    "resultat_net": 7403589,
+    "effectif": "Entre 200 et 249 salariés"
+  },
+  {
+    "rang": 56,
+    "entreprise": "SCALIAN OP",
+    "activite": "Sièges sociaux ; conseil de gestion",
+    "chiffre_affaires": 125075590,
+    "resultat_net": 7829614,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 57,
+    "entreprise": "SHARP BUSINESS SYSTEMS",
+    "activite": "Commerce de gros",
+    "chiffre_affaires": 115501579,
+    "resultat_net": 941419,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 58,
+    "entreprise": "SEAC GF",
+    "activite": "Fabrication de produits minéraux",
+    "chiffre_affaires": 114319350,
+    "resultat_net": 1143751,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 59,
+    "entreprise": "AIRBUS ATR",
+    "activite": "Fabrication d'autres matériels de transport",
+    "chiffre_affaires": 113397291,
+    "resultat_net": 420576,
+    "effectif": "Entre 50 et 99 salariés"
+  },
+  {
+    "rang": 60,
+    "entreprise": "YEO FRAIS",
+    "activite": "Industries alimentaires",
+    "chiffre_affaires": 111102914,
+    "resultat_net": 768148,
+    "effectif": "Entre 200 et 249 salariés"
+  },
+  {
+    "rang": 61,
+    "entreprise": "ENTREPRISE BOURDARIOS",
+    "activite": "Construction de bâtiments",
+    "chiffre_affaires": 110478242,
+    "resultat_net": 4010051,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 62,
+    "entreprise": "PARAMETRIC TECHNOLOGY SA",
+    "activite": "Conseil informatique",
+    "chiffre_affaires": 110166699,
+    "resultat_net": 2959575,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 63,
+    "entreprise": "E.C.M.P. EIFFAGE CONSTRUCTION",
+    "activite": "Construction de bâtiments",
+    "chiffre_affaires": 109850226,
+    "resultat_net": 4093603,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 64,
+    "entreprise": "DOYEN AUTO FRANCE",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 106968387,
+    "resultat_net": 1165288,
+    "effectif": "Entre 20 et 49 salariés"
+  },
+  {
+    "rang": 65,
+    "entreprise": "GROUPE PATRIMOINES DE FRANCE",
+    "activite": "Sièges sociaux ; conseil de gestion",
+    "chiffre_affaires": 106727000,
+    "resultat_net": 11748000,
+    "effectif": "Entre 3 et 5 salariés"
+  },
+  {
+    "rang": 66,
+    "entreprise": "BONCOLAC",
+    "activite": "Industries alimentaires",
+    "chiffre_affaires": 104602342,
+    "resultat_net": 14936595,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 67,
+    "entreprise": "VECTURA",
+    "activite": "Services financiers",
+    "chiffre_affaires": 103767000,
+    "resultat_net": 14229000,
+    "effectif": "Entre 3 et 5 salariés"
+  },
+  {
+    "rang": 68,
+    "entreprise": "GXO LOGISTICS SPORT FRANCE",
+    "activite": "Services auxiliaires des transports",
+    "chiffre_affaires": 100363254,
+    "resultat_net": 3630445,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 69,
+    "entreprise": "TELESPAZIO FRANCE",
+    "activite": "Télécommunications",
+    "chiffre_affaires": 100012877,
+    "resultat_net": 6069692,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 70,
+    "entreprise": "PATRIMOINE LANGUEDOCIENNE",
+    "activite": "Activités immobilières",
+    "chiffre_affaires": 99106835,
+    "resultat_net": 8342578,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 71,
+    "entreprise": "GTM SUD OUEST TP GC",
+    "activite": "Génie civil",
+    "chiffre_affaires": 96350705,
+    "resultat_net": 1735124,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 72,
+    "entreprise": "SPHEREA TEST & SERVICES",
+    "activite": "Fabrication de produits informatiques et optiques",
+    "chiffre_affaires": 96186682,
+    "resultat_net": 12910016,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 73,
+    "entreprise": "SETOM",
+    "activite": "Distribution d'eau",
+    "chiffre_affaires": 93371575,
+    "resultat_net": -1764001,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 74,
+    "entreprise": "CAMPUS STARDUST",
+    "activite": "Activités immobilières",
+    "chiffre_affaires": 93308494,
+    "resultat_net": 5874632,
+    "effectif": "0 salarié"
+  },
+  {
+    "rang": 75,
+    "entreprise": "LG TOULOUSE AUTOMOBILES",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 92038270,
+    "resultat_net": 1984107,
+    "effectif": "Entre 50 et 99 salariés"
+  },
+  {
+    "rang": 76,
+    "entreprise": "HENSOLDT NEXEYA FRANCE",
+    "activite": "Fabrication de produits informatiques et optiques",
+    "chiffre_affaires": 91509202,
+    "resultat_net": -5025524,
+    "effectif": "Entre 500 et 999 salariés"
+  },
+  {
+    "rang": 77,
+    "entreprise": "INEO SCLE FERROVIAIRE",
+    "activite": "Génie civil",
+    "chiffre_affaires": 91285927,
+    "resultat_net": 608020,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 78,
+    "entreprise": "EES - SO EIFFAGE ENERGIE",
+    "activite": "Travaux de construction spécialisés",
+    "chiffre_affaires": 90277127,
+    "resultat_net": 4529218,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 79,
+    "entreprise": "CYBELIA",
+    "activite": "Services financiers",
+    "chiffre_affaires": 89520000,
+    "resultat_net": 747000,
+    "effectif": "Au moins 1 salarié"
+  },
+  {
+    "rang": 80,
+    "entreprise": "FRANCE GARDIENNAGE",
+    "activite": "Enquêtes et sécurité",
+    "chiffre_affaires": 87906058,
+    "resultat_net": 629204,
+    "effectif": "Entre 1 000 et 1 999 salariés"
+  },
+  {
+    "rang": 81,
+    "entreprise": "OPAD",
+    "activite": "Services financiers",
+    "chiffre_affaires": 87417000,
+    "resultat_net": 2911000,
+    "effectif": "Entre 6 et 9 salariés"
+  },
+  {
+    "rang": 82,
+    "entreprise": "AUTO SERVICES TOULOUSE",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 86648960,
+    "resultat_net": 2865827,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 83,
+    "entreprise": "STAR REAL ESTATE",
+    "activite": "Activités immobilières",
+    "chiffre_affaires": 86000000,
+    "resultat_net": 35000000,
+    "effectif": "0 salarié"
+  },
+  {
+    "rang": 84,
+    "entreprise": "COFRATA EUROPA GROUP",
+    "activite": "Soutien aux entreprises",
+    "chiffre_affaires": 85611577,
+    "resultat_net": 14361459,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 85,
+    "entreprise": "LINDE AMT TOULOUSE SAS",
+    "activite": "Métallurgie",
+    "chiffre_affaires": 83178000,
+    "resultat_net": 7010148,
+    "effectif": "Entre 50 et 99 salariés"
+  },
+  {
+    "rang": 86,
+    "entreprise": "GROUPE ELIENCE",
+    "activite": "Sièges sociaux ; conseil de gestion",
+    "chiffre_affaires": 82121000,
+    "resultat_net": 1367000,
+    "effectif": "Entre 3 et 5 salariés"
+  },
+  {
+    "rang": 87,
+    "entreprise": "BRICO PRIVE",
+    "activite": "Commerce de détail",
+    "chiffre_affaires": 81950701,
+    "resultat_net": -11619789,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 88,
+    "entreprise": "CIR COMPAGNIE INDUSTRIELLE DU ROULEMENT",
+    "activite": "Commerce de gros",
+    "chiffre_affaires": 81335983,
+    "resultat_net": 1945518,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 89,
+    "entreprise": "RNO MONTAUDRAN",
+    "activite": "Commerce et réparation automobile",
+    "chiffre_affaires": 80096624,
+    "resultat_net": 352913,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 90,
+    "entreprise": "ACTIA AEROSPACE",
+    "activite": "Fabrication de produits informatiques et optiques",
+    "chiffre_affaires": 80067513,
+    "resultat_net": 3651734,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 91,
+    "entreprise": "GROUPE CAILLEAU",
+    "activite": "Services financiers",
+    "chiffre_affaires": 77083562,
+    "resultat_net": 342001,
+    "effectif": "0 salarié"
+  },
+  {
+    "rang": 92,
+    "entreprise": "ABO ENERGY FRANCE",
+    "activite": "Ingénierie et contrôle technique",
+    "chiffre_affaires": 76712632,
+    "resultat_net": 13672207,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 93,
+    "entreprise": "CEGELEC RENEWABLE ENERGIES",
+    "activite": "Travaux de construction spécialisés",
+    "chiffre_affaires": 76397087,
+    "resultat_net": 2749407,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 94,
+    "entreprise": "GA PROMOTION",
+    "activite": "Construction de bâtiments",
+    "chiffre_affaires": 75705175,
+    "resultat_net": 12800754,
+    "effectif": "Entre 10 et 19 salariés"
+  },
+  {
+    "rang": 95,
+    "entreprise": "CEGELEC DEFENSE",
+    "activite": "Travaux de construction spécialisés",
+    "chiffre_affaires": 74234726,
+    "resultat_net": 3932369,
+    "effectif": "Entre 250 et 499 salariés"
+  },
+  {
+    "rang": 96,
+    "entreprise": "IMERYS TALC EUROPE",
+    "activite": "Sièges sociaux ; conseil de gestion",
+    "chiffre_affaires": 74207817,
+    "resultat_net": 27772291,
+    "effectif": "Entre 100 et 199 salariés"
+  },
+  {
+    "rang": 97,
+    "entreprise": "LOFT ORBITAL TECHNOLOGIES",
+    "activite": "Programmation et conseil informatique",
+    "chiffre_affaires": 73878092,
+    "resultat_net": 1331891,
+    "effectif": "Entre 20 et 49 salariés"
+  },
+  {
+    "rang": 98,
+    "entreprise": "ESSP SATELLITE SERVICES PROVIDER",
+    "activite": "Ingénierie et contrôle technique",
+    "chiffre_affaires": 72678405,
+    "resultat_net": 8165226,
+    "effectif": "Entre 50 et 99 salariés"
+  },
+  {
+    "rang": 99,
+    "entreprise": "SPORTING FINANCES",
+    "activite": "Services financiers",
+    "chiffre_affaires": 71445000,
+    "resultat_net": 344222,
+    "effectif": "Entre 10 et 19 salariés"
+  },
+  {
+    "rang": 100,
+    "entreprise": "2MEME FINANCES",
+    "activite": "Services financiers",
+    "chiffre_affaires": 71280000,
+    "resultat_net": 2932000,
+    "effectif": "Entre 1 et 2 salariés"
+  }
+]

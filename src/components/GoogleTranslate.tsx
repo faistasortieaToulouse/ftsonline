@@ -8,7 +8,7 @@ const LANGS = [
   { code: 'de', label: 'Allemand' },
   { code: 'en', label: 'Anglais' },
   { code: 'ar', label: 'Arabe' },
-  { code: 'zh-CN', label: 'Chinois (simpl.)' },
+  { code: 'zh-CN', label: 'Chinois' },
   { code: 'es', label: 'Espagnol' },
   { code: 'it', label: 'Italien' },
   { code: 'ja', label: 'Japonais' },
@@ -33,10 +33,15 @@ const EXTRA_LANGS = [
   { code: 'vi', label: 'Vietnamien' },
 ];
 
-function setCookie(name: string, value: string, days?: number) {
+function setSecureCookie(name: string, value: string, days?: number) {
   if (typeof document === 'undefined') return;
   const host = window.location.hostname;
-  let cookie = `${name}=${value};path=/;`;
+  let cookie = `${name}=${value};path=/;SameSite=Lax;`;
+  
+  if (window.location.protocol === 'https:') {
+    cookie += 'Secure;';
+  }
+
   if (days) {
     const d = new Date();
     d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
@@ -51,55 +56,29 @@ function getCookie(name: string) {
   return match ? decodeURIComponent(match[2]) : null;
 }
 
-function deleteCookie(name: string) {
-  if (typeof document === 'undefined') return;
-  const host = window.location.hostname;
-  const expiredCookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;`;
-  document.cookie = `${expiredCookie}domain=${host};`;
-}
-
 export default function GoogleTranslateCustom() {
   const [selectedLang, setSelectedLang] = useState('fr');
-  const [scriptReady, setScriptReady] = useState(false);
+  const [mounted, setMounted] = useState(false); // Pour éviter l'erreur d'hydratation #418
   const [showExtra, setShowExtra] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [currentDomain, setCurrentDomain] = useState('');
 
   useEffect(() => {
+    setMounted(true); // Signale que le client a pris la main
     if (typeof window !== 'undefined') {
       setCurrentDomain(window.location.hostname);
       const cookie = getCookie('googtrans');
       const currentLang = cookie?.split('/')[2];
       setSelectedLang(currentLang || 'fr');
-      setScriptReady(true);
     }
-
-    const interval = setInterval(() => {
-      const frames = document.querySelectorAll(
-        '.goog-te-banner-frame, #goog-gt-tt, .goog-te-menu-frame, .skiptranslate'
-      );
-      frames.forEach((f) => {
-        const frame = f as HTMLElement;
-        frame.style.display = 'none';
-        frame.style.visibility = 'hidden';
-        frame.style.pointerEvents = 'none';
-      });
-
-      if (document.body.style.top !== '0px') {
-        document.body.style.top = '0px';
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
   }, []);
 
   const changeLang = (lang: string) => {
     if (lang === selectedLang) return;
 
     if (lang === 'fr') {
-      deleteCookie('googtrans');
-      deleteCookie('googtrans_save');
-      window.location.hash = '';
+      setSecureCookie('googtrans', '', -1);
+      setSecureCookie('googtrans_save', '', -1);
       window.location.reload();
       return;
     }
@@ -107,79 +86,48 @@ export default function GoogleTranslateCustom() {
     const allLangs = [...LANGS, ...EXTRA_LANGS];
     const targetLabel = allLangs.find((l) => l.code === lang)?.label || lang;
 
-    // ✅ Confirmation pour éviter la traduction accidentelle
     const hasConfirmed = window.confirm(
-      `Traduire la page en ${targetLabel} ?\n\nNote : La page sera actualisée pour appliquer la traduction.`
+      `Traduire la page en ${targetLabel} ?\n\nNote : La page sera actualisée.`
     );
 
     if (hasConfirmed) {
-      setCookie('googtrans', `/fr/${lang}`, 7);
+      setSecureCookie('googtrans', `/fr/${lang}`, 7);
       window.location.reload();
     } else {
       setSelectedLang(selectedLang);
     }
   };
 
+  // Ne rien rendre tant que le composant n'est pas monté (Règle l'erreur #418)
+  if (!mounted) return <div className="min-h-[75px]" />;
+
   return (
     <>
-      <style jsx global>{`
-        iframe.goog-te-banner-frame,
-        .goog-te-banner-frame,
-        .goog-te-menu-frame,
-        #goog-gt-tt,
-        .skiptranslate,
-        .goog-te-spinner-pos {
-          display: none !important;
-          visibility: hidden !important;
-          opacity: 0 !important;
-          pointer-events: none !important;
-        }
-        body {
-          top: 0px !important;
-          position: static !important;
-        }
-        .goog-te-gadget,
-        .goog-logo-link {
-          display: none !important;
-        }
-        .goog-text-highlight {
-          background: none !important;
-          box-shadow: none !important;
-        }
-      `}</style>
-
       <div id="google_translate_element" style={{ display: 'none' }} />
 
-      {scriptReady && (
-        <>
-          <Script
-            src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-            strategy="afterInteractive"
-          />
-          <Script id="google-translate-init" strategy="afterInteractive">
-            {`
-              function googleTranslateElementInit() {
-                new google.translate.TranslateElement({
-                  pageLanguage: 'fr',
-                  autoDisplay: false,
-                  layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-                }, 'google_translate_element');
-              }
-            `}
-          </Script>
-        </>
-      )}
+      <Script
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+        strategy="lazyOnload" // Chargement après tout le reste pour éviter le Quirks Mode précoce
+      />
+      <Script id="google-translate-init" strategy="lazyOnload">
+        {`
+          function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+              pageLanguage: 'fr',
+              autoDisplay: false,
+              layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+          }
+        `}
+      </Script>
 
-      {/* --- Layout mobile friendly --- */}
-      <div className="google-translate-custom flex flex-col gap-2 pt-4">
-
-        {/* Ligne 1: Autres Langues + Besoin d'aide */}
-        <div className="w-full flex flex-wrap justify-between items-center gap-2">
+      <div className="google-translate-custom flex flex-col gap-2 pt-2">
+        <div className="flex justify-between items-center px-1">
           <button
             onClick={() => setShowExtra(!showExtra)}
-            className="text-[10px] uppercase tracking-wider font-bold text-blue-600 hover:text-blue-800 flex-shrink-0"
+            className="text-[10px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-tight"
           >
-            {showExtra ? 'Réduire' : 'Autres Langues'}
+            {showExtra ? '× Réduire' : '+ Langues'}
           </button>
 
           <button
@@ -190,19 +138,15 @@ export default function GoogleTranslateCustom() {
           </button>
         </div>
 
-        {/* Ligne 2: Sélecteur principal + FR */}
-        <div className="w-full flex flex-wrap gap-2 items-center">
+        <div className="flex gap-2 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
             value={selectedLang}
-            className="px-2 py-1 rounded border shadow-sm bg-white text-slate-900 hover:bg-slate-50 transition-colors text-sm font-medium outline-none flex-1 min-w-[120px]"
+            className="flex-1 px-2 py-1.5 text-sm font-medium bg-white border border-slate-200 rounded-md shadow-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all text-slate-900"
           >
-            <option value="" disabled>
-              Traduire
-            </option>
             {LANGS.map((lang) => (
               <option key={lang.code} value={lang.code}>
-                {lang.label}
+                {lang.code === 'fr' ? '🇫🇷 ' : ''}{lang.label}
               </option>
             ))}
           </select>
@@ -210,54 +154,48 @@ export default function GoogleTranslateCustom() {
           {selectedLang !== 'fr' && (
             <button
               onClick={() => changeLang('fr')}
-              className="px-2 py-1 text-xs font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border"
+              className="px-3 py-1.5 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md border border-slate-300 transition-colors"
             >
               FR
             </button>
           )}
         </div>
+
+        {showExtra && (
+          <select
+            onChange={(e) => changeLang(e.target.value)}
+            value={selectedLang}
+            className="mt-1 px-2 py-1 text-xs bg-slate-50 border border-dashed border-slate-300 rounded text-slate-600 outline-none"
+          >
+            <option value="" disabled>Choisir une autre langue...</option>
+            {EXTRA_LANGS.map((lang) => (
+              <option key={lang.code} value={lang.code}>{lang.label}</option>
+            ))}
+          </select>
+        )}
       </div>
 
-      {/* --- Langues supplémentaires --- */}
-      {showExtra && (
-        <select
-          onChange={(e) => changeLang(e.target.value)}
-          value={selectedLang}
-          className="mt-2 px-2 py-1 rounded border shadow-sm bg-white text-slate-900 text-sm w-full transition-all focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="" disabled>
-            Langues supplémentaires
-          </option>
-          {EXTRA_LANGS.map((lang) => (
-            <option key={lang.code} value={lang.code}>
-              {lang.label}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {/* --- Modale d'aide --- */}
       {helpOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm"
+        <div 
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
           onClick={() => setHelpOpen(false)}
         >
-          <div
-            className="bg-white text-slate-900 p-6 rounded-2xl shadow-2xl max-w-md w-full relative"
+          <div 
+            className="bg-white p-6 rounded-2xl shadow-xl max-w-xs w-full animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold mb-4">🧭 Aide à la traduction</h3>
-            <p className="text-sm mb-4 text-slate-600">
-              En cas de problème, videz les cookies pour ce domaine :
+            <h3 className="font-bold text-slate-900 mb-2 italic">Aide Traduction</h3>
+            <p className="text-sm text-slate-500 mb-4">
+              Si la traduction bloque, videz vos cookies ou actualisez la page.
+              <code className="block mt-2 p-1.5 bg-slate-100 rounded text-blue-600 font-mono text-[10px]">
+                {currentDomain}
+              </code>
             </p>
-            <div className="bg-slate-50 p-2 rounded mb-4 text-xs font-mono text-blue-600">
-              {currentDomain}
-            </div>
             <button
               onClick={() => setHelpOpen(false)}
-              className="w-full py-2 bg-blue-600 text-white rounded-xl font-bold"
+              className="w-full py-2 bg-blue-600 text-white rounded-xl font-bold text-sm"
             >
-              Continuer
+              Fermer
             </button>
           </div>
         </div>

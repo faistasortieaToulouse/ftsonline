@@ -88,14 +88,20 @@
   width: 12px;              /* largeur de la barre */
 }
 
-/* === Masquage et réduction du widget Google Translate === */
-.goog-te-combo,
-.goog-te-menu-value,
+/* === Nettoyage Radical Google Translate === */
+/* Masque les bannières, les cadres et les popups qui cassent le design */
+.goog-te-banner-frame, 
+.goog-te-menu-frame, 
+#goog-gt-tt, 
+.skiptranslate, 
+.goog-te-spinner-pos,
 .goog-te-gadget-icon,
 .goog-logo-link,
 .goog-te-overlay {
   display: none !important;
   visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .scrollable::-webkit-scrollbar-track {
