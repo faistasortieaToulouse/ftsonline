@@ -10,9 +10,16 @@ export default function LacsPage() {
 
   useEffect(() => {
     fetch('/api/lacbaignade')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Erreur API');
+        return res.json();
+      })
       .then(json => {
         setData(json);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Fetch error:", err);
         setLoading(false);
       });
   }, []);
@@ -22,6 +29,9 @@ export default function LacsPage() {
       <Loader2 className="animate-spin text-blue-600" size={40} />
     </div>
   );
+
+  // Sécurité si les données n'ont pas pu être chargées
+  if (!data) return <div className="p-12 text-center text-slate-500 font-medium">Aucune donnée trouvée.</div>;
 
   return (
     <main className="min-h-screen bg-slate-50 p-6 md:p-12">
