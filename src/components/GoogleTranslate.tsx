@@ -55,7 +55,6 @@ function getCookie(name: string) {
 export default function GoogleTranslateCustom() {
   const [selectedLang, setSelectedLang] = useState('fr');
   const [mounted, setMounted] = useState(false);
-  const [showExtra, setShowExtra] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [currentDomain, setCurrentDomain] = useState('');
 
@@ -82,9 +81,7 @@ export default function GoogleTranslateCustom() {
     const allLangs = [...LANGS, ...EXTRA_LANGS];
     const targetLabel = allLangs.find((l) => l.code === lang)?.label || lang;
 
-    const hasConfirmed = window.confirm(
-      `Traduire la page en ${targetLabel} ?\n\nNote : La page sera actualisée.`
-    );
+    const hasConfirmed = window.confirm(`Traduire en ${targetLabel} ?`);
 
     if (hasConfirmed) {
       setSecureCookie('googtrans', `/fr/${lang}`, 7);
@@ -92,57 +89,27 @@ export default function GoogleTranslateCustom() {
     }
   };
 
-  if (!mounted) return <div className="min-h-[60px]" />;
+  if (!mounted) return <div className="min-h-[110px]" />;
 
   return (
     <>
       <div id="google_translate_element" style={{ display: 'none' }} />
-
-      <Script
-        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        strategy="lazyOnload"
-      />
+      <Script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" strategy="lazyOnload" />
       <Script id="google-translate-init" strategy="lazyOnload">
-        {`
-          function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-              pageLanguage: 'fr',
-              autoDisplay: false,
-              layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-          }
-        `}
+        {`function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'fr', autoDisplay: false}, 'google_translate_element'); }`}
       </Script>
 
-      <div className="google-translate-custom flex flex-col gap-1.5 w-full max-w-[300px] ml-auto p-1">
-        {/* En-tête : Contrôles */}
-        <div className="flex justify-between items-center px-0.5">
-          <button
-            onClick={() => setShowExtra(!showExtra)}
-            className="text-[10px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-tight transition-colors"
-          >
-            {showExtra ? '× Masquer autres' : '+ Autres Langues'}
-          </button>
-
-          <button
-            onClick={() => setHelpOpen(true)}
-            className="text-[10px] text-slate-400 hover:text-slate-600 flex items-center gap-1"
-          >
-            ❓ <span className="hidden sm:inline italic">besoin d'aide</span>
-          </button>
-        </div>
-
-        {/* 1. SÉLECTEUR PRINCIPAL (LANGS) */}
+      <div className="google-translate-custom flex flex-col gap-2 w-full max-w-[320px] ml-auto p-2 bg-white rounded-xl shadow-sm border border-slate-200">
+        
+        {/* LIGNE 1 : LANGUES PRINCIPALES + BOUTON FR */}
         <div className="flex gap-1.5 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
             value={LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-            className="flex-1 px-2 py-1.5 text-sm font-medium bg-white border border-slate-200 rounded-lg shadow-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 transition-all"
+            className="flex-1 px-2 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-lg text-slate-900 outline-none focus:ring-2 focus:ring-blue-100"
           >
-            {/* Si une langue Extra est choisie, on l'affiche ici pour ne pas perdre l'utilisateur */}
-            {!LANGS.find(l => l.code === selectedLang) && (
-               <option value="">🌍 Langue sélectionnée...</option>
-            )}
+            {/* Si une langue "Extra" est active, on le signale */}
+            {!LANGS.find(l => l.code === selectedLang) && <option value="">🌍 Langue choisie...</option>}
             {LANGS.map((lang) => (
               <option key={lang.code} value={lang.code}>
                 {lang.code === 'fr' ? '🇫🇷 ' : ''}{lang.label}
@@ -150,56 +117,50 @@ export default function GoogleTranslateCustom() {
             ))}
           </select>
 
-          {selectedLang !== 'fr' && (
-            <button
-              onClick={() => changeLang('fr')}
-              className="px-2.5 py-1.5 text-[10px] font-black bg-slate-800 text-white rounded-lg hover:bg-black transition-colors shadow-sm"
-            >
-              FR
-            </button>
-          )}
+          <button
+            onClick={() => changeLang('fr')}
+            title="Revenir en Français"
+            className="px-3 py-2 text-xs font-black bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            FR
+          </button>
         </div>
 
-        {/* 2. SÉLECTEUR SECONDAIRE (EXTRA_LANGS) - Visible seulement sur demande */}
-        {showExtra && (
-          <div className="flex flex-col animate-in fade-in slide-in-from-top-1 duration-200">
-            <label className="text-[9px] font-bold text-slate-400 ml-1 mb-0.5 uppercase">Plus de choix :</label>
+        {/* LIGNE 2 : AUTRES LANGUES + AIDE */}
+        <div className="flex gap-2 items-center">
+          <div className="flex-1 flex flex-col">
             <select
               onChange={(e) => changeLang(e.target.value)}
               value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-              className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-dashed border-slate-300 rounded-lg text-slate-600 outline-none hover:bg-white transition-colors"
+              className="w-full px-2 py-1.5 text-[11px] bg-white border border-dashed border-slate-300 rounded-lg text-slate-600 outline-none"
             >
-              <option value="" disabled>Choisir une langue spécifique...</option>
+              <option value="">AUTRES LANGUES...</option>
               {EXTRA_LANGS.map((lang) => (
                 <option key={lang.code} value={lang.code}>{lang.label}</option>
               ))}
             </select>
           </div>
-        )}
+
+          <button
+            onClick={() => setHelpOpen(true)}
+            className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium"
+          >
+            ❓ <span className="hidden xs:inline">besoin d'aide</span>
+          </button>
+        </div>
       </div>
 
       {/* MODAL D'AIDE */}
       {helpOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
-          onClick={() => setHelpOpen(false)}
-        >
-          <div 
-            className="bg-white p-6 rounded-2xl shadow-2xl max-w-[280px] w-full text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="font-bold text-slate-900 mb-2">Besoin d'aide ?</h3>
-            <p className="text-xs text-slate-500 mb-5 leading-relaxed text-left">
-              Si la traduction ne s'active pas :
-              <br />1. Cliquez sur <strong>FR</strong> pour réinitialiser.
-              <br />2. Actualisez la page.
-              <br />3. Videz vos cookies pour <strong>{currentDomain}</strong>.
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setHelpOpen(false)}>
+          <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-[280px] w-full" onClick={e => e.stopPropagation()}>
+            <h3 className="font-bold text-slate-900 mb-2 italic">Aide Traduction</h3>
+            <p className="text-xs text-slate-500 mb-4">
+              Si la traduction est bloquée, utilisez le bouton <strong>FR</strong> pour réinitialiser ou rafraîchissez la page.
+              <code className="block mt-2 p-2 bg-slate-50 rounded text-[10px] text-blue-500 font-mono">{currentDomain}</code>
             </p>
-            <button
-              onClick={() => setHelpOpen(false)}
-              className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-200 active:scale-95 transition-transform"
-            >
-              OK, J'AI COMPRIS
+            <button onClick={() => setHelpOpen(false)} className="w-full py-2.5 bg-slate-900 text-white rounded-xl font-bold text-sm transition-transform active:scale-95">
+              FERMER
             </button>
           </div>
         </div>
