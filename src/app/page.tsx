@@ -317,6 +317,7 @@ const categories = [
     emploiSources: [
       { title: "Evènements Emploi", href: "/toulousetravail" },
       { title: "Atelier Emploi", href: "/atelieremploi" },
+      { title: "Entreprises à Toulouse", href: "/entreprisetoulouse" },
     ] 
   },
 //  const nbEmploi = 2;
