@@ -69,10 +69,10 @@ export default function RootLayout({
           <div className="container max-w-7xl mx-auto flex h-20 items-center justify-between px-4">
             
             {/* Logo / Marque */}
-            <div className="flex items-center gap-2 font-bold text-xl tracking-tighter transition-opacity hover:opacity-80">
-              <span className="text-primary">FTS</span>
-              <span className="hidden xs:inline">Online</span>
-            </div>
+<div className="flex items-center gap-2 font-bold text-xl tracking-tighter">
+  <span className="text-primary">FTS</span>
+  <span className="hidden sm:inline">Online</span> 
+</div>
 
             {/* Zone du traducteur Google (Optimisée pour éviter le saut de mise en page) */}
             <div className="flex items-center">
