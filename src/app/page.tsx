@@ -256,6 +256,9 @@ const categories = [
 //  const nbVisite = 11;
 
   { title: "Visites en Occitanie", href: "/visites-occitanie", icon: MapPin, isOccitanie: true, occitanieSources: [
+    { title: "Plages de mer", href: "/plages" },
+    { title: "Plages de lac", href: "/lacbaignade" },
+    { title: "Stations de ski", href: "/ski" },
     { title: "Ariège", href: "/ariege" },
     { title: "Randonnées Ariège", href: "/randoariege" },
     { title: "Aude", href: "/aude" },
