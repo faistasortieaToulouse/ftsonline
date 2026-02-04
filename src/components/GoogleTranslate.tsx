@@ -114,34 +114,34 @@ export default function GoogleTranslateCustom() {
         `}
       </Script>
 
-      <div className="google-translate-custom flex flex-col gap-1 w-full max-w-[300px] ml-auto">
-        {/* Barre supérieure compacte */}
-        <div className="flex justify-between items-center px-1">
+      <div className="google-translate-custom flex flex-col gap-1.5 w-full max-w-[300px] ml-auto p-1">
+        {/* En-tête : Contrôles */}
+        <div className="flex justify-between items-center px-0.5">
           <button
             onClick={() => setShowExtra(!showExtra)}
-            className="text-[10px] font-extrabold text-blue-600 hover:text-blue-800 uppercase"
+            className="text-[10px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-tight transition-colors"
           >
-            {showExtra ? '× Fermer' : '+ Autres Langues'}
+            {showExtra ? '× Masquer autres' : '+ Autres Langues'}
           </button>
 
           <button
             onClick={() => setHelpOpen(true)}
-            className="text-[10px] text-slate-400 hover:text-slate-600 italic"
+            className="text-[10px] text-slate-400 hover:text-slate-600 flex items-center gap-1"
           >
-            ❓ aide
+            ❓ <span className="hidden sm:inline italic">besoin d'aide</span>
           </button>
         </div>
 
-        {/* Ligne principale de sélection */}
-        <div className="flex gap-1 items-center">
+        {/* 1. SÉLECTEUR PRINCIPAL (LANGS) */}
+        <div className="flex gap-1.5 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
             value={LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-            className="flex-1 px-2 py-1 text-sm bg-white border border-slate-200 rounded-lg shadow-sm text-slate-900 outline-none"
+            className="flex-1 px-2 py-1.5 text-sm font-medium bg-white border border-slate-200 rounded-lg shadow-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 transition-all"
           >
-            {/* Si une langue "Extra" est active, on affiche un indicateur dans le select principal */}
+            {/* Si une langue Extra est choisie, on l'affiche ici pour ne pas perdre l'utilisateur */}
             {!LANGS.find(l => l.code === selectedLang) && (
-               <option value="">🌍 Langue choisie...</option>
+               <option value="">🌍 Langue sélectionnée...</option>
             )}
             {LANGS.map((lang) => (
               <option key={lang.code} value={lang.code}>
@@ -153,22 +153,23 @@ export default function GoogleTranslateCustom() {
           {selectedLang !== 'fr' && (
             <button
               onClick={() => changeLang('fr')}
-              className="px-2 py-1 text-[10px] font-bold bg-slate-900 text-white rounded-lg hover:bg-black transition-colors"
+              className="px-2.5 py-1.5 text-[10px] font-black bg-slate-800 text-white rounded-lg hover:bg-black transition-colors shadow-sm"
             >
-              RESET
+              FR
             </button>
           )}
         </div>
 
-        {/* Menu EXTRA - S'affiche proprement même sur mobile */}
+        {/* 2. SÉLECTEUR SECONDAIRE (EXTRA_LANGS) - Visible seulement sur demande */}
         {showExtra && (
-          <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="flex flex-col animate-in fade-in slide-in-from-top-1 duration-200">
+            <label className="text-[9px] font-bold text-slate-400 ml-1 mb-0.5 uppercase">Plus de choix :</label>
             <select
               onChange={(e) => changeLang(e.target.value)}
               value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-              className="w-full mt-1 px-2 py-1 text-[11px] bg-blue-50 border border-dashed border-blue-200 rounded-lg text-blue-700 outline-none"
+              className="w-full px-2 py-1.5 text-xs bg-slate-50 border border-dashed border-slate-300 rounded-lg text-slate-600 outline-none hover:bg-white transition-colors"
             >
-              <option value="" disabled>--- Choisir une langue spécifique ---</option>
+              <option value="" disabled>Choisir une langue spécifique...</option>
               {EXTRA_LANGS.map((lang) => (
                 <option key={lang.code} value={lang.code}>{lang.label}</option>
               ))}
@@ -177,28 +178,28 @@ export default function GoogleTranslateCustom() {
         )}
       </div>
 
-      {/* Modal d'Aide - Adapté au mobile */}
+      {/* MODAL D'AIDE */}
       {helpOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
           onClick={() => setHelpOpen(false)}
         >
           <div 
-            className="bg-white p-6 rounded-2xl shadow-2xl max-w-xs w-full"
+            className="bg-white p-6 rounded-2xl shadow-2xl max-w-[280px] w-full text-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-bold text-slate-900 mb-2 italic">Aide Traduction</h3>
-            <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-              La traduction utilise Google Translate. En cas de blocage, essayez de rafraîchir la page.
-              <code className="block mt-2 p-2 bg-slate-50 border border-slate-100 rounded text-blue-600 font-mono text-[9px] break-all">
-                Domaine : {currentDomain}
-              </code>
+            <h3 className="font-bold text-slate-900 mb-2">Besoin d'aide ?</h3>
+            <p className="text-xs text-slate-500 mb-5 leading-relaxed text-left">
+              Si la traduction ne s'active pas :
+              <br />1. Cliquez sur <strong>FR</strong> pour réinitialiser.
+              <br />2. Actualisez la page.
+              <br />3. Videz vos cookies pour <strong>{currentDomain}</strong>.
             </p>
             <button
               onClick={() => setHelpOpen(false)}
-              className="w-full py-2.5 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-200"
+              className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-200 active:scale-95 transition-transform"
             >
-              J'ai compris
+              OK, J'AI COMPRIS
             </button>
           </div>
         </div>
