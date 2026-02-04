@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Building2, MapPin, ExternalLink } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, Users, Calendar } from "lucide-react";
 
 export default function VillesEuropePage() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("/api/villeseurope")
       .then((res) => res.json())
-      .then(setData);
+      .then((villes) => setData(villes))
+      .catch((err) => console.error("Erreur:", err));
   }, []);
 
   return (
@@ -31,31 +32,38 @@ export default function VillesEuropePage() {
         </p>
       </div>
 
-      <div className="space-y-16">
-        {data.map((section: any, idx: number) => (
-          <div key={idx} className="animate-in fade-in duration-700">
-            <h2 className="text-2xl font-bold mb-6 text-slate-800 border-l-4 border-blue-500 pl-4 bg-slate-50 py-2 rounded-r-lg">
-              {section.category}
-            </h2>
-            
-            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {section.links.map((link: any, i: number) => (
-                <li key={i}>
-                  <a 
-                    href={link.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-4 border rounded-xl bg-white hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <MapPin size={18} className="text-blue-500 group-hover:text-blue-100" />
-                      <span className="font-semibold">{link.name}</span>
-                    </div>
-                    <ExternalLink size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
-                </li>
-              ))}
-            </ul>
+      {/* Remplacement du double .map par une grille simple */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-700">
+        {data.map((ville: any, i: number) => (
+          <div 
+            key={i}
+            className="flex flex-col p-5 border rounded-xl bg-white shadow-sm hover:border-blue-500 transition-all group"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center justify-center w-6 h-6 bg-slate-900 text-white text-[10px] font-bold rounded-full">
+                  {ville.rank}
+                </span>
+                <h3 className="font-bold text-slate-800 text-lg">{ville.city}</h3>
+              </div>
+              <MapPin size={16} className="text-blue-500" />
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wide">
+                {ville.country}
+              </p>
+              
+              <div className="flex items-center gap-2 text-blue-600 font-bold">
+                <Users size={16} />
+                <span>{ville.population} hab.</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 pt-2 border-t border-slate-50 text-[10px] text-slate-400">
+                <Calendar size={12} />
+                Données : {ville.date}
+              </div>
+            </div>
           </div>
         ))}
       </div>
