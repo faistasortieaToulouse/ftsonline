@@ -135,14 +135,14 @@ export default function GoogleTranslateCustom() {
         </div>
       </div>
 
-      {/* ✅ Modale d’aide (Correction du positionnement) */}
+      {/* ✅ Modale d’aide (Correction du positionnement vertical) */}
       {helpOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-[99999] flex items-center justify-center p-4 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 z-[99999] flex items-start justify-center p-4 backdrop-blur-sm overflow-y-auto"
           onClick={() => setHelpOpen(false)}
         >
           <div
-            className="bg-white text-slate-800 p-5 md:p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[90vh]"
+            className="bg-white text-slate-800 p-5 md:p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 my-[15vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -166,15 +166,15 @@ export default function GoogleTranslateCustom() {
 
               <ul className="space-y-3">
                 <li className="flex flex-col sm:flex-row gap-1">
-                  <span className="font-bold underline sm:no-underline">Chrome / Edge :</span> 
+                  <span className="font-bold underline sm:no-underline text-xs uppercase text-slate-500">Chrome / Edge :</span> 
                   <span>🔒 à gauche de l’adresse → <em>Cookies et données</em> → Supprimer le site.</span>
                 </li>
                 <li className="flex flex-col sm:flex-row gap-1">
-                  <span className="font-bold underline sm:no-underline">Firefox :</span> 
+                  <span className="font-bold underline sm:no-underline text-xs uppercase text-slate-500">Firefox :</span> 
                   <span>🔒 → <em>Effacer les cookies et données du site</em>.</span>
                 </li>
                 <li className="flex flex-col sm:flex-row gap-1">
-                  <span className="font-bold underline sm:no-underline">Safari :</span> 
+                  <span className="font-bold underline sm:no-underline text-xs uppercase text-slate-500">Safari :</span> 
                   <span>Réglages → Confidentialité → Gérer les données → Supprimer le site.</span>
                 </li>
               </ul>
