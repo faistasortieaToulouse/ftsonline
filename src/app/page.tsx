@@ -555,6 +555,7 @@ const categories = [
     savoirsTerritoiresSources: [
 	{ title: "France", href: "/France" },
 	{ title: "Frontières de la France", href: "/frontieres" },
+	{ title: "Villes en France", href: "/population" },
 	{ title: "PIB des villes en France", href: "/villespib" },
 	{ title: "Anciens départements", href: "/anciensdepartements" },
 	{ title: "Colonies en Europe", href: "/colonieeurope" },
