@@ -12,7 +12,15 @@ const facebookGroups = [
   { name: "Sorties culturelles à Toulouse", url: "https://www.facebook.com/groups/513531158446053" },
   { name: "Sorties Visite Toulouse, Occitanie et Région Toulousaine", url: "https://www.facebook.com/groups/546506525504472" },
   { name: "Soirées sorties entre filles Toulouse et Occitanie", url: "https://www.facebook.com/groups/1397077878141492" },
-  { name: "Aller au théâtre, impro, stand up, spectacles, comédie à Toulouse", url: "https://www.facebook.com/groups/1396560737927890" }
+  { name: "Aller au théâtre, impro, stand up, spectacles, comédie à Toulouse", url: "https://www.facebook.com/groups/1396560737927890" },
+  // Nouveaux ajouts
+  { name: "Sortie ski dans les Pyrénées à partir de Toulouse", url: "https://www.facebook.com/groups/304919476675833" },
+  { name: "Toulouse Sortie Plage", url: "https://www.facebook.com/groups/1634680750109791/" },
+  { name: "Club lecture et club d'écriture à Toulouse", url: "https://www.facebook.com/groups/1355306319236116/" },
+  { name: "Soirée Jeux, bar et club de jeux sur Toulouse", url: "https://www.facebook.com/groups/1363843758107232/" },
+  { name: "Comedie Club Stand Up Blind Test et Quizz à Toulouse", url: "https://www.facebook.com/groups/625050106569426/" },
+  { name: "Salons de thé, coffee shop et restaurants à Toulouse", url: "https://www.facebook.com/groups/1313021633356765/" },
+  { name: "Café Des Langues Toulouse", url: "https://www.facebook.com/groups/191206554544247/" }
 ];
 
 export default function FacebookFTS() {
