@@ -135,24 +135,24 @@ export default function GoogleTranslateCustom() {
         </div>
       </div>
 
-      {/* ✅ Modale d’aide (Correction du positionnement vertical) */}
+      {/* ✅ MODALE D'AIDE CORRIGÉE : position forcée vers le bas pour éviter la barre Google */}
       {helpOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-[99999] flex items-start justify-center p-4 backdrop-blur-sm overflow-y-auto"
+          className="fixed inset-0 bg-black/60 z-[99999] flex justify-center backdrop-blur-sm overflow-y-auto pt-[150px] pb-10"
           onClick={() => setHelpOpen(false)}
         >
           <div
-            className="bg-white text-slate-800 p-5 md:p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 my-[15vh]"
+            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-[90%] h-fit relative animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setHelpOpen(false)}
-              className="absolute top-2 right-3 text-2xl font-bold text-slate-400 hover:text-slate-900 transition-colors p-1"
+              className="absolute top-2 right-3 text-2xl font-bold text-slate-400 hover:text-slate-900 transition-colors"
             >
               ×
             </button>
 
-            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2 pr-6">
+            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2">
               🧭 Aide : Réinitialiser Google Translate
             </h3>
             
@@ -165,30 +165,30 @@ export default function GoogleTranslateCustom() {
               </p>
 
               <ul className="space-y-3">
-                <li className="flex flex-col sm:flex-row gap-1">
-                  <span className="font-bold underline sm:no-underline text-xs uppercase text-slate-500">Chrome / Edge :</span> 
+                <li className="flex flex-col gap-0.5">
+                  <span className="font-bold text-xs text-slate-500 uppercase">Chrome / Edge :</span> 
                   <span>🔒 à gauche de l’adresse → <em>Cookies et données</em> → Supprimer le site.</span>
                 </li>
-                <li className="flex flex-col sm:flex-row gap-1">
-                  <span className="font-bold underline sm:no-underline text-xs uppercase text-slate-500">Firefox :</span> 
+                <li className="flex flex-col gap-0.5">
+                  <span className="font-bold text-xs text-slate-500 uppercase">Firefox :</span> 
                   <span>🔒 → <em>Effacer les cookies et données du site</em>.</span>
                 </li>
-                <li className="flex flex-col sm:flex-row gap-1">
-                  <span className="font-bold underline sm:no-underline text-xs uppercase text-slate-500">Safari :</span> 
+                <li className="flex flex-col gap-0.5">
+                  <span className="font-bold text-xs text-slate-500 uppercase">Safari :</span> 
                   <span>Réglages → Confidentialité → Gérer les données → Supprimer le site.</span>
                 </li>
               </ul>
 
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-[13px]">
-                🌍 <strong>Depuis la barre Google Translate :</strong> cliquez sur ⚙️ → 
+                🌍 <strong>Depuis la barre Google :</strong> cliquez sur ⚙️ → 
                 <em> Afficher la page originale</em>. 
-                Si ça ne suffit pas, supprime le cookie comme indiqué ci-dessus.
+                Sinon, supprimez le cookie comme indiqué.
               </div>
             </div>
 
             <button 
               onClick={() => setHelpOpen(false)}
-              className="w-full mt-6 py-3 bg-slate-900 text-white rounded-xl font-bold shadow-lg active:scale-[0.98] transition-all"
+              className="w-full mt-6 py-3 bg-slate-900 text-white rounded-xl font-bold shadow-lg"
             >
               J'ai compris
             </button>
