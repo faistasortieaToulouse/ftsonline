@@ -68,20 +68,15 @@ export default function GoogleTranslateCustom() {
 
   const changeLang = (lang: string) => {
     if (!lang || lang === selectedLang) return;
-
     if (lang === 'fr') {
       setSecureCookie('googtrans', '', -1);
       setSecureCookie('googtrans_save', '', -1);
       window.location.reload();
       return;
     }
-
     const allLangs = [...LANGS, ...EXTRA_LANGS];
     const targetLabel = allLangs.find((l) => l.code === lang)?.label || lang;
-
-    const hasConfirmed = window.confirm(`Traduire en ${targetLabel} ?`);
-
-    if (hasConfirmed) {
+    if (window.confirm(`Traduire en ${targetLabel} ?`)) {
       setSecureCookie('googtrans', `/fr/${lang}`, 7);
       window.location.reload();
     }
@@ -98,8 +93,6 @@ export default function GoogleTranslateCustom() {
       </Script>
 
       <div className="google-translate-custom flex flex-col gap-2 w-full max-w-[320px] ml-auto p-2 bg-white rounded-xl shadow-sm border border-slate-200">
-        
-        {/* LIGNE 1 : LANGUES PRINCIPALES + BOUTON FR */}
         <div className="flex gap-1.5 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
@@ -113,16 +106,11 @@ export default function GoogleTranslateCustom() {
               </option>
             ))}
           </select>
-
-          <button
-            onClick={() => changeLang('fr')}
-            className="px-3 py-2 text-xs font-black bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-          >
+          <button onClick={() => changeLang('fr')} className="px-3 py-2 text-xs font-black bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
             FR
           </button>
         </div>
 
-        {/* LIGNE 2 : AUTRES LANGUES (BLEU) + BESOIN D'AIDE ? */}
         <div className="flex gap-2 items-center">
           <div className="flex-1">
             <select
@@ -136,79 +124,71 @@ export default function GoogleTranslateCustom() {
               ))}
             </select>
           </div>
-
-          <button
-            onClick={() => setHelpOpen(true)}
-            className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic underline underline-offset-2"
-          >
+          <button onClick={() => setHelpOpen(true)} className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic underline underline-offset-2">
             ❓ besoin d'aide ?
           </button>
         </div>
 
-        {/* MENTION GOOGLE TRANSLATE */}
-        <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1.5 px-1">
-          <img
-            src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png"
-            alt="Google Translate"
-            width={14}
-            height={14}
-          />
+        <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1.5 px-1 font-medium italic">
+          <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" alt="Google Translate" width={14} height={14} />
           <span>Traduction fournie par Google Translate</span>
         </div>
       </div>
 
-      {/* ✅ Modale d’aide (popup) */}
+      {/* ✅ Modale d’aide (Correction du positionnement) */}
       {helpOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 z-[99999] flex items-center justify-center p-4 backdrop-blur-sm"
           onClick={() => setHelpOpen(false)}
         >
           <div
-            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-[92%] relative animate-in fade-in zoom-in duration-200"
+            className="bg-white text-slate-800 p-5 md:p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setHelpOpen(false)}
-              className="absolute top-3 right-4 text-2xl font-light text-slate-400 hover:text-slate-800"
+              className="absolute top-2 right-3 text-2xl font-bold text-slate-400 hover:text-slate-900 transition-colors p-1"
             >
               ×
             </button>
 
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2 pr-6">
               🧭 Aide : Réinitialiser Google Translate
             </h3>
             
-            <p className="mb-4 text-sm leading-relaxed">
-              Si la traduction reste bloquée, supprime le cookie du site 
-              <code className="mx-1 px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600">
-                faistasortieatoulouse.online
-              </code>.
-            </p>
+            <div className="space-y-4 text-sm leading-relaxed">
+              <p>
+                Si la traduction reste bloquée, supprime le cookie du site : 
+                <code className="block mt-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600 text-center break-all">
+                  faistasortieatoulouse.online
+                </code>
+              </p>
 
-            <ul className="space-y-3 mb-5 text-sm">
-              <li className="flex gap-2">
-                <span className="font-bold">Chrome / Edge :</span> 
-                <span>🔒 à gauche de l’adresse → <em>Cookies et données de site</em> → Supprimer le site.</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-bold">Firefox :</span> 
-                <span>🔒 → <em>Effacer les cookies et données du site</em>.</span>
-              </li>
-              <li className="flex gap-2">
-                <span className="font-bold">Safari :</span> 
-                <span>Réglages → Confidentialité → Gérer les données → Supprimer le site.</span>
-              </li>
-            </ul>
+              <ul className="space-y-3">
+                <li className="flex flex-col sm:flex-row gap-1">
+                  <span className="font-bold underline sm:no-underline">Chrome / Edge :</span> 
+                  <span>🔒 à gauche de l’adresse → <em>Cookies et données</em> → Supprimer le site.</span>
+                </li>
+                <li className="flex flex-col sm:flex-row gap-1">
+                  <span className="font-bold underline sm:no-underline">Firefox :</span> 
+                  <span>🔒 → <em>Effacer les cookies et données du site</em>.</span>
+                </li>
+                <li className="flex flex-col sm:flex-row gap-1">
+                  <span className="font-bold underline sm:no-underline">Safari :</span> 
+                  <span>Réglages → Confidentialité → Gérer les données → Supprimer le site.</span>
+                </li>
+              </ul>
 
-            <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-sm">
-              🌍 <strong>Depuis la barre Google Translate :</strong> clique sur ⚙️ → 
-              <em> Afficher la page originale</em>. 
-              Si ça ne suffit pas, supprime le cookie comme indiqué ci-dessus.
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-[13px]">
+                🌍 <strong>Depuis la barre Google Translate :</strong> cliquez sur ⚙️ → 
+                <em> Afficher la page originale</em>. 
+                Si ça ne suffit pas, supprime le cookie comme indiqué ci-dessus.
+              </div>
             </div>
 
             <button 
               onClick={() => setHelpOpen(false)}
-              className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 active:scale-[0.98] transition-all"
+              className="w-full mt-6 py-3 bg-slate-900 text-white rounded-xl font-bold shadow-lg active:scale-[0.98] transition-all"
             >
               J'ai compris
             </button>
