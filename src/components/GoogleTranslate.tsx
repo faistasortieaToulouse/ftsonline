@@ -135,32 +135,33 @@ export default function GoogleTranslateCustom() {
         </div>
       </div>
 
-      {/* ✅ MODALE D'AIDE : Correction ULTIME du Z-Index et de la position */}
+      {/* ✅ MODALE D'AIDE : SOLUTION RADICALE POUR LE CENTRAGE ET LE Z-INDEX */}
       {helpOpen && (
         <div
-          className="fixed inset-0 bg-black/70 flex justify-center overflow-y-auto pt-[180px] pb-10 px-4"
-          style={{ zIndex: 9999999 }} // Supérieur à la carte Leaflet
+          className="fixed inset-0 bg-black/80 flex items-center justify-center p-4"
+          style={{ zIndex: 2147483647 }} // Valeur maximale possible pour être au-dessus de TOUT
           onClick={() => setHelpOpen(false)}
         >
           <div
-            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-full h-fit relative animate-in fade-in zoom-in duration-200"
+            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[85vh]"
+            style={{ transform: 'translateY(0)' }} // S'assure qu'on ne subit pas de décalage parasite
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setHelpOpen(false)}
-              className="absolute top-2 right-4 text-3xl font-light text-slate-400 hover:text-slate-900 transition-colors"
+              className="absolute top-2 right-4 text-3xl font-light text-slate-400 hover:text-slate-900 transition-colors p-1"
             >
               &times;
             </button>
 
-            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2 pr-6">
-              🧭 Aide : Réinitialiser Google Translate
+            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2 pr-8">
+              🧭 Aide : Google Translate
             </h3>
             
             <div className="space-y-4 text-sm leading-relaxed">
               <p>
-                Si la traduction reste bloquée, supprimez le cookie du site : 
-                <code className="block mt-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600 text-center break-all">
+                Si la traduction reste bloquée ou masque le menu, supprimez les cookies du site : 
+                <code className="block mt-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600 text-center text-[10px] break-all">
                   faistasortieatoulouse.online
                 </code>
               </p>
@@ -180,8 +181,8 @@ export default function GoogleTranslateCustom() {
                 </div>
               </div>
 
-              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-[13px] italic">
-                🌍 <strong>Astuce :</strong> Dans la barre Google Translate, cliquez sur l'icône ⚙️ puis sur 
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-[12px] italic">
+                🌍 <strong>Note :</strong> Si la barre Google gêne la lecture, cliquez sur ⚙️ (dans la barre) puis sur 
                 <em> "Afficher la page originale"</em>.
               </div>
             </div>
