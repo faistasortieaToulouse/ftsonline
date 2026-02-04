@@ -733,7 +733,7 @@ useEffect(() => {
           <Link href="#categories" className="bg-purple-700 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg transition">
             Explorer les rubriques
           </Link>
-          <a href="https://faistasortieatoulouse.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-pink-100 text-pink-600 font-semibold py-3 px-6 rounded-full shadow-lg transition">
+          <a href="https://faistasortieatoulouse31.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-pink-100 text-pink-600 font-semibold py-3 px-6 rounded-full shadow-lg transition">
             Fais Ta sortie à Toulouse
           </a>
         </div>
