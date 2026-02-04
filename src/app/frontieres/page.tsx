@@ -1,10 +1,13 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Globe, ExternalLink, MapPin, Anchor, Info, AlertCircle } from "lucide-react";
+import { ArrowLeft, Globe, ExternalLink, MapPin, Anchor, AlertCircle } from "lucide-react";
+import 'leaflet/dist/leaflet.css';
 
 export default function FrontieresPage() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
   const [frontieres, setFrontieres] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,10 +19,48 @@ export default function FrontieresPage() {
         setLoading(false);
       })
       .catch(err => {
-        console.error("Erreur chargement frontières:", err);
+        console.error("Erreur:", err);
         setLoading(false);
       });
   }, []);
+
+  // Initialisation de la carte Leaflet
+  useEffect(() => {
+    if (loading || !mapRef.current || mapInstance.current || frontieres.length === 0) return;
+
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+
+      // Création de la carte centrée sur un point neutre
+      mapInstance.current = L.map(mapRef.current).setView([20, 0], 2);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(mapInstance.current);
+
+      const markersGroup = L.featureGroup();
+
+      frontieres.forEach((f, i) => {
+        if (f.lat && f.lng) {
+          // Marqueur numéroté personnalisé
+          const customIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background-color:${f.type.includes('Terrestre') ? '#10b981' : '#3b82f6'}; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:10px;">${i + 1}</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+          });
+
+          const marker = L.marker([f.lat, f.lng], { icon: customIcon });
+          marker.bindPopup(`<b>${i + 1}. ${f.pays}</b><br><span style="font-size:11px">${f.zone}</span>`);
+          marker.addTo(markersGroup);
+        }
+      });
+
+      markersGroup.addTo(mapInstance.current);
+    };
+
+    initMap();
+  }, [loading, frontieres]);
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
@@ -30,95 +71,86 @@ export default function FrontieresPage() {
         Retour à l'accueil
       </Link>
 
-      {/* Header avec lien Wikipédia */}
-      <header className="mb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h1 className="text-4xl md:text-6xl font-black flex items-center gap-4 text-slate-900 tracking-tighter">
-              <Globe className="text-indigo-500" size={48} /> 
-              Frontières <span className="text-indigo-600">Françaises</span>
-            </h1>
-            <p className="text-slate-500 mt-4 text-lg max-w-2xl leading-relaxed">
-              Exploration des limites territoriales de la France à travers le monde, incluant les frontières terrestres, maritimes et les zones contestées.
-            </p>
+      {/* Header avec Titre Lien Wikipédia */}
+      <header className="mb-10">
+        <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mb-4">
+          Frontières <span className="text-indigo-600">Françaises</span>
+        </h1>
+        
+        {/* Ton nouveau titre interactif pour remplacer le bouton Source */}
+        <a 
+          href="https://fr.wikipedia.org/wiki/Frontières_de_la_France" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="group inline-flex flex-col md:flex-row md:items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors"
+        >
+          <div className="flex items-center gap-2 font-bold text-lg md:text-xl">
+            <Globe className="text-indigo-500" size={24} />
+            Consulter les détails officiels sur Wikipédia
+            <ExternalLink size={18} className="opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
-
-          <a 
-            href="https://fr.wikipedia.org/wiki/Frontières_de_la_France" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-white border-2 border-indigo-100 text-indigo-700 px-6 py-3 rounded-2xl font-bold hover:bg-indigo-50 hover:border-indigo-200 transition-all shadow-sm shrink-0"
-          >
-            Source Wikipédia <ExternalLink size={18} />
-          </a>
-        </div>
+          <p className="text-sm md:text-base text-slate-400 font-medium">
+            (Cliquez ici pour plus d'informations sur l'histoire et les traités)
+          </p>
+        </a>
       </header>
+
+      {/* Carte Leaflet */}
+      <div className="mb-12 relative">
+        <div 
+          ref={mapRef} 
+          className="h-[400px] md:h-[500px] w-full rounded-3xl border-4 border-white shadow-xl z-0 overflow-hidden bg-slate-200"
+        />
+        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm z-[1000] flex gap-4">
+          <span className="flex items-center gap-1 text-emerald-600"><div className="w-2 h-2 rounded-full bg-emerald-500"/> Terrestre</span>
+          <span className="flex items-center gap-1 text-blue-600"><div className="w-2 h-2 rounded-full bg-blue-500"/> Maritime</span>
+        </div>
+      </div>
 
       {/* Grille des Frontières */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
-          <p>Chargement des données géopolitiques...</p>
+        <div className="flex flex-col items-center justify-center py-10 text-slate-400 font-medium">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
+          Chargement de la liste...
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {frontieres.map((f, i) => (
             <div 
               key={i} 
-              className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden"
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col relative"
             >
-              {/* Badge Type de Frontière */}
-              <div className={`h-2 w-full ${f.type.includes('Terrestre') ? 'bg-emerald-500' : 'bg-blue-500'}`} />
-              
-              <div className="p-6 flex flex-col flex-1">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-bold text-xl text-slate-800 tracking-tight">{f.pays}</h3>
-                  <div className={`p-2 rounded-xl ${f.type.includes('Terrestre') ? 'bg-emerald-50' : 'bg-blue-50'}`}>
-                    {f.type.includes('Terrestre') ? 
-                      <MapPin size={20} className="text-emerald-600" /> : 
-                      <Anchor size={20} className="text-blue-600" />
-                    }
-                  </div>
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 bg-slate-900 text-white text-[10px] font-bold rounded-full">
+                    {i + 1}
+                  </span>
+                  <h3 className="font-bold text-slate-800 leading-tight">{f.pays}</h3>
                 </div>
+                {f.type.includes('Terrestre') ? 
+                  <MapPin size={16} className="text-emerald-500 shrink-0" /> : 
+                  <Anchor size={16} className="text-blue-500 shrink-0" />
+                }
+              </div>
 
-                <div className="space-y-4 flex-1">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase tracking-[0.1em] text-slate-400 font-black mb-1">Localisation</span>
-                    <span className="text-sm font-semibold text-slate-700 bg-slate-50 px-2 py-1 rounded-md inline-block">
-                      {f.zone}
-                    </span>
+              <div className="space-y-2 mt-auto">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{f.zone}</p>
+                <p className="text-xs font-semibold text-indigo-600">{f.type}</p>
+                {f.notes && (
+                  <div className="flex gap-1.5 mt-2 pt-2 border-t border-slate-50 italic text-[10px] text-slate-500">
+                    <AlertCircle size={12} className="shrink-0 text-slate-300" />
+                    {f.notes}
                   </div>
-
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase tracking-[0.1em] text-slate-400 font-black mb-1">Nature du tracé</span>
-                    <span className="text-sm font-bold text-indigo-600">
-                      {f.type}
-                    </span>
-                  </div>
-
-                  {/* Notes Spécifiques */}
-                  {f.notes && (
-                    <div className="mt-4 p-3 bg-slate-50 rounded-2xl border border-slate-100 flex gap-2">
-                      <AlertCircle size={14} className="text-slate-400 shrink-0 mt-0.5" />
-                      <p className="text-[11px] text-slate-500 leading-relaxed italic">
-                        {f.notes}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Footer / Disclaimer */}
-      <footer className="mt-20 py-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-xs italic">
-        <p>© 2026 FTS Online - Données synthétisées depuis Wikipédia.</p>
-        <div className="flex gap-6">
-          <span className="flex items-center gap-1"><MapPin size={12} className="text-emerald-500" /> Terrestre</span>
-          <span className="flex items-center gap-1"><Anchor size={12} className="text-blue-500" /> Maritime</span>
-        </div>
+      {/* Footer */}
+      <footer className="mt-20 py-8 border-t border-slate-200 text-center text-slate-400 text-xs italic">
+        FTS Online 2026 — Données issues de l'article Wikipédia "Frontières de la France".
       </footer>
     </div>
   );
