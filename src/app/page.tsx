@@ -59,11 +59,11 @@ const nbCommunaute = 2;
 const nbSport = 5;
 const nbMusee = 13;
 const nbVisite = 11;
-const nbOccitanie = 15;
+const nbOccitanie = 18;
 const nbTransport = 5;
 const nbCafeLangue = 1;
 const nbConsomamtion = 2;
-const nbEmploi = 2;
+const nbEmploi = 3;
 const nbFlore = 1;
 const nbEquipement = 3;
 const nbGeographie = 5;
@@ -73,7 +73,7 @@ const nbLittératureEt = 7;
 const nbLittératureFr = 22;
 const nbPrix = 21;
 const nbArchitecture = 1;
-const nbEurope = 5;
+const nbEurope = 6;
 const nbFete = 1;
 const nbFrancais = 3;
 const nbHierarchie = 23;
@@ -81,7 +81,7 @@ const nbSaHistoire = 12;
 const nbLangue = 1;
 const nbMonde = 1;
 const nbReligion = 3;
-const nbTerritoire = 4;
+const nbTerritoire = 8;
 const totalArticles = 
   nbAgenda + nbActualites + nbMeetup + nbToulouseEvents + 
   nbSpectacles + nbCulture + nbLibrairie + nbCinema + 
@@ -275,7 +275,7 @@ const categories = [
     { title: "Tarn-Garonne", href: "/tarngaronne" },
     { title: "Cirque et sommet", href: "/montcirque" },
   ]},
-//  const nbOccitanie = 15;
+//  const nbOccitanie = 18;
 
   { title: "Transports & Trafic", href: "/transports-tisseo", icon: Bus, isTransport: true, transportSources: [
     { title: "Tisséo Toulouse", href: "/tisseotoulouse" },
@@ -320,7 +320,7 @@ const categories = [
       { title: "Entreprises à Toulouse", href: "/entreprisetoulouse" },
     ] 
   },
-//  const nbEmploi = 2;
+//  const nbEmploi = 3;
 
   { title: "Toulouse : Environnement", href: "/flore", icon: Flower, isOccitanie: true, occitanieSources: [
     { title: "Flore", href: "/flore" },
@@ -458,11 +458,12 @@ const categories = [
       { title: "Pays de l'Europe", href: "/europe" },
       { title: "Membres de l'Union Eruopéenne", href: "/membresue" },
       { title: "États associés à l'UE", href: "/associeseurope" },
+      { title: "Villes de l'Europe", href: "/villeseurope" },
       { title: "Membres de l'OTAN", href: "/OTAN" },
       { title: "Partenaires de l'OTAN", href: "/OTANsup" }
     ] 
   },
-//  const nbEurope = 5;
+//  const nbEurope = 6;
 
   { title: "Savoirs : Fêtes", href: "/datefetes", icon: PartyPopper, isOccitanie: true, occitanieSources: [
     { title: "Dates des fêtes", href: "/datefetes" },
@@ -555,13 +556,14 @@ const categories = [
     savoirsTerritoiresSources: [
 	{ title: "France", href: "/France" },
 	{ title: "Frontières de la France", href: "/frontieres" },
+	{ title: "Enclaves et Exclaves", href: "/enclave" },
 	{ title: "Villes en France", href: "/population" },
 	{ title: "PIB des villes en France", href: "/villespib" },
 	{ title: "Anciens départements", href: "/anciensdepartements" },
 	{ title: "Colonies en Europe", href: "/colonieeurope" },
 	{ title: "Colonies dans le Monde", href: "/coloniefrance" }
   ]},
-//  const nbTerritoire = 4;
+//  const nbTerritoire = 8;
 
 
   /* ---------------- FTS ---------------- */
