@@ -26,7 +26,32 @@ export async function GET() {
     { rang: 22, commune: "Aix-en-Provence", dept: "13", region: "PACA", pop: 149695, statut: "Sous-préfecture", lat: 43.5297, lng: 5.4474 },
     { rang: 23, commune: "Saint-Denis (93)", dept: "93", region: "Île-de-France", pop: 149077, statut: "Sous-préfecture", lat: 48.9362, lng: 2.3574 },
     { rang: 24, commune: "Clermont-Ferrand", dept: "63", region: "Auvergne-Rhône-Alpes", pop: 146351, statut: "Préfecture", lat: 45.7772, lng: 3.0870 },
-    { rang: 25, commune: "Le Mans", dept: "72", region: "Pays de la Loire", pop: 146249, statut: "Préfecture", lat: 48.0061, lng: 0.1996 }
+    { rang: 25, commune: "Le Mans", dept: "72", region: "Pays de la Loire", pop: 146249, statut: "Préfecture", lat: 48.0061, lng: 0.1996 },
+    { rang: 26, commune: "Brest", dept: "29", region: "Bretagne", pop: 142346, statut: "Sous-préfecture", lat: 48.3903, lng: -4.4860 },
+    { rang: 27, commune: "Tours", dept: "37", region: "Centre-Val de Loire", pop: 139259, statut: "Préfecture", lat: 47.3941, lng: 0.6848 },
+    { rang: 28, commune: "Amiens", dept: "80", region: "Hauts-de-France", pop: 136449, statut: "Préfecture", lat: 49.8940, lng: 2.2957 },
+    { rang: 29, commune: "Annecy", dept: "74", region: "Auvergne-Rhône-Alpes", pop: 132117, statut: "Préfecture", lat: 45.8992, lng: 6.1293 },
+    { rang: 30, commune: "Limoges", dept: "87", region: "Nouvelle-Aquitaine", pop: 129937, statut: "Préfecture", lat: 45.8336, lng: 1.2611 },
+    { rang: 31, commune: "Metz", dept: "57", region: "Grand Est", pop: 122572, statut: "Préfecture", lat: 49.1193, lng: 6.1757 },
+    { rang: 32, commune: "Perpignan", dept: "66", region: "Occitanie", pop: 121616, statut: "Préfecture", lat: 42.6976, lng: 2.8954 },
+    { rang: 33, commune: "Boulogne-Billancourt", dept: "92", region: "Île-de-France", pop: 119019, statut: "Sous-préfecture", lat: 48.8396, lng: 2.2399 },
+    { rang: 34, commune: "Besançon", dept: "25", region: "Bourgogne-Franche-Comté", pop: 118489, statut: "Préfecture", lat: 47.2378, lng: 6.0240 },
+    { rang: 35, commune: "Rouen", dept: "76", region: "Normandie", pop: 117662, statut: "Préfecture", lat: 49.4432, lng: 1.0999 },
+    { rang: 36, commune: "Orléans", dept: "45", region: "Centre-Val de Loire", pop: 116357, statut: "Préfecture", lat: 47.9029, lng: 1.9087 },
+    { rang: 37, commune: "Montreuil", dept: "93", region: "Île-de-France", pop: 111934, statut: "Commune", lat: 48.8638, lng: 2.4484 },
+    { rang: 38, commune: "Caen", dept: "14", region: "Normandie", pop: 109400, statut: "Préfecture", lat: 49.1828, lng: -0.3707 },
+    { rang: 39, commune: "Saint-Paul (Réunion)", dept: "974", region: "La Réunion", pop: 108088, statut: "Sous-préfecture", lat: -21.0096, lng: 55.2707 },
+    { rang: 40, commune: "Argenteuil", dept: "95", region: "Île-de-France", pop: 106130, statut: "Sous-préfecture", lat: 48.9478, lng: 2.2471 },
+    { rang: 41, commune: "Mulhouse", dept: "68", region: "Grand Est", pop: 104978, statut: "Sous-préfecture", lat: 47.7464, lng: 7.3384 },
+    { rang: 42, commune: "Nancy", dept: "54", region: "Grand Est", pop: 103671, statut: "Préfecture", lat: 48.6927, lng: 6.1844 },
+    { rang: 43, commune: "Tourcoing", dept: "59", region: "Hauts-de-France", pop: 98772, statut: "Commune", lat: 50.7239, lng: 3.1612 },
+    { rang: 44, commune: "Roubaix", dept: "59", region: "Hauts-de-France", pop: 98286, statut: "Commune", lat: 50.6927, lng: 3.1778 },
+    { rang: 45, commune: "Nanterre", dept: "92", region: "Île-de-France", pop: 97783, statut: "Préfecture", lat: 48.8924, lng: 2.2043 },
+    { rang: 46, commune: "Vitry-sur-Seine", dept: "94", region: "Île-de-France", pop: 93963, statut: "Commune", lat: 48.7875, lng: 2.3920 },
+    { rang: 47, commune: "Asnières-sur-Seine", dept: "92", region: "Île-de-France", pop: 93941, statut: "Commune", lat: 48.9106, lng: 2.2890 },
+    { rang: 48, commune: "Créteil", dept: "94", region: "Île-de-France", pop: 93397, statut: "Préfecture", lat: 48.7771, lng: 2.4531 },
+    { rang: 49, commune: "Avignon", dept: "84", region: "PACA", pop: 92188, statut: "Préfecture", lat: 43.9493, lng: 4.8055 },
+    { rang: 50, commune: "Colombes", dept: "92", region: "Île-de-France", pop: 91053, statut: "Commune", lat: 48.9225, lng: 2.2544 }
   ];
 
   return NextResponse.json(populations);
