@@ -135,60 +135,60 @@ export default function GoogleTranslateCustom() {
         </div>
       </div>
 
-      {/* ✅ MODALE D'AIDE CORRIGÉE : position forcée vers le bas pour éviter la barre Google */}
+      {/* ✅ MODALE D'AIDE : Correction ULTIME du Z-Index et de la position */}
       {helpOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-[99999] flex justify-center backdrop-blur-sm overflow-y-auto pt-[150px] pb-10"
+          className="fixed inset-0 bg-black/70 flex justify-center overflow-y-auto pt-[180px] pb-10 px-4"
+          style={{ zIndex: 9999999 }} // Supérieur à la carte Leaflet
           onClick={() => setHelpOpen(false)}
         >
           <div
-            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-[90%] h-fit relative animate-in fade-in zoom-in duration-200"
+            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-full h-fit relative animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setHelpOpen(false)}
-              className="absolute top-2 right-3 text-2xl font-bold text-slate-400 hover:text-slate-900 transition-colors"
+              className="absolute top-2 right-4 text-3xl font-light text-slate-400 hover:text-slate-900 transition-colors"
             >
-              ×
+              &times;
             </button>
 
-            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2 pr-6">
               🧭 Aide : Réinitialiser Google Translate
             </h3>
             
             <div className="space-y-4 text-sm leading-relaxed">
               <p>
-                Si la traduction reste bloquée, supprime le cookie du site : 
+                Si la traduction reste bloquée, supprimez le cookie du site : 
                 <code className="block mt-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600 text-center break-all">
                   faistasortieatoulouse.online
                 </code>
               </p>
 
-              <ul className="space-y-3">
-                <li className="flex flex-col gap-0.5">
-                  <span className="font-bold text-xs text-slate-500 uppercase">Chrome / Edge :</span> 
-                  <span>🔒 à gauche de l’adresse → <em>Cookies et données</em> → Supprimer le site.</span>
-                </li>
-                <li className="flex flex-col gap-0.5">
-                  <span className="font-bold text-xs text-slate-500 uppercase">Firefox :</span> 
-                  <span>🔒 → <em>Effacer les cookies et données du site</em>.</span>
-                </li>
-                <li className="flex flex-col gap-0.5">
-                  <span className="font-bold text-xs text-slate-500 uppercase">Safari :</span> 
-                  <span>Réglages → Confidentialité → Gérer les données → Supprimer le site.</span>
-                </li>
-              </ul>
+              <div className="space-y-3 border-l-2 border-slate-100 pl-3">
+                <div className="flex flex-col">
+                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Chrome / Edge</span> 
+                  <span>🔒 à gauche de l’URL → <em>Cookies</em> → Supprimer.</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Firefox</span> 
+                  <span>🔒 → <em>Effacer les cookies et données</em>.</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Safari</span> 
+                  <span>Réglages → Confidentialité → Supprimer le site.</span>
+                </div>
+              </div>
 
-              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-[13px]">
-                🌍 <strong>Depuis la barre Google :</strong> cliquez sur ⚙️ → 
-                <em> Afficher la page originale</em>. 
-                Sinon, supprimez le cookie comme indiqué.
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-[13px] italic">
+                🌍 <strong>Astuce :</strong> Dans la barre Google Translate, cliquez sur l'icône ⚙️ puis sur 
+                <em> "Afficher la page originale"</em>.
               </div>
             </div>
 
             <button 
               onClick={() => setHelpOpen(false)}
-              className="w-full mt-6 py-3 bg-slate-900 text-white rounded-xl font-bold shadow-lg"
+              className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all active:scale-95"
             >
               J'ai compris
             </button>
