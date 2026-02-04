@@ -14,8 +14,8 @@ export async function GET() {
       category: "Langues Construites (Conlangs)",
       links: [
         { name: "Liste des langues construites", url: "https://fr.wikipedia.org/wiki/Liste_de_langues_construites" },
-        { name: "L'univers de l'Ido", url: "https://fr.wikipedia.org/wiki/Ido" },
-        { name: "Langues de la Terre du Milieu", url: "https://fr.wikipedia.org/wiki/Langues_de_la_Terre_du_Milieu" },
+        { name: "Langues imaginaires", url: "https://fr.wikipedia.org/wiki/Langue_imaginaire" },
+        { name: "Anglicismes en français", url: "https://fr.wikipedia.org/wiki/Anglicismes_en_fran%C3%A7ais" },
       ]
     },
     {
