@@ -56,12 +56,10 @@ export default function GoogleTranslateCustom() {
   const [selectedLang, setSelectedLang] = useState('fr');
   const [mounted, setMounted] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
-  const [currentDomain, setCurrentDomain] = useState('');
 
   useEffect(() => {
     setMounted(true);
     if (typeof window !== 'undefined') {
-      setCurrentDomain(window.location.hostname);
       const cookie = getCookie('googtrans');
       const currentLang = cookie?.split('/')[2];
       setSelectedLang(currentLang || 'fr');
@@ -89,7 +87,7 @@ export default function GoogleTranslateCustom() {
     }
   };
 
-  if (!mounted) return <div className="min-h-[110px]" />;
+  if (!mounted) return <div className="min-h-[140px]" />;
 
   return (
     <>
@@ -118,7 +116,6 @@ export default function GoogleTranslateCustom() {
 
           <button
             onClick={() => changeLang('fr')}
-            title="Revenir en Français"
             className="px-3 py-2 text-xs font-black bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
           >
             FR
@@ -127,7 +124,7 @@ export default function GoogleTranslateCustom() {
 
         {/* LIGNE 2 : AUTRES LANGUES (BLEU) + BESOIN D'AIDE ? */}
         <div className="flex gap-2 items-center">
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1">
             <select
               onChange={(e) => changeLang(e.target.value)}
               value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
@@ -142,24 +139,78 @@ export default function GoogleTranslateCustom() {
 
           <button
             onClick={() => setHelpOpen(true)}
-            className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic"
+            className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic underline underline-offset-2"
           >
-            ❓ <span>besoin d'aide</span>
+            ❓ besoin d'aide ?
           </button>
+        </div>
+
+        {/* MENTION GOOGLE TRANSLATE */}
+        <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1.5 px-1">
+          <img
+            src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png"
+            alt="Google Translate"
+            width={14}
+            height={14}
+          />
+          <span>Traduction fournie par Google Translate</span>
         </div>
       </div>
 
-      {/* MODAL D'AIDE */}
+      {/* ✅ Modale d’aide (popup) */}
       {helpOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4" onClick={() => setHelpOpen(false)}>
-          <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-[280px] w-full" onClick={e => e.stopPropagation()}>
-            <h3 className="font-bold text-slate-900 mb-2 italic">Aide Traduction</h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Si la traduction est bloquée, utilisez le bouton <strong>FR</strong> pour réinitialiser ou rafraîchissez la page.
-              <code className="block mt-2 p-2 bg-slate-50 rounded text-[10px] text-blue-500 font-mono">{currentDomain}</code>
+        <div
+          className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center backdrop-blur-sm"
+          onClick={() => setHelpOpen(false)}
+        >
+          <div
+            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-[92%] relative animate-in fade-in zoom-in duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setHelpOpen(false)}
+              className="absolute top-3 right-4 text-2xl font-light text-slate-400 hover:text-slate-800"
+            >
+              ×
+            </button>
+
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              🧭 Aide : Réinitialiser Google Translate
+            </h3>
+            
+            <p className="mb-4 text-sm leading-relaxed">
+              Si la traduction reste bloquée, supprime le cookie du site 
+              <code className="mx-1 px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600">
+                faistasortieatoulouse.online
+              </code>.
             </p>
-            <button onClick={() => setHelpOpen(false)} className="w-full py-2.5 bg-slate-900 text-white rounded-xl font-bold text-sm transition-transform active:scale-95">
-              FERMER
+
+            <ul className="space-y-3 mb-5 text-sm">
+              <li className="flex gap-2">
+                <span className="font-bold">Chrome / Edge :</span> 
+                <span>🔒 à gauche de l’adresse → <em>Cookies et données de site</em> → Supprimer le site.</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-bold">Firefox :</span> 
+                <span>🔒 → <em>Effacer les cookies et données du site</em>.</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-bold">Safari :</span> 
+                <span>Réglages → Confidentialité → Gérer les données → Supprimer le site.</span>
+              </li>
+            </ul>
+
+            <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-sm">
+              🌍 <strong>Depuis la barre Google Translate :</strong> clique sur ⚙️ → 
+              <em> Afficher la page originale</em>. 
+              Si ça ne suffit pas, supprime le cookie comme indiqué ci-dessus.
+            </div>
+
+            <button 
+              onClick={() => setHelpOpen(false)}
+              className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 active:scale-[0.98] transition-all"
+            >
+              J'ai compris
             </button>
           </div>
         </div>
