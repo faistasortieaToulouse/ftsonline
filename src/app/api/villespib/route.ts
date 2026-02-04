@@ -10,7 +10,7 @@ export async function GET() {
     
     return NextResponse.json(data);
   } catch (error) {
-    console.error(error);
+    console.error("Erreur API:", error);
     return NextResponse.json({ error: "Erreur lors de la lecture des données" }, { status: 500 });
   }
 }
