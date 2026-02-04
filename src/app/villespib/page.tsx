@@ -1,89 +1,155 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-
-// CSS obligatoire pour Leaflet
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, BarChart3, TrendingUp, Info } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 
-// Fix pour les icônes Leaflet dans Next.js
-const icon = L.icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
 export default function VillesPIBPage() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
   const [villes, setVilles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Récupération des données
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch('/api/villespib');
-        const data = await response.json();
+    fetch("/api/villespib")
+      .then(res => res.json())
+      .then(data => {
         setVilles(data.classement_pib_france || []);
-      } catch (error) {
-        console.error("Erreur fetch:", error);
-      } finally {
         setLoading(false);
-      }
-    }
-    fetchData();
+      })
+      .catch(err => {
+        console.error("Erreur:", err);
+        setLoading(false);
+      });
   }, []);
 
-  if (loading) return <div className="p-10 text-center">Chargement des données économiques...</div>;
+  // Initialisation de la carte Leaflet (même logique que frontières)
+  useEffect(() => {
+    if (loading || !mapRef.current || mapInstance.current || villes.length === 0) return;
+
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+
+      // Création de la carte centrée sur la France
+      mapInstance.current = L.map(mapRef.current).setView([46.6033, 1.8883], 6);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(mapInstance.current);
+
+      const markersGroup = L.featureGroup();
+
+      villes.forEach((v) => {
+        if (v.lat && v.lng) {
+          // Marqueur personnalisé avec le rang
+          const customIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background-color:#1e40af; color:white; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:10px;">${v.rang}</div>`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+          });
+
+          const marker = L.marker([v.lat, v.lng], { icon: customIcon });
+          marker.bindPopup(`
+            <div style="font-family: sans-serif; padding: 5px;">
+              <b style="font-size: 14px;">${v.ville}</b><br>
+              <span style="color: #16a34a; font-weight: bold;">PIB : ${v.pib_mds_euros} Md€</span><br>
+              <p style="font-size: 11px; margin-top: 5px; color: #64748b;">${v.secteurs_cles}</p>
+            </div>
+          `);
+          marker.addTo(markersGroup);
+        }
+      });
+
+      markersGroup.addTo(mapInstance.current);
+    };
+
+    initMap();
+
+    // Nettoyage de l'instance au démontage
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [loading, villes]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
+      
+      {/* Navigation Retour */}
+      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-8 transition-colors font-medium group">
+        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+        Retour à l'accueil
+      </Link>
+
       {/* Header */}
-      <header className="bg-white border-b p-4 shadow-sm">
-        <h1 className="text-xl font-bold text-blue-900">Top 100 PIB des Villes de France</h1>
+      <header className="mb-10">
+        <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mb-4">
+          Économie <span className="text-blue-600">Française</span>
+        </h1>
+        <div className="flex items-center gap-2 text-slate-500 font-bold text-lg">
+          <TrendingUp className="text-blue-500" size={24} />
+          Classement des 100 premiers pôles de richesse (PIB)
+        </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Barre latérale : Liste des villes */}
-        <aside className="w-1/4 overflow-y-auto border-r bg-white">
-          {villes.map((v) => (
-            <div key={v.rang} className="p-4 border-b hover:bg-gray-50 transition-colors">
-              <div className="flex justify-between items-start">
-                <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">#{v.rang}</span>
-                <span className="text-green-600 font-mono font-bold text-sm">{v.pib_mds_euros} Md€</span>
+      {/* Carte Leaflet (Utilisation de la Ref) */}
+      <div className="mb-12">
+        <div 
+          ref={mapRef} 
+          className="h-[400px] md:h-[600px] w-full rounded-3xl border-4 border-white shadow-xl z-0 overflow-hidden bg-slate-200"
+        />
+      </div>
+
+      {/* Liste des Villes */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-10 text-slate-400 font-medium">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-4"></div>
+          Analyse des données économiques...
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {villes.map((v, i) => (
+            <div 
+              key={i} 
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col"
+            >
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center w-7 h-7 bg-blue-900 text-white text-[11px] font-bold rounded-full shadow-sm">
+                    {v.rang}
+                  </span>
+                  <h3 className="font-bold text-slate-800 leading-tight">{v.ville}</h3>
+                </div>
+                <BarChart3 size={18} className="text-blue-500 shrink-0" />
               </div>
-              <h3 className="font-semibold mt-1">{v.ville}</h3>
-              <p className="text-xs text-gray-500 line-clamp-1">{v.secteurs_cles}</p>
+
+              <div className="space-y-2 mt-auto">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-black text-emerald-600">{v.pib_mds_euros}</span>
+                  <span className="text-xs font-bold text-emerald-700 uppercase">Mds €</span>
+                </div>
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Secteurs Clés</p>
+                <p className="text-xs font-medium text-slate-600 leading-relaxed">{v.secteurs_cles}</p>
+                
+                <div className="flex gap-1.5 mt-3 pt-3 border-t border-slate-50 italic text-[10px] text-slate-400">
+                  <Info size={12} className="shrink-0" />
+                  Données estimatives par zone urbaine.
+                </div>
+              </div>
             </div>
           ))}
-        </aside>
+        </div>
+      )}
 
-        {/* Zone Carte */}
-        <main className="flex-1 relative">
-          <MapContainer 
-            center={[46.6, 2.2]} 
-            zoom={6} 
-            style={{ height: "100%", width: "100%" }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            />
-            {villes.map((v) => (
-              <Marker key={v.rang} position={[v.lat, v.lng]} icon={icon}>
-                <Popup>
-                  <div className="text-sm">
-                    <strong className="text-lg">{v.ville}</strong> <br />
-                    <span className="text-blue-600 font-bold">PIB : {v.pib_mds_euros} Milliards d'euros</span> <br />
-                    <hr className="my-1" />
-                    <strong>Secteurs :</strong> {v.secteurs_cles}
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </main>
-      </div>
+      {/* Footer */}
+      <footer className="mt-20 py-8 border-t border-slate-200 text-center text-slate-400 text-xs italic">
+        FTS Online 2026 — Classement basé sur les données du PIB des aires urbaines françaises.
+      </footer>
     </div>
   );
 }
