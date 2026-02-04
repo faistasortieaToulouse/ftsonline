@@ -138,7 +138,7 @@ export default function GoogleTranslateCustom() {
       {/* ✅ MODALE D'AIDE : SOLUTION RADICALE POUR LE CENTRAGE ET LE Z-INDEX */}
       {helpOpen && (
         <div
-          className="fixed inset-0 bg-black/80 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/80 flex items-start justify-center p-4 pt-32"
           style={{ zIndex: 2147483647 }} // Valeur maximale possible pour être au-dessus de TOUT
           onClick={() => setHelpOpen(false)}
         >
