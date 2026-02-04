@@ -108,7 +108,6 @@ export default function GoogleTranslateCustom() {
             value={LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
             className="flex-1 px-2 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-lg text-slate-900 outline-none focus:ring-2 focus:ring-blue-100"
           >
-            {/* Si une langue "Extra" est active, on le signale */}
             {!LANGS.find(l => l.code === selectedLang) && <option value="">🌍 Langue choisie...</option>}
             {LANGS.map((lang) => (
               <option key={lang.code} value={lang.code}>
@@ -126,26 +125,26 @@ export default function GoogleTranslateCustom() {
           </button>
         </div>
 
-        {/* LIGNE 2 : AUTRES LANGUES + AIDE */}
+        {/* LIGNE 2 : AUTRES LANGUES (BLEU) + BESOIN D'AIDE ? */}
         <div className="flex gap-2 items-center">
           <div className="flex-1 flex flex-col">
             <select
               onChange={(e) => changeLang(e.target.value)}
               value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-              className="w-full px-2 py-1.5 text-[11px] bg-white border border-dashed border-slate-300 rounded-lg text-slate-600 outline-none"
+              className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors"
             >
-              <option value="">AUTRES LANGUES...</option>
+              <option value="" className="text-blue-600">AUTRES LANGUES...</option>
               {EXTRA_LANGS.map((lang) => (
-                <option key={lang.code} value={lang.code}>{lang.label}</option>
+                <option key={lang.code} value={lang.code} className="text-slate-800">{lang.label}</option>
               ))}
             </select>
           </div>
 
           <button
             onClick={() => setHelpOpen(true)}
-            className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium"
+            className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic"
           >
-            ❓ <span className="hidden xs:inline">besoin d'aide</span>
+            ❓ <span>besoin d'aide</span>
           </button>
         </div>
       </div>
