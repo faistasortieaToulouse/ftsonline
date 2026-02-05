@@ -41,8 +41,20 @@ export default function AndorrePage() {
       
       {/* Section Paroisses */}
       <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-        <Map className="text-purple-600" /> Les 7 Paroisses (Divisions administratives)
+        <Map className="text-purple-600" /> Les 7 Paroisses (Divisions administratives - triés par population des villes)
       </h2>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-slate-400 font-mono">
+            Recensement 2020 & Estimations 2025/26
+          </p>
+          <span className="bg-purple-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+            Classé par population urbaine
+          </span>
+        </div>
+      <br />
+      <br />
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
         {data.paroisses.map((paroisse, index) => (
           <article 
