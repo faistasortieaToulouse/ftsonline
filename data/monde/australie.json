@@ -6,8 +6,8 @@
     { "nom": "Queensland", "capitale": "Brisbane", "population_capitale": "2 780 000", "population_totale": "5 650 000" },
     { "nom": "Australie-Occidentale", "capitale": "Perth", "population_capitale": "2 350 000", "population_totale": "2 980 000" },
     { "nom": "Australie-Méridionale", "capitale": "Adélaïde", "population_capitale": "1 450 000", "population_totale": "1 880 000" },
-    { "nom": "Territoire de la Capitale", "capitale": "Canberra", "population_capitale": "485 000", "population_totale": "485 000" },
     { "nom": "Tasmanie", "capitale": "Hobart", "population_capitale": "260 000", "population_totale": "585 000" },
+    { "nom": "Territoire de la Capitale", "capitale": "Canberra", "population_capitale": "485 000", "population_totale": "485 000" },
     { "nom": "Territoire du Nord", "capitale": "Darwin", "population_capitale": "155 000", "population_totale": "258 000" }
   ],
   "classement_villes": [
