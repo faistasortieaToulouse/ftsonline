@@ -19,7 +19,7 @@ export default function EtatsUnisPage() {
   // Nettoie les chaînes comme "39 130 000" ou "~298 000" en nombres
   const parsePop = (val: string) => parseInt(val.replace(/[^0-9]/g, '')) || 0;
 
-  if (loading) return <div className="p-20 text-center animate-pulse font-black text-blue-800 tracking-widest">LOADING AMERICAN DATA...</div>;
+  if (loading) return <div className="p-20 text-center animate-pulse font-black text-blue-800 tracking-widest">Chargement en cours...</div>;
 
   return (
     <main className="max-w-7xl mx-auto p-6 bg-slate-50 min-h-screen my-10 shadow-2xl rounded-2xl border border-slate-200">
