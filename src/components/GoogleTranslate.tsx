@@ -92,7 +92,7 @@ export default function GoogleTranslateCustom() {
         {`function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'fr', autoDisplay: false}, 'google_translate_element'); }`}
       </Script>
 
-      <div className="google-translate-custom flex flex-col gap-2 w-full max-w-[320px] ml-auto p-2 bg-white rounded-xl shadow-sm border border-slate-200">
+      <div className="google-translate-custom mt-10 mb-4 flex flex-col gap-2 w-full max-w-[320px] ml-auto p-2 bg-white rounded-xl shadow-sm border border-slate-200">
         <div className="flex gap-1.5 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
