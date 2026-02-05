@@ -48,7 +48,7 @@ export default function AustraliePage() {
 
       {/* Section États et Territoires triés */}
       <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-        <Map className="text-emerald-600" /> États et Territoires (triés par population de capitales)
+        <Map className="text-emerald-600" /> États et Territoires (triés par population des capitales)
       </h2>
 
         <div className="flex flex-wrap items-center gap-3">
