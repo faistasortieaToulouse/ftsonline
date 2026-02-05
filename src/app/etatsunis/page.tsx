@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Flag, Building2, Map as MapIcon, Star } from "lucide-react";
+import { ArrowLeft, Flag, Building2, Map as MapIcon, Star, Users } from "lucide-react";
 
 export default function EtatsUnisPage() {
   const [data, setData] = useState<any>(null);
@@ -28,7 +28,7 @@ export default function EtatsUnisPage() {
     return city ? parsePop(city.population) : 0;
   };
 
-  if (loading) return <div className="p-20 text-center animate-pulse font-black text-blue-800 tracking-widest">LOADING AMERICAN CITIES...</div>;
+  if (loading) return <div className="p-20 text-center animate-pulse font-black text-blue-800 tracking-widest">Chargement en cours...</div>;
 
   return (
     <main className="max-w-7xl mx-auto p-6 bg-slate-50 min-h-screen my-10 shadow-2xl rounded-2xl border border-slate-200">
