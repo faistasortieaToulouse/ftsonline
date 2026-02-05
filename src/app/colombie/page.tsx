@@ -19,7 +19,7 @@ export default function ColombiePage() {
   // Fonction pour convertir "8 100 000" en nombre réel 8100000
   const parsePop = (txt: string) => parseInt(txt?.replace(/\s/g, '') || '0');
 
-  if (loading) return <div className="p-20 text-center animate-pulse font-black text-yellow-600">CARGANDO DATOS...</div>;
+  if (loading) return <div className="p-20 text-center animate-pulse font-black text-yellow-600">Chargement en cours...</div>;
 
   return (
     <main className="max-w-7xl mx-auto p-6 bg-white min-h-screen shadow-2xl my-10 border-t-8 border-yellow-400 rounded-b-xl">
@@ -32,7 +32,10 @@ export default function ColombiePage() {
         <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase italic">
           Colombie<span className="text-yellow-400">.</span>
         </h1>
-        <p className="text-slate-400 font-mono mt-2">Démographie par Départements et Municipalités</p>
+        <p className="text-slate-400 font-mono mt-2">Recensement 2020 & Estimations 2025/26</p>
+        <span className="bg-yellow-400 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+            Classé par population urbaine
+          </span>
       </header>
 
       {/* SECTION 1 : DÉPARTEMENTS TRIÉS PAR POP. CAPITALE */}
