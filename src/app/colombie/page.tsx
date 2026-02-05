@@ -32,10 +32,16 @@ export default function ColombiePage() {
         <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase italic">
           Colombie<span className="text-yellow-400">.</span>
         </h1>
-        <p className="text-slate-400 font-mono mt-2">Recensement 2020 & Estimations 2025/26</p>
-        <span className="bg-yellow-400 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+        
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-slate-400 font-mono">
+            Recensement 2020 & Estimations 2025/26
+          </p>
+          <span className="bg-yellow-400 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
             Classé par population urbaine
           </span>
+        </div>
+        
       </header>
 
       {/* SECTION 1 : DÉPARTEMENTS TRIÉS PAR POP. CAPITALE */}
