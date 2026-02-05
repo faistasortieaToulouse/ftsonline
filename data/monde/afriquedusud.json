@@ -35,6 +35,12 @@
     "province": "Cap-Oriental",
     "population_agglo": 1200000
   },
+    {
+    "ville": "Mahikeng",
+    "role": "Chef-lieu provincial",
+    "province": "Nord-Ouest",
+    "population_agglo": 900000
+  },
   {
     "ville": "Soshanguve",
     "role": "Zone urbaine (int. Pretoria)",
@@ -94,11 +100,5 @@
     "role": "Chef-lieu provincial",
     "province": "Cap-Oriental",
     "population_agglo": 150000
-  },
-  {
-    "ville": "Mahikeng",
-    "role": "Chef-lieu provincial",
-    "province": "Nord-Ouest",
-    "population_agglo": 900000
   }
 ]
