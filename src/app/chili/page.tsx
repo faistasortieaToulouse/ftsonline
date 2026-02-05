@@ -59,7 +59,8 @@ export default function ChiliPage() {
             Classé par population urbaine
           </span>
         </div>
-      <p>  </p>
+<br />
+<br />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
         {data.regions.map((region, index) => (
