@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { VilleAfriqueSud } from '../api/afriquedusud/route';
 
 export default function AfriqueDuSudPage() {
@@ -25,8 +27,14 @@ export default function AfriqueDuSudPage() {
 
   return (
     <main className="max-w-6xl mx-auto p-6 bg-slate-50 min-h-screen">
+      
+       <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline mb-6 transition-colors group">
+        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+        Retour à l'accueil
+      </Link>
+      
       <h1 className="text-4xl font-extrabold text-slate-900 mb-8 text-center">
-        Exploration de l'Afrique du Sud
+        Classement des villes et capitales par population de l'Afrique du Sud
       </h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -59,9 +67,6 @@ export default function AfriqueDuSudPage() {
           Nombre total de ressources : <span className="font-bold text-purple-600">{villes.length}</span> articles
         </div>
         
-        <p className="text-slate-600 font-medium">
-          Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
-        </p>
       </footer>
     </main>
   );
