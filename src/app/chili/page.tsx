@@ -51,6 +51,15 @@ export default function ChiliPage() {
         <MapIcon className="text-red-600" /> Régions (triées par population de capitale)
       </h2>
 
+       <div className="flex flex-wrap items-center gap-3">
+          <p className="text-slate-400 font-mono">
+            Recensement 2020 & Estimations 2025/26
+          </p>
+          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+            Classé par population urbaine
+          </span>
+        </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
         {data.regions.map((region, index) => (
           <article 
