@@ -1,7 +1,6 @@
 {
   "pays": "États-Unis",
   "etats": [
-[
   { "nom": "Alabama", "capitale": "Montgomery", "population_totale": "196 000" },
   { "nom": "Alaska", "capitale": "Juneau", "population_totale": "31 500" },
   { "nom": "Arizona", "capitale": "Phoenix", "population_totale": "1 650 000" },
@@ -52,7 +51,6 @@
   { "nom": "Washington", "capitale": "Olympia", "population_totale": "56 000" },
   { "nom": "Wisconsin", "capitale": "Madison", "population_totale": "272 000" },
   { "nom": "Wyoming", "capitale": "Cheyenne", "population_totale": "65 000" }
-]
   ],
   "villes_plus_de_500k": [
     { "ville": "New York", "etat": "New York", "population": "8 260 000" },
