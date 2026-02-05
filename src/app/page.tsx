@@ -1211,13 +1211,13 @@ useEffect(() => {
       <section id="categories" className="py-8 px-4 container mx-auto">
         <h2 className="text-3xl font-bold mb-10 text-center text-purple-700">Nos rubriques</h2>
 		  {/* AJOUTE CETTE LIGNE CI-DESSOUS */}
-		 <p className="text-center -mt-8 mb-10 text-slate-600 font-medium">
-		   Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
-		 </p>
 		  {/* TON COMPTEUR ICI */}
 		    <div className="text-center mb-8 font-medium text-slate-500 italic">
  		     Nombre total de ressources : <span className="font-bold text-purple-600">{totalArticles}</span> articles
 		    </div>
+		 <p className="text-center -mt-8 mb-10 text-slate-600 font-medium">
+		   Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
+		 </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {categories.map((cat) => {
             const Icon = cat.icon;
