@@ -51,7 +51,6 @@ export default function BresilPage() {
         <MapPinned className="text-green-600" /> États et District Fédéral
       </h2>
 
-      <br />
               <div className="flex flex-wrap items-center gap-3">
           <p className="text-slate-400 font-mono">
             Recensement 2020 & Estimations 2025/26
