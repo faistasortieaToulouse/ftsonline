@@ -48,7 +48,7 @@ export default function ArgentinePage() {
 
       {/* Section Provinces triées */}
       <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-        <MapIcon className="text-yellow-500" /> Provinces (Triées par population de capitales)
+        <MapIcon className="text-yellow-500" /> Provinces (Triées par population des capitales)
       </h2>
       
         <div className="flex flex-wrap items-center gap-3">
