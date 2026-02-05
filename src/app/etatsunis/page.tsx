@@ -59,7 +59,7 @@ export default function EtatsUnisPage() {
               <div key={i} className="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-xl transition-all group">
                 <span className="text-[10px] font-black text-slate-300 group-hover:text-red-600">RANK #{i + 1}</span>
                 <h3 className="font-black text-lg text-slate-800 leading-tight mb-1">{etat.nom}</h3>
-                <p className="text-xs text-blue-600 font-bold mb-4 italic truncate">Cap: {etat.capitale}</p>
+                <p className="text-xs text-blue-600 font-bold mb-4 italic truncate">Capitale: {etat.capitale}</p>
                 <p className="font-mono font-black text-slate-900 text-sm bg-slate-100 p-2 rounded text-center">
                   {etat.population_totale}
                 </p>
