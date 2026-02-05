@@ -48,9 +48,20 @@ export default function ArgentinePage() {
 
       {/* Section Provinces triées */}
       <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-        <MapIcon className="text-yellow-500" /> Provinces (Triées par capitale)
+        <MapIcon className="text-yellow-500" /> Provinces (Triées par population de capitales)
       </h2>
-
+      
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-slate-400 font-mono">
+            Recensement 2020 & Estimations 2025/26
+          </p>
+          <span className="bg-yellow-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+            Classé par population urbaine
+          </span>
+        </div>
+      <br />
+      <br />
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
         {data.provinces.map((prov, index) => (
           <article 
