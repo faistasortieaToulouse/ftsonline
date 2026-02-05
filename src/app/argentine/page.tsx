@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from "next/link";
 import { ArrowLeft, MapIcon, Building2 } from "lucide-react";
-import { DonneesArgentine } from '../api/argentine/route';
+import { DonneesArgentine, Province } from '../api/argentine/route';
 
 export default function ArgentinePage() {
   const [data, setData] = useState<DonneesArgentine | null>(null);
@@ -12,8 +12,16 @@ export default function ArgentinePage() {
     const fetchData = async () => {
       try {
         const res = await fetch('/api/argentine');
-        const json = await res.json();
-        setData(json);
+        const json: DonneesArgentine = await res.json();
+
+        // Logique de tri par population de la capitale (du plus grand au plus petit)
+        const provincesTriees = [...json.provinces].sort((a, b) => {
+          const popA = parseInt(a.population_capitale.replace(/\s/g, ''), 10);
+          const popB = parseInt(b.population_capitale.replace(/\s/g, ''), 10);
+          return popB - popA;
+        });
+
+        setData({ ...json, provinces: provincesTriees });
       } catch (err) {
         console.error("Erreur de fetch:", err);
       } finally {
@@ -23,7 +31,7 @@ export default function ArgentinePage() {
     fetchData();
   }, []);
 
-  if (loading) return <div className="text-center mt-20 font-medium text-slate-500">Chargement des données de l'Argentine...</div>;
+  if (loading) return <div className="text-center mt-20 font-medium text-slate-500">Chargement et tri des données...</div>;
   if (!data) return <div className="text-center mt-20">Données non disponibles.</div>;
 
   return (
@@ -35,15 +43,13 @@ export default function ArgentinePage() {
       </Link>
       
       <h1 className="text-4xl font-extrabold text-slate-900 mb-8 text-center">
-        Démographie et Provinces de l'Argentine
+        Classement des provinces par population de leur capitale (Argentine)
       </h1>
 
-      {/* Section Provinces */}
+      {/* Section Provinces triées */}
       <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-        <MapIcon className="text-sun-600 text-yellow-500" /> Les Provinces Argentines
+        <MapIcon className="text-yellow-500" /> Provinces (Triées par capitale)
       </h2>
-
-      
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
         {data.provinces.map((prov, index) => (
@@ -51,15 +57,20 @@ export default function ArgentinePage() {
             key={index} 
             className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:border-blue-300 transition-colors"
           >
-            <h3 className="text-xl font-bold text-blue-800 mb-3">{prov.nom}</h3>
+            <div className="flex justify-between items-start mb-3">
+              <h3 className="text-xl font-bold text-blue-800">{prov.nom}</h3>
+              <span className="text-xs font-bold bg-slate-100 px-2 py-1 rounded text-slate-500">
+                #{index + 1}
+              </span>
+            </div>
             <div className="text-slate-700 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500 italic">Capitale</span>
-                <span className="font-medium">{prov.capitale}</span>
+                <span className="text-slate-500 italic">Capitale : {prov.capitale}</span>
+                <span className="font-bold text-blue-600">{prov.population_capitale} hab.</span>
               </div>
               <div className="flex justify-between items-center border-t pt-2 text-xs">
-                <span className="text-slate-500 uppercase tracking-wider">Pop. Totale</span>
-                <span className="font-bold text-slate-900">{prov.population_totale} hab.</span>
+                <span className="text-slate-500 uppercase tracking-wider">Population Province</span>
+                <span className="font-medium text-slate-900">{prov.population_totale} hab.</span>
               </div>
             </div>
           </article>
