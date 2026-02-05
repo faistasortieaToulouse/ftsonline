@@ -93,26 +93,40 @@ export default function ChinePage() {
         </div>
       </section>
 
-      {/* SECTION COMPLÉMENTAIRE : VILLES SECONDAIRES */}
-      {data.villes_principales_urbaines && (
-        <section className="mt-24">
-          <div className="flex items-center gap-4 mb-8">
-            <Building2 size={32} className="text-blue-600" />
-            <h2 className="text-3xl font-black uppercase tracking-tight text-slate-800">Index Urbain Complet</h2>
+{/* SECTION COMPLÉMENTAIRE : VILLES SECONDAIRES TRIÉES PAR POPULATION */}
+{data.villes_principales_urbaines && (
+  <section className="mt-24">
+    <div className="flex items-center justify-between mb-8 border-b-2 border-blue-100 pb-4">
+      <div className="flex items-center gap-4">
+        <Building2 size={32} className="text-blue-600" />
+        <h2 className="text-3xl font-black uppercase tracking-tight text-slate-800">Index Urbain Complet</h2>
+      </div>
+      <span className="text-xs font-bold text-blue-500 bg-blue-50 px-3 py-1 rounded-full uppercase">
+        Trié par Census 2020
+      </span>
+    </div>
+
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {/* On ajoute le TRI ici basé sur census_2020 */}
+      {[...data.villes_principales_urbaines]
+        .sort((a: any, b: any) => b.census_2020 - a.census_2020)
+        .map((v: any, i: number) => (
+          <div key={i} className="bg-slate-50 p-3 rounded-xl border border-transparent hover:border-blue-300 hover:bg-white transition-all group text-center relative overflow-hidden">
+            {/* Petit badge de classement discret */}
+            <span className="absolute top-0 left-0 bg-blue-100 text-blue-600 text-[8px] font-black px-1.5 rounded-br-lg">
+              #{i + 1}
+            </span>
+            
+            <p className="text-[9px] font-black text-slate-300 uppercase mb-1 truncate px-2">{v.province}</p>
+            <p className="font-bold text-slate-800 text-sm leading-tight mb-1">{v.ville}</p>
+            <p className="text-blue-600 font-mono text-[11px] font-black">
+              {v.census_2020.toLocaleString('fr-FR')}
+            </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {data.villes_principales_urbaines.map((v: any, i: number) => (
-              <div key={i} className="bg-slate-50 p-3 rounded-xl border border-transparent hover:border-blue-300 hover:bg-white transition-all group text-center">
-                <p className="text-[9px] font-black text-slate-300 uppercase mb-1">{v.province}</p>
-                <p className="font-bold text-slate-800 text-sm leading-tight mb-1">{v.ville}</p>
-                <p className="text-blue-600 font-mono text-[11px] font-black">
-                  {v.census_2020.toLocaleString('fr-FR')}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+        ))}
+    </div>
+  </section>
+)}
 
       <footer className="mt-20 pt-10 border-t border-slate-100 text-center">
         <p className="font-mono text-slate-400 text-[10px] uppercase tracking-widest">
