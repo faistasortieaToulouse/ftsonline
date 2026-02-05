@@ -29,16 +29,12 @@ export default function AfriqueDuSudPage() {
 
       <header className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase">
-            South Africa<span className="text-green-600">.</span>
-          </h1>
-          <p className="text-slate-400 font-mono mt-2 uppercase tracking-widest">Répertoire Urbain & Provincial 2026</p>
-        </div>
-        <div className="flex gap-2">
-          <div className="h-4 w-8 bg-[#E03C31]"></div>
-          <div className="h-4 w-8 bg-[#002395]"></div>
-          <div className="h-4 w-8 bg-[#FFB81C]"></div>
-          <div className="h-4 w-8 bg-[#007749]"></div>
+
+      <h1 className="text-4xl font-extrabold text-slate-900 mb-4 text-center">
+        Afrique du Sud
+      </h1>
+          
+          <p className="text-slate-400 font-mono mt-2 uppercase tracking-widest">Répertoire Urbain & Provincial</p>
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
