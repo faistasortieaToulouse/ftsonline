@@ -85,7 +85,7 @@ export default function RussiePage() {
       {/* SECTION 3: TABLEAU COMPLET DES OBLASTS */}
       <section>
         <h2 className="flex items-center gap-3 text-2xl font-black mb-8 uppercase text-slate-800">
-          <MapPin className="text-red-500" /> Répertoire des Oblasts
+          <MapPin className="text-red-500" /> Répertoire des villes des Oblasts
         </h2>
         <div className="overflow-hidden shadow-2xl rounded-2xl border border-slate-100">
           <table className="w-full text-left border-collapse">
