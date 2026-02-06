@@ -44,7 +44,7 @@ export default function MondePage() {
 
       <section className="mt-10 p-6 bg-slate-50 rounded-2xl border border-slate-100">
          <p className="text-slate-500 italic text-sm text-center">
-           Utilisez la barre de traduction située en haut de la page pour changer la langue.
+           Agrandissez la carte afin d'effectuer vos recherches.
          </p>
       </section>
     </main>
