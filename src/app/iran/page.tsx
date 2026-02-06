@@ -33,17 +33,16 @@ export default function IranPage() {
           <p className="text-slate-500 font-mono text-sm uppercase tracking-widest italic">
             Statistical Centre of Iran (Classé par population urbaine)
           </p>
+        </div>
+        
           <div className="flex items-center gap-3">
             <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase">
               République Islamique d'Iran
             </span>
-                      </div>
-                    <div>
             <span className="bg-slate-900 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
               Recensement 2020 & Estimations 2025/26
             </span>
           </div>
-        </div>
       <br />
       <br />
       </header>
