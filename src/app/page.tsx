@@ -79,7 +79,7 @@ const nbFrancais = 3;
 const nbHierarchie = 23;
 const nbSaHistoire = 12;
 const nbLangue = 1;
-const nbMonde = 1;
+const nbMonde = 20;
 const nbReligion = 3;
 const nbTerritoire = 8;
 const totalArticles = 
@@ -558,9 +558,10 @@ const categories = [
       { title: "Villes du Pérou", href: "/perou" },
       { title: "Villes de Russie", href: "/russie" },
       { title: "Villes de Turquie", href: "/turquie" },
+      { title: "Pays et villes du monde", href: "/monde" },
     ]
   },
-//  const nbMonde = 1;
+//  const nbMonde = 20;
 
   { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
     { title: "Religion Chine", href: "/religionchine" },
