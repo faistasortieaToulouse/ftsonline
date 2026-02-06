@@ -57,7 +57,7 @@ export default function EuropePage() {
         <h1 className="text-5xl font-black text-slate-900 tracking-tighter mb-2">
           {data.pays_continent} <span className="text-blue-600">.</span>
         </h1>
-        <p className="text-slate-500 font-medium uppercase text-xs tracking-[0.2em]">{data.data_source}</p>
+        <p className="text-slate-500 font-medium uppercase text-xs tracking-[0.2em]">Agglomérations & Aires Urbaines</p>
         
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-slate-400 font-mono">
