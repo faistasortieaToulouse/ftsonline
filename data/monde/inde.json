@@ -1,6 +1,6 @@
 {
   "pays": "Inde",
-  "data_source": "Estimations 2026 - Urban Economic Regions",
+  "data_source": "Source - Urban Economic Regions",
   "administration_territoriale": {
     "etats": [
       { "nom": "Andhra Pradesh", "capitale": "Amaravati", "pop_capitale": 800000 },
