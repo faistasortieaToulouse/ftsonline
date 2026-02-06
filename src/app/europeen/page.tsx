@@ -63,7 +63,7 @@ export default function EuropePage() {
           <p className="text-slate-400 font-mono">
             Recensement 2020 & Estimations 2025/26
           </p>
-          <span className="bg-yellow-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+          <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
             Classé par population urbaine
           </span>
         </div>
