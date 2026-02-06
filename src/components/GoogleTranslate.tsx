@@ -93,7 +93,7 @@ export default function GoogleTranslateCustom() {
       </Script>
 
 {/* On passe de mt-10 à mt-32 (environ 128px de descente) */}
-    <div className="google-translate-custom mt-28 mb-8 flex flex-col gap-4 w-[95%] sm:max-w-[600px] mx-auto sm:ml-auto p-6 bg-white rounded-3xl shadow-2xl border border-slate-200 relative z-50">
+    <div className="google-translate-custom mt-28 mb-8 flex flex-col gap-2 w-[95%] sm:max-w-[500px] mx-auto sm:ml-auto p-5 bg-white rounded-2xl shadow-lg border border-slate-200 relative z-10">
         <div className="flex gap-1.5 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
@@ -112,28 +112,24 @@ export default function GoogleTranslateCustom() {
           </button>
         </div>
 
-<div className="flex flex-col gap-2 w-full">
-  <select
-    onChange={(e) => changeLang(e.target.value)}
-    value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-    className="w-full px-4 py-3 text-sm font-black bg-blue-50/30 border-2 border-dashed border-blue-200 rounded-xl text-blue-700 outline-none hover:bg-blue-50 transition-colors uppercase tracking-widest"
-  >
-    <option value="" className="text-blue-600">🌍 VOIR TOUTES LES AUTRES LANGUES...</option>
-    {EXTRA_LANGS.map((lang) => (
-      <option key={lang.code} value={lang.code} className="text-slate-800">{lang.label}</option>
-    ))}
-  </select>
-  
-  <div className="flex justify-between items-center px-1">
-    <div className="flex items-center gap-2 text-[10px] text-slate-400 font-medium italic">
-      <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" alt="Google" width={14} height={14} />
-      <span>Traduction Google Translate</span>
-    </div>
-    <button onClick={() => setHelpOpen(true)} className="text-[10px] text-slate-500 hover:text-blue-600 font-bold underline underline-offset-4">
-      ❓ Besoin d'aide ?
-    </button>
-  </div>
-</div>
+        <div className="flex gap-2 items-center">
+          <div className="flex-1">
+            <select
+              onChange={(e) => changeLang(e.target.value)}
+              value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
+              className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors"
+            >
+              <option value="" className="text-blue-600">AUTRES LANGUES...</option>
+              {EXTRA_LANGS.map((lang) => (
+                <option key={lang.code} value={lang.code} className="text-slate-800">{lang.label}</option>
+              ))}
+            </select>
+          </div>
+          
+          <button onClick={() => setHelpOpen(true)} className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic underline underline-offset-2">
+            ❓ besoin d'aide ?
+          </button>
+        </div>
 
         <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1.5 px-1 font-medium italic">
           <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" alt="Google Translate" width={14} height={14} />
