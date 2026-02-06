@@ -49,10 +49,12 @@ export default function IndePage() {
       <header className="mb-16 border-b-4 border-orange-500 pb-6">
         <h1 className="text-6xl font-black text-slate-900 tracking-tighter uppercase italic">Inde<span className="text-orange-500">.</span></h1>
         
-      <div className="border-b-8 border-orange-500 pb-4 mb-12">
-        <h1 className="text-6xl font-black uppercase tracking-tighter italic">Inde</h1>
-        <p className="text-slate-400 font-mono mt-2">{data.data_source}</p>
-      </div>
+  <div className="mt-6 mb-8">
+    <p className="text-slate-500 font-mono text-sm uppercase tracking-widest italic">
+      {data.data_source}
+    </p>
+  </div>
+        
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-slate-400 font-mono">
             Recensement 2020 & Estimations 2025/26
@@ -70,7 +72,7 @@ export default function IndePage() {
               Tri Global Décroissant
             </span>
           </div>
-        </div>
+
       </header>
 
       {/* SECTION 1: TOP 6 MÉGALOPOLES (Mises en avant) */}
