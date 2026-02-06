@@ -49,11 +49,22 @@ export default function IndePage() {
       <header className="mb-16 border-b-4 border-orange-500 pb-6">
         <h1 className="text-6xl font-black text-slate-900 tracking-tighter uppercase italic">Inde<span className="text-orange-500">.</span></h1>
         
-  <div className="mt-6 mb-8">
-    <p className="text-slate-500 font-mono text-sm uppercase tracking-widest italic">
-      {data.data_source}
-    </p>
+<div className="mt-6 mb-8 flex flex-wrap items-center justify-between gap-4">
+  {/* Côté gauche : La Source */}
+  <p className="text-slate-500 font-mono text-sm uppercase tracking-widest italic">
+    {data.data_source}
+  </p>
+
+  {/* Côté droit : Les Badges */}
+  <div className="flex items-center gap-3">
+    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">
+      Union des États
+    </span>
+    <span className="bg-slate-900 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+      Tri Global Décroissant
+    </span>
   </div>
+</div>
         
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-slate-400 font-mono">
@@ -65,13 +76,6 @@ export default function IndePage() {
         </div>
       <br />
       <br />
-          
-          <div className="flex items-center gap-3">
-            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Union des États</span>
-            <span className="bg-slate-900 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
-              Tri Global Décroissant
-            </span>
-          </div>
 
       </header>
 
