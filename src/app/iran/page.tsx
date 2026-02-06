@@ -35,7 +35,7 @@ export default function IranPage() {
           </p>
         </div>
         
-          <div className="flex items-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
             <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase">
               République Islamique d'Iran
             </span>
