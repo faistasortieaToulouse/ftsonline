@@ -23,7 +23,7 @@ export default function MondePage() {
       */}
 
       <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-black mb-8 uppercase text-sm mt-20">
-        <ArrowLeft size={18} /> Retour
+        <ArrowLeft size={18} /> Retour à l'Accueil
       </Link>
 
       <header className="mb-10">
