@@ -1,0 +1,17 @@
+import { NextResponse } from 'next/server';
+import path from 'path';
+import { promises as fs } from 'fs';
+
+export async function GET() {
+  try {
+    // Chemin vers ton fichier JSON
+    const jsonPath = path.join(process.cwd(), 'data', 'monde', 'iran.json');
+    const fileContents = await fs.readFile(jsonPath, 'utf8');
+    const data = JSON.parse(fileContents);
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Erreur lors de la lecture du JSON Iran:", error);
+    return NextResponse.json({ error: "Fichier non trouvé" }, { status: 404 });
+  }
+}
