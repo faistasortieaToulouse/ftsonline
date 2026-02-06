@@ -30,7 +30,6 @@ export default function ParcJardinPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 1. Chargement des données
   async function fetchItems() {
     setLoading(true);
     setError(null);
@@ -50,7 +49,6 @@ export default function ParcJardinPage() {
     fetchItems();
   }, []);
 
-  // 2. Filtrage
   const filteredItems = items.filter(item => {
     const q = searchQuery.toLowerCase();
     return (
@@ -63,7 +61,6 @@ export default function ParcJardinPage() {
     );
   });
 
-  // 3. Initialisation Leaflet (OTAN)
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current) return;
 
@@ -72,12 +69,9 @@ export default function ParcJardinPage() {
 
       if (!mapInstance.current) {
         mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.444], 13);
-
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(mapInstance.current);
-
-        // Groupe de marqueurs pour gestion facile
         markersGroupRef.current = L.layerGroup().addTo(mapInstance.current);
         setIsMapReady(true);
       }
@@ -93,36 +87,18 @@ export default function ParcJardinPage() {
     };
   }, []);
 
-  // 4. Mise à jour des marqueurs selon le filtrage
   useEffect(() => {
     if (!isMapReady || !markersGroupRef.current) return;
 
     const updateMarkers = async () => {
       const L = (await import('leaflet')).default;
-      
-      // On vide les anciens marqueurs
       markersGroupRef.current.clearLayers();
 
       filteredItems.forEach((item, i) => {
         const numero = i + 1;
-
-        // Création d'une icône personnalisée avec numéro
         const customIcon = L.divIcon({
           className: 'custom-div-icon',
-          html: `<div style="
-            background-color: #15803d; 
-            color: white; 
-            width: 24px; 
-            height: 24px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 10px; 
-            font-weight: bold; 
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          ">${numero}</div>`,
+          html: `<div style="background-color: #15803d; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${numero}</div>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12]
         });
@@ -131,9 +107,7 @@ export default function ParcJardinPage() {
           <div style="font-family: sans-serif; font-size: 13px;">
             <strong style="color: #15803d;">${numero}. ${item.name}</strong><br/>
             <b>Type :</b> ${item.type}<br/>
-            <b>Adresse :</b> ${item.adresse}<br/>
-            <b>Quartier :</b> ${item.quartier}<br/>
-            <b>Commune :</b> ${item.commune}
+            <b>Adresse :</b> ${item.adresse}
           </div>
         `;
 
@@ -148,7 +122,6 @@ export default function ParcJardinPage() {
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -156,9 +129,9 @@ export default function ParcJardinPage() {
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-bold mb-4">🌿 Espaces verts et parcs de Toulouse</h1>
-      <p className="mb-4 font-semibold">
-        {filteredItems.length} lieux affichés sur {items.length} espaces verts au total.
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">🌿 Espaces verts de Toulouse</h1>
+      <p className="mb-4 font-semibold text-sm md:text-base">
+        {filteredItems.length} lieux affichés sur {items.length}.
       </p>
 
       <input
@@ -166,20 +139,20 @@ export default function ParcJardinPage() {
         placeholder="Rechercher un parc ou jardin..."
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
-        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-green-300 shadow-sm"
+        className="w-full mb-4 p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm transition-all"
       />
 
       {error && (
-        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
+        <div className="mb-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded-lg">
           <strong>Erreur :</strong> {error}
         </div>
       )}
 
-      {/* CARTE LEAFLET */}
+      {/* CARTE LEAFLET - Hauteur réduite sur mobile */}
       <div
         ref={mapRef}
-        style={{ height: "60vh", width: "100%", zIndex: 0 }}
-        className="mb-6 border rounded-lg bg-gray-100 shadow-inner"
+        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh]"
+        style={{ zIndex: 0 }}
       >
         {!isMapReady && (
           <div className="flex items-center justify-center h-full">
@@ -188,41 +161,42 @@ export default function ParcJardinPage() {
         )}
       </div>
 
-      <div className="overflow-x-auto border rounded-lg shadow-sm">
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
-          <thead style={{ backgroundColor: "#f0f0f0" }}>
-            <tr>
-              <th style={{ padding: "12px 8px", borderBottom: "2px solid #ddd", width: "5%" }}>#</th>
-              <th style={{ padding: "12px 8px", borderBottom: "2px solid #ddd", textAlign: 'left' }}>Nom</th>
-              <th style={{ padding: "12px 8px", borderBottom: "2px solid #ddd", textAlign: 'left' }}>Type</th>
-              <th style={{ padding: "12px 8px", borderBottom: "2px solid #ddd", textAlign: 'left' }}>Adresse</th>
-              <th style={{ padding: "12px 8px", borderBottom: "2px solid #ddd", textAlign: 'left' }}>Quartier</th>
-              <th style={{ padding: "12px 8px", borderBottom: "2px solid #ddd", textAlign: 'left' }}>Commune</th>
-              <th style={{ padding: "12px 8px", borderBottom: "2px solid #ddd", textAlign: 'left' }}>Territoire</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems.map((item, i) => (
-              <tr 
-                key={`${item.id}-${i}`} 
-                style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#fbfbfb" }}
-                className="hover:bg-green-50 transition-colors"
-              >
-                <td style={{ padding: "10px 8px", borderBottom: "1px solid #eee", fontWeight: 'bold', textAlign: 'center' }}>{i + 1}</td>
-                <td style={{ padding: "10px 8px", borderBottom: "1px solid #eee", fontWeight: '500' }}>{item.name}</td>
-                <td style={{ padding: "10px 8px", borderBottom: "1px solid #eee" }}>{item.type}</td>
-                <td style={{ padding: "10px 8px", borderBottom: "1px solid #eee", color: '#666' }}>{item.adresse}</td>
-                <td style={{ padding: "10px 8px", borderBottom: "1px solid #eee" }}>{item.quartier}</td>
-                <td style={{ padding: "10px 8px", borderBottom: "1px solid #eee" }}>{item.commune}</td>
-                <td style={{ padding: "10px 8px", borderBottom: "1px solid #eee" }}>{item.territoire}</td>
+      {/* TABLEAU RESPONSIVE */}
+      <div className="overflow-hidden border rounded-2xl shadow-sm bg-white dark:bg-slate-900">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+              <tr>
+                <th className="p-4 font-bold text-center w-12">#</th>
+                <th className="p-4 font-bold">Nom / Adresse</th>
+                <th className="p-4 font-bold hidden sm:table-cell">Type</th>
+                <th className="p-4 font-bold hidden md:table-cell">Quartier</th>
+                <th className="p-4 font-bold hidden lg:table-cell">Commune</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {filteredItems.map((item, i) => (
+                <tr key={`${item.id}-${i}`} className="hover:bg-green-50/50 dark:hover:bg-green-900/10 transition-colors">
+                  <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
+                  <td className="p-4">
+                    <div className="font-bold text-green-800 dark:text-green-400">{item.name}</div>
+                    {/* Adresse affichée sous le nom sur MOBILE seulement */}
+                    <div className="text-[11px] text-slate-500 md:text-sm md:text-slate-600 block">
+                      {item.adresse}
+                    </div>
+                  </td>
+                  <td className="p-4 hidden sm:table-cell text-slate-600 dark:text-slate-300">{item.type}</td>
+                  <td className="p-4 hidden md:table-cell text-slate-500 italic">{item.quartier}</td>
+                  <td className="p-4 hidden lg:table-cell text-slate-500">{item.commune}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {filteredItems.length === 0 && !loading && (
-        <p className="text-center py-10 text-gray-500">Aucun parc ne correspond à votre recherche.</p>
+        <p className="text-center py-10 text-gray-400 italic">Aucun résultat trouvé.</p>
       )}
     </div>
   );
