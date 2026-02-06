@@ -14,6 +14,7 @@ const facebookGroups = [
   { name: "Soirées sorties entre filles Toulouse et Occitanie", url: "https://www.facebook.com/groups/1397077878141492" },
   { name: "Aller au théâtre, impro, stand up, spectacles, comédie à Toulouse", url: "https://www.facebook.com/groups/1396560737927890" },
   // Nouveaux ajouts
+  { name: "Sport à Toulouse", url: "https://www.facebook.com/groups/1492320668700625/" },
   { name: "Sortie ski dans les Pyrénées à partir de Toulouse", url: "https://www.facebook.com/groups/304919476675833" },
   { name: "Toulouse Sortie Plage", url: "https://www.facebook.com/groups/1634680750109791/" },
   { name: "Club lecture et club d'écriture à Toulouse", url: "https://www.facebook.com/groups/1355306319236116/" },
