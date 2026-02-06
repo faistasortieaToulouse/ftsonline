@@ -24,6 +24,7 @@ export async function GET() {
         { name: "Babelang", url: "http://babelang.free.fr/" },
         { name: "Langoland", url: "http://langoland.free.fr/" },
         { name: "Toulangues (Toulouse)", url: "https://www.toulangues.org/" },
+        { name: "Language Exchange International (LEI)", url: "http://lei-web.click" },
       ]
     }
   ];
