@@ -33,6 +33,12 @@ export async function GET() {
       categorie: "Géopolitique"
     },
     {
+      titre: "Villes de l'Union européenne",
+      url: "https://fr.wikipedia.org/wiki/Liste_des_villes_de_l%27Union_europ%C3%A9enne_par_population",
+      description: "Classement des zones urbaines les plus peuplées au sein de l'UE.",
+      categorie: "Europe"
+    },
+    {
       titre: "Mégalopoles & Villes",
       url: "https://fr.wikipedia.org/wiki/Liste_des_villes_et_agglom%C3%A9rations_les_plus_peupl%C3%A9es",
       description: "Les agglomérations urbaines les plus massives du monde.",
