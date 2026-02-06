@@ -49,11 +49,20 @@ export default function IndePage() {
       <header className="mb-16 border-b-4 border-orange-500 pb-6">
         <h1 className="text-6xl font-black text-slate-900 tracking-tighter uppercase italic">Inde<span className="text-orange-500">.</span></h1>
         
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mt-4 gap-4">
-          <div>
-            <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">{data.data_source}</p>
-            <p className="text-slate-400 font-mono text-xs italic">Recensement 2020 & Estimations 2025/26</p>
-          </div>
+      <div className="border-b-8 border-orange-500 pb-4 mb-12">
+        <h1 className="text-6xl font-black uppercase tracking-tighter italic">Inde</h1>
+        <p className="text-slate-400 font-mono mt-2">{data.data_source}</p>
+      </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-slate-400 font-mono">
+            Recensement 2020 & Estimations 2025/26
+          </p>
+          <span className="bg-yellow-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
+            Classé par population urbaine
+          </span>
+        </div>
+      <br />
+      <br />
           
           <div className="flex items-center gap-3">
             <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Union des États</span>
@@ -88,7 +97,7 @@ export default function IndePage() {
       {/* SECTION 2: ÉTATS & CAPITALES (Tri administratif) */}
       <section className="mb-20">
         <h2 className="flex items-center gap-3 text-2xl font-black mb-8 border-l-8 border-orange-500 pl-4 uppercase">
-          <Landmark className="text-slate-400" /> Capitales par poids administratif
+          <Landmark className="text-slate-400" /> Etats par taille démographique des capitales
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {data.etatsTries.map((e: any, i: number) => (
@@ -104,7 +113,7 @@ export default function IndePage() {
       {/* SECTION 3: CLASSEMENT COMPLET DES VILLES (Tableau trié) */}
       <section>
         <h2 className="flex items-center gap-3 text-2xl font-black mb-8 uppercase text-slate-800">
-          <MapPin className="text-orange-500" /> Répertoire Urbain National
+          <MapPin className="text-orange-500" /> Répertoire Urbain National par population
         </h2>
         <div className="overflow-hidden shadow-2xl rounded-2xl border border-slate-100">
           <table className="w-full text-left border-collapse">
