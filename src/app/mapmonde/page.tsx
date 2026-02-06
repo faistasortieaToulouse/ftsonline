@@ -3,8 +3,9 @@
 import dynamic from 'next/dynamic';
 import Link from "next/link";
 import { ArrowLeft, Globe } from "lucide-react";
-// Importe ton composant GoogleTranslate ici
-import GoogleTranslateCustom from "@/components/GoogleTranslateCustom"; 
+
+// ON SUPPRIME L'IMPORT QUI CAUSAIT L'ERREUR
+// Car le traducteur est géré par le layout.tsx
 
 // Import dynamique de la carte
 const MapWorld = dynamic(() => import('./MapWorld'), { 
@@ -16,12 +17,12 @@ export default function MondePage() {
   return (
     <main className="max-w-6xl mx-auto p-6 bg-white min-h-screen relative">
       
-      {/* 1. LE TRADUCTEUR (Placé en haut avec un z-index forcé) */}
-      <div className="relative" style={{ zIndex: 9999 }}>
-        <GoogleTranslateCustom />
-      </div>
+      {/* IMPORTANT : 
+          Le GoogleTranslateCustom n'est plus appelé ici car il descend déjà de ton layout. 
+          On laisse un espace vide ou on met le bouton retour.
+      */}
 
-      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-black mb-8 uppercase text-sm">
+      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-black mb-8 uppercase text-sm mt-20">
         <ArrowLeft size={18} /> Retour
       </Link>
 
@@ -31,8 +32,9 @@ export default function MondePage() {
         </h1>
       </header>
 
-      {/* 2. ESPACEMENT ET CARTE */}
-      {/* On ajoute 'relative' et un z-index plus faible que le traducteur */}
+      {/* LA CARTE 
+          On garde z-index: 1 pour qu'elle reste "sous" le menu du layout 
+      */}
       <section className="mb-12 relative" style={{ zIndex: 1 }}>
         <div className="mb-6 text-xs font-mono text-slate-400 uppercase tracking-widest italic">
           — Navigation interactive via OpenStreetMap
@@ -40,10 +42,10 @@ export default function MondePage() {
         <MapWorld />
       </section>
 
-      {/* 3. TES LIENS WIKIPÉDIA (en bas) */}
       <section className="mt-10 p-6 bg-slate-50 rounded-2xl border border-slate-100">
-         {/* Ton code pour afficher les liens de l'API ici */}
-         <p className="text-slate-500 italic text-sm">Les ressources documentaires sont chargées ci-dessous...</p>
+         <p className="text-slate-500 italic text-sm text-center">
+           Utilisez la barre de traduction située en haut de la page pour changer la langue.
+         </p>
       </section>
     </main>
   );
