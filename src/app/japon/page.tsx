@@ -21,7 +21,7 @@ export default function JaponPage() {
   return (
     <main className="max-w-7xl mx-auto p-6 bg-white min-h-screen">
       <Link href="/" className="inline-flex items-center gap-2 text-red-600 font-black mb-8 hover:translate-x-[-4px] transition-transform uppercase text-sm">
-        <ArrowLeft size={18} /> Retour
+        <ArrowLeft size={18} /> Retour à l'Accueil
       </Link>
 
       <header className="mb-16 border-b-4 border-red-600 pb-6">
