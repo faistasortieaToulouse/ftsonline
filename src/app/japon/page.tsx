@@ -28,18 +28,7 @@ export default function JaponPage() {
         <h1 className="text-6xl font-black text-slate-900 tracking-tighter uppercase italic">
           Japon<span className="text-red-600">.</span>
         </h1>
-        
-        <div className="flex flex-wrap items-center gap-3">
-          <p className="text-slate-400 font-mono">
-            Recensement 2020 & Estimations 2025/26
-          </p>
-          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter">
-            Classé par population urbaine
-          </span>
-        </div>
-      <br />
-      <br />
-        
+                
         {/* LIGNE 1 : Source */}
         <div className="mt-6">
           <p className="text-slate-500 font-mono text-sm uppercase tracking-widest italic">
