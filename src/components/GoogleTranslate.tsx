@@ -93,7 +93,7 @@ export default function GoogleTranslateCustom() {
       </Script>
 
 {/* On passe de mt-10 à mt-32 (environ 128px de descente) */}
-    <div className="google-translate-custom mt-28 mb-8 flex flex-col gap-2 w-[95%] max-w-[400px] mx-auto sm:ml-auto p-4 bg-white rounded-xl shadow-md border border-slate-200 relative z-10">
+    <div className="google-translate-custom mt-28 mb-8 flex flex-col gap-2 w-[95%] sm:max-w-[500px] mx-auto sm:ml-auto p-5 bg-white rounded-2xl shadow-lg border border-slate-200 relative z-10">
         <div className="flex gap-1.5 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
