@@ -77,7 +77,7 @@ export default function RootLayout({
             {/* Zone du traducteur Google (Optimisée pour éviter le saut de mise en page) */}
             <div className="flex items-center">
               {/* min-h-[75px] réserve l'espace pour "Besoin d'aide" + le sélecteur */}
-              <div className="w-48 sm:w-64 min-h-[75px] flex flex-col justify-center">
+              <div className="w-full sm:min-w-[500px] md:min-w-[650px] min-h-[75px] flex flex-col justify-center">
                 <GoogleTranslate />
               </div>
             </div>
