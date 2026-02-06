@@ -112,19 +112,20 @@ export default function GoogleTranslateCustom() {
           </button>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <div className="flex-1">
-            <select
-              onChange={(e) => changeLang(e.target.value)}
-              value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-              className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors"
-            >
-              <option value="" className="text-blue-600">AUTRES LANGUES...</option>
-              {EXTRA_LANGS.map((lang) => (
-                <option key={lang.code} value={lang.code} className="text-slate-800">{lang.label}</option>
-              ))}
-            </select>
-          </div>
+<div className="flex gap-3 items-center"> {/* Augmentation du gap à 3 */}
+  <div className="flex-[2]"> {/* On donne plus de poids (flex-2) au sélecteur */}
+    <select
+      onChange={(e) => changeLang(e.target.value)}
+      value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
+      className="w-full px-3 py-2 text-[12px] font-black bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors uppercase tracking-tight"
+    >
+      <option value="" className="text-blue-600">AUTRES LANGUES...</option>
+      {EXTRA_LANGS.map((lang) => (
+        <option key={lang.code} value={lang.code} className="text-slate-800">{lang.label}</option>
+      ))}
+    </select>
+  </div>
+          
           <button onClick={() => setHelpOpen(true)} className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic underline underline-offset-2">
             ❓ besoin d'aide ?
           </button>
