@@ -196,7 +196,7 @@ export default function AriegeMapPage() {
                         <div className="flex items-center gap-2">
                           <Info size={16} style={{ color: getMarkerColor(site.categorie) }} />
                           <span className="text-sm text-slate-700">
-                            <strong className="text-slate-900">Niveau :</strong> {site.niveau} / 5
+                            <strong className="text-slate-900">Niveau :</strong> {site.niveau}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-slate-500">
