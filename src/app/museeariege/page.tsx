@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Musee } from '../api/museeariege/route';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag } from "lucide-react";
 
 const ARIEGE_CENTER: [number, number] = [42.96, 1.60];
 const THEME_COLOR = '#8b5cf6';
@@ -13,6 +13,7 @@ export default function MuseeAriegePage() {
   const [musees, setMusees] = useState<Musee[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
@@ -55,22 +56,9 @@ export default function MuseeAriegePage() {
     };
   }, [isLoadingData]);
 
-  useEffect(() => {
-    if (!isReady || !mapInstance.current || musees.length === 0) return;
-    const addMarkers = async () => {
-      const L = (await import('leaflet')).default;
-      musees.forEach((m, i) => {
-        const customIcon = L.divIcon({
-          className: 'custom-marker',
-          html: `<div style="background-color: ${THEME_COLOR}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px;">${i + 1}</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
-        });
-        L.marker([m.lat, m.lng], { icon: customIcon }).bindPopup(`<strong>${m.nom}</strong>`).addTo(mapInstance.current);
-      });
-    };
-    addMarkers();
-  }, [isReady, musees]);
+  const toggleRow = (id: number) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
 
   if (error) return <div className="p-10 text-red-500 text-center font-bold italic">Erreur : {error}</div>;
 
@@ -91,53 +79,75 @@ export default function MuseeAriegePage() {
       </div>
 
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-left border-separate border-spacing-0">
           <thead className="bg-slate-50 border-b border-slate-200 text-[11px] md:text-sm text-slate-500 uppercase font-bold">
             <tr>
               <th className="p-4 w-12 text-center">N°</th>
               <th className="p-4 hidden md:table-cell">Commune</th>
               <th className="p-4">Type du Site</th>
-              <th className="p-4 hidden sm:table-cell">Catégorie</th>
+              <th className="p-4 hidden md:table-cell">Catégorie</th>
               <th className="p-4 hidden lg:table-cell">Adresse</th>
-              <th className="p-4 w-16 text-center">LIEN</th>
+              <th className="p-4 w-24 text-center">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-xs md:text-sm">
+          <tbody className="divide-y divide-slate-100 text-xs md:text-sm font-medium">
             {musees.map((m, i) => (
-              <tr key={i} className="hover:bg-violet-50/30 transition-colors">
-                <td className="p-4 text-center font-bold text-violet-400">{i + 1}</td>
-                
-                {/* 1. Colonne Commune : Visible uniquement sur Tablettes/PC */}
-                <td className="p-4 hidden md:table-cell font-semibold text-slate-700">
-                  {m.commune}
-                </td>
-
-                {/* 2. Colonne Type du Site : Toujours visible */}
-                <td className="p-4">
-                  <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
-                  {/* Sur Mobile (md:hidden), on affiche la commune ici juste en dessous du nom */}
-                  <div className="text-[10px] text-violet-600 font-bold md:hidden mt-1 uppercase italic leading-none">
+              <React.Fragment key={i}>
+                <tr 
+                  onClick={() => toggleRow(i)}
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-violet-50/50' : 'hover:bg-slate-50'}`}
+                >
+                  <td className="p-4 text-center font-bold text-violet-400">{i + 1}</td>
+                  
+                  <td className="p-4 hidden md:table-cell text-slate-700">
                     {m.commune}
-                  </div>
-                </td>
+                  </td>
 
-                {/* 3. Catégorie : Masquée sur tout petit mobile */}
-                <td className="p-4 hidden sm:table-cell text-slate-500 font-medium">
-                  {m.categorie}
-                </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
+                      <div className="md:hidden">
+                        {expandedId === i ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-violet-600 font-bold md:hidden mt-1 uppercase italic">
+                      {m.commune}
+                    </div>
+                  </td>
 
-                {/* 4. Adresse : Visible uniquement sur grands écrans */}
-                <td className="p-4 hidden lg:table-cell text-slate-500 italic">
-                  {m.adresse}
-                </td>
+                  <td className="p-4 hidden md:table-cell text-slate-500">
+                    {m.categorie}
+                  </td>
 
-                {/* 5. Action : Toujours visible */}
-                <td className="p-4 text-center">
-                  <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 inline-block">
-                    Web <ExternalLink size={18} />
-                  </a>
-                </td>
-              </tr>
+                  <td className="p-4 hidden lg:table-cell text-slate-500 italic">
+                    {m.adresse}
+                  </td>
+
+                  <td className="p-4 text-center">
+                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:scale-110 transition-transform inline-block p-1" onClick={(e) => e.stopPropagation()}>
+                      <ExternalLink size={18} />
+                    </a>
+                  </td>
+                </tr>
+
+                {/* ZONE DÉPLIABLE (Visible uniquement sur mobile quand la ligne est cliquée) */}
+                {expandedId === i && (
+                  <tr className="bg-violet-50/30 md:hidden">
+                    <td colSpan={3} className="p-4 pt-0">
+                      <div className="flex flex-col gap-2 py-3 border-t border-violet-100">
+                        <div className="flex items-start gap-2 text-slate-600">
+                          <Tag size={14} className="mt-0.5 text-violet-400" />
+                          <span><strong className="text-slate-700">Catégorie :</strong> {m.categorie}</span>
+                        </div>
+                        <div className="flex items-start gap-2 text-slate-600">
+                          <MapPin size={14} className="mt-0.5 text-violet-400" />
+                          <span><strong className="text-slate-700">Adresse :</strong> {m.adresse}</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>
