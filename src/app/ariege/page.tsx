@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, Search, ChevronDown, ChevronUp, MapPin, Star } from "lucide-react";
+import { ArrowLeft, Search, ChevronDown, ChevronUp, MapPin, Star, Info } from "lucide-react";
 
 // --- Interface de type ---
 interface SiteAriege {
@@ -117,7 +117,7 @@ export default function AriegeMapPage() {
       </nav>
 
       <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 italic">🏔️ Sites Touristiques en Ariège (09)</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 italic leading-tight">🏔️ Sites Touristiques en Ariège (09)</h1>
         <div className="flex flex-wrap gap-4 mt-3 text-xs md:text-sm font-bold">
           <span className="flex items-center gap-1 text-red-600">🔴 Incontournable</span>
           <span className="flex items-center gap-1 text-orange-500">🟠 Remarquable</span>
@@ -125,71 +125,78 @@ export default function AriegeMapPage() {
         </div>
       </header>
 
-      {/* Barre de recherche */}
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <input 
           type="text"
-          placeholder="Rechercher (Foix, Mirepoix, Château...)"
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-600 outline-none shadow-sm transition-all"
+          placeholder="Rechercher une commune ou un monument..."
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-600 outline-none shadow-sm transition-all text-sm"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      <div className="mb-8 border rounded-2xl bg-gray-100 h-[40vh] md:h-[55vh] relative z-0 overflow-hidden shadow-md"> 
+      <div className="mb-8 border rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
         <div ref={mapRef} className="h-full w-full" />
       </div>
 
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         <table className="w-full text-left border-collapse text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-900 uppercase font-bold text-[12px]">
+          <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase font-bold text-[11px]">
             <tr>
               <th className="p-4 w-12 text-center">#</th>
               <th className="p-4">Commune</th>
               <th className="p-4">Monument ou site emblématique</th>
               <th className="p-4 hidden md:table-cell text-center">Niveau</th>
               <th className="p-4 hidden md:table-cell">Catégorie</th>
-              <th className="p-4 md:hidden text-center">Infos</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredSites.map((site, i) => (
-              <React.Fragment key={site.id}>
+              <React.Fragment key={`ariege-${site.id}`}>
                 <tr 
                   onClick={() => setExpandedId(expandedId === i ? null : i)}
-                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-slate-50' : 'hover:bg-slate-50/50'}`}
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-emerald-50/30' : 'hover:bg-slate-50'}`}
                 >
-                  <td className="p-4 text-center font-medium text-slate-400 align-top">{i + 1}</td>
+                  <td className="p-4 text-center font-bold text-slate-400 align-top">{i + 1}</td>
                   <td className="p-4 font-bold text-slate-900 align-top">{site.commune}</td>
-                  {/* Texte normal (pas d'italique, pas de gris clair) */}
-                  <td className="p-4 text-slate-800 align-top leading-relaxed text-sm">
-                    {site.description}
+                  <td className="p-4 align-top">
+                    <div className="flex items-start gap-2 justify-between">
+                      <div className="text-slate-800 leading-relaxed font-normal">{site.description}</div>
+                      <div className="md:hidden mt-1 flex-shrink-0">
+                        {expandedId === i ? <ChevronUp size={16} className="text-emerald-700" /> : <ChevronDown size={16} className="text-emerald-700" />}
+                      </div>
+                    </div>
                   </td>
+                  {/* Colonnes visibles uniquement sur Desktop */}
                   <td className="p-4 hidden md:table-cell text-center align-top font-bold text-base" style={{ color: getMarkerColor(site.categorie) }}>
                     {site.niveau}
                   </td>
                   <td className="p-4 hidden md:table-cell align-top font-bold text-base" style={{ color: getMarkerColor(site.categorie) }}>
                     {site.categorie.charAt(0).toUpperCase() + site.categorie.slice(1)}
                   </td>
-                  <td className="p-4 md:hidden text-center align-top">
-                    {expandedId === i ? <ChevronUp size={18} className="text-slate-400" /> : <ChevronDown size={18} className="text-slate-400" />}
-                  </td>
                 </tr>
 
+                {/* Détails accordéon pour mobile (Niveau + Catégorie) */}
                 {expandedId === i && (
-                  <tr className="bg-slate-50/80 md:hidden">
-                    <td colSpan={4} className="p-4 pt-0">
-                      <div className="flex flex-col gap-3 py-3 border-t border-slate-200">
+                  <tr className="bg-emerald-50/20 md:hidden">
+                    <td colSpan={3} className="p-4 pt-0">
+                      <div className="flex flex-col gap-3 py-3 border-t border-emerald-100">
                         <div className="flex items-center gap-2">
                           <Star size={16} style={{ color: getMarkerColor(site.categorie) }} />
                           <span className="text-sm font-bold" style={{ color: getMarkerColor(site.categorie) }}>
-                            {site.categorie.charAt(0).toUpperCase() + site.categorie.slice(1)} (Niveau {site.niveau})
+                            {site.categorie.charAt(0).toUpperCase() + site.categorie.slice(1)}
                           </span>
                         </div>
-                        <div className="flex items-start gap-2 text-slate-600">
-                          <MapPin size={16} className="mt-0.5 text-slate-400 flex-shrink-0" />
-                          <span className="text-xs">Pyrénées Ariégeoises</span>
+                        <div className="flex items-center gap-2 text-slate-700">
+                          <Info size={16} style={{ color: getMarkerColor(site.categorie) }} />
+                          <span className="text-sm">
+                            <strong>Niveau d'intérêt :</strong> {site.niveau}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <MapPin size={16} />
+                          <span className="text-xs italic">Pyrénées Ariégeoises</span>
                         </div>
                       </div>
                     </td>
