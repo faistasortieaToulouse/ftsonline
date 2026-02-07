@@ -140,7 +140,7 @@ export default function GoogleTranslateCustom() {
             </div>
             
             <button onClick={() => setHelpOpen(true)} className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic underline underline-offset-2">
-              ❓ aide
+              ❓ besoin d'aide
             </button>
           </div>
         </div>
@@ -152,14 +152,63 @@ export default function GoogleTranslateCustom() {
         </div>
       </div>
 
-      {/* MODALE D'AIDE IDENTIQUE... */}
+      {/* ✅ MODALE D'AIDE : SOLUTION RADICALE POUR LE CENTRAGE ET LE Z-INDEX */}
       {helpOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-start justify-center p-4 pt-32" style={{ zIndex: 2147483647 }} onClick={() => setHelpOpen(false)}>
-          <div className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setHelpOpen(false)} className="absolute top-2 right-4 text-3xl font-light text-slate-400 hover:text-slate-900 transition-colors p-1">&times;</button>
-            <h3 className="text-lg font-extrabold mb-4">🧭 Aide : Google Translate</h3>
-            <div className="space-y-4 text-sm"><p>Si la traduction bloque, videz les cookies de : <strong>ftstoulouse.online</strong></p></div>
-            <button onClick={() => setHelpOpen(false)} className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all active:scale-95">J'ai compris</button>
+        <div
+          className="fixed inset-0 bg-black/80 flex items-start justify-center p-4 pt-20"
+          style={{ zIndex: 2147483647 }} // Valeur maximale possible pour être au-dessus de TOUT
+          onClick={() => setHelpOpen(false)}
+        >
+          <div
+            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[85vh]"
+            style={{ transform: 'translateY(0)' }} // S'assure qu'on ne subit pas de décalage parasite
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setHelpOpen(false)}
+              className="absolute top-2 right-4 text-3xl font-light text-slate-400 hover:text-slate-900 transition-colors p-1"
+            >
+              &times;
+            </button>
+
+            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2 pr-8">
+              🧭 Aide : Google Translate
+            </h3>
+            
+            <div className="space-y-4 text-sm leading-relaxed">
+              <p>
+                Si la traduction reste bloquée ou masque le menu, supprimez les cookies du site : 
+                <code className="block mt-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600 text-center text-[10px] break-all">
+                  faistasortieatoulouse.online
+                </code>
+              </p>
+
+              <div className="space-y-3 border-l-2 border-slate-100 pl-3">
+                <div className="flex flex-col">
+                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Chrome / Edge</span> 
+                  <span>🔒 à gauche de l’URL → <em>Cookies</em> → Supprimer.</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Firefox</span> 
+                  <span>🔒 → <em>Effacer les cookies et données</em>.</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Safari</span> 
+                  <span>Réglages → Confidentialité → Supprimer le site.</span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-[12px] italic">
+                🌍 <strong>Note :</strong> Si la barre Google gêne la lecture, cliquez sur ⚙️ (dans la barre) puis sur 
+                <em> "Afficher la page originale"</em>.
+              </div>
+            </div>
+
+            <button onClick={() => setHelpOpen(false)} 
+            className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all active:scale-95"
+            >
+            J'ai compris
+            </button>
           </div>
         </div>
       )}
