@@ -1,8 +1,9 @@
-'use client'; 
+'use client';
 
-import { useEffect, useState, useRef, CSSProperties } from "react"; 
+import React, { useEffect, useState, useRef } from 'react';
+import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Search, ChevronDown, ChevronUp, MapPin, Star } from "lucide-react";
 
 // --- Interface de type ---
 interface SiteAriege {
@@ -13,7 +14,7 @@ interface SiteAriege {
   categorie: 'incontournable' | 'remarquable' | 'suggéré';
   lat: number;
   lng: number;
-} 
+}
 
 const ARIÈGE_CENTER: [number, number] = [42.9667, 1.6000];
 
@@ -27,18 +28,16 @@ const getMarkerColor = (categorie: SiteAriege['categorie']): string => {
   }
 };
 
-const getLabelColor = (categorie: SiteAriege['categorie']): string => {
-  return (categorie === 'remarquable') ? 'white' : 'yellow';
-};
-
-export default function AriegeMapPage() { 
+export default function AriegeMapPage() {
   const [sitesData, setSitesData] = useState<SiteAriege[]>([]);
-  const [isLoadingData, setIsLoadingData] = useState(true);
-  
-  // Refs pour gérer Leaflet manuellement
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
-  const [L, setL] = useState<any>(null);
+  const markersLayer = useRef<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   // 1. Fetch des données
   useEffect(() => {
@@ -47,154 +46,160 @@ export default function AriegeMapPage() {
         const response = await fetch('/api/ariege');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         let data: SiteAriege[] = await response.json();
-        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
         setSitesData(data);
       } catch (error) {
-        console.error("Erreur lors de la récupération des sites:", error);
+        console.error("Erreur:", error);
       } finally {
-        setIsLoadingData(false);
+        setIsLoading(false);
       }
     }
     fetchSites();
   }, []);
 
-  // 2. Initialisation de la carte (une seule fois)
+  // 2. Filtrage et Tri
+  const filteredSites = sitesData
+    .filter(s => 
+      s.commune?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => a.commune.localeCompare(b.commune));
+
+  // 3. Initialisation de la carte
   useEffect(() => {
-    if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
+    if (typeof window === "undefined" || !mapRef.current || isLoading) return;
 
     const initMap = async () => {
-      const Leaflet = (await import('leaflet')).default;
-      await import('leaflet/dist/leaflet.css');
-      setL(Leaflet);
+      const L = (await import('leaflet')).default;
+      if (mapInstance.current) return;
 
-      if (mapInstance.current) return; // Sécurité anti-double-initialisation
-
-      // Création de l'instance
-      mapInstance.current = Leaflet.map(mapRef.current).setView(ARIÈGE_CENTER, 9);
-
-      Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+      mapInstance.current = L.map(mapRef.current!).setView(ARIÈGE_CENTER, 9);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
-    };
 
+      markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+      setIsMapReady(true);
+    };
     initMap();
+  }, [isLoading]);
 
-    // NETTOYAGE : Détruit la carte quand on quitte la page ou qu'on recharge
-    return () => {
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
-      }
-    };
-  }, [isLoadingData]);
-
-  // 3. Ajout des marqueurs quand la carte ET les données sont prêtes
+  // 4. Mise à jour des marqueurs
   useEffect(() => {
-    if (!L || !mapInstance.current || sitesData.length === 0) return;
+    if (!isMapReady || !mapInstance.current) return;
+    
+    const updateMarkers = async () => {
+      const L = (await import('leaflet')).default;
+      markersLayer.current.clearLayers();
 
-    sitesData.forEach((site, i) => {
-      const customIcon = L.divIcon({
-        className: 'custom-leaflet-marker',
-        html: `
-          <div style="
-            background-color: ${getMarkerColor(site.categorie)};
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 2px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: ${getLabelColor(site.categorie)};
-            font-weight: bold;
-            font-size: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          ">
-            ${i + 1}
-          </div>
-        `,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
+      filteredSites.forEach((site, i) => {
+        const color = getMarkerColor(site.categorie);
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="background-color: ${color}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
+        });
+
+        L.marker([site.lat, site.lng], { icon: customIcon })
+          .bindPopup(`<strong>${site.commune}</strong><br/>${site.description}`)
+          .addTo(markersLayer.current);
       });
+    };
+    updateMarkers();
+  }, [isMapReady, filteredSites]);
 
-      const marker = L.marker([site.lat, site.lng], { icon: customIcon });
-      marker.bindPopup(`
-        <div style="font-family: Arial; font-size: 14px; color: black;"> 
-          <strong>${i + 1}. ${site.commune}</strong> (${site.categorie})<br/> 
-          <b>Description :</b> ${site.description}<br/>
-          <b>Niveau :</b> ${site.niveau}
-        </div>
-      `);
-      marker.addTo(mapInstance.current);
-    });
-  }, [L, sitesData]);
-
-  return ( 
-    <div className="p-4 max-w-7xl mx-auto"> 
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+  return (
+    <div className="max-w-7xl mx-auto p-4 bg-slate-50 min-h-screen">
+      <nav className="mb-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-emerald-800 font-bold hover:underline transition-all">
+          <ArrowLeft size={18} /> Retour à l'accueil
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-extrabold mb-6">🏔️ Sites Touristiques en Ariège</h1> 
+      <header className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 italic">🏔️ Sites Touristiques en Ariège (09)</h1>
+        <div className="flex flex-wrap gap-4 mt-3 text-xs md:text-sm font-bold">
+          <span className="flex items-center gap-1 text-red-600">🔴 Incontournable</span>
+          <span className="flex items-center gap-1 text-orange-500">🟠 Remarquable</span>
+          <span className="flex items-center gap-1 text-blue-600">🔵 Suggéré</span>
+        </div>
+      </header>
 
-      <p className="font-semibold text-lg mb-4 text-slate-700">
-        Statut : {isLoadingData ? 'Chargement des données...' : `${sitesData.length} sites chargés.`}
-      </p>
-
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', flexWrap: 'wrap', backgroundColor: 'white' }}>
-        <strong>Légende :</strong>
-        <span style={{ color: '#ef4444', fontWeight: 'bold' }}>🔴 Incontournable</span>
-        <span style={{ color: '#f97316', fontWeight: 'bold' }}>🟠 Remarquable</span>
-        <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>🔵 Suggéré</span>
+      {/* Barre de recherche */}
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+        <input 
+          type="text"
+          placeholder="Rechercher (Foix, Mirepoix, Château...)"
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-600 outline-none shadow-sm transition-all"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
 
-      {/* CONTENEUR DE LA CARTE */}
-      <div style={{ height: "70vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 relative z-0 overflow-hidden shadow-inner"> 
+      <div className="mb-8 border rounded-2xl bg-gray-100 h-[40vh] md:h-[55vh] relative z-0 overflow-hidden shadow-md"> 
         <div ref={mapRef} className="h-full w-full" />
-        {isLoadingData && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-            <p className="animate-pulse">Chargement de la carte...</p>
-          </div>
-        )}
       </div>
 
-      <h2 className="text-2xl font-semibold mb-4">Liste complète des sites</h2> 
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <table className="w-full text-left border-collapse text-sm">
+          <thead className="bg-slate-50 border-b border-slate-200 text-slate-900 uppercase font-bold text-[12px]">
+            <tr>
+              <th className="p-4 w-12 text-center">#</th>
+              <th className="p-4">Commune</th>
+              <th className="p-4">Monument ou site emblématique</th>
+              <th className="p-4 hidden md:table-cell text-center">Niveau</th>
+              <th className="p-4 hidden md:table-cell">Catégorie</th>
+              <th className="p-4 md:hidden text-center">Infos</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {filteredSites.map((site, i) => (
+              <React.Fragment key={site.id}>
+                <tr 
+                  onClick={() => setExpandedId(expandedId === i ? null : i)}
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-slate-50' : 'hover:bg-slate-50/50'}`}
+                >
+                  <td className="p-4 text-center font-medium text-slate-400 align-top">{i + 1}</td>
+                  <td className="p-4 font-bold text-slate-900 align-top">{site.commune}</td>
+                  {/* Texte normal (pas d'italique, pas de gris clair) */}
+                  <td className="p-4 text-slate-800 align-top leading-relaxed text-sm">
+                    {site.description}
+                  </td>
+                  <td className="p-4 hidden md:table-cell text-center align-top font-bold text-base" style={{ color: getMarkerColor(site.categorie) }}>
+                    {site.niveau}
+                  </td>
+                  <td className="p-4 hidden md:table-cell align-top font-bold text-base" style={{ color: getMarkerColor(site.categorie) }}>
+                    {site.categorie.charAt(0).toUpperCase() + site.categorie.slice(1)}
+                  </td>
+                  <td className="p-4 md:hidden text-center align-top">
+                    {expandedId === i ? <ChevronUp size={18} className="text-slate-400" /> : <ChevronDown size={18} className="text-slate-400" />}
+                  </td>
+                </tr>
 
-      <div style={{ overflowX: "auto", width: "100%", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "700px", backgroundColor: "white" }}> 
-          <thead style={{ backgroundColor: "#f1f5f9" }}> 
-            <tr> 
-              <th style={tableHeaderStyle}>#</th>
-              <th style={tableHeaderStyle}>Commune</th> 
-              <th style={tableHeaderStyle}>Monument ou site emblématique</th> 
-              <th style={tableHeaderStyle}>Niveau</th> 
-              <th style={tableHeaderStyle}>Catégorie</th> 
-            </tr> 
-          </thead> 
-          <tbody> 
-            {sitesData.map((site, i) => ( 
-              <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f8fafc" }}> 
-                <td style={tableCellStyle}>{i + 1}</td>
-                <td style={tableCellStyle}>{site.commune}</td> 
-                <td style={tableCellStyle}>{site.description}</td> 
-                <td style={{ ...tableCellStyleCenter, color: getMarkerColor(site.categorie), fontWeight: 'bold' }}>
-                  {site.niveau}
-                </td> 
-                <td style={{ ...tableCellStyle, color: getMarkerColor(site.categorie), fontWeight: 'bold', textTransform: 'capitalize' }}>
-                  {site.categorie}
-                </td> 
-              </tr> 
-            ))} 
-          </tbody> 
+                {expandedId === i && (
+                  <tr className="bg-slate-50/80 md:hidden">
+                    <td colSpan={4} className="p-4 pt-0">
+                      <div className="flex flex-col gap-3 py-3 border-t border-slate-200">
+                        <div className="flex items-center gap-2">
+                          <Star size={16} style={{ color: getMarkerColor(site.categorie) }} />
+                          <span className="text-sm font-bold" style={{ color: getMarkerColor(site.categorie) }}>
+                            {site.categorie.charAt(0).toUpperCase() + site.categorie.slice(1)} (Niveau {site.niveau})
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2 text-slate-600">
+                          <MapPin size={16} className="mt-0.5 text-slate-400 flex-shrink-0" />
+                          <span className="text-xs">Pyrénées Ariégeoises</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
         </table>
-      </div> 
-    </div> 
-  ); 
+      </div>
+    </div>
+  );
 }
-
-const tableHeaderStyle: CSSProperties = { padding: "12px", border: "1px solid #e2e8f0", textAlign: "left", fontSize: "14px", color: "#475569" };
-const tableCellStyle: CSSProperties = { padding: "10px", border: "1px solid #e2e8f0", fontSize: "14px" };
-const tableCellStyleCenter: CSSProperties = { padding: "10px", border: "1px solid #e2e8f0", textAlign: "center", fontSize: "14px" };

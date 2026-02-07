@@ -155,10 +155,10 @@ export default function MuseeHeraultPage() {
                       href={m.url} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-blue-600 font-bold flex items-center justify-center gap-1 hover:underline"
+                      className="text-blue-600 font-bold hover:underline inline-flex items-center gap-1 justify-center"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <span className="hidden sm:inline">Web</span> <ExternalLink size={18} />
+                      Web <ExternalLink size={18} />
                     </a>
                   </td>
                 </tr>

@@ -1,16 +1,14 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback, CSSProperties } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { MuseeTarnGaronne as Musee } from '../api/museetarngaronne/route'; 
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search } from "lucide-react";
 
-// Styles pour le tableau
-const tableHeaderStyle: CSSProperties = { padding: '12px', borderBottom: '2px solid #ddd', cursor: 'pointer' };
-const tableCellStyle: CSSProperties = { padding: '12px' };
+const THEME_COLOR = '#1e3a8a'; // Bleu Tarn-et-Garonne
 
-// --- Composant Leaflet (Méthode OTAN) ---
+// --- Composant Carte Leaflet ---
 const LeafletMap = ({ musees }: { musees: Musee[] }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
@@ -23,54 +21,30 @@ const LeafletMap = ({ musees }: { musees: Musee[] }) => {
       const L = (await import('leaflet')).default;
 
       if (!mapInstance.current) {
-        // Calcul du centre moyen
+        // Calcul du centre dynamique basé sur les musées affichés
         const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
         const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
 
         mapInstance.current = L.map(mapRef.current!).setView([centerLat, centerLng], 9);
-
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors'
+          attribution: '&copy; OpenStreetMap'
         }).addTo(mapInstance.current);
 
         markersLayer.current = L.layerGroup().addTo(mapInstance.current);
       }
 
-      // Mise à jour des marqueurs (se synchronise avec le tri du tableau)
       markersLayer.current.clearLayers();
 
-      musees.forEach((musee, index) => {
-        const numero = index + 1;
-        
+      musees.forEach((m, i) => {
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `
-            <div style="
-              background-color: #1e3a8a;
-              width: 24px; height: 24px;
-              border-radius: 50%; border: 2px solid white;
-              display: flex; align-items: center; justify-content: center;
-              color: white; font-weight: bold; font-size: 10px;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            ">
-              ${numero}
-            </div>
-          `,
+          html: `<div style="background-color: ${THEME_COLOR}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12]
         });
 
-        const popupContent = `
-          <div style="font-family: sans-serif; font-size: 13px;">
-            <h3 style="margin:0; color:#1e3a8a;">${numero}. ${musee.nom}</h3>
-            <p style="margin:5px 0;"><b>${musee.commune}</b></p>
-            <p style="margin:2px 0;">${musee.adresse}</p>
-            <a href="${musee.url}" target="_blank" style="color:blue; text-decoration:underline;">Visiter le site</a>
-          </div>
-        `;
-
-        L.marker([musee.lat, musee.lng], { icon: customIcon })
-          .bindPopup(popupContent)
+        L.marker([m.lat, m.lng], { icon: customIcon })
+          .bindPopup(`<strong>${m.nom}</strong><br/>${m.commune}`)
           .addTo(markersLayer.current);
       });
     };
@@ -85,7 +59,7 @@ const LeafletMap = ({ musees }: { musees: Musee[] }) => {
     };
   }, [musees]);
 
-  return <div ref={mapRef} style={{ height: '500px', width: '100%', borderRadius: '8px', marginBottom: '32px', zIndex: 0 }} />;
+  return <div ref={mapRef} className="h-full w-full" />;
 };
 
 // --- Composant Principal ---
@@ -93,6 +67,9 @@ export default function MuseeTarnGaronnePage() {
   const [musees, setMusees] = useState<Musee[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  
   const [sortKey, setSortKey] = useState<keyof Musee>('commune');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
@@ -100,11 +77,11 @@ export default function MuseeTarnGaronnePage() {
     async function fetchMusees() {
       try {
         const response = await fetch('/api/museetarngaronne'); 
-        if (!response.ok) throw new Error("Erreur lors de la récupération des données.");
+        if (!response.ok) throw new Error("Erreur de récupération");
         const data: Musee[] = await response.json();
         setMusees(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Erreur inattendue.");
+        setError(err instanceof Error ? err.message : "Erreur inattendue");
       } finally {
         setIsLoading(false);
       }
@@ -114,69 +91,120 @@ export default function MuseeTarnGaronnePage() {
 
   const handleSort = (key: keyof Musee) => {
     const direction = key === sortKey && sortDirection === 'asc' ? 'desc' : 'asc';
-    const sortedData = [...musees].sort((a, b) => {
-      const aValue = (a[key] || '').toString().toLowerCase();
-      const bValue = (b[key] || '').toString().toLowerCase();
-      if (aValue < bValue) return direction === 'asc' ? -1 : 1;
-      if (aValue > bValue) return direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-    setMusees(sortedData);
     setSortKey(key);
     setSortDirection(direction);
   };
 
-  const getSortIndicator = (key: keyof Musee) => {
-    if (key !== sortKey) return '';
-    return sortDirection === 'asc' ? ' ▲' : ' ▼';
-  };
+  const filteredAndSortedMusees = musees
+    .filter(m => 
+      m.nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.commune?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      const aVal = (a[sortKey] || '').toString().toLowerCase();
+      const bVal = (b[sortKey] || '').toString().toLowerCase();
+      if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
 
-  const DEPARTEMENT_NOM = 'Tarn-et-Garonne (82)';
-
-  if (isLoading) return <div className="p-10"><h1>Chargement du {DEPARTEMENT_NOM}...</h1></div>;
-  if (error) return <div className="p-10 text-red-500"><h1>Erreur : {error}</h1></div>;
+  if (isLoading) return <div className="p-10 font-bold text-center italic">Chargement du Tarn-et-Garonne (82)...</div>;
+  if (error) return <div className="p-10 text-red-600 font-bold text-center">Erreur : {error}</div>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+    <div className="max-w-7xl mx-auto p-4 bg-slate-50 min-h-screen">
+      <nav className="mb-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-800 font-bold hover:underline transition-all">
+          <ArrowLeft size={18} /> Retour à l'accueil
         </Link>
       </nav>
 
-      <h1>🏰 Musées et Patrimoine du {DEPARTEMENT_NOM}</h1>
-      <p style={{ marginBottom: '5px', fontWeight: 'bold' }}>Total de Sites listés : {musees.length}</p>
-      <p style={{ marginBottom: '20px', color: '#555' }}>Carte interactive et liste des lieux culturels du département.</p>
+      <header className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 italic">🏰 Musées du Tarn-et-Garonne (82)</h1>
+        <p className="text-blue-700 mt-1 font-medium italic text-sm">
+          {filteredAndSortedMusees.length} sites culturels affichés.
+        </p>
+      </header>
 
-      {/* Remplacement Google Map par Leaflet */}
-      <LeafletMap musees={musees} />
+      {/* Barre de recherche */}
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+        <input 
+          type="text"
+          placeholder="Rechercher à Montauban, Moissac, Caussade..."
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-800 outline-none shadow-sm transition-all"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-      <h2>Liste Détaillée (Cliquez sur l'entête pour trier)</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f4f4f4' }}>
-            <th style={tableHeaderStyle} onClick={() => handleSort('commune')}>Commune {getSortIndicator('commune')}</th>
-            <th style={tableHeaderStyle} onClick={() => handleSort('nom')}>Nom du Site {getSortIndicator('nom')}</th>
-            <th style={tableHeaderStyle} onClick={() => handleSort('categorie')}>Catégorie {getSortIndicator('categorie')}</th>
-            <th style={tableHeaderStyle}>Adresse</th>
-            <th style={tableHeaderStyle}>URL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {musees.map((musee, index) => (
-            <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={tableCellStyle}><strong>{musee.commune}</strong></td>
-              <td style={tableCellStyle}>{musee.nom}</td>
-              <td style={tableCellStyle}>{musee.categorie}</td>
-              <td style={tableCellStyle}>{musee.adresse}</td>
-              <td style={tableCellStyle}>
-                <a href={musee.url} target="_blank" rel="noopener noreferrer" style={{ color: 'blue', textDecoration: 'underline' }}>Voir le site</a>
-              </td>
+      <div className="mb-8 border rounded-2xl bg-gray-100 h-[40vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
+        <LeafletMap musees={filteredAndSortedMusees} />
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <table className="w-full text-left border-collapse text-sm">
+          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[11px]">
+            <tr>
+              <th className="p-4 w-12 text-center">#</th>
+              <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('commune')}>
+                Commune {sortKey === 'commune' ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
+              </th>
+              <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('nom')}>
+                Nom {sortKey === 'nom' ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
+              </th>
+              <th className="p-4 hidden md:table-cell">Catégorie</th>
+              <th className="p-4 hidden lg:table-cell">Adresse</th>
+              <th className="p-4 w-16 text-center">Lien</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {filteredAndSortedMusees.map((m, i) => (
+              <React.Fragment key={`tg-${i}`}>
+                <tr 
+                  onClick={() => setExpandedId(expandedId === i ? null : i)}
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}
+                >
+                  <td className="p-4 text-center font-bold text-blue-900 align-top">{i + 1}</td>
+                  <td className="p-4 font-bold text-slate-700 align-top">{m.commune}</td>
+                  <td className="p-4 align-top">
+                    <div className="flex items-center gap-2">
+                      <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
+                      <div className="md:hidden text-blue-800">
+                        {expandedId === i ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4 hidden md:table-cell text-slate-500 text-xs italic align-top">{m.categorie}</td>
+                  <td className="p-4 hidden lg:table-cell text-slate-500 text-xs align-top leading-relaxed">{m.adresse}</td>
+                  <td className="p-4 text-center align-top">
+                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 inline-flex items-center gap-1 font-bold" onClick={(e) => e.stopPropagation()}>
+                      Web <ExternalLink size={18} />
+                    </a>
+                  </td>
+                </tr>
+
+                {expandedId === i && (
+                  <tr className="bg-blue-50/30 md:hidden lg:hidden">
+                    <td colSpan={4} className="p-4 pt-0">
+                      <div className="flex flex-col gap-2 py-3 border-t border-blue-100">
+                        <div className="flex items-start gap-2 text-slate-600">
+                          <Tag size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
+                          <span className="text-xs"><strong>Catégorie :</strong> {m.categorie}</span>
+                        </div>
+                        <div className="flex items-start gap-2 text-slate-600">
+                          <MapPin size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
+                          <span className="text-xs italic whitespace-normal"><strong>Adresse :</strong> {m.adresse}</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
