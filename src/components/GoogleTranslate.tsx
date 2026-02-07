@@ -25,7 +25,7 @@ const EXTRA_LANGS = [
   { code: 'hi', label: 'Hindi', flag: '🇮🇳' },
   { code: 'id', label: 'Indonésien', flag: '🇮🇩' },
   { code: 'nl', label: 'Néerlandais', flag: '🇳🇱' },
-  { code: 'oc', label: 'Occitan', flag: '🛡️' }, // Le blason pour l'identité occitane
+  { code: 'oc', label: 'Occitan', flag: '🛡️' }, 
   { code: 'pl', label: 'Polonais', flag: '🇵🇱' },
   { code: 'ro', label: 'Roumain', flag: '🇷🇴' },
   { code: 'sv', label: 'Suédois', flag: '🇸🇪' },
@@ -75,7 +75,9 @@ export default function GoogleTranslateCustom() {
       return;
     }
     const allLangs = [...LANGS, ...EXTRA_LANGS];
-    const targetLabel = allLangs.find((l) => l.code === lang)?.label || lang;
+    const target = allLangs.find((l) => l.code === lang);
+    const targetLabel = target ? `${target.flag} ${target.label}` : lang;
+
     if (window.confirm(`Traduire en ${targetLabel} ?`)) {
       setSecureCookie('googtrans', `/fr/${lang}`, 7);
       window.location.reload();
@@ -92,8 +94,9 @@ export default function GoogleTranslateCustom() {
         {`function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'fr', autoDisplay: false}, 'google_translate_element'); }`}
       </Script>
 
-{/* On passe de mt-10 à mt-32 (environ 128px de descente) */}
-    <div className="google-translate-custom mt-28 mb-8 flex flex-col gap-2 w-[95%] sm:max-w-[500px] mx-auto sm:ml-auto p-5 bg-white rounded-2xl shadow-lg border border-slate-200 relative z-10">
+      <div className="google-translate-custom mt-28 mb-8 flex flex-col gap-2 w-[95%] sm:max-w-[500px] mx-auto sm:ml-auto p-5 bg-white rounded-2xl shadow-lg border border-slate-200 relative z-10">
+        
+        {/* BLOC 1 : LANGUES PRINCIPALES */}
         <div className="flex gap-1.5 items-center">
           <select
             onChange={(e) => changeLang(e.target.value)}
@@ -103,50 +106,59 @@ export default function GoogleTranslateCustom() {
             {!LANGS.find(l => l.code === selectedLang) && <option value="">🌍 Langue choisie...</option>}
             {LANGS.map((lang) => (
               <option key={lang.code} value={lang.code}>
-                {lang.code === 'fr' ? '🇫🇷 ' : ''}{lang.label}
+                {lang.flag} {lang.label}
               </option>
             ))}
           </select>
           <button onClick={() => changeLang('fr')} className="px-3 py-2 text-xs font-black bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
-            FR
+            🇫🇷 FR
           </button>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <div className="flex-1">
-            <select
-              onChange={(e) => changeLang(e.target.value)}
-              value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-              className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors"
-            >
-              <option value="" className="text-blue-600">AUTRES LANGUES...</option>
-              {EXTRA_LANGS.map((lang) => (
-                <option key={lang.code} value={lang.code} className="text-slate-800">{lang.label}</option>
-              ))}
-            </select>
-          </div>
+        {/* BLOC 2 : AUTRES LANGUES (Titre au-dessus) */}
+        <div className="flex flex-col gap-1 mt-1">
+          <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1">
+            Autres langues
+          </span>
           
-          <button onClick={() => setHelpOpen(true)} className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic underline underline-offset-2">
-            ❓ besoin d'aide ?
-          </button>
+          <div className="flex gap-2 items-center">
+            <div className="flex-1">
+              <select
+                onChange={(e) => changeLang(e.target.value)}
+                value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
+                className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors"
+              >
+                <option value="" className="text-blue-600">Sélectionner dans la liste...</option>
+                {EXTRA_LANGS.map((lang) => (
+                  <option key={lang.code} value={lang.code} className="text-slate-800">
+                    {lang.flag} {lang.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <button onClick={() => setHelpOpen(true)} className="whitespace-nowrap text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1 font-medium italic underline underline-offset-2">
+              ❓ aide
+            </button>
+          </div>
         </div>
 
+        {/* FOOTER GOOGLE */}
         <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1.5 px-1 font-medium italic">
           <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" alt="Google Translate" width={14} height={14} />
           <span>Traduction fournie par Google Translate</span>
         </div>
       </div>
 
-      {/* ✅ MODALE D'AIDE : SOLUTION RADICALE POUR LE CENTRAGE ET LE Z-INDEX */}
+      {/* MODALE D'AIDE */}
       {helpOpen && (
         <div
           className="fixed inset-0 bg-black/80 flex items-start justify-center p-4 pt-32"
-          style={{ zIndex: 2147483647 }} // Valeur maximale possible pour être au-dessus de TOUT
+          style={{ zIndex: 2147483647 }}
           onClick={() => setHelpOpen(false)}
         >
           <div
             className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[85vh]"
-            style={{ transform: 'translateY(0)' }} // S'assure qu'on ne subit pas de décalage parasite
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -155,40 +167,10 @@ export default function GoogleTranslateCustom() {
             >
               &times;
             </button>
-
-            <h3 className="text-lg font-extrabold mb-4 flex items-center gap-2 pr-8">
-              🧭 Aide : Google Translate
-            </h3>
-            
-            <div className="space-y-4 text-sm leading-relaxed">
-              <p>
-                Si la traduction reste bloquée ou masque le menu, supprimez les cookies du site : 
-                <code className="block mt-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600 text-center text-[10px] break-all">
-                  faistasortieatoulouse.online
-                </code>
-              </p>
-
-              <div className="space-y-3 border-l-2 border-slate-100 pl-3">
-                <div className="flex flex-col">
-                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Chrome / Edge</span> 
-                  <span>🔒 à gauche de l’URL → <em>Cookies</em> → Supprimer.</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Firefox</span> 
-                  <span>🔒 → <em>Effacer les cookies et données</em>.</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">Safari</span> 
-                  <span>Réglages → Confidentialité → Supprimer le site.</span>
-                </div>
-              </div>
-
-              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-[12px] italic">
-                🌍 <strong>Note :</strong> Si la barre Google gêne la lecture, cliquez sur ⚙️ (dans la barre) puis sur 
-                <em> "Afficher la page originale"</em>.
-              </div>
+            <h3 className="text-lg font-extrabold mb-4">🧭 Aide : Google Translate</h3>
+            <div className="space-y-4 text-sm">
+              <p>Si la traduction bloque, videz les cache ou les cookies de : <strong>ftstoulouse.online</strong></p>
             </div>
-
             <button 
               onClick={() => setHelpOpen(false)}
               className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all active:scale-95"
