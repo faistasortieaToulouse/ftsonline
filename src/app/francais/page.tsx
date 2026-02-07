@@ -153,9 +153,9 @@ function CountryRow({ item, index }: { item: any, index: number }) {
           {index + 1}
         </td>
         <td className="p-3 md:p-4 font-bold text-slate-800 uppercase">
-          <div className="flex items-center justify-between">
-            <span className="truncate max-w-[120px] md:max-w-none">{item.pays}</span>
-            <span className="md:hidden text-slate-300">
+          <div className="flex items-start justify-between gap-2">
+            <span className="flex-1 leading-tight">{item.pays}</span>
+            <span className="md:hidden text-slate-300 flex-shrink-0 mt-1">
               {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </span>
           </div>

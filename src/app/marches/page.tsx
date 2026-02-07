@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, CSSProperties } from "react"; 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 
 // --- Interface de type ---
 interface Marche {
@@ -39,7 +39,6 @@ export default function MarchesPage() {
         const response = await fetch('/api/marches'); 
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         let data: Marche[] = await response.json();
-        // Tri par commune ou nom
         data.sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }));
         setMarches(data);
       } catch (error) {
@@ -150,28 +149,21 @@ export default function MarchesPage() {
 
       <h2 className="text-2xl font-semibold mb-4 text-slate-800">Liste complète des marchés</h2> 
 
-      <div style={{ overflowX: "auto", width: "100%", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "800px", backgroundColor: "white" }}> 
+      <div style={{ width: "100%", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", overflow: "hidden" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "white" }}> 
           <thead style={{ backgroundColor: "#f1f5f9" }}> 
             <tr> 
               <th style={tableHeaderStyle}>#</th>
               <th style={tableHeaderStyle}>Nom du Marché</th> 
               <th style={tableHeaderStyle}>Adresse</th> 
-              <th style={tableHeaderStyle}>Commune</th> 
+              <th className="hidden md:table-cell" style={tableHeaderStyle}>Commune</th> 
               <th style={tableHeaderStyle}>Jours de tenue</th> 
-              <th style={tableHeaderStyle}>Type</th> 
+              <th className="hidden md:table-cell" style={tableHeaderStyle}>Type</th> 
             </tr> 
           </thead> 
           <tbody> 
             {marches.map((m, i) => ( 
-              <tr key={m.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f8fafc" }}> 
-                <td style={tableCellStyle}>{i + 1}</td>
-                <td style={{ ...tableCellStyle, fontWeight: 'bold', color: THEME_COLOR }}>{m.nom}</td> 
-                <td style={tableCellStyle}>{m.adresse}</td> 
-                <td style={tableCellStyle}>{m.commune} {m.code_postal ? `(${m.code_postal})` : ''}</td> 
-                <td style={{ ...tableCellStyle, fontStyle: 'italic' }}>{m.jours_de_tenue}</td> 
-                <td style={tableCellStyle}>{m.type}</td> 
-              </tr> 
+              <MarcheRow key={m.id} m={m} i={i} />
             ))} 
           </tbody> 
         </table>
@@ -180,6 +172,45 @@ export default function MarchesPage() {
   ); 
 }
 
-// --- Styles du tableau (Identique à Aude/Lot) ---
+function MarcheRow({ m, i }: { m: Marche; i: number }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <tr 
+        style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f8fafc", cursor: "pointer" }}
+        onClick={() => setIsOpen(!isOpen)}
+      > 
+        <td style={tableCellStyle}>{i + 1}</td>
+        <td style={{ ...tableCellStyle, fontWeight: 'bold', color: THEME_COLOR }}>
+          <div className="flex items-center justify-between">
+            {m.nom}
+            <span className="md:hidden">
+              {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </span>
+          </div>
+        </td> 
+        <td style={tableCellStyle}>{m.adresse}</td> 
+        <td className="hidden md:table-cell" style={tableCellStyle}>{m.commune} {m.code_postal ? `(${m.code_postal})` : ''}</td> 
+        <td style={{ ...tableCellStyle, fontStyle: 'italic' }}>{m.jours_de_tenue}</td> 
+        <td className="hidden md:table-cell" style={tableCellStyle}>{m.type}</td> 
+      </tr>
+      
+      {/* Accordéon Mobile */}
+      {isOpen && (
+        <tr className="md:hidden" style={{ backgroundColor: "#fdfdfd" }}>
+          <td colSpan={4} style={{ ...tableCellStyle, padding: "15px" }}>
+            <div className="space-y-2">
+              <p><strong>Commune :</strong> {m.commune} {m.code_postal ? `(${m.code_postal})` : ''}</p>
+              <p><strong>Type :</strong> {m.type}</p>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+// --- Styles du tableau ---
 const tableHeaderStyle: CSSProperties = { padding: "12px", border: "1px solid #e2e8f0", textAlign: "left", fontSize: "14px", color: "#475569" };
 const tableCellStyle: CSSProperties = { padding: "10px", border: "1px solid #e2e8f0", fontSize: "14px", color: "#1e293b" };
