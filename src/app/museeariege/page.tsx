@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 
 const ARIEGE_CENTER: [number, number] = [42.96, 1.60];
-const THEME_COLOR = '#8b5cf6'; // Violet
+const THEME_COLOR = '#8b5cf6';
 
 export default function MuseeAriegePage() {
   const [musees, setMusees] = useState<Musee[]>([]);
@@ -63,31 +63,19 @@ export default function MuseeAriegePage() {
 
     const addMarkers = async () => {
       const L = (await import('leaflet')).default;
-
       musees.forEach((musee, i) => {
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `
-            <div style="background-color: ${THEME_COLOR}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-              ${i + 1}
-            </div>
-          `,
+          html: `<div style="background-color: ${THEME_COLOR}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
           iconSize: [28, 28],
           iconAnchor: [14, 14]
         });
 
         L.marker([musee.lat, musee.lng], { icon: customIcon })
-          .bindPopup(`
-            <div style="font-family: Arial; font-size: 14px; color: black;"> 
-              <strong style="color:${THEME_COLOR};">${i + 1}. ${musee.nom}</strong><br/> 
-              <b>Commune :</b> ${musee.commune}<br/>
-              <a href="${musee.url}" target="_blank" style="color:blue; text-decoration:underline;">Visiter le site</a>
-            </div>
-          `)
+          .bindPopup(`<div style="font-family: Arial; font-size: 14px;"><strong>${i + 1}. ${musee.nom}</strong><br/><b>Commune :</b> ${musee.commune}</div>`)
           .addTo(mapInstance.current);
       });
     };
-
     addMarkers();
   }, [isReady, musees]);
 
@@ -104,33 +92,28 @@ export default function MuseeAriegePage() {
 
       <header className="mb-8">
         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">⛰️ Musées et Patrimoine de l'Ariège (09)</h1>
-        <p className="text-slate-600 mt-2 font-medium text-sm md:text-base">
-          {isLoadingData ? 'Chargement des sites...' : `${musees.length} sites culturels et historiques répertoriés.`}
+        <p className="text-slate-600 mt-2 font-medium">
+          {isLoadingData ? 'Chargement...' : `${musees.length} sites répertoriés.`}
         </p>
       </header>
 
-      {/* ZONE CARTE - Adaptative height */}
-      <div className="mb-8 border rounded-2xl bg-gray-100 relative z-0 overflow-hidden shadow-md border-violet-100 h-[40vh] md:h-[60vh]"> 
+      <div className="mb-8 border rounded-2xl bg-gray-100 relative z-0 overflow-hidden shadow-md h-[40vh] md:h-[60vh]"> 
         <div ref={mapRef} className="h-full w-full" />
-        {isLoadingData && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-50 z-10">
-            <p className="animate-pulse font-bold text-violet-600">Initialisation de la carte...</p>
-          </div>
-        )}
       </div>
 
-      <h2 className="text-xl md:text-2xl font-bold mb-4 text-slate-800">Liste des Sites</h2>
+      <h2 className="text-xl md:text-2xl font-bold mb-4 text-slate-800">Liste Détaillée des Sites</h2>
 
-      {/* TABLEAU RESPONSIVE */}
+      {/* TABLEAU AVEC DEFILEMENT HORIZONTAL POUR MOBILE */}
       <div className="overflow-hidden border border-slate-200 rounded-2xl shadow-sm bg-white">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto whitespace-nowrap md:whitespace-normal">
           <table className="w-full text-left border-collapse text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-slate-100 border-b border-slate-200">
               <tr>
                 <th className="p-4 font-bold text-slate-500 w-12 text-center">N°</th> 
-                <th className="p-4 font-bold text-slate-700">Site / Commune</th>
-                <th className="p-4 font-bold text-slate-700 hidden sm:table-cell">Catégorie</th>
-                <th className="p-4 font-bold text-slate-700 hidden lg:table-cell text-center">Adresse</th>
+                <th className="p-4 font-bold text-slate-700">Commune</th>
+                <th className="p-4 font-bold text-slate-700">Type du Site</th>
+                <th className="p-4 font-bold text-slate-700">Catégorie</th>
+                <th className="p-4 font-bold text-slate-700">Adresse</th>
                 <th className="p-4 font-bold text-slate-700 text-center">Action</th>
               </tr>
             </thead>
@@ -138,27 +121,22 @@ export default function MuseeAriegePage() {
               {musees.map((m, i) => (
                 <tr key={i} className="hover:bg-violet-50/50 transition-colors">
                   <td className="p-4 text-center font-bold text-violet-400">{i + 1}</td> 
-                  <td className="p-4">
-                    <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
-                    <div className="text-[11px] md:text-xs font-semibold text-violet-600 uppercase tracking-wide mt-1">
-                      {m.commune}
-                    </div>
-                  </td>
-                  <td className="p-4 hidden sm:table-cell">
-                    <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-500 uppercase">
+                  <td className="p-4 font-semibold text-slate-700">{m.commune}</td>
+                  <td className="p-4 font-bold text-slate-900">{m.nom}</td>
+                  <td className="p-4 text-xs">
+                    <span className="px-2 py-1 rounded-full bg-slate-100 text-slate-500 font-bold uppercase">
                       {m.categorie}
                     </span>
                   </td>
-                  <td className="p-4 hidden lg:table-cell text-slate-500 italic text-center text-xs">{m.adresse}</td>
+                  <td className="p-4 text-slate-600 text-xs">{m.adresse}</td>
                   <td className="p-4 text-center">
                     <a 
                       href={m.url} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="inline-flex items-center justify-center p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
-                      title="Visiter le site"
+                      className="text-blue-600 font-bold hover:underline inline-flex items-center gap-1"
                     >
-                      <ExternalLink size={18} />
+                      Site web <ExternalLink size={14} />
                     </a>
                   </td>
                 </tr>
