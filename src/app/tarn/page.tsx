@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useState, useRef, CSSProperties } from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import React, { useEffect, useState, useRef } from 'react';
 import "leaflet/dist/leaflet.css";
+import Link from "next/link";
+import { ArrowLeft, Search, ChevronDown, MapPin, Info, Database, BrickWall } from "lucide-react";
 
 // --- Interface de type ---
 interface SiteTarn {
   id: number;
   commune: string;
-  site: string;
+  site: string; // Note: 'site' remplace 'description' dans ton interface Tarn
   niveau: number;
   categorie: 'incontournable' | 'remarquable' | 'suggéré';
   lat: number;
@@ -18,29 +18,24 @@ interface SiteTarn {
 
 const TARN_CENTER: [number, number] = [43.9289, 2.1464];
 
-// --- Couleurs thématiques ---
-const getThemeColor = (categorie: SiteTarn['categorie']): string => {
-  switch (categorie.toLowerCase()) {
-    case 'incontournable': return '#dc2626'; // Rouge
-    case 'remarquable':    return '#ea580c'; // Orange
-    case 'suggéré':        return '#2563eb'; // Bleu
-    default:               return '#2563eb';
-  }
-};
-
-const getLabelColor = (categorie: SiteTarn['categorie']): string => {
-  return (categorie.toLowerCase() === 'remarquable') ? 'white' : 'yellow';
+const getThemeColor = (categorie: string): string => {
+  const cat = categorie?.toLowerCase() || '';
+  if (cat.includes('incontournable')) return '#b91c1c'; // Rouge brique foncé
+  if (cat.includes('remarquable'))    return '#ea580c'; // Orange terreux
+  if (cat.includes('suggéré') || cat.includes('suggere')) return '#2563eb'; // Bleu
+  return '#2563eb';
 };
 
 export default function TarnMapPage() {
   const [sitesData, setSitesData] = useState<SiteTarn[]>([]);
-  const [isLoadingData, setIsLoadingData] = useState(true);
-  
-  // Refs pour Leaflet (Méthode OTAN)
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
-  const markersLayerRef = useRef<any>(null);
-  const [isReady, setIsReady] = useState(false);
+  const markersLayer = useRef<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   // 1. Charger les données API
   useEffect(() => {
@@ -48,40 +43,39 @@ export default function TarnMapPage() {
       try {
         const response = await fetch('/api/tarn');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-        let data: SiteTarn[] = await response.json();
-        
-        // Tri alphabétique par commune
-        data.sort((a, b) => a.commune.localeCompare(b.commune, 'fr', { sensitivity: 'base' }));
-        
+        const data: SiteTarn[] = await response.json();
         setSitesData(data);
       } catch (error) {
-        console.error("Erreur lors de la récupération des sites du Tarn:", error);
+        console.error("Erreur:", error);
       } finally {
-        setIsLoadingData(false);
+        setIsLoading(false);
       }
     }
     fetchSites();
   }, []);
 
-  // 2. Initialisation de la carte (Client-side only)
-  useEffect(() => {
-    if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
+  const filteredSites = sitesData
+    .filter(s => 
+      s.commune?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.site?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => a.commune.localeCompare(b.commune));
 
+  // 2. Initialisation de la carte
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || isLoading) return;
     const initMap = async () => {
       const L = (await import('leaflet')).default;
-
-      if (!mapInstance.current) {
-        mapInstance.current = L.map(mapRef.current!).setView(TARN_CENTER, 9);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(mapInstance.current);
-
-        markersLayerRef.current = L.layerGroup().addTo(mapInstance.current);
-      }
-      setIsReady(true);
+      if (mapInstance.current) return;
+      
+      mapInstance.current = L.map(mapRef.current!).setView(TARN_CENTER, 9);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(mapInstance.current);
+      
+      markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+      setIsMapReady(true);
     };
-
     initMap();
 
     return () => {
@@ -90,131 +84,141 @@ export default function TarnMapPage() {
         mapInstance.current = null;
       }
     };
-  }, [isLoadingData]);
+  }, [isLoading]);
 
-  // 3. Gestion des Marqueurs
+  // 3. Mise à jour des marqueurs
   useEffect(() => {
-    if (!isReady || !mapInstance.current || sitesData.length === 0) return;
-
+    if (!isMapReady || !mapInstance.current) return;
     const updateMarkers = async () => {
       const L = (await import('leaflet')).default;
-      markersLayerRef.current.clearLayers();
-
-      sitesData.forEach((site, i) => {
-        const count = i + 1;
+      markersLayer.current.clearLayers();
+      
+      filteredSites.forEach((site, i) => {
         const color = getThemeColor(site.categorie);
-        const textColor = getLabelColor(site.categorie);
-
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `
-            <div style="
-              background-color: ${color};
-              width: 28px; height: 28px;
-              border-radius: 50%; border: 2px solid white;
-              display: flex; align-items: center; justify-content: center;
-              color: ${textColor}; font-weight: bold; font-size: 12px;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            ">
-              ${count}
-            </div>
-          `,
-          iconSize: [28, 28],
-          iconAnchor: [14, 14]
+          html: `<div style="background-color: ${color}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
         });
-
-        const popupContent = `
-          <div style="font-family: Arial; font-size: 14px; color: #333;">
-            <strong style="color: ${color};">${count}. ${site.commune}</strong> 
-            <span style="text-transform: capitalize;">(${site.categorie})</span><br/>
-            <hr style="margin: 5px 0; border: 0; border-top: 1px solid #eee;" />
-            <b>Patrimoine :</b> ${site.site}<br/>
-            <b>Niveau :</b> ${site.niveau}
-          </div>
-        `;
-
+        
         L.marker([site.lat, site.lng], { icon: customIcon })
-          .addTo(markersLayerRef.current)
-          .bindPopup(popupContent);
+          .bindPopup(`<strong>${site.commune}</strong><br/>${site.site}`)
+          .addTo(markersLayer.current);
       });
     };
-
     updateMarkers();
-  }, [isReady, sitesData]);
+  }, [isMapReady, filteredSites]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+    <div className="max-w-7xl mx-auto p-4 bg-orange-50/30 min-h-screen">
+      <nav className="mb-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-red-800 font-bold hover:underline">
+          <ArrowLeft size={18} /> Retour à l'accueil
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-extrabold mb-6 text-red-900">
-        🧱 Sites touristiques du Tarn sur la carte
-      </h1>
-
-      <p className="font-semibold text-lg mb-4 text-slate-700">
-        Statut : {isLoadingData ? 'Chargement...' : `${sitesData.length} sites chargés.`}
-      </p>
-
-      {/* Légende */}
-      <div style={legendStyle}>
-        <strong>Légende :</strong>
-        <span style={{ color: '#dc2626', fontWeight: 'bold' }}>🔴 Incontournable</span>
-        <span style={{ color: '#ea580c', fontWeight: 'bold' }}>🟠 Remarquable</span>
-        <span style={{ color: '#2563eb', fontWeight: 'bold' }}>🔵 Suggéré</span>
-      </div>
-
-      {/* Carte */}
-      <div style={{ height: "70vh", width: "100%" }} className="mb-8 border-2 border-red-50 rounded-xl bg-gray-100 relative z-0 overflow-hidden shadow-inner">
-        <div ref={mapRef} className="h-full w-full" />
-        {isLoadingData && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-            <p className="animate-pulse font-bold text-red-900">Chargement du Pays de Cocagne...</p>
+      <header className="mb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-stone-900 italic leading-tight">🧱 Patrimoine du Tarn (81)</h1>
+            <div className="flex items-center gap-2 text-stone-600 font-bold text-sm mt-2">
+              <Database size={16} className="text-red-700" />
+              <span>Statut : {isLoading ? 'Chargement...' : `${filteredSites.length} sites chargés`}</span>
+            </div>
           </div>
-        )}
+          <div className="flex flex-wrap gap-4 text-xs md:text-sm font-bold uppercase tracking-wider">
+            <span className="flex items-center gap-1.5" style={{ color: '#b91c1c' }}>
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#b91c1c' }}></span> Incontournable
+            </span>
+            <span className="flex items-center gap-1.5" style={{ color: '#ea580c' }}>
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ea580c' }}></span> Remarquable
+            </span>
+            <span className="flex items-center gap-1.5" style={{ color: '#2563eb' }}>
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#2563eb' }}></span> Suggéré
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
+        <input 
+          type="text"
+          placeholder="Rechercher Albi, Cordes-sur-Ciel, Lautrec..."
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-red-700 outline-none shadow-sm transition-all text-sm"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
 
-      <h2 className="text-2xl font-semibold mb-4 text-red-800">
-        Liste complète des sites du Tarn ({sitesData.length} marqueurs)
-      </h2>
+      <div className="mb-8 border-2 border-red-100 rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
+        <div ref={mapRef} className="h-full w-full" />
+      </div>
 
-      {/* Tableau avec mise en page Aude/Tarn fusionnée */}
-      <div style={{ overflowX: "auto", width: "100%", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "800px", backgroundColor: "white" }}>
-          <thead style={{ backgroundColor: "#fef2f2" }}>
+      <div className="bg-white border border-stone-200 rounded-2xl shadow-sm overflow-hidden">
+        <table className="w-full text-left border-collapse text-sm table-fixed md:table-auto">
+          <thead className="bg-stone-50 border-b border-stone-200 text-stone-600 uppercase font-bold text-[11px]">
             <tr>
-              <th style={tableHeaderStyle}>#</th>
-              <th style={tableHeaderStyle}>Commune</th>
-              <th style={tableHeaderStyle}>Monument ou site emblématique</th>
-              <th style={tableHeaderStyleCenter}>Niveau</th>
-              <th style={tableHeaderStyle}>Catégorie</th>
+              <th className="p-4 w-10 text-center">#</th>
+              <th className="p-4">Commune</th>
+              <th className="p-4 hidden md:table-cell w-1/2">Monument emblématique</th>
+              <th className="p-4 hidden md:table-cell text-center">Niveau</th>
+              <th className="p-4 text-right md:text-left w-[120px] md:w-auto">Catégorie</th>
             </tr>
           </thead>
-          <tbody>
-            {sitesData.map((site, i) => (
-              <tr key={site.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#fffafa" }}>
-                <td style={tableCellStyle}>{i + 1}</td>
-                <td style={{ ...tableCellStyle, fontWeight: 'bold' }}>{site.commune}</td>
-                <td style={tableCellStyle}>{site.site}</td>
-                <td style={tableCellStyleCenter}>
-                  <span style={{
-                    padding: '4px 10px',
-                    borderRadius: '12px',
-                    fontWeight: 'bold',
-                    fontSize: '0.85em',
-                    backgroundColor: site.niveau === 1 ? '#fee2e2' : site.niveau === 2 ? '#ffedd5' : '#dbeafe',
-                    color: getThemeColor(site.categorie)
-                  }}>
+          <tbody className="divide-y divide-stone-100">
+            {filteredSites.map((site, i) => (
+              <React.Fragment key={`tarn-${site.id}`}>
+                <tr 
+                  onClick={() => setExpandedId(expandedId === i ? null : i)}
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-red-50/50' : 'hover:bg-stone-50'}`}
+                >
+                  <td className="p-4 text-center font-bold text-stone-400">{i + 1}</td>
+                  
+                  <td className="p-4 font-bold text-stone-900 min-w-0">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <span className="truncate">{site.commune}</span>
+                      <ChevronDown size={14} className={`md:hidden flex-shrink-0 transition-transform ${expandedId === i ? 'rotate-180' : ''}`} />
+                    </div>
+                  </td>
+
+                  <td className="p-4 hidden md:table-cell text-stone-700 font-normal italic">
+                    {site.site}
+                  </td>
+
+                  <td className="p-4 hidden md:table-cell text-center font-bold text-base" style={{ color: getThemeColor(site.categorie) }}>
                     {site.niveau}
-                  </span>
-                </td>
-                <td style={{ ...tableCellStyle, color: getThemeColor(site.categorie), fontWeight: 'bold' }}>
-                  <span className="capitalize">{site.categorie}</span>
-                </td>
-              </tr>
+                  </td>
+
+                  <td className="p-4 text-right md:text-left font-bold text-[13px] md:text-base whitespace-nowrap capitalize" style={{ color: getThemeColor(site.categorie) }}>
+                    {site.categorie}
+                  </td>
+                </tr>
+
+                {expandedId === i && (
+                  <tr className="bg-red-50/20 md:hidden">
+                    <td colSpan={3} className="p-4 pt-0">
+                      <div className="flex flex-col gap-3 py-4 border-t border-red-100">
+                        <div className="flex flex-col gap-1">
+                           <span className="text-[10px] font-bold text-stone-400 uppercase">Patrimoine emblématique</span>
+                           <p className="text-stone-800 text-[13.5px] leading-relaxed">{site.site}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Info size={16} style={{ color: getThemeColor(site.categorie) }} />
+                          <span className="text-sm text-stone-700">
+                            <strong className="text-stone-900">Niveau :</strong> {site.niveau}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-stone-500">
+                          <BrickWall size={16} className="text-red-700" />
+                          <span className="text-xs italic">Cœur de l'Occitanie (81)</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>
@@ -222,21 +226,3 @@ export default function TarnMapPage() {
     </div>
   );
 }
-
-// --- Styles ---
-const legendStyle: CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '20px',
-  marginBottom: '20px',
-  padding: '15px',
-  border: '1px solid #fee2e2',
-  borderRadius: '10px',
-  backgroundColor: '#ffffff',
-  boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-};
-
-const tableHeaderStyle: CSSProperties = { padding: "12px", border: "1px solid #fecaca", textAlign: "left", color: "#991b1b", fontSize: "14px" };
-const tableHeaderStyleCenter: CSSProperties = { padding: "12px", border: "1px solid #fecaca", textAlign: "center", color: "#991b1b", fontSize: "14px" };
-const tableCellStyle: CSSProperties = { padding: "10px", border: "1px solid #fecaca", fontSize: "14px" };
-const tableCellStyleCenter: CSSProperties = { padding: "10px", border: "1px solid #fecaca", textAlign: "center", fontSize: "14px" };

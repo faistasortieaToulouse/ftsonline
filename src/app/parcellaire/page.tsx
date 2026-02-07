@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 
 interface Parcelle {
   id: number;
@@ -21,14 +21,11 @@ interface Parcelle {
 export default function ParcellairePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
-  
-  // Refs pour stocker les couches Leaflet afin d'y accéder depuis le tableau
   const layersRef = useRef<Map<number, any>>(new Map());
 
   const [parcelles, setParcelles] = useState<Parcelle[]>([]);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  /* ================= 1. LOAD DATA ================= */
   useEffect(() => {
     fetch("/api/parcellaire")
       .then((res) => res.json())
@@ -41,32 +38,25 @@ export default function ParcellairePage() {
       .catch(console.error);
   }, []);
 
-  /* ================= 2. MAP INIT & DRAW (OTAN) ================= */
   useEffect(() => {
-    // Empêche l'exécution côté serveur
     if (typeof window === "undefined" || !mapRef.current || parcelles.length === 0) return;
 
     const initLeaflet = async () => {
       const L = (await import("leaflet")).default;
 
-      // Initialisation de la carte si elle n'existe pas
       if (!mapInstance.current) {
         mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.444], 14);
-
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: '&copy; OpenStreetMap contributors',
         }).addTo(mapInstance.current);
       }
 
-      // Nettoyage si nécessaire (pour éviter les doublons au refresh)
       layersRef.current.forEach(layer => mapInstance.current.removeLayer(layer));
       layersRef.current.clear();
 
-      // Dessin des parcelles
       parcelles.forEach((p) => {
         if (!p.geometry?.coordinates?.[0]) return;
 
-        // Leaflet utilise [lat, lng], GeoJSON utilise [lng, lat]
         const latLngs: [number, number][] = p.geometry.coordinates[0].map(
           (coord) => [coord[1], coord[0]]
         );
@@ -79,7 +69,6 @@ export default function ParcellairePage() {
           fillOpacity: 0.35,
         }).addTo(mapInstance.current);
 
-        // Tooltip ou Popup
         polygon.bindPopup(`
           <strong>Parcelle :</strong> ${p.codeparcelle}<br/>
           <strong>Type :</strong> ${p.typologie}<br/>
@@ -103,19 +92,14 @@ export default function ParcellairePage() {
     };
   }, [parcelles]);
 
-  /* ================= 3. HANDLE TABLE CLICK ================= */
   const handleRowClick = (p: Parcelle) => {
     const polygon = layersRef.current.get(p.id);
     if (!mapInstance.current || !polygon) return;
 
-    // Zoom sur la parcelle
     const bounds = polygon.getBounds();
     mapInstance.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 18 });
-    
-    // Ouvrir le popup
     polygon.openPopup();
 
-    // Scroll vers la carte
     if (mapRef.current) {
       mapRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -124,14 +108,8 @@ export default function ParcellairePage() {
   return (
     <div className="p-4 max-w-7xl mx-auto">
       <nav className="mb-6">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group"
-        >
-          <ArrowLeft
-            size={20}
-            className="group-hover:-translate-x-1 transition-transform"
-          />
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           Retour à l'accueil
         </Link>
       </nav>
@@ -140,44 +118,78 @@ export default function ParcellairePage() {
         🗺️ Parcellaire de Toulouse (1830)
       </h1>
 
-      <div
-        ref={mapRef}
-        className="h-[600px] w-full border rounded-lg bg-gray-100 shadow-md relative z-0"
-      >
+      <div ref={mapRef} className="h-[500px] w-full border rounded-lg bg-gray-100 shadow-md relative z-0 overflow-hidden">
         {!isMapReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
-             <p className="text-purple-600 animate-pulse font-semibold">Chargement de la carte…</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 z-10">
+            <p className="text-purple-600 animate-pulse font-semibold">Chargement de la carte…</p>
           </div>
         )}
       </div>
 
-      {/* Tableau de données trié */}
-      <div className="mt-8 overflow-x-auto shadow-sm border rounded-lg">
+      <div className="mt-8 overflow-hidden shadow-sm border rounded-lg bg-white">
         <table className="min-w-full table-auto border-collapse">
           <thead>
             <tr className="bg-purple-100 text-purple-900">
-              <th className="border-b border-gray-300 p-3 text-left">Parcelle</th>
-              <th className="border-b border-gray-300 p-3 text-left">Type</th>
-              <th className="border-b border-gray-300 p-3 text-left">Surface (m²)</th>
-              <th className="border-b border-gray-300 p-3 text-left">Propriétaire</th>
+              <th className="p-3 text-left text-sm font-bold">Parcelle</th>
+              <th className="p-3 text-left text-sm font-bold">Type</th>
+              {/* Colonnes cachées sur mobile */}
+              <th className="p-3 text-left text-sm font-bold hidden md:table-cell">Surface (m²)</th>
+              <th className="p-3 text-left text-sm font-bold hidden md:table-cell">Propriétaire</th>
             </tr>
           </thead>
           <tbody>
             {parcelles.map((p) => (
-              <tr
-                key={p.id}
-                className="hover:bg-purple-50 cursor-pointer transition-colors even:bg-gray-50"
-                onClick={() => handleRowClick(p)}
-              >
-                <td className="border-b border-gray-200 p-3 font-medium">{p.codeparcelle}</td>
-                <td className="border-b border-gray-200 p-3 text-gray-700">{p.typologie}</td>
-                <td className="border-b border-gray-200 p-3 text-gray-700">{p.surface}</td>
-                <td className="border-b border-gray-200 p-3 text-gray-700">{p.nom_prenom}</td>
-              </tr>
+              <ParcelleRow key={p.id} parcelle={p} onZoom={handleRowClick} />
             ))}
           </tbody>
         </table>
       </div>
     </div>
+  );
+}
+
+function ParcelleRow({ parcelle, onZoom }: { parcelle: Parcelle; onZoom: (p: Parcelle) => void }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <tr
+        className="hover:bg-purple-50 cursor-pointer transition-colors border-b border-gray-100 even:bg-gray-50/50"
+        onClick={() => {
+          setIsOpen(!isOpen);
+          onZoom(parcelle);
+        }}
+      >
+        <td className="p-3 font-bold text-purple-700">{parcelle.codeparcelle}</td>
+        <td className="p-3 text-gray-700 text-sm">
+          <div className="flex items-center justify-between">
+            {parcelle.typologie}
+            <span className="md:hidden text-purple-400 ml-2">
+              {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </span>
+          </div>
+        </td>
+        <td className="p-3 text-gray-700 text-sm hidden md:table-cell">{parcelle.surface}</td>
+        <td className="p-3 text-gray-700 text-sm hidden md:table-cell">{parcelle.nom_prenom}</td>
+      </tr>
+
+      {/* Accordéon Mobile */}
+      {isOpen && (
+        <tr className="md:hidden bg-purple-50/50 border-b border-purple-100 transition-all">
+          <td colSpan={2} className="p-4">
+            <div className="grid grid-cols-1 gap-3 text-sm">
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase font-bold text-purple-800 tracking-wider">Surface</span>
+                <span className="text-gray-700 font-medium">{parcelle.surface} m²</span>
+              </div>
+              <div className="flex flex-col border-t border-purple-100 pt-2">
+                <span className="text-[10px] uppercase font-bold text-purple-800 tracking-wider">Propriétaire</span>
+                <span className="text-gray-700 italic">{parcelle.nom_prenom}</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }

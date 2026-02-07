@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, CSSProperties } from "react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 
 // --- Interface de type ---
 interface ActiviteAriege {
@@ -13,7 +13,6 @@ interface ActiviteAriege {
   details: string;
 }
 
-// Coordonnées pour centrer la carte sur l'Ariège (Foix)
 const ARIEGE_CENTER: [number, number] = [42.9667, 1.6000];
 
 export default function RandoAriegePage() {
@@ -25,13 +24,11 @@ export default function RandoAriegePage() {
   const [isMapReady, setIsMapReady] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // ---- 1. Récupération des données ----
   useEffect(() => {
     async function fetchActivites() {
       try {
         const response = await fetch('/api/randoariege');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-
         const data: ActiviteAriege[] = await response.json();
         setActivitesData(data);
       } catch (error) {
@@ -43,53 +40,29 @@ export default function RandoAriegePage() {
     fetchActivites();
   }, []);
 
-  // ---- 2. Initialisation de la carte Leaflet (Méthode OTAN) ----
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || activitesData.length === 0) return;
 
     const initMap = async () => {
       const L = (await import('leaflet')).default;
-
       if (!mapInstance.current) {
-        // Initialisation de l'instance
         mapInstance.current = L.map(mapRef.current!).setView(ARIEGE_CENTER, 9);
-
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(mapInstance.current);
-
-        // Groupe pour gérer les marqueurs proprement
         markersLayerRef.current = L.layerGroup().addTo(mapInstance.current);
       }
 
-      // Nettoyage des marqueurs si re-calcul
       markersLayerRef.current.clearLayers();
 
       activitesData.forEach((act, i) => {
         const count = i + 1;
-        
-        // Simulation de dispersion (puisque nous n'avons pas de lat/lng dans l'interface originale)
-        // Note: Si votre API fournit lat/lng, remplacez ces calculs par act.lat et act.lng
         const lat = ARIEGE_CENTER[0] + (Math.random() - 0.5) * 0.4;
         const lng = ARIEGE_CENTER[1] + (Math.random() - 0.5) * 0.4;
 
-        // Création de l'icône personnalisée numérotée
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `
-            <div style="
-              background-color: #1d4ed8; 
-              color: white; 
-              width: 24px; height: 24px; 
-              border-radius: 50%; 
-              display: flex; align-items: center; justify-content: center; 
-              font-size: 11px; font-weight: bold; 
-              border: 2px solid white;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            ">
-              ${count}
-            </div>
-          `,
+          html: `<div style="background-color: #1d4ed8; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${count}</div>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12]
         });
@@ -106,13 +79,10 @@ export default function RandoAriegePage() {
           .addTo(markersLayerRef.current)
           .bindPopup(popupContent);
       });
-
       setIsMapReady(true);
     };
 
     initMap();
-
-    // Cleanup au démontage
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -137,41 +107,32 @@ export default function RandoAriegePage() {
       </p>
 
       {/* Carte */}
-      <div
-        style={{ height: "70vh", width: "100%", zIndex: 0 }}
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center relative overflow-hidden shadow-inner"
-      >
+      <div style={{ height: "60vh", width: "100%", zIndex: 0 }} className="mb-8 border rounded-lg bg-gray-100 relative overflow-hidden shadow-inner">
         <div ref={mapRef} className="h-full w-full" />
         {(!isMapReady || isLoadingData) && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10">
-            <p className="animate-pulse font-medium">Chargement de la carte et des données…</p>
+            <p className="animate-pulse font-medium">Chargement de la carte…</p>
           </div>
         )}
       </div>
 
-      {/* Tableau */}
-      <h2 className="text-2xl font-semibold mb-4 text-slate-800">
-        Liste complète des activités ({activitesData.length} marqueurs)
-      </h2>
+      <h2 className="text-2xl font-semibold mb-4 text-slate-800">Liste des activités</h2>
 
-      <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead style={{ backgroundColor: "#e0e0e0" }}>
+      {/* Tableau Responsive */}
+      <div className="overflow-hidden shadow-sm rounded-lg border border-gray-200">
+        <table className="w-full border-collapse">
+          <thead className="bg-gray-100">
             <tr>
-              <th style={tableHeaderStyle}>#</th>
+              <th style={tableHeaderStyle} className="w-12">#</th>
               <th style={tableHeaderStyle}>Commune</th>
               <th style={tableHeaderStyle}>Type d'activité / Site</th>
-              <th style={tableHeaderStyle}>Détails</th>
+              {/* Masqué sur mobile, affiché sur PC (md:table-cell) */}
+              <th style={tableHeaderStyle} className="hidden md:table-cell">Détails</th>
             </tr>
           </thead>
           <tbody>
             {activitesData.map((act, i) => (
-              <tr key={act.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9f9f9" }}>
-                <td style={tableCellStyle}>{i + 1}</td>
-                <td style={tableCellStyle}>{act.commune}</td>
-                <td style={tableCellStyle}>{act.type}</td>
-                <td style={tableCellStyle}>{act.details}</td>
-              </tr>
+              <ActivityRow key={act.id} act={act} index={i} />
             ))}
           </tbody>
         </table>
@@ -180,6 +141,48 @@ export default function RandoAriegePage() {
   );
 }
 
-// Styles table
-const tableHeaderStyle: CSSProperties = { padding: "12px 10px", border: "1px solid #ccc", textAlign: "left", fontSize: "14px" };
-const tableCellStyle: CSSProperties = { padding: "10px 8px", border: "1px solid #ddd", fontSize: "14px" };
+// --- Sous-composant pour la ligne du tableau ---
+function ActivityRow({ act, index }: { act: ActiviteAriege; index: number }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <tr 
+        className={`border-b border-gray-200 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"} md:hover:bg-blue-50/30 cursor-pointer md:cursor-default`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <td style={tableCellStyle} className="text-blue-600 font-bold">{index + 1}</td>
+        <td style={tableCellStyle}>{act.commune}</td>
+        <td style={tableCellStyle}>
+          <div className="flex items-center justify-between">
+            <span>{act.type}</span>
+            {/* Icône d'état uniquement sur mobile */}
+            <span className="md:hidden">
+              {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </span>
+          </div>
+        </td>
+        {/* Colonne détails : masquée sur mobile */}
+        <td style={tableCellStyle} className="hidden md:table-cell text-slate-600">
+          {act.details}
+        </td>
+      </tr>
+
+      {/* Détails en accordéon : Affichés uniquement sur mobile quand isOpen est vrai */}
+      {isOpen && (
+        <tr className="md:hidden bg-blue-50/50">
+          <td colSpan={3} className="p-4 text-sm text-slate-700 border-b border-gray-200">
+            <div className="flex flex-col gap-1">
+              <span className="font-bold text-blue-800 text-xs uppercase tracking-wider">Détails de l'activité :</span>
+              <p className="italic leading-relaxed">{act.details}</p>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+// Styles
+const tableHeaderStyle: CSSProperties = { padding: "12px 10px", textAlign: "left", fontSize: "14px", fontWeight: "600" };
+const tableCellStyle: CSSProperties = { padding: "10px 8px", fontSize: "14px" };
