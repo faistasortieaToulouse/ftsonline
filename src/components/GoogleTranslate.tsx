@@ -4,33 +4,33 @@ import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
 const LANGS = [
-  { code: 'fr', label: 'Français' },
-  { code: 'de', label: 'Allemand' },
-  { code: 'en', label: 'Anglais' },
-  { code: 'ar', label: 'Arabe' },
-  { code: 'zh-CN', label: 'Chinois' },
-  { code: 'es', label: 'Espagnol' },
-  { code: 'it', label: 'Italien' },
-  { code: 'ja', label: 'Japonais' },
-  { code: 'pt', label: 'Portugais' },
-  { code: 'ru', label: 'Russe' },
-  { code: 'tr', label: 'Turc' },
+  { code: 'fr', label: 'Français', flag: '🇫🇷' },
+  { code: 'de', label: 'Allemand', flag: '🇩🇪' },
+  { code: 'en', label: 'Anglais', flag: '🇬🇧' },
+  { code: 'ar', label: 'Arabe', flag: '🇸🇦' },
+  { code: 'zh-CN', label: 'Chinois', flag: '🇨🇳' },
+  { code: 'es', label: 'Espagnol', flag: '🇪🇸' },
+  { code: 'it', label: 'Italien', flag: '🇮🇹' },
+  { code: 'ja', label: 'Japonais', flag: '🇯🇵' },
+  { code: 'pt', label: 'Portugais', flag: '🇵🇹' },
+  { code: 'ru', label: 'Russe', flag: '🇷🇺' },
+  { code: 'tr', label: 'Turc', flag: '🇹🇷' },
 ];
 
 const EXTRA_LANGS = [
-  { code: 'eu', label: 'Basque' },
-  { code: 'ko', label: 'Coréen' },
-  { code: 'fa', label: 'Farci' },
-  { code: 'el', label: 'Grec' },
-  { code: 'hi', label: 'Hindi' },
-  { code: 'id', label: 'Indonésien' },
-  { code: 'nl', label: 'Néerlandais' },
-  { code: 'oc', label: 'Occitan' },
-  { code: 'pl', label: 'Polonais' },
-  { code: 'ro', label: 'Roumain' },
-  { code: 'sv', label: 'Suédois' },
-  { code: 'th', label: 'Thaïlandais' },
-  { code: 'vi', label: 'Vietnamien' },
+  { code: 'eu', label: 'Basque', flag: '🇪🇸' },
+  { code: 'ko', label: 'Coréen', flag: '🇰🇷' },
+  { code: 'fa', label: 'Farci', flag: '🇮🇷' },
+  { code: 'el', label: 'Grec', flag: '🇬🇷' },
+  { code: 'hi', label: 'Hindi', flag: '🇮🇳' },
+  { code: 'id', label: 'Indonésien', flag: '🇮🇩' },
+  { code: 'nl', label: 'Néerlandais', flag: '🇳🇱' },
+  { code: 'oc', label: 'Occitan', flag: '🛡️' }, // Le blason pour l'identité occitane
+  { code: 'pl', label: 'Polonais', flag: '🇵🇱' },
+  { code: 'ro', label: 'Roumain', flag: '🇷🇴' },
+  { code: 'sv', label: 'Suédois', flag: '🇸🇪' },
+  { code: 'th', label: 'Thaïlandais', flag: '🇹🇭' },
+  { code: 'vi', label: 'Vietnamien', flag: '🇻🇳' },
 ];
 
 function setSecureCookie(name: string, value: string, days?: number) {
