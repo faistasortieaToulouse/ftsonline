@@ -850,56 +850,65 @@ useEffect(() => {
     </div>
 
 {/* --- Bloc unique : Éphéméride & Environnement --- */}
-<div className="bg-indigo-900/10 border-t border-purple-200 py-4 px-6">
-  <div className="flex flex-col md:flex-row flex-wrap justify-around items-center gap-y-6 gap-x-6 text-[11px] font-medium text-indigo-800">
+<div className="bg-indigo-900/10 border-t border-purple-200 py-6 px-4 md:py-4 md:px-6">
+  {/* 1. flex-wrap : permet aux deux grandes sections de passer l'une sous l'autre.
+      2. justify-center : centre les blocs si on est en mode "empilé".
+  */}
+  <div className="flex flex-wrap justify-center md:justify-around items-center gap-y-8 gap-x-6 text-[11px] font-medium text-indigo-800">
     
-    {/* 1. SECTION LUMIÈRE & PHOTO */}
-<div className="flex flex-wrap justify-center md:justify-start items-center gap-4">
-  <div className="flex items-center gap-1.5">
-    {/* On utilise l'icône dynamique */}
-    <span className="text-sm">{iconeLumiere}</span> 
-    <span className="whitespace-nowrap">
-      Lumière : <b className="text-indigo-900">{tendanceLumiere}</b>
-    </span>
-  </div>
-      <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
-        <span className="text-sm" title="Heure Dorée">📷</span> 
-        <span>Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
+    {/* SECTION 1 : LUMIÈRE & PHOTO */}
+    {/* flex-wrap ici aussi pour que si les 3 items photo ne tiennent pas, ils créent une 2ème ligne */}
+    <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-4">
+      <div className="flex items-center gap-1.5">
+        <span className="text-sm">{iconeLumiere}</span> 
+        <span className="whitespace-nowrap">
+          Lumière : <b className="text-indigo-900">{tendanceLumiere}</b>
+        </span>
       </div>
-      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-        <span className="text-sm" title="Heure Bleue">🌃</span>
-        <span>Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
-      </div>
-    </div>
-
-    {/* 2. SECTION ENVIRONNEMENT (Vent, Air, UV) */}
-    <div className="flex items-center gap-4 border-l border-indigo-300 pl-4">
       
-{/* Vent : Vitesse du jour + Statut Autan */}
-  <div className="flex items-center gap-1.5">
-    <span className="text-sm">💨</span>
-    <div className="flex flex-col leading-tight">
-      <span className="whitespace-nowrap">
-        {/* On utilise ?. pour éviter les erreurs si meteo est en train de charger */}
-        Vent : <b className="text-indigo-900">{meteo?.vitesseVent || '--'} km/h</b>
-      </span>
-      <span className="text-[9px] opacity-70 italic">
-        {/* On vérifie si "Vent" est dans la condition envoyée par l'API */}
-        Autan : {meteo?.condition?.includes("Vent") ? "Actif" : "Calme"}
-      </span>
-    </div>
-  </div>
-
-      {/* Qualité de l'Air */}
-      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
-        <span className="text-sm">🍃</span>
-        <span>Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span></span>
+      {/* Utilisation de border-l seulement si on a de la place */}
+      <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
+        <span className="text-sm">📷</span> 
+        <span className="whitespace-nowrap">Heure Dorée : <b className="text-indigo-900">{heureDoree}</b></span>
       </div>
 
-      {/* Indice UV */}
-      <div className="flex items-center gap-1.5 border-l border-indigo-100 pl-4">
+      <div className="flex items-center gap-1.5 border-l border-indigo-200 pl-4">
+        <span className="text-sm">🌃</span>
+        <span className="whitespace-nowrap">Heure Bleue : <b className="text-indigo-900">{heureBleue}</b></span>
+      </div>
+    </div>
+
+    {/* SECTION 2 : ENVIRONNEMENT */}
+    {/* On ajoute une bordure à gauche SEULEMENT sur grand écran (md:border-l) */}
+    <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-4 md:border-l md:border-indigo-300 md:pl-6">
+      
+      {/* Vent */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm">💨</span>
+        <div className="flex flex-col leading-tight">
+          <span className="whitespace-nowrap">
+            Vent : <b className="text-indigo-900">{meteo?.vitesseVent || '--'} km/h</b>
+          </span>
+          <span className="text-[9px] opacity-70 italic">
+             Autan : {meteo?.condition?.includes("Vent") ? "Actif" : "Calme"}
+          </span>
+        </div>
+      </div>
+
+      {/* Air */}
+      <div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
+        <span className="text-sm">🍃</span>
+        <span className="whitespace-nowrap">
+          Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span>
+        </span>
+      </div>
+
+      {/* UV */}
+      <div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
         <span className="text-sm">🕶️</span>
-        <span>UV : <b className="text-indigo-900">{indiceUV}</b></span>
+        <span className="whitespace-nowrap">
+          UV : <b className="text-indigo-900">{indiceUV}</b>
+        </span>
       </div>
     </div>
 

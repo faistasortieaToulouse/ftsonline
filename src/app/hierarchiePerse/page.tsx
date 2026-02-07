@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Landmark, Scroll, ChevronRight, Star, MapPin } from "lucide-react";
 
 /* =========================
-   TYPES
+    TYPES
 ========================= */
-
 type NoeudPerse = {
   id: number;
   section: string;
@@ -23,152 +22,162 @@ type Position = {
 };
 
 /* =========================
-   COMPOSANT LISTE (GAUCHE)
+    CONFIGURATIONS VISUELLES
 ========================= */
-
-function NoeudHierarchie({ noeud }: { noeud: NoeudPerse }) {
-  return (
-    <li className="ml-4 border-l pl-4 mt-2">
-      <div className="font-semibold">{noeud.titre}</div>
-      <div className="text-sm text-gray-600">{noeud.description}</div>
-      {noeud.enfants && noeud.enfants.length > 0 && (
-        <ul className="mt-2">
-          {noeud.enfants.map((enfant) => (
-            <NoeudHierarchie key={enfant.id} noeud={enfant} />
-          ))}
-        </ul>
-      )}
-    </li>
-  );
-}
+const LARGEUR_NOEUD = 280;
+const HAUTEUR_NOEUD = 100;
+const ESPACE_V = 60; // Espace vertical entre les rangs
+const HAUTEUR_MAX_SECTION = 750;
 
 /* =========================
-   ARBRE SVG VERTICAL (DROITE)
+    LOGIQUE LAYOUT (VERTICAL)
 ========================= */
-
-const LARGEUR_NOEUD = 220;
-const HAUTEUR_NOEUD = 60;
-const ESPACE_VERTICAL = 80;
-const ESPACE_HORIZONTAL = 40;
-
-function calculLayoutVertical(
-  noeud: NoeudPerse,
-  x: number,
-  y: number,
-  positions: Position[]
-): number {
+function calculLayout(noeud: NoeudPerse, x: number, y: number, positions: Position[]): number {
   positions.push({ x, y, noeud });
-  let maxY = y;
-
+  let currentY = y;
   if (noeud.enfants && noeud.enfants.length > 0) {
-    const nextY = y + HAUTEUR_NOEUD + ESPACE_VERTICAL;
-    maxY = calculLayoutVertical(noeud.enfants[0], x, nextY, positions);
+    noeud.enfants.forEach(e => {
+      currentY = calculLayout(e, x, currentY + HAUTEUR_NOEUD + ESPACE_V, positions);
+    });
   }
-
-  return maxY;
-}
-
-function ArbreSVGVertical({ racine }: { racine: NoeudPerse }) {
-  const positions: Position[] = [];
-  const startX = 50;
-  const startY = 20;
-
-  calculLayoutVertical(racine, startX, startY, positions);
-
-  const largeurMax = Math.max(...positions.map((p) => p.x + LARGEUR_NOEUD)) + 50;
-  const hauteurMax = Math.max(...positions.map((p) => p.y + HAUTEUR_NOEUD)) + 50;
-
-  return (
-    <svg width={largeurMax} height={hauteurMax} className="bg-white">
-      {/* Liens parent → enfants */}
-      {positions.map((parent) =>
-        parent.noeud.enfants?.map((enfant) => {
-          const enfantPos = positions.find((p) => p.noeud.id === enfant.id);
-          if (!enfantPos) return null;
-          return (
-            <line
-              key={`${parent.noeud.id}-${enfant.id}`}
-              x1={parent.x + LARGEUR_NOEUD / 2}
-              y1={parent.y + HAUTEUR_NOEUD}
-              x2={enfantPos.x + LARGEUR_NOEUD / 2}
-              y2={enfantPos.y}
-              stroke="#334155"
-            />
-          );
-        })
-      )}
-
-      {/* Nœuds */}
-      {positions.map((p) => (
-        <g key={p.noeud.id}>
-          <rect
-            x={p.x}
-            y={p.y}
-            width={LARGEUR_NOEUD}
-            height={HAUTEUR_NOEUD}
-            rx={10}
-            fill="#f8fafc"
-            stroke="#0f172a"
-          />
-          <text x={p.x + 10} y={p.y + 30} fontSize={14} fill="#0f172a">
-            {p.noeud.titre}
-          </text>
-        </g>
-      ))}
-    </svg>
-  );
+  return currentY;
 }
 
 /* =========================
-   PAGE PRINCIPALE
+    COMPOSANT PRINCIPAL
 ========================= */
-
 export default function HierarchiePersePage() {
   const [arbre, setArbre] = useState<NoeudPerse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const positions: Position[] = [];
 
   useEffect(() => {
     fetch("/api/hierarchiePerse")
       .then((res) => res.json())
       .then((data: NoeudPerse[]) => {
-        if (data.length === 0) return;
-
-        // Construire un arbre vertical linéaire : chaque nœud → enfant suivant
-        for (let i = 0; i < data.length - 1; i++) {
-          data[i].enfants = [data[i + 1]];
+        if (!data || data.length === 0) return;
+        
+        // Reconstruction de la chaîne hiérarchique linéaire
+        const nodes = data.map(d => ({ ...d, enfants: [] }));
+        for (let i = 0; i < nodes.length - 1; i++) {
+          nodes[i].enfants = [nodes[i + 1]];
         }
-        data[data.length - 1].enfants = [];
-
-        setArbre([data[0]]); // racine
-      });
+        
+        setArbre([nodes[0]]);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
+  if (arbre.length > 0) {
+    calculLayout(arbre[0], 20, 30, positions);
+  }
+
+  const hauteurContenu = positions.length * (HAUTEUR_NOEUD + ESPACE_V) + 60;
+  const hauteurAffichee = Math.min(hauteurContenu, HAUTEUR_MAX_SECTION);
+
   return (
-    <main className="p-6 h-screen">
-       
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+    <main className="p-4 md:p-8 min-h-screen bg-[#fdfbf7]">
+      {/* NAVIGATION */}
+      <nav className="mb-8 max-w-7xl mx-auto">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-900 hover:text-blue-700 font-bold group transition-colors">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+          Retour aux Empires
         </Link>
       </nav>
-       
-      <h1 className="text-2xl font-bold mb-6">Hiérarchie de l'Empire Perse</h1>
 
-      <div className="grid grid-cols-2 gap-6 h-[calc(100%-4rem)]">
-        {/* GAUCHE : liste hiérarchique */}
-        <section className="overflow-auto border-r pr-4">
-          <ul>
-            {arbre.map((racine) => (
-              <NoeudHierarchie key={racine.id} noeud={racine} />
-            ))}
-          </ul>
-        </section>
+      {/* HEADER STYLE "OTTOMAN" ADAPTÉ PERSE */}
+      <header className="mb-16 text-center max-w-4xl mx-auto">
+        <div className="flex justify-center mb-4">
+          <Landmark size={50} className="text-blue-900 opacity-80" />
+        </div>
+        <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-2 uppercase tracking-tighter">
+          Le Trône de Persépolis
+        </h1>
+        <p className="text-blue-700 font-serif italic text-lg uppercase tracking-[0.2em] text-sm">
+          Hiérarchie de l'Empire Achéménide
+        </p>
+        <div className="mt-6 flex justify-center items-center gap-3">
+          <div className="h-px w-16 bg-blue-200"></div>
+          <Star size={14} className="text-amber-500 fill-amber-500" />
+          <div className="h-px w-16 bg-blue-200"></div>
+        </div>
+      </header>
 
-        {/* DROITE : arbre SVG vertical */}
-        <section className="overflow-auto">
-          {arbre[0] && <ArbreSVGVertical racine={arbre[0]} />}
-        </section>
-      </div>
+      {loading ? (
+        <div className="text-center py-20 animate-pulse text-blue-900 font-serif italic uppercase text-xs tracking-widest">
+          Consultation des tablettes de Suse...
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-8 items-start">
+          
+          {/* 1. DÉTAILS DES FONCTIONS (GAUCHE) */}
+          <section 
+            style={{ height: `${hauteurAffichee}px` }}
+            className="order-2 xl:order-1 bg-white border border-blue-100 rounded-3xl shadow-xl flex flex-col overflow-hidden"
+          >
+            <div className="bg-blue-50/50 border-b border-blue-100 p-5 flex items-center gap-3">
+              <Scroll size={20} className="text-blue-800" />
+              <h3 className="text-blue-900 font-black uppercase text-xs tracking-widest">Édits et Gouvernance</h3>
+            </div>
+            <div className="overflow-y-auto flex-grow p-6 space-y-8 scrollbar-thin scrollbar-thumb-blue-100">
+              {positions.map((p) => (
+                <div key={p.noeud.id} className="relative pl-6 group">
+                  <div className="absolute left-0 top-0 bottom-0 w-px bg-blue-100 group-hover:bg-amber-400 transition-colors"></div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{p.noeud.section}</span>
+                    <ChevronRight size={12} className="text-blue-200" />
+                  </div>
+                  <h4 className="text-xl font-black text-slate-900 mb-2 tracking-tight">{p.noeud.titre}</h4>
+                  <p className="text-slate-500 text-sm italic font-serif leading-relaxed pr-4">{p.noeud.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* 2. ARBRE SCHÉMATIQUE (DROITE) */}
+          <section 
+            style={{ height: `${hauteurAffichee}px` }}
+            className="order-1 xl:order-2 bg-blue-900/5 border-2 border-blue-100 rounded-3xl p-6 overflow-auto shadow-inner relative"
+          >
+            <div className="flex justify-center">
+              <svg width={LARGEUR_NOEUD + 40} height={hauteurContenu} className="overflow-visible">
+                {positions.map((p, i) => (
+                  <g key={p.noeud.id}>
+                    {/* Ligne de connexion pointillée */}
+                    {i < positions.length - 1 && (
+                      <line 
+                        x1={p.x + LARGEUR_NOEUD/2} y1={p.y + HAUTEUR_NOEUD} 
+                        x2={p.x + LARGEUR_NOEUD/2} y2={positions[i+1].y} 
+                        stroke="#1e3a8a" strokeWidth="2" strokeDasharray="6 4"
+                      />
+                    )}
+                    
+                    {/* Carte du Noeud */}
+                    <foreignObject x={p.x} y={p.y} width={LARGEUR_NOEUD} height={HAUTEUR_NOEUD} className="overflow-visible">
+                      <div className="h-full w-full bg-white border-2 border-blue-900 rounded-2xl p-4 shadow-lg flex flex-col justify-center text-center relative hover:scale-105 transition-transform duration-300">
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[8px] font-black px-3 py-1 rounded-full shadow-sm uppercase whitespace-nowrap">
+                          Rang de l'Empire
+                        </div>
+                        <p className="text-[9px] font-bold text-blue-600 uppercase tracking-widest mb-1">{p.noeud.section}</p>
+                        <h4 className="text-[14px] font-black text-slate-900 leading-tight tracking-tight uppercase">{p.noeud.titre}</h4>
+                        <div className="mt-1 flex items-center justify-center gap-1 text-[8px] text-slate-400">
+                           <MapPin size={8} /> Persépolis / Suse
+                        </div>
+                      </div>
+                    </foreignObject>
+                  </g>
+                ))}
+              </svg>
+            </div>
+          </section>
+
+        </div>
+      )}
+
+      <footer className="mt-12 text-center">
+        <p className="text-[10px] text-slate-400 uppercase tracking-[0.3em]">Archives Royales — Sous l'autorité du Roi des Rois</p>
+      </footer>
     </main>
   );
 }
