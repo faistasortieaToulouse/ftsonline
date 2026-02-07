@@ -28,9 +28,9 @@ const ARIÈGE_CENTER: [number, number] = [42.9667, 1.6000];
 
 const getMarkerColor = (categorie: SiteAriege['categorie']): string => {
   switch (categorie) {
-    case 'incontournable': return '#ef4444';
-    case 'remarquable': return '#f97316';
-    case 'suggéré': return '#3b82f6';
+    case 'incontournable': return '#ef4444'; // Rouge
+    case 'remarquable': return '#f97316';    // Orange
+    case 'suggéré': return '#3b82f6';       // Bleu
     default: return '#3b82f6';
   }
 };
@@ -46,7 +46,7 @@ export default function AriegeMapPage() {
   const markersLayer = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // --- Fetch API ---
+  // --- Fetch des données ---
   useEffect(() => {
     async function fetchSites() {
       try {
@@ -70,7 +70,7 @@ export default function AriegeMapPage() {
     )
     .sort((a, b) => a.commune.localeCompare(b.commune));
 
-  // --- Init map ---
+  // --- Initialisation Carte ---
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoading) return;
 
@@ -78,7 +78,7 @@ export default function AriegeMapPage() {
       const L = (await import('leaflet')).default;
       if (mapInstance.current) return;
 
-      mapInstance.current = L.map(mapRef.current).setView(ARIÈGE_CENTER, 9);
+      mapInstance.current = L.map(mapRef.current!).setView(ARIÈGE_CENTER, 9);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
@@ -90,7 +90,7 @@ export default function AriegeMapPage() {
     initMap();
   }, [isLoading]);
 
-  // --- Update markers ---
+  // --- Mise à jour des marqueurs ---
   useEffect(() => {
     if (!isMapReady || !mapInstance.current) return;
 
@@ -119,6 +119,7 @@ export default function AriegeMapPage() {
               ${i + 1}
             </div>
           `,
+          className: 'custom-marker-container',
           iconSize: [26, 26],
           iconAnchor: [13, 13]
         });
@@ -141,10 +142,10 @@ export default function AriegeMapPage() {
       </nav>
 
       <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-extrabold italic">
+        <h1 className="text-2xl md:text-3xl font-extrabold italic text-slate-900">
           🏔️ Sites Touristiques en Ariège (09)
         </h1>
-        <div className="flex flex-wrap gap-4 mt-3 text-sm font-bold">
+        <div className="flex flex-wrap gap-4 mt-3 text-sm font-bold uppercase tracking-wider">
           <span className="text-red-600">🔴 Incontournable</span>
           <span className="text-orange-500">🟠 Remarquable</span>
           <span className="text-blue-600">🔵 Suggéré</span>
@@ -156,78 +157,98 @@ export default function AriegeMapPage() {
         <input
           type="text"
           placeholder="Rechercher une commune ou un monument..."
-          className="w-full pl-10 pr-4 py-3 rounded-xl border focus:ring-2 focus:ring-emerald-600 text-sm"
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-600 outline-none text-sm transition-all"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      <div className="mb-8 h-[40vh] rounded-2xl overflow-hidden shadow-md">
+      <div className="mb-8 h-[35vh] md:h-[50vh] rounded-2xl overflow-hidden shadow-md border border-slate-200">
         <div ref={mapRef} className="h-full w-full" />
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-[11px] uppercase font-bold">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <table className="w-full text-left border-collapse text-sm">
+          <thead className="bg-slate-50 border-b border-slate-200 text-slate-900 uppercase font-bold text-[11px]">
             <tr>
-              <th className="p-4 text-center w-12">#</th>
+              <th className="p-4 w-12 text-center">#</th>
               <th className="p-4">Commune</th>
+              <th className="p-4 hidden md:table-cell">Monument ou site emblématique</th>
+              <th className="p-4 hidden md:table-cell text-center">Niveau</th>
               <th className="p-4">Catégorie</th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="divide-y divide-slate-100">
             {filteredSites.map((site, i) => (
               <React.Fragment key={site.id}>
                 <tr
                   onClick={() => setExpandedId(expandedId === i ? null : i)}
-                  className="cursor-pointer hover:bg-slate-50"
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-emerald-50/40' : 'hover:bg-slate-50'}`}
                 >
-                  <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
+                  <td className="p-4 text-center font-bold text-slate-400 align-middle">{i + 1}</td>
 
-                  <td className="p-4 font-bold flex items-center gap-2">
-                    {site.commune}
-                    {expandedId === i
-                      ? <ChevronUp size={14} />
-                      : <ChevronDown size={14} />
-                    }
+                  <td className="p-4 font-bold text-slate-900 align-middle">
+                    <div className="flex items-center gap-2">
+                      {site.commune}
+                      <div className="md:hidden flex-shrink-0">
+                        {expandedId === i ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
+                      </div>
+                    </div>
                   </td>
 
+                  {/* Monument : visible sur PC, caché sur mobile (va dans l'accordéon) */}
+                  <td className="p-4 hidden md:table-cell text-slate-800 align-middle font-normal">
+                    {site.description}
+                  </td>
+
+                  {/* Niveau : visible sur PC, caché sur mobile (va dans l'accordéon) */}
+                  <td className="p-4 hidden md:table-cell text-center font-bold text-base align-middle" style={{ color: getMarkerColor(site.categorie) }}>
+                    {site.niveau}
+                  </td>
+
+                  {/* Catégorie : TOUJOURS visible */}
                   <td
-                    className="p-4 font-bold capitalize"
+                    className="p-4 font-bold text-base align-middle"
                     style={{ color: getMarkerColor(site.categorie) }}
                   >
-                    {site.categorie}
+                    {site.categorie.charAt(0).toUpperCase() + site.categorie.slice(1)}
                   </td>
                 </tr>
 
+                {/* ACCORDÉON MOBILE (Monument + Niveau) */}
                 {expandedId === i && (
-                  <tr className="bg-emerald-50/20">
-                    <td colSpan={3} className="p-4">
-                      <div className="flex flex-col gap-3">
-
-                        {/* Niveau */}
-                        <span
-                          className="inline-flex items-center gap-1 w-fit px-3 py-1 rounded-full bg-white text-xs font-bold shadow"
-                          style={{ color: getMarkerColor(site.categorie) }}
-                        >
-                          <Star size={12} /> Niveau {site.niveau}
-                        </span>
-
-                        {/* Description */}
+                  <tr className="bg-emerald-50/20 md:hidden">
+                    <td colSpan={3} className="p-4 pt-2 pb-5">
+                      <div className="flex flex-col gap-4 py-3 border-t border-emerald-100">
+                        
+                        {/* Bloc Monument */}
                         <div className="flex gap-3">
-                          <Landmark size={18} className="text-emerald-700 mt-1" />
+                          <Landmark size={18} className="text-emerald-700 mt-1 flex-shrink-0" />
                           <div>
-                            <span className="block text-xs font-bold uppercase mb-1">
+                            <span className="block text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1">
                               Monument ou site emblématique
                             </span>
-                            <p className="text-sm text-slate-800">
+                            <p className="text-sm text-slate-800 font-normal leading-relaxed">
                               {site.description}
                             </p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                        {/* Bloc Niveau */}
+                        <div className="flex items-center gap-3">
+                          <Star size={18} className="text-emerald-700 flex-shrink-0" />
+                          <div>
+                            <span className="block text-[10px] font-bold text-emerald-800 uppercase tracking-widest mb-1">
+                              Niveau d'intérêt
+                            </span>
+                            <span className="text-lg font-black" style={{ color: getMarkerColor(site.categorie) }}>
+                              {site.niveau} / 10
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-xs text-slate-500 italic">
                           <MapPin size={14} /> Localisé en Ariège (09)
                         </div>
                       </div>
