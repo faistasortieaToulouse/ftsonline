@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, Search, ChevronDown, ChevronUp, MapPin, Star, Info, Database } from "lucide-react";
+import { ArrowLeft, Search, ChevronDown, MapPin, Info, Database } from "lucide-react";
 
 // --- Interface de type ---
 interface SiteAriege {
@@ -132,7 +132,7 @@ export default function AriegeMapPage() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <input 
           type="text"
-          placeholder="Rechercher..."
+          placeholder="Rechercher une commune ou un site..."
           className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-600 outline-none shadow-sm transition-all text-sm"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -144,16 +144,14 @@ export default function AriegeMapPage() {
       </div>
 
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-left border-collapse text-sm">
+        <table className="w-full text-left border-collapse text-sm table-fixed md:table-auto">
           <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase font-bold text-[11px]">
             <tr>
-              <th className="p-4 w-12 text-center">#</th>
+              <th className="p-4 w-10 text-center">#</th>
               <th className="p-4">Commune</th>
-              {/* Caché sur mobile */}
-              <th className="p-4 hidden md:table-cell">Monument ou site emblématique</th>
-              {/* Caché sur mobile */}
+              <th className="p-4 hidden md:table-cell w-1/2">Monument ou site emblématique</th>
               <th className="p-4 hidden md:table-cell text-center">Niveau</th>
-              <th className="p-4 text-right md:text-left">Catégorie</th>
+              <th className="p-4 text-right md:text-left w-[115px] md:w-auto">Catégorie</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -164,39 +162,41 @@ export default function AriegeMapPage() {
                   className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-emerald-50/30' : 'hover:bg-slate-50'}`}
                 >
                   <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
-                  <td className="p-4 font-bold text-slate-900">
-                    <div className="flex items-center gap-2">
-                      {site.commune}
-                      <ChevronDown size={14} className={`md:hidden transition-transform ${expandedId === i ? 'rotate-180' : ''}`} />
+                  
+                  {/* Cellule Commune avec gestion de l'espace pour éviter de couper la catégorie */}
+                  <td className="p-4 font-bold text-slate-900 min-w-0">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <span className="truncate">{site.commune}</span>
+                      <ChevronDown size={14} className={`md:hidden flex-shrink-0 transition-transform ${expandedId === i ? 'rotate-180' : ''}`} />
                     </div>
                   </td>
-                  {/* Monument : visible uniquement sur ordinateur */}
+
                   <td className="p-4 hidden md:table-cell text-slate-800 font-normal">
                     {site.description}
                   </td>
-                  {/* Niveau : visible uniquement sur ordinateur */}
+
                   <td className="p-4 hidden md:table-cell text-center font-bold text-base" style={{ color: getMarkerColor(site.categorie) }}>
                     {site.niveau}
                   </td>
-                  {/* Catégorie : Toujours visible */}
-                  <td className="p-4 text-right md:text-left font-bold text-base whitespace-nowrap" style={{ color: getMarkerColor(site.categorie) }}>
+
+                  {/* Cellule Catégorie : On force l'affichage complet */}
+                  <td className="p-4 text-right md:text-left font-bold text-[13px] md:text-base whitespace-nowrap" style={{ color: getMarkerColor(site.categorie) }}>
                     {site.categorie.charAt(0).toUpperCase() + site.categorie.slice(1)}
                   </td>
                 </tr>
 
-                {/* Accordéon mobile : Contient Monument et Niveau */}
                 {expandedId === i && (
                   <tr className="bg-emerald-50/20 md:hidden">
                     <td colSpan={3} className="p-4 pt-0">
                       <div className="flex flex-col gap-3 py-4 border-t border-emerald-100">
                         <div className="flex flex-col gap-1">
                            <span className="text-[10px] font-bold text-slate-400 uppercase">Monument ou site emblématique</span>
-                           <p className="text-slate-800 text-sm leading-relaxed">{site.description}</p>
+                           <p className="text-slate-800 text-[13.5px] leading-relaxed">{site.description}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <Info size={16} style={{ color: getMarkerColor(site.categorie) }} />
-                          <span className="text-sm">
-                            <strong>Niveau :</strong> {site.niveau}
+                          <span className="text-sm text-slate-700">
+                            <strong className="text-slate-900">Niveau :</strong> {site.niveau} / 5
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-slate-500">
@@ -212,6 +212,12 @@ export default function AriegeMapPage() {
           </tbody>
         </table>
       </div>
+      
+      {filteredSites.length === 0 && !isLoading && (
+        <div className="text-center py-12 text-slate-500">
+          Aucun site ne correspond à votre recherche.
+        </div>
+      )}
     </div>
   );
 }
