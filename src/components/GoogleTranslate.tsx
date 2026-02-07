@@ -17,7 +17,6 @@ const LANGS = [
   { code: 'tr', label: 'Turc', flag: '🇹🇷' },
 ];
 
-// J'ai placé l'Occitan en première position ici
 const EXTRA_LANGS = [
   { code: 'oc', label: 'Occitan', flag: '🛡️' }, 
   { code: 'eu', label: 'Basque', flag: '🇪🇸' },
@@ -57,6 +56,9 @@ export default function GoogleTranslateCustom() {
   const [selectedLang, setSelectedLang] = useState('fr');
   const [mounted, setMounted] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  
+  // ✅ OUVERT PAR DÉFAUT (isCollapsed = false)
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -95,66 +97,81 @@ export default function GoogleTranslateCustom() {
         {`function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'fr', autoDisplay: false}, 'google_translate_element'); }`}
       </Script>
 
-      <div className="google-translate-custom mt-28 mb-8 flex flex-col gap-2 w-[95%] sm:max-w-[500px] mx-auto sm:ml-auto p-5 bg-white rounded-2xl shadow-lg border border-slate-200 relative z-10">
+      {/* POSITION CONSERVÉE (mt-28, relative, z-10) */}
+      <div className={`google-translate-custom mt-28 mb-8 flex flex-col gap-2 w-[95%] sm:max-w-[500px] mx-auto sm:ml-auto p-5 bg-white rounded-2xl shadow-lg border border-slate-200 relative z-10 transition-all duration-300 ${isCollapsed ? 'max-h-[50px] overflow-hidden' : 'max-h-[500px]'}`}>
         
-        {/* BLOC 1 : LANGUES PRINCIPALES */}
-        <div className="flex gap-1.5 items-center">
-          <select
-            onChange={(e) => changeLang(e.target.value)}
-            value={LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-            className="flex-1 px-2 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-lg text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer"
-          >
-            {/* Si la langue actuelle n'est pas dans les principales, on montre "Français" par défaut */}
-            {!LANGS.find(l => l.code === selectedLang) && <option value="fr">🇫🇷 Français</option>}
-            {LANGS.map((lang) => (
-              <option key={lang.code} value={lang.code}>
-                {lang.flag} {lang.label}
-              </option>
-            ))}
-          </select>
-          <button onClick={() => changeLang('fr')} className="px-3 py-2 text-xs font-black bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
-            🇫🇷 FR
-          </button>
-        </div>
+        {/* BOUTON DE RÉDUCTION DISCRET EN HAUT À DROITE */}
+        <button 
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="absolute top-2 right-4 text-[10px] font-bold text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-tighter"
+        >
+          {isCollapsed ? '▲ Déplier' : '▼ Plier'}
+        </button>
 
-        {/* BLOC 2 : AUTRES LANGUES */}
-        <div className="flex flex-col gap-1 mt-1">
-          <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1">
-            Autres langues
-          </span>
-          
-          <div className="flex gap-2 items-center">
-            <div className="flex-1">
-              <select
-                onChange={(e) => changeLang(e.target.value)}
-                value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : 'oc'}
-                className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors cursor-pointer"
-              >
-                {/* L'Occitan sera le premier affiché car il est en haut du tableau EXTRA_LANGS */}
-                {EXTRA_LANGS.map((lang) => (
-                  <option key={lang.code} value={lang.code} className="text-slate-800">
-                    {lang.flag} {lang.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <button 
-              onClick={() => setHelpOpen(true)} 
-              className="text-[10px] text-red-400 hover:text-blue-600 transition-colors flex flex-col sm:flex-row items-center sm:gap-1 font-medium italic underline underline-offset-2 text-right sm:text-left">
-              <span className="whitespace-nowrap">besoin</span>
-              <span>d'aide ?</span>
+        {/* TITRE VISIBLE MÊME SI PLIÉ (Optionnel, sinon le bouton suffit) */}
+        {isCollapsed && (
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsCollapsed(false)}>
+            <span className="text-xs font-bold text-slate-600">🌍 Traducteur</span>
+          </div>
+        )}
+
+        {/* LE RESTE DU CONTENU : MASQUÉ SI PLIÉ */}
+        <div className={isCollapsed ? 'opacity-0 invisible' : 'opacity-100 visible transition-opacity duration-500'}>
+          {/* BLOC 1 : LANGUES PRINCIPALES */}
+          <div className="flex gap-1.5 items-center mt-2">
+            <select
+              onChange={(e) => changeLang(e.target.value)}
+              value={LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
+              className="flex-1 px-2 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-lg text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer"
+            >
+              {!LANGS.find(l => l.code === selectedLang) && <option value="fr">🇫🇷 Français</option>}
+              {LANGS.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.flag} {lang.label}
+                </option>
+              ))}
+            </select>
+            <button onClick={() => changeLang('fr')} className="px-3 py-2 text-xs font-black bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+              🇫🇷 FR
             </button>
           </div>
-        </div>
 
-        {/* FOOTER */}
-        <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1.5 px-1 font-medium italic">
-          <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" alt="Google Translate" width={14} height={14} />
-          <span>Traduction fournie par Google Translate</span>
+          {/* BLOC 2 : AUTRES LANGUES */}
+          <div className="flex flex-col gap-1 mt-1">
+            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1">
+              Autres langues
+            </span>
+            <div className="flex gap-2 items-center">
+              <div className="flex-1">
+                <select
+                  onChange={(e) => changeLang(e.target.value)}
+                  value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : 'oc'}
+                  className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors cursor-pointer"
+                >
+                  {EXTRA_LANGS.map((lang) => (
+                    <option key={lang.code} value={lang.code} className="text-slate-800">
+                      {lang.flag} {lang.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button 
+                onClick={() => setHelpOpen(true)} 
+                className="text-[10px] text-red-400 hover:text-blue-600 transition-colors flex flex-col sm:flex-row items-center sm:gap-1 font-medium italic underline underline-offset-2 text-right sm:text-left leading-tight"
+              >
+                <span className="whitespace-nowrap">besoin</span>
+                <span>d'aide ?</span>
+              </button>
+            </div>
+          </div>
+
+          {/* FOOTER */}
+          <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1.5 px-1 font-medium italic">
+            <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" alt="Google Translate" width={14} height={14} />
+            <span>Traduction par Google</span>
+          </div>
         </div>
       </div>
-
       {/* ✅ MODALE D'AIDE : SOLUTION RADICALE POUR LE CENTRAGE ET LE Z-INDEX */}
       {helpOpen && (
         <div
