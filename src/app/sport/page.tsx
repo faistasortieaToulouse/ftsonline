@@ -60,7 +60,6 @@ export default function SportPage() {
     );
   });
 
-  // INITIALISATION CARTE ET MARQUEURS (MÉTHODE OTAN)
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || filteredItems.length === 0) return;
 
@@ -68,46 +67,28 @@ export default function SportPage() {
       const L = (await import('leaflet')).default;
 
       if (!mapInstance.current) {
-        // Initialisation de la carte sur Toulouse
         mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.444], 12);
-        
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(mapInstance.current);
-
         markersGroupRef.current = L.layerGroup().addTo(mapInstance.current);
       }
 
-      // Nettoyage et ajout des marqueurs
       markersGroupRef.current.clearLayers();
 
       filteredItems.forEach((item, i) => {
         const count = i + 1;
-
-        // Icône personnalisée numérotée
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `<div style="
-            background-color: #2563eb;
-            color: white;
-            width: 24px; height: 24px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: bold;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          ">${count}</div>`,
+          html: `<div style="background-color: #2563eb; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${count}</div>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12]
         });
 
         const popupContent = `
           <div style="font-family: Arial; font-size: 14px;">
-            <strong>${count}. ${item.name}</strong><br/>
-            <b>Installation :</b> ${item.installation}<br/>
-            <b>Famille :</b> ${item.famille}<br/>
-            <b>Type :</b> ${item.type}<br/>
-            <b>Adresse :</b> ${item.adresse}
+            <strong style="color: #2563eb;">${count}. ${item.name}</strong><br/>
+            <small>${item.adresse}</small>
           </div>
         `;
 
@@ -139,70 +120,80 @@ export default function SportPage() {
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-bold mb-4 text-slate-800">Équipements sportifs de Toulouse</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-4 text-slate-800">🏟️ Équipements sportifs de Toulouse</h1>
 
-      <p className="mb-4 font-semibold text-slate-600">
-        {markersCount} lieux affichés sur {filteredItems.length} équipements filtrés.
+      <p className="mb-4 font-semibold text-slate-600 text-sm md:text-base">
+        {markersCount} lieux affichés sur {filteredItems.length} résultats.
       </p>
 
       <input
         type="text"
-        placeholder="Rechercher un équipement..."
+        placeholder="Rechercher un gymnase, stade, piscine..."
         value={searchQuery}
         onChange={e => setSearchQuery(e.target.value)}
-        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+        className="w-full mb-6 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm transition-all"
       />
 
       {error && (
-        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
+        <div className="mb-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded-lg text-sm">
           <strong>Erreur :</strong> {error}
         </div>
       )}
 
-      {/* ZONE CARTE */}
+      {/* ZONE CARTE - Responsive Height */}
       <div
-        style={{ height: "60vh", width: "100%", zIndex: 0 }}
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center shadow-inner relative overflow-hidden"
+        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner relative overflow-hidden h-[40vh] md:h-[60vh]"
+        style={{ zIndex: 0 }}
       >
         <div ref={mapRef} className="h-full w-full" />
         {(!isMapReady || loading) && (
-          <div className="absolute inset-0 bg-gray-50 flex items-center justify-center z-10">
-            <p className="animate-pulse text-gray-500 font-medium">Chargement de la carte et des données…</p>
+          <div className="absolute inset-0 bg-slate-50/80 flex items-center justify-center z-10">
+            <p className="animate-pulse text-blue-600 font-medium">Chargement des données sportives…</p>
           </div>
         )}
       </div>
 
-      {/* TABLEAU */}
-      <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead style={{ backgroundColor: "#f8fafc" }}>
-            <tr>
-              <th style={thStyle}>#</th>
-              <th style={thStyle}>Nom</th>
-              <th style={thStyle}>Installation</th>
-              <th style={thStyle}>Famille</th>
-              <th style={thStyle}>Type</th>
-              <th style={thStyle}>Adresse</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems.map((item, i) => (
-              <tr key={item.id} style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f9fafb" }}>
-                <td style={{ ...tdStyle, fontWeight: 'bold' }}>{i + 1}</td>
-                <td style={tdStyle}>{item.name}</td>
-                <td style={tdStyle}>{item.installation}</td>
-                <td style={tdStyle}>{item.famille}</td>
-                <td style={tdStyle}>{item.type}</td>
-                <td style={tdStyle}>{item.adresse}</td>
+      {/* TABLEAU RESPONSIVE */}
+      <div className="overflow-hidden border border-slate-200 rounded-2xl shadow-sm bg-white">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead className="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th className="p-4 font-bold text-slate-500 w-12 text-center">#</th>
+                <th className="p-4 font-bold text-slate-700">Nom / Adresse</th>
+                <th className="p-4 font-bold text-slate-700 hidden sm:table-cell">Installation</th>
+                <th className="p-4 font-bold text-slate-700 hidden md:table-cell text-center">Famille</th>
+                <th className="p-4 font-bold text-slate-700 hidden lg:table-cell">Type</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredItems.map((item, i) => (
+                <tr key={item.id} className="hover:bg-blue-50/50 transition-colors">
+                  <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
+                  <td className="p-4">
+                    <div className="font-bold text-blue-900">{item.name}</div>
+                    {/* Adresse visible sur mobile sous le nom */}
+                    <div className="text-[11px] text-slate-500 md:text-sm block">
+                      {item.adresse}
+                    </div>
+                  </td>
+                  <td className="p-4 hidden sm:table-cell text-slate-600">{item.installation}</td>
+                  <td className="p-4 hidden md:table-cell text-center">
+                    <span className="px-2 py-1 bg-slate-100 rounded text-[10px] font-bold uppercase text-slate-500">
+                      {item.famille}
+                    </span>
+                  </td>
+                  <td className="p-4 hidden lg:table-cell text-slate-500">{item.type}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {filteredItems.length === 0 && !loading && (
+        <p className="text-center py-10 text-slate-400 italic">Aucun équipement trouvé pour cette recherche.</p>
+      )}
     </div>
   );
 }
-
-// Styles réutilisables
-const thStyle = { padding: "12px 8px", border: "1px solid #e2e8f0", textAlign: "left" as const, fontSize: "14px", color: "#64748b" };
-const tdStyle = { padding: "10px 8px", border: "1px solid #e2e8f0", fontSize: "14px" };
