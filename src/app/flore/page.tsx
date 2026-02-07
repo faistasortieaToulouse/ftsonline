@@ -10,45 +10,42 @@ interface Plante {
   famille: string;
   statut: string | null;
   abondance: string | null;
-  nom_occitan: string | null;
-  herbier_mhnt: string | null;
-  carpotheque_mhnt: string | null;
   dates_et_lieux_d_observations: string;
-  date: string | null;
-  image: string | null;
   url: string | null;
-  credits: string | null;
-  autre_date: string | null;
 }
 
 export default function FlorePage() {
   const [plantes, setPlantes] = useState<Plante[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/flore")
       .then(res => res.json())
       .then(data => {
-        if (!Array.isArray(data)) return;
-        const plantesTriees = data.sort((a: Plante, b: Plante) => {
-          const nomA = (a.nom_commun ?? "").toLowerCase();
-          const nomB = (b.nom_commun ?? "").toLowerCase();
-          return nomA.localeCompare(nomB);
-        });
-        setPlantes(plantesTriees);
+        if (Array.isArray(data)) {
+          const triees = data.sort((a, b) => 
+            (a.nom_commun ?? "").localeCompare(b.nom_commun ?? "")
+          );
+          setPlantes(triees);
+        }
+        setLoading(false);
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error("Erreur API:", err);
+        setLoading(false);
+      });
   }, []);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="p-4 max-w-7xl mx-auto min-h-screen bg-white">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
       
-      <h1 className="text-3xl font-extrabold mb-4 text-green-700">
+      <h1 className="text-2xl md:text-3xl font-extrabold mb-4 text-green-700">
         🌿 Flore sauvage de Toulouse ({plantes.length})
       </h1>
 
@@ -62,22 +59,28 @@ export default function FlorePage() {
         </div>
       </div>
 
-      <div className="overflow-hidden shadow-sm border rounded-lg bg-white">
-        <table className="w-full border-collapse">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border-b p-3 text-left">Nom commun</th>
-              <th className="border-b p-3 text-left hidden md:table-cell">Nom scientifique</th>
-              <th className="border-b p-3 text-left hidden md:table-cell">Famille</th>
-              <th className="border-b p-3 text-center hidden md:table-cell">Abondance</th>
-              <th className="border-b p-3 text-left">Observations / Lieux</th>
-              <th className="border-b p-3 text-center hidden md:table-cell">Image</th>
+      <div className="overflow-hidden shadow-md border rounded-xl bg-white">
+        <table className="w-full border-collapse table-fixed md:table-auto">
+          <thead className="bg-gray-50">
+            <tr className="text-gray-600 text-sm">
+              <th className="p-3 text-left w-5/12 md:w-auto">Nom commun</th>
+              <th className="p-3 text-left hidden md:table-cell">Nom scientifique</th>
+              <th className="p-3 text-left hidden md:table-cell">Famille</th>
+              <th className="p-3 text-center hidden md:table-cell">Abondance</th>
+              <th className="p-3 text-left w-7/12 md:w-auto">Observations</th>
+              <th className="p-3 text-center hidden md:table-cell">Image</th>
             </tr>
           </thead>
-          <tbody>
-            {plantes.map((p, idx) => (
-              <PlanteRow key={idx} plante={p} />
-            ))}
+          <tbody className="divide-y divide-gray-100">
+            {loading ? (
+              <tr><td colSpan={6} className="p-10 text-center text-gray-400">Chargement de la flore...</td></tr>
+            ) : plantes.length === 0 ? (
+              <tr><td colSpan={6} className="p-10 text-center text-gray-400">Aucune plante trouvée.</td></tr>
+            ) : (
+              plantes.map((p, idx) => (
+                <PlanteRow key={idx} plante={p} />
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -91,55 +94,51 @@ function PlanteRow({ plante }: { plante: Plante }) {
   return (
     <>
       <tr 
-        className="hover:bg-green-50/50 cursor-pointer md:cursor-default transition-colors border-b border-gray-100"
+        className="hover:bg-green-50/40 cursor-pointer md:cursor-default transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <td className="p-3 font-semibold text-green-800">
+        <td className="p-3 font-semibold text-green-800 align-top text-xs md:text-sm">
           <div className="flex items-center gap-2">
-            {plante.nom_commun || "Inconnu"}
-            {plante.url && <ImageIcon size={14} className="text-green-500 md:hidden" />}
+            <span className="break-words">{plante.nom_commun || "Inconnu"}</span>
+            {plante.url && <ImageIcon size={14} className="text-green-500 md:hidden flex-shrink-0" />}
           </div>
         </td>
-        <td className="p-3 italic text-gray-600 hidden md:table-cell">{plante.nom_scientifique}</td>
-        <td className="p-3 text-gray-600 hidden md:table-cell">{plante.famille}</td>
-        <td className="p-3 text-center hidden md:table-cell">
-           <span className="px-2 py-1 bg-gray-100 rounded text-xs font-bold">{plante.abondance ?? "-"}</span>
+        
+        <td className="p-3 italic text-gray-500 hidden md:table-cell align-top text-sm">{plante.nom_scientifique}</td>
+        <td className="p-3 text-gray-500 hidden md:table-cell align-top text-sm">{plante.famille}</td>
+        <td className="p-3 text-center hidden md:table-cell align-top">
+           <span className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-bold uppercase">{plante.abondance ?? "-"}</span>
         </td>
-        <td className="p-3 text-sm text-gray-700">
-          <div className="flex items-center justify-between">
-            <span className="line-clamp-2 md:line-clamp-none">{plante.dates_et_lieux_d_observations}</span>
-            <span className="md:hidden ml-2">
-              {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+
+        <td className="p-3 text-xs md:text-sm text-gray-600 align-top">
+          <div className="flex items-start justify-between gap-2">
+            <span className="break-words whitespace-normal leading-relaxed overflow-hidden">
+              {plante.dates_et_lieux_d_observations}
+            </span>
+            <span className="md:hidden flex-shrink-0 text-gray-400">
+              {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </span>
           </div>
         </td>
-        <td className="p-3 text-center hidden md:table-cell">
-          {plante.url ? (
-            <a href={plante.url} target="_blank" rel="noopener noreferrer">
-              <img src={plante.url} alt={plante.nom_commun} className="w-16 h-12 object-cover rounded shadow-sm hover:scale-110 transition-transform" />
-            </a>
-          ) : "-"}
+
+        <td className="p-3 text-center hidden md:table-cell align-top">
+          {plante.url && (
+            <img src={plante.url} alt="" className="w-12 h-10 object-cover rounded shadow-sm mx-auto" />
+          )}
         </td>
       </tr>
 
-      {/* Accordéon Mobile */}
       {isOpen && (
-        <tr className="md:hidden bg-green-50/30">
-          <td colSpan={3} className="p-4 border-b border-green-100">
-            <div className="grid grid-cols-1 gap-4">
-              <div className="flex flex-col gap-1 text-sm">
-                <p><strong>Scientifique :</strong> <span className="italic">{plante.nom_scientifique}</span></p>
-                <p><strong>Famille :</strong> {plante.famille}</p>
-                <p><strong>Abondance :</strong> {plante.abondance ?? "Non renseigné"}</p>
-              </div>
-              
-              {plante.url && (
-                <div className="mt-2">
-                  <p className="text-[10px] uppercase font-bold text-green-800 mb-1">Aperçu :</p>
-                  <img src={plante.url} alt={plante.nom_commun} className="w-full max-h-48 object-cover rounded-lg shadow-md" />
-                </div>
-              )}
+        <tr className="md:hidden bg-green-50/20">
+          <td colSpan={2} className="p-4 space-y-3">
+            <div className="text-xs space-y-1.5 border-l-2 border-green-200 pl-3">
+              <p><strong>Scientifique :</strong> <span className="italic">{plante.nom_scientifique}</span></p>
+              <p><strong>Famille :</strong> {plante.famille}</p>
+              <p><strong>Abondance :</strong> {plante.abondance ?? "Inconnue"}</p>
             </div>
+            {plante.url && (
+              <img src={plante.url} className="w-full h-40 object-cover rounded-lg shadow-inner" alt="" />
+            )}
           </td>
         </tr>
       )}

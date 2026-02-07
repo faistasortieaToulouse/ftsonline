@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from "next/link";
 import { ArrowLeft, Crown, ScrollText } from "lucide-react";
 
-/* ... (Types et config restent identiques) ... */
+/* ... (Types et config inchangés) ... */
 interface Abyssinien { id: number; section: string; titre: string; description: string; }
 type Position = { x: number; y: number; noeud: Abyssinien; };
 const LARGEUR_NOEUD = 260;
@@ -57,33 +57,38 @@ export default function HierarchieAbyssinienPage() {
       {loading ? (
         <div className="text-center py-20 animate-pulse text-red-900 italic">Lecture des chroniques...</div>
       ) : (
-        <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[1fr_350px] gap-8 items-start">
+        /* Conteneur principal : Flex col sur mobile (Tableau en haut), Grid sur XL (Tableau à gauche) */
+        <div className="max-w-7xl mx-auto flex flex-col xl:grid xl:grid-cols-[1fr_350px] gap-8 items-start">
           
-          {/* 1. TABLEAU : On ajoute 'overflow-x-auto' pour le mobile */}
-          <div className="order-2 xl:order-1 bg-white border-l-4 border-l-red-800 rounded-r-2xl shadow-xl overflow-hidden border border-slate-200">
+          {/* 1. TABLEAU : S'affiche en PREMIER sur mobile */}
+          <div className="w-full bg-white border-l-4 border-l-red-800 rounded-r-2xl shadow-xl overflow-hidden border border-slate-200 order-1">
             <div className="bg-slate-50 border-b p-4 flex items-center gap-2">
               <ScrollText size={18} className="text-red-800" />
               <h3 className="text-slate-800 font-bold uppercase text-[10px] tracking-widest">Protocole</h3>
             </div>
             
-            <div className="overflow-x-auto"> {/* Permet au tableau de glisser sans casser la page */}
-              <table className="w-full text-sm min-w-[500px]"> {/* min-w force une largeur lisible */}
-                <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm table-fixed md:table-auto">
+                <thead className="bg-slate-50 text-slate-400 uppercase text-[9px] md:text-[10px] font-bold">
                   <tr>
-                    <th className="px-4 py-4 text-left w-16">Rang</th>
-                    <th className="px-4 py-4 text-left">Titre</th>
-                    <th className="px-4 py-4 text-left">Signification</th>
+                    <th className="px-2 md:px-4 py-4 text-left w-12 md:w-20">Rang</th>
+                    <th className="px-2 md:px-4 py-4 text-left w-32 md:w-48">Titre</th>
+                    <th className="px-2 md:px-4 py-4 text-left">Signification</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {personnes.map((p) => (
                     <tr key={p.id} className="hover:bg-red-50/50">
-                      <td className="px-4 py-4 text-center font-bold text-red-900 bg-red-50/30">{p.id}</td>
-                      <td className="px-4 py-4">
-                        <div className="font-bold text-slate-900">{p.titre}</div>
-                        <div className="text-[9px] text-red-600 uppercase font-bold">{p.section}</div>
+                      <td className="px-2 md:px-4 py-4 text-center font-bold text-red-900 bg-red-50/30 text-xs">
+                        {p.id}
                       </td>
-                      <td className="px-4 py-4 text-slate-600 text-xs italic leading-relaxed">{p.description}</td>
+                      <td className="px-2 md:px-4 py-4">
+                        <div className="font-bold text-slate-900 text-xs md:text-sm break-words">{p.titre}</div>
+                        <div className="text-[8px] md:text-[9px] text-red-600 uppercase font-bold">{p.section}</div>
+                      </td>
+                      <td className="px-2 md:px-4 py-4 text-slate-600 text-[11px] md:text-xs italic leading-relaxed break-words">
+                        {p.description}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -91,9 +96,9 @@ export default function HierarchieAbyssinienPage() {
             </div>
           </div>
 
-          {/* 2. ARBRE VISUEL : Gardé sur le côté, mais scrollable localement */}
-          <div className="order-1 xl:order-2 bg-[#f9f5f4] border-2 border-red-50 rounded-3xl p-4 md:p-8 overflow-auto max-h-[500px] xl:max-h-[750px] shadow-inner relative">
-            <div className="min-w-[300px] flex justify-center"> {/* Empêche l'écrasement de l'arbre */}
+          {/* 2. ARBRE VISUEL : S'affiche en SECOND sur mobile */}
+          <div className="w-full bg-[#f9f5f4] border-2 border-red-50 rounded-3xl p-4 md:p-8 overflow-auto max-h-[600px] xl:max-h-[750px] shadow-inner relative order-2">
+            <div className="flex justify-center">
               <svg width={LARGEUR_NOEUD + 40} height={hMax} className="overflow-visible">
                 {positions.map((p, i) => (
                   <g key={i}>
@@ -106,11 +111,11 @@ export default function HierarchieAbyssinienPage() {
                     )}
                     <foreignObject x={p.x} y={p.y} width={LARGEUR_NOEUD} height={DISTANCE_ENTRE_NOEUDS - 20} className="overflow-visible">
                       <div className="min-h-[110px] w-full bg-white border-2 border-red-50 rounded-xl p-4 shadow-md flex flex-col items-center justify-center text-center relative hover:border-red-700 transition-all">
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-800 text-white text-[9px] font-black px-3 py-1 rounded-full shadow-md">
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-800 text-white text-[9px] font-black px-3 py-1 rounded-full shadow-md whitespace-nowrap">
                           RANG {p.noeud.id}
                         </div>
                         <p className="text-[9px] text-red-600 font-bold uppercase mb-1">{p.noeud.section}</p>
-                        <h4 className="text-[15px] font-black text-slate-900 leading-tight">{p.noeud.titre}</h4>
+                        <h4 className="text-[14px] md:text-[15px] font-black text-slate-900 leading-tight">{p.noeud.titre}</h4>
                       </div>
                     </foreignObject>
                   </g>
