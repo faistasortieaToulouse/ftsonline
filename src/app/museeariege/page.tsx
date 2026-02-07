@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react'; // Ajout de React ici pour corriger l'erreur
 import { Musee } from '../api/museeariege/route';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag } from "lucide-react";
+import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search } from "lucide-react";
 
 const ARIEGE_CENTER: [number, number] = [42.96, 1.60];
 const THEME_COLOR = '#8b5cf6';
@@ -14,10 +14,12 @@ export default function MuseeAriegePage() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
-  const [isReady, setIsReady] = useState(false);
+  const markersGroupRef = useRef<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   useEffect(() => {
     async function fetchMusees() {
@@ -36,112 +38,122 @@ export default function MuseeAriegePage() {
     fetchMusees();
   }, []);
 
+  const filteredMusees = musees.filter(m => 
+    m.nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    m.commune?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
     const initMap = async () => {
       const L = (await import('leaflet')).default;
       if (mapInstance.current) return;
       mapInstance.current = L.map(mapRef.current!).setView(ARIEGE_CENTER, 9);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(mapInstance.current);
-      setIsReady(true);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance.current);
+      markersGroupRef.current = L.layerGroup().addTo(mapInstance.current);
+      setIsMapReady(true);
     };
     initMap();
-    return () => {
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
-      }
-    };
   }, [isLoadingData]);
 
-  const toggleRow = (id: number) => {
-    setExpandedId(expandedId === id ? null : id);
-  };
+  useEffect(() => {
+    if (!isMapReady || !mapInstance.current) return;
+    const updateMarkers = async () => {
+      const L = (await import('leaflet')).default;
+      markersGroupRef.current.clearLayers();
+      filteredMusees.forEach((m, i) => {
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="background-color: ${THEME_COLOR}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px;">${i + 1}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+        L.marker([m.lat, m.lng], { icon: customIcon }).bindPopup(`<strong>${m.nom}</strong>`).addTo(markersGroupRef.current);
+      });
+    };
+    updateMarkers();
+  }, [isMapReady, filteredMusees]);
 
-  if (error) return <div className="p-10 text-red-500 text-center font-bold italic">Erreur : {error}</div>;
+  if (error) return <div className="p-10 text-center text-red-500 font-bold italic">Erreur : {error}</div>;
 
   return (
-    <div className="max-w-7xl mx-auto p-4 bg-slate-50 min-h-screen">
-      <nav className="mb-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-violet-700 font-bold hover:underline">
-          <ArrowLeft size={18} /> Retour
+    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen font-sans">
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-violet-700 font-bold">
+          <ArrowLeft size={20} /> Retour à l'accueil
         </Link>
       </nav>
 
       <header className="mb-6">
-        <h1 className="text-xl md:text-3xl font-extrabold text-slate-900 leading-tight">⛰️ Musées et Patrimoine de l'Ariège (09)</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">⛰️ Musées et Patrimoine de l'Ariège</h1>
       </header>
 
-      <div className="mb-8 border rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-sm">
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+        <input 
+          type="text"
+          placeholder="Rechercher..."
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-500 outline-none shadow-sm"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      <div className="mb-8 border rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
         <div ref={mapRef} className="h-full w-full" />
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-left border-separate border-spacing-0">
-          <thead className="bg-slate-50 border-b border-slate-200 text-[11px] md:text-sm text-slate-500 uppercase font-bold">
+      <div className="overflow-hidden border border-slate-200 rounded-2xl shadow-sm bg-white">
+        {/* Ajout de table-fixed sur ordi pour forcer l'alignement */}
+        <table className="w-full text-left border-collapse text-sm md:table-fixed">
+          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[11px]">
             <tr>
-              <th className="p-4 w-12 text-center">N°</th>
-              <th className="p-4 hidden md:table-cell">Commune</th>
-              <th className="p-4">Type du Site</th>
-              <th className="p-4 hidden md:table-cell">Catégorie</th>
+              <th className="p-4 w-12 md:w-16 text-center">N°</th>
+              <th className="p-4 hidden md:table-cell md:w-1/4">Commune</th>
+              <th className="p-4 md:w-1/3">Type du Site</th>
+              <th className="p-4 hidden md:table-cell md:w-1/4">Catégorie</th>
               <th className="p-4 hidden lg:table-cell">Adresse</th>
-              <th className="p-4 w-24 text-center">Action</th>
+              <th className="p-4 w-20 text-center">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-xs md:text-sm font-medium">
-            {musees.map((m, i) => (
-              <React.Fragment key={i}>
+          <tbody className="divide-y divide-slate-100">
+            {filteredMusees.map((m, i) => (
+              <React.Fragment key={`group-${i}`}>
                 <tr 
-                  onClick={() => toggleRow(i)}
-                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-violet-50/50' : 'hover:bg-slate-50'}`}
+                  onClick={() => setExpandedId(expandedId === i ? null : i)}
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-violet-50' : 'hover:bg-slate-50'}`}
                 >
                   <td className="p-4 text-center font-bold text-violet-400">{i + 1}</td>
-                  
-                  <td className="p-4 hidden md:table-cell text-slate-700">
-                    {m.commune}
-                  </td>
-
+                  <td className="p-4 hidden md:table-cell font-semibold text-slate-700 truncate">{m.commune}</td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
                       <div className="md:hidden">
-                        {expandedId === i ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
+                        {expandedId === i ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                       </div>
                     </div>
-                    <div className="text-[10px] text-violet-600 font-bold md:hidden mt-1 uppercase italic">
-                      {m.commune}
-                    </div>
+                    <div className="text-[10px] text-violet-600 font-bold md:hidden mt-1 uppercase italic">{m.commune}</div>
                   </td>
-
-                  <td className="p-4 hidden md:table-cell text-slate-500">
-                    {m.categorie}
-                  </td>
-
-                  <td className="p-4 hidden lg:table-cell text-slate-500 italic">
-                    {m.adresse}
-                  </td>
-
+                  <td className="p-4 hidden md:table-cell text-slate-500 truncate">{m.categorie}</td>
+                  <td className="p-4 hidden lg:table-cell text-slate-500 italic text-xs truncate">{m.adresse}</td>
                   <td className="p-4 text-center">
-                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:scale-110 transition-transform inline-block p-1" onClick={(e) => e.stopPropagation()}>
+                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600" onClick={(e) => e.stopPropagation()}>
                       <ExternalLink size={18} />
                     </a>
                   </td>
                 </tr>
 
-                {/* ZONE DÉPLIABLE (Visible uniquement sur mobile quand la ligne est cliquée) */}
                 {expandedId === i && (
                   <tr className="bg-violet-50/30 md:hidden">
                     <td colSpan={3} className="p-4 pt-0">
                       <div className="flex flex-col gap-2 py-3 border-t border-violet-100">
                         <div className="flex items-start gap-2 text-slate-600">
-                          <Tag size={14} className="mt-0.5 text-violet-400" />
-                          <span><strong className="text-slate-700">Catégorie :</strong> {m.categorie}</span>
+                          <Tag size={14} className="mt-0.5 text-violet-400 flex-shrink-0" />
+                          <span><strong>Catégorie :</strong> {m.categorie}</span>
                         </div>
                         <div className="flex items-start gap-2 text-slate-600">
-                          <MapPin size={14} className="mt-0.5 text-violet-400" />
-                          <span><strong className="text-slate-700">Adresse :</strong> {m.adresse}</span>
+                          <MapPin size={14} className="mt-0.5 text-violet-400 flex-shrink-0" />
+                          <span><strong>Adresse :</strong> {m.adresse}</span>
                         </div>
                       </div>
                     </td>
