@@ -17,7 +17,9 @@ const LANGS = [
   { code: 'tr', label: 'Turc', flag: '🇹🇷' },
 ];
 
+// J'ai placé l'Occitan en première position ici
 const EXTRA_LANGS = [
+  { code: 'oc', label: 'Occitan', flag: '🛡️' }, 
   { code: 'eu', label: 'Basque', flag: '🇪🇸' },
   { code: 'ko', label: 'Coréen', flag: '🇰🇷' },
   { code: 'fa', label: 'Farci', flag: '🇮🇷' },
@@ -25,7 +27,6 @@ const EXTRA_LANGS = [
   { code: 'hi', label: 'Hindi', flag: '🇮🇳' },
   { code: 'id', label: 'Indonésien', flag: '🇮🇩' },
   { code: 'nl', label: 'Néerlandais', flag: '🇳🇱' },
-  { code: 'oc', label: 'Occitan', flag: '🛡️' }, 
   { code: 'pl', label: 'Polonais', flag: '🇵🇱' },
   { code: 'ro', label: 'Roumain', flag: '🇷🇴' },
   { code: 'sv', label: 'Suédois', flag: '🇸🇪' },
@@ -101,9 +102,10 @@ export default function GoogleTranslateCustom() {
           <select
             onChange={(e) => changeLang(e.target.value)}
             value={LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-            className="flex-1 px-2 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-lg text-slate-900 outline-none focus:ring-2 focus:ring-blue-100"
+            className="flex-1 px-2 py-2 text-sm font-bold bg-slate-50 border border-slate-200 rounded-lg text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer"
           >
-            {!LANGS.find(l => l.code === selectedLang) && <option value="">🌍 Langue choisie...</option>}
+            {/* Si la langue actuelle n'est pas dans les principales, on montre "Français" par défaut */}
+            {!LANGS.find(l => l.code === selectedLang) && <option value="fr">🇫🇷 Français</option>}
             {LANGS.map((lang) => (
               <option key={lang.code} value={lang.code}>
                 {lang.flag} {lang.label}
@@ -115,7 +117,7 @@ export default function GoogleTranslateCustom() {
           </button>
         </div>
 
-        {/* BLOC 2 : AUTRES LANGUES (Titre au-dessus) */}
+        {/* BLOC 2 : AUTRES LANGUES */}
         <div className="flex flex-col gap-1 mt-1">
           <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest ml-1">
             Autres langues
@@ -125,10 +127,10 @@ export default function GoogleTranslateCustom() {
             <div className="flex-1">
               <select
                 onChange={(e) => changeLang(e.target.value)}
-                value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : ''}
-                className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors"
+                value={EXTRA_LANGS.find(l => l.code === selectedLang) ? selectedLang : 'oc'}
+                className="w-full px-2 py-1.5 text-[11px] font-bold bg-blue-50/50 border border-dashed border-blue-200 rounded-lg text-blue-600 outline-none hover:bg-blue-50 transition-colors cursor-pointer"
               >
-                <option value="" className="text-blue-600">Sélectionner dans la liste...</option>
+                {/* L'Occitan sera le premier affiché car il est en haut du tableau EXTRA_LANGS */}
                 {EXTRA_LANGS.map((lang) => (
                   <option key={lang.code} value={lang.code} className="text-slate-800">
                     {lang.flag} {lang.label}
@@ -143,40 +145,21 @@ export default function GoogleTranslateCustom() {
           </div>
         </div>
 
-        {/* FOOTER GOOGLE */}
+        {/* FOOTER */}
         <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1.5 px-1 font-medium italic">
           <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" alt="Google Translate" width={14} height={14} />
           <span>Traduction fournie par Google Translate</span>
         </div>
       </div>
 
-      {/* MODALE D'AIDE */}
+      {/* MODALE D'AIDE IDENTIQUE... */}
       {helpOpen && (
-        <div
-          className="fixed inset-0 bg-black/80 flex items-start justify-center p-4 pt-32"
-          style={{ zIndex: 2147483647 }}
-          onClick={() => setHelpOpen(false)}
-        >
-          <div
-            className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[85vh]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setHelpOpen(false)}
-              className="absolute top-2 right-4 text-3xl font-light text-slate-400 hover:text-slate-900 transition-colors p-1"
-            >
-              &times;
-            </button>
+        <div className="fixed inset-0 bg-black/80 flex items-start justify-center p-4 pt-32" style={{ zIndex: 2147483647 }} onClick={() => setHelpOpen(false)}>
+          <div className="bg-white text-slate-800 p-6 rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setHelpOpen(false)} className="absolute top-2 right-4 text-3xl font-light text-slate-400 hover:text-slate-900 transition-colors p-1">&times;</button>
             <h3 className="text-lg font-extrabold mb-4">🧭 Aide : Google Translate</h3>
-            <div className="space-y-4 text-sm">
-              <p>Si la traduction bloque, videz les cache ou les cookies de : <strong>ftstoulouse.online</strong></p>
-            </div>
-            <button 
-              onClick={() => setHelpOpen(false)}
-              className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all active:scale-95"
-            >
-              J'ai compris
-            </button>
+            <div className="space-y-4 text-sm"><p>Si la traduction bloque, videz les cookies de : <strong>ftstoulouse.online</strong></p></div>
+            <button onClick={() => setHelpOpen(false)} className="w-full mt-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all active:scale-95">J'ai compris</button>
           </div>
         </div>
       )}
