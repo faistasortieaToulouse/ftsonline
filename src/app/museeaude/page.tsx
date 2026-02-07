@@ -1,37 +1,36 @@
 'use client';
 
-import { useEffect, useState, useRef, CSSProperties } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { MuseeAude } from '../museeaude/museeaude';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search } from "lucide-react";
 
-// CENTRE DE L'AUDE (Carcassonne environ)
 const AUDE_CENTER: [number, number] = [43.15, 2.35];
-const THEME_COLOR = '#e11d48'; // Rouge/Rose pour l'identité visuelle de l'Aude
+const THEME_COLOR = '#e11d48'; 
 
 export default function MuseeAudePage() {
   const [musees, setMusees] = useState<MuseeAude[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Refs Leaflet (Méthode OTAN)
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
-  const [isReady, setIsReady] = useState(false);
+  const markersGroupRef = useRef<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Fetch des données
   useEffect(() => {
     async function fetchMusees() {
       try {
         const response = await fetch('/api/museeaude');
-        if (!response.ok) throw new Error("Erreur lors de la récupération des données de l'Aude.");
+        if (!response.ok) throw new Error("Erreur réseau");
         const data: MuseeAude[] = await response.json();
-        // Tri par commune
         data.sort((a, b) => a.commune.localeCompare(b.commune));
         setMusees(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+        setError(err instanceof Error ? err.message : "Erreur");
       } finally {
         setIsLoadingData(false);
       }
@@ -39,143 +38,135 @@ export default function MuseeAudePage() {
     fetchMusees();
   }, []);
 
-  // 2. Initialisation Carte
+  const filteredMusees = musees.filter(m => 
+    m.nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    m.commune?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
-
     const initMap = async () => {
       const L = (await import('leaflet')).default;
-      await import('leaflet/dist/leaflet.css');
-
       if (mapInstance.current) return;
-
-      mapInstance.current = L.map(mapRef.current).setView(AUDE_CENTER, 9);
-
+      mapInstance.current = L.map(mapRef.current!).setView(AUDE_CENTER, 9);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
-
-      setIsReady(true);
+      markersGroupRef.current = L.layerGroup().addTo(mapInstance.current);
+      setIsMapReady(true);
     };
-
     initMap();
-
-    return () => {
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
-      }
-    };
   }, [isLoadingData]);
 
-  // 3. Marqueurs
   useEffect(() => {
-    if (!isReady || !mapInstance.current || musees.length === 0) return;
-
-    const addMarkers = async () => {
+    if (!isMapReady || !mapInstance.current) return;
+    const updateMarkers = async () => {
       const L = (await import('leaflet')).default;
-
-      musees.forEach((m, i) => {
+      markersGroupRef.current.clearLayers();
+      filteredMusees.forEach((m, i) => {
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `
-            <div style="
-              background-color: ${THEME_COLOR};
-              width: 28px; height: 28px;
-              border-radius: 50%; border: 2px solid white;
-              display: flex; align-items: center; justify-content: center;
-              color: white; font-weight: bold; font-size: 11px;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            ">
-              ${i + 1}
-            </div>
-          `,
-          iconSize: [28, 28],
-          iconAnchor: [14, 14]
+          html: `<div style="background-color: ${THEME_COLOR}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
         });
-
-        const popupContent = `
-          <div style="font-family: Arial; font-size: 14px;">
-            <strong style="color:${THEME_COLOR}">${i + 1}. ${m.nom}</strong><br/>
-            <b>Ville :</b> ${m.commune}<br/>
-            <b>Catégorie :</b> ${m.categorie}<br/>
-            ${m.url ? `<a href="${m.url}" target="_blank" style="color:blue; text-decoration:underline;">Site web</a>` : '<i>Pas de site web</i>'}
-          </div>
-        `;
-
-        L.marker([m.lat, m.lng], { icon: customIcon })
-          .bindPopup(popupContent)
-          .addTo(mapInstance.current);
+        L.marker([m.lat, m.lng], { icon: customIcon }).bindPopup(`<strong>${m.nom}</strong><br/>${m.commune}`).addTo(markersGroupRef.current);
       });
     };
+    updateMarkers();
+  }, [isMapReady, filteredMusees]);
 
-    addMarkers();
-  }, [isReady, musees]);
-
-  if (error) return <div className="p-10 text-red-500">Erreur : {error}</div>;
+  if (error) return <div className="p-10 text-red-500 text-center font-bold italic">Erreur : {error}</div>;
 
   return (
-    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen">
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+    <div className="max-w-7xl mx-auto p-4 bg-slate-50 min-h-screen">
+      <nav className="mb-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-rose-700 font-bold hover:underline">
+          <ArrowLeft size={18} /> Retour à l'accueil
         </Link>
       </nav>
 
-      <header className="mb-8">
-        <h1 className="text-3xl font-extrabold text-slate-900">🗺️ Musées et Patrimoine de l'Aude (11)</h1>
-        <p className="text-slate-600 mt-2">
-          {isLoadingData ? 'Chargement des sites...' : `Total de lieux culturels : ${musees.length}`}
-        </p>
+      <header className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">🗺️ Musées et Patrimoine de l'Aude (11)</h1>
       </header>
 
-      {/* ZONE CARTE */}
-      <div style={{ height: "55vh", width: "100%" }} className="mb-8 border rounded-xl bg-gray-100 relative z-0 overflow-hidden shadow-md border-rose-100"> 
-        <div ref={mapRef} className="h-full w-full" />
-        {isLoadingData && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-            <p className="animate-pulse font-bold text-rose-600">Chargement de la carte audoise...</p>
-          </div>
-        )}
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+        <input 
+          type="text"
+          placeholder="Rechercher une commune, un site..."
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-rose-500 outline-none shadow-sm transition-all"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
 
-      <h2 className="text-2xl font-bold mb-4 text-slate-800">Liste Détaillée des Sites</h2>
+      <div className="mb-8 border rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
+        <div ref={mapRef} className="h-full w-full" />
+      </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-        <table className="w-full border-collapse bg-white text-left">
-          <thead className="bg-slate-100">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <table className="w-full text-left border-collapse text-sm">
+          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[11px]">
             <tr>
-              <th style={tableHeaderStyle}>N°</th>
-              <th style={tableHeaderStyle}>Commune</th>
-              <th style={tableHeaderStyle}>Nom du Site</th>
-              <th style={tableHeaderStyle}>Catégorie</th>
-              <th style={tableHeaderStyle}>Adresse</th>
-              <th style={tableHeaderStyle}>Lien</th>
+              <th className="p-4 w-12 md:w-16 text-center">N°</th>
+              <th className="p-4 hidden md:table-cell w-32">Commune</th>
+              <th className="p-4">Nom du Site</th>
+              <th className="p-4 hidden md:table-cell w-48">Catégorie</th>
+              <th className="p-4 hidden lg:table-cell w-72">Adresse</th>
+              <th className="p-4 w-16 text-center">Lien</th>
             </tr>
           </thead>
-          <tbody>
-            {musees.map((m, i) => (
-              <tr key={i} className="border-t hover:bg-rose-50 transition-colors">
-                <td className="p-4 font-bold text-rose-600">{i + 1}</td>
-                <td className="p-4 font-semibold text-slate-700">{m.commune}</td>
-                <td className="p-4 font-bold text-slate-900">{m.nom}</td>
-                <td className="p-4">
-                  <span className="text-xs font-bold px-2 py-1 rounded-full bg-slate-200 text-slate-700 uppercase">
-                    {m.categorie}
-                  </span>
-                </td>
-                <td className="p-4 text-sm text-slate-600">{m.adresse}</td>
-                <td className="p-4">
-                  {m.url ? (
-                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">
-                      Visiter
-                    </a>
-                  ) : (
-                    <span className="text-slate-300">N/A</span>
-                  )}
-                </td>
-              </tr>
+          <tbody className="divide-y divide-slate-100">
+            {filteredMusees.map((m, i) => (
+              <React.Fragment key={`group-${i}`}>
+                <tr 
+                  onClick={() => setExpandedId(expandedId === i ? null : i)}
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-rose-50/50' : 'hover:bg-slate-50'}`}
+                >
+                  <td className="p-4 text-center font-bold text-rose-500 align-top">{i + 1}</td>
+                  <td className="p-4 hidden md:table-cell font-semibold text-slate-700 align-top">{m.commune}</td>
+                  <td className="p-4 align-top">
+                    <div className="flex items-center gap-2">
+                      <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
+                      <div className="md:hidden">
+                        {expandedId === i ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-rose-600 font-bold md:hidden mt-1 uppercase italic">{m.commune}</div>
+                  </td>
+                  <td className="p-4 hidden md:table-cell text-slate-500 align-top leading-relaxed">{m.categorie}</td>
+                  <td className="p-4 hidden lg:table-cell text-slate-500 italic text-xs align-top whitespace-normal break-words leading-relaxed">
+                    {m.adresse}
+                  </td>
+                  <td className="p-4 text-center align-top">
+                    {m.url ? (
+                      <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600" onClick={(e) => e.stopPropagation()}>
+                        Web <ExternalLink size={18} />
+                      </a>
+                    ) : (
+                      <span className="text-slate-300">-</span>
+                    )}
+                  </td>
+                </tr>
+
+                {expandedId === i && (
+                  <tr className="bg-rose-50/30 md:hidden">
+                    <td colSpan={3} className="p-4 pt-0">
+                      <div className="flex flex-col gap-2 py-3 border-t border-rose-100">
+                        <div className="flex items-start gap-2 text-slate-600">
+                          <Tag size={14} className="mt-0.5 text-rose-400 flex-shrink-0" />
+                          <span className="text-xs"><strong>Catégorie :</strong> {m.categorie}</span>
+                        </div>
+                        <div className="flex items-start gap-2 text-slate-600">
+                          <MapPin size={14} className="mt-0.5 text-rose-400 flex-shrink-0" />
+                          <span className="text-xs whitespace-normal"><strong>Adresse :</strong> {m.adresse}</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>
@@ -183,12 +174,3 @@ export default function MuseeAudePage() {
     </div>
   );
 }
-
-const tableHeaderStyle: CSSProperties = { 
-  padding: '12px 16px', 
-  fontSize: '13px', 
-  fontWeight: 'bold', 
-  color: '#475569',
-  textTransform: 'uppercase',
-  letterSpacing: '0.025em'
-};
