@@ -22,7 +22,7 @@ export default function MuseeAriegePage() {
     async function fetchMusees() {
       try {
         const response = await fetch('/api/museeariege'); 
-        if (!response.ok) throw new Error("Erreur de données");
+        if (!response.ok) throw new Error("Erreur réseau");
         const data: Musee[] = await response.json();
         data.sort((a, b) => a.commune.localeCompare(b.commune));
         setMusees(data);
@@ -66,15 +66,13 @@ export default function MuseeAriegePage() {
           iconSize: [24, 24],
           iconAnchor: [12, 12]
         });
-        L.marker([m.lat, m.lng], { icon: customIcon })
-          .bindPopup(`<strong>${m.nom}</strong>`)
-          .addTo(mapInstance.current);
+        L.marker([m.lat, m.lng], { icon: customIcon }).bindPopup(`<strong>${m.nom}</strong>`).addTo(mapInstance.current);
       });
     };
     addMarkers();
   }, [isReady, musees]);
 
-  if (error) return <div className="p-10 text-red-500 text-center font-bold">Erreur : {error}</div>;
+  if (error) return <div className="p-10 text-red-500 text-center font-bold italic">Erreur : {error}</div>;
 
   return (
     <div className="max-w-7xl mx-auto p-4 bg-slate-50 min-h-screen">
@@ -85,8 +83,7 @@ export default function MuseeAriegePage() {
       </nav>
 
       <header className="mb-6">
-        <h1 className="text-xl md:text-3xl font-extrabold text-slate-900 leading-tight">⛰️ Musées de l'Ariège</h1>
-        <p className="text-slate-600 text-sm mt-1">{musees.length} sites culturels.</p>
+        <h1 className="text-xl md:text-3xl font-extrabold text-slate-900 leading-tight">⛰️ Musées et Patrimoine de l'Ariège (09)</h1>
       </header>
 
       <div className="mb-8 border rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-sm">
@@ -97,35 +94,47 @@ export default function MuseeAriegePage() {
         <table className="w-full text-left border-collapse">
           <thead className="bg-slate-50 border-b border-slate-200 text-[11px] md:text-sm text-slate-500 uppercase font-bold">
             <tr>
-              <th className="p-4 w-12 text-center">#</th>
+              <th className="p-4 w-12 text-center">N°</th>
+              <th className="p-4 hidden md:table-cell">Commune</th>
               <th className="p-4">Type du Site</th>
-              <th className="p-4 hidden sm:table-cell">Commune</th>
-              <th className="p-4 hidden md:table-cell">Catégorie</th>
+              <th className="p-4 hidden sm:table-cell">Catégorie</th>
               <th className="p-4 hidden lg:table-cell">Adresse</th>
-              <th className="p-4 w-16 text-center">Lien</th>
+              <th className="p-4 w-16 text-center">LIEN</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-xs md:text-sm">
             {musees.map((m, i) => (
               <tr key={i} className="hover:bg-violet-50/30 transition-colors">
                 <td className="p-4 text-center font-bold text-violet-400">{i + 1}</td>
+                
+                {/* 1. Colonne Commune : Visible uniquement sur Tablettes/PC */}
+                <td className="p-4 hidden md:table-cell font-semibold text-slate-700">
+                  {m.commune}
+                </td>
+
+                {/* 2. Colonne Type du Site : Toujours visible */}
                 <td className="p-4">
-                  <div className="font-bold text-slate-900">{m.nom}</div>
-                  {/* La commune s'affiche ICI uniquement sur mobile */}
-                  <div className="text-[10px] text-violet-600 font-semibold sm:hidden mt-0.5 uppercase italic">
+                  <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
+                  {/* Sur Mobile (md:hidden), on affiche la commune ici juste en dessous du nom */}
+                  <div className="text-[10px] text-violet-600 font-bold md:hidden mt-1 uppercase italic leading-none">
                     {m.commune}
                   </div>
                 </td>
-                <td className="p-4 hidden sm:table-cell font-medium text-slate-700">{m.commune}</td>
-                <td className="p-4 hidden md:table-cell">
-                   <span className="bg-slate-100 px-2 py-1 rounded text-[10px] uppercase font-bold text-slate-500">
-                    {m.categorie}
-                   </span>
+
+                {/* 3. Catégorie : Masquée sur tout petit mobile */}
+                <td className="p-4 hidden sm:table-cell text-slate-500 font-medium">
+                  {m.categorie}
                 </td>
-                <td className="p-4 hidden lg:table-cell text-slate-500 italic">{m.adresse}</td>
+
+                {/* 4. Adresse : Visible uniquement sur grands écrans */}
+                <td className="p-4 hidden lg:table-cell text-slate-500 italic">
+                  {m.adresse}
+                </td>
+
+                {/* 5. Action : Toujours visible */}
                 <td className="p-4 text-center">
-                  <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 p-2 inline-block">
-                    <ExternalLink size={18} />
+                  <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 inline-block">
+                    Web <ExternalLink size={18} />
                   </a>
                 </td>
               </tr>
