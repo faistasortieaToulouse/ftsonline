@@ -141,7 +141,7 @@ export default function GoogleTranslateCustom() {
             
             <button 
               onClick={() => setHelpOpen(true)} 
-              className="text-[10px] text-slate-400 hover:text-blue-600 transition-colors flex flex-col sm:flex-row items-center sm:gap-1 font-medium italic underline underline-offset-2 text-right sm:text-left">
+              className="text-[10px] text-red-400 hover:text-blue-600 transition-colors flex flex-col sm:flex-row items-center sm:gap-1 font-medium italic underline underline-offset-2 text-right sm:text-left">
               <span className="whitespace-nowrap">besoin</span>
               <span>d'aide ?</span>
             </button>
