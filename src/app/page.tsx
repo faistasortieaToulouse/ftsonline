@@ -970,22 +970,32 @@ useEffect(() => {
   </div>
   {/* ---------------------------------------- */}
 
-    {/* Ligne 4 : Astro (Zodiaque) */}
-    <div className="bg-blue-50/50 border-t border-purple-200 py-2 px-6">
-      <div className="flex items-center justify-center gap-6 w-full text-sm">
-        <div className="flex items-center gap-2">
-          <span className="text-blue-500 text-lg">☀️</span>
-          <span className="text-gray-500 font-medium italic">Signe :</span>
-          <span className="font-bold text-blue-900">{signeZodiaque}</span>
-        </div>
-        <div className="w-px h-4 bg-purple-200 hidden sm:block"></div>
-        <div className="flex items-center gap-2">
-          <span className="text-indigo-500 text-lg">🌅</span>
-          <span className="text-gray-500 font-medium italic">Ascendant :</span>
-          <span className="font-bold text-indigo-900">{ascendant}</span>
-        </div>
-      </div>
+{/* Ligne 4 : Astro (Zodiaque) */}
+<div className="bg-blue-50/50 border-t border-purple-200 py-3 px-4 md:px-6">
+  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 w-full text-sm">
+    
+    {/* Signe Solaire */}
+    <div className="flex items-center gap-2">
+      <span className="text-blue-500 text-lg">☀️</span>
+      <span className="text-gray-500 font-medium italic">Signe :</span>
+      <span className="font-bold text-blue-900">{signeZodiaque}</span>
     </div>
+
+    {/* Séparateur vertical (caché sur mobile, affiché à partir de 'sm') */}
+    <div className="hidden sm:block w-px h-4 bg-purple-200"></div>
+    
+    {/* Séparateur horizontal (affiché sur mobile, caché sur 'sm') */}
+    <div className="sm:hidden w-1/4 h-px bg-purple-100"></div>
+
+    {/* Ascendant */}
+    <div className="flex items-center gap-2">
+      <span className="text-indigo-500 text-lg">🌅</span>
+      <span className="text-gray-500 font-medium italic">Ascendant :</span>
+      <span className="font-bold text-indigo-900">{ascendant}</span>
+    </div>
+    
+  </div>
+</div>
 
     {/* Ligne 5 : MENUS DÉROULANTS */}
     <div className="bg-white/40 border-t border-purple-200 py-3 px-6">

@@ -19,11 +19,14 @@ export default function FrancophonieMapPage() {
           const cleaned = json.map(item => {
             let p = item.population_totale;
             let f = item.nombre_francophones;
+            // Corrections spécifiques
             if (item.id === 49) { p = 4660000; f = 115000; }
             if (item.id === 50) { p = 515000; f = 67000; }
             const uniqueName = Array.from(new Set(item.pays.split(' '))).join(' ');
             return { ...item, pays: uniqueName, population_totale: p, nombre_francophones: f };
-          }).sort((a, b) => b.population_totale - a.population_totale);
+          })
+          // TRI PAR NOMBRE DE FRANCOPHONES DÉCROISSANT
+          .sort((a, b) => b.nombre_francophones - a.nombre_francophones);
           
           setData(cleaned);
         }
@@ -92,12 +95,12 @@ export default function FrancophonieMapPage() {
       </nav>
       
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8">
+        <header className="mb-8 text-center md:text-left">
           <h1 className="text-2xl md:text-4xl font-black text-slate-900 uppercase tracking-tighter">
             Francophonie Mondiale
           </h1>
           <p className="text-slate-500 font-bold text-[10px] md:text-sm uppercase tracking-widest">
-            {data.length} Pays et territoires
+            Classement par nombre de locuteurs • {data.length} pays
           </p>
         </header>
 
@@ -111,18 +114,17 @@ export default function FrancophonieMapPage() {
           )}
         </div>
 
-        {/* TABLEAU AVEC TABLE-FIXED POUR LE MOBILE */}
         <div className="bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
-          <table className="w-full text-left border-collapse table-fixed">
+          <table className="w-full text-left border-collapse table-auto">
             <thead>
               <tr className="bg-slate-900 text-white text-[9px] md:text-[10px] uppercase tracking-widest">
-                <th className="p-2 md:p-4 border-r border-slate-800 text-center w-[12%] md:w-20">N°</th>
-                <th className="p-2 md:p-4 w-[48%] md:w-auto">Pays</th>
+                <th className="p-2 md:p-4 border-r border-slate-800 text-center w-10 md:w-20">Rang</th>
+                <th className="p-2 md:p-4">Pays</th>
                 <th className="p-2 md:p-4 text-right hidden md:table-cell w-48">Population</th>
-                <th className="p-2 md:p-4 text-right bg-blue-900 w-[40%] md:w-48">Francophones</th>
+                <th className="p-2 md:p-4 text-right bg-blue-900 w-24 md:w-48 whitespace-nowrap">Francophones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
+            <tbody className="divide-y divide-slate-100">
               {data.map((item, index) => (
                 <CountryRow key={item.id} item={item} index={index} />
               ))}
@@ -143,31 +145,31 @@ function CountryRow({ item, index }: { item: any, index: number }) {
         className="hover:bg-blue-50 transition-colors group cursor-pointer md:cursor-default"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <td className="p-2 md:p-4 text-center font-black text-slate-400 border-r border-slate-50 text-xs md:text-sm">
+        <td className="p-2 md:p-4 text-center font-black text-slate-400 border-r border-slate-50 text-[10px] md:text-sm">
           {index + 1}
         </td>
-        <td className="p-2 md:p-4 font-bold text-slate-800 uppercase text-xs md:text-sm">
-          <div className="flex items-center justify-between gap-1 overflow-hidden">
-            <span className="truncate block flex-1">{item.pays}</span>
+        <td className="p-2 md:p-4 font-bold text-slate-800 uppercase text-[11px] md:text-sm leading-tight">
+          <div className="flex items-center justify-between gap-2">
+            <span className="whitespace-normal break-words flex-1 min-w-0">{item.pays}</span>
             <span className="md:hidden text-slate-300 flex-shrink-0">
               {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </span>
           </div>
         </td>
-        <td className="p-2 md:p-4 text-right font-mono text-slate-600 hidden md:table-cell">
+        <td className="p-2 md:p-4 text-right font-mono text-slate-600 hidden md:table-cell text-sm">
           {item.population_totale.toLocaleString()}
         </td>
-        <td className="p-2 md:p-4 text-right font-black text-blue-700 bg-blue-50/30 text-xs md:text-sm whitespace-nowrap">
+        <td className="p-2 md:p-4 text-right font-black text-blue-700 bg-blue-50/30 text-[10px] md:text-sm whitespace-nowrap">
           {item.nombre_francophones.toLocaleString()}
         </td>
       </tr>
 
       {isOpen && (
-        <tr className="md:hidden bg-slate-50">
+        <tr className="md:hidden bg-slate-50/80">
           <td colSpan={3} className="p-3 border-b border-slate-200">
-            <div className="flex justify-between items-center">
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Pop. Totale</span>
-              <span className="font-mono text-slate-700 text-xs">{item.population_totale.toLocaleString()}</span>
+            <div className="flex justify-between items-center px-1">
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Population Totale</span>
+              <span className="font-mono text-slate-700 text-[11px]">{item.population_totale.toLocaleString()}</span>
             </div>
           </td>
         </tr>

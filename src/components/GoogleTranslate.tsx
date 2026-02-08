@@ -196,6 +196,17 @@ export default function GoogleTranslateCustom() {
             </h3>
             
             <div className="space-y-4 text-sm leading-relaxed">
+
+              {/* NOUVEL AJOUT : INFO PLIAGE */}
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-start gap-3">
+                <span className="text-xl">↕️</span>
+                <p className="text-amber-900 font-medium">
+                  Si le traducteur vous gêne, vous pouvez le <strong>plier</strong> ou le <strong>déplier</strong> avec les boutons 
+                  <span className="inline-flex items-center gap-1 mx-1 px-1.5 py-0.5 bg-white border rounded text-[11px] font-bold">▼ Plier</span> 
+                  ou <span className="inline-flex items-center gap-1 mx-1 px-1.5 py-0.5 bg-white border rounded text-[11px] font-bold">▲ Déplier</span>.
+                </p>
+              </div>
+
               <p>
                 Si la traduction reste bloquée ou masque le menu, supprimez les cookies du site : 
                 <code className="block mt-1 px-2 py-1 bg-slate-100 border border-slate-200 rounded font-mono text-blue-600 text-center text-[10px] break-all">

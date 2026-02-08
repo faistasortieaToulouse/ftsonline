@@ -91,7 +91,7 @@ function SectionMalte({ titre, items, data }: { titre: string, items: string[], 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-8 items-start">
         
         {/* 1. TABLEAU AVEC SCROLL INTERNE */}
-        <div className="order-2 xl:order-1 bg-white border-l-4 border-l-red-600 rounded-r-2xl shadow-xl border border-slate-200 flex flex-col h-[750px]">
+        <div className="order-1 xl:order-1 bg-white border-l-4 border-l-red-600 rounded-r-2xl shadow-xl border border-slate-200 flex flex-col h-[750px]">
           <div className="bg-slate-50 border-b p-4 flex items-center gap-2 flex-shrink-0">
             <ScrollText size={18} className="text-red-600" />
             <h3 className="text-slate-800 font-bold uppercase text-[10px] tracking-widest">Registres Hospitaliers</h3>
@@ -127,7 +127,7 @@ function SectionMalte({ titre, items, data }: { titre: string, items: string[], 
         </div>
 
         {/* 2. ARBRE AVEC SCROLL INTERNE */}
-        <div className="order-1 xl:order-2 bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 md:p-8 overflow-auto h-[750px] shadow-inner relative">
+        <div className="order-2 xl:order-2 bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 md:p-8 overflow-auto h-[750px] shadow-inner relative">
           <div className="flex justify-center">
             <svg width={LARGEUR_NOEUD + 40} height={hMax} className="overflow-visible">
               {positions.map((p, i) => (

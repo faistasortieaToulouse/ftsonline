@@ -114,7 +114,7 @@ export default function HierarchieSunniteOttomanPage() {
           {/* 1. DÉTAILS DES FONCTIONS (GAUCHE) */}
           <section 
             style={{ height: `${hauteurAffichee}px` }}
-            className="order-2 xl:order-1 bg-white border border-amber-100 rounded-3xl shadow-xl flex flex-col overflow-hidden"
+            className="order-1 xl:order-1 bg-white border border-amber-100 rounded-3xl shadow-xl flex flex-col overflow-hidden"
           >
             <div className="bg-amber-50/50 border-b border-amber-100 p-5 flex items-center gap-3">
               <Scroll size={20} className="text-amber-800" />
@@ -138,7 +138,7 @@ export default function HierarchieSunniteOttomanPage() {
           {/* 2. ARBRE SVG (DROITE) */}
           <section 
             style={{ height: `${hauteurAffichee}px` }}
-            className="order-1 xl:order-2 bg-amber-900/5 border-2 border-amber-100 rounded-3xl p-6 overflow-auto shadow-inner relative"
+            className="order-2 xl:order-2 bg-amber-900/5 border-2 border-amber-100 rounded-3xl p-6 overflow-auto shadow-inner relative"
           >
             <div className="flex justify-center">
               <svg width={LARGEUR_NOEUD + 40} height={hauteurContenu} className="overflow-visible">

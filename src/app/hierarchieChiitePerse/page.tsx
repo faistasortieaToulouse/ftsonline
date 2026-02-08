@@ -103,7 +103,7 @@ export default function HierarchieChiitePersePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-8 items-start">
           
           {/* 1. REGISTRE (TABLEAU) */}
-          <div className="order-2 xl:order-1 bg-white border-l-4 border-l-emerald-700 rounded-r-2xl shadow-xl overflow-hidden border border-slate-200">
+          <div className="order-1 xl:order-1 bg-white border-l-4 border-l-emerald-700 rounded-r-2xl shadow-xl overflow-hidden border border-slate-200">
             <div className="bg-slate-50 border-b p-4 flex items-center gap-2">
               <ScrollText size={18} className="text-emerald-800" />
               <h3 className="text-slate-800 font-bold uppercase text-[10px] tracking-widest">Registre des Savants</h3>
@@ -136,7 +136,7 @@ export default function HierarchieChiitePersePage() {
           </div>
 
           {/* 2. ARBRE VISUEL */}
-          <div className="order-1 xl:order-2 bg-[#f0f4f0] border-2 border-slate-200 rounded-3xl p-4 md:p-8 overflow-auto max-h-[600px] xl:max-h-[750px] shadow-inner relative">
+          <div className="order-2 xl:order-2 bg-[#f0f4f0] border-2 border-slate-200 rounded-3xl p-4 md:p-8 overflow-auto max-h-[600px] xl:max-h-[750px] shadow-inner relative">
             <div className="flex justify-center">
               <svg width={LARGEUR_NOEUD + 40} height={hMax} className="overflow-visible">
                 {positions.map((p, i) => (

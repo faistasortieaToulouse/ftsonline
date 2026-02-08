@@ -71,7 +71,7 @@ function SectionNoblesse({ racine, sectionNom }: { racine: Personne, sectionNom:
         {/* 1. REGISTRE DES TITRES (Adaptatif) */}
         <section 
           style={{ height: `${hauteurAffichee}px` }}
-          className="order-2 xl:order-1 bg-white border-l-4 border-l-blue-900 rounded-r-2xl shadow-xl border border-slate-200 flex flex-col transition-all duration-300"
+          className="order-1 xl:order-1 bg-white border-l-4 border-l-blue-900 rounded-r-2xl shadow-xl border border-slate-200 flex flex-col transition-all duration-300"
         >
           <div className="bg-slate-50 border-b p-4 flex items-center gap-2 flex-shrink-0">
             <ScrollText size={18} className="text-blue-900" />
@@ -109,7 +109,7 @@ function SectionNoblesse({ racine, sectionNom }: { racine: Personne, sectionNom:
         {/* 2. VISUALISATION GÉNÉALOGIQUE (Adaptatif) */}
         <section 
           style={{ height: `${hauteurAffichee}px` }}
-          className="order-1 xl:order-2 bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 md:p-8 overflow-auto shadow-inner relative transition-all duration-300"
+          className="order-2 xl:order-2 bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 md:p-8 overflow-auto shadow-inner relative transition-all duration-300"
         >
           <div className="flex justify-center">
             <svg width={LARGEUR_NOEUD + 40} height={hauteurContenu} className="overflow-visible">

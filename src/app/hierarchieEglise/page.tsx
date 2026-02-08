@@ -98,7 +98,7 @@ export default function HierarchieEglisePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-8 items-start">
           
           {/* 1. TABLEAU AVEC BARRE DÉFILANTE (Même hauteur que l'arbre) */}
-          <div className="order-2 xl:order-1 bg-white border-l-4 border-l-purple-800 rounded-r-2xl shadow-xl border border-slate-200 flex flex-col h-[750px]">
+          <div className="order-1 xl:order-1 bg-white border-l-4 border-l-purple-800 rounded-r-2xl shadow-xl border border-slate-200 flex flex-col h-[750px]">
             <div className="bg-slate-50 border-b p-4 flex items-center gap-2 flex-shrink-0">
               <ScrollText size={18} className="text-purple-900" />
               <h3 className="text-slate-800 font-bold uppercase text-[10px] tracking-widest">Registres Ecclésiastiques</h3>
@@ -133,7 +133,7 @@ export default function HierarchieEglisePage() {
           </div>
 
           {/* 2. ARBRE VISUEL SVG (Hauteur fixe identique) */}
-          <div className="order-1 xl:order-2 bg-[#f8f5f2] border-2 border-slate-200 rounded-3xl p-4 md:p-8 overflow-auto h-[750px] shadow-inner relative scrollbar-none">
+          <div className="order-2 xl:order-2 bg-[#f8f5f2] border-2 border-slate-200 rounded-3xl p-4 md:p-8 overflow-auto h-[750px] shadow-inner relative scrollbar-none">
             <div className="flex justify-center">
               <svg width={LARGEUR_NOEUD + 40} height={hMax} className="overflow-visible">
                 {positions.map((p, i) => (

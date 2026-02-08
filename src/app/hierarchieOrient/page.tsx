@@ -67,7 +67,7 @@ function SectionTemple({ racine, titre, couleur }: { racine: NoeudTemple, titre:
         {/* 1. LISTE DESCRIPTIVE (GAUCHE) */}
         <section 
           style={{ height: `${hauteurAffichee}px` }}
-          className="order-2 xl:order-1 bg-white border border-slate-200 rounded-2xl shadow-xl flex flex-col overflow-hidden"
+          className="order-1 xl:order-1 bg-white border border-slate-200 rounded-2xl shadow-xl flex flex-col overflow-hidden"
         >
           <div className="bg-slate-50 border-b p-4 flex items-center gap-2 flex-shrink-0">
             <ScrollText size={18} className="text-slate-400" />
@@ -92,7 +92,7 @@ function SectionTemple({ racine, titre, couleur }: { racine: NoeudTemple, titre:
         {/* 2. ARBRE VISUEL (DROITE) */}
         <section 
           style={{ height: `${hauteurAffichee}px` }}
-          className="order-1 xl:order-2 bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 overflow-auto shadow-inner relative"
+          className="order-2 xl:order-2 bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 overflow-auto shadow-inner relative"
         >
           <div className="flex justify-center">
             <svg width={LARGEUR_NOEUD + 40} height={hauteurContenu} className="overflow-visible">

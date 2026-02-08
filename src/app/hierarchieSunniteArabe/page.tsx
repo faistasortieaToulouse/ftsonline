@@ -113,7 +113,7 @@ export default function HierarchieSunniteArabePage() {
           {/* 1. DÉTAILS (GAUCHE) */}
           <section 
             style={{ height: `${hauteurAffichee}px` }}
-            className="order-2 xl:order-1 bg-white border border-emerald-100 rounded-3xl shadow-xl flex flex-col overflow-hidden"
+            className="order-1 xl:order-1 bg-white border border-emerald-100 rounded-3xl shadow-xl flex flex-col overflow-hidden"
           >
             <div className="bg-emerald-50/50 border-b border-emerald-100 p-5 flex items-center gap-3">
               <Scroll size={20} className="text-emerald-800" />
@@ -137,7 +137,7 @@ export default function HierarchieSunniteArabePage() {
           {/* 2. ARBRE (DROITE) */}
           <section 
             style={{ height: `${hauteurAffichee}px` }}
-            className="order-1 xl:order-2 bg-emerald-900/5 border-2 border-emerald-50 rounded-3xl p-6 overflow-auto shadow-inner relative"
+            className="order-2 xl:order-2 bg-emerald-900/5 border-2 border-emerald-50 rounded-3xl p-6 overflow-auto shadow-inner relative"
           >
             <div className="flex justify-center">
               <svg width={LARGEUR_NOEUD + 40} height={hauteurContenu} className="overflow-visible">
