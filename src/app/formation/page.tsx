@@ -79,7 +79,7 @@ export default function FormationPage() {
         <p className="text-blue-800 font-bold italic">
           "L'éducation est l'arme la plus puissante pour changer le monde."
         </p>
-      </header>
+      </footer>
     </main>
   );
 }
