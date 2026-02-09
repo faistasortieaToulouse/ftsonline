@@ -92,27 +92,30 @@ export default function EnclavesPage() {
         </div>
       </header>
 
-      {/* --- CARTE LEAFLET - VERSION MISE À JOUR --- */}
-      <div
-        ref={mapRef}
-        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
-        style={{ zIndex: 0 }}
-      >
+      {/* --- CARTE LEAFLET - VERSION CORRIGÉE --- */}
+      <div className="mb-12 relative">
+        <div
+          ref={mapRef}
+          className="border-4 border-white rounded-3xl bg-gray-100 shadow-xl overflow-hidden h-[40vh] md:h-[60vh] z-0"
+        />
+        
+        {/* Overlay de chargement */}
         {!isReady && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10 rounded-3xl">
             <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
             <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
           </div>
         )}
-      </div>
-        
+          
+        {/* Légende - Elle est maintenant BIEN à l'intérieur du conteneur parent */}
         <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-4 py-2 rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-widest shadow-md z-[1000] flex flex-wrap gap-4 border border-slate-100">
           <span className="flex items-center gap-1.5 text-red-600"><div className="w-2.5 h-2.5 rounded-full bg-red-500"/> Régional</span>
           <span className="flex items-center gap-1.5 text-purple-600"><div className="w-2.5 h-2.5 rounded-full bg-purple-500"/> Départemental</span>
           <span className="flex items-center gap-1.5 text-blue-600"><div className="w-2.5 h-2.5 rounded-full bg-blue-500"/> Communal</span>
           <span className="flex items-center gap-1.5 text-slate-500"><div className="w-2.5 h-2.5 rounded-full bg-slate-400"/> Parcelles</span>
         </div>
-      </div>
+      </div> 
+      {/* Un seul </div> ici pour fermer le bloc de la carte ! */}
 
       {/* SECTION ENCLAVES */}
       <section className="mb-16">
