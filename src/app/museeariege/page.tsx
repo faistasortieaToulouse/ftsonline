@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Musee } from '../api/museeariege/route';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search } from "lucide-react";
+import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search, Loader2 } from "lucide-react";
 
 const ARIEGE_CENTER: [number, number] = [42.96, 1.60];
 const THEME_COLOR = '#8b5cf6';
