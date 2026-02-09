@@ -6,13 +6,14 @@ import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search, Loader2 } from "lucide-react";
 
-const THEME_COLOR = '#1e3a8a'; // Bleu Tarn-et-Garonne
+const THEME_COLOR = '#1e3a8a';
 
-// --- Composant Carte Leaflet ---
+// --- Composant Carte Leaflet (Gère son propre état de chargement) ---
 const LeafletMap = ({ musees }: { musees: Musee[] }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const markersLayer = useRef<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || musees.length === 0) return;
@@ -21,7 +22,6 @@ const LeafletMap = ({ musees }: { musees: Musee[] }) => {
       const L = (await import('leaflet')).default;
 
       if (!mapInstance.current) {
-        // Calcul du centre dynamique basé sur les musées affichés
         const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
         const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
 
@@ -31,6 +31,7 @@ const LeafletMap = ({ musees }: { musees: Musee[] }) => {
         }).addTo(mapInstance.current);
 
         markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+        setIsMapReady(true);
       }
 
       markersLayer.current.clearLayers();
@@ -59,7 +60,17 @@ const LeafletMap = ({ musees }: { musees: Musee[] }) => {
     };
   }, [musees]);
 
-  return <div ref={mapRef} className="h-full w-full" />;
+  return (
+    <div className="relative h-full w-full">
+      <div ref={mapRef} className="h-full w-full" style={{ zIndex: 0 }} />
+      {!isMapReady && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+          <Loader2 className="animate-spin h-8 w-8 text-blue-800 mb-2" />
+          <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
+        </div>
+      )}
+    </div>
+  );
 };
 
 // --- Composant Principal ---
@@ -126,7 +137,6 @@ export default function MuseeTarnGaronnePage() {
         </p>
       </header>
 
-      {/* Barre de recherche */}
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <input 
@@ -138,82 +148,73 @@ export default function MuseeTarnGaronnePage() {
         />
       </div>
 
-      {/* --- CARTE LEAFLET - VERSION MISE À JOUR --- */}
-      <div
-        ref={mapRef}
-        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
-        style={{ zIndex: 0 }}
-      >
-        {!isMapReady && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
-            <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
-            <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
-          </div>
-        )}
+      {/* --- ICI ON APPELLE JUSTE LE COMPOSANT --- */}
+      <div className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative">
+        <LeafletMap musees={filteredAndSortedMusees} />
       </div>
 
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        {/* ... (Reste de ton tableau) */}
         <table className="w-full text-left border-collapse text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[11px]">
-            <tr>
-              <th className="p-4 w-12 text-center">#</th>
-              <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('commune')}>
-                Commune {sortKey === 'commune' ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
-              </th>
-              <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('nom')}>
-                Nom {sortKey === 'nom' ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
-              </th>
-              <th className="p-4 hidden md:table-cell">Catégorie</th>
-              <th className="p-4 hidden lg:table-cell">Adresse</th>
-              <th className="p-4 w-16 text-center">Lien</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {filteredAndSortedMusees.map((m, i) => (
-              <React.Fragment key={`tg-${i}`}>
-                <tr 
-                  onClick={() => setExpandedId(expandedId === i ? null : i)}
-                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}
-                >
-                  <td className="p-4 text-center font-bold text-blue-900 align-top">{i + 1}</td>
-                  <td className="p-4 font-bold text-slate-700 align-top">{m.commune}</td>
-                  <td className="p-4 align-top">
-                    <div className="flex items-center gap-2">
-                      <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
-                      <div className="md:hidden text-blue-800">
-                        {expandedId === i ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4 hidden md:table-cell text-slate-500 text-xs italic align-top">{m.categorie}</td>
-                  <td className="p-4 hidden lg:table-cell text-slate-500 text-xs align-top leading-relaxed">{m.adresse}</td>
-                  <td className="p-4 text-center align-top">
-                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 inline-flex items-center gap-1 font-bold" onClick={(e) => e.stopPropagation()}>
-                      Web <ExternalLink size={18} />
-                    </a>
-                  </td>
-                </tr>
-
-                {expandedId === i && (
-                  <tr className="bg-blue-50/30 md:hidden lg:hidden">
-                    <td colSpan={4} className="p-4 pt-0">
-                      <div className="flex flex-col gap-2 py-3 border-t border-blue-100">
-                        <div className="flex items-start gap-2 text-slate-600">
-                          <Tag size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
-                          <span className="text-xs"><strong>Catégorie :</strong> {m.categorie}</span>
-                        </div>
-                        <div className="flex items-start gap-2 text-slate-600">
-                          <MapPin size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
-                          <span className="text-xs italic whitespace-normal"><strong>Adresse :</strong> {m.adresse}</span>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
+           <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[11px]">
+             <tr>
+               <th className="p-4 w-12 text-center">#</th>
+               <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('commune')}>
+                 Commune {sortKey === 'commune' ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
+               </th>
+               <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('nom')}>
+                 Nom {sortKey === 'nom' ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
+               </th>
+               <th className="p-4 hidden md:table-cell">Catégorie</th>
+               <th className="p-4 hidden lg:table-cell">Adresse</th>
+               <th className="p-4 w-16 text-center">Lien</th>
+             </tr>
+           </thead>
+           <tbody className="divide-y divide-slate-100">
+             {filteredAndSortedMusees.map((m, i) => (
+               <React.Fragment key={`tg-${i}`}>
+                 <tr 
+                   onClick={() => setExpandedId(expandedId === i ? null : i)}
+                   className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}
+                 >
+                   <td className="p-4 text-center font-bold text-blue-900 align-top">{i + 1}</td>
+                   <td className="p-4 font-bold text-slate-700 align-top">{m.commune}</td>
+                   <td className="p-4 align-top">
+                     <div className="flex items-center gap-2">
+                       <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
+                       <div className="md:hidden text-blue-800">
+                         {expandedId === i ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                       </div>
+                     </div>
+                   </td>
+                   <td className="p-4 hidden md:table-cell text-slate-500 text-xs italic align-top">{m.categorie}</td>
+                   <td className="p-4 hidden lg:table-cell text-slate-500 text-xs align-top leading-relaxed">{m.adresse}</td>
+                   <td className="p-4 text-center align-top">
+                     <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 inline-flex items-center gap-1 font-bold" onClick={(e) => e.stopPropagation()}>
+                       Web <ExternalLink size={18} />
+                     </a>
+                   </td>
+                 </tr>
+                 {expandedId === i && (
+                   <tr className="bg-blue-50/30 md:hidden lg:hidden">
+                     <td colSpan={4} className="p-4 pt-0">
+                       <div className="flex flex-col gap-2 py-3 border-t border-blue-100">
+                         <div className="flex items-start gap-2 text-slate-600">
+                           <Tag size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
+                           <span className="text-xs"><strong>Catégorie :</strong> {m.categorie}</span>
+                         </div>
+                         <div className="flex items-start gap-2 text-slate-600">
+                           <MapPin size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
+                           <span className="text-xs italic"><strong>Adresse :</strong> {m.adresse}</span>
+                         </div>
+                       </div>
+                     </td>
+                   </tr>
+                 )}
+               </React.Fragment>
+             ))}
+           </tbody>
+         </table>
       </div>
     </div>
   );
