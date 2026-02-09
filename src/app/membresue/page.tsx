@@ -124,7 +124,7 @@ export default function MembresUEPage() {
         className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
         style={{ zIndex: 0 }}
       >
-        {!isMapReady && (
+        {!isReady && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
             <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
             <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
