@@ -101,7 +101,7 @@ export default function Cinemas31Page() {
           onClick={() => setViewMode("card")}
           variant={viewMode === "card" ? "default" : "secondary"}
         >
-          🗂 Cartes
+          🗂 Vignette
         </Button>
 
         <Button
