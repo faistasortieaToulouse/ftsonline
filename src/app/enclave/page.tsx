@@ -65,6 +65,15 @@ export default function EnclavesPage() {
       });
 
       markersGroup.addTo(mapInstance.current);
+      // --- AJOUTER ICI ---
+      setTimeout(() => {
+        if (mapInstance.current) {
+          mapInstance.current.invalidateSize();
+          setIsReady(true); // <--- L'interrupteur magique
+        }
+      }, 500);
+      // ------------------
+
       if (enclaves.length > 0) {
         mapInstance.current.fitBounds(markersGroup.getBounds(), { padding: [50, 50] });
       }
