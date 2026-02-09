@@ -175,7 +175,7 @@ export default function MuseeTarnGaronnePage() {
                   <td className="p-4 hidden md:table-cell text-slate-500 text-xs italic">{m.categorie}</td>
                   <td className="p-4 text-center">
                     <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600" onClick={(e) => e.stopPropagation()}>
-                      <ExternalLink size={18} />
+                      Web <ExternalLink size={18} />
                     </a>
                   </td>
                 </tr>
