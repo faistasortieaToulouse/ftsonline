@@ -64,7 +64,15 @@ export default function PopulationPage() {
       });
 
       markersGroup.addTo(mapInstance.current);
-      
+
+      // --- AJOUTE CES LIGNES JUSTE ICI ---
+      setTimeout(() => {
+        if (mapInstance.current) {
+          mapInstance.current.invalidateSize();
+          setIsReady(true); // C'est CA qui fait disparaître le chargement
+        }
+      }, 500);
+            
       // Ajuster la vue si des villes sont présentes
       if (villes.length > 0) {
         mapInstance.current.fitBounds(markersGroup.getBounds(), { padding: [50, 50] });
