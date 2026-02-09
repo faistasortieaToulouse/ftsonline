@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowLeft, Landmark, Search } from "lucide-react";
+import { ArrowLeft, Landmark, Search, Loader2 } from "lucide-react";
 
 // 1. IMPORTATION DU CSS LEAFLET (Indispensable)
 import "leaflet/dist/leaflet.css";
@@ -124,35 +124,48 @@ export default function AdministrationPage() {
         ))}
       </div>
 
-      {/* CARTE LEAFLET (Remplace Google Maps) */}
-      <div className="h-[50vh] w-full mb-12 rounded-3xl bg-slate-100 overflow-hidden border shadow-inner z-0">
-        <MapContainer 
-          center={[43.6045, 1.444]} 
-          zoom={12} 
-          style={{ height: '100%', width: '100%' }}
+{/* CARTE LEAFLET (Remplace Google Maps) */}
+<div className="h-[50vh] w-full mb-12 rounded-3xl bg-slate-100 overflow-hidden border shadow-inner relative z-0">
+  
+  {/* --- TON BLOC DE CHARGEMENT --- */}
+  {!isMapReady && (
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-blue-50/90 z-10 border-2 border-dashed border-blue-100 rounded-3xl">
+      <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
+      <p className="text-blue-700 font-bold text-xl italic animate-pulse">
+        🚀 En cours de chargement...
+      </p>
+    </div>
+  )}
+
+  <MapContainer 
+    center={[43.6045, 1.444]} 
+    zoom={12} 
+    style={{ height: '100%', width: '100%' }}
+    /* Cet événement déclenche la disparition du loader */
+    whenReady={() => setIsMapReady(true)}
+  >
+    <TileLayer
+      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    />
+    {L && filteredList.map((item, i) => (
+      item.geo && (
+        <Marker 
+          key={`${item.nom}-${i}`}
+          position={[item.geo.lat, item.geo.lon]}
+          icon={createIcon(i + 1, colors[item.categorie])}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {L && filteredList.map((item, i) => (
-            item.geo && (
-              <Marker 
-                key={`${item.nom}-${i}`}
-                position={[item.geo.lat, item.geo.lon]}
-                icon={createIcon(i + 1, colors[item.categorie])}
-              >
-                <Popup>
-                  <div className="p-1">
-                    <strong className="text-slate-900 block mb-1">{item.nom}</strong>
-                    <span className="text-slate-600 text-xs">{item.adresse}</span>
-                  </div>
-                </Popup>
-              </Marker>
-            )
-          ))}
-        </MapContainer>
-      </div>
+          <Popup>
+            <div className="p-1">
+              <strong className="text-slate-900 block mb-1">{item.nom}</strong>
+              <span className="text-slate-600 text-xs">{item.adresse}</span>
+            </div>
+          </Popup>
+        </Marker>
+      )
+    ))}
+  </MapContainer>
+</div>
 
       {/* Liste complète */}
       <div className="mb-8 border-b pb-4">
