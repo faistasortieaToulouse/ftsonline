@@ -137,11 +137,9 @@ export default function MuseeTarnGaronnePage() {
         style={{ zIndex: 0 }}
       >
         {(!isMapReady || isLoadingData) && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-blue-50/90 z-10 border-2 border-dashed border-blue-100 rounded-2xl">
-            <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
-            <p className="text-blue-700 font-bold text-xl italic animate-pulse">
-              🚀 En cours de chargement...
-            </p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+            <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
+            <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
           </div>
         )}
       </div>
@@ -184,7 +182,7 @@ export default function MuseeTarnGaronnePage() {
                     <td className="p-4 hidden lg:table-cell text-slate-500 text-xs align-top">{m.adresse}</td>
                     <td className="p-4 text-center align-top">
                       <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 inline-flex items-center" onClick={(e) => e.stopPropagation()}>
-                        <ExternalLink size={18} />
+                        Web <ExternalLink size={18} />
                       </a>
                     </td>
                   </tr>
