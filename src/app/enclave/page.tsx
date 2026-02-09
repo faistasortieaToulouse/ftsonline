@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, MapPin, Box, AlertCircle, Info, Map as MapIcon } from "lucide-react";
+import { ArrowLeft, ExternalLink, MapPin, Box, AlertCircle, Loader2, Info, Map as MapIcon } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 
 export default function EnclavesPage() {
@@ -10,6 +10,7 @@ export default function EnclavesPage() {
   const mapInstance = useRef<any>(null);
   const [enclaves, setEnclaves] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     fetch("/api/enclave")
@@ -91,12 +92,20 @@ export default function EnclavesPage() {
         </div>
       </header>
 
-      {/* Carte */}
-      <div className="mb-12 relative">
-        <div 
-          ref={mapRef} 
-          className="h-[450px] md:h-[600px] w-full rounded-3xl border-4 border-white shadow-xl z-0 overflow-hidden bg-slate-200"
-        />
+      {/* --- CARTE LEAFLET - VERSION MISE À JOUR --- */}
+      <div
+        ref={mapRef}
+        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
+        style={{ zIndex: 0 }}
+      >
+        {!isReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+            <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
+            <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
+          </div>
+        )}
+      </div>
+        
         <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-4 py-2 rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-widest shadow-md z-[1000] flex flex-wrap gap-4 border border-slate-100">
           <span className="flex items-center gap-1.5 text-red-600"><div className="w-2.5 h-2.5 rounded-full bg-red-500"/> Régional</span>
           <span className="flex items-center gap-1.5 text-purple-600"><div className="w-2.5 h-2.5 rounded-full bg-purple-500"/> Départemental</span>
