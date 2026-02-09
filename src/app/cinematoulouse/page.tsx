@@ -101,7 +101,7 @@ export default function CinemaToulousePage() {
 
         <Button onClick={() => setViewMode("card")}
           variant={viewMode === "card" ? "default" : "secondary"}>
-          📺 Cartes
+          📺 Vignette
         </Button>
 
         <Button onClick={() => setViewMode("list")}
