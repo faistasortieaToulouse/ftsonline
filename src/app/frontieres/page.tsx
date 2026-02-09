@@ -96,7 +96,7 @@ export default function FrontieresPage() {
         </a>
       </header>
 
-      {/* CONTENEUR CARTE */}
+{/* CONTENEUR CARTE */}
       <div className="relative w-full mb-10 border-4 border-white shadow-xl rounded-3xl bg-slate-200 overflow-hidden z-0" style={{ height: "60vh" }}>
         <div ref={mapRef} className="h-full w-full" />
         
@@ -107,18 +107,17 @@ export default function FrontieresPage() {
             <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
           </div>
         )}
-      </div>
 
-  {/* Légende (elle sera cachée par le chargement grâce au z-index) */}
-  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm z-[1000] flex gap-4">
-    <span className="flex items-center gap-1 text-emerald-600">
-      <div className="w-2 h-2 rounded-full bg-emerald-500"/> Terrestre
-    </span>
-    <span className="flex items-center gap-1 text-blue-600">
-      <div className="w-2 h-2 rounded-full bg-blue-500"/> Maritime
-    </span>
-  </div>
-</div>
+        {/* Légende - BIEN PLACÉE À L'INTÉRIEUR DU CONTENEUR RELATIVE */}
+        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm z-[1000] flex gap-4">
+          <span className="flex items-center gap-1 text-emerald-600">
+            <div className="w-2 h-2 rounded-full bg-emerald-500"/> Terrestre
+          </span>
+          <span className="flex items-center gap-1 text-blue-600">
+            <div className="w-2 h-2 rounded-full bg-blue-500"/> Maritime
+          </span>
+        </div>
+      </div>
 
       {/* Grille des Frontières */}
       {loading ? (
