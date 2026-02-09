@@ -8,35 +8,70 @@ import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search, L
 
 const THEME_COLOR = '#1e3a8a';
 
-// --- Composant Carte Leaflet (Gère son propre état de chargement) ---
-const LeafletMap = ({ musees }: { musees: Musee[] }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
+export default function MuseeTarnGaronnePage() {
+  const [musees, setMusees] = useState<Musee[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const [sortKey, setSortKey] = useState<keyof Musee>('commune');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
   const markersLayer = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
+  // 1. Récupération des données
   useEffect(() => {
-    if (typeof window === "undefined" || !mapRef.current || musees.length === 0) return;
+    async function fetchMusees() {
+      try {
+        const response = await fetch('/api/museetarngaronne'); 
+        if (!response.ok) throw new Error("Erreur lors de la récupération des données.");
+        const data: Musee[] = await response.json();
+        setMusees(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Erreur");
+      } finally {
+        setIsLoadingData(false);
+      }
+    }
+    fetchMusees();
+  }, []);
 
+  // 2. Initialisation Carte
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData || musees.length === 0) return;
+    
     const initMap = async () => {
       const L = (await import('leaflet')).default;
+      if (mapInstance.current) return;
 
-      if (!mapInstance.current) {
-        const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
-        const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
+      const centerLat = musees.reduce((sum, m) => sum + m.lat, 0) / musees.length;
+      const centerLng = musees.reduce((sum, m) => sum + m.lng, 0) / musees.length;
 
-        mapInstance.current = L.map(mapRef.current!).setView([centerLat, centerLng], 9);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap'
-        }).addTo(mapInstance.current);
+      mapInstance.current = L.map(mapRef.current!).setView([centerLat, centerLng], 9);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current);
 
-        markersLayer.current = L.layerGroup().addTo(mapInstance.current);
-        setIsMapReady(true);
-      }
+      markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+      
+      // On simule un petit délai pour s'assurer que les tuiles chargent ou on valide direct
+      setIsMapReady(true);
+    };
+    initMap();
+  }, [isLoadingData, musees]);
 
+  // 3. Mise à jour des marqueurs
+  useEffect(() => {
+    if (!isMapReady || !mapInstance.current) return;
+    const updateMarkers = async () => {
+      const L = (await import('leaflet')).default;
       markersLayer.current.clearLayers();
 
-      musees.forEach((m, i) => {
+      filteredAndSortedMusees.forEach((m, i) => {
         const customIcon = L.divIcon({
           className: 'custom-marker',
           html: `<div style="background-color: ${THEME_COLOR}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
@@ -49,56 +84,8 @@ const LeafletMap = ({ musees }: { musees: Musee[] }) => {
           .addTo(markersLayer.current);
       });
     };
-
-    initMap();
-
-    return () => {
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
-      }
-    };
-  }, [musees]);
-
-  return (
-    <div className="relative h-full w-full">
-      <div ref={mapRef} className="h-full w-full" style={{ zIndex: 0 }} />
-      {!isMapReady && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
-          <Loader2 className="animate-spin h-8 w-8 text-blue-800 mb-2" />
-          <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// --- Composant Principal ---
-export default function MuseeTarnGaronnePage() {
-  const [musees, setMusees] = useState<Musee[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  
-  const [sortKey, setSortKey] = useState<keyof Musee>('commune');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-
-  useEffect(() => {
-    async function fetchMusees() {
-      try {
-        const response = await fetch('/api/museetarngaronne'); 
-        if (!response.ok) throw new Error("Erreur de récupération");
-        const data: Musee[] = await response.json();
-        setMusees(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Erreur inattendue");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchMusees();
-  }, []);
+    updateMarkers();
+  }, [isMapReady, searchQuery, sortKey, sortDirection]); // Ajout des dépendances pour rafraîchir les numéros
 
   const handleSort = (key: keyof Musee) => {
     const direction = key === sortKey && sortDirection === 'asc' ? 'desc' : 'asc';
@@ -119,8 +106,7 @@ export default function MuseeTarnGaronnePage() {
       return 0;
     });
 
-  if (isLoading) return <div className="p-10 font-bold text-center italic">Chargement du Tarn-et-Garonne (82)...</div>;
-  if (error) return <div className="p-10 text-red-600 font-bold text-center">Erreur : {error}</div>;
+  if (error) return <div className="p-10 text-red-700 text-center font-bold italic">Erreur : {error}</div>;
 
   return (
     <div className="max-w-7xl mx-auto p-4 bg-slate-50 min-h-screen">
@@ -131,91 +117,73 @@ export default function MuseeTarnGaronnePage() {
       </nav>
 
       <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 italic">🏰 Musées du Tarn-et-Garonne (82)</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight italic">🏰 Musées du Tarn-et-Garonne (82)</h1>
         <p className="text-blue-700 mt-1 font-medium italic text-sm">
-          {filteredAndSortedMusees.length} sites culturels affichés.
+          {isLoadingData ? 'Chargement des données...' : `${filteredAndSortedMusees.length} sites culturels répertoriés.`}
         </p>
       </header>
 
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-        <input 
-          type="text"
-          placeholder="Rechercher à Montauban, Moissac, Caussade..."
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-800 outline-none shadow-sm transition-all"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      {/* Barre de recherche toujours visible une fois les données chargées */}
+      {!isLoadingData && (
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <input 
+            type="text"
+            placeholder="Rechercher à Montauban, Moissac..."
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-800 outline-none shadow-sm transition-all"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      )}
+
+      {/* --- EMPLACEMENT DE LA CARTE AVEC LOADER INTÉGRÉ --- */}
+      <div
+        ref={mapRef}
+        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
+        style={{ zIndex: 0 }}
+      >
+        {(!isMapReady || isLoadingData) && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-blue-50/90 z-10 border-2 border-dashed border-blue-100 rounded-2xl">
+            <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
+            <p className="text-blue-700 font-bold text-xl italic animate-pulse">
+              🚀 En cours de chargement...
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* --- ICI ON APPELLE JUSTE LE COMPOSANT --- */}
-      <div className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative">
-        <LeafletMap musees={filteredAndSortedMusees} />
-      </div>
-
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        {/* ... (Reste de ton tableau) */}
-        <table className="w-full text-left border-collapse text-sm">
-           <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[11px]">
-             <tr>
-               <th className="p-4 w-12 text-center">#</th>
-               <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('commune')}>
-                 Commune {sortKey === 'commune' ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
-               </th>
-               <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('nom')}>
-                 Nom {sortKey === 'nom' ? (sortDirection === 'asc' ? '↑' : '↓') : '↕'}
-               </th>
-               <th className="p-4 hidden md:table-cell">Catégorie</th>
-               <th className="p-4 hidden lg:table-cell">Adresse</th>
-               <th className="p-4 w-16 text-center">Lien</th>
-             </tr>
-           </thead>
-           <tbody className="divide-y divide-slate-100">
-             {filteredAndSortedMusees.map((m, i) => (
-               <React.Fragment key={`tg-${i}`}>
-                 <tr 
-                   onClick={() => setExpandedId(expandedId === i ? null : i)}
-                   className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}
-                 >
-                   <td className="p-4 text-center font-bold text-blue-900 align-top">{i + 1}</td>
-                   <td className="p-4 font-bold text-slate-700 align-top">{m.commune}</td>
-                   <td className="p-4 align-top">
-                     <div className="flex items-center gap-2">
-                       <div className="font-bold text-slate-900 leading-tight">{m.nom}</div>
-                       <div className="md:hidden text-blue-800">
-                         {expandedId === i ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                       </div>
-                     </div>
-                   </td>
-                   <td className="p-4 hidden md:table-cell text-slate-500 text-xs italic align-top">{m.categorie}</td>
-                   <td className="p-4 hidden lg:table-cell text-slate-500 text-xs align-top leading-relaxed">{m.adresse}</td>
-                   <td className="p-4 text-center align-top">
-                     <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 inline-flex items-center gap-1 font-bold" onClick={(e) => e.stopPropagation()}>
-                       Web <ExternalLink size={18} />
-                     </a>
-                   </td>
-                 </tr>
-                 {expandedId === i && (
-                   <tr className="bg-blue-50/30 md:hidden lg:hidden">
-                     <td colSpan={4} className="p-4 pt-0">
-                       <div className="flex flex-col gap-2 py-3 border-t border-blue-100">
-                         <div className="flex items-start gap-2 text-slate-600">
-                           <Tag size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
-                           <span className="text-xs"><strong>Catégorie :</strong> {m.categorie}</span>
-                         </div>
-                         <div className="flex items-start gap-2 text-slate-600">
-                           <MapPin size={14} className="mt-0.5 text-blue-500 flex-shrink-0" />
-                           <span className="text-xs italic"><strong>Adresse :</strong> {m.adresse}</span>
-                         </div>
-                       </div>
-                     </td>
-                   </tr>
-                 )}
-               </React.Fragment>
-             ))}
-           </tbody>
-         </table>
-      </div>
+      {/* Tableau des résultats */}
+      {!isLoadingData && (
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[11px]">
+              <tr>
+                <th className="p-4 w-12 text-center">#</th>
+                <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('commune')}>Commune</th>
+                <th className="p-4 cursor-pointer hover:text-blue-800" onClick={() => handleSort('nom')}>Nom</th>
+                <th className="p-4 hidden md:table-cell">Catégorie</th>
+                <th className="p-4 w-16 text-center">Lien</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredAndSortedMusees.map((m, i) => (
+                <tr key={i} onClick={() => setExpandedId(expandedId === i ? null : i)} className="hover:bg-slate-50 cursor-pointer">
+                  <td className="p-4 text-center font-bold text-blue-900">{i + 1}</td>
+                  <td className="p-4 font-bold text-slate-700">{m.commune}</td>
+                  <td className="p-4 text-slate-900 font-medium">{m.nom}</td>
+                  <td className="p-4 hidden md:table-cell text-slate-500 text-xs italic">{m.categorie}</td>
+                  <td className="p-4 text-center">
+                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="text-blue-600" onClick={(e) => e.stopPropagation()}>
+                      <ExternalLink size={18} />
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
