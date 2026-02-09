@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
-import { Library, MapPin } from "lucide-react";
+import { Library, MapPin, ArrowLeft, Loader2, ExternalLink } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 interface CulturePoint {
   id: number;
@@ -21,88 +19,108 @@ interface CulturePoint {
 
 export default function EcoleCulturePage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
+  const mapInstance = useRef<any>(null);
+  const markersLayer = useRef<any>(null);
 
   const [points, setPoints] = useState<CulturePoint[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [isMapReady, setIsMapReady] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
+  // 1. Récupération des données
   useEffect(() => {
     fetch("/api/ecoleculture")
       .then((res) => res.json())
-      .then(setPoints)
-      .catch((err) => console.error("Erreur API:", err));
+      .then((data) => {
+        setPoints(data);
+        setIsLoadingData(false);
+      })
+      .catch((err) => {
+        console.error("Erreur API:", err);
+        setIsLoadingData(false);
+      });
   }, []);
 
+  // 2. Initialisation de Leaflet
   useEffect(() => {
-    if (!isReady || !mapRef.current || mapInstance.current) return;
+    if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
 
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 13,
-      center: { lat: 43.6045, lng: 1.4442 },
-      styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
-    });
-  }, [isReady]);
+    const initMap = async () => {
+      const L = (await import("leaflet")).default;
 
+      if (!mapInstance.current) {
+        // Toulouse par défaut
+        mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.4442], 13);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(mapInstance.current);
+
+        markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+        setIsMapReady(true);
+      }
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoadingData]);
+
+  // 3. Mise à jour des marqueurs
   useEffect(() => {
-    if (!mapInstance.current) return;
+    if (!isMapReady || !mapInstance.current) return;
 
-    markersRef.current.forEach((m) => m.setMap(null));
-    markersRef.current = [];
+    const updateMarkers = async () => {
+      const L = (await import("leaflet")).default;
+      markersLayer.current.clearLayers();
 
-    points.forEach((point) => {
-      if (point.lat === null || point.lng === null) return;
+      points.forEach((point) => {
+        if (point.lat === null || point.lng === null) return;
 
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: { lat: point.lat, lng: point.lng },
-        // Ajout du numéro sur le marqueur
-        label: {
-          text: point.id.toString(),
-          color: "white",
-          fontWeight: "bold",
-          fontSize: "12px"
-        },
-        title: point.nom,
-      });
+        const customIcon = L.divIcon({
+          className: "custom-marker",
+          html: `<div style="background-color: #4f46e5; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${point.id}</div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+        });
 
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <div style="color:#1e293b;padding:8px;font-family:sans-serif;max-width:200px;">
+        const popupContent = `
+          <div style="color:#1e293b;padding:4px;font-family:sans-serif;max-width:200px;">
             <div style="font-size:10px; font-weight:bold; color:#6366f1;">#${point.id} - ${point.quartier}</div>
             <strong style="font-size:14px;color:#1e293b;display:block;margin-bottom:4px;">${point.nom}</strong>
             <div style="color:#64748b; font-size:12px; margin-bottom:4px;">${point.adresse}</div>
             <div style="font-size:12px; font-weight:bold;">Tel: ${point.telephone}</div>
           </div>
-        `,
+        `;
+
+        L.marker([point.lat, point.lng], { icon: customIcon })
+          .bindPopup(popupContent)
+          .addTo(markersLayer.current);
       });
+    };
 
-      marker.addListener("click", () => infowindow.open(mapInstance.current, marker));
-      markersRef.current.push(marker);
-    });
-  }, [points]);
+    updateMarkers();
+  }, [isMapReady, points]);
 
+  // 4. Fonction de focus
   const focusOnPoint = (point: CulturePoint) => {
     if (!mapInstance.current || point.lat === null || point.lng === null) return;
-    mapInstance.current.setZoom(17);
-    mapInstance.current.panTo({ lat: point.lat, lng: point.lng });
+    mapInstance.current.setView([point.lat, point.lng], 16, { animate: true });
   };
 
   return (
     <div className="flex flex-col h-screen p-4 gap-4 bg-slate-50">
       
-      <nav className="mb-6">
+      <nav className="mb-2">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
 
       <header className="flex items-center gap-3 bg-white p-4 rounded-xl shadow-sm border">
         <div className="bg-indigo-600 p-2 rounded-lg text-white">
@@ -115,7 +133,7 @@ export default function EcoleCulturePage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
-        {/* LISTE TRIÉE PAR QUARTIER */}
+        {/* LISTE */}
         <div className="lg:col-span-4 bg-white rounded-xl shadow-sm border overflow-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50 sticky top-0 z-10">
@@ -148,9 +166,18 @@ export default function EcoleCulturePage() {
           </table>
         </div>
 
-        {/* CARTE */}
+        {/* CARTE AVEC LOADER */}
         <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative">
-          <div ref={mapRef} className="h-full w-full" />
+          <div ref={mapRef} className="h-full w-full z-0" />
+          
+          {(!isMapReady || isLoadingData) && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-indigo-50/90 z-10 border-2 border-dashed border-indigo-100 rounded-xl">
+              <Loader2 className="animate-spin h-12 w-12 text-indigo-700 mb-4" />
+              <p className="text-indigo-700 font-bold text-xl italic animate-pulse">
+                🚀 En cours de chargement...
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
