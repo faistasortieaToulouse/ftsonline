@@ -101,8 +101,18 @@ export default function MuseeAriegePage() {
         />
       </div>
 
-      <div className="mb-8 border rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
-        <div ref={mapRef} className="h-full w-full" />
+     {/* --- CARTE LEAFLET - VERSION MISE À JOUR --- */}
+      <div
+        ref={mapRef}
+        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
+        style={{ zIndex: 0 }}
+      >
+        {!isMapReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+            <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
+            <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
+          </div>
+        )}
       </div>
 
       <div className="overflow-hidden border border-slate-200 rounded-2xl shadow-sm bg-white">
