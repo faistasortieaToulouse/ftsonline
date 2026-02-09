@@ -63,7 +63,7 @@ const nbOccitanie = 18;
 const nbTransport = 5;
 const nbCafeLangue = 1;
 const nbConsomamtion = 2;
-const nbEmploi = 3;
+const nbEmploi = 4;
 const nbFlore = 1;
 const nbEquipement = 3;
 const nbGeographie = 5;
@@ -318,9 +318,10 @@ const categories = [
       { title: "Evènements Emploi", href: "/toulousetravail" },
       { title: "Atelier Emploi", href: "/atelieremploi" },
       { title: "Entreprises à Toulouse", href: "/entreprisetoulouse" },
+	  { title: "Formation et Orientation", href: "/formation" },
     ] 
   },
-//  const nbEmploi = 3;
+//  const nbEmploi = 4;
 
   { title: "Toulouse : Environnement", href: "/flore", icon: Flower, isOccitanie: true, occitanieSources: [
     { title: "Flore", href: "/flore" },
