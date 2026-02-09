@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 // --- Fonctions d'aide et Types ---
 
@@ -154,6 +154,17 @@ export default function JeuPlateauPage() {
 
       <p className="mb-4 text-sm text-gray-600">Articles affichés : {filteredEvents.length}</p>
       {error && <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>}
+      
+      {/* --- ETAT DE CHARGEMENT --- */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20 bg-blue-50/50 rounded-2xl border-2 border-dashed border-blue-100">
+          <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
+          <p className="text-blue-700 font-bold text-xl italic animate-pulse">
+            🚀 En cours de chargement...
+          </p>
+        </div>
+      )}
+      
       {filteredEvents.length === 0 && !loading && <p className="text-muted-foreground">Aucun article à afficher.</p>}
 
       {/* Rendu en mode CARTE (Vignette) */}
