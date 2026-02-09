@@ -137,7 +137,7 @@ export default function AssociesEuropePage() {
         <div ref={mapRef} className="h-full w-full z-0" />
         {!isReady && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-100 z-10">
-             <p className="animate-pulse text-blue-900 font-bold">Initialisation de la carte mondiale...</p>
+             <p className="animate-pulse text-blue-900 font-bold">Initialisation de la carte...</p>
           </div>
         )}
       </div>
