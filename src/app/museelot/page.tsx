@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Musee } from '../api/museelot/route'; 
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search } from "lucide-react";
+import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search, Loader2 } from "lucide-react";
 import { Search as SearchIcon } from "lucide-react"; // Pour éviter les conflits de nom
 
 // CENTRE DU LOT (Cahors environ)
@@ -113,8 +113,18 @@ export default function MuseeLotPage() {
         />
       </div>
 
-      <div className="mb-8 border rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
-        <div ref={mapRef} className="h-full w-full" />
+      {/* --- CARTE LEAFLET - VERSION MISE À JOUR --- */}
+      <div
+        ref={mapRef}
+        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
+        style={{ zIndex: 0 }}
+      >
+        {!isMapReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+            <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
+            <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
+          </div>
+        )}
       </div>
 
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
