@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"; 
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, AlertCircle, XCircle, Loader2 } from "lucide-react";
 
 // --- Interface de type ---
 interface PaysUE {
@@ -118,9 +118,18 @@ export default function MembresUEPage() {
         <p className="text-gray-500 text-sm md:text-base mt-1">Chronologie des adhésions et espace Schengen</p>
       </header>
 
-      {/* CARTE : Hauteur réduite sur mobile */}
-      <div className="h-[35vh] md:h-[50vh] w-full mb-8 border-2 md:border-4 border-white shadow-lg rounded-2xl bg-slate-200 relative z-0 overflow-hidden"> 
-        <div ref={mapRef} className="h-full w-full" />
+      {/* --- CARTE LEAFLET - VERSION MISE À JOUR --- */}
+      <div
+        ref={mapRef}
+        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
+        style={{ zIndex: 0 }}
+      >
+        {!isMapReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+            <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
+            <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
+          </div>
+        )}
       </div>
 
       <h2 className="text-xl font-bold mb-4 text-slate-800">Détails des membres</h2> 
