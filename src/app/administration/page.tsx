@@ -34,6 +34,7 @@ interface Administration {
 export default function AdministrationPage() {
   const [data, setData] = useState<Administration[]>([]);
   const [L, setL] = useState<any>(null); // Instance Leaflet pour les icônes
+  const [isMapReady, setIsMapReady] = useState(false);
 
   const [filters, setFilters] = useState<Record<Administration["categorie"], boolean>>({
     mairie: true,
