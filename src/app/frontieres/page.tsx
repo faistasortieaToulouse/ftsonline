@@ -10,6 +10,7 @@ export default function FrontieresPage() {
   const mapInstance = useRef<any>(null);
   const [frontieres, setFrontieres] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     fetch("/api/frontieres")
