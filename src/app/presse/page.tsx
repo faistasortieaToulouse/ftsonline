@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 interface PressArticle {
   id: string;
@@ -13,7 +13,6 @@ interface PressArticle {
   image: string | null;
   url: string;
   source: string;
-  dateFormatted?: string;
 }
 
 const fetchPress = async (): Promise<PressArticle[]> => {
@@ -26,38 +25,15 @@ export default function PressePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [articles, setArticles] = useState<PressArticle[]>([]);
-  const [filteredArticles, setFilteredArticles] = useState<PressArticle[]>([]);
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [searchQuery, setSearchQuery] = useState("");
 
   async function loadArticles() {
     setLoading(true);
     setError(null);
-
     try {
       const data = await fetchPress();
-
-      const cleaned = data.map((a, index) => {
-        const d = new Date(a.publishedAt);
-        return {
-          ...a,
-          id: `${a.id}-${index}`,
-          dateFormatted:
-            !isNaN(d.getTime())
-              ? d.toLocaleString("fr-FR", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : "",
-        };
-      });
-
-      setArticles(cleaned);
-      setFilteredArticles(cleaned);
+      setArticles(data);
     } catch (err: any) {
       setError(err.message || "Erreur inconnue");
     } finally {
@@ -69,26 +45,33 @@ export default function PressePage() {
     loadArticles();
   }, []);
 
-  useEffect(() => {
-    if (!searchQuery) {
-      setFilteredArticles(articles);
-      return;
-    }
-
-    const q = searchQuery.toLowerCase();
-    setFilteredArticles(
-      articles.filter(a =>
-        a.title.toLowerCase().includes(q) ||
-        a.description?.toLowerCase().includes(q) ||
-        a.source.toLowerCase().includes(q) ||
-        a.dateFormatted?.toLowerCase().includes(q)
-      )
+  // Filtrage optimisé
+  const filteredArticles = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return articles;
+    return articles.filter(a =>
+      a.title.toLowerCase().includes(q) ||
+      a.description?.toLowerCase().includes(q) ||
+      a.source.toLowerCase().includes(q)
     );
   }, [searchQuery, articles]);
 
+  // Formatage de date sécurisé (évite les erreurs d'hydratation serveur/client)
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleString("fr-FR", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <div className="container mx-auto py-10 px-4">
-
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -117,7 +100,7 @@ export default function PressePage() {
           variant={viewMode === "card" ? "default" : "secondary"}
           onClick={() => setViewMode("card")}
         >
-          📺 Cartes
+          📺 Vignette
         </Button>
         <Button
           variant={viewMode === "list" ? "default" : "secondary"}
@@ -126,6 +109,16 @@ export default function PressePage() {
           📄 Liste
         </Button>
       </div>
+
+      {/* --- ETAT DE CHARGEMENT --- */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20 bg-blue-50/50 rounded-2xl border-2 border-dashed border-blue-100">
+          <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
+          <p className="text-blue-700 font-bold text-xl italic animate-pulse">
+            🚀 En cours de chargement...
+          </p>
+        </div>
+      )}
 
       {error && (
         <div className="p-4 mb-6 bg-red-50 border border-red-400 text-red-700 rounded">
@@ -140,11 +133,11 @@ export default function PressePage() {
       {/* MODE CARD */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredArticles.map(a => (
-            <div key={a.id} className="bg-white shadow rounded overflow-hidden flex flex-col">
+          {filteredArticles.map((a, index) => (
+            <div key={`${a.id}-${index}`} className="bg-white shadow rounded overflow-hidden flex flex-col">
               {a.image && (
                 <img
-                  src={a.image} // accepte URL distant ou chemin local
+                  src={a.image}
                   alt={a.title}
                   className="w-full aspect-[16/9] object-cover"
                   loading="lazy"
@@ -155,7 +148,7 @@ export default function PressePage() {
                 <p className="text-sm text-muted-foreground line-clamp-4">
                   {a.description}
                 </p>
-                <p className="text-sm">{a.dateFormatted}</p>
+                <p className="text-sm">{formatDate(a.publishedAt)}</p>
                 <p className="text-xs italic text-muted-foreground">
                   Source : {a.source}
                 </p>
@@ -176,8 +169,8 @@ export default function PressePage() {
       {/* MODE LIST */}
       {viewMode === "list" && (
         <div className="space-y-4">
-          {filteredArticles.map(a => (
-            <div key={a.id} className="flex gap-4 p-4 border rounded bg-white shadow-sm">
+          {filteredArticles.map((a, index) => (
+            <div key={`${a.id}-${index}`} className="flex gap-4 p-4 border rounded bg-white shadow-sm">
               {a.image && (
                 <img
                   src={a.image}
@@ -188,7 +181,7 @@ export default function PressePage() {
               )}
               <div className="flex flex-col gap-1">
                 <h2 className="font-semibold">{a.title}</h2>
-                <p className="text-sm text-blue-600">{a.dateFormatted}</p>
+                <p className="text-sm text-blue-600">{formatDate(a.publishedAt)}</p>
                 <p className="text-sm text-muted-foreground line-clamp-3">
                   {a.description}
                 </p>
