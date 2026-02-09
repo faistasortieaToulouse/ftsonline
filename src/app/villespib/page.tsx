@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, BarChart3, TrendingUp, Info } from "lucide-react";
+import { ArrowLeft, BarChart3, TrendingUp, Info, Loader2 } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 
 export default function VillesPIBPage() {
@@ -10,6 +10,7 @@ export default function VillesPIBPage() {
   const mapInstance = useRef<any>(null);
   const [villes, setVilles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   // 1. Récupération des données
   useEffect(() => {
@@ -69,6 +70,20 @@ export default function VillesPIBPage() {
       });
 
       markersGroup.addTo(mapInstance.current);
+      
+      // --- AJOUTE CES LIGNES JUSTE ICI ---
+      setTimeout(() => {
+        if (mapInstance.current) {
+          mapInstance.current.invalidateSize();
+          setIsReady(true); // C'est CA qui fait disparaître le chargement
+        }
+      }, 500);
+            
+      // Ajuster la vue si des villes sont présentes
+      if (villes.length > 0) {
+        mapInstance.current.fitBounds(markersGroup.getBounds(), { padding: [50, 50] });
+      }
+      
     };
 
     initMap();
@@ -97,12 +112,24 @@ export default function VillesPIBPage() {
         </div>
       </header>
 
-      {/* Carte */}
-      <div className="mb-12">
-        <div 
-          ref={mapRef} 
-          className="h-[400px] md:h-[600px] w-full rounded-3xl border-4 border-white shadow-xl bg-slate-200"
+      {/* --- CARTE LEAFLET - STRUCTURE CORRIGÉE --- */}
+      <div className="mb-8 relative border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh]">
+        {/* La div de la carte doit être seule */}
+        <div
+          ref={mapRef}
+          className="w-full h-full"
+          style={{ zIndex: 0 }}
         />
+
+        {/* L'overlay de chargement doit être un FRÈRE de la div mapRef, pas un enfant */}
+        {!isReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+            <Loader2 className="animate-spin h-8 w-8 text-blue-600 mb-2" />
+            <p className="text-slate-500 animate-pulse text-sm font-bold uppercase tracking-widest">
+              Chargement de la carte…
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Grille des résultats */}
