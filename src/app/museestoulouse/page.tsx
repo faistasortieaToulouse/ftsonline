@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 interface MuseePlace {
   id: number;
@@ -131,11 +131,18 @@ export default function MuseesToulousePage() {
         <span className="text-blue-600">🔵 Banlieue : {places.filter(p => p.ville !== 'Toulouse').length}</span>
       </p>
 
-      <div
-        ref={mapRef}
-        style={{ height: '60vh', width: '100%', zIndex: 0 }}
-        className="mb-8 border rounded-lg bg-gray-100 shadow-inner"
-      />
+<div
+  ref={mapRef}
+  className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
+  style={{ zIndex: 0 }}
+>
+  {!isMapReady && (
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+      <Loader2 className="animate-spin h-8 w-8 text-indigo-600 mb-2" />
+      <p className="text-slate-500 animate-pulse text-sm font-medium">Chargement de la carte…</p>
+    </div>
+  )}
+</div>
 
       <div className="space-y-12">
         {Object.entries(groupedPlaces).map(([category, items]) => (
