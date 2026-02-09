@@ -26,6 +26,7 @@ export default function MuseesToulousePage() {
 
   const [places, setPlaces] = useState<MuseePlace[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   useEffect(() => {
     fetch('/api/museestoulouse')
@@ -53,6 +54,7 @@ export default function MuseesToulousePage() {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(mapInstance.current);
+        setIsMapReady(true);
       }
 
       mapInstance.current.eachLayer((layer: any) => {
