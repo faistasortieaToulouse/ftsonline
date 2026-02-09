@@ -79,7 +79,30 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/toulouse-viajes-aventura-meetup-group/events/ical/",
     "https://www.meetup.com/fr-FR/meetup-group-ogveclmn/events/ical/",
     "https://www.meetup.com/fr-FR/Gnosis-Toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/The-Freedom-Trail-Trek-Meetup/events/ical/"
+    "https://www.meetup.com/fr-FR/The-Freedom-Trail-Trek-Meetup/events/ical/",
+    "https://www.meetup.com/pages-n-pies/events/ical/"
+  ],
+    // Lot 6
+  [
+    "https://www.meetup.com/femmes-sensibles-solidaires-toulouse/events/ical/",
+    "https://www.meetup.com/myapero-toulouse/events/ical/",
+    "https://www.meetup.com/club-de-reflexion-discussions-sur-l-actualite/events/ical/",
+    "https://www.meetup.com/conscience-spiritualite-toulouse/events/ical/",
+    "https://www.meetup.com/happy-nouvelle-vie/events/ical/",
+    "https://www.meetup.com/cercle-dambition-morale/events/ical/",
+    "https://www.meetup.com/rotary-toulouse-ovalie/events/ical/",
+    "https://www.meetup.com/malaia-collective-yoga-movement-intentional-living/events/ical/",
+    "https://www.meetup.com/pages-n-pals/events/ical/",
+    "https://www.meetup.com/cercle-de-femme-et-art-therapie-toulouse/events/ical/",
+    "https://www.meetup.com/crea-toulouse/events/ical/",
+    "https://www.meetup.com/toulouse-sociale-meetup-group/events/ical/"
+  ],
+      // Lot 7
+  [
+    "https://www.meetup.com/la-sauce-viens-relever-ta-creativite-au-sol-entre-meufs/events/ical/",
+    "https://www.meetup.com/meetup-group-pdfpdjis/events/ical/",
+    "https://www.meetup.com/star-wars-imperial-assault-in-toulouse/events/ical/",
+    "https://www.meetup.com/espritwafu/events/ical/"
   ]
 ];
 
