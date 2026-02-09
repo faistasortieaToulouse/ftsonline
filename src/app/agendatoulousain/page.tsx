@@ -175,9 +175,25 @@ export default function AgendaToulousainPage() {
         </Button>
       </div>
 
-      {error && (
-        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
-          <strong>Erreur :</strong> {error}
+      {/* --- ETAT : CHARGEMENT --- */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20 bg-blue-50/50 rounded-3xl border-2 border-dashed border-blue-100 transition-all">
+          <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-blue-700 mb-6"></div>
+          <p className="text-blue-700 font-black text-2xl italic animate-pulse tracking-tight uppercase">
+            🚀 En cours de chargement...
+          </p>
+          <p className="text-blue-400 text-sm mt-2 font-medium">Récupération des données en cours</p>
+        </div>
+      )}
+
+      {/* --- ETAT : ERREUR --- */}
+      {error && !loading && (
+        <div className="mt-6 p-6 border-2 border-red-200 bg-red-50 text-red-700 rounded-2xl flex items-center gap-4">
+          <span className="text-3xl">⚠️</span>
+          <div>
+            <p className="font-bold uppercase italic">Une erreur est survenue</p>
+            <p className="text-sm opacity-80">{error}</p>
+          </div>
         </div>
       )}
 
