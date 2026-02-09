@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowLeft, Building2, MapPin, Users, Calendar } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, Users, Calendar, Loader2 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 export default function VillesEuropePage() {
   const [data, setData] = useState<any[]>([]);
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     fetch("/api/villeseurope")
@@ -83,12 +84,18 @@ export default function VillesEuropePage() {
         </p>
       </div>
 
-      {/* Carte Leaflet */}
-      <div className="mb-12 relative z-0">
-        <div 
-          ref={mapRef} 
-          className="h-[500px] w-full rounded-3xl border-4 border-white shadow-xl overflow-hidden" 
-        />
+      {/* --- CARTE LEAFLET - VERSION MISE À JOUR --- */}
+      <div
+        ref={mapRef}
+        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh] relative"
+        style={{ zIndex: 0 }}
+      >
+        {!isReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+            <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
+            <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
+          </div>
+        )}
       </div>
 
       {/* Grille des Villes */}
