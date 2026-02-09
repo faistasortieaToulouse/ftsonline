@@ -115,7 +115,18 @@ export default function AgendaToulousePage() {
       </div>
 
       {error && <div className="p-4 border border-red-500 bg-red-50 text-red-700 rounded mb-6">{error}</div>}
-
+      
+      {/* --- ETAT : EN COURS DE CHARGEMENT --- */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20 bg-blue-50/50 rounded-2xl border-2 border-dashed border-blue-100">
+          <Loader2 className="h-12 w-12 text-blue-600 animate-spin mb-4" />
+          <p className="text-blue-700 font-bold text-xl italic animate-pulse">
+            🚀 En cours de chargement...
+          </p>
+          <p className="text-blue-400 text-sm mt-2">Récupération des données toulousaines</p>
+        </div>
+      )}
+      
       {/* --- MODE CARD --- */}
       {viewMode === "card" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
