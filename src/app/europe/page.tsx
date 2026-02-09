@@ -145,14 +145,13 @@ export default function EuropePage() {
         <div ref={mapRef} className="h-full w-full" />
         
         {/* Overlay de chargement interne à la carte */}
-        {!isMapReady && (
+        {!isReady && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
             <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
             <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
           </div>
         )}
       </div>
-        )}
 
       {/* GRILLE DES PAYS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
