@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Clock, Video, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, Clock, Video, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 interface Event {
@@ -114,6 +114,16 @@ Liste des événements et conférences issus de la chaîne UT2-Min (Canal-U). </
       🔲 Vignette
     </Button>
   </div>
+      
+      {/* --- ETAT DE CHARGEMENT --- */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20 bg-blue-50/50 rounded-2xl border-2 border-dashed border-blue-100">
+          <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
+          <p className="text-blue-700 font-bold text-xl italic animate-pulse">
+            🚀 En cours de chargement...
+          </p>
+        </div>
+      )}
 
   {error && (
     <div className="p-4 bg-red-50 text-red-700 border border-red-400 rounded mb-6">{error}</div>
