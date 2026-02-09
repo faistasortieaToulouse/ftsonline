@@ -145,13 +145,13 @@ export default function EuropePage() {
         <div ref={mapRef} className="h-full w-full" />
         
         {/* Overlay de chargement interne à la carte */}
-        {!isReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-100 z-10">
-             <div className="flex flex-col items-center gap-2">
-                <Loader2 className="animate-spin text-blue-600" size={32} />
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Génération de la carte</span>
-             </div>
+        {!isMapReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
+            <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
+            <p className="text-slate-500 animate-pulse text-sm">Chargement de la carte…</p>
           </div>
+        )}
+      </div>
         )}
       </div>
 
