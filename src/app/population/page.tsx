@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Users, ExternalLink, MapPin, TrendingUp, AlertCircle } from "lucide-react";
+import { ArrowLeft, Users, ExternalLink, MapPin, TrendingUp, AlertCircle, Loader2 } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 
 export default function PopulationPage() {
@@ -10,6 +10,7 @@ export default function PopulationPage() {
   const mapInstance = useRef<any>(null);
   const [villes, setVilles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     fetch("/api/population")
@@ -111,6 +112,18 @@ export default function PopulationPage() {
           ref={mapRef} 
           className="h-[400px] md:h-[500px] w-full rounded-3xl border-4 border-white shadow-xl z-0 overflow-hidden bg-slate-200"
         />
+
+        {/* --- AJOUT DU CHARGEMENT ICI --- */}
+        {!isReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/80 backdrop-blur-sm z-10 rounded-3xl">
+            <Loader2 className="animate-spin h-10 w-10 text-indigo-600 mb-3" />
+            <p className="text-slate-600 font-bold animate-pulse tracking-wide uppercase text-xs">
+              Chargement de la carte...
+            </p>
+          </div>
+        )}
+        {/* ------------------------------ */}
+
         <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm z-[1000] flex gap-4 border border-slate-100">
           <span className="flex items-center gap-1.5 text-indigo-600">
             <div className="w-2.5 h-2.5 rounded-full bg-indigo-500"/> Grandes Métropoles
