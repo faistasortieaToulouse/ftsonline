@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 export default function Cinemas31Page() {
   const [loading, setLoading] = useState(false);
@@ -121,7 +121,17 @@ export default function Cinemas31Page() {
 
       {/* États */}
       {loading && <p className="text-sm text-gray-500">Chargement…</p>}
-
+      
+      {/* --- ETAT DE CHARGEMENT --- */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20 bg-blue-50/50 rounded-2xl border-2 border-dashed border-blue-100">
+          <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
+          <p className="text-blue-700 font-bold text-xl italic animate-pulse">
+            🚀 En cours de chargement...
+          </p>
+        </div>
+      )}
+      
       {error && (
         <div className="p-4 bg-red-100 text-red-700 mb-4">{error}</div>
       )}
