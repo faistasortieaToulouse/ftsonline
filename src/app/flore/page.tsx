@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ChevronDown, ChevronUp, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, Loader2, Image as ImageIcon } from "lucide-react";
 
 interface Plante {
   nom_scientifique: string;
