@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 interface Equipement {
   id: string | number;
@@ -133,7 +133,17 @@ export default function SportPage() {
         onChange={e => setSearchQuery(e.target.value)}
         className="w-full mb-6 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm transition-all"
       />
-
+      
+      {/* --- ETAT DE CHARGEMENT --- */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20 bg-blue-50/50 rounded-2xl border-2 border-dashed border-blue-100">
+          <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
+          <p className="text-blue-700 font-bold text-xl italic animate-pulse">
+            🚀 En cours de chargement...
+          </p>
+        </div>
+      )}
+      
       {error && (
         <div className="mb-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded-lg text-sm">
           <strong>Erreur :</strong> {error}
