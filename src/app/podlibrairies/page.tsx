@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import debounce from "lodash.debounce";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 interface PodcastEpisode {
   titre: string;
@@ -188,7 +188,7 @@ export default function PodLibrairiesPage() {
       {/* STATES */}
       {loading && (
         <p className="text-center py-12 text-xl text-indigo-600 font-medium">
-          Chargement du cache...
+          Chargement des épisodes en cours...
         </p>
       )}
 
