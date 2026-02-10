@@ -10,8 +10,8 @@ interface Gallery {
     name: string;
     address: string;
     url: string;
-    latitude?: number;
-    longitude?: number;
+    lat: number;
+    lng: number; number;
 }
 
 const TOULOUSE_CENTER: [number, number] = [43.6047, 1.4442];
@@ -81,7 +81,7 @@ export default function VisiteGalerieArtPage() {
 
         galleries.forEach((gallery, i) => {
             // Sécurité si les coordonnées sont absentes de l'API
-            if (gallery.latitude === undefined || gallery.longitude === undefined) return;
+            if (gallery.lat === undefined || gallery.lng === undefined) return;
 
             const id = i;
             const markerNumber = (i + 1).toString();
@@ -110,7 +110,7 @@ export default function VisiteGalerieArtPage() {
                 iconAnchor: [13, 13]
             });
 
-            const marker = L.marker([gallery.latitude, gallery.longitude], { icon: customIcon })
+const marker = L.marker([gallery.lat, gallery.lng], { icon: customIcon })
                 .addTo(mapInstance.current!)
                 .bindPopup(`<strong>${markerNumber}. ${gallery.name}</strong>`);
 
