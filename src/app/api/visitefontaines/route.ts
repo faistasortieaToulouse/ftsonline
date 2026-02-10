@@ -8,6 +8,8 @@ interface Fontaine {
     address: string;
     description: string;
     details: string; // Ajout du champ détails
+    latitude: f.latitude,  // <-- AJOUTER CECI
+    longitude: f.longitude // <-- AJOUTER CECI
 }
 
 const fontainesData: Fontaine[] = [
