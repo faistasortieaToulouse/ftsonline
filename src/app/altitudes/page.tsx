@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Mountain, ArrowLeft } from "lucide-react";
+import { Mountain, ArrowLeft, Loader2 } from "lucide-react";
 // Importation directe du CSS pour éviter les bugs d'affichage
 import "leaflet/dist/leaflet.css";
 
@@ -17,6 +17,7 @@ interface AltitudePoint {
 
 export default function AltitudesPage() {
   const [points, setPoints] = useState<AltitudePoint[]>([]);
+  const [loading, setLoading] = useState(true); // État pour gérer l'affichage du chargement
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
   const markersLayerRef = useRef<any>(null);
@@ -35,7 +36,6 @@ export default function AltitudesPage() {
 
   // 2. Initialisation de la carte
   useEffect(() => {
-    // Vérification côté client
     if (typeof window === "undefined" || !mapRef.current) return;
 
     const initMap = async () => {
@@ -44,20 +44,20 @@ export default function AltitudesPage() {
 
       if (mapInstance.current) return;
 
-      // On crée l'instance de la carte
+      // Création de la carte
       mapInstance.current = Leaflet.map(mapRef.current!).setView([43.6045, 1.4442], 12);
 
       Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
 
-      // Création du calque pour les marqueurs
       markersLayerRef.current = Leaflet.layerGroup().addTo(mapInstance.current);
       
-      // Petit hack pour forcer Leaflet à recalculer sa taille après le rendu
+      // Une fois que la carte est prête, on enlève le chargement
       setTimeout(() => {
         mapInstance.current.invalidateSize();
-      }, 100);
+        setLoading(false); // La carte est prête
+      }, 500);
     };
 
     initMap();
@@ -78,7 +78,6 @@ export default function AltitudesPage() {
 
     points.forEach((point, index) => {
       const numero = index + 1;
-
       const customIcon = L.divIcon({
         className: "custom-div-icon",
         html: `
@@ -145,7 +144,7 @@ export default function AltitudesPage() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden min-h-0">
         {/* TABLEAU */}
         <div className="lg:col-span-4 bg-white rounded-xl shadow-sm border overflow-auto">
           <table className="w-full text-left border-collapse">
@@ -172,7 +171,6 @@ export default function AltitudesPage() {
                     <div className="font-semibold text-slate-700 group-hover:text-emerald-800 transition-colors">
                       {point.nom}
                     </div>
-                    <div className="text-[10px] text-slate-400 line-clamp-1">{point.description}</div>
                   </td>
                   <td className="p-4 text-right">
                     <span className="inline-block px-2 py-1 rounded bg-slate-100 text-slate-600 font-mono text-xs font-bold group-hover:bg-emerald-600 group-hover:text-white transition-all">
@@ -185,9 +183,22 @@ export default function AltitudesPage() {
           </table>
         </div>
 
-        {/* CARTE : S'assurer que le conteneur a une hauteur */}
-        <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative z-0">
-          <div ref={mapRef} style={{ height: "100%", width: "100%", minHeight: "400px" }} />
+        {/* CARTE AVEC OVERLAY DE CHARGEMENT */}
+        <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative">
+          
+          {/* L'OVERLAY DE CHARGEMENT */}
+          {loading && (
+            <div className="absolute inset-0 z-[1000] bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity duration-500">
+              <Loader2 className="w-10 h-10 text-emerald-600 animate-spin mb-2" />
+              <p className="text-slate-600 font-bold animate-pulse">En cours de chargement...</p>
+            </div>
+          )}
+
+          <div 
+            ref={mapRef} 
+            style={{ height: "100%", width: "100%", minHeight: "400px" }} 
+            className="z-0"
+          />
         </div>
       </div>
     </div>
