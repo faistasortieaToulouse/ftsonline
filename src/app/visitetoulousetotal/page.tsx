@@ -109,9 +109,6 @@ export default function VisiteToulouseTotalPage() {
               {i + 1}. {l.numero} {l.type_voie} {l.nom_voie}
             </p>
             <p className="italic">{l.description}</p>
-            <p className="text-sm text-gray-500">
-              {l.lat}, {l.lng}
-            </p>
           </li>
         ))}
       </ul>
