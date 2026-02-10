@@ -8,8 +8,8 @@ import "leaflet/dist/leaflet.css";
 interface Establishment {
   name: string;
   address: string;
-  lat?: number; // Requis dans l'API pour éviter le géocodage
-  lng?: number; // Requis dans l'API pour éviter le géocodage
+  lat?: number;
+  lng?: number;
 }
 
 const ST_MICHEL_CENTER: [number, number] = [43.5925, 1.444];
@@ -23,11 +23,6 @@ export default function VisiteSaintMichelPage() {
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [loading, setLoading] = useState(true);
   const [L, setL] = useState<any>(null);
-  const [openDetailsId, setOpenDetailsId] = useState<number | null>(null);
-
-  const toggleDetails = (id: number) => {
-    setOpenDetailsId((prevId) => (prevId === id ? null : id));
-  };
 
   // ----------------------------------------------------
   // 2. RÉCUPÉRATION DES DONNÉES
@@ -46,7 +41,7 @@ export default function VisiteSaintMichelPage() {
   }, []);
 
   // ----------------------------------------------------
-  // 3. INITIALISATION LEAFLET (MÉTHODE OTAN)
+  // 3. INITIALISATION LEAFLET
   // ----------------------------------------------------
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || loading) return;
@@ -57,7 +52,6 @@ export default function VisiteSaintMichelPage() {
 
       if (mapInstance.current) return;
 
-      // Création de la carte
       mapInstance.current = Leaflet.map(mapRef.current!).setView(ST_MICHEL_CENTER, 15);
 
       Leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -114,8 +108,8 @@ export default function VisiteSaintMichelPage() {
         .bindPopup(`<strong>${id}. ${est.name}</strong>`);
 
       marker.on("click", () => {
-        toggleDetails(id);
         mapInstance.current.setView([est.lat, est.lng], 16);
+        // Scroll fluide vers l'élément de la liste
         document.getElementById(`est-item-${id}`)?.scrollIntoView({
           behavior: "smooth",
           block: "center",
@@ -152,55 +146,33 @@ export default function VisiteSaintMichelPage() {
         {loading && (
           <div className="flex flex-col items-center gap-2">
             <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-gray-500 font-medium font-bold">Chargement de la carte…</p>
+            <p className="text-gray-500 font-bold">Chargement de la carte…</p>
           </div>
         )}
       </div>
 
       <h2 className="text-2xl font-bold mb-4 border-b pb-2 text-slate-800">
-        Liste des lieux détaillés
+        Liste des lieux de visite
       </h2>
 
-      {/* Liste en Grille / Accordéon */}
+      {/* Liste en Grille simple */}
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {establishments.map((est, i) => {
           const id = i + 1;
-          const isDetailsOpen = openDetailsId === id;
-
           return (
             <li
               key={i}
               id={`est-item-${id}`}
-              className={`p-5 border rounded-xl transition-all duration-300 cursor-pointer flex flex-col ${
-                isDetailsOpen
-                  ? "bg-red-50 border-red-400 shadow-md ring-1 ring-red-100"
-                  : "bg-white border-slate-200 shadow hover:shadow-lg"
-              }`}
-              onClick={() => toggleDetails(id)}
+              className="p-5 border border-slate-200 rounded-xl bg-white shadow hover:shadow-lg transition-all flex flex-col justify-center"
             >
               <div className="flex justify-between items-start">
                 <p className="text-lg font-bold text-slate-900">
                   <span className="text-red-600 mr-2">{id}.</span> {est.name}
                 </p>
-                {/* Triangle noir et gras */}
-                <span
-                  className={`text-xl text-black font-bold transition-transform duration-300 ${
-                    isDetailsOpen ? "rotate-180" : "rotate-0"
-                  }`}
-                >
-                  ▼
-                </span>
               </div>
-
-              <p className="text-sm italic text-slate-600 mt-1">📍 {est.address}</p>
-
-              {isDetailsOpen && (
-                <div className="mt-3 pt-3 border-t border-red-200 animate-in fade-in slide-in-from-top-1 duration-300">
-                  <p className="text-sm text-slate-700 leading-relaxed">
-                    Ce lieu historique emblématique du quartier Saint-Michel fait partie de notre circuit de visite.
-                  </p>
-                </div>
-              )}
+              <p className="text-sm italic text-slate-600 mt-1">
+                📍 {est.address}
+              </p>
             </li>
           );
         })}
