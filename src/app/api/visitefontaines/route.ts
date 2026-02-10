@@ -522,10 +522,13 @@ const fontainesData: Fontaine[] = [
 
 export async function GET() {
     const establishments = fontainesData.map(f => ({
-        name: `${f.id}. ${f.name}`,
+        id: f.id,              // Indispensable pour toggleDetails
+        name: f.name,          // On garde le nom propre (sans le f.id devant)
         address: f.address,
         description: f.description,
-        details: f.details || ""
+        details: f.details || "",
+        latitude: f.latitude,  // Indispensable pour la carte
+        longitude: f.longitude // Indispensable pour la carte
     }));
     return NextResponse.json(establishments);
 }
