@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Mountain, ArrowLeft } from "lucide-react";
+// Importation directe du CSS pour éviter les bugs d'affichage
+import "leaflet/dist/leaflet.css";
 
 interface AltitudePoint {
   id: number;
@@ -20,7 +22,7 @@ export default function AltitudesPage() {
   const markersLayerRef = useRef<any>(null);
   const [L, setL] = useState<any>(null);
 
-  // 1. Charger les données et les trier immédiatement par altitude (Décroissant)
+  // 1. Charger les données et les trier
   useEffect(() => {
     fetch("/api/altitudes")
       .then((res) => res.json())
@@ -33,22 +35,29 @@ export default function AltitudesPage() {
 
   // 2. Initialisation de la carte
   useEffect(() => {
+    // Vérification côté client
     if (typeof window === "undefined" || !mapRef.current) return;
 
     const initMap = async () => {
       const Leaflet = (await import('leaflet')).default;
-      await import('leaflet/dist/leaflet.css');
       setL(Leaflet);
 
       if (mapInstance.current) return;
 
-      mapInstance.current = Leaflet.map(mapRef.current).setView([43.6045, 1.4442], 12);
+      // On crée l'instance de la carte
+      mapInstance.current = Leaflet.map(mapRef.current!).setView([43.6045, 1.4442], 12);
 
       Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
 
+      // Création du calque pour les marqueurs
       markersLayerRef.current = Leaflet.layerGroup().addTo(mapInstance.current);
+      
+      // Petit hack pour forcer Leaflet à recalculer sa taille après le rendu
+      setTimeout(() => {
+        mapInstance.current.invalidateSize();
+      }, 100);
     };
 
     initMap();
@@ -61,7 +70,7 @@ export default function AltitudesPage() {
     };
   }, []);
 
-  // 3. Mise à jour des marqueurs avec Numérotation
+  // 3. Mise à jour des marqueurs
   useEffect(() => {
     if (!L || !markersLayerRef.current || points.length === 0) return;
 
@@ -70,7 +79,6 @@ export default function AltitudesPage() {
     points.forEach((point, index) => {
       const numero = index + 1;
 
-      // Création d'un marqueur circulaire avec le numéro
       const customIcon = L.divIcon({
         className: "custom-div-icon",
         html: `
@@ -138,7 +146,7 @@ export default function AltitudesPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden">
-        {/* TABLEAU NUMÉROTÉ */}
+        {/* TABLEAU */}
         <div className="lg:col-span-4 bg-white rounded-xl shadow-sm border overflow-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50 sticky top-0 z-10">
@@ -177,9 +185,9 @@ export default function AltitudesPage() {
           </table>
         </div>
 
-        {/* CARTE */}
+        {/* CARTE : S'assurer que le conteneur a une hauteur */}
         <div className="lg:col-span-8 bg-white rounded-xl overflow-hidden shadow-sm border relative z-0">
-          <div ref={mapRef} className="h-full w-full" />
+          <div ref={mapRef} style={{ height: "100%", width: "100%", minHeight: "400px" }} />
         </div>
       </div>
     </div>
