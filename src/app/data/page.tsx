@@ -54,6 +54,17 @@ export default async function MeetupDataPage() {
 
       <hr />
 
+      {/* NOUVELLE SECTION AVEC TES DONNÉES EN DUR */}
+      <section>
+        <h2>Podcasts & Lectures</h2>
+        <ul style={{ lineHeight: "1.8" }}>
+          <li><strong>Podcasts sorties de livre :</strong> 1708</li>
+          <li><strong>Nombre de livres suggérés :</strong> 4266</li>
+        </ul>
+      </section>
+
+      <hr />
+      
       <section>
         <h2>Évènements en direct (Radar)</h2>
         <p style={{ fontSize: "1.2rem" }}><strong>Total évènements :</strong> {data.totalLive || 0}</p>
@@ -62,6 +73,7 @@ export default async function MeetupDataPage() {
           <li><strong>Meetup Full :</strong> {data.detailsLive?.meetup || 0}</li>
           <li><strong>Cinémas :</strong> {data.detailsLive?.cinema || 0}</li>
           <li><strong>Jeux :</strong> {data.detailsLive?.jeux || 0}</li>
+
         </ul>
       </section>
 
