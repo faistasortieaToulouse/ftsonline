@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Search, Database, Bus, ArrowUpDown, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { ArrowLeft, Search, Database, Bus, ArrowUpDown, Map as MapIcon, Layers } from "lucide-react";
 
 interface StopArea {
   id: string;
@@ -19,28 +19,23 @@ export default function TisseoArretLogiquePage() {
   const [stopAreas, setStopAreas] = useState<StopArea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedLine, setSelectedLine] = useState("all"); // Nouveau filtre par ligne
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 100;
-
-  const [sortConfig, setSortConfig] = useState<{ key: keyof StopArea; direction: 'asc' | 'desc' } | null>({
-    key: 'name',
-    direction: 'asc'
-  });
+  const [selectedLine, setSelectedLine] = useState("all");
+  
+  // État pour stocker les limites de la carte (Nord, Sud, Est, Ouest)
+  const [mapBounds, setMapBounds] = useState<any>(null);
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
   const markersLayer = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Charger les données
+  // 1. Chargement des données
   useEffect(() => {
     async function fetchStopAreas() {
       try {
         const response = await fetch('/api/tisseoarretlogique');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         const data = await response.json();
-        
         const formattedData = data.map((item: any) => ({
           id: item.code_log,
           name: item.nom_log,
@@ -49,10 +44,9 @@ export default function TisseoArretLogiquePage() {
           lat: item.geo_point_2d.lat,
           lng: item.geo_point_2d.lon
         }));
-        
         setStopAreas(formattedData);
       } catch (error) {
-        console.error("Erreur de chargement JSON:", error);
+        console.error("Erreur:", error);
       } finally {
         setIsLoading(false);
       }
@@ -60,213 +54,175 @@ export default function TisseoArretLogiquePage() {
     fetchStopAreas();
   }, []);
 
-  // 2. Extraire la liste unique des lignes pour le menu déroulant
-  const uniqueLines = useMemo(() => {
-    const lines = new Set<string>();
-    stopAreas.forEach(s => {
-      if (s.line) {
-        s.line.split(',').forEach(l => lines.add(l.trim()));
-      }
-    });
-    return Array.from(lines).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-  }, [stopAreas]);
-
-  // 3. Logique de Filtrage (Recherche + Filtre Ligne) et de Tri
-  const filteredStops = useMemo(() => {
-    let result = stopAreas.filter(s => {
+  // 2. Filtrage intelligent (Recherche + Ligne + ZONE VISIBLE)
+  const visibleStops = useMemo(() => {
+    return stopAreas.filter(s => {
+      // Filtre 1 : Recherche texte
       const matchesSearch = s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           s.line?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Filtre 2 : Sélection ligne
       const matchesLine = selectedLine === "all" || s.line.includes(selectedLine);
-      return matchesSearch && matchesLine;
+
+      // Filtre 3 : ZONE VISIBLE (Si la carte est prête et qu'on a des limites)
+      let isInView = true;
+      if (mapBounds) {
+        isInView = s.lat <= mapBounds._northEast.lat && 
+                   s.lat >= mapBounds._southWest.lat &&
+                   s.lng <= mapBounds._northEast.lng &&
+                   s.lng >= mapBounds._southWest.lng;
+      }
+
+      return matchesSearch && matchesLine && isInView;
     });
+  }, [stopAreas, searchQuery, selectedLine, mapBounds]);
 
-    if (sortConfig !== null) {
-      result.sort((a, b) => {
-        const aValue = a[sortConfig.key] || "";
-        const bValue = b[sortConfig.key] || "";
-        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-    return result;
-  }, [stopAreas, searchQuery, selectedLine, sortConfig]);
-
-  // Pagination
-  const totalPages = Math.ceil(filteredStops.length / itemsPerPage);
-  const paginatedStops = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return filteredStops.slice(start, start + itemsPerPage);
-  }, [filteredStops, currentPage]);
-
-  useEffect(() => { setCurrentPage(1); }, [searchQuery, selectedLine]);
-
-  // 4. Initialisation Carte
+  // 3. Initialisation Carte
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoading) return;
+
     const initMap = async () => {
       const L = (await import('leaflet')).default;
       await import('leaflet/dist/leaflet.css');
+      
       if (mapInstance.current) return;
-      mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 12);
+      
+      mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 14);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap'
+        attribution: '&copy; OSM'
       }).addTo(mapInstance.current);
+
       markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+
+      // --- LE SECRET : Écouter les mouvements de la carte ---
+      const updateVisibleBounds = () => {
+        setMapBounds(mapInstance.current.getBounds());
+      };
+
+      mapInstance.current.on('moveend', updateVisibleBounds);
+      updateVisibleBounds(); // Initialisation au démarrage
+      
       setIsMapReady(true);
     };
+
     initMap();
-    return () => { if (mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; } };
   }, [isLoading]);
 
-  // 5. Mise à jour Marqueurs
+  // 4. Mise à jour des marqueurs (On affiche tout ce qui est filtré par texte/ligne)
   useEffect(() => {
-    if (!isMapReady || !mapInstance.current) return;
+    if (!isMapReady) return;
     const updateMarkers = async () => {
       const L = (await import('leaflet')).default;
       markersLayer.current.clearLayers();
-      paginatedStops.forEach((stop) => {
-        const customIcon = L.divIcon({
-          className: 'custom-marker',
-          html: `<div style="background-color: #e11d48; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>`,
-          iconSize: [12, 12],
-          iconAnchor: [6, 6]
+      
+      // On limite l'affichage des points sur la carte à 300 pour la performance
+      visibleStops.slice(0, 300).forEach((stop) => {
+        const marker = L.circleMarker([stop.lat, stop.lng], {
+          radius: 6,
+          fillColor: "#e11d48",
+          color: "white",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.8
         });
-        L.marker([stop.lat, stop.lng], { icon: customIcon })
-          .bindPopup(`<strong>${stop.name}</strong><br/>Lignes: ${stop.line}`)
-          .addTo(markersLayer.current);
+        marker.bindPopup(`<strong>${stop.name}</strong><br/>Lignes: ${stop.line}`).addTo(markersLayer.current);
       });
     };
     updateMarkers();
-  }, [isMapReady, paginatedStops]);
+  }, [isMapReady, visibleStops]);
 
-  const handleSort = (key: keyof StopArea) => {
-    setSortConfig(prev => ({
-      key,
-      direction: prev?.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
-    }));
-  };
+  // Liste des lignes pour le sélecteur
+  const uniqueLines = useMemo(() => {
+    const lines = new Set<string>();
+    stopAreas.forEach(s => s.line?.split(',').forEach(l => lines.add(l.trim())));
+    return Array.from(lines).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  }, [stopAreas]);
 
   return (
-    <div className="max-w-7xl mx-auto p-4 min-h-screen bg-slate-50">
-      <nav className="mb-4">
+    <div className="max-w-7xl mx-auto p-4 min-h-screen bg-slate-50 flex flex-col gap-4">
+      <nav>
         <Link href="/" className="inline-flex items-center gap-2 text-rose-600 font-bold hover:underline">
           <ArrowLeft size={18} /> Retour
         </Link>
       </nav>
 
-      <header className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="bg-white p-4 rounded-xl border shadow-sm flex flex-col md:flex-row justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">📍 Arrêts Logiques Tisséo</h1>
-          <div className="flex items-center gap-2 text-slate-500 text-sm mt-1">
-            <Database size={14} />
-            <span>{isLoading ? 'Chargement...' : `${filteredStops.length} arrêts trouvés`}</span>
-          </div>
+          <h1 className="text-xl font-bold flex items-center gap-2">
+            <MapIcon className="text-rose-500" /> Exploration Interactive
+          </h1>
+          <p className="text-sm text-slate-500 italic">Le tableau affiche uniquement les arrêts visibles sur la carte.</p>
         </div>
-      </header>
-
-      {/* Barre de Recherche et Filtre par Ligne */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="md:col-span-2 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input 
-            type="text"
-            placeholder="Rechercher par nom ou ligne..."
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 shadow-sm transition-all"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <div className="relative">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <select 
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white shadow-sm appearance-none"
-            value={selectedLine}
-            onChange={(e) => setSelectedLine(e.target.value)}
-          >
-            <option value="all">Toutes les lignes</option>
-            {uniqueLines.map(line => (
-              <option key={line} value={line}>Ligne {line}</option>
-            ))}
-          </select>
+        <div className="flex gap-2 items-center bg-rose-50 px-4 py-2 rounded-lg border border-rose-100">
+          <Layers size={16} className="text-rose-600" />
+          <span className="text-rose-700 font-bold">{visibleStops.length}</span>
+          <span className="text-rose-600 text-sm font-medium">arrêts dans cette zone</span>
         </div>
       </div>
 
-      {/* Carte */}
-      <div className="mb-4 border border-slate-200 rounded-xl h-[400px] relative z-0 overflow-hidden shadow-inner bg-slate-200"> 
+      {/* Carte (Plus grande pour l'exploration) */}
+      <div className="border-4 border-white rounded-2xl h-[500px] relative z-0 overflow-hidden shadow-xl ring-1 ring-slate-200"> 
         <div ref={mapRef} className="h-full w-full" />
       </div>
 
-      {/* Barre de Pagination PLACÉE ICI (Sous la carte) */}
-      {!isLoading && totalPages > 1 && (
-        <div className="mb-6 flex items-center justify-center gap-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-          <button 
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            className="p-2 hover:bg-slate-100 disabled:opacity-20 transition-colors rounded-lg border"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-slate-600 uppercase tracking-wider">Tranche :</span>
-            <select 
-              value={currentPage} 
-              onChange={(e) => setCurrentPage(Number(e.target.value))}
-              className="font-bold text-rose-600 outline-none cursor-pointer bg-slate-50 border rounded-md px-3 py-1"
-            >
-              {Array.from({ length: totalPages }, (_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {i * itemsPerPage + 1} à {Math.min((i + 1) * itemsPerPage, filteredStops.length)}
-                </option>
-              ))}
-            </select>
-            <span className="text-sm text-slate-400">sur {filteredStops.length}</span>
-          </div>
-
-          <button 
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            className="p-2 hover:bg-slate-100 disabled:opacity-20 transition-colors rounded-lg border"
-          >
-            <ChevronRight size={20} />
-          </button>
+      {/* Filtres de secours */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <input 
+            type="text" placeholder="Chercher dans la zone..."
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white"
+            value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-      )}
+        <select 
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white"
+          value={selectedLine} onChange={(e) => setSelectedLine(e.target.value)}
+        >
+          <option value="all">Toutes les lignes de la zone</option>
+          {uniqueLines.map(line => <option key={line} value={line}>Ligne {line}</option>)}
+        </select>
+      </div>
 
-      {/* Tableau */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      {/* Tableau Dynamique */}
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm max-h-[600px] overflow-y-auto">
         <table className="w-full text-left text-sm border-collapse">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold sticky top-0">
+          <thead className="bg-slate-50 sticky top-0 z-10 border-b border-slate-200 text-slate-600 font-bold">
             <tr>
-              <th className="p-4 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => handleSort('name')}>
-                <div className="flex items-center gap-2">Nom <ArrowUpDown size={14} /></div>
-              </th>
-              <th className="p-4 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => handleSort('line')}>
-                <div className="flex items-center gap-2">Lignes <ArrowUpDown size={14} /></div>
-              </th>
-              <th className="p-4">Mode</th>
+              <th className="p-4">Nom de l'arrêt</th>
+              <th className="p-4">Lignes disponibles</th>
+              <th className="p-4 text-right pr-6">Position</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {paginatedStops.map((stop) => (
-              <tr key={stop.id} className="hover:bg-rose-50/30 transition-colors group">
-                <td className="p-4 font-medium flex items-center gap-3">
-                  <Bus size={16} className="text-rose-500" />
-                  {stop.name}
+            {visibleStops.slice(0, 100).map((stop) => (
+              <tr key={stop.id} className="hover:bg-slate-50 transition-colors">
+                <td className="p-4 font-bold text-slate-800">
+                  <div className="flex items-center gap-2 italic">
+                    <Bus size={14} className="text-rose-500" />
+                    {stop.name}
+                  </div>
                 </td>
-                <td className="p-4 text-slate-600 font-mono text-xs">{stop.line}</td>
                 <td className="p-4">
-                  <span className="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-1 rounded uppercase">
-                    {stop.mode}
-                  </span>
+                  <div className="flex flex-wrap gap-1">
+                    {stop.line.split(',').map(l => (
+                      <span key={l} className="px-2 py-0.5 bg-slate-100 border text-[10px] font-bold rounded text-slate-600">
+                        {l.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </td>
+                <td className="p-4 text-right text-[10px] text-slate-400 font-mono pr-6">
+                  {stop.lat.toFixed(4)}, {stop.lng.toFixed(4)}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {filteredStops.length === 0 && !isLoading && (
-          <div className="p-12 text-center text-slate-400">Aucun résultat.</div>
+        {visibleStops.length === 0 && (
+          <div className="p-10 text-center text-slate-400">
+            Aucun arrêt dans cette zone. Déplacez la carte ou dézoomez.
+          </div>
         )}
       </div>
     </div>
