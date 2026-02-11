@@ -1,15 +1,14 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Search, Database, Bus } from "lucide-react";
+import { ArrowLeft, Search, Database, Bus, ArrowUpDown } from "lucide-react";
 
-// --- Interface adaptée à ton JSON réel ---
 interface StopArea {
   id: string;
   name: string;
-  line: string;    // conc_ligne dans ton JSON
-  mode: string;    // conc_mode dans ton JSON
+  line: string;
+  mode: string;
   lat: number;
   lng: number;
 }
@@ -20,21 +19,26 @@ export default function TisseoArretLogiquePage() {
   const [stopAreas, setStopAreas] = useState<StopArea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // États pour le tri
+  const [sortConfig, setSortConfig] = useState<{ key: keyof StopArea; direction: 'asc' | 'desc' } | null>({
+    key: 'name',
+    direction: 'asc'
+  });
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
   const markersLayer = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Charger les données depuis ton API locale
+  // 1. Charger les données
   useEffect(() => {
     async function fetchStopAreas() {
       try {
-        const response = await fetch('/api/tisseoarretlogique'); 
+        const response = await fetch('/api/tisseoarretlogique');
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         const data = await response.json();
         
-        // MAPPAGE CORRECT DU JSON
         const formattedData = data.map((item: any) => ({
           id: item.code_log,
           name: item.nom_log,
@@ -54,7 +58,7 @@ export default function TisseoArretLogiquePage() {
     fetchStopAreas();
   }, []);
 
-  // 2. Initialisation de la carte
+  // 2. Initialisation de la carte (Leaflet)
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoading) return;
 
@@ -84,13 +88,38 @@ export default function TisseoArretLogiquePage() {
     };
   }, [isLoading]);
 
-  // Filtrage
-  const filteredStops = stopAreas.filter(s => 
-    s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.line?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // 3. Logique de Filtrage ET de Tri (useMemo pour la performance)
+  const filteredStops = useMemo(() => {
+    // Filtrage
+    let result = stopAreas.filter(s => 
+      s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.line?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-  // 3. Mise à jour des marqueurs
+    // Tri
+    if (sortConfig !== null) {
+      result.sort((a, b) => {
+        const aValue = a[sortConfig.key] || "";
+        const bValue = b[sortConfig.key] || "";
+        
+        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return result;
+  }, [stopAreas, searchQuery, sortConfig]);
+
+  // Fonction pour déclencher le tri
+  const handleSort = (key: keyof StopArea) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // 4. Mise à jour des marqueurs sur la carte
   useEffect(() => {
     if (!isMapReady || !mapInstance.current) return;
 
@@ -98,7 +127,7 @@ export default function TisseoArretLogiquePage() {
       const L = (await import('leaflet')).default;
       markersLayer.current.clearLayers();
       
-      // On affiche les 150 premiers pour garder de la fluidité
+      // On affiche les 150 premiers filtrés pour la fluidité de la carte
       filteredStops.slice(0, 150).forEach((stop) => {
         const customIcon = L.divIcon({
           className: 'custom-marker',
@@ -128,7 +157,7 @@ export default function TisseoArretLogiquePage() {
         <h1 className="text-2xl font-bold text-slate-900">📍 Arrêts Logiques Tisséo</h1>
         <div className="flex items-center gap-2 text-slate-500 text-sm mt-1">
           <Database size={14} />
-          <span>{isLoading ? 'Chargement du fichier...' : `${filteredStops.length} arrêts chargés`}</span>
+          <span>{isLoading ? 'Chargement...' : `${filteredStops.length} arrêts trouvés sur ${stopAreas.length}`}</span>
         </div>
       </header>
 
@@ -136,7 +165,7 @@ export default function TisseoArretLogiquePage() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <input 
           type="text"
-          placeholder="Filtrer par nom ou par ligne (ex: 67, L1...)"
+          placeholder="Chercher un arrêt ou une ligne (ex: 67, L1, Capitole...)"
           className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 shadow-sm"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -151,29 +180,50 @@ export default function TisseoArretLogiquePage() {
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
             <tr>
-              <th className="p-3">Nom</th>
-              <th className="p-3">Lignes</th>
+              <th 
+                className="p-3 cursor-pointer hover:text-rose-600 transition-colors"
+                onClick={() => handleSort('name')}
+              >
+                <div className="flex items-center gap-1">Nom <ArrowUpDown size={14} /></div>
+              </th>
+              <th 
+                className="p-3 cursor-pointer hover:text-rose-600 transition-colors"
+                onClick={() => handleSort('line')}
+              >
+                <div className="flex items-center gap-1">Lignes <ArrowUpDown size={14} /></div>
+              </th>
               <th className="p-3">Mode</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {filteredStops.slice(0, 50).map((stop) => (
+            {filteredStops.slice(0, 100).map((stop) => (
               <tr key={stop.id} className="hover:bg-slate-50 transition-colors">
-                <td className="p-3 font-medium flex items-center gap-2">
-                  <Bus size={14} className="text-rose-500" />
-                  {stop.name}
+                <td className="p-3 font-medium">
+                  <div className="flex items-center gap-2">
+                    <Bus size={14} className="text-rose-500" />
+                    {stop.name}
+                  </div>
                 </td>
-                <td className="p-3 text-slate-600">{stop.line}</td>
-                <td className="p-3 capitalize text-xs bg-slate-100 rounded px-2 py-1 inline-block mt-2 ml-3">
-                  {stop.mode}
+                <td className="p-3 text-slate-600 font-mono text-xs">{stop.line}</td>
+                <td className="p-3">
+                  <span className="capitalize text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-1 rounded">
+                    {stop.mode}
+                  </span>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {filteredStops.length > 50 && (
-          <div className="p-3 text-center text-slate-400 text-xs italic border-t border-slate-100">
-            Affichage limité aux 50 premiers résultats dans le tableau.
+        
+        {filteredStops.length > 100 && (
+          <div className="p-4 text-center text-slate-400 text-xs italic border-t border-slate-100 bg-slate-50">
+            Affichage des 100 premiers résultats. Utilisez la recherche pour affiner.
+          </div>
+        )}
+        
+        {filteredStops.length === 0 && !isLoading && (
+          <div className="p-10 text-center text-slate-500">
+            Aucun arrêt trouvé pour cette recherche.
           </div>
         )}
       </div>
