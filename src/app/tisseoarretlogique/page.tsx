@@ -1,99 +1,202 @@
-"use client";
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-import { Zap, Mic, BookOpen, Database, MessageSquare } from "lucide-react";
+'use client';
 
-// Correction icônes Leaflet par défaut
-const icon = L.icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
+import React, { useEffect, useState, useRef } from 'react';
+// Importation du CSS uniquement côté client pour éviter les erreurs de build
+import Link from "next/link";
+import { ArrowLeft, Search, ChevronDown, MapPin, Info, Database, Waves } from "lucide-react";
 
-export default function RadarTisseoPage() {
-  const [passages, setPassages] = useState([]);
-  const [loading, setLoading] = useState(true);
+// --- Interface synchronisée ---
+interface SiteTG {
+  id: number;
+  commune: string;
+  site: string; 
+  niveau: number;
+  categorie: 'incontournable' | 'remarquable' | 'suggéré';
+  lat: number;
+  lng: number;
+}
 
+const TG_CENTER: [number, number] = [44.05, 1.40];
+
+const getThemeColor = (categorie: string): string => {
+  const cat = categorie?.toLowerCase() || '';
+  if (cat.includes('incontournable')) return '#ef4444'; 
+  if (cat.includes('remarquable'))    return '#f97316'; 
+  if (cat.includes('suggéré') || cat.includes('suggere')) return '#0891b2'; 
+  return '#0891b2';
+};
+
+export default function TarnGaronneMapPage() {
+  const [sitesData, setSitesData] = useState<SiteTG[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const markersLayer = useRef<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
+
+  // 1. Charger les données API
   useEffect(() => {
-    // Ici l'appel à ton API Route qui utilise ta clé API Tisséo
-    fetch('/api/tisseo/passages')
-      .then(res => res.json())
-      .then(data => {
-        setPassages(data);
-        setLoading(false);
-      });
+    async function fetchSites() {
+      try {
+        const response = await fetch('/api/tarngaronne');
+        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+        const data: SiteTG[] = await response.json();
+        setSitesData(data);
+      } catch (error) {
+        console.error("Erreur:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchSites();
   }, []);
 
-  return (
-    <div className="min-h-screen bg-[#050505] text-white p-4 font-sans">
-      <div className="max-w-6xl mx-auto">
+  // 2. Initialisation de la carte (Strictement Client-Side)
+  useEffect(() => {
+    // Sécurité supplémentaire : On ne fait rien si window n'existe pas ou si on charge
+    if (typeof window === "undefined" || !mapRef.current || isLoading) return;
+
+    const initMap = async () => {
+      // Import dynamique de Leaflet et du CSS
+      const L = (await import('leaflet')).default;
+      await import('leaflet/dist/leaflet.css');
+      
+      if (mapInstance.current) return;
+      
+      mapInstance.current = L.map(mapRef.current!).setView(TG_CENTER, 10);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(mapInstance.current);
+      
+      markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+      setIsMapReady(true);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [isLoading]);
+
+  const filteredSites = sitesData
+    .filter(s => 
+      s.commune?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.site?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => a.commune.localeCompare(b.commune));
+
+  // 3. Mise à jour des marqueurs
+  useEffect(() => {
+    if (!isMapReady || !mapInstance.current) return;
+
+    const updateMarkers = async () => {
+      const L = (await import('leaflet')).default;
+      markersLayer.current.clearLayers();
+      
+      filteredSites.forEach((site, i) => {
+        const color = getThemeColor(site.categorie);
+        const customIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="background-color: ${color}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
+        });
         
-        {/* HEADER */}
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-black italic uppercase italic">
-            Radar<span className="text-red-600">.Toulouse</span>
-          </h1>
-        </header>
+        L.marker([site.lat, site.lng], { icon: customIcon })
+          .bindPopup(`<strong>${site.commune}</strong><br/>${site.site}`)
+          .addTo(markersLayer.current);
+      });
+    };
 
-        {/* 1. LA CARTE LEAFLET */}
-        <div className="h-[400px] w-full rounded-[2rem] overflow-hidden border border-white/10 mb-12">
-          <MapContainer center={[43.6047, 1.4442]} zoom={13} style={{ height: '100%', width: '100%' }}>
-            <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
-            {/* Exemple de marqueur pour un arrêt Tisséo */}
-            <Marker position={[43.6045, 1.4440]} icon={icon}>
-              <Popup>Station Jean Jaurès - Flux en direct</Popup>
-            </Marker>
-          </MapContainer>
-        </div>
+    updateMarkers();
+  }, [isMapReady, filteredSites]);
 
-        {/* 2. STATS EN DUR (PODCASTS / LIVRES) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-           <div className="p-6 bg-purple-900/10 border border-purple-500/20 rounded-2xl flex items-center gap-4">
-              <Mic className="text-purple-400" size={40} />
-              <div>
-                <p className="text-2xl font-black">1708</p>
-                <p className="text-xs uppercase text-slate-500">Podcasts sorties de livre</p>
-              </div>
-           </div>
-           <div className="p-6 bg-orange-900/10 border border-orange-500/20 rounded-2xl flex items-center gap-4">
-              <BookOpen className="text-orange-400" size={40} />
-              <div>
-                <p className="text-2xl font-black">4266</p>
-                <p className="text-xs uppercase text-slate-500">Livres suggérés</p>
-              </div>
-           </div>
-        </div>
+  return (
+    <div className="max-w-7xl mx-auto p-4 bg-emerald-50/20 min-h-screen">
+      {/* ... (Reste de votre JSX identique) ... */}
+      <nav className="mb-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-emerald-800 font-bold hover:underline">
+          <ArrowLeft size={18} /> Retour à l'accueil
+        </Link>
+      </nav>
 
-        {/* 3. TRI DES DONNÉES PAR LIGNE (FLUX LIVE) */}
-        <section className="bg-slate-900/20 border border-white/5 p-8 rounded-[3rem]">
-          <h2 className="text-xl font-black uppercase mb-6 flex items-center gap-2">
-            <Zap className="text-yellow-400" /> Prochains Passages (v2)
-          </h2>
-          
-          <div className="space-y-4">
-            {passages.length > 0 ? passages.map((p, i) => (
-              <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border-l-4 border-l-red-600">
-                <div className="flex items-center gap-4">
-                  <span className="bg-white text-black font-black px-3 py-1 rounded text-sm">
-                    {p.lineShortName || "22"}
-                  </span>
-                  <div>
-                    <p className="font-bold text-sm uppercase">{p.destinationName || "Gonin"}</p>
-                    <p className="text-[10px] text-slate-500">ID: {p.id}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-xl font-black text-yellow-400">{p.expectedDepartureTime}</p>
-                  <p className="text-[10px] uppercase text-slate-500">Temps réel</p>
-                </div>
-              </div>
-            )) : (
-              <p className="text-slate-500 italic">En attente des données Tisséo...</p>
-            )}
+      <header className="mb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 italic leading-tight">🌳 Sites du Tarn-et-Garonne (82)</h1>
+            <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm mt-2">
+              <Database size={16} />
+              <span>Statut : {isLoading ? 'Chargement...' : `${filteredSites.length} sites trouvés`}</span>
+            </div>
           </div>
-        </section>
+          {/* Légende couleurs */}
+          <div className="flex flex-wrap gap-4 text-xs md:text-sm font-bold uppercase tracking-wider">
+            <span className="flex items-center gap-1.5" style={{ color: '#ef4444' }}>
+              <span className="w-3 h-3 rounded-full bg-red-500"></span> Incontournable
+            </span>
+            <span className="flex items-center gap-1.5" style={{ color: '#f97316' }}>
+              <span className="w-3 h-3 rounded-full bg-orange-500"></span> Remarquable
+            </span>
+            <span className="flex items-center gap-1.5" style={{ color: '#0891b2' }}>
+              <span className="w-3 h-3 rounded-full bg-cyan-600"></span> Suggéré
+            </span>
+          </div>
+        </div>
+      </header>
 
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+        <input 
+          type="text"
+          placeholder="Rechercher Moissac, Montauban, Bruniquel..."
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-emerald-100 focus:ring-2 focus:ring-emerald-500 outline-none shadow-sm transition-all text-sm"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      {/* Conteneur de la carte */}
+      <div className="mb-8 border border-emerald-100 rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
+        <div ref={mapRef} className="h-full w-full" />
+      </div>
+
+      {/* Tableau des données */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <table className="w-full text-left border-collapse text-sm">
+          <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase font-bold text-[11px]">
+            <tr>
+              <th className="p-4 w-10 text-center">#</th>
+              <th className="p-4">Commune</th>
+              <th className="p-4 hidden md:table-cell w-1/2">Monument emblématique</th>
+              <th className="p-4 text-right md:text-left">Catégorie</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {filteredSites.map((site, i) => (
+              <React.Fragment key={`tg-${site.id}`}>
+                <tr 
+                  onClick={() => setExpandedId(expandedId === i ? null : i)}
+                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-emerald-50/50' : 'hover:bg-slate-50'}`}
+                >
+                  <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
+                  <td className="p-4 font-bold text-slate-900">{site.commune}</td>
+                  <td className="p-4 hidden md:table-cell text-slate-800">{site.site}</td>
+                  <td className="p-4 text-right md:text-left font-bold capitalize" style={{ color: getThemeColor(site.categorie) }}>
+                    {site.categorie}
+                  </td>
+                </tr>
+                {/* Mobile expansion row... */}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
