@@ -1,4 +1,4 @@
-import { Zap, Film, Bell, Gamepad2, Database, LayoutGrid } from "lucide-react";
+import { Zap, Film, Bell, Gamepad2, Database, BookOpen, Mic } from "lucide-react";
 
 // On force la page à être recalculée sans boucle infinie côté client
 export const dynamic = "force-dynamic";
@@ -7,7 +7,6 @@ async function getTestData() {
   const host = process.env.NEXT_PUBLIC_BASE_URL || "https://ftstoulouse.vercel.app";
   
   try {
-    // Appel à l'API de test avec un cache désactivé pour voir tes modifs en direct
     const res = await fetch(`${host}/api/testdata`, { cache: 'no-store' });
     if (!res.ok) return null;
     return res.json();
@@ -43,7 +42,6 @@ export default async function MeetupSupPage() {
 
         {/* SECTION DES GRANDS COMPTEURS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-          
           <div className="text-center p-10 bg-slate-900/20 border border-white/5 rounded-[3rem] relative overflow-hidden group">
             <Database className="absolute -right-4 -top-4 text-white/5 group-hover:text-white/10 transition-colors" size={160} />
             <span className="relative z-10 text-[6rem] md:text-[8rem] font-black leading-none bg-gradient-to-b from-slate-200 to-slate-600 bg-clip-text text-transparent">
@@ -59,10 +57,22 @@ export default async function MeetupSupPage() {
             </span>
             <p className="text-red-600 font-black italic uppercase tracking-widest text-lg mt-4">Flux Live</p>
           </div>
-          
         </div>
 
-        {/* GRILLE DES SOURCES */}
+        {/* --- NOUVELLE SECTION PODCASTS & LECTURES (DONNÉES EN DUR) --- */}
+        <div className="flex items-center gap-4 mb-8">
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+          <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 italic">Podcasts & Lectures</h2>
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-20">
+          <StatCard icon={<Mic />} label="Podcasts sorties de livre" count={1708} color="text-purple-400" />
+          <StatCard icon={<BookOpen />} label="Livres suggérés" count={4266} color="text-orange-400" />
+        </div>
+        {/* ----------------------------------------------------------- */}
+
+        {/* GRILLE DES SOURCES LIVE */}
         <div className="flex items-center gap-4 mb-8">
           <div className="h-[1px] flex-1 bg-white/10"></div>
           <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 italic">Endpoints de test</h2>
