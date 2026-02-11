@@ -1,74 +1,75 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-// Importation du CSS uniquement côté client pour éviter les erreurs de build
 import Link from "next/link";
-import { ArrowLeft, Search, ChevronDown, MapPin, Info, Database, Waves } from "lucide-react";
+import { ArrowLeft, Search, ChevronDown, MapPin, Database, Bus } from "lucide-react";
 
-// --- Interface synchronisée ---
-interface SiteTG {
-  id: number;
-  commune: string;
-  site: string; 
-  niveau: number;
-  categorie: 'incontournable' | 'remarquable' | 'suggéré';
+// --- Interface Tisséo v2 ---
+interface StopArea {
+  id: string;
+  name: string;
+  cityName: string;
   lat: number;
   lng: number;
 }
 
-const TG_CENTER: [number, number] = [44.05, 1.40];
+const TOULOUSE_CENTER: [number, number] = [43.6047, 1.4442];
 
-const getThemeColor = (categorie: string): string => {
-  const cat = categorie?.toLowerCase() || '';
-  if (cat.includes('incontournable')) return '#ef4444'; 
-  if (cat.includes('remarquable'))    return '#f97316'; 
-  if (cat.includes('suggéré') || cat.includes('suggere')) return '#0891b2'; 
-  return '#0891b2';
-};
-
-export default function TarnGaronneMapPage() {
-  const [sitesData, setSitesData] = useState<SiteTG[]>([]);
+export default function TisseoArretLogiquePage() {
+  const [stopAreas, setStopAreas] = useState<StopArea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
   const markersLayer = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Charger les données API
+  // 1. Charger les données de l'API Tisséo (via votre API route interne)
   useEffect(() => {
-    async function fetchSites() {
+    async function fetchStopAreas() {
       try {
-        const response = await fetch('/api/tarngaronne');
+        // Remplacez par votre endpoint réel (ex: api/tisseo/stop_areas)
+        const response = await fetch('/api/tisseo/stop_areas'); 
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-        const data: SiteTG[] = await response.json();
-        setSitesData(data);
+        const data = await response.json();
+        
+        // On adapte les données reçues au format de notre interface
+        const formattedData = data.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          cityName: item.cityName,
+          lat: parseFloat(item.y), // Tisséo v2 renvoie souvent Y pour latitude
+          lng: parseFloat(item.x)  // et X pour longitude
+        }));
+        
+        setStopAreas(formattedData);
       } catch (error) {
-        console.error("Erreur:", error);
+        console.error("Erreur de chargement Tisséo:", error);
       } finally {
         setIsLoading(false);
       }
     }
-    fetchSites();
+    fetchStopAreas();
   }, []);
 
-  // 2. Initialisation de la carte (Strictement Client-Side)
+  // 2. Initialisation de la carte Leaflet (Strictement Client-Side)
   useEffect(() => {
-    // Sécurité supplémentaire : On ne fait rien si window n'existe pas ou si on charge
     if (typeof window === "undefined" || !mapRef.current || isLoading) return;
 
     const initMap = async () => {
-      // Import dynamique de Leaflet et du CSS
+      // Imports dynamiques pour éviter les erreurs de build SSR
       const L = (await import('leaflet')).default;
       await import('leaflet/dist/leaflet.css');
       
       if (mapInstance.current) return;
       
-      mapInstance.current = L.map(mapRef.current!).setView(TG_CENTER, 10);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
+      mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 13);
+      
+      // Fond de carte sombre pour le look "Radar"
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO'
       }).addTo(mapInstance.current);
       
       markersLayer.current = L.layerGroup().addTo(mapInstance.current);
@@ -85,14 +86,15 @@ export default function TarnGaronneMapPage() {
     };
   }, [isLoading]);
 
-  const filteredSites = sitesData
+  // Filtrage des arrêts
+  const filteredStops = stopAreas
     .filter(s => 
-      s.commune?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.site?.toLowerCase().includes(searchQuery.toLowerCase())
+      s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.cityName?.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .sort((a, b) => a.commune.localeCompare(b.commune));
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-  // 3. Mise à jour des marqueurs
+  // 3. Mise à jour des marqueurs quand la liste filtrée change
   useEffect(() => {
     if (!isMapReady || !mapInstance.current) return;
 
@@ -100,100 +102,90 @@ export default function TarnGaronneMapPage() {
       const L = (await import('leaflet')).default;
       markersLayer.current.clearLayers();
       
-      filteredSites.forEach((site, i) => {
-        const color = getThemeColor(site.categorie);
+      filteredStops.slice(0, 100).forEach((stop, i) => { // Limite à 100 pour la performance
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `<div style="background-color: ${color}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
-          iconSize: [26, 26],
-          iconAnchor: [13, 13]
+          html: `<div style="background-color: #ef4444; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 9px; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">${i + 1}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
         });
         
-        L.marker([site.lat, site.lng], { icon: customIcon })
-          .bindPopup(`<strong>${site.commune}</strong><br/>${site.site}`)
+        L.marker([stop.lat, stop.lng], { icon: customIcon })
+          .bindPopup(`<strong>${stop.name}</strong><br/>${stop.cityName}`)
           .addTo(markersLayer.current);
       });
     };
 
     updateMarkers();
-  }, [isMapReady, filteredSites]);
+  }, [isMapReady, filteredStops]);
 
   return (
-    <div className="max-w-7xl mx-auto p-4 bg-emerald-50/20 min-h-screen">
-      {/* ... (Reste de votre JSX identique) ... */}
+    <div className="max-w-7xl mx-auto p-4 bg-[#050505] min-h-screen text-white">
       <nav className="mb-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-emerald-800 font-bold hover:underline">
-          <ArrowLeft size={18} /> Retour à l'accueil
+        <Link href="/" className="inline-flex items-center gap-2 text-red-500 font-bold hover:underline">
+          <ArrowLeft size={18} /> Retour au Radar
         </Link>
       </nav>
 
       <header className="mb-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 italic leading-tight">🌳 Sites du Tarn-et-Garonne (82)</h1>
-            <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm mt-2">
+            <h1 className="text-2xl md:text-3xl font-black italic uppercase tracking-tighter">
+              📡 Zones d'arrêts <span className="text-red-600">Tisséo</span>
+            </h1>
+            <div className="flex items-center gap-2 text-slate-400 font-bold text-sm mt-2">
               <Database size={16} />
-              <span>Statut : {isLoading ? 'Chargement...' : `${filteredSites.length} sites trouvés`}</span>
+              <span>{isLoading ? 'Synchronisation...' : `${filteredStops.length} zones détectées`}</span>
             </div>
-          </div>
-          {/* Légende couleurs */}
-          <div className="flex flex-wrap gap-4 text-xs md:text-sm font-bold uppercase tracking-wider">
-            <span className="flex items-center gap-1.5" style={{ color: '#ef4444' }}>
-              <span className="w-3 h-3 rounded-full bg-red-500"></span> Incontournable
-            </span>
-            <span className="flex items-center gap-1.5" style={{ color: '#f97316' }}>
-              <span className="w-3 h-3 rounded-full bg-orange-500"></span> Remarquable
-            </span>
-            <span className="flex items-center gap-1.5" style={{ color: '#0891b2' }}>
-              <span className="w-3 h-3 rounded-full bg-cyan-600"></span> Suggéré
-            </span>
           </div>
         </div>
       </header>
 
+      {/* Barre de recherche */}
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
         <input 
           type="text"
-          placeholder="Rechercher Moissac, Montauban, Bruniquel..."
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-emerald-100 focus:ring-2 focus:ring-emerald-500 outline-none shadow-sm transition-all text-sm"
+          placeholder="Rechercher un arrêt (ex: Marengo, Jean Jaurès...)"
+          className="w-full bg-white/5 pl-10 pr-4 py-3 rounded-xl border border-white/10 focus:ring-2 focus:ring-red-600 outline-none transition-all text-sm"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      {/* Conteneur de la carte */}
-      <div className="mb-8 border border-emerald-100 rounded-2xl bg-gray-100 h-[35vh] md:h-[50vh] relative z-0 overflow-hidden shadow-md"> 
+      {/* Conteneur de la carte avec style "Glassmorphism" */}
+      <div className="mb-8 border border-white/10 rounded-2xl bg-white/5 h-[40vh] md:h-[55vh] relative z-0 overflow-hidden shadow-2xl"> 
         <div ref={mapRef} className="h-full w-full" />
       </div>
 
-      {/* Tableau des données */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      {/* Liste des arrêts */}
+      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
         <table className="w-full text-left border-collapse text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase font-bold text-[11px]">
+          <thead className="bg-white/5 border-b border-white/10 text-slate-400 uppercase font-bold text-[11px]">
             <tr>
-              <th className="p-4 w-10 text-center">#</th>
-              <th className="p-4">Commune</th>
-              <th className="p-4 hidden md:table-cell w-1/2">Monument emblématique</th>
-              <th className="p-4 text-right md:text-left">Catégorie</th>
+              <th className="p-4 w-12 text-center">#</th>
+              <th className="p-4">Nom de la Zone</th>
+              <th className="p-4 hidden md:table-cell">Commune</th>
+              <th className="p-4 text-right">Identifiant</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {filteredSites.map((site, i) => (
-              <React.Fragment key={`tg-${site.id}`}>
-                <tr 
-                  onClick={() => setExpandedId(expandedId === i ? null : i)}
-                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-emerald-50/50' : 'hover:bg-slate-50'}`}
-                >
-                  <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
-                  <td className="p-4 font-bold text-slate-900">{site.commune}</td>
-                  <td className="p-4 hidden md:table-cell text-slate-800">{site.site}</td>
-                  <td className="p-4 text-right md:text-left font-bold capitalize" style={{ color: getThemeColor(site.categorie) }}>
-                    {site.categorie}
-                  </td>
-                </tr>
-                {/* Mobile expansion row... */}
-              </React.Fragment>
+          <tbody className="divide-y divide-white/5">
+            {filteredStops.map((stop, i) => (
+              <tr 
+                key={stop.id}
+                onClick={() => setExpandedId(expandedId === stop.id ? null : stop.id)}
+                className={`cursor-pointer transition-colors ${expandedId === stop.id ? 'bg-red-600/10' : 'hover:bg-white/5'}`}
+              >
+                <td className="p-4 text-center font-bold text-slate-600">{i + 1}</td>
+                <td className="p-4 font-bold">
+                    <div className="flex items-center gap-2">
+                        <Bus size={14} className="text-red-500" />
+                        {stop.name}
+                    </div>
+                </td>
+                <td className="p-4 hidden md:table-cell text-slate-400">{stop.cityName}</td>
+                <td className="p-4 text-right font-mono text-[10px] text-red-400">{stop.id}</td>
+              </tr>
             ))}
           </tbody>
         </table>
