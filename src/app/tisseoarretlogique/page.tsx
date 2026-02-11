@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Search, ChevronDown, MapPin, Database, Bus } from "lucide-react";
+import { ArrowLeft, Search, Database, Bus } from "lucide-react";
 
-// --- Interface Tisséo v2 ---
+// --- Interface adaptée à ton JSON réel ---
 interface StopArea {
   id: string;
   name: string;
-  cityName: string;
+  line: string;    // conc_ligne dans ton JSON
+  mode: string;    // conc_mode dans ton JSON
   lat: number;
   lng: number;
 }
@@ -19,34 +20,33 @@ export default function TisseoArretLogiquePage() {
   const [stopAreas, setStopAreas] = useState<StopArea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
   const markersLayer = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Charger les données de l'API Tisséo (via votre API route interne)
+  // 1. Charger les données depuis ton API locale
   useEffect(() => {
     async function fetchStopAreas() {
       try {
-        // Remplacez par votre endpoint réel (ex: api/tisseo/stop_areas)
-        const response = await fetch('/api/tisseo/stop_areas'); 
+        const response = await fetch('/api/tisseoarretlogique'); 
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         const data = await response.json();
         
-        // On adapte les données reçues au format de notre interface
+        // MAPPAGE CORRECT DU JSON
         const formattedData = data.map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          cityName: item.cityName,
-          lat: parseFloat(item.y), // Tisséo v2 renvoie souvent Y pour latitude
-          lng: parseFloat(item.x)  // et X pour longitude
+          id: item.code_log,
+          name: item.nom_log,
+          line: item.conc_ligne,
+          mode: item.conc_mode,
+          lat: item.geo_point_2d.lat,
+          lng: item.geo_point_2d.lon
         }));
         
         setStopAreas(formattedData);
       } catch (error) {
-        console.error("Erreur de chargement Tisséo:", error);
+        console.error("Erreur de chargement JSON:", error);
       } finally {
         setIsLoading(false);
       }
@@ -54,22 +54,20 @@ export default function TisseoArretLogiquePage() {
     fetchStopAreas();
   }, []);
 
-  // 2. Initialisation de la carte Leaflet (Strictement Client-Side)
+  // 2. Initialisation de la carte
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoading) return;
 
     const initMap = async () => {
-      // Imports dynamiques pour éviter les erreurs de build SSR
       const L = (await import('leaflet')).default;
       await import('leaflet/dist/leaflet.css');
       
       if (mapInstance.current) return;
       
-      mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 13);
+      mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 12);
       
-      // Fond de carte sombre pour le look "Radar"
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO'
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
       
       markersLayer.current = L.layerGroup().addTo(mapInstance.current);
@@ -86,15 +84,13 @@ export default function TisseoArretLogiquePage() {
     };
   }, [isLoading]);
 
-  // Filtrage des arrêts
-  const filteredStops = stopAreas
-    .filter(s => 
-      s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.cityName?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => a.name.localeCompare(b.name));
+  // Filtrage
+  const filteredStops = stopAreas.filter(s => 
+    s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.line?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  // 3. Mise à jour des marqueurs quand la liste filtrée change
+  // 3. Mise à jour des marqueurs
   useEffect(() => {
     if (!isMapReady || !mapInstance.current) return;
 
@@ -102,16 +98,17 @@ export default function TisseoArretLogiquePage() {
       const L = (await import('leaflet')).default;
       markersLayer.current.clearLayers();
       
-      filteredStops.slice(0, 100).forEach((stop, i) => { // Limite à 100 pour la performance
+      // On affiche les 150 premiers pour garder de la fluidité
+      filteredStops.slice(0, 150).forEach((stop) => {
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `<div style="background-color: #ef4444; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 9px; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">${i + 1}</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
+          html: `<div style="background-color: #e11d48; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>`,
+          iconSize: [12, 12],
+          iconAnchor: [6, 6]
         });
         
         L.marker([stop.lat, stop.lng], { icon: customIcon })
-          .bindPopup(`<strong>${stop.name}</strong><br/>${stop.cityName}`)
+          .bindPopup(`<strong>${stop.name}</strong><br/>Lignes: ${stop.line}<br/>Mode: ${stop.mode}`)
           .addTo(markersLayer.current);
       });
     };
@@ -120,75 +117,65 @@ export default function TisseoArretLogiquePage() {
   }, [isMapReady, filteredStops]);
 
   return (
-    <div className="max-w-7xl mx-auto p-4 bg-[#050505] min-h-screen text-white">
+    <div className="max-w-7xl mx-auto p-4 min-h-screen bg-slate-50">
       <nav className="mb-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-red-500 font-bold hover:underline">
-          <ArrowLeft size={18} /> Retour au Radar
+        <Link href="/" className="inline-flex items-center gap-2 text-rose-600 font-bold hover:underline">
+          <ArrowLeft size={18} /> Retour
         </Link>
       </nav>
 
       <header className="mb-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-black italic uppercase tracking-tighter">
-              📡 Zones d'arrêts <span className="text-red-600">Tisséo</span>
-            </h1>
-            <div className="flex items-center gap-2 text-slate-400 font-bold text-sm mt-2">
-              <Database size={16} />
-              <span>{isLoading ? 'Synchronisation...' : `${filteredStops.length} zones détectées`}</span>
-            </div>
-          </div>
+        <h1 className="text-2xl font-bold text-slate-900">📍 Arrêts Logiques Tisséo</h1>
+        <div className="flex items-center gap-2 text-slate-500 text-sm mt-1">
+          <Database size={14} />
+          <span>{isLoading ? 'Chargement du fichier...' : `${filteredStops.length} arrêts chargés`}</span>
         </div>
       </header>
 
-      {/* Barre de recherche */}
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <input 
           type="text"
-          placeholder="Rechercher un arrêt (ex: Marengo, Jean Jaurès...)"
-          className="w-full bg-white/5 pl-10 pr-4 py-3 rounded-xl border border-white/10 focus:ring-2 focus:ring-red-600 outline-none transition-all text-sm"
+          placeholder="Filtrer par nom ou par ligne (ex: 67, L1...)"
+          className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 shadow-sm"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      {/* Conteneur de la carte avec style "Glassmorphism" */}
-      <div className="mb-8 border border-white/10 rounded-2xl bg-white/5 h-[40vh] md:h-[55vh] relative z-0 overflow-hidden shadow-2xl"> 
+      <div className="mb-8 border border-slate-200 rounded-xl h-[400px] relative z-0 overflow-hidden shadow-inner bg-slate-200"> 
         <div ref={mapRef} className="h-full w-full" />
       </div>
 
-      {/* Liste des arrêts */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
-        <table className="w-full text-left border-collapse text-sm">
-          <thead className="bg-white/5 border-b border-white/10 text-slate-400 uppercase font-bold text-[11px]">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
             <tr>
-              <th className="p-4 w-12 text-center">#</th>
-              <th className="p-4">Nom de la Zone</th>
-              <th className="p-4 hidden md:table-cell">Commune</th>
-              <th className="p-4 text-right">Identifiant</th>
+              <th className="p-3">Nom</th>
+              <th className="p-3">Lignes</th>
+              <th className="p-3">Mode</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
-            {filteredStops.map((stop, i) => (
-              <tr 
-                key={stop.id}
-                onClick={() => setExpandedId(expandedId === stop.id ? null : stop.id)}
-                className={`cursor-pointer transition-colors ${expandedId === stop.id ? 'bg-red-600/10' : 'hover:bg-white/5'}`}
-              >
-                <td className="p-4 text-center font-bold text-slate-600">{i + 1}</td>
-                <td className="p-4 font-bold">
-                    <div className="flex items-center gap-2">
-                        <Bus size={14} className="text-red-500" />
-                        {stop.name}
-                    </div>
+          <tbody className="divide-y divide-slate-100">
+            {filteredStops.slice(0, 50).map((stop) => (
+              <tr key={stop.id} className="hover:bg-slate-50 transition-colors">
+                <td className="p-3 font-medium flex items-center gap-2">
+                  <Bus size={14} className="text-rose-500" />
+                  {stop.name}
                 </td>
-                <td className="p-4 hidden md:table-cell text-slate-400">{stop.cityName}</td>
-                <td className="p-4 text-right font-mono text-[10px] text-red-400">{stop.id}</td>
+                <td className="p-3 text-slate-600">{stop.line}</td>
+                <td className="p-3 capitalize text-xs bg-slate-100 rounded px-2 py-1 inline-block mt-2 ml-3">
+                  {stop.mode}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {filteredStops.length > 50 && (
+          <div className="p-3 text-center text-slate-400 text-xs italic border-t border-slate-100">
+            Affichage limité aux 50 premiers résultats dans le tableau.
+          </div>
+        )}
       </div>
     </div>
   );
