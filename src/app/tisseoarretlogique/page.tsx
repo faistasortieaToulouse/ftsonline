@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Search, Database, Bus, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Search, Database, Bus, ArrowUpDown, ChevronLeft, ChevronRight, Filter } from "lucide-react";
 
 interface StopArea {
   id: string;
@@ -19,10 +19,10 @@ export default function TisseoArretLogiquePage() {
   const [stopAreas, setStopAreas] = useState<StopArea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLine, setSelectedLine] = useState("all"); // Nouveau filtre par ligne
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100;
 
-  // États pour le tri
   const [sortConfig, setSortConfig] = useState<{ key: keyof StopArea; direction: 'asc' | 'desc' } | null>({
     key: 'name',
     direction: 'asc'
@@ -44,8 +44,8 @@ export default function TisseoArretLogiquePage() {
         const formattedData = data.map((item: any) => ({
           id: item.code_log,
           name: item.nom_log,
-          line: item.conc_ligne,
-          mode: item.conc_mode,
+          line: item.conc_ligne || "",
+          mode: item.conc_mode || "",
           lat: item.geo_point_2d.lat,
           lng: item.geo_point_2d.lon
         }));
@@ -60,12 +60,25 @@ export default function TisseoArretLogiquePage() {
     fetchStopAreas();
   }, []);
 
-  // 2. Logique de Filtrage et de Tri
+  // 2. Extraire la liste unique des lignes pour le menu déroulant
+  const uniqueLines = useMemo(() => {
+    const lines = new Set<string>();
+    stopAreas.forEach(s => {
+      if (s.line) {
+        s.line.split(',').forEach(l => lines.add(l.trim()));
+      }
+    });
+    return Array.from(lines).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  }, [stopAreas]);
+
+  // 3. Logique de Filtrage (Recherche + Filtre Ligne) et de Tri
   const filteredStops = useMemo(() => {
-    let result = stopAreas.filter(s => 
-      s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.line?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    let result = stopAreas.filter(s => {
+      const matchesSearch = s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          s.line?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesLine = selectedLine === "all" || s.line.includes(selectedLine);
+      return matchesSearch && matchesLine;
+    });
 
     if (sortConfig !== null) {
       result.sort((a, b) => {
@@ -77,19 +90,18 @@ export default function TisseoArretLogiquePage() {
       });
     }
     return result;
-  }, [stopAreas, searchQuery, sortConfig]);
+  }, [stopAreas, searchQuery, selectedLine, sortConfig]);
 
-  // 3. Découpage pour la pagination
+  // Pagination
   const totalPages = Math.ceil(filteredStops.length / itemsPerPage);
   const paginatedStops = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredStops.slice(start, start + itemsPerPage);
   }, [filteredStops, currentPage]);
 
-  // Reset de la page si on recherche
-  useEffect(() => { setCurrentPage(1); }, [searchQuery]);
+  useEffect(() => { setCurrentPage(1); }, [searchQuery, selectedLine]);
 
-  // 4. Initialisation de la carte
+  // 4. Initialisation Carte
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoading) return;
     const initMap = async () => {
@@ -107,7 +119,7 @@ export default function TisseoArretLogiquePage() {
     return () => { if (mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; } };
   }, [isLoading]);
 
-  // 5. Mise à jour des marqueurs (On affiche uniquement ceux de la page en cours pour la performance)
+  // 5. Mise à jour Marqueurs
   useEffect(() => {
     if (!isMapReady || !mapInstance.current) return;
     const updateMarkers = async () => {
@@ -151,54 +163,78 @@ export default function TisseoArretLogiquePage() {
             <span>{isLoading ? 'Chargement...' : `${filteredStops.length} arrêts trouvés`}</span>
           </div>
         </div>
-
-        {/* Sélecteur de tranche (Pagination) */}
-        {!isLoading && totalPages > 1 && (
-          <div className="flex items-center gap-2 bg-white p-1 rounded-lg border shadow-sm">
-            <button 
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="p-2 hover:bg-slate-100 disabled:opacity-30 transition-colors"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <select 
-              value={currentPage} 
-              onChange={(e) => setCurrentPage(Number(e.target.value))}
-              className="bg-transparent font-medium text-sm outline-none cursor-pointer px-2"
-            >
-              {Array.from({ length: totalPages }, (_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  Tranche {i * itemsPerPage + 1} - {Math.min((i + 1) * itemsPerPage, filteredStops.length)}
-                </option>
-              ))}
-            </select>
-            <button 
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="p-2 hover:bg-slate-100 disabled:opacity-30 transition-colors"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        )}
       </header>
 
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-        <input 
-          type="text"
-          placeholder="Filtrer par nom ou ligne (ex: Capitole, L1...)"
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 shadow-sm"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      {/* Barre de Recherche et Filtre par Ligne */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="md:col-span-2 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <input 
+            type="text"
+            placeholder="Rechercher par nom ou ligne..."
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 shadow-sm transition-all"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <div className="relative">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <select 
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white shadow-sm appearance-none"
+            value={selectedLine}
+            onChange={(e) => setSelectedLine(e.target.value)}
+          >
+            <option value="all">Toutes les lignes</option>
+            {uniqueLines.map(line => (
+              <option key={line} value={line}>Ligne {line}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div className="mb-8 border border-slate-200 rounded-xl h-[400px] relative z-0 overflow-hidden shadow-inner bg-slate-200"> 
+      {/* Carte */}
+      <div className="mb-4 border border-slate-200 rounded-xl h-[400px] relative z-0 overflow-hidden shadow-inner bg-slate-200"> 
         <div ref={mapRef} className="h-full w-full" />
       </div>
 
+      {/* Barre de Pagination PLACÉE ICI (Sous la carte) */}
+      {!isLoading && totalPages > 1 && (
+        <div className="mb-6 flex items-center justify-center gap-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+          <button 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-2 hover:bg-slate-100 disabled:opacity-20 transition-colors rounded-lg border"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-600 uppercase tracking-wider">Tranche :</span>
+            <select 
+              value={currentPage} 
+              onChange={(e) => setCurrentPage(Number(e.target.value))}
+              className="font-bold text-rose-600 outline-none cursor-pointer bg-slate-50 border rounded-md px-3 py-1"
+            >
+              {Array.from({ length: totalPages }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i * itemsPerPage + 1} à {Math.min((i + 1) * itemsPerPage, filteredStops.length)}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-slate-400">sur {filteredStops.length}</span>
+          </div>
+
+          <button 
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="p-2 hover:bg-slate-100 disabled:opacity-20 transition-colors rounded-lg border"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      )}
+
+      {/* Tableau */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <table className="w-full text-left text-sm border-collapse">
           <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold sticky top-0">
@@ -216,7 +252,7 @@ export default function TisseoArretLogiquePage() {
             {paginatedStops.map((stop) => (
               <tr key={stop.id} className="hover:bg-rose-50/30 transition-colors group">
                 <td className="p-4 font-medium flex items-center gap-3">
-                  <Bus size={16} className="text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Bus size={16} className="text-rose-500" />
                   {stop.name}
                 </td>
                 <td className="p-4 text-slate-600 font-mono text-xs">{stop.line}</td>
@@ -229,11 +265,8 @@ export default function TisseoArretLogiquePage() {
             ))}
           </tbody>
         </table>
-
         {filteredStops.length === 0 && !isLoading && (
-          <div className="p-12 text-center text-slate-400">
-            Aucun arrêt ne correspond à votre recherche.
-          </div>
+          <div className="p-12 text-center text-slate-400">Aucun résultat.</div>
         )}
       </div>
     </div>
