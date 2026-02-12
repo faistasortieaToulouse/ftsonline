@@ -4,7 +4,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import Link from "next/link";
 import { ArrowLeft, Search, Bike, Loader2, Navigation } from "lucide-react";
-import GoogleTranslate from "@/components/GoogleTranslate";
 
 export default function VeloToulousePage() {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -70,14 +69,7 @@ export default function VeloToulousePage() {
 
   return (
     <div className="flex h-screen bg-white font-sans overflow-hidden">
-      
-      {/* Barre de traduction (Z-Index Fix) */}
-      <div className="absolute top-0 left-0 w-full z-[2000] pointer-events-none">
-        <div className="pointer-events-auto">
-          <GoogleTranslate />
-        </div>
-      </div>
-
+    
       <aside className="w-80 border-r bg-slate-50 flex flex-col z-20 shadow-lg mt-10">
         <div className="p-6 bg-white border-b">
           <nav className="mb-6">
