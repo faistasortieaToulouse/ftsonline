@@ -131,16 +131,6 @@ export default function ParkingRelaisPage() {
                 </div>
               </div>
 
-              <button 
-                onClick={() => setSelectedParking({...item})} // Le spread operator force la création d'une nouvelle référence
-                className={`mt-5 w-full py-2.5 rounded-lg text-sm font-bold transition-all ${
-                  isSelected 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' 
-                  : 'bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white border border-blue-100'
-                }`}
-              >
-                {isSelected ? 'Parking localisé' : 'Localiser le parking'}
-              </button>
             </div>
           );
         })}
