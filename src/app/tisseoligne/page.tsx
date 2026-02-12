@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 // ✅ Imports dynamiques UNIQUEMENT pour les composants
 const MapContainer = dynamic(
@@ -117,6 +119,14 @@ export default function LignesPage() {
 
   return (
     <main className="p-8 bg-white min-h-screen text-black">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-3xl font-bold mb-6 border-b pb-2 italic text-orange-600">
         Réseau Tisséo - Tracés des Lignes
       </h1>
