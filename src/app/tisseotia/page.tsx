@@ -195,7 +195,7 @@ export default function TisseoArretPhysiquePage() {
             <Link href="/" className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                 <ArrowLeft size={20}/>
             </Link>
-            <h1 className="font-bold text-slate-800">Points d'arrêt Tisséo</h1>
+            <h1 className="font-bold text-slate-800">Retour à l'Accueil</h1>
           </div>
           <div className="text-xs font-bold bg-orange-100 text-orange-600 px-3 py-1.5 rounded-full border border-orange-200">
             {filteredStops.length} résultat{filteredStops.length > 1 ? 's' : ''}
