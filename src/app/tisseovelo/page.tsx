@@ -8,69 +8,94 @@ import { ArrowLeft, Search, Bike, Loader2, Navigation } from "lucide-react";
 export default function VeloToulousePage() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
-  const markersRef = useRef<any>(null);
+  const markersGroupRef = useRef<any>(null);
 
   const [stations, setStations] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  // 1. Charger les données
   useEffect(() => {
     fetch('/api/tisseovelo')
       .then(res => res.json())
       .then(data => {
         setStations(Array.isArray(data) ? data : []);
         setIsLoading(false);
-      });
+      })
+      .catch(() => setIsLoading(false));
   }, []);
 
+  // 2. Initialiser la carte
   useEffect(() => {
     if (isLoading || !mapRef.current || mapInstance.current) return;
 
     import('leaflet').then((L) => {
-      const map = L.map(mapRef.current!).setView([43.6047, 1.4442], 14);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-      markersRef.current = L.layerGroup().addTo(map);
+      // Correction icônes par défaut Leaflet
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      });
+
+      const map = L.map(mapRef.current!).setView([43.6047, 1.4442], 13);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(map);
+
+      markersGroupRef.current = L.layerGroup().addTo(map);
       mapInstance.current = map;
+      
+      // Forcer un premier rendu des marqueurs une fois la carte prête
+      renderMarkers(L);
     });
   }, [isLoading]);
 
-  // Filtrage et affichage des marqueurs
-  useEffect(() => {
-    if (!mapInstance.current) return;
+  // 3. Fonction pour dessiner les marqueurs
+  const renderMarkers = (L: any) => {
+    if (!mapInstance.current || !markersGroupRef.current) return;
 
-    import('leaflet').then((L) => {
-      markersRef.current.clearLayers();
+    markersGroupRef.current.clearLayers();
+
+    const filtered = stations.filter(s => 
+      s.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    filtered.forEach(s => {
+      const hasBikes = s.bikes_available > 0;
+      const color = hasBikes ? '#10b981' : '#ef4444'; // Vert si dispo, Rouge sinon
       
-      stations
-        .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
-        .forEach(s => {
-          const color = s.bikes_available > 0 ? '#10b981' : '#ef4444'; // Vert si vélos dispos, rouge sinon
-          
-          const icon = L.divIcon({
-            className: 'custom-bike-icon',
-            html: `<div style="background-color: ${color}; border: 2px solid white; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
-            iconSize: [12, 12]
-          });
+      const icon = L.divIcon({
+        className: 'custom-div-icon',
+        html: `<div style="background-color: ${color}; width: 14px; height: 14px; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 5px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [14, 14],
+        iconAnchor: [7, 7]
+      });
 
-          L.marker([s.lat, s.lon], { icon })
-            .bindPopup(`
-              <div class="font-sans p-1">
-                <b class="text-blue-600">${s.name}</b><br/>
-                <div class="mt-2 flex gap-4">
-                  <span>🚲 <b>${s.bikes_available}</b> vélos</span>
-                  <span>⚓ <b>${s.docks_available}</b> places</span>
-                </div>
-              </div>
-            `)
-            .addTo(markersRef.current);
-        });
+      L.marker([s.lat, s.lon], { icon })
+        .bindPopup(`
+          <div style="font-family: sans-serif;">
+            <strong style="color: #2563eb;">${s.name}</strong><br/>
+            <div style="margin-top: 8px; display: flex; gap: 10px;">
+              <span>🚲 <b>${s.bikes_available}</b></span>
+              <span>⚓ <b>${s.docks_available}</b></span>
+            </div>
+          </div>
+        `)
+        .addTo(markersGroupRef.current);
     });
+  };
+
+  // 4. Mettre à jour les marqueurs quand la recherche ou les données changent
+  useEffect(() => {
+    if (mapInstance.current) {
+      import('leaflet').then((L) => renderMarkers(L));
+    }
   }, [searchQuery, stations]);
 
   return (
     <div className="flex h-screen bg-white font-sans overflow-hidden">
-    
-      <aside className="w-80 border-r bg-slate-50 flex flex-col z-20 shadow-lg mt-10">
+      {/* Pas de GoogleTranslate ici, il est dans le Layout */}
+
+      <aside className="w-80 border-r bg-slate-50 flex flex-col z-20 shadow-lg relative pt-12">
         <div className="p-6 bg-white border-b">
           <nav className="mb-6">
             <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-bold transition-all text-sm group">
@@ -87,34 +112,41 @@ export default function VeloToulousePage() {
           <div className="relative">
             <Search className="absolute left-3 top-3 text-slate-400" size={16} />
             <input 
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
-              placeholder="Nom de la station..."
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm text-slate-700"
+              placeholder="Chercher une station..."
+              value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <p className="text-[11px] text-slate-500 italic mt-3">
-            Sélectionne une station pour voir les vélos disponibles.
-          </p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-3">
           {isLoading ? (
-            <div className="flex justify-center p-10"><Loader2 className="animate-spin text-emerald-600" /></div>
+            <div className="flex flex-col items-center p-10 text-slate-400">
+              <Loader2 className="animate-spin mb-2" />
+              <p className="text-xs font-medium">Chargement des stations...</p>
+            </div>
           ) : (
             stations
               .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
               .map(s => (
                 <button 
                   key={s.id}
-                  onClick={() => mapInstance.current.flyTo([s.lat, s.lon], 17)}
+                  onClick={() => {
+                    mapInstance.current.flyTo([s.lat, s.lon], 16);
+                    // On cherche le marqueur pour ouvrir son popup automatiquement
+                    markersGroupRef.current.eachLayer((layer: any) => {
+                      if (layer.getLatLng().lat === s.lat) layer.openPopup();
+                    });
+                  }}
                   className="w-full text-left p-3 mb-2 bg-white rounded-xl border border-slate-100 hover:border-emerald-300 transition-all shadow-sm group"
                 >
                   <div className="text-sm font-bold text-slate-700 truncate">{s.name}</div>
-                  <div className="flex justify-between mt-2">
-                    <span className={`text-xs font-bold ${s.bikes_available > 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                      {s.bikes_available} vélos dispos
+                  <div className="flex justify-between mt-2 items-center">
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${s.bikes_available > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'}`}>
+                      {s.bikes_available} vélos
                     </span>
-                    <Navigation size={12} className="text-slate-300 group-hover:text-emerald-500" />
+                    <Navigation size={14} className="text-slate-300 group-hover:text-emerald-500 transition-colors" />
                   </div>
                 </button>
               ))
