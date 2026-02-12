@@ -121,7 +121,7 @@ export default function TisseoTadPage() {
     <div className="max-w-7xl mx-auto p-4 flex flex-col gap-4 bg-slate-50 min-h-screen">
       <nav>
         <Link href="/" className="text-slate-600 font-bold flex items-center gap-2 hover:text-orange-600 transition-colors">
-          <ArrowLeft size={18} /> Retour
+          <ArrowLeft size={18} /> Retour à l'Acceuil
         </Link>
       </nav>
 
