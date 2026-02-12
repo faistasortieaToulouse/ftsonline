@@ -43,7 +43,7 @@ export default function TisseoArretPhysiquePage() {
 
         const cleanedData: PhysicalStop[] = dataArray.map((item: any) => ({
           id: item.id_hastus || Math.random().toString(),
-          name: item.nom_arret || "Nom inconnu",
+          name: item.nom_tia || "Nom inconnu",
           address: item.adresse || "Adresse non renseignée",
           city: item.commune || "",
           lines: item.conc_ligne ? item.conc_ligne.split(' ') : [],
