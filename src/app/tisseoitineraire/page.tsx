@@ -3,21 +3,9 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 
-// --- CORRECTIF INDISPENSABLE POUR LES ICÔNES LEAFLET ---
-// Cela évite l'erreur "Application error" et fait apparaître les marqueurs
-import L from 'leaflet';
+// On ne fait PAS d'import L from 'leaflet' ici, sinon le build plante.
 
-const iconFix = () => {
-  // @ts-ignore
-  delete L.Icon.Default.prototype._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  });
-};
-// --------------------------------------------------------
-
+// Import dynamique des composants react-leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(m => m.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(m => m.Marker), { ssr: false });
@@ -32,6 +20,7 @@ interface TisseoItineraire {
   geo_point_2d: { lon: number; lat: number };
 }
 
+// Composant interne pour recentrer la carte
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
   useEffect(() => {
@@ -48,12 +37,25 @@ export default function TisseoPage() {
   const [activeCoords, setActiveCoords] = useState<[number, number] | null>(null);
 
   useEffect(() => {
-    // Appliquer le fix d'icônes une seule fois au chargement
-    iconFix();
+    // FIX DES ICÔNES : Importation de Leaflet uniquement côté client
+    const initLeafletFix = async () => {
+      const L = (await import('leaflet')).default;
+      // @ts-ignore
+      delete L.Icon.Default.prototype._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      });
+    };
 
+    initLeafletFix();
+
+    // Fetch des données
     fetch('/api/tisseoitineraire')
       .then((res) => res.json())
       .then((data) => {
+        // Tri croissant (ex: ligne 1, 2, 10...)
         const sorted = data.sort((a: TisseoItineraire, b: TisseoItineraire) => 
           a.ligne.localeCompare(b.ligne, undefined, { numeric: true })
         );
@@ -71,21 +73,24 @@ export default function TisseoPage() {
         Réseau Tisséo - Itinéraires
       </h1>
 
-      <div className="h-96 w-full rounded-xl mb-8 shadow-md border-2 border-orange-200 overflow-hidden relative" style={{ zIndex: 10 }}>
-        <MapContainer center={[43.6047, 1.4442]} zoom={12} style={{ height: '100%', width: '100%' }}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {activeCoords && (
-            <>
-              <Marker position={activeCoords} />
-              <ChangeView center={activeCoords} />
-            </>
-          )}
-        </MapContainer>
+      <div className="h-96 w-full rounded-xl mb-8 shadow-md border-2 border-orange-200 overflow-hidden relative" style={{ zIndex: 1 }}>
+        {/* Sécurité supplémentaire : On ne rend la carte que si window est défini */}
+        {typeof window !== 'undefined' && (
+          <MapContainer center={[43.6047, 1.4442]} zoom={12} style={{ height: '100%', width: '100%' }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {activeCoords && (
+              <>
+                <Marker position={activeCoords} />
+                <ChangeView center={activeCoords} />
+              </>
+            )}
+          </MapContainer>
+        )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {itineraires.map((item, index) => (
-          <div key={index} className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+          <div key={index} className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-2">
               <span className="bg-orange-500 text-white font-bold px-3 py-1 rounded text-lg">
                 {item.ligne}
