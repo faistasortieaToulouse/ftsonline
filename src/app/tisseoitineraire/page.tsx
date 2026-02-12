@@ -90,6 +90,11 @@ export default function TisseoPage() {
         )}
       </div>
 
+      {/* 2. LE CODE À RAJOUTER EST ICI */}
+      <p className="text-center text-sm text-gray-500 mb-8 italic">
+        Clique sur <span className="font-bold text-orange-600">"Voir sur la Carte"</span> pour voir le terminus de la ligne et clique sur le marqueur de la carte qui s'affiche pour voir l'itinéraire, <span className="font-semibold">"point de départ - terminus"</span>.
+      </p>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {itineraires.map((item, index) => {
           // Astuce : On sépare le nom de l'itinéraire pour afficher Départ et Arrivée
