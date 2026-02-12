@@ -45,7 +45,7 @@ export default function TisseoArretPhysiquePage() {
   useEffect(() => {
     async function fetchStops() {
       try {
-        const response = await fetch('/api/tisseoarretphysique');
+        const response = await fetch('/api/tisseotia');
         const rawData = await response.json();
         const dataArray = Array.isArray(rawData) ? rawData : [];
 
