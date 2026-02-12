@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { Search, Bus, ChevronRight, Ruler, Loader2, Info } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Search, Bus, ChevronRight, Ruler, Loader2, Info } from "lucide-react";
 
 // Fonction Haversine pour calculer la distance réelle entre points GPS
 const calculatePathDistance = (coords: [number, number][]) => {
@@ -115,6 +116,14 @@ export default function TisseoMapPage() {
 
   return (
     <div className="flex h-screen bg-white font-sans">
+      
+        <nav className="mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-bold transition-all group">
+            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+            Retour à l'accueil
+          </Link>
+        </nav>
+      
       {/* Sidebar */}
       <aside className="w-80 border-r bg-slate-50 flex flex-col z-20 shadow-lg">
         <div className="p-6 bg-white border-b">
