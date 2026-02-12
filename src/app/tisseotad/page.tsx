@@ -1,11 +1,15 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from "next/link";
-import { ArrowLeft, MapPin, Bus, Navigation, Info } from "lucide-react";
+import { ArrowLeft, Bus, MapPin, Navigation } from "lucide-react";
+
+const TadMap = dynamic(() => import('./TadMap'), { ssr: false });
 
 export default function TisseoTadPage() {
   const [zones, setZones] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [map, setMap] = useState<any>(null); // Stocke l'instance de la carte
 
   useEffect(() => {
     fetch('/api/tisseotad')
@@ -14,87 +18,62 @@ export default function TisseoTadPage() {
         setZones(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-20 text-center font-black animate-pulse text-orange-600">CHARGEMENT DES ZONES TAD...</div>;
+  // Fonction pour centrer la carte sur une zone spécifique
+  const flyToZone = (zone: any) => {
+    if (!map) return;
+    const { lat, lon } = zone.geo_point_2d;
+    map.flyTo([lat, lon], 13, { duration: 2 }); // Zoom niveau 13 avec animation
+  };
+
+  if (loading) return <div className="p-20 text-center font-black animate-pulse text-orange-600">CHARGEMENT...</div>;
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        
-        <Link href="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-orange-600 font-bold mb-8 transition-colors">
-          <ArrowLeft size={20} /> Retour à l'Accueil
+    <main className="min-h-screen bg-slate-50 flex flex-col h-screen overflow-hidden">
+      {/* HEADER */}
+      <header className="bg-white border-b p-4 flex justify-between items-center shrink-0">
+        <Link href="/" className="flex items-center gap-2 font-black text-slate-800 uppercase text-sm">
+          <ArrowLeft size={18} /> Retour
         </Link>
+        <div className="flex items-center gap-2 bg-orange-600 text-white px-4 py-1 rounded-full text-xs font-black">
+          <Bus size={14} /> TISSÉO TAD
+        </div>
+      </header>
 
-        <header className="mb-12">
-          <div className="flex items-center gap-4 mb-2">
-            <Bus className="text-orange-600" size={40} />
-            <h1 className="text-5xl font-black text-slate-900 tracking-tighter uppercase">
-              Tisséo TAD<span className="text-orange-600">.</span>
-            </h1>
-          </div>
-          <p className="text-slate-500 font-medium">Transport à la demande - Zones de couverture et arrêts de départ</p>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {zones.map((zone, index) => (
-            <div key={index} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl transition-shadow group">
-              {/* Header de la carte avec la couleur dynamique */}
-              <div 
-                className="h-3 w-full" 
-                style={{ backgroundColor: `rgb(${zone.r}, ${zone.v}, ${zone.b})` }}
-              />
-              
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Zone ID</span>
-                    <h2 className="text-3xl font-black text-slate-800">#{zone.id_tad}</h2>
-                  </div>
-                  <div 
-                    className="p-2 rounded-lg"
-                    style={{ backgroundColor: `rgba(${zone.r}, ${zone.v}, ${zone.b}, 0.1)`, color: `rgb(${zone.r}, ${zone.v}, ${zone.b})` }}
-                  >
-                    <Navigation size={24} />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center gap-2 text-orange-600 mb-1">
-                      <MapPin size={16} />
-                      <span className="text-xs font-bold uppercase italic">Point de départ principal</span>
-                    </div>
-                    <p className="font-bold text-slate-700">{zone.arret_dep}</p>
-                  </div>
-
-                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                    <div className="flex items-center gap-2 text-slate-400 mb-2">
-                      <Info size={14} />
-                      <span className="text-[10px] font-black uppercase">Communes desservies</span>
-                    </div>
-                    <p className="text-xs leading-relaxed text-slate-600 font-medium">
-                      {zone.commune.split(' / ').join(', ')}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-slate-100 flex justify-between items-center">
-                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Couleur : {zone.couleur}</span>
-                   <button className="text-xs font-black uppercase text-orange-600 group-hover:underline">Voir périmètre</button>
-                </div>
+      <div className="flex-1 flex overflow-hidden">
+        {/* LISTE DE GAUCHE */}
+        <aside className="w-1/3 border-r bg-white overflow-y-auto p-6 space-y-6 shadow-inner">
+          {zones.map((zone, i) => (
+            <div key={i} className="border-2 border-slate-100 rounded-2xl p-5 hover:border-orange-500 transition-all bg-white shadow-sm group">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-[10px] font-black text-slate-400">ZONE #{zone.id_tad}</span>
+                <div className="w-4 h-4 rounded-full shadow-sm" style={{backgroundColor: `rgb(${zone.r},${zone.v},${zone.b})`}} />
               </div>
+              
+              <h3 className="text-2xl font-black text-slate-900 leading-none mb-1">{zone.arret_dep}</h3>
+              <p className="text-xs font-bold text-orange-600 uppercase tracking-widest mb-4 italic">Point de départ</p>
+
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Communes desservies</p>
+                <p className="text-[11px] leading-tight text-slate-600 font-medium">{zone.commune}</p>
+              </div>
+
+              <button 
+                onClick={() => flyToZone(zone)}
+                className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white py-3 rounded-xl font-black text-xs uppercase hover:bg-orange-600 transition-colors"
+              >
+                <Navigation size={14} /> Voir le périmètre
+              </button>
             </div>
           ))}
-        </div>
+        </aside>
 
-        <footer className="mt-20 py-10 text-center border-t border-slate-200">
-          <p className="text-slate-400 text-xs font-black uppercase tracking-[0.5em]">Open Data Tisséo - 2026</p>
-        </footer>
+        {/* CARTE À DROITE */}
+        <section className="flex-1 relative bg-slate-200">
+          <TadMap zones={zones} setMapInstance={setMap} />
+        </section>
       </div>
     </main>
   );
