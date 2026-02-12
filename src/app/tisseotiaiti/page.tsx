@@ -3,14 +3,14 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import 'leaflet/dist/leaflet.css';
 import Link from "next/link";
-import { ArrowLeft, Search, Bus, ChevronRight, Ruler, Loader2, Info } from "lucide-react";
+import { ArrowLeft, Search, Bus, ChevronRight, Ruler, Loader2 } from "lucide-react";
+// Importe ton composant de traduction ici
+import GoogleTranslate from "@/components/GoogleTranslate"; 
 
-// Fonction Haversine pour calculer la distance réelle entre points GPS
 const calculatePathDistance = (coords: [number, number][]) => {
   let total = 0;
-  const R = 6371; // Rayon de la terre en km
+  const R = 6371; 
   const toRad = (v: number) => (v * Math.PI) / 180;
-
   for (let i = 0; i < coords.length - 1; i++) {
     const [lon1, lat1] = coords[i];
     const [lon2, lat2] = coords[i + 1];
@@ -34,7 +34,6 @@ export default function TisseoMapPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [distance, setDistance] = useState<string>("0");
 
-  // Chargement initial des données
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,19 +43,13 @@ export default function TisseoMapPage() {
         ]);
         setAllIti(await resIti.json());
         setAllStops(await resStops.json());
-      } catch (e) {
-        console.error("Erreur de chargement", e);
-      } finally {
-        setIsLoading(false);
-      }
+      } catch (e) { console.error(e); } finally { setIsLoading(false); }
     };
     fetchData();
   }, []);
 
-  // Initialisation de Leaflet
   useEffect(() => {
     if (isLoading || !mapRef.current || mapInstance.current) return;
-
     import('leaflet').then((L) => {
       const map = L.map(mapRef.current!).setView([43.6047, 1.4442], 12);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
@@ -66,7 +59,6 @@ export default function TisseoMapPage() {
     });
   }, [isLoading]);
 
-  // Extraction des lignes uniques pour la sidebar
   const uniqueLignes = useMemo(() => {
     const map = new Map();
     allIti.forEach(item => {
@@ -77,50 +69,49 @@ export default function TisseoMapPage() {
     return Array.from(map.values()).sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
   }, [allIti]);
 
-  // Mise à jour de la carte (Tracé + Arrêts + Zoom)
   useEffect(() => {
     if (!mapInstance.current || !selectedLigne) return;
-
     import('leaflet').then((L) => {
       const { traces, arrets } = layersRef.current;
       traces.clearLayers();
       arrets.clearLayers();
-
       const lineSegments = allIti.filter(d => d.ligne === selectedLigne);
       const lineStops = allStops.filter(s => s.ligne === selectedLigne);
       const bounds = L.latLngBounds([]);
       let totalDistance = 0;
 
-      // Dessiner les segments
       lineSegments.forEach(seg => {
         const rawCoords = seg.geo_shape.geometry.coordinates;
         totalDistance += calculatePathDistance(rawCoords);
         const leafCoords = rawCoords.map((c: any) => [c[1], c[0]] as [number, number]);
-        
         L.polyline(leafCoords, { color: `rgb(${seg.r}, ${seg.v}, ${seg.b})`, weight: 6, opacity: 0.8 }).addTo(traces);
         leafCoords.forEach(c => bounds.extend(c));
       });
-
       setDistance(totalDistance.toFixed(2));
 
-      // Dessiner les arrêts
       lineStops.forEach(stop => {
         L.circleMarker([stop.lat, stop.lon], {
           radius: 5, fillColor: 'white', color: '#1d4ed8', weight: 2, fillOpacity: 1
         }).bindPopup(`<b>${stop.nom_arret}</b>`).addTo(arrets);
       });
-
       if (bounds.isValid()) mapInstance.current.flyToBounds(bounds, { padding: [50, 50] });
     });
   }, [selectedLigne, allIti, allStops]);
 
   return (
-    <div className="flex h-screen bg-white font-sans">
+    <div className="flex h-screen bg-white font-sans overflow-hidden">
       
+      {/* 1. Google Translate Fix - Positionné en haut avec un z-index maximal */}
+      <div className="absolute top-0 left-0 w-full z-[2000] pointer-events-none">
+        <div className="pointer-events-auto">
+          <GoogleTranslate />
+        </div>
+      </div>
+
       {/* Sidebar */}
-      <aside className="w-80 border-r bg-slate-50 flex flex-col z-20 shadow-lg">
+      <aside className="w-80 border-r bg-slate-50 flex flex-col z-20 shadow-lg relative mt-10"> 
+        {/* Le mt-10 permet de laisser de la place à la barre de traduction si elle est fixe */}
         <div className="p-6 bg-white border-b">
-          {/* Navigation Retour */}
           <nav className="mb-6">
             <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-bold transition-all group text-sm">
               <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -163,7 +154,7 @@ export default function TisseoMapPage() {
                   selectedLigne === l.id ? 'bg-blue-600 text-white shadow-md' : 'hover:bg-white text-slate-600'
                 }`}
               >
-                <span className="w-10 h-6 rounded flex items-center justify-center text-[10px] font-black shadow-sm" style={{ backgroundColor: l.color, color: 'white' }}>{l.id}</span>
+                <span className="w-10 h-6 rounded flex items-center justify-center text-[10px] font-black" style={{ backgroundColor: l.color, color: 'white' }}>{l.id}</span>
                 <span className="text-sm font-semibold">Ligne {l.id}</span>
                 <ChevronRight size={14} className="ml-auto opacity-30" />
               </button>
@@ -174,10 +165,10 @@ export default function TisseoMapPage() {
 
       {/* Carte */}
       <main className="flex-1 relative">
-        <div ref={mapRef} className="h-full w-full" />
+        <div ref={mapRef} className="h-full w-full z-10" />
         
         {selectedLigne && (
-          <div className="absolute top-6 right-6 z-[1000] flex flex-col gap-3">
+          <div className="absolute top-16 right-6 z-[1000] flex flex-col gap-3"> {/* top-16 pour éviter la barre Google */}
             <div className="bg-white/90 backdrop-blur p-4 rounded-2xl shadow-xl border border-white flex items-center gap-4">
               <div className="bg-blue-600 p-2 rounded-lg text-white"><Ruler size={20} /></div>
               <div>
