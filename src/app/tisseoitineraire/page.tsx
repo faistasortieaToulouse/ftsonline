@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 // Import dynamique des composants react-leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false });
@@ -67,6 +69,14 @@ export default function TisseoPage() {
 
   return (
     <main className="p-8 bg-gray-50 min-h-screen text-black">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       <h1 className="text-3xl font-bold mb-6 border-b pb-2 italic text-orange-600">
         Réseau Tisséo - Itinéraires
       </h1>
