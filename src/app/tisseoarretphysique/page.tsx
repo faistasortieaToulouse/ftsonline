@@ -2,16 +2,17 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Bus, Map as MapIcon, ChevronDown, ListFilter, Hash, MapPin } from "lucide-react";
+import { ArrowLeft, Bus, Map as MapIcon, ChevronDown, ListFilter, Hash, MapPin, Loader2 } from "lucide-react";
 
 interface PhysicalStop {
-  id_hastus: string;
-  nom_arret: string;
-  adresse: string;
-  commune: string;
-  conc_ligne: string;
-  conc_mode: string;
-  geo_point_2d: { lon: number; lat: number };
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  lines: string;
+  mode: string;
+  lat: number;
+  lng: number;
 }
 
 const TOULOUSE_CENTER: [number, number] = [43.6047, 1.4442];
@@ -20,7 +21,6 @@ export default function TisseoArretPhysiquePage() {
   const [stops, setStops] = useState<PhysicalStop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // États des Filtres
   const [nameRange, setNameRange] = useState("all");
   const [lineRange, setLineRange] = useState("all");
   const [mapBounds, setMapBounds] = useState<any>(null);
@@ -30,15 +30,31 @@ export default function TisseoArretPhysiquePage() {
   const markersLayer = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Chargement des données Physiques
+  // 1. Récupération et "Nettoyage" des données
   useEffect(() => {
     async function fetchStops() {
       try {
         const response = await fetch('/api/tisseoarretphysique');
-        const data = await response.json();
-        setStops(data);
+        const rawData = await response.json();
+        
+        // Sécurité : On s'assure que rawData est un tableau
+        const dataArray = Array.isArray(rawData) ? rawData : [];
+
+        // Mapping rigoureux pour correspondre à ton JSON
+        const cleanedData: PhysicalStop[] = dataArray.map((item: any) => ({
+          id: item.id_hastus || Math.random().toString(),
+          name: item.nom_arret || "Nom inconnu",
+          address: item.adresse || "Adresse non renseignée",
+          city: item.commune || "",
+          lines: item.conc_ligne || "",
+          mode: item.conc_mode || "",
+          lat: item.geo_point_2d?.lat || 0,
+          lng: item.geo_point_2d?.lon || 0
+        })).filter(s => s.lat !== 0); // On retire les points sans coordonnées
+
+        setStops(cleanedData);
       } catch (error) {
-        console.error("Erreur:", error);
+        console.error("Erreur de fetch:", error);
       } finally {
         setIsLoading(false);
       }
@@ -46,34 +62,28 @@ export default function TisseoArretPhysiquePage() {
     fetchStops();
   }, []);
 
-  // 2. Filtrage par Zone Carte
+  // 2. Filtrage Géographique (Bounding Box)
   const stopsInZone = useMemo(() => {
-    return stops.filter(s => {
-      if (!mapBounds) return true;
-      const { lat, lon } = s.geo_point_2d;
-      return lat <= mapBounds._northEast.lat && 
-             lat >= mapBounds._southWest.lat &&
-             lon <= mapBounds._northEast.lon &&
-             lon >= mapBounds._southWest.lon;
-    });
+    if (!mapBounds) return stops;
+    return stops.filter(s => 
+      s.lat <= mapBounds._northEast.lat && 
+      s.lat >= mapBounds._southWest.lat &&
+      s.lng <= mapBounds._northEast.lng &&
+      s.lng >= mapBounds._southWest.lng
+    );
   }, [stops, mapBounds]);
 
-  // 3. Filtrage par Tranches (Nom et Ligne)
+  // 3. Filtrage par Tranches
   const finalStops = useMemo(() => {
     return stopsInZone.filter(s => {
-      // Tranche Nom
-      const firstLetter = s.nom_arret?.[0]?.toUpperCase() || "";
+      const firstLetter = s.name?.[0]?.toUpperCase() || "";
       const matchesName = nameRange === "all" || nameRange.includes(firstLetter);
-
-      // Tranche Ligne
-      const lines = s.conc_ligne.split(' ');
-      const matchesLine = lineRange === "all" || lines.some(l => l.startsWith(lineRange));
-
+      const matchesLine = lineRange === "all" || s.lines.split(' ').some(l => l.startsWith(lineRange));
       return matchesName && matchesLine;
-    }).sort((a, b) => a.nom_arret.localeCompare(b.nom_arret));
+    }).sort((a, b) => a.name.localeCompare(b.name));
   }, [stopsInZone, nameRange, lineRange]);
 
-  // 4. Init Carte
+  // 4. Leaflet Init
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoading) return;
     const initMap = async () => {
@@ -81,15 +91,16 @@ export default function TisseoArretPhysiquePage() {
       await import('leaflet/dist/leaflet.css');
       if (mapInstance.current) return;
 
-      mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 13);
+      mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 14);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap'
+        attribution: '&copy; OSM'
       }).addTo(mapInstance.current);
 
       markersLayer.current = L.layerGroup().addTo(mapInstance.current);
+      
       const update = () => setMapBounds(mapInstance.current.getBounds());
       mapInstance.current.on('moveend', update);
-      update();
+      update(); // Capture initiale
       setIsMapReady(true);
     };
     initMap();
@@ -101,20 +112,23 @@ export default function TisseoArretPhysiquePage() {
     const updateMarkers = async () => {
       const L = (await import('leaflet')).default;
       markersLayer.current.clearLayers();
-      finalStops.slice(0, 200).forEach((stop) => {
-        L.circleMarker([stop.geo_point_2d.lat, stop.geo_point_2d.lon], {
-          radius: 6, fillColor: "#0ea5e9", color: "white", weight: 2, fillOpacity: 0.9
-        }).bindPopup(`
-          <div class="font-sans">
-            <strong class="text-blue-600">${stop.nom_arret}</strong><br/>
-            <span class="text-xs text-gray-500">${stop.adresse}</span><br/>
-            <div class="mt-1 font-bold text-gray-700">Lignes: ${stop.conc_ligne}</div>
-          </div>
-        `).addTo(markersLayer.current);
+      finalStops.slice(0, 150).forEach((stop) => {
+        L.circleMarker([stop.lat, stop.lng], {
+          radius: 5, fillColor: "#3b82f6", color: "white", weight: 1, fillOpacity: 0.8
+        }).bindPopup(`<strong>${stop.name}</strong><br/>${stop.lines}`).addTo(markersLayer.current);
       });
     };
     updateMarkers();
   }, [isMapReady, finalStops]);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex flex-col items-center justify-center gap-4 bg-slate-50">
+        <Loader2 className="animate-spin text-blue-500" size={48} />
+        <p className="text-slate-500 font-bold">Chargement des arrêts physiques...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-4 flex flex-col gap-4 bg-slate-50 min-h-screen">
@@ -127,106 +141,91 @@ export default function TisseoArretPhysiquePage() {
       <header className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-800 flex items-center gap-2">
-            <MapPin className="text-blue-500" /> Arrêts Physiques Tisséo
+            <MapPin className="text-blue-500" /> Arrêts Physiques
           </h1>
-          <p className="text-slate-500 text-sm italic">Données d'exploitation temps réel par emplacement</p>
+          <p className="text-slate-500 text-sm">Exploration géographique par tranches</p>
         </div>
-        <div className="px-4 py-2 bg-blue-500 text-white rounded-xl font-bold text-sm shadow-blue-100 shadow-lg">
-          {finalStops.length} arrêts filtrés
+        <div className="px-6 py-2 bg-blue-600 text-white rounded-full font-black text-sm shadow-xl shadow-blue-100 transition-all">
+          {finalStops.length} arrêts
         </div>
       </header>
 
-      {/* Carte */}
-      <div className="h-[400px] rounded-3xl overflow-hidden border-4 border-white shadow-xl relative z-0">
+      <div className="h-[400px] rounded-3xl overflow-hidden border shadow-xl relative z-0">
         <div ref={mapRef} className="h-full w-full" />
       </div>
 
-      {/* Les Tranches de sélection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Sélecteurs de tranches */}
         <div className="bg-white p-4 rounded-2xl border shadow-sm">
-          <label className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase mb-3 tracking-widest">
+          <label className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase mb-2">
             <ListFilter size={14} /> Tranche de Nom
           </label>
-          <div className="relative">
-            <select 
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl appearance-none outline-none focus:ring-2 focus:ring-blue-500 font-medium"
-              value={nameRange} onChange={(e) => setNameRange(e.target.value)}
-            >
-              <option value="all">Tous les noms de la zone</option>
-              <option value="ABCDE">De A à E</option>
-              <option value="FGHIJ">De F à J</option>
-              <option value="KLMNO">De K à O</option>
-              <option value="PQRST">De P à T</option>
-              <option value="UVWXYZ">De U à Z</option>
-            </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          </div>
+          <select 
+            className="w-full p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+            value={nameRange} onChange={(e) => setNameRange(e.target.value)}
+          >
+            <option value="all">Tous les noms</option>
+            <option value="ABCDE">A - E</option>
+            <option value="FGHIJ">F - J</option>
+            <option value="KLMNO">K - O</option>
+            <option value="PQRST">P - T</option>
+            <option value="UVWXYZ">U - Z</option>
+          </select>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border shadow-sm">
-          <label className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase mb-3 tracking-widest">
+          <label className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase mb-2">
             <Hash size={14} /> Tranche de Ligne
           </label>
-          <div className="relative">
-            <select 
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl appearance-none outline-none focus:ring-2 focus:ring-blue-500 font-medium"
-              value={lineRange} onChange={(e) => setLineRange(e.target.value)}
-            >
-              <option value="all">Toutes les lignes de la zone</option>
-              <option value="L">Lignes Linéo (L)</option>
-              <option value="1">Série 10 (14, 15...)</option>
-              <option value="2">Série 20 (21, 27...)</option>
-              <option value="3">Série 30 (33, 34...)</option>
-              <option value="4">Série 40 (44, 45...)</option>
-              <option value="5">Série 50 (54, 55...)</option>
-              <option value="6">Série 60 (63, 66...)</option>
-              <option value="7">Série 70 (70, 76...)</option>
-              <option value="8">Série 80 (80, 83...)</option>
-            </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-          </div>
+          <select 
+            className="w-full p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+            value={lineRange} onChange={(e) => setLineRange(e.target.value)}
+          >
+            <option value="all">Toutes les lignes</option>
+            <option value="L">Lignes Linéo (L)</option>
+            <option value="1">Lignes 10, 14, 15...</option>
+            <option value="2">Lignes 20, 21...</option>
+            <option value="3">Lignes 30, 31...</option>
+            <option value="4">Lignes 40...</option>
+            <option value="5">Lignes 50...</option>
+            <option value="6">Lignes 60...</option>
+            <option value="7">Lignes 70...</option>
+            <option value="8">Lignes 80...</option>
+          </select>
         </div>
       </div>
 
-      {/* Tableau des arrêts physiques */}
       <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden mb-10">
-        <div className="overflow-x-auto max-h-[600px]">
+        <div className="max-h-[500px] overflow-y-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 border-b border-slate-100 sticky top-0 z-10">
+            <thead className="bg-slate-50 border-b sticky top-0 z-10 font-bold text-slate-500">
               <tr>
-                <th className="p-4 text-slate-500 font-bold">Arrêt & Adresse</th>
-                <th className="p-4 text-slate-500 font-bold">Lignes (Physique)</th>
-                <th className="p-4 text-slate-500 font-bold">Commune</th>
+                <th className="p-4">Arrêt</th>
+                <th className="p-4">Lignes</th>
+                <th className="p-4">Commune</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-100">
               {finalStops.map((stop) => (
-                <tr key={stop.id_hastus} className="hover:bg-blue-50/40 transition-colors group">
+                <tr key={stop.id} className="hover:bg-blue-50/50 transition-colors">
                   <td className="p-4">
-                    <div className="font-bold text-slate-700">{stop.nom_arret}</div>
-                    <div className="text-[11px] text-slate-400 uppercase tracking-tighter">{stop.adresse}</div>
+                    <div className="font-bold text-slate-700">{stop.name}</div>
+                    <div className="text-[10px] text-slate-400 uppercase">{stop.address}</div>
                   </td>
                   <td className="p-4">
                     <div className="flex flex-wrap gap-1">
-                      {stop.conc_ligne.split(' ').map((l, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-white border border-slate-200 text-[10px] font-black rounded text-blue-600 group-hover:border-blue-200">
+                      {stop.lines.split(' ').map((l, i) => (
+                        <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black rounded border border-blue-100">
                           {l}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="p-4 text-xs font-medium text-slate-500">
-                    {stop.commune}
-                  </td>
+                  <td className="p-4 text-xs text-slate-400">{stop.city}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {finalStops.length === 0 && (
-            <div className="p-20 text-center text-slate-400 font-medium italic">
-              Aucun arrêt physique trouvé avec ces critères dans cette zone.
-            </div>
-          )}
         </div>
       </div>
     </div>
