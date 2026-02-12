@@ -117,33 +117,43 @@ export default function TisseoMapPage() {
   return (
     <div className="flex h-screen bg-white font-sans">
       
-        <nav className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-bold transition-all group">
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-            Retour à l'accueil
-          </Link>
-        </nav>
-      
       {/* Sidebar */}
       <aside className="w-80 border-r bg-slate-50 flex flex-col z-20 shadow-lg">
         <div className="p-6 bg-white border-b">
+          {/* Navigation Retour */}
+          <nav className="mb-6">
+            <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 font-bold transition-all group text-sm">
+              <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+              Retour à l'accueil
+            </Link>
+          </nav>
+
           <div className="flex items-center gap-2 mb-4">
             <Bus className="text-blue-600" size={24} />
             <h1 className="text-xl font-bold text-slate-800 tracking-tight">Tisséo Itinéraires</h1>
           </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-3 text-slate-400" size={16} />
-            <input 
-              className="w-full pl-10 pr-4 py-2 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              placeholder="Chercher une ligne..."
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 text-slate-400" size={16} />
+              <input 
+                className="w-full pl-10 pr-4 py-2 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                placeholder="Chercher une ligne..."
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <p className="text-[11px] text-slate-500 italic leading-tight px-1">
+              Sélectionne une ligne afin d'afficher l'itinéraire sur la carte.
+            </p>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-1">
           {isLoading ? (
-            <div className="flex flex-col items-center p-10 text-slate-400"><Loader2 className="animate-spin mb-2" /></div>
+            <div className="flex flex-col items-center p-10 text-slate-400">
+              <Loader2 className="animate-spin mb-2" />
+              <p className="text-xs">Chargement...</p>
+            </div>
           ) : (
             uniqueLignes.filter(l => l.id.includes(searchQuery.toUpperCase())).map(l => (
               <button
@@ -153,7 +163,7 @@ export default function TisseoMapPage() {
                   selectedLigne === l.id ? 'bg-blue-600 text-white shadow-md' : 'hover:bg-white text-slate-600'
                 }`}
               >
-                <span className="w-10 h-6 rounded flex items-center justify-center text-[10px] font-black" style={{ backgroundColor: l.color, color: 'white' }}>{l.id}</span>
+                <span className="w-10 h-6 rounded flex items-center justify-center text-[10px] font-black shadow-sm" style={{ backgroundColor: l.color, color: 'white' }}>{l.id}</span>
                 <span className="text-sm font-semibold">Ligne {l.id}</span>
                 <ChevronRight size={14} className="ml-auto opacity-30" />
               </button>
@@ -174,6 +184,14 @@ export default function TisseoMapPage() {
                 <p className="text-[10px] uppercase font-bold text-slate-500">Distance totale</p>
                 <p className="text-lg font-black text-slate-800">{distance} km</p>
               </div>
+            </div>
+          </div>
+        )}
+
+        {!selectedLigne && !isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center z-[500] pointer-events-none">
+            <div className="bg-slate-900/60 text-white px-6 py-3 rounded-full backdrop-blur-sm text-sm font-medium">
+              Utilisez la liste à gauche pour commencer
             </div>
           </div>
         )}
