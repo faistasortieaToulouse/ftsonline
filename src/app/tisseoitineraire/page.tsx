@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 
-// On ne fait PAS d'import L from 'leaflet' ici, sinon le build plante.
-
 // Import dynamique des composants react-leaflet
 const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(m => m.TileLayer), { ssr: false });
@@ -20,14 +18,17 @@ interface TisseoItineraire {
   geo_point_2d: { lon: number; lat: number };
 }
 
-// Composant interne pour recentrer la carte
+// Composant interne sécurisé pour recentrer la carte
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
+
   useEffect(() => {
-    if (center) {
-      map.setView(center, 15);
+    // SÉCURITÉ : On vérifie que map est défini ET que setView est une fonction
+    if (map && typeof map.setView === 'function' && center) {
+      map.setView(center, 15, { animate: true });
     }
   }, [center, map]);
+
   return null;
 }
 
@@ -37,25 +38,27 @@ export default function TisseoPage() {
   const [activeCoords, setActiveCoords] = useState<[number, number] | null>(null);
 
   useEffect(() => {
-    // FIX DES ICÔNES : Importation de Leaflet uniquement côté client
+    // FIX DES ICÔNES : Uniquement côté client
     const initLeafletFix = async () => {
-      const L = (await import('leaflet')).default;
-      // @ts-ignore
-      delete L.Icon.Default.prototype._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-      });
+      try {
+        const L = (await import('leaflet')).default;
+        // @ts-ignore
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        });
+      } catch (e) {
+        console.error("Leaflet icon fix error", e);
+      }
     };
 
     initLeafletFix();
 
-    // Fetch des données
     fetch('/api/tisseoitineraire')
       .then((res) => res.json())
       .then((data) => {
-        // Tri croissant (ex: ligne 1, 2, 10...)
         const sorted = data.sort((a: TisseoItineraire, b: TisseoItineraire) => 
           a.ligne.localeCompare(b.ligne, undefined, { numeric: true })
         );
@@ -74,7 +77,6 @@ export default function TisseoPage() {
       </h1>
 
       <div className="h-96 w-full rounded-xl mb-8 shadow-md border-2 border-orange-200 overflow-hidden relative" style={{ zIndex: 1 }}>
-        {/* Sécurité supplémentaire : On ne rend la carte que si window est défini */}
         {typeof window !== 'undefined' && (
           <MapContainer center={[43.6047, 1.4442]} zoom={12} style={{ height: '100%', width: '100%' }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
