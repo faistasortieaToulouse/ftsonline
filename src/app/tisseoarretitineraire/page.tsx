@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Link from "next/link";
-import { ArrowLeft, MapPin, Route, Bus, Search, Loader2 } from "lucide-react";
+import { ArrowLeft, Route, Search, Loader2 } from "lucide-react";
 
 interface StopRoute {
   geo_point_2d: { lon: number; lat: number };
@@ -35,7 +35,6 @@ export default function TisseoArretItinerairePage() {
       .catch(() => setLoading(false));
   }, []);
 
-  // TRI : Ligne d'abord, puis Itinéraire
   const finalStops = useMemo(() => {
     return data
       .filter(s => {
@@ -44,10 +43,8 @@ export default function TisseoArretItinerairePage() {
         return matchLine && matchSearch;
       })
       .sort((a, b) => {
-        // Tri par ligne (numérique si possible)
         const lineSort = a.ligne.localeCompare(b.ligne, undefined, { numeric: true });
         if (lineSort !== 0) return lineSort;
-        // Si même ligne, tri par nom d'itinéraire
         return a.nom_iti.localeCompare(b.nom_iti);
       });
   }, [data, selectedLine, searchTerm]);
@@ -58,7 +55,6 @@ export default function TisseoArretItinerairePage() {
     );
   }, [data]);
 
-  // Initialisation Carte & Marqueurs
   useEffect(() => {
     if (loading || !mapRef.current) return;
 
@@ -74,13 +70,12 @@ export default function TisseoArretItinerairePage() {
 
       markersLayer.current.clearLayers();
       
-      // Ajout des marqueurs avec vérification des coordonnées
       finalStops.slice(0, 300).forEach(stop => {
         if (stop.geo_point_2d?.lat && stop.geo_point_2d?.lon) {
           L.circleMarker([stop.geo_point_2d.lat, stop.geo_point_2d.lon], {
             radius: 5, color: '#f43f5e', fillColor: '#f43f5e', fillOpacity: 0.6, weight: 1
           })
-          .bindPopup(`<b>${stop.nom_arret}</b><br/>Ligne ${stop.ligne}`)
+          .bindPopup(`<b>${stop.nom_arret}</b><br/>Ligne ${stop.ligne}<br/><i>${stop.nom_iti}</i>`)
           .addTo(markersLayer.current);
         }
       });
@@ -89,60 +84,89 @@ export default function TisseoArretItinerairePage() {
     initMap();
   }, [loading, finalStops]);
 
-  if (loading) return <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto" /></div>;
+  if (loading) return <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto text-blue-500" /></div>;
 
   return (
     <div className="min-h-screen bg-slate-50 p-4">
       <div className="max-w-6xl mx-auto space-y-4">
-        <Link href="/" className="text-blue-600 font-bold flex items-center gap-2">
-          <ArrowLeft size={18} /> Retour Accueil
-        </Link>
-
-        <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col md:flex-row gap-4 items-center justify-between">
-          <h1 className="text-2xl font-black text-slate-800 flex items-center gap-2">
-            <Route className="text-rose-500" /> Arrêts par Itinéraire
+        
+        {/* Header simple */}
+        <div className="flex items-center justify-between">
+          <Link href="/" className="text-blue-600 font-bold flex items-center gap-2 hover:underline">
+            <ArrowLeft size={18} /> Retour Accueil
+          </Link>
+          <h1 className="text-xl font-black text-slate-800 flex items-center gap-2">
+            <Route className="text-rose-500" size={20} /> Réseau Tisséo
           </h1>
+        </div>
+
+        {/* 1. CARTE (En haut) */}
+        <div className="h-[450px] rounded-3xl overflow-hidden border-4 border-white shadow-xl">
+          <div ref={mapRef} className="h-full w-full z-0" />
+        </div>
+
+        {/* 2. FILTRES (Sous la carte) */}
+        <div className="bg-white p-4 rounded-2xl shadow-sm border flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="Rechercher un arrêt..." 
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
           <div className="flex gap-2">
             <select 
-              className="p-2 bg-slate-100 rounded-lg font-bold text-sm"
+              className="p-2 bg-blue-50 border border-blue-100 rounded-xl font-bold text-blue-700 text-sm outline-none"
               value={selectedLine} onChange={(e) => setSelectedLine(e.target.value)}
             >
               <option value="all">Toutes les lignes</option>
               {uniqueLines.map(l => <option key={l} value={l}>Ligne {l}</option>)}
             </select>
-            <input 
-              type="text" placeholder="Rechercher un arrêt..." 
-              className="p-2 border rounded-lg text-sm"
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            
+            <div className="px-4 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold flex items-center">
+              {finalStops.length} arrêts
+            </div>
           </div>
         </div>
 
-        <div className="h-[400px] rounded-2xl overflow-hidden border shadow-inner">
-          <div ref={mapRef} className="h-full w-full z-0" />
-        </div>
-
+        {/* 3. TABLEAU DES DONNÉES */}
         <div className="bg-white rounded-2xl border shadow-sm overflow-hidden">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 font-bold text-slate-500 border-b">
-              <tr>
-                <th className="p-3">Ligne</th>
-                <th className="p-3">Itinéraire</th>
-                <th className="p-3">Arrêt</th>
-                <th className="p-3">Ordre</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {finalStops.slice(0, 150).map((stop, i) => (
-                <tr key={i} className="hover:bg-slate-50">
-                  <td className="p-3 font-black text-blue-600">{stop.ligne}</td>
-                  <td className="p-3 text-xs text-slate-500">{stop.nom_iti}</td>
-                  <td className="p-3 font-bold">{stop.nom_arret}</td>
-                  <td className="p-3 text-slate-400">{stop.ordre}</td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 font-bold text-slate-500 border-b">
+                <tr>
+                  <th className="p-4">Ligne</th>
+                  <th className="p-4">Itinéraire</th>
+                  <th className="p-4">Arrêt</th>
+                  <th className="p-4">Ordre</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y">
+                {finalStops.slice(0, 100).map((stop, i) => (
+                  <tr key={i} className="hover:bg-blue-50/50 transition-colors">
+                    <td className="p-4 font-black text-blue-600">
+                      <span className="bg-blue-100 px-2 py-1 rounded text-xs">{stop.ligne}</span>
+                    </td>
+                    <td className="p-4 text-xs text-slate-500 max-w-xs truncate">{stop.nom_iti}</td>
+                    <td className="p-4 font-bold text-slate-700">{stop.nom_arret}</td>
+                    <td className="p-4">
+                      <span className="text-slate-400 font-mono text-xs bg-slate-100 px-2 py-0.5 rounded-full">
+                        #{stop.ordre}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {finalStops.length > 100 && (
+            <div className="p-4 text-center text-slate-400 text-xs italic border-t bg-slate-50">
+              Affichage limité aux 100 premiers résultats. Utilisez les filtres pour affiner.
+            </div>
+          )}
         </div>
       </div>
     </div>
