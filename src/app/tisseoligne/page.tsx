@@ -3,25 +3,22 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 
-// 1. Imports dynamiques classiques pour les composants
+// 1. Imports dynamiques pour éviter les erreurs SSR (Server Side Rendering)
 const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(m => m.TileLayer), { ssr: false });
 const Polyline = dynamic(() => import('react-leaflet').then(m => m.Polyline), { ssr: false });
 
-// 2. Le composant ChangeView corrigé
-// On n'utilise pas dynamic() pour useMap ici
+// 2. Composant pour recentrer la carte (utilise require pour éviter les bugs d'import dynamique)
 function ChangeView({ bounds }: { bounds: [number, number][] }) {
-  // On récupère le hook directement. Puisque ChangeView est appelé 
-  // à l'intérieur de MapContainer, il a accès au contexte de la carte.
-  const { useMap } = require('react-leaflet'); 
+  const { useMap } = require('react-leaflet');
   const map = useMap();
-
+  
   useEffect(() => {
     if (map && bounds && bounds.length > 0) {
       map.fitBounds(bounds, { padding: [30, 30] });
     }
   }, [bounds, map]);
-
+  
   return null;
 }
 
@@ -34,20 +31,31 @@ export default function LignesPage() {
     fetch('/api/tisseoligne')
       .then(res => res.json())
       .then(data => {
+        // Gestion de la structure Tisséo (soit un tableau, soit un objet avec .records)
         let items = Array.isArray(data) ? data : (data.records || []);
         
-        // Extraction : On s'assure de garder la structure plate
+        // Extraction profonde : On fusionne tout pour ne rien rater
         items = items.map((item: any) => ({
-          ...(item.fields || item),
-          geometry: item.geometry || item.fields?.geo_shape
+          ...(item.fields || {}),
+          ...item,
+          // Priorité à la géométrie
+          geometry: item.geometry || item.fields?.geo_shape || item.geo_shape
         }));
 
-        items.sort((a: any) => a.nom_court || a.shortname || "", undefined, { numeric: true });
+        // Tri naturel (L1, L2, 10...)
+        items.sort((a: any, b: any) => {
+          const nameA = String(a.nom_court || a.shortname || a.ligne || a.line_short_name || "");
+          const nameB = String(b.nom_court || b.shortname || b.ligne || b.line_short_name || "");
+          return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+        });
 
         setLignes(items);
         setLoading(false);
       })
-      .catch(err => console.error("Erreur Fetch:", err));
+      .catch(err => {
+        console.error("Erreur Fetch:", err);
+        setLoading(false);
+      });
   }, []);
 
   const getPositions = (ligne: any): [number, number][] => {
@@ -55,20 +63,20 @@ export default function LignesPage() {
     if (!geo || !geo.coordinates) return [];
     
     try {
-      // Gestion MultiLineString (plus robuste)
+      // Tisséo renvoie souvent du MultiLineString (plusieurs segments)
       let coords = geo.coordinates;
       if (geo.type === "MultiLineString") {
         coords = geo.coordinates.flat(1);
       }
 
-      // Leaflet veut [Lat, Lon], Tisséo donne [Lon, Lat]
+      // Crucial : Inversion [Lon, Lat] (Tisséo) -> [Lat, Lon] (Leaflet)
       return coords.map((c: any) => [c[1], c[0]]);
     } catch (e) {
       return [];
     }
   };
 
-  if (loading) return <div className="p-10 text-center text-white bg-gray-900 min-h-screen">Chargement...</div>;
+  if (loading) return <div className="p-10 text-center text-white bg-gray-900 min-h-screen">Chargement du réseau...</div>;
 
   const activePositions = selectedLigne ? getPositions(selectedLigne) : [];
 
@@ -85,10 +93,7 @@ export default function LignesPage() {
               <Polyline 
                 positions={activePositions} 
                 pathOptions={{ 
-                  // Vérification de la couleur (ajoute # si absent)
-                  color: selectedLigne.couleur_ligne?.startsWith('#') 
-                    ? selectedLigne.couleur_ligne 
-                    : `#${selectedLigne.couleur_ligne || 'ff6600'}`, 
+                  color: selectedLigne.couleur_ligne || selectedLigne.color || '#ff6600', 
                   weight: 5, 
                   opacity: 0.9 
                 }} 
@@ -101,8 +106,9 @@ export default function LignesPage() {
 
       <div className="flex flex-wrap gap-2 justify-center max-w-6xl mx-auto">
         {lignes.map((ligne, index) => {
-          const displayName = ligne.nom_court || ligne.shortname || "Ligne";
-          const color = ligne.couleur_ligne?.startsWith('#') ? ligne.couleur_ligne : `#${ligne.couleur_ligne || '555'}`;
+          // On teste toutes les clés possibles pour le nom
+          const displayName = ligne.nom_court || ligne.shortname || ligne.ligne || ligne.line_short_name || "Ligne";
+          const color = ligne.couleur_ligne || ligne.color || "#555";
           const isSelected = selectedLigne === ligne;
 
           return (
