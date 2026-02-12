@@ -2,14 +2,12 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Link from "next/link";
+// IMPORT DU CSS ICI (ou dans layout.tsx)
+import 'leaflet/dist/leaflet.css';
 import { 
   ArrowLeft, 
-  MapPin, 
   Loader2, 
-  Filter, 
-  Search, 
-  Navigation,
-  Info
+  Search 
 } from "lucide-react";
 
 // --- Types ---
@@ -41,7 +39,7 @@ export default function TisseoArretPhysiquePage() {
   const markersLayer = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Récupération des données (Inchangé)
+  // 1. Récupération des données
   useEffect(() => {
     async function fetchStops() {
       try {
@@ -70,13 +68,16 @@ export default function TisseoArretPhysiquePage() {
     fetchStops();
   }, []);
 
-  // 2. Logique de Filtrage
+  // 2. Logique de Filtrage (Corrigé pour Leaflet Bounds)
   const filteredStops = useMemo(() => {
     return stops.filter(s => {
-      const isInMap = mapBounds 
-        ? s.lat <= mapBounds._northEast.lat && s.lat >= mapBounds._southWest.lat &&
-          s.lng <= mapBounds._northEast.lng && s.lng >= mapBounds._southWest.lng
-        : true;
+      let isInMap = true;
+      if (mapBounds) {
+        const ne = mapBounds.getNorthEast();
+        const sw = mapBounds.getSouthWest();
+        isInMap = s.lat <= ne.lat && s.lat >= sw.lat &&
+                  s.lng <= ne.lng && s.lng >= sw.lng;
+      }
 
       const firstLetter = s.name?.[0]?.toUpperCase() || "";
       const matchesNameRange = nameRange === "all" || nameRange.includes(firstLetter);
@@ -88,35 +89,37 @@ export default function TisseoArretPhysiquePage() {
     }).sort((a, b) => a.name.localeCompare(b.name));
   }, [stops, mapBounds, nameRange, lineRange, searchQuery]);
 
-  // 3. Initialisation Leaflet SÉCURISÉE
+  // 3. Initialisation Leaflet
   useEffect(() => {
-    if (typeof window === "undefined" || !mapRef.current || isLoading) return;
+    if (isLoading || !mapRef.current || mapInstance.current) return;
     
     let L: any;
     const initMap = async () => {
-      L = (await import('leaflet')).default;
-      await import('leaflet/dist/leaflet.css');
+      const leaflet = await import('leaflet');
+      L = leaflet.default;
       
-      // Sécurité : évite de créer plusieurs instances sur le même DOM
-      if (mapInstance.current) return;
+      // Fix pour les icônes par défaut de Leaflet dans Next.js
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      });
 
       mapInstance.current = L.map(mapRef.current!, { 
         zoomControl: false,
-        tap: false // Améliore le scroll sur mobile
+        tap: false 
       }).setView(TOULOUSE_CENTER, 14);
       
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OSM CartoDB'
+        attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
 
       L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current);
-
       markersLayer.current = L.layerGroup().addTo(mapInstance.current);
       
       const update = () => {
-        if (mapInstance.current) {
-          setMapBounds(mapInstance.current.getBounds());
-        }
+        setMapBounds(mapInstance.current.getBounds());
       };
 
       mapInstance.current.on('moveend', update);
@@ -126,7 +129,6 @@ export default function TisseoArretPhysiquePage() {
 
     initMap();
 
-    // NETTOYAGE : très important pour Next.js
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -135,138 +137,106 @@ export default function TisseoArretPhysiquePage() {
     };
   }, [isLoading]);
 
-  // 4. Update Marqueurs (Optimisé)
+  // 4. Update Marqueurs (Nettoyage immédiat)
   useEffect(() => {
     if (!isMapReady || !markersLayer.current) return;
 
-    const renderMarkers = async () => {
+    const updateMarkers = async () => {
       const L = (await import('leaflet')).default;
       markersLayer.current.clearLayers();
       
-      // On limite à 150 pour garder une fluidité parfaite
-      filteredStops.slice(0, 150).forEach((stop) => {
+      filteredStops.slice(0, 100).forEach((stop) => {
         const marker = L.circleMarker([stop.lat, stop.lng], {
-          radius: 7,
+          radius: 6,
           fillColor: "#FF5500", 
           color: "white",
           weight: 2,
-          fillOpacity: 1
+          fillOpacity: 0.9
         });
 
-        marker.bindPopup(`
-          <div style="min-width: 150px;">
-            <b style="font-size: 14px; color: #1e293b;">${stop.name}</b><br/>
-            <span style="font-size: 11px; color: #64748b;">${stop.city}</span>
-            <div style="display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap;">
-              ${stop.lines.slice(0, 5).map(l => `<span style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; border: 1px solid #e2e8f0;">${l}</span>`).join('')}
-            </div>
-          </div>
-        `);
-        
+        marker.bindPopup(`<b>${stop.name}</b><br/><small>${stop.city}</small>`);
         marker.addTo(markersLayer.current);
       });
     };
 
-    renderMarkers();
-  }, [isMapReady, filteredStops]);
+    updateMarkers();
+  }, [filteredStops, isMapReady]);
 
-  // Fonction pour centrer la carte sur un arrêt précis (quand on clique dans la liste)
   const focusStop = (lat: number, lng: number) => {
     if (mapInstance.current) {
-      mapInstance.current.flyTo([lat, lng], 17, { duration: 1.5 });
+      mapInstance.current.flyTo([lat, lng], 17, { duration: 1.2 });
     }
   };
 
   if (isLoading) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center gap-4 bg-white">
-        <Loader2 className="animate-spin text-orange-500" size={48} />
-        <p className="text-slate-600 font-medium">Chargement de la carte Tisseotia...</p>
+      <div className="h-screen w-full flex flex-col items-center justify-center gap-4">
+        <Loader2 className="animate-spin text-orange-500" size={40} />
+        <p className="text-slate-500">Chargement des données Tisséo...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      <header className="bg-white border-b sticky top-0 z-[1000]">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-              <ArrowLeft size={20} />
-            </Link>
-            <h1 className="text-xl font-bold tracking-tight">Arrêts Physiques</h1>
+    <div className="flex flex-col h-screen bg-slate-50">
+       {/* Header Simplifié */}
+       <header className="h-16 bg-white border-b px-4 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            <Link href="/"><ArrowLeft size={20}/></Link>
+            <h1 className="font-bold">Réseau Tisséo</h1>
           </div>
-          <div className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg shadow-orange-200">
-            {filteredStops.length} arrêts
+          <div className="text-xs font-bold bg-orange-100 text-orange-600 px-3 py-1 rounded-full">
+            {filteredStops.length} arrêts visibles
           </div>
-        </div>
-      </header>
+       </header>
 
-      <main className="max-w-7xl mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-80px)]">
-        
-        {/* Colonne Gauche : Filtres et Liste */}
-        <div className="lg:col-span-5 flex flex-col gap-4 overflow-hidden">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="text"
-              placeholder="Chercher un arrêt..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl shadow-sm outline-none focus:ring-2 focus:ring-orange-500"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <select className="p-2 text-sm bg-white border rounded-xl" value={nameRange} onChange={e => setNameRange(e.target.value)}>
-               <option value="all">Noms : Tous</option>
-               <option value="ABCDE">A - E</option>
-               <option value="FGHIJ">F - J</option>
-               <option value="KLMNO">K - O</option>
-               <option value="PQRST">P - T</option>
-               <option value="UVWXYZ">U - Z</option>
-            </select>
-            <select className="p-2 text-sm bg-white border rounded-xl" value={lineRange} onChange={e => setLineRange(e.target.value)}>
-               <option value="all">Lignes : Toutes</option>
-               <option value="L">Linéos (L)</option>
-               <option value="T">Tram (T)</option>
-               <option value="1">Lignes 10-19</option>
-               <option value="2">Lignes 20-29</option>
-            </select>
-          </div>
-
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-y-auto flex-1">
-            {filteredStops.map((stop) => (
-              <div 
-                key={stop.id} 
-                onClick={() => focusStop(stop.lat, stop.lng)}
-                className="p-4 hover:bg-orange-50 cursor-pointer border-b last:border-0 transition-colors group"
-              >
-                <div className="flex justify-between items-center mb-1">
-                  <span className="font-bold text-slate-800 group-hover:text-orange-600">{stop.name}</span>
-                  <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded uppercase">{stop.city}</span>
-                </div>
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {stop.lines.map((l, i) => (
-                    <span key={i} className="text-[9px] font-bold px-1.5 py-0.5 bg-white border rounded text-slate-600">{l}</span>
-                  ))}
-                </div>
+       <div className="flex flex-1 overflow-hidden">
+          {/* Sidebar */}
+          <aside className="w-full lg:w-[400px] flex flex-col border-r bg-white">
+            <div className="p-4 space-y-3 shadow-sm z-10">
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 text-slate-400" size={16} />
+                <input 
+                  className="w-full pl-10 pr-4 py-2 bg-slate-100 rounded-lg text-sm outline-none focus:ring-2 focus:ring-orange-500"
+                  placeholder="Rechercher..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                />
               </div>
-            ))}
-          </div>
-        </div>
+              <div className="grid grid-cols-2 gap-2">
+                <select value={nameRange} onChange={e => setNameRange(e.target.value)} className="text-xs border p-2 rounded-md">
+                   <option value="all">Tous les noms</option>
+                   <option value="ABCDE">A - E</option>
+                </select>
+                <select value={lineRange} onChange={e => setLineRange(e.target.value)} className="text-xs border p-2 rounded-md">
+                   <option value="all">Toutes les lignes</option>
+                   <option value="L">Linéo</option>
+                </select>
+              </div>
+            </div>
 
-        {/* Colonne Droite : Carte */}
-        <div className="lg:col-span-7 bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden relative">
-          <div ref={mapRef} className="w-full h-full z-10" />
-          
-          {/* Badge flottant sur la carte */}
-          <div className="absolute top-4 left-4 z-[1001] bg-white/90 backdrop-blur-md p-3 rounded-2xl border shadow-sm max-w-[200px]">
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Zone active</p>
-            <p className="text-xs text-slate-600 leading-tight">Déplacez la carte pour filtrer la liste.</p>
+            <div className="flex-1 overflow-y-auto">
+              {filteredStops.map(stop => (
+                <div 
+                  key={stop.id}
+                  onClick={() => focusStop(stop.lat, stop.lng)}
+                  className="p-4 border-b hover:bg-orange-50 cursor-pointer transition-colors"
+                >
+                  <p className="font-semibold text-sm">{stop.name}</p>
+                  <p className="text-[10px] text-slate-500 uppercase">{stop.city}</p>
+                </div>
+              ))}
+            </div>
+          </aside>
+
+          {/* Map Container */}
+          <div className="hidden lg:block flex-1 relative">
+            <div ref={mapRef} className="absolute inset-0 z-0" />
+            <div className="absolute top-4 left-4 z-[1000] bg-white/80 backdrop-blur p-2 rounded shadow text-[10px]">
+              Déplacez la carte pour filtrer
+            </div>
           </div>
-        </div>
-      </main>
+       </div>
     </div>
   );
 }
