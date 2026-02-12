@@ -4,8 +4,6 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import 'leaflet/dist/leaflet.css';
 import Link from "next/link";
 import { ArrowLeft, Search, Bus, ChevronRight, Ruler, Loader2 } from "lucide-react";
-// Importe ton composant de traduction ici
-import GoogleTranslate from "@/components/GoogleTranslate"; 
 
 const calculatePathDistance = (coords: [number, number][]) => {
   let total = 0;
@@ -101,13 +99,6 @@ export default function TisseoMapPage() {
   return (
     <div className="flex h-screen bg-white font-sans overflow-hidden">
       
-      {/* 1. Google Translate Fix - Positionné en haut avec un z-index maximal */}
-      <div className="absolute top-0 left-0 w-full z-[2000] pointer-events-none">
-        <div className="pointer-events-auto">
-          <GoogleTranslate />
-        </div>
-      </div>
-
       {/* Sidebar */}
       <aside className="w-80 border-r bg-slate-50 flex flex-col z-20 shadow-lg relative mt-10"> 
         {/* Le mt-10 permet de laisser de la place à la barre de traduction si elle est fixe */}
