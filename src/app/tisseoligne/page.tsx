@@ -3,25 +3,27 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 
-// 1. On importe les composants lourds dynamiquement
+// 1. Imports dynamiques classiques pour les composants
 const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(m => m.TileLayer), { ssr: false });
 const Polyline = dynamic(() => import('react-leaflet').then(m => m.Polyline), { ssr: false });
 
-// 2. IMPORTATION CRUCIALE : Le hook useMap doit être récupéré depuis le module chargé dynamiquement 
-// OU on crée un wrapper. La méthode la plus sûre dans ton cas :
-const ChangeView = ({ bounds }: { bounds: any[] }) => {
-  // On importe le hook au sein d'un composant qui n'est rendu que dans le MapContainer
+// 2. Le composant ChangeView corrigé
+// On n'utilise pas dynamic() pour useMap ici
+function ChangeView({ bounds }: { bounds: [number, number][] }) {
+  // On récupère le hook directement. Puisque ChangeView est appelé 
+  // à l'intérieur de MapContainer, il a accès au contexte de la carte.
   const { useMap } = require('react-leaflet'); 
   const map = useMap();
-  
+
   useEffect(() => {
-    if (map && bounds.length > 0) {
+    if (map && bounds && bounds.length > 0) {
       map.fitBounds(bounds, { padding: [30, 30] });
     }
   }, [bounds, map]);
+
   return null;
-};
+}
 
 export default function LignesPage() {
   const [lignes, setLignes] = useState<any[]>([]);
@@ -34,24 +36,18 @@ export default function LignesPage() {
       .then(data => {
         let items = Array.isArray(data) ? data : (data.records || []);
         
+        // Extraction : On s'assure de garder la structure plate
         items = items.map((item: any) => ({
           ...(item.fields || item),
-          geometry: item.geometry || item.fields?.geo_shape || item.geo_shape
+          geometry: item.geometry || item.fields?.geo_shape
         }));
 
-        items.sort((a: any, b: any) => {
-          const nameA = String(a.nom_court || a.shortname || "");
-          const nameB = String(b.nom_court || b.shortname || "");
-          return nameA.localeCompare(nameB, undefined, { numeric: true });
-        });
+        items.sort((a: any) => a.nom_court || a.shortname || "", undefined, { numeric: true });
 
         setLignes(items);
         setLoading(false);
       })
-      .catch(err => {
-        console.error("Erreur Fetch:", err);
-        setLoading(false);
-      });
+      .catch(err => console.error("Erreur Fetch:", err));
   }, []);
 
   const getPositions = (ligne: any): [number, number][] => {
@@ -59,18 +55,20 @@ export default function LignesPage() {
     if (!geo || !geo.coordinates) return [];
     
     try {
-      // Correction Leaflet : On s'assure que c'est bien [lat, lon]
-      // Tisséo renvoie souvent du [lon, lat]
+      // Gestion MultiLineString (plus robuste)
+      let coords = geo.coordinates;
       if (geo.type === "MultiLineString") {
-        return geo.coordinates.flat(1).map((c: any) => [c[1], c[0]]);
+        coords = geo.coordinates.flat(1);
       }
-      return geo.coordinates.map((c: any) => [c[1], c[0]]);
+
+      // Leaflet veut [Lat, Lon], Tisséo donne [Lon, Lat]
+      return coords.map((c: any) => [c[1], c[0]]);
     } catch (e) {
       return [];
     }
   };
 
-  if (loading) return <div className="p-10 text-center text-white bg-gray-900 min-h-screen">Chargement du réseau...</div>;
+  if (loading) return <div className="p-10 text-center text-white bg-gray-900 min-h-screen">Chargement...</div>;
 
   const activePositions = selectedLigne ? getPositions(selectedLigne) : [];
 
@@ -79,7 +77,6 @@ export default function LignesPage() {
       <h1 className="text-3xl font-bold mb-6 text-orange-500 italic text-center">Tracés du Réseau Tisséo</h1>
 
       <div className="h-[500px] w-full rounded-2xl mb-6 shadow-2xl border-2 border-gray-700 overflow-hidden relative">
-        {/* Pas besoin de typeof window ici car les composants sont déjà en ssr:false */}
         <MapContainer center={[43.6047, 1.4442]} zoom={12} style={{ height: '100%', width: '100%' }}>
           <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
           
@@ -88,7 +85,10 @@ export default function LignesPage() {
               <Polyline 
                 positions={activePositions} 
                 pathOptions={{ 
-                  color: selectedLigne.couleur_ligne || `#${selectedLigne.couleur_html}` || '#ff6600', 
+                  // Vérification de la couleur (ajoute # si absent)
+                  color: selectedLigne.couleur_ligne?.startsWith('#') 
+                    ? selectedLigne.couleur_ligne 
+                    : `#${selectedLigne.couleur_ligne || 'ff6600'}`, 
                   weight: 5, 
                   opacity: 0.9 
                 }} 
@@ -102,7 +102,7 @@ export default function LignesPage() {
       <div className="flex flex-wrap gap-2 justify-center max-w-6xl mx-auto">
         {lignes.map((ligne, index) => {
           const displayName = ligne.nom_court || ligne.shortname || "Ligne";
-          const color = ligne.couleur_ligne || (ligne.couleur_html ? `#${ligne.couleur_html}` : "#555");
+          const color = ligne.couleur_ligne?.startsWith('#') ? ligne.couleur_ligne : `#${ligne.couleur_ligne || '555'}`;
           const isSelected = selectedLigne === ligne;
 
           return (
