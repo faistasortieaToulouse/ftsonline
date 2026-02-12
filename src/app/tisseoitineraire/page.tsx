@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(m => m.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(m => m.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(m => m.Popup), { ssr: false }); // Ajout du Popup
 const useMap = dynamic(() => import('react-leaflet').then(m => m.useMap), { ssr: false });
 
 interface TisseoItineraire {
@@ -18,27 +19,22 @@ interface TisseoItineraire {
   geo_point_2d: { lon: number; lat: number };
 }
 
-// Composant interne sécurisé pour recentrer la carte
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
-
   useEffect(() => {
-    // SÉCURITÉ : On vérifie que map est défini ET que setView est une fonction
     if (map && typeof map.setView === 'function' && center) {
       map.setView(center, 15, { animate: true });
     }
   }, [center, map]);
-
   return null;
 }
 
 export default function TisseoPage() {
   const [itineraires, setItineraires] = useState<TisseoItineraire[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCoords, setActiveCoords] = useState<[number, number] | null>(null);
+  const [selectedIti, setSelectedIti] = useState<TisseoItineraire | null>(null);
 
   useEffect(() => {
-    // FIX DES ICÔNES : Uniquement côté client
     const initLeafletFix = async () => {
       try {
         const L = (await import('leaflet')).default;
@@ -53,7 +49,6 @@ export default function TisseoPage() {
         console.error("Leaflet icon fix error", e);
       }
     };
-
     initLeafletFix();
 
     fetch('/api/tisseoitineraire')
@@ -80,10 +75,15 @@ export default function TisseoPage() {
         {typeof window !== 'undefined' && (
           <MapContainer center={[43.6047, 1.4442]} zoom={12} style={{ height: '100%', width: '100%' }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            {activeCoords && (
+            {selectedIti && (
               <>
-                <Marker position={activeCoords} />
-                <ChangeView center={activeCoords} />
+                <Marker position={[selectedIti.geo_point_2d.lat, selectedIti.geo_point_2d.lon]}>
+                  <Popup>
+                    <div className="font-bold text-orange-600">Ligne {selectedIti.ligne}</div>
+                    <div className="text-xs font-semibold">{selectedIti.nom_iti}</div>
+                  </Popup>
+                </Marker>
+                <ChangeView center={[selectedIti.geo_point_2d.lat, selectedIti.geo_point_2d.lon]} />
               </>
             )}
           </MapContainer>
@@ -91,31 +91,41 @@ export default function TisseoPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {itineraires.map((item, index) => (
-          <div key={index} className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="bg-orange-500 text-white font-bold px-3 py-1 rounded text-lg">
-                {item.ligne}
-              </span>
-              <h2 className="font-semibold text-gray-800 uppercase text-sm">
-                {item.nom_iti}
-              </h2>
-            </div>
-            
-            <div className="text-sm text-gray-600 space-y-1">
-              <p>📍 {item.geo_point_2d.lat.toFixed(4)}, {item.geo_point_2d.lon.toFixed(4)}</p>
-              <p>🚌 <strong>Mode :</strong> {item.mode}</p>
-              <p>📏 <strong>Distance :</strong> {(item.dist_spa / 1000).toFixed(2)} km</p>
-            </div>
+        {itineraires.map((item, index) => {
+          // Astuce : On sépare le nom de l'itinéraire pour afficher Départ et Arrivée
+          const [depart, arrivee] = item.nom_iti.includes(' - ') 
+            ? item.nom_iti.split(' - ') 
+            : [item.nom_iti, ''];
 
-            <button 
-              onClick={() => setActiveCoords([item.geo_point_2d.lat, item.geo_point_2d.lon])}
-              className="mt-4 w-full py-2 bg-orange-100 hover:bg-orange-600 hover:text-white text-orange-700 rounded-lg text-sm font-bold transition-all"
-            >
-              Voir sur la carte
-            </button>
-          </div>
-        ))}
+          return (
+            <div key={index} className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="bg-orange-500 text-white font-bold px-3 py-1 rounded text-lg">
+                    {item.ligne}
+                  </span>
+                  <div className="text-xs font-bold uppercase text-gray-500">{item.mode}</div>
+                </div>
+                
+                <div className="mb-4">
+                   <div className="text-sm font-bold text-gray-800">🚩 {depart}</div>
+                   {arrivee && <div className="text-sm font-bold text-gray-800 mt-1">🏁 {arrivee}</div>}
+                </div>
+
+                <div className="text-xs text-gray-600 space-y-1 bg-gray-50 p-2 rounded">
+                  <p>📏 <strong>Distance :</strong> {(item.dist_spa / 1000).toFixed(2)} km</p>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedIti(item)}
+                className="mt-4 w-full py-2 bg-orange-100 hover:bg-orange-600 hover:text-white text-orange-700 rounded-lg text-sm font-bold transition-all"
+              >
+                Voir sur la carte
+              </button>
+            </div>
+          );
+        })}
       </div>
     </main>
   );
