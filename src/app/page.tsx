@@ -477,7 +477,7 @@ const categories = [
 
   { title: "Savoirs : Fêtes", href: "/datefetes", icon: PartyPopper, isOccitanie: true, occitanieSources: [
     { title: "Dates des fêtes", href: "/datefetes" },
-    { title: "Constelaltions", href: "/constellation" },
+    { title: "Constellations", href: "/constellation" },
   ]},
 //  const nbFete = 2;
 
