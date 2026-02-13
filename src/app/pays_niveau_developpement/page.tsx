@@ -45,7 +45,7 @@ export default function IDHPage() {
       <div className="max-w-6xl mx-auto">
         <Link href="/" className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-8 group">
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          Tableau de bord
+          Retour à l'Accueil
         </Link>
 
         <header className="mb-12">
