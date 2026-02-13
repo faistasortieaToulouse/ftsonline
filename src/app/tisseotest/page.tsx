@@ -89,7 +89,7 @@ export default function TisseoPage() {
 
       <div className="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
         <div className="p-4 bg-slate-100 border-b border-slate-200">
-          <h2 className="font-semibold text-slate-700">Sélectionnez une ligne</h2>
+          <h2 className="font-semibold text-slate-700">Sélectionnez une ligne pour afficher le parcours sur la carte</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
