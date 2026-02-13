@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Search, Wallet, Landmark, Info, Coins, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft, Search, Wallet, Landmark, Info, Coins } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PouvoirAchatPage() {
@@ -24,8 +24,14 @@ export default function PouvoirAchatPage() {
     item.pays.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Formateur pour le format monétaire USD
+  // Formateur amélioré pour gérer les valeurs < 1000
   const formatUSD = (val: number) => {
+    if (val < 1000) {
+      // Pour 560, cela donnera "0.560 k$"
+      const formatted = (val / 1000).toFixed(3);
+      return `${formatted} k$`;
+    }
+    
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
@@ -36,7 +42,7 @@ export default function PouvoirAchatPage() {
   if (loading) return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center">
       <div className="w-16 h-1 bg-slate-100 overflow-hidden rounded-full mb-4">
-        <div className="w-full h-full bg-emerald-500 animate-[loading_1.5s_infinite]"></div>
+        <div className="w-full h-full bg-emerald-500 animate-pulse"></div>
       </div>
       <p className="text-slate-400 font-mono text-xs uppercase tracking-widest">Calcul des parités monétaires...</p>
     </div>
@@ -85,14 +91,14 @@ export default function PouvoirAchatPage() {
           <input 
             type="text"
             placeholder="Chercher un pays ou une région..."
-            className="w-full pl-16 pr-8 py-5 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-4 focus:ring-emerald-500/20 shadow-sm text-lg transition-all"
+            className="w-full pl-16 pr-8 py-5 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-4 focus:ring-emerald-500/20 shadow-sm text-lg transition-all outline-none"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredData.map((item) => (
-            <div key={item.rang} className="bg-white rounded-[2rem] border border-slate-100 p-6 hover:shadow-2xl transition-all duration-300 group">
+            <div key={`${item.rang}-${item.pays}`} className="bg-white rounded-[2rem] border border-slate-100 p-6 hover:shadow-2xl transition-all duration-300 group">
               <div className="flex justify-between items-start mb-6">
                 <span className="text-4xl">{item.flag}</span>
                 <span className="bg-slate-50 text-slate-400 text-[10px] font-bold px-3 py-1 rounded-full border border-slate-100 font-mono">
@@ -106,14 +112,16 @@ export default function PouvoirAchatPage() {
               
               <div className="mb-6">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">PIB / hab (PPA)</p>
-                <p className="text-3xl font-black text-emerald-600 tracking-tight">{formatUSD(item.ppa_usd)}</p>
+                <p className={`text-3xl font-black tracking-tight ${item.ppa_usd < 2000 ? 'text-orange-600' : 'text-emerald-600'}`}>
+                  {formatUSD(item.ppa_usd)}
+                </p>
               </div>
 
               {/* Jauge comparative basée sur le maximum (Luxembourg) */}
               <div className="mb-6 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-emerald-500 rounded-full group-hover:bg-emerald-400 transition-all duration-700 ease-out"
-                  style={{ width: `${(item.ppa_usd / 143320) * 100}%` }}
+                  className={`h-full rounded-full transition-all duration-700 ease-out ${item.ppa_usd < 2000 ? 'bg-orange-500' : 'bg-emerald-500 group-hover:bg-emerald-400'}`}
+                  style={{ width: `${Math.max((item.ppa_usd / 143320) * 100, 1)}%` }} // min 1% pour la visibilité
                 />
               </div>
 
