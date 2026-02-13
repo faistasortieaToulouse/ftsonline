@@ -43,7 +43,7 @@ export default function NiveauViePage() {
     <div className="min-h-screen bg-slate-50 p-4 md:p-12 font-sans text-slate-900">
       <div className="max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-2 text-blue-600 font-medium mb-8 hover:underline">
-          <ArrowLeft size={18} /> Retour au Dashboard
+          <ArrowLeft size={18} /> Retour à l'Accueil
         </Link>
 
         {metadata && (
