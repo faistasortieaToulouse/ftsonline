@@ -32,7 +32,7 @@ export default function EducationPage() {
       <div className="max-w-4xl mx-auto">
         
         <Link href="/" className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 mb-6 font-medium transition-colors">
-          <ArrowLeft size={20} /> Retour
+          <ArrowLeft size={20} /> Retour à l'Accueil
         </Link>
 
         {/* HEADER STATISTIQUE */}
