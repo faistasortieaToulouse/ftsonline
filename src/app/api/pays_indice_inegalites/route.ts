@@ -1,24 +1,25 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 export async function GET() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || ''
-    const response = await fetch(`${baseUrl}/data/tri_pays_indice_inegalites.json`)
+    const filePath = path.join(
+      process.cwd(),
+      'data/statistiques/tri_pays_indice_inegalites.json'
+    );
 
-    if (!response.ok) {
-      throw new Error('Fichier introuvable')
-    }
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const data = JSON.parse(fileContents);
 
-    const data = await response.json()
-
-    return NextResponse.json(data)
+    return NextResponse.json(data);
 
   } catch (error) {
-    console.error('Erreur API Inégalités :', error)
+    console.error("Erreur API Inégalités :", error);
 
     return NextResponse.json(
-      { error: 'Impossible de charger les données', data: [] },
+      { error: "Erreur lors du chargement des données" },
       { status: 500 }
-    )
+    );
   }
 }
