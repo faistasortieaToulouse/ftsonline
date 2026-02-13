@@ -60,7 +60,7 @@ const nbSport = 5;
 const nbMusee = 13;
 const nbVisite = 11;
 const nbOccitanie = 18;
-const nbTransport = 5;
+const nbTransport = 14;
 const nbCafeLangue = 1;
 const nbConsomamtion = 2;
 const nbEmploi = 4;
@@ -74,12 +74,12 @@ const nbLittératureFr = 22;
 const nbPrix = 21;
 const nbArchitecture = 1;
 const nbEurope = 6;
-const nbFete = 1;
+const nbFete = 2;
 const nbFrancais = 3;
 const nbHierarchie = 23;
 const nbSaHistoire = 12;
 const nbLangue = 1;
-const nbMonde = 20;
+const nbMonde = 21;
 const nbReligion = 3;
 const nbTerritoire = 8;
 const totalArticles = 
@@ -278,13 +278,22 @@ const categories = [
 //  const nbOccitanie = 18;
 
   { title: "Transports & Trafic", href: "/transports-tisseo", icon: Bus, isTransport: true, transportSources: [
-    { title: "Tisséo Toulouse", href: "/tisseotoulouse" },
-    { title: "Bison Futé 31", href: "/bisonfute" },
+    { title: "Tisséo Arrêts par itinéraire", href: "/tisseoarretitineraire" },
+    { title: "Tisséo Arrêts Logiques", href: "/tisseoarretlogique" },
+    { title: "Tisséo Arrêts Physiques", href: "/tisseoarretphysique" },
+    { title: "Tisséo Départs et Terminus", href: "/tisseoitineraire" },
+    { title: "Tisséo Lignes de bus", href: "/tisseoligne" },
+    { title: "Tisséo Parking Relais", href: "/tisseoparking" },
+    { title: "Tisséo TAD de la banlieue", href: "/tisseotad" },
+    { title: "Tisséo par quartier", href: "/tisseotia" },
+    { title: "Tisséo itinéraire par quartier", href: "/tisseotiaiti" },
+    { title: "Tisséo Vél'O Toulouse", href: "/tisseovelo" },
     { title: "train 1 euro Occitanie", href: "/train1euro" },
     { title: "Voyage", href: "/voyagetoulouse" },
     { title: "Automobile", href: "/automobile" },
+	{ title: "Bison Futé 31", href: "/bisonfute" },
   ]},
-//  const nbTransport = 5;
+//  const nbTransport = 14;
 
 
   /* ---------------- TOULOUSE ---------------- */
@@ -323,7 +332,7 @@ const categories = [
   },
 //  const nbEmploi = 4;
 
-  { title: "Toulouse : Environnement", href: "/flore", icon: Flower, isOccitanie: true, occitanieSources: [
+    { title: "Toulouse : Environnement", href: "/flore", icon: Flower, isOccitanie: true, occitanieSources: [
     { title: "Flore", href: "/flore" },
   ]},
 //  const nbFlore = 1;
@@ -468,8 +477,9 @@ const categories = [
 
   { title: "Savoirs : Fêtes", href: "/datefetes", icon: PartyPopper, isOccitanie: true, occitanieSources: [
     { title: "Dates des fêtes", href: "/datefetes" },
+    { title: "Constelaltions", href: "/constellation" },
   ]},
-//  const nbFete = 1;
+//  const nbFete = 2;
 
   { title: "Savoirs : Français", href: "/francais", icon: GraduationCap, isOccitanie: true, occitanieSources: [
     { title: "Français", href: "/francais" },
@@ -540,6 +550,7 @@ const categories = [
     icon: Globe, 
     isSavoirsMonde: true, 
     savoirsMondeSources: [
+      { title: "Mapmonde", href: "/mapmonde" },
       { title: "PIB (PPA/Nominal)", href: "/pib" },
       { title: "Villes d'Afrique du Sud ", href: "/afriquedusud" },
       { title: "Villes d'Andorre ", href: "/andorre" },
@@ -562,9 +573,9 @@ const categories = [
       { title: "Pays et villes du monde", href: "/monde" },
     ]
   },
-//  const nbMonde = 20;
+//  const nbMonde = 21;
 
-  { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
+    { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
     { title: "Religion Chine", href: "/religionchine" },
     { title: "Religions Monde", href: "/religionsmonde" },
     { title: "Religions Part", href: "/religionspart" },
