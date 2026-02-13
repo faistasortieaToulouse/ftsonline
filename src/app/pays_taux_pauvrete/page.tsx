@@ -36,7 +36,7 @@ export default function PaysPauvretePage() {
       <div className="max-w-7xl mx-auto">
         
         <Link href="/" className="flex items-center gap-2 text-red-600 font-bold mb-8 hover:bg-red-50 w-fit px-4 py-2 rounded-xl transition-colors">
-          <ArrowLeft size={18} /> Retour
+          <ArrowLeft size={18} /> Retour à l'Accueil
         </Link>
 
         {metadata && (
