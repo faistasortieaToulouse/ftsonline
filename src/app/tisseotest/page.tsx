@@ -1,65 +1,59 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 
-export default function TisseoTestPage() {
+export default function TisseoPage() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Import dynamique de Leaflet uniquement côté client
     const initMap = async () => {
       const L = (await import('leaflet')).default;
       
-      if (!mapRef.current || mapInstance.current) return;
-
-      // 2. Initialisation de la carte
-      mapInstance.current = L.map(mapRef.current).setView([43.6047, 1.4442], 12);
-
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap'
-      }).addTo(mapInstance.current);
-
       try {
-        // 3. Récupération des données
-        const res = await fetch('/api/lignetisseo');
-        const data = await res.json();
-        const lines = Array.isArray(data) ? data : [data];
+        const res = await fetch('/api/tisseotest');
+        const jsonData = await res.json();
+        const lines = Array.isArray(jsonData) ? jsonData : [jsonData];
+        setData(lines);
 
-        // 4. Dessin des tracés avec vérification de structure
+        if (!mapRef.current || mapInstance.current) return;
+
+        // Init carte centrée sur le tracé
+        mapInstance.current = L.map(mapRef.current).setView([43.546, 1.513], 13);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          attribution: '© OpenStreetMap'
+        }).addTo(mapInstance.current);
+
         lines.forEach((line) => {
-          const coords = line?.geo_shape?.geometry?.coordinates;
+          // Extraction du tracé (on descend dans le triple tableau)
+          const rawCoords = line?.geo_shape?.geometry?.coordinates;
           
-          if (coords && Array.isArray(coords[0])) {
-            // Inversion [lon, lat] -> [lat, lon] pour Leaflet
-            const pathPositions = coords[0].map((coord: number[]) => [coord[1], coord[0]]);
+          // Ton JSON a une structure : [ [ [lon, lat], [lon, lat] ] ]
+          if (rawCoords && Array.isArray(rawCoords[0])) {
+            const path = rawCoords[0].map((c: any) => [c[1], c[0]]); // Inversion Lat/Lon
             
-            L.polyline(pathPositions as any, {
-              color: '#2563eb',
+            const polyline = L.polyline(path, {
+              color: '#ff0000', // Rouge pour bien le voir
               weight: 5,
-              opacity: 0.8,
-              lineJoin: 'round'
+              opacity: 0.7
             }).addTo(mapInstance.current);
 
-            // Ajuster la vue sur le tracé
-            const bounds = L.polyline(pathPositions as any).getBounds();
-            mapInstance.current.fitBounds(bounds);
+            mapInstance.current.fitBounds(polyline.getBounds());
           }
         });
-
+        
         setLoading(false);
-      } catch (error) {
-        console.error("Erreur chargement tracé:", error);
+      } catch (err) {
+        console.error("Erreur:", err);
         setLoading(false);
       }
     };
 
     initMap();
 
-    // Nettoyage de la carte au démontage du composant
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -69,25 +63,52 @@ export default function TisseoTestPage() {
   }, []);
 
   return (
-    <main className="h-screen w-full p-4 flex flex-col bg-slate-50">
+    <div className="min-h-screen bg-gray-100 p-8">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Réseau Tisséo - Visualisation</h1>
 
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
-        </Link>
-      </nav>
-
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold text-blue-600 italic">Tracé Tisséo (Leaflet Natif)</h1>
-        {loading && <p className="text-sm text-gray-500">Chargement des données...</p>}
+      {/* CARTE */}
+      <div className="bg-white p-4 rounded-xl shadow-lg mb-8">
+        <div 
+          ref={mapRef} 
+          className="w-full h-[500px] rounded-lg border border-gray-200"
+        />
       </div>
-      
-      <div 
-        ref={mapRef} 
-        className="flex-1 rounded-2xl border-2 border-white shadow-2xl overflow-hidden"
-        style={{ minHeight: '500px' }}
-      />
-    </main>
+
+      {/* TABLEAU DE DONNÉES */}
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="p-6 border-b border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-700">Informations du tracé</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
+              <tr>
+                <th className="px-6 py-4 font-bold">Point central (Lat/Lon)</th>
+                <th className="px-6 py-4 font-bold">Type Géométrie</th>
+                <th className="px-6 py-4 font-bold">Nombre de points</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {data.map((item, idx) => (
+                <tr key={idx} className="hover:bg-blue-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-700">
+                    {item.geo_point_2d.lat.toFixed(5)} , {item.geo_point_2d.lon.toFixed(5)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm uppercase">
+                      {item.geo_shape.geometry.type}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600 font-mono">
+                    {item.geo_shape.geometry.coordinates[0].length} points
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {loading && <p className="p-10 text-center text-gray-400 italic">Chargement des données du tableau...</p>}
+        </div>
+      </div>
+    </div>
   );
 }
