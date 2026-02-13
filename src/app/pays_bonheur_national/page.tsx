@@ -38,7 +38,7 @@ export default function BonheurNationalPage() {
       <div className="max-w-5xl mx-auto">
         
         <Link href="/" className="inline-flex items-center gap-2 text-rose-600 hover:text-rose-800 mb-6 font-medium">
-          <ArrowLeft size={20} /> Retour
+          <ArrowLeft size={20} /> Retour à l'Accueil
         </Link>
 
         {/* SECTION D'EN-TÊTE & DÉFINITION */}
