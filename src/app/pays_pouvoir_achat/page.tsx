@@ -53,7 +53,7 @@ export default function PouvoirAchatPage() {
       <div className="max-w-7xl mx-auto">
         
         <Link href="/" className="group flex items-center gap-2 text-slate-500 font-semibold mb-10 hover:text-emerald-600 transition-colors">
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Retour au Dashboard
+          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Retour à l'Accueil
         </Link>
 
         {metadata && (
