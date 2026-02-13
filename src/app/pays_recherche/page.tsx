@@ -37,7 +37,7 @@ export default function PaysRecherchePage() {
       <div className="max-w-7xl mx-auto">
         
         <Link href="/" className="flex items-center gap-2 text-blue-700 font-semibold mb-8 hover:underline decoration-2">
-          <ArrowLeft size={18} /> Retour au Dashboard
+          <ArrowLeft size={18} /> Retour à l'Accueil
         </Link>
 
         {metadata && (
