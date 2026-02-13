@@ -1,227 +1,171 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, Loader2 } from 'lucide-react'; // Ajout de Loader2 pour l'animation
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import 'leaflet/dist/leaflet.css';
 
-// ✅ Imports dynamiques UNIQUEMENT pour les composants
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((m) => m.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((m) => m.TileLayer),
-  { ssr: false }
-);
-const Polyline = dynamic(
-  () => import("react-leaflet").then((m) => m.Polyline),
-  { ssr: false }
-);
-
-// ✅ Composant pour recentrer la carte
-function ChangeView({ bounds }: { bounds: [number, number][] }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (bounds.length > 0) {
-      map.fitBounds(bounds, { padding: [40, 40] });
-    }
-  }, [bounds, map]);
-
-  return null;
-}
-
-export default function LignesPage() {
-  const [lignes, setLignes] = useState<any[]>([]);
+export default function TisseoPage() {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstance = useRef<any>(null);
+  const polylineLayerRef = useRef<any>(null);
+  
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedLigne, setSelectedLigne] = useState<any | null>(null);
 
-  // ✅ Fetch des données
-  useEffect(() => {
-    fetch("/api/tisseoligne")
-      .then((res) => res.json())
-      .then((data) => {
-        let items = Array.isArray(data) ? data : data.records || [];
+  const showLineOnMap = async (lineData: any) => {
+    if (!mapInstance.current) return;
+    const L = (await import('leaflet')).default;
 
-        items = items.map((item: any) => {
-          const fields = item.fields || item;
+    if (polylineLayerRef.current) {
+      mapInstance.current.removeLayer(polylineLayerRef.current);
+    }
 
-          return {
-            ...fields,
-            geometry:
-              item.geometry ||
-              fields.geo_shape ||
-              fields.geometry ||
-              null,
-            label_long:
-              fields.nom_long ||
-              fields.nom ||
-              fields.line_name ||
-              fields.longname ||
-              "Itinéraire non défini",
-          };
-        });
+    const geom = lineData?.geo_shape?.geometry;
+    const rawCoords = geom?.coordinates;
+    
+    if (rawCoords) {
+      const isMulti = geom.type === "MultiLineString";
+      const coordsToProcess = isMulti ? rawCoords[0] : rawCoords;
+      const path = coordsToProcess.map((c: any) => [c[1], c[0]]);
+      
+      const lineColor = `rgb(${lineData.r}, ${lineData.v}, ${lineData.b})`;
 
-        items.sort((a: any, b: any) => {
-          const nameA = String(a.nom_court || a.shortname || a.ligne || "");
-          const nameB = String(b.nom_court || b.shortname || b.ligne || "");
-          return nameA.localeCompare(nameB, undefined, { numeric: true });
-        });
+      polylineLayerRef.current = L.polyline(path, {
+        color: lineColor, 
+        weight: 6,
+        opacity: 0.9,
+        lineJoin: 'round'
+      }).addTo(mapInstance.current);
 
-        setLignes(items);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Erreur Fetch:", err);
-        setLoading(false);
-      });
-  }, []);
-
-  // ✅ Conversion robuste des coordonnées
-  const getPositions = (ligne: any): [number, number][] => {
-    const geo = ligne?.geometry;
-    if (!geo?.coordinates) return [];
-
-    try {
-      let coords: any[] = [];
-
-      if (geo.type === "LineString") {
-        coords = geo.coordinates;
-      }
-
-      if (geo.type === "MultiLineString") {
-        coords = geo.coordinates.flat(Infinity);
-      }
-
-      // Inversion [lon, lat] → [lat, lon]
-      return coords
-        .filter((c) => Array.isArray(c) && c.length >= 2)
-        .map((c) => [c[1], c[0]]);
-    } catch (error) {
-      console.error("Erreur conversion coordonnées:", error);
-      return [];
+      mapInstance.current.fitBounds(polylineLayerRef.current.getBounds(), { padding: [50, 50] });
     }
   };
 
-  if (loading)
-    return (
-      <div className="p-10 text-center bg-white min-h-screen">
-        Chargement du réseau...
-      </div>
-    );
+  useEffect(() => {
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      try {
+        const res = await fetch('/api/tisseotest');
+        const jsonData = await res.json();
+        let lines = Array.isArray(jsonData) ? jsonData : [jsonData];
+        
+        lines.sort((a, b) => a.id_ligne.localeCompare(b.id_ligne, undefined, {numeric: true}));
 
-  const activePositions = selectedLigne
-    ? getPositions(selectedLigne)
-    : [];
+        setData(lines);
+
+        if (!mapRef.current || mapInstance.current) {
+             // Si la carte existe déjà mais qu'on a de nouvelles données
+             setLoading(false);
+             return;
+        }
+
+        mapInstance.current = L.map(mapRef.current).setView([43.6047, 1.4442], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          attribution: '© OpenStreetMap'
+        }).addTo(mapInstance.current);
+
+        if (lines.length > 0) showLineOnMap(lines[0]);
+        
+        // On laisse un petit délai pour que les tuiles de la carte commencent à charger
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+    initMap();
+  }, []);
 
   return (
-    <main className="p-8 bg-white min-h-screen text-black">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
       
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors font-medium">
+          <ArrowLeft size={20} />
+          Retour à l'Accueil
         </Link>
-      </nav>
-      
-      <h1 className="text-3xl font-bold mb-6 border-b pb-2 italic text-orange-600">
-        Réseau Tisséo - Tracés des Lignes
-      </h1>
-
-      <div className="h-96 w-full rounded-xl mb-8 border border-gray-200 overflow-hidden relative shadow-sm">
-        <MapContainer
-          center={[43.6047, 1.4442]}
-          zoom={12}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            attribution="&copy; OpenStreetMap"
-          />
-
-          {activePositions.length > 0 && (
-            <>
-              <Polyline
-                positions={activePositions}
-                pathOptions={{
-                  color:
-                    selectedLigne?.couleur_ligne ||
-                    selectedLigne?.color ||
-                    "#ea580c",
-                  weight: 5,
-                  opacity: 0.9,
-                }}
-              />
-              <ChangeView bounds={activePositions} />
-            </>
-          )}
-        </MapContainer>
+        <h1 className="text-2xl font-bold text-slate-800">Réseau Tisséo</h1>
       </div>
 
-      <p className="text-center text-sm text-gray-400 mb-8 italic">
-        {selectedLigne
-          ? `Tracé de la ligne ${
-              selectedLigne.nom_court || ""
-            } affiché`
-          : "Cliquez sur une ligne pour voir son tracé"}
-      </p>
+      {/* CONTENEUR CARTE AVEC LOADING */}
+      <div className="bg-white p-2 rounded-xl shadow-md mb-8 relative z-10 overflow-hidden">
+        {loading && (
+          <div className="absolute inset-0 z-[1000] flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm transition-opacity">
+            <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-2" />
+            <p className="text-slate-600 font-medium animate-pulse">Chargement de la carte...</p>
+          </div>
+        )}
+        <div ref={mapRef} className="w-full h-[400px] md:h-[500px] rounded-lg border border-slate-200" />
+      </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {lignes.map((ligne, index) => {
-          const displayName =
-            ligne.nom_court || ligne.shortname || ligne.ligne || "Ligne";
-
-          const color =
-            ligne.couleur_ligne || ligne.color || "#666";
-
-          const isSelected =
-            selectedLigne?.nom_court === ligne.nom_court;
-
-          return (
-            <div
-              key={index}
-              className={`bg-white p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                isSelected
-                  ? "border-orange-500 ring-1 ring-orange-500 shadow-md"
-                  : "border-gray-100 shadow-sm"
-              }`}
-            >
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <span
-                    className="text-white font-bold px-3 py-1 rounded text-md min-w-[45px] text-center"
-                    style={{ backgroundColor: color }}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+        <div className="p-4 bg-slate-100 border-b border-slate-200">
+          <h2 className="font-semibold text-slate-700">Sélectionnez une ligne pour afficher le parcours</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
+              <tr>
+                <th className="px-6 py-3 border-b">id_ligne</th>
+                <th className="px-6 py-3 border-b">ligne</th>
+                <th className="px-6 py-3 border-b">nom_ligne</th>
+                <th className="px-6 py-3 border-b">couleur</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-10 text-center text-slate-400 italic">
+                    Récupération des données en cours...
+                  </td>
+                </tr>
+              ) : (
+                data.map((item, idx) => (
+                  <tr 
+                    key={idx} 
+                    onClick={() => showLineOnMap(item)}
+                    className="hover:bg-blue-50 cursor-pointer transition-colors group"
                   >
-                    {displayName}
-                  </span>
-
-                  <span className="text-[10px] font-bold uppercase text-gray-400 tracking-tighter">
-                    {ligne.mode || "Bus"}
-                  </span>
-                </div>
-
-                <div className="text-xs font-bold text-gray-800 mb-4 line-clamp-2 h-8 leading-tight">
-                  {ligne.label_long}
-                </div>
-              </div>
-
-              <button
-                onClick={() => setSelectedLigne(ligne)}
-                className={`w-full py-2 rounded-lg text-xs font-bold transition-all ${
-                  isSelected
-                    ? "bg-orange-600 text-white"
-                    : "bg-orange-50 text-orange-700 hover:bg-orange-600 hover:text-white border border-orange-100"
-                }`}
-              >
-                {isSelected ? "Tracé affiché" : "Afficher le tracé"}
-              </button>
-            </div>
-          );
-        })}
+                    <td className="px-6 py-4 font-mono text-sm text-slate-500">
+                      {item.id_ligne}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span 
+                        style={{ backgroundColor: `rgb(${item.r}, ${item.v}, ${item.b})` }}
+                        className="text-white px-3 py-1 rounded font-bold text-sm shadow-sm"
+                      >
+                        {item.ligne}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-700 font-medium">
+                      {item.nom_ligne}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: `rgb(${item.r}, ${item.v}, ${item.b})` }}
+                        />
+                        {item.couleur}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </main>
+
+      <style jsx global>{`
+        body { top: 0 !important; }
+        .skiptranslate, #google_translate_element {
+          z-index: 9999 !important;
+        }
+        .leaflet-container {
+          z-index: 1 !important;
+        }
+      `}</style>
+    </div>
   );
 }
