@@ -36,7 +36,7 @@ export default function PaysPollutionPage() {
       <div className="max-w-7xl mx-auto">
         
         <Link href="/" className="flex items-center gap-2 text-indigo-600 font-medium mb-8 hover:underline">
-          <ArrowLeft size={18} /> Retour
+          <ArrowLeft size={18} /> Retour à l'Accueil
         </Link>
 
         {metadata && (
