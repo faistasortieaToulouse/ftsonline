@@ -79,8 +79,9 @@ export default function NiveauViePage() {
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-600"></div>
-          </div>
+           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-600"></div>
+             <p className="ml-4 text-slate-500">Chargement des données...</p> {/* Petit texte ajouté */}
+            </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredData.map((item) => (
