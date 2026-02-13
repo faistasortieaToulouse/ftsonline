@@ -79,7 +79,7 @@ const nbFrancais = 3;
 const nbHierarchie = 23;
 const nbSaHistoire = 12;
 const nbLangue = 1;
-const nbMonde = 21;
+const nbMonde = 36;
 const nbReligion = 3;
 const nbTerritoire = 8;
 const totalArticles = 
@@ -571,9 +571,24 @@ const categories = [
       { title: "Villes de Russie", href: "/russie" },
       { title: "Villes de Turquie", href: "/turquie" },
       { title: "Pays et villes du monde", href: "/monde" },
+      { title: "Niveau d'alphabétisation", href: "/pays_alphabetisation" },
+      { title: "Bonheur National Brut", href: "/pays_bonheur_national" },
+      { title: "Niveau d'éducation", href: "/pays_education" },
+      { title: "Indice d'inégalités", href: "/pays_indice_inegalites" },
+      { title: "Mécanisation agricole", href: "/pays_mecanique_agricole" },
+      { title: "Natalité et Fécondité", href: "/pays_natalite_fecondite" },
+      { title: "Niveau de développement", href: "/pays_niveau_developpement" },
+      { title: "Niveau de vie", href: "/pays_niveau_vie" },
+      { title: "Pauvreté d'apprentissage", href: "/pays_pauvrete_apprentissage" },
+      { title: "Niveau de pollution", href: "/pays_pollution" },
+      { title: "Pouvoir d'achat", href: "/pays_pouvoir_achat" },
+      { title: "Niveau de la Recherche", href: "/pays_recherche" },
+      { title: "Taux de pauvreté", href: "/pays_taux_pauvrete" },
+      { title: "Niveau technologique", href: "/pays_technologie" },
+      { title: "Valeur des monnaies", href: "/pays_valeur_monnaie" },
     ]
   },
-//  const nbMonde = 21;
+//  const nbMonde = 36;
 
     { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
     { title: "Religion Chine", href: "/religionchine" },
