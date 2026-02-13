@@ -1,5 +1,6 @@
-// src/app/api/pays_pauvrete_apprentissage/route.ts
 import { NextResponse } from 'next/server';
+// Importation directe du fichier JSON
+import learningPovertyData from '@/data/statistiques/tri_pays_pauvrete_apprentissage.json';
 
 export async function GET() {
   const metadata = {
@@ -12,11 +13,9 @@ export async function GET() {
     ]
   };
 
-  const data = [
-    // ... Insérez ici votre tableau JSON complet ...
-    {"rang": 1, "pays": "Singapour", "taux_lp": "0,0%", "analyse": "Méritocratie & Tech", "particularite": "Les enseignants sont recrutés parmi les top 5% diplômés."},
-    // etc... jusqu'au rang 121
-  ];
-
-  return NextResponse.json({ metadata, data });
+  // On renvoie directement les données importées du JSON
+  return NextResponse.json({ 
+    metadata, 
+    data: learningPovertyData 
+  });
 }
