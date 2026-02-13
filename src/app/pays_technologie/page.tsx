@@ -39,7 +39,7 @@ export default function PaysTechnologiePage() {
       <div className="max-w-7xl mx-auto">
         
         <Link href="/" className="flex items-center gap-2 text-cyan-400 font-bold mb-10 hover:text-cyan-300 transition-colors w-fit">
-          <ArrowLeft size={18} /> Retour au Dashboard
+          <ArrowLeft size={18} /> Retour à l'Accueil
         </Link>
 
         {metadata && (
