@@ -55,7 +55,7 @@ export default function PauvretéApprentissagePage() {
         
         {/* Navigation */}
         <Link href="/" className="flex items-center gap-2 text-emerald-700 font-medium mb-8 hover:underline">
-          <ArrowLeft size={18} /> Retour au Dashboard
+          <ArrowLeft size={18} /> Retour à l'Accueil
         </Link>
 
         {/* Header Section */}
