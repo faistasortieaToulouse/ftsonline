@@ -12,10 +12,6 @@ export default function TisseoPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // --- CONFIGURATION DES VRAIS NUMÉROS ---
-  // Remplace ces numéros par les vrais numéros de ligne dans l'ordre de ton JSON
-  const nomsReels = ["44", "L1", "18", "27", "L9"]; 
-
   const showLineOnMap = async (lineData: any) => {
     if (!mapInstance.current) return;
     const L = (await import('leaflet')).default;
@@ -24,15 +20,19 @@ export default function TisseoPage() {
       mapInstance.current.removeLayer(polylineLayerRef.current);
     }
 
-    const rawCoords = lineData?.geo_shape?.geometry?.coordinates;
+    const geom = lineData?.geo_shape?.geometry;
+    const rawCoords = geom?.coordinates;
     
     if (rawCoords) {
-      const isMulti = lineData.geo_shape.geometry.type === "MultiLineString";
+      const isMulti = geom.type === "MultiLineString";
       const coordsToProcess = isMulti ? rawCoords[0] : rawCoords;
       const path = coordsToProcess.map((c: any) => [c[1], c[0]]);
       
+      // Utilisation de la couleur RGB dynamique du JSON pour le tracé
+      const lineColor = `rgb(${lineData.r}, ${lineData.v}, ${lineData.b})`;
+
       polylineLayerRef.current = L.polyline(path, {
-        color: '#ef4444', 
+        color: lineColor, 
         weight: 6,
         opacity: 0.9,
         lineJoin: 'round'
@@ -48,7 +48,11 @@ export default function TisseoPage() {
       try {
         const res = await fetch('/api/tisseotest');
         const jsonData = await res.json();
-        const lines = Array.isArray(jsonData) ? jsonData : [jsonData];
+        let lines = Array.isArray(jsonData) ? jsonData : [jsonData];
+        
+        // TRI PAR ID_LIGNE (Ordre croissant)
+        lines.sort((a, b) => a.id_ligne.localeCompare(b.id_ligne, undefined, {numeric: true}));
+
         setData(lines);
 
         if (!mapRef.current || mapInstance.current) return;
@@ -72,14 +76,11 @@ export default function TisseoPage() {
     <div className="min-h-screen bg-slate-50 p-4 md:p-8">
       
       <div className="flex items-center justify-between mb-6">
-        <Link 
-          href="/" 
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors font-medium"
-        >
+        <Link href="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors font-medium">
           <ArrowLeft size={20} />
           Retour à l'Accueil
         </Link>
-        <h1 className="text-2xl font-bold text-slate-800">Tracés du Réseau Tisséo</h1>
+        <h1 className="text-2xl font-bold text-slate-800">Réseau Tisséo</h1>
       </div>
 
       <div className="bg-white p-2 rounded-xl shadow-md mb-8 relative z-10">
@@ -88,16 +89,16 @@ export default function TisseoPage() {
 
       <div className="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
         <div className="p-4 bg-slate-100 border-b border-slate-200">
-          <h2 className="font-semibold text-slate-700">Sélectionnez une ligne pour voir le tracé</h2>
+          <h2 className="font-semibold text-slate-700">Sélectionnez une ligne</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50 text-slate-500 uppercase text-xs">
               <tr>
-                <th className="px-6 py-3 border-b">Ligne</th>
-                <th className="px-6 py-3 border-b">Point Central</th>
-                <th className="px-6 py-3 border-b">Géométrie</th>
-                <th className="px-6 py-3 border-b">Points</th>
+                <th className="px-6 py-3 border-b">id_ligne</th>
+                <th className="px-6 py-3 border-b">ligne</th>
+                <th className="px-6 py-3 border-b">nom_ligne</th>
+                <th className="px-6 py-3 border-b">couleur</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -107,22 +108,28 @@ export default function TisseoPage() {
                   onClick={() => showLineOnMap(item)}
                   className="hover:bg-blue-50 cursor-pointer transition-colors group"
                 >
-                  <td className="px-6 py-4">
-                    <span className="bg-blue-600 text-white px-3 py-1 rounded-full font-bold text-sm shadow-sm group-hover:bg-blue-700">
-                      {/* On affiche le nom réel depuis le mapping, sinon l'index */}
-                      Ligne {nomsReels[idx] || (idx + 1)} 
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-600">
-                    {item.geo_point_2d.lat.toFixed(4)}, {item.geo_point_2d.lon.toFixed(4)}
+                  <td className="px-6 py-4 font-mono text-sm text-slate-500">
+                    {item.id_ligne}
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-[10px] font-mono bg-slate-200 px-2 py-0.5 rounded text-slate-600">
-                      {item.geo_shape.geometry.type}
+                    <span 
+                      style={{ backgroundColor: `rgb(${item.r}, ${item.v}, ${item.b})` }}
+                      className="text-white px-3 py-1 rounded font-bold text-sm shadow-sm"
+                    >
+                      {item.ligne}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-500">
-                    {item.geo_shape.geometry.coordinates[0].length} pts
+                  <td className="px-6 py-4 text-sm text-slate-700 font-medium">
+                    {item.nom_ligne}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: `rgb(${item.r}, ${item.v}, ${item.b})` }}
+                      />
+                      {item.couleur}
+                    </div>
                   </td>
                 </tr>
               ))}
