@@ -38,7 +38,7 @@ export default function MecaniqueAgricolePage() {
       <div className="max-w-5xl mx-auto">
         
         <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 mb-6 font-medium transition-colors">
-          <ArrowLeft size={20} /> Retour au tableau de bord
+          <ArrowLeft size={20} /> Retour à l'Accueil
         </Link>
 
         {/* HEADER & METADATA */}
