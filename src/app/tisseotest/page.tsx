@@ -1,83 +1,93 @@
 "use client";
-import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-// Import dynamique de la carte
-const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then(m => m.TileLayer), { ssr: false });
-const Polyline = dynamic(() => import('react-leaflet').then(m => m.Polyline), { ssr: false });
-
-interface TisseoLine {
-  geo_point_2d: { lon: number; lat: number };
-  geo_shape: {
-    geometry: {
-      coordinates: [number, number][][];
-    };
-  };
-}
-
 export default function TisseoTestPage() {
-  const [lines, setLines] = useState<TisseoLine[]>([]);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstance = useRef<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/tisseotest')
-      .then(res => res.json())
-      .then(data => {
-        setLines(Array.isArray(data) ? data : [data]);
+    // 1. Import dynamique de Leaflet uniquement côté client
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      
+      if (!mapRef.current || mapInstance.current) return;
+
+      // 2. Initialisation de la carte
+      mapInstance.current = L.map(mapRef.current).setView([43.6047, 1.4442], 12);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(mapInstance.current);
+
+      try {
+        // 3. Récupération des données
+        const res = await fetch('/api/lignetisseo');
+        const data = await res.json();
+        const lines = Array.isArray(data) ? data : [data];
+
+        // 4. Dessin des tracés avec vérification de structure
+        lines.forEach((line) => {
+          const coords = line?.geo_shape?.geometry?.coordinates;
+          
+          if (coords && Array.isArray(coords[0])) {
+            // Inversion [lon, lat] -> [lat, lon] pour Leaflet
+            const pathPositions = coords[0].map((coord: number[]) => [coord[1], coord[0]]);
+            
+            L.polyline(pathPositions as any, {
+              color: '#2563eb',
+              weight: 5,
+              opacity: 0.8,
+              lineJoin: 'round'
+            }).addTo(mapInstance.current);
+
+            // Ajuster la vue sur le tracé
+            const bounds = L.polyline(pathPositions as any).getBounds();
+            mapInstance.current.fitBounds(bounds);
+          }
+        });
+
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      } catch (error) {
+        console.error("Erreur chargement tracé:", error);
+        setLoading(false);
+      }
+    };
+
+    initMap();
+
+    // Nettoyage de la carte au démontage du composant
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
   }, []);
 
-  if (loading) return <div className="p-10">Chargement du tracé...</div>;
-
   return (
-    <main className="h-screen w-full p-4 flex flex-col gap-4">
-      
+    <main className="h-screen w-full p-4 flex flex-col bg-slate-50">
+
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
-      
-      <h1 className="text-2xl font-bold text-blue-700 italic">Test Tracé Ligne Tisséo</h1>
-      
-      <div className="flex-1 rounded-2xl overflow-hidden border-2 border-gray-200 shadow-xl">
-        {typeof window !== 'undefined' && (
-          <MapContainer 
-            center={[43.5463, 1.5139]} 
-            zoom={13} 
-            style={{ height: '100%', width: '100%' }}
-          >
-            <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
-            
-            {lines.map((line, idx) => {
-              // Leaflet attend [lat, lon], le JSON fournit [lon, lat]
-              const pathPositions = line.geo_shape.geometry.coordinates[0].map(
-                coord => [coord[1], coord[0]] as [number, number]
-              );
 
-              return (
-                <Polyline 
-                  key={idx}
-                  positions={pathPositions}
-                  pathOptions={{ 
-                    color: '#2563eb', 
-                    weight: 5, 
-                    opacity: 0.7,
-                    lineJoin: 'round'
-                  }}
-                />
-              );
-            })}
-          </MapContainer>
-        )}
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-blue-600 italic">Tracé Tisséo (Leaflet Natif)</h1>
+        {loading && <p className="text-sm text-gray-500">Chargement des données...</p>}
       </div>
+      
+      <div 
+        ref={mapRef} 
+        className="flex-1 rounded-2xl border-2 border-white shadow-2xl overflow-hidden"
+        style={{ minHeight: '500px' }}
+      />
     </main>
   );
 }
