@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 export async function GET() {
   try {
     const filePath = path.join(process.cwd(), 'data', 'tisseo', 'lignetisseo.json');
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const data = JSON.parse(fileContents);
+    const jsonData = await fs.readFile(filePath, 'utf-8');
+    const data = JSON.parse(jsonData);
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: "Erreur lors de la lecture des lignes" }, { status: 500 });
+    console.error('Erreur API Tisséo:', error);
+    return NextResponse.json({ error: 'Erreur lors du chargement des données' }, { status: 500 });
   }
 }
