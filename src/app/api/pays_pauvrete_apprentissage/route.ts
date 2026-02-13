@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 // Importation directe du fichier JSON
-import learningPovertyData from '@/data/statistiques/tri_pays_pauvrete_apprentissage.json';
+import learningPovertyData from '../../../../data/statistiques/tri_pays_pauvrete_apprentissage.json';
 
 export async function GET() {
   const metadata = {
