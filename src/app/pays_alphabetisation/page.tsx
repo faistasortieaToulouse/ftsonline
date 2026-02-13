@@ -43,7 +43,7 @@ export default function AlphabetisationPage() {
           className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors mb-4 font-medium"
         >
           <ArrowLeft size={20} />
-          Retour
+          Retour à l'Accueil
         </Link>
         
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
