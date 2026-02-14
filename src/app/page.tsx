@@ -16,7 +16,7 @@ import {
   Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
   Newspaper, Speech, Users, UserGroup, Smile, Handshake,
   ChevronDown, Wind, Droplets, Sun as SunIcon, Navigation,
-  Timer, Mountain, Store, Share2
+  Timer, Mountain, Store, Share2, Download
 } from "lucide-react";
 import APKDownloadModal from "@/components/APKDownloadModal";
 import InstallPWAiOS from "@/components/InstallPWAiOS";
@@ -1367,6 +1367,16 @@ useEffect(() => {
         height={53}
         className="w-auto h-auto"
       />
+    </a>
+
+{/* Téléchargement Direct de l'APK (Ton fichier dans /public) */}
+    <a
+      href="/fts-toulouse.apk"
+      download="FTS_Toulouse_Online.apk"
+      className="flex items-center space-x-2 p-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition"
+    >
+      <Download className="h-5 w-5" />
+      <span className="font-semibold text-sm text-center">Télécharger l'APK <br/><span className="text-[10px] opacity-80">(Installation directe)</span></span>
     </a>
 
     <APKDownloadModal />
