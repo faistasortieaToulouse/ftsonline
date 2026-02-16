@@ -60,7 +60,7 @@ const nbSport = 5;
 const nbMusee = 13;
 const nbVisite = 11;
 const nbOccitanie = 18;
-const nbTransport = 14;
+const nbTransport = 16;
 const nbCafeLangue = 1;
 const nbConsomamtion = 2;
 const nbEmploi = 4;
@@ -291,9 +291,10 @@ const categories = [
     { title: "train 1 euro Occitanie", href: "/train1euro" },
     { title: "Voyage", href: "/voyagetoulouse" },
     { title: "Automobile", href: "/automobile" },
-	{ title: "Bison Futé 31", href: "/bisonfute" },
+    { title: "Circulation", href: "/voitures" },
+	{ title: "Trafic Automobile", href: "/tomtom" },
   ]},
-//  const nbTransport = 14;
+//  const nbTransport = 16;
 
 
   /* ---------------- TOULOUSE ---------------- */
