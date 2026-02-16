@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
-/**
- * On utilise "../../../" pour remonter depuis :
- * src/app/api/paystest/ -> src/app/api/ -> src/app/ -> src/ -> RACINE
- * Puis on redescend dans /data
- */
+// On utilise le même chemin relatif que pour votre fichier recherche qui fonctionne
 import inequalityData from '../../../../data/statistiques/tri_pays_indice_inegalites.json';
 
 export async function GET() {
   try {
-    // Les données sont intégrées au bundle lors du build
+    // On s'assure de renvoyer le contenu complet (metadata + data)
+    // tel qu'il est défini dans votre fichier JSON
     return NextResponse.json(inequalityData);
   } catch (error) {
-    console.error("Erreur lors de la distribution du JSON :", error);
+    console.error("Erreur API Paystest:", error);
     return NextResponse.json(
       { error: "Impossible de charger les données." },
       { status: 500 }
