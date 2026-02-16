@@ -1,22 +1,15 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+// Next.js va inclure automatiquement ce fichier dans le déploiement Vercel
+import inequalityData from '@/data/statistiques/tri_pays_indice_inegalites.json';
 
 export async function GET() {
   try {
-    // 1. On définit le chemin absolu à partir de la racine du projet (process.cwd())
-    const jsonDirectory = path.join(process.cwd(), 'data', 'statistiques');
-    const fileContents = await fs.readFile(jsonDirectory + '/tri_pays_indice_inegalites.json', 'utf8');
-    
-    // 2. On parse le contenu JSON
-    const data = JSON.parse(fileContents);
-
-    // 3. On retourne les données
-    return NextResponse.json(data);
+    // Plus besoin de lire le fichier, il est déjà chargé en mémoire
+    return NextResponse.json(inequalityData);
   } catch (error) {
-    console.error("Erreur lors de la lecture du JSON :", error);
+    console.error("Erreur lors de la distribution du JSON :", error);
     return NextResponse.json(
-      { error: "Impossible de charger le fichier de données." },
+      { error: "Impossible de charger les données." },
       { status: 500 }
     );
   }
