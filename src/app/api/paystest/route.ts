@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 // Importation directe du fichier JSON
-import inequalityData from '@/data/statistiques/tri_pays_indice_inegalites.json';
+import inequalityData from '../../../../data/statistiques/tri_pays_indice_inegalites.json';
 
 export async function GET() {
   try {
