@@ -30,9 +30,10 @@ export default function TraficToulousePage() {
       try {
         const res = await fetch('/api/voitures');
         const data = await res.json();
-        setTraficData(data);
+        // Filtrage pour ne garder que les points ayant des coordonnées valides
+        setTraficData(data.filter((p: any) => p.coords && p.coords.length === 2));
       } catch (err) {
-        console.error(err);
+        console.error("Erreur de récupération:", err);
       } finally {
         setIsLoading(false);
       }
@@ -45,6 +46,7 @@ export default function TraficToulousePage() {
 
     const initMap = async () => {
       const L = (await import('leaflet')).default;
+      
       if (!mapInstance.current) {
         mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 12);
         L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
@@ -57,7 +59,8 @@ export default function TraficToulousePage() {
 
       traficData.forEach((point, i) => {
         const count = i + 1;
-        const color = point.debit > 500 ? "#ef4444" : "#22c55e"; // Rouge si débit élevé
+        // Seuil ajusté pour le trafic journalier (TMJO)
+        const color = point.debit > 2000 ? "#ef4444" : "#22c55e"; 
 
         const customIcon = L.divIcon({
           className: 'custom-marker',
@@ -67,10 +70,12 @@ export default function TraficToulousePage() {
         });
 
         const popupContent = `
-          <div style="font-family: sans-serif; min-width: 150px;">
-            <strong style="display:block; border-bottom:1px solid #ccc; margin-bottom:5px;">${point.voie}</strong>
-            <b>Débit :</b> ${point.debit} véh/h<br/>
-            <b>Vitesse moy :</b> ${point.vitesse} km/h
+          <div style="font-family: sans-serif; min-width: 150px; padding: 5px;">
+            <strong style="display:block; border-bottom:1px solid #eee; margin-bottom:5px; color: #334155;">${point.voie}</strong>
+            <div style="font-size: 12px;">
+              <b>Trafic (TMJO) :</b> ${point.debit} véhicules/j<br/>
+              <b>Vitesse V85 :</b> ${point.vitesse} km/h
+            </div>
           </div>
         `;
 
@@ -82,6 +87,13 @@ export default function TraficToulousePage() {
     };
 
     initMap();
+
+    // Nettoyage au démontage
+    return () => {
+      if (mapInstance.current) {
+        // Optionnel : On peut laisser la carte persistante ou la supprimer
+      }
+    };
   }, [traficData]);
 
   return (
@@ -93,35 +105,44 @@ export default function TraficToulousePage() {
       </nav>
 
       <div className="mb-6">
-        <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
-          <Car className="text-indigo-600" size={36} /> Trafic en Temps Réel
+        <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3 italic uppercase tracking-tighter">
+          <Car className="text-indigo-600" size={36} /> Trafic <span className="text-indigo-600">Toulouse</span>
         </h1>
-        <p className="text-slate-500 italic">Analyse des points de comptage de Toulouse Métropole</p>
+        <p className="text-slate-500 font-medium">Analyse dynamique des flux de circulation par section.</p>
       </div>
 
-      <div style={{ height: "50vh" }} className="mb-8 border-4 border-white rounded-2xl shadow-xl relative overflow-hidden">
-        <div ref={mapRef} className="h-full w-full" />
+      <div style={{ height: "55vh" }} className="mb-8 border-4 border-white rounded-3xl shadow-2xl relative overflow-hidden bg-slate-200">
+        <div ref={mapRef} className="h-full w-full z-0" />
         {(isLoading || !isMapReady) && (
-          <div className="absolute inset-0 bg-slate-100/80 flex items-center justify-center z-[1000]">
-            <p className="animate-bounce font-bold text-indigo-600">Chargement du trafic...</p>
+          <div className="absolute inset-0 bg-slate-100/90 flex flex-col items-center justify-center z-50">
+            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-3"></div>
+            <p className="font-bold text-slate-600">Chargement des données métropole...</p>
           </div>
         )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <table className="w-full text-left">
+      <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <table className="w-full text-left border-collapse">
           <thead className="bg-slate-900 text-white">
             <tr>
               <th className="p-4 text-center w-16">#</th>
-              <th className="p-4">Voie de circulation</th>
-              <th className="p-4">Débit (véh/h)</th>
-              <th className="p-4 hidden md:table-cell">Vitesse Moyenne</th>
+              <th className="p-4 uppercase text-xs font-black tracking-widest">Voie de circulation</th>
+              <th className="p-4 uppercase text-xs font-black tracking-widest">Trafic Journalier (Moyen)</th>
+              <th className="p-4 hidden md:table-cell uppercase text-xs font-black tracking-widest">Vitesse V85</th>
             </tr>
           </thead>
           <tbody>
-            {traficData.map((point, i) => (
-              <TraficRow key={point.id} point={point} index={i} />
-            ))}
+            {traficData.length > 0 ? (
+              traficData.map((point, i) => (
+                <TraficRow key={point.id || i} point={point} index={i} />
+              ))
+            ) : (
+              !isLoading && (
+                <tr>
+                  <td colSpan={4} className="p-10 text-center text-slate-400">Aucune donnée reçue de l'API.</td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>
@@ -131,32 +152,34 @@ export default function TraficToulousePage() {
 
 function TraficRow({ point, index }: { point: TraficPoint; index: number }) {
   const [isOpen, setIsOpen] = useState(false);
-  const isHeavy = (point.debit > 500);
+  const isHeavy = (point.debit > 2000);
 
   return (
     <>
       <tr 
-        className={`border-b border-slate-100 cursor-pointer md:cursor-default hover:bg-indigo-50/30 ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}
+        className={`border-b border-slate-100 cursor-pointer md:cursor-default transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} hover:bg-indigo-50/50`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <td className="p-4 text-center font-bold text-indigo-600">{index + 1}</td>
-        <td className="p-4 font-semibold text-slate-800">{point.voie}</td>
+        <td className="p-4 font-bold text-slate-800">{point.voie}</td>
         <td className="p-4">
-          <span className={`px-2 py-1 rounded text-xs font-bold ${isHeavy ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
-            {point.debit}
+          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${isHeavy ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+            {point.debit} véhicules/j
           </span>
         </td>
         <td className="p-4 hidden md:table-cell">
-          <div className="flex items-center gap-2 text-slate-600 text-sm">
-            <Gauge size={14} /> {point.vitesse} km/h
+          <div className="flex items-center gap-2 text-slate-500 font-medium">
+            <Gauge size={14} className="text-indigo-400" /> {point.vitesse} km/h
           </div>
         </td>
       </tr>
       {isOpen && (
-        <tr className="md:hidden bg-indigo-50/50">
-          <td colSpan={3} className="p-4 text-sm text-slate-600 italic">
-            Vitesse moyenne enregistrée : <strong>{point.vitesse} km/h</strong><br/>
-            Dernière mise à jour : {new Date(point.derniere_maj).toLocaleTimeString()}
+        <tr className="md:hidden bg-indigo-50/30">
+          <td colSpan={3} className="p-4 text-sm text-slate-600 border-b border-indigo-100">
+            <div className="space-y-1">
+              <p>📍 <b>Vitesse V85 :</b> {point.vitesse} km/h</p>
+              <p>📅 <b>Mise à jour :</b> {new Date(point.derniere_maj).toLocaleDateString()}</p>
+            </div>
           </td>
         </tr>
       )}
