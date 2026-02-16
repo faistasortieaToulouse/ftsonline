@@ -112,7 +112,7 @@ export default function PubToulousePage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-extrabold flex items-center gap-3">
-            <Beer className="text-amber-600" /> Pubs & Bars de Toulouse
+            <Beer className="text-amber-600" /> Pubs anglo-saxons de Toulouse
           </h1>
           <p className="text-slate-500 mt-1 italic">The British, Irish & Scottish Spirit in the Pink City</p>
         </div>
