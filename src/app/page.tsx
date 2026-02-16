@@ -79,7 +79,7 @@ const nbFrancais = 3;
 const nbHierarchie = 23;
 const nbSaHistoire = 12;
 const nbLangue = 1;
-const nbMonde = 36;
+const nbMonde = 37;
 const nbReligion = 3;
 const nbTerritoire = 8;
 const totalArticles = 
@@ -586,9 +586,10 @@ const categories = [
       { title: "Taux de pauvreté", href: "/pays_taux_pauvrete" },
       { title: "Niveau technologique", href: "/pays_technologie" },
       { title: "Valeur des monnaies", href: "/pays_valeur_monnaie" },
+      { title: "Vie par pays", href: "/vivrebienpays" },
     ]
   },
-//  const nbMonde = 36;
+//  const nbMonde = 37;
 
     { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
     { title: "Religion Chine", href: "/religionchine" },
