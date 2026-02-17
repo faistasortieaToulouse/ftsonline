@@ -64,7 +64,7 @@ const nbTransport = 16;
 const nbCafeLangue = 2;
 const nbConsomamtion = 3;
 const nbEmploi = 4;
-const nbFlore = 1;
+const nbFlore = 2;
 const nbEquipement = 3;
 const nbGeographie = 5;
 const nbHistoire = 3;
@@ -338,8 +338,9 @@ const categories = [
 
     { title: "Toulouse : Environnement", href: "/flore", icon: Flower, isOccitanie: true, occitanieSources: [
     { title: "Flore", href: "/flore" },
+    { title: "Environnement", href: "/environnement" },
   ]},
-//  const nbFlore = 1;
+//  const nbFlore = 2;
 
   { title: "Toulouse : Equipements", href: "/administration", icon: Home, isOccitanie: true, occitanieSources: [
     { title: "Administration", href: "/administration" },
