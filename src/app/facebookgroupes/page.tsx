@@ -27,7 +27,7 @@ export default async function FacebookGroupsPage() {
         <header className="mb-12 text-center md:text-left">
           <h1 className="text-4xl font-black text-slate-800 flex items-center justify-center md:justify-start gap-4 mb-4">
             <Facebook size={48} className="text-[#1877f2]" /> 
-            Communautés de Langues
+            Communautés FAcebook à Toulouse
           </h1>
           <p className="text-slate-600 text-lg max-w-2xl">
             Retrouvez tous les groupes Facebook pour pratiquer une langue, rencontrer des expatriés ou célébrer votre culture à Toulouse.
