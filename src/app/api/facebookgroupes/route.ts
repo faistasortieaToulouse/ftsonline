@@ -137,10 +137,11 @@ export async function GET() {
         { nom: "Comédie Club & Blind Test", tags: "Quizz, Humour, Jeux", url: "https://www.facebook.com/groups/625050106569426" },
         { nom: "Lecture & Écriture", tags: "Livres, Plume, Littérature", url: "https://www.facebook.com/groups/1355306319236116" },
         { nom: "Sorties Culturelles", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/513531158446053/" },
-        { nom: "Sorties Culturelles", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/513531158446053/" },
-        { nom: "Sorties Culturelles", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/513531158446053/" },
-        { nom: "Sorties Culturelles", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/513531158446053/" },
-        { nom: "Sorties Culturelles", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/513531158446053/" },
+        { nom: "Toulouse pittoresque, mystérieuse, insolite", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/tholosa.pittoresque.mysterieuse.insolite/" },
+        { nom: "Ville de Toulouse, Histoire et Photographie", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/tusaisquetuvientdetoulouse/" },
+        { nom: "Spectacles et concerts (31) Haute Garonne", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/166764296989718/" },
+        { nom: "Les Concerts Gratuits de Toulouse", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/221534187648/" },
+        { nom: "Les concerts et Jam Sessions Toulousaines !", tags: "Musées, Patrimoine, Art", url: "https://www.facebook.com/groups/201993529841614/" }
     ]},
     { id: "loisirs", nom: "Loisirs", groupes: [
       { nom: "Sport à Toulouse", tags: "Fitness, Course, Équipes, Santé", url: "https://www.facebook.com/groups/1492320668700625" },
