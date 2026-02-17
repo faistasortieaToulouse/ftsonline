@@ -125,7 +125,7 @@ const categories = [
 // const nbAgenda = 16;
 	
   { title: "Actualités nationale et locale", href: "/actualites", icon: Newspaper, isActualites: true, actualitesSources: [
-    { title: "Presse", href: "/presse" }
+    { title: "Presse", href: "/presse" },
     { title: "Médias locaux", href: "/media" }
   ]},
 // const nbActualites = 2;	
