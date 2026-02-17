@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from "next/link";
-import { ArrowLeft, Droplets, Flame, MapPin, Hammer, Factory } from "lucide-react";
+import { ArrowLeft, Droplets, Flame, MapPin, Hammer, Factory, Layers } from "lucide-react";
 
 async function getArchiToulouse() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
@@ -38,34 +38,36 @@ export default async function ArchiToulousePage() {
           </p>
         </header>
 
-        {/* 1. LA MATIÈRE ET LA FABRICATION */}
-        <div className="grid md:grid-cols-2 gap-8 mb-24">
-          <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
-            <h2 className="text-2xl font-bold text-[#8b4513] mb-6 flex items-center gap-2">
-              <Droplets className="text-blue-400" /> 1. La Matière Première
-            </h2>
-            <p className="text-gray-600 mb-4 leading-relaxed">
-              Toulouse est assise sur une <strong>plaine alluviale</strong>. Depuis des millénaires, la Garonne charrie des sédiments depuis les Pyrénées :
-            </p>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li>• <strong>L'argile :</strong> Le liant qui durcit à la cuisson.</li>
-              <li>• <strong>Le sable :</strong> Le "dégraissant" qui évite les fissures.</li>
-              <li>• <strong>L'oxyde de fer :</strong> Réagit à la chaleur pour donner la couleur.</li>
-            </ul>
-          </div>
+        {/* 1. MATIÈRE PREMIÈRE & FABRICATION */}
+        <section className="mb-24">
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
+              <h2 className="text-2xl font-bold text-[#8b4513] mb-6 flex items-center gap-2">
+                <Droplets className="text-blue-400" /> 1. D'où vient la matière première ?
+              </h2>
+              <p className="text-gray-600 mb-4 leading-relaxed">
+                La matière première, c'est <strong>le limon de la Garonne</strong>. Toulouse est assise sur une plaine alluviale qui charrie des sédiments pyrénéens :
+              </p>
+              <ul className="space-y-3 text-sm text-gray-700">
+                <li>• <strong>L'argile :</strong> Le liant qui durcit à la cuisson.</li>
+                <li>• <strong>Le sable :</strong> Sert de "dégraissant" pour éviter que la brique ne se fende au séchage.</li>
+                <li>• <strong>L'oxyde de fer :</strong> Naturellement présent, il réagit à la chaleur pour donner la couleur.</li>
+              </ul>
+            </div>
 
-          <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
-            <h2 className="text-2xl font-bold text-[#8b4513] mb-6 flex items-center gap-2">
-              <Factory className="text-gray-500" /> 2. Les Briqueteries
-            </h2>
-            <p className="text-gray-600 text-sm mb-4 italic">"On fabriquait les briques là où on creusait."</p>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li>• <strong>Briqueteries foraines :</strong> Aux portes de la ville (frais de transport réduits).</li>
-              <li>• <strong>Quartiers Rive Gauche :</strong> Blagnac, Lardenne et Saint-Cyprien (terre grasse).</li>
-              <li>• <strong>Virebent :</strong> Manufacture célèbre pour ses décors moulés (Launaguet).</li>
-            </ul>
+            <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
+              <h2 className="text-2xl font-bold text-[#8b4513] mb-6 flex items-center gap-2">
+                <Factory className="text-gray-500" /> 2. Où étaient-elles fabriquées ?
+              </h2>
+              <p className="text-gray-600 text-sm mb-4">Historiquement, on fabriquait les briques là où on creusait :</p>
+              <ul className="space-y-3 text-sm text-gray-700">
+                <li>• <strong>Briqueteries foraines :</strong> Situées aux portes de la ville pour limiter les frais de charrette.</li>
+                <li>• <strong>Quartiers historiques :</strong> Blagnac, Lardenne et Saint-Cyprien (rive gauche) possédaient une terre particulièrement grasse.</li>
+                <li>• <strong>Manufacture Virebent :</strong> Célèbre au XIXe pour ses briques moulées et décors de façades (Launaguet).</li>
+              </ul>
+            </div>
           </div>
-        </div>
+        </section>
 
         {/* 2. CHRONOLOGIE HISTORIQUE (Données API) */}
         <div className="relative border-l-2 border-[#d2691e] ml-4 md:ml-10 space-y-16 mb-24">
@@ -89,90 +91,60 @@ export default async function ArchiToulousePage() {
           ))}
         </div>
 
-        {/* 3. LE SECRET DES COULEURS & GÉOLOGIE */}
+        {/* 3. GÉOGRAPHIE DES COULEURS (Gers, Lauragais, Tarn) */}
         <section className="mb-24 bg-white p-10 rounded-3xl border border-orange-100 shadow-sm">
           <h2 className="text-3xl font-bold text-[#8b4513] mb-10 flex items-center gap-3">
-            <Flame className="text-[#d2691e]" /> Pourquoi Rose, Rouge ou Jaune ?
+            <MapPin className="text-[#d2691e]" /> Géographie de la Couleur
           </h2>
           
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-6">A. Chimie & Terroir</h3>
-              <div className="space-y-6">
-                <div className="border-l-4 border-red-500 pl-4">
-                  <h4 className="font-bold text-red-700">Fer + Oxygène = Rouge/Rose</h4>
-                  <p className="text-sm text-gray-600">Le standard toulousain, Albi et le Tarn (très riche en fer).</p>
-                </div>
-                <div className="border-l-4 border-amber-400 pl-4">
-                  <h4 className="font-bold text-amber-600">Calcaire + Fer = Jaune/Paille</h4>
-                  <p className="text-sm text-gray-600">
-                    <strong>Le Gers :</strong> Le calcaire des molasses "blanchit" le fer. 
-                    Typique des bastides comme Lectoure ou Gimont.
-                  </p>
-                </div>
+          <div className="space-y-12">
+            <div className="grid md:grid-cols-2 gap-8 items-start">
+              <div className="border-l-4 border-amber-400 pl-6">
+                <h3 className="text-xl font-bold text-amber-700 mb-3">Le Gers : Le royaume de la brique jaune</h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  Le sol possède des <strong>molasses calcaires</strong>. Le calcaire "blanchit" l'oxyde de fer pendant la cuisson. 
+                  La brique prend des teintes crème, jaune pâle ou moutarde.
+                </p>
+                <p className="text-xs text-amber-800 font-bold uppercase tracking-wide">Où en voir ? Bastides (Gimont, Lectoure) et haute vallée de la Save.</p>
+              </div>
+              <div className="border-l-4 border-red-800 pl-6">
+                <h3 className="text-xl font-bold text-red-900 mb-3">Le Lauragais et le Tarn : Les nuances d'ocre</h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  Vers <strong>Castres et Albi</strong>, la terre riche en fer donne les briques les plus sombres (Cathédrale d'Albi). 
+                  Vers <strong>Castelnaudary (Lauragais)</strong>, on obtient un orangé ou ocre chaleureux.
+                </p>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-6">B. Position dans le four</h3>
-              <ul className="space-y-4 text-sm text-gray-600">
-                <li className="flex gap-2">
-                  <span className="w-4 h-4 rounded bg-red-900 shrink-0"></span>
-                  <span><strong>Cœur du foyer :</strong> Cuisson forte, briques brunes/violettes (très dures).</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="w-4 h-4 rounded bg-orange-300 shrink-0"></span>
-                  <span><strong>Périphérie :</strong> Cuisson douce, briques saumonées ou roses (plus tendres).</span>
-                </li>
-              </ul>
+            <div className="bg-orange-50 p-6 rounded-xl border border-orange-100">
+              <h3 className="text-lg font-bold text-[#8b4513] mb-2 flex items-center gap-2">
+                <Layers size={20} /> Les "zones de rencontre" (Toulouse Ouest)
+              </h3>
+              <p className="text-gray-700 text-sm leading-relaxed">
+                À <strong>Lardenne</strong> ou <strong>Tournefeuille</strong>, les bâtisseurs utilisaient la brique jaune du Gers pour les encadrements de fenêtres afin de créer un contraste avec la brique rouge locale. On appelle cela le <strong>"jeu de briques"</strong>.
+              </p>
             </div>
-          </div>
-
-          {/* TABLEAU RÉCAPITULATIF DES PROVENANCES */}
-          <div className="mt-12 overflow-hidden rounded-xl border border-gray-100">
-            <table className="w-full text-left text-sm bg-orange-50/30">
-              <thead className="bg-[#8b4513] text-white">
-                <tr>
-                  <th className="p-3">Couleur</th>
-                  <th className="p-3">Provenance historique</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-orange-100">
-                  <td className="p-3 font-medium text-red-600">Rose / Saumon</td>
-                  <td className="p-3">Toulouse (Limon Garonne)</td>
-                </tr>
-                <tr className="border-b border-orange-100">
-                  <td className="p-3 font-medium text-red-900">Rouge Vif / Brun</td>
-                  <td className="p-3">Albi / Montauban / Tarn</td>
-                </tr>
-                <tr className="border-b border-orange-100">
-                  <td className="p-3 font-medium text-amber-600">Jaune / Crème</td>
-                  <td className="p-3">Gers (Lomagne / Vallée de la Save)</td>
-                </tr>
-                <tr>
-                  <td className="p-3 font-medium text-gray-500">Gris / Blanc</td>
-                  <td className="p-3">Briqueteries modernes (XXIe siècle)</td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </section>
 
-        {/* 4. ZONES DE RENCONTRE & MODERNITÉ */}
-        <section className="mb-24 grid md:grid-cols-2 gap-8">
-          <div className="p-8 bg-orange-100 rounded-2xl border-2 border-dashed border-orange-300">
-            <h3 className="text-xl font-bold text-[#8b4513] mb-4">Le "Jeu de Briques"</h3>
-            <p className="text-[#a0522d] text-sm leading-relaxed">
-              Dans les quartiers Ouest (Lardenne, Tournefeuille), on mélange les briques rouges locales et les briques jaunes du Gers pour décorer les angles des murs et les fenêtres.
-            </p>
-          </div>
-          <div className="p-8 bg-slate-800 text-white rounded-2xl">
-            <h3 className="text-xl font-bold text-amber-400 mb-4">La Brique au XXIe siècle</h3>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              Aujourd'hui, on utilise des mélanges industriels pour obtenir du gris anthracite ou du blanc pur. 
-              La brique "grise" (Cartoucherie) vient d'une cuisson sans oxygène.
-            </p>
+        {/* 4. LA BRIQUE ACTUELLE (XXIe SIÈCLE) */}
+        <section className="mb-24">
+          <h2 className="text-3xl font-bold text-slate-800 mb-10 flex items-center gap-3">
+            <Flame className="text-slate-500" /> La brique actuelle (XXIe siècle)
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-200">
+              <h3 className="text-xl font-bold text-slate-700 mb-4">Mélanges industriels</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Les briqueteries modernes (comme Terreal) mélangent des argiles de carrières différentes pour obtenir des couleurs précises : <strong>gris anthracite, blanc pur ou rouge éclatant</strong>.
+              </p>
+            </div>
+            <div className="p-8 bg-slate-800 text-white rounded-2xl shadow-xl">
+              <h3 className="text-xl font-bold text-slate-300 mb-4">La brique "grise"</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Très présente à <strong>La Cartoucherie</strong>, elle ne vient pas de terre grise mais d'un processus de <strong>réduction d'oxygène</strong> lors de la cuisson qui change la couleur naturelle de l'argile.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -183,12 +155,12 @@ export default async function ArchiToulousePage() {
           </div>
           <h3 className="text-2xl font-bold mb-4">Le saviez-vous ?</h3>
           <p className="text-orange-100 leading-relaxed max-w-2xl">
-            Au XVIIIe siècle, la brique était jugée "pauvre". Les riches toulousains peignaient leurs façades en blanc pour faire croire que leurs maisons étaient en pierre de taille, comme à Paris ! C'est seulement plus tard qu'on a redécouvert et assumé la beauté du "rose" naturel.
+            Au XVIIIe siècle, la brique était jugée "pauvre". Les riches toulousains peignaient leurs façades en blanc pour imiter la pierre de taille parisienne ! C'est seulement plus tard qu'on a redécouvert et assumé la beauté du "rose" naturel.
           </p>
         </div>
 
-        <footer className="mt-20 text-center text-gray-400 text-sm border-t border-orange-100 pt-10">
-          <p>Archives de l'Architecture Toulousaine • Dossier Spécial 2026</p>
+        <footer className="mt-20 text-center text-gray-400 text-sm border-t border-orange-100 pt-10 font-sans">
+          <p>Archives de l'Architecture Toulousaine • Données 2026</p>
         </footer>
       </div>
     </div>
