@@ -56,7 +56,7 @@ economie_emploi: [
       { name: "Toulemploi", url: "https://www.toulemploi.fr", status: "✅ Actif" },
       { name: "L'Apprentissage en Occitanie", url: "https://www.apprentissage-en-occitanie.fr", status: "✅ Actif" },
       { name: "Le Tafeur", url: "http://www.letafeur.com", status: "✅ Actif", comment: "Journal de l'emploi intérimaire" }
-    ]
+    ],
 culture_lifestyle: [
 { name: "Le Petit Tou", url: "https://www.lepetittou.com", status: "✅ Actif", comment: "Le city-guide annuel (TBS). La bible des bonnes adresses." },
       { name: "Clutch", url: "https://www.clutchmag.fr", status: "✅ Actif", comment: "Référence culturelle gratuite." },
