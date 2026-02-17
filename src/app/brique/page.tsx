@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from "next/link";
-import { ArrowLeft, Droplets, Flame, MapPin, Hammer } from "lucide-react";
+import { ArrowLeft, Droplets, Flame, MapPin, Hammer, Factory } from "lucide-react";
 
 async function getArchiToulouse() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
@@ -16,7 +16,7 @@ async function getArchiToulouse() {
 export default async function ArchiToulousePage() {
   const etapes = await getArchiToulouse();
 
-  if (!etapes) return <div className="p-10 text-center">Chargement de l'histoire rose...</div>;
+  if (!etapes) return <div className="p-10 text-center italic">Chargement des secrets de la Ville Rose...</div>;
 
   return (
     <div className="min-h-screen bg-[#fffcf9] py-12 px-4 sm:px-6 lg:px-8 font-serif">
@@ -29,16 +29,47 @@ export default async function ArchiToulousePage() {
       
       <div className="max-w-5xl mx-auto">
         
-        {/* SECTION 1 : INTRODUCTION & TIMELINE */}
+        {/* HEADER PRINCIPAL */}
         <header className="text-center mb-20">
           <h1 className="text-5xl font-serif text-[#8b4513] mb-4 uppercase tracking-tighter">Toulouse & la Brique</h1>
           <div className="h-0.5 w-40 bg-[#d2691e] mx-auto mb-6"></div>
-          <p className="text-xl text-gray-700 italic max-w-2xl mx-auto">
-            "La ville est rose parce qu'elle a transformé la contrainte de son sol en une signature mondiale."
+          <p className="text-xl text-gray-700 italic max-w-3xl mx-auto">
+            "La brique est l'âme de Toulouse. Si la ville est rose, c'est parce qu'elle a transformé la contrainte de son sol en une signature mondiale."
           </p>
         </header>
 
+        {/* 1. LA MATIÈRE ET LA FABRICATION */}
+        <div className="grid md:grid-cols-2 gap-8 mb-24">
+          <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
+            <h2 className="text-2xl font-bold text-[#8b4513] mb-6 flex items-center gap-2">
+              <Droplets className="text-blue-400" /> 1. La Matière Première
+            </h2>
+            <p className="text-gray-600 mb-4 leading-relaxed">
+              Toulouse est assise sur une <strong>plaine alluviale</strong>. Depuis des millénaires, la Garonne charrie des sédiments depuis les Pyrénées :
+            </p>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li>• <strong>L'argile :</strong> Le liant qui durcit à la cuisson.</li>
+              <li>• <strong>Le sable :</strong> Le "dégraissant" qui évite les fissures.</li>
+              <li>• <strong>L'oxyde de fer :</strong> Réagit à la chaleur pour donner la couleur.</li>
+            </ul>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
+            <h2 className="text-2xl font-bold text-[#8b4513] mb-6 flex items-center gap-2">
+              <Factory className="text-gray-500" /> 2. Les Briqueteries
+            </h2>
+            <p className="text-gray-600 text-sm mb-4 italic">"On fabriquait les briques là où on creusait."</p>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li>• <strong>Briqueteries foraines :</strong> Aux portes de la ville (frais de transport réduits).</li>
+              <li>• <strong>Quartiers Rive Gauche :</strong> Blagnac, Lardenne et Saint-Cyprien (terre grasse).</li>
+              <li>• <strong>Virebent :</strong> Manufacture célèbre pour ses décors moulés (Launaguet).</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* 2. CHRONOLOGIE HISTORIQUE (Données API) */}
         <div className="relative border-l-2 border-[#d2691e] ml-4 md:ml-10 space-y-16 mb-24">
+          <h2 className="text-3xl font-bold text-[#8b4513] mb-10 pl-4 uppercase">L'Évolution du Style</h2>
           {etapes.map((etape: any) => (
             <div key={etape.id} className="relative pl-8 md:pl-12">
               <div className="absolute -left-[9px] top-0 h-4 w-4 rounded-full bg-[#d2691e] border-2 border-white shadow-sm"></div>
@@ -58,82 +89,91 @@ export default async function ArchiToulousePage() {
           ))}
         </div>
 
-        {/* SECTION 2 : SECRETS DE FABRICATION */}
+        {/* 3. LE SECRET DES COULEURS & GÉOLOGIE */}
         <section className="mb-24 bg-white p-10 rounded-3xl border border-orange-100 shadow-sm">
-          <h2 className="text-3xl font-bold text-[#8b4513] mb-8 flex items-center gap-3">
-            <Hammer className="text-[#d2691e]" /> Les Secrets de la Brique Foraine
+          <h2 className="text-3xl font-bold text-[#8b4513] mb-10 flex items-center gap-3">
+            <Flame className="text-[#d2691e]" /> Pourquoi Rose, Rouge ou Jaune ?
           </h2>
           
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <Droplets size={18} className="text-blue-400" /> La Matière : Le Limon
-              </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Toulouse est assise sur une plaine alluviale. Depuis des millénaires, la Garonne charrie des sédiments pyrénéens : 
-                <strong> l'argile</strong> (liant), <strong>le sable</strong> (dégraissant) et <strong>l'oxyde de fer</strong> (colorant naturel).
-              </p>
-              <div className="mt-6 p-4 bg-orange-50 rounded-xl border border-orange-100">
-                <p className="text-xs font-bold text-[#d2691e] uppercase mb-2">Format Unique</p>
-                <p className="text-sm text-gray-700 italic">42 x 28 x 5 cm : Un format large et plat qui permet une cuisson homogène à cœur.</p>
+              <h3 className="text-xl font-bold text-gray-800 mb-6">A. Chimie & Terroir</h3>
+              <div className="space-y-6">
+                <div className="border-l-4 border-red-500 pl-4">
+                  <h4 className="font-bold text-red-700">Fer + Oxygène = Rouge/Rose</h4>
+                  <p className="text-sm text-gray-600">Le standard toulousain, Albi et le Tarn (très riche en fer).</p>
+                </div>
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-bold text-amber-600">Calcaire + Fer = Jaune/Paille</h4>
+                  <p className="text-sm text-gray-600">
+                    <strong>Le Gers :</strong> Le calcaire des molasses "blanchit" le fer. 
+                    Typique des bastides comme Lectoure ou Gimont.
+                  </p>
+                </div>
               </div>
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <Flame size={18} className="text-orange-500" /> L'Art de la Cuisson
-              </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                La couleur dépend de la position dans le four à bois :
-              </p>
-              <ul className="mt-4 space-y-3 text-sm text-gray-600">
-                <li><span className="font-bold text-red-900">■ Cœur du foyer :</span> Briques sombres, violettes, très dures (résistantes à l'eau).</li>
-                <li><span className="font-bold text-orange-400">■ Périphérie :</span> Cuisson douce, briques claires, saumonées ou roses (plus tendres).</li>
+              <h3 className="text-xl font-bold text-gray-800 mb-6">B. Position dans le four</h3>
+              <ul className="space-y-4 text-sm text-gray-600">
+                <li className="flex gap-2">
+                  <span className="w-4 h-4 rounded bg-red-900 shrink-0"></span>
+                  <span><strong>Cœur du foyer :</strong> Cuisson forte, briques brunes/violettes (très dures).</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="w-4 h-4 rounded bg-orange-300 shrink-0"></span>
+                  <span><strong>Périphérie :</strong> Cuisson douce, briques saumonées ou roses (plus tendres).</span>
+                </li>
               </ul>
             </div>
           </div>
-        </section>
 
-        {/* SECTION 3 : GÉOLOGIE DES COULEURS */}
-        <section className="mb-24">
-          <h2 className="text-3xl font-bold text-[#8b4513] mb-8 flex items-center gap-3">
-            <MapPin className="text-[#d2691e]" /> Géographie de la Couleur
-          </h2>
-          
-          <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
-            <table className="w-full text-left bg-white border-collapse">
+          {/* TABLEAU RÉCAPITULATIF DES PROVENANCES */}
+          <div className="mt-12 overflow-hidden rounded-xl border border-gray-100">
+            <table className="w-full text-left text-sm bg-orange-50/30">
               <thead className="bg-[#8b4513] text-white">
                 <tr>
-                  <th className="p-4 uppercase text-xs tracking-widest">Couleur</th>
-                  <th className="p-4 uppercase text-xs tracking-widest">Composant</th>
-                  <th className="p-4 uppercase text-xs tracking-widest">Provenance</th>
+                  <th className="p-3">Couleur</th>
+                  <th className="p-3">Provenance historique</th>
                 </tr>
               </thead>
-              <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
-                <tr>
-                  <td className="p-4 flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#f4a460]"></div> Rose / Saumon</td>
-                  <td className="p-4 italic">Fer + Cuisson douce</td>
-                  <td className="p-4 font-bold">Toulouse (Limon Garonne)</td>
+              <tbody>
+                <tr className="border-b border-orange-100">
+                  <td className="p-3 font-medium text-red-600">Rose / Saumon</td>
+                  <td className="p-3">Toulouse (Limon Garonne)</td>
+                </tr>
+                <tr className="border-b border-orange-100">
+                  <td className="p-3 font-medium text-red-900">Rouge Vif / Brun</td>
+                  <td className="p-3">Albi / Montauban / Tarn</td>
+                </tr>
+                <tr className="border-b border-orange-100">
+                  <td className="p-3 font-medium text-amber-600">Jaune / Crème</td>
+                  <td className="p-3">Gers (Lomagne / Vallée de la Save)</td>
                 </tr>
                 <tr>
-                  <td className="p-4 flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#8b0000]"></div> Rouge / Brun</td>
-                  <td className="p-4 italic">Fer + Cuisson forte</td>
-                  <td className="p-4 font-bold">Albi / Montauban</td>
-                </tr>
-                <tr>
-                  <td className="p-4 flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#f5deb3]"></div> Jaune / Crème</td>
-                  <td className="p-4 italic">Calcaire + Sable</td>
-                  <td className="p-4 font-bold">Gers (Lomagne)</td>
-                </tr>
-                <tr>
-                  <td className="p-4 flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#d1d5db]"></div> Gris / Blanc</td>
-                  <td className="p-4 italic">Mélanges Kaolinitiques</td>
-                  <td className="p-4 font-bold">Briqueteries Modernes</td>
+                  <td className="p-3 font-medium text-gray-500">Gris / Blanc</td>
+                  <td className="p-3">Briqueteries modernes (XXIe siècle)</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-xs text-gray-500 italic text-right">Le mélange brique rouge / brique jaune du Gers est fréquent dans les quartiers Ouest (Lardenne).</p>
+        </section>
+
+        {/* 4. ZONES DE RENCONTRE & MODERNITÉ */}
+        <section className="mb-24 grid md:grid-cols-2 gap-8">
+          <div className="p-8 bg-orange-100 rounded-2xl border-2 border-dashed border-orange-300">
+            <h3 className="text-xl font-bold text-[#8b4513] mb-4">Le "Jeu de Briques"</h3>
+            <p className="text-[#a0522d] text-sm leading-relaxed">
+              Dans les quartiers Ouest (Lardenne, Tournefeuille), on mélange les briques rouges locales et les briques jaunes du Gers pour décorer les angles des murs et les fenêtres.
+            </p>
+          </div>
+          <div className="p-8 bg-slate-800 text-white rounded-2xl">
+            <h3 className="text-xl font-bold text-amber-400 mb-4">La Brique au XXIe siècle</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Aujourd'hui, on utilise des mélanges industriels pour obtenir du gris anthracite ou du blanc pur. 
+              La brique "grise" (Cartoucherie) vient d'une cuisson sans oxygène.
+            </p>
+          </div>
         </section>
 
         {/* FOOTER SAVIEZ-VOUS */}
@@ -148,7 +188,7 @@ export default async function ArchiToulousePage() {
         </div>
 
         <footer className="mt-20 text-center text-gray-400 text-sm border-t border-orange-100 pt-10">
-          <p>Dossier Spécial : Architecture et Terroir Occitan • 2026</p>
+          <p>Archives de l'Architecture Toulousaine • Dossier Spécial 2026</p>
         </footer>
       </div>
     </div>
