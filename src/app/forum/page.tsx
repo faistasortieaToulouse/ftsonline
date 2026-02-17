@@ -1,4 +1,6 @@
 import React from 'react';
+import { ArrowLeft, Search, Settings, Tractor, Info, Sprout } from 'lucide-react';
+import Link from 'next/link';
 
 async function getForumData() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -18,6 +20,11 @@ export default async function ForumPage() {
 
   return (
     <div className="min-h-screen bg-orange-50/30 py-12 px-4 md:px-8 font-sans text-slate-900">
+      
+        <Link href="/" className="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-900 mb-6 font-medium transition-colors">
+          <ArrowLeft size={20} /> Retour à l'Accueil
+        </Link>
+      
       <div className="max-w-5xl mx-auto">
         
         {/* Header - Style Affiche de Quartier */}
