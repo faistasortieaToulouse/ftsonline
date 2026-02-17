@@ -68,7 +68,7 @@ const nbFlore = 1;
 const nbEquipement = 3;
 const nbGeographie = 5;
 const nbHistoire = 3;
-const nbMonument = 2;
+const nbMonument = 3;
 const nbLittératureEt = 7;
 const nbLittératureFr = 22;
 const nbPrix = 21;
@@ -367,8 +367,9 @@ const categories = [
   { title: "Toulouse : Monuments", href: "/lagrave", icon: Castle, isOccitanie: true, occitanieSources: [
     { title: "Hôpital de la Grave", href: "/lagrave" },
     { title: "Hôtel-Dieu", href: "/hoteldieu" },
+    { title: "Style toulousain", href: "/brique" },
   ]},
-//  const nbMonument = 2;
+//  const nbMonument = 3;
 
 
   /* ---------------- LITTERATURE ---------------- */
