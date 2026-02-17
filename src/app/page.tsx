@@ -61,7 +61,7 @@ const nbMusee = 13;
 const nbVisite = 11;
 const nbOccitanie = 18;
 const nbTransport = 16;
-const nbCafeLangue = 1;
+const nbCafeLangue = 2;
 const nbConsomamtion = 2;
 const nbEmploi = 4;
 const nbFlore = 1;
@@ -309,9 +309,10 @@ const categories = [
     isCafeLangues: true, 
     cafeLanguesSources: [
       { title: "Café des Langues", href: "/langue" },
+      { title: "Forum des Langues", href: "/forum" },
     ]
   },
-//  const nbCafeLangue = 1;
+//  const nbCafeLangue = 2;
 
   { title: "Toulouse : Consommation", href: "/marches", icon: Apple, isOccitanie: true, occitanieSources: [
     { title: "Marchés", href: "/marches" },
