@@ -126,6 +126,38 @@ export default async function ArchiToulousePage() {
             </div>
           </div>
         </section>
+        
+          {/* TABLEAU RÉCAPITULATIF DES PROVENANCES */}
+          <div className="mt-12 overflow-hidden rounded-xl border border-gray-100">
+            <table className="w-full text-left text-sm bg-orange-50/30">
+              <thead className="bg-[#8b4513] text-white">
+                <tr>
+                  <th className="p-3">Couleur</th>
+                  <th className="p-3">Provenance historique</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-orange-100">
+                  <td className="p-3 font-medium text-red-600">Rose / Saumon</td>
+                  <td className="p-3">Toulouse (Limon Garonne)</td>
+                </tr>
+                <tr className="border-b border-orange-100">
+                  <td className="p-3 font-medium text-red-900">Rouge Vif / Brun</td>
+                  <td className="p-3">Albi / Montauban / Tarn</td>
+                </tr>
+                <tr className="border-b border-orange-100">
+                  <td className="p-3 font-medium text-amber-600">Jaune / Crème</td>
+                  <td className="p-3">Gers (Lomagne / Vallée de la Save)</td>
+                </tr>
+                <tr>
+                  <td className="p-3 font-medium text-gray-500">Gris / Blanc</td>
+                  <td className="p-3">Briqueteries modernes (XXIe siècle)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        
 
         {/* 4. LA BRIQUE ACTUELLE (XXIe SIÈCLE) */}
         <section className="mb-24">
@@ -146,7 +178,85 @@ export default async function ArchiToulousePage() {
               </p>
             </div>
           </div>
-        </section>
+        </section>        
+      
+{/* --- NOUVEAU BLOC : L'ÉPOPÉE DES BRIQUETIERS --- */}
+<section className="mb-24">
+  <h2 className="text-3xl font-bold text-[#8b4513] mb-10 flex items-center gap-3">
+    <Hammer className="text-[#d2691e]" /> L'Épopée des Briquetiers
+  </h2>
+
+  <div className="grid md:grid-cols-2 gap-8">
+    
+    {/* 1. CYCLE SAISONNIER */}
+    <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
+      <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <ThermometerSnowflake size={20} className="text-blue-400" /> Le Cycle des Saisons
+      </h3>
+      <div className="space-y-4">
+        <div>
+          <span className="font-bold text-[#d2691e]">Hiver (L'Extraction) :</span>
+          <p className="text-sm text-gray-600">On extrait le limon. Le gel brise les mottes : c'est le "pourrissement" indispensable à la souplesse de la terre.</p>
+        </div>
+        <div>
+          <span className="font-bold text-[#d2691e]">Printemps (Le Moulage) :</span>
+          <p className="text-sm text-gray-600">Le travail se fait à genoux. On jette la pâte dans des cadres en bois sablés pour donner forme à la brique.</p>
+        </div>
+        <div>
+          <span className="font-bold text-[#d2691e]">Été (Le Séchage) :</span>
+          <p className="text-sm text-gray-600">Les briques reposent sous des "haies" (hangars ouverts). Un séchage trop brutal au soleil les ferait éclater.</p>
+        </div>
+      </div>
+    </div>
+
+    {/* 2. RÉVOLUTION VIREBENT */}
+    <div className="bg-[#fdf2e9] p-8 rounded-2xl border border-orange-200">
+      <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <DraftingCompass size={20} className="text-[#d2691e]" /> L'Ère Virebent (XIXe)
+      </h3>
+      <p className="text-sm text-gray-700 leading-relaxed mb-4">
+        Cette famille a démocratisé le luxe. Grâce à l'invention du <strong>"ciseau"</strong> (découpe mécanique), ils ont produit des colonnes et statues en série.
+      </p>
+      <p className="text-sm text-gray-700 italic">
+        "C'est grâce à eux que les façades bourgeoises arborent ces décors Renaissance en terre cuite sans le prix de la pierre sculptée."
+      </p>
+    </div>
+
+    {/* 3. LES DERNIERS GÉANTS */}
+    <div className="bg-white p-8 rounded-2xl border border-orange-100 shadow-sm">
+      <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <Factory size={20} className="text-gray-500" /> Noms Emblématiques
+      </h3>
+      <ul className="space-y-4 text-sm">
+        <li>
+          <strong className="text-[#8b4513]">Briqueterie Nagen :</strong> Située à Saint-Marcel-Paulel, elle utilise toujours le célèbre <strong>four Hoffmann</strong> pour restaurer nos monuments historiques.
+        </li>
+        <li>
+          <strong className="text-[#8b4513]">Terreal :</strong> Le successeur des Briqueteries du Midi, exportant aujourd'hui le "style toulousain" dans le monde entier.
+        </li>
+      </ul>
+    </div>
+
+    {/* 4. L'EXIL HORS LA VILLE */}
+    <div className="bg-slate-50 p-8 rounded-2xl border border-slate-200">
+      <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+        <CloudOff size={20} className="text-slate-500" /> Pourquoi ont-elles quitté le centre ?
+      </h3>
+      <ul className="space-y-3 text-sm text-slate-600">
+        <li>• <strong>Le risque d'incendie :</strong> Les étincelles des fours à bois menaçaient les toitures médiévales.</li>
+        <li>• <strong>La pollution :</strong> Les fumées noires constantes étaient devenues insupportables pour les riverains.</li>
+      </ul>
+    </div>
+  </div>
+
+  {/* ANECDOTE FORMAT */}
+  <div className="mt-8 p-6 bg-amber-50 rounded-xl border-l-4 border-amber-400 italic">
+    <p className="text-sm text-amber-900">
+      <span className="font-bold">Le secret du format 42x28x5 cm :</span> Ce n'est pas qu'une question de style ! Ce format plat permettait à la brique de sécher de façon homogène. Plus épaisse, le cœur resterait humide et la brique exploserait littéralement dans le four sous la pression de la vapeur d'eau.
+    </p>
+  </div>
+</section>
+      
 
         {/* FOOTER SAVIEZ-VOUS */}
         <div className="p-10 bg-[#8b4513] text-white rounded-3xl shadow-inner relative overflow-hidden">
