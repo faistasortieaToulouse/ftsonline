@@ -211,7 +211,8 @@ const categories = [
     isCommuSorties: true, 
     commuSortiesSources: [
       { title: "Agenda des Communautés", href: "/communautes" },
-    ]
+	  { title: "Groupes Facebook à Toulouse", href: "/facebookgroupes" },
+	]
   },
 //  const nbCommunaute = 2;
 
