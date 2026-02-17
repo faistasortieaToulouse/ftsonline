@@ -44,7 +44,7 @@ import * as Astronomy from 'astronomy-engine';
 
 // --- COMPTEURS MANUELS ---
 const nbAgenda = 16;
-const nbActualites = 1;
+const nbActualites = 2;
 const nbMeetup = 6;
 const nbToulouseEvents = 2;
 const nbSpectacles = 2;
@@ -126,8 +126,9 @@ const categories = [
 	
   { title: "Actualités nationale et locale", href: "/actualites", icon: Newspaper, isActualites: true, actualitesSources: [
     { title: "Presse", href: "/presse" }
+    { title: "Médias locaux", href: "/media" }
   ]},
-// const nbActualites = 1;	
+// const nbActualites = 2;	
 
   { title: "Événements Meetup à Toulouse", href: "/meetup-full", icon: Music, isMeetup: true, meetupSources: [
     { title: "Les évènements Meetup", href: "/meetup-full" },
