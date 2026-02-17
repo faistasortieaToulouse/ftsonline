@@ -62,7 +62,7 @@ const nbVisite = 11;
 const nbOccitanie = 18;
 const nbTransport = 16;
 const nbCafeLangue = 2;
-const nbConsomamtion = 2;
+const nbConsomamtion = 3;
 const nbEmploi = 4;
 const nbFlore = 1;
 const nbEquipement = 3;
@@ -72,7 +72,7 @@ const nbMonument = 2;
 const nbLittératureEt = 7;
 const nbLittératureFr = 22;
 const nbPrix = 21;
-const nbArchitecture = 1;
+const nbArchitecture = 2;
 const nbEurope = 6;
 const nbFete = 2;
 const nbFrancais = 3;
@@ -317,8 +317,9 @@ const categories = [
   { title: "Toulouse : Consommation", href: "/marches", icon: Apple, isOccitanie: true, occitanieSources: [
     { title: "Marchés", href: "/marches" },
 	{ title: "Cuisine de Toulouse", href: "/cuisinetoulouse" },
+    { title: "Pubs anglo-saxons", href: "/pubtoulouse" },
   ]},
-//  const nbConsomamtion = 2;
+//  const nbConsomamtion = 3;
 
 /* 3. Toulouse : Emploi */
   { 
@@ -458,8 +459,9 @@ const categories = [
 
   { title: "Savoirs : Architecture", href: "/architecture", icon: DraftingCompass, isOccitanie: true, occitanieSources: [
     { title: "Architecture", href: "/architecture" },
+    { title: "Styles", href: "/style" },
   ]},
-//  const nbArchitecture = 1;
+//  const nbArchitecture = 2;
 
 /* 4. Savoirs : Europe */
   { 
