@@ -111,24 +111,25 @@ export async function GET() {
         { nom: "Sorties & Covoiturage Night", tags: "Discothèque, Sécurité", url: "https://www.facebook.com/groups/1541661882827138/" }
       ]
     },
-    id: "sorties",
+    {
+      id: "sorties",
       nom: "Soirées, Sorties & Loisirs",
       groupes: [
         { nom: "Sorties Soirées Toulouse", tags: "Fête, Rencontres, Nightlife", url: "https://www.facebook.com/groups/596757027131271/" },
-        { nom: "Sorties Visite Région Toulousaine", tags: "Tourisme, Culture, Patrimoine", url: "https://www.facebook.com/groups/546506525504472/" },
-        { nom: "Soirées ERASMUS", tags: "Étudiants, International, Party", url: "https://www.facebook.com/groups/985981198114855/" },
-        { nom: "Randonnées Pyrénées", tags: "Nature, Montagne, Sport", url: "https://www.facebook.com/groups/903021969753097/" },
-        { nom: "Repas pique nique Toulouse", tags: "Convivialité, Plein air, Repas", url: "https://www.facebook.com/groups/566958656805309/" },
-        { nom: "Pique-nique Toulouse", tags: "Convivialité, Plein air, Repas", url: "https://www.facebook.com/groups/1262927567162691/" },
-        { nom: "Sortie ski dans les Pyrénées à partir de Toulouse", tags: "Hiver, Glisse, Covoiturage", url: "https://www.facebook.com/groups/304919476675833/" },
-        { nom: "Sortie à la plage, mer, baignade à partir de Toulouse", tags: "Été, Baignade, Méditerranée", url: "https://www.facebook.com/groups/169962730264331/" },
-        { nom: "Les Toulousains de Toulouse", tags: "Identité, Local, Entraide", url: "https://www.facebook.com/groups/1979331888986201/" },
-        { nom: "Réveillon de Noël 24 décembre - Christmas Eve Free Toulouse", tags: "Fêtes, Solidarité, Fin d'année", url: "https://www.facebook.com/groups/130539997728049/" },
-        { nom: "Réveillon du Nouvel An le 31 décembre à Toulouse - New Year's Eve Free", tags: "Fêtes, Solidarité, Fin d'année", url: "https://www.facebook.com/groups/142246859768492/" },
-        { nom: "Sorties entre Filles", tags: "Occitanie, Sororité, Sécurité", url: "https://www.facebook.com/groups/1397077878141492/" },
-        { nom: "Salons de thé & Restaurants", tags: "Gastronomie, Coffee Shop, Foodies", url: "https://www.facebook.com/groups/1313021633356765/" },
-        { nom: "Jeux, Bars & Clubs de jeux", tags: "Loisirs, Gaming, Société", url: "https://www.facebook.com/groups/1363843758107232/" },
-        { nom: "Randonnées Pyrénées, balade, visite à partir de Toulouse", tags: "Escapades, Grand Air", url: "https://www.facebook.com/groups/25509149805453238/" }
+        { nom: "Sorties Visite Région", tags: "Tourisme, Culture", url: "https://www.facebook.com/groups/546506525504472/" },
+        { nom: "Soirées ERASMUS", tags: "Étudiants, Party", url: "https://www.facebook.com/groups/985981198114855/" },
+        { nom: "Randonnées Pyrénées", tags: "Nature, Montagne", url: "https://www.facebook.com/groups/903021969753097/" },
+        { nom: "Repas pique nique Toulouse", tags: "Convivialité, Plein air", url: "https://www.facebook.com/groups/566958656805309/" },
+        { nom: "Pique-nique Toulouse", tags: "Convivialité, Plein air", url: "https://www.facebook.com/groups/1262927567162691/" },
+        { nom: "Ski Pyrénées", tags: "Hiver, Glisse", url: "https://www.facebook.com/groups/304919476675833/" },
+        { nom: "Plage & Baignade", tags: "Été, Mer", url: "https://www.facebook.com/groups/169962730264331/" },
+        { nom: "Les Toulousains de Toulouse", tags: "Identité, Local", url: "https://www.facebook.com/groups/1979331888986201/" },
+        { nom: "Réveillon de Noël", tags: "Solidarité, Fêtes", url: "https://www.facebook.com/groups/130539997728049/" },
+        { nom: "Réveillon du Nouvel An", tags: "Fêtes, 31 décembre", url: "https://www.facebook.com/groups/142246859768492/" },
+        { nom: "Sorties entre Filles", tags: "Sororité, Sécurité", url: "https://www.facebook.com/groups/1397077878141492/" },
+        { nom: "Restaurants & Salons de thé", tags: "Gastro, Foodies", url: "https://www.facebook.com/groups/1313021633356765/" },
+        { nom: "Jeux & Bars", tags: "Gaming, Société", url: "https://www.facebook.com/groups/1363843758107232/" },
+        { nom: "Balades Pyrénées", tags: "Escapades, Nature", url: "https://www.facebook.com/groups/25509149805453238/" }
       ]
     },
     { id: "culture", nom: "Culture", groupes: [
