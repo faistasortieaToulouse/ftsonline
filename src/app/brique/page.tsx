@@ -91,74 +91,76 @@ export default async function ArchiToulousePage() {
           ))}
         </div>
 
-        {/* 3. GÉOGRAPHIE DES COULEURS (Gers, Lauragais, Tarn) */}
-        <section className="mb-24 bg-white p-10 rounded-3xl border border-orange-100 shadow-sm">
-          <h2 className="text-3xl font-bold text-[#8b4513] mb-10 flex items-center gap-3">
-            <MapPin className="text-[#d2691e]" /> Géographie de la Couleur
-          </h2>
-          
-          <div className="space-y-12">
-            <div className="grid md:grid-cols-2 gap-8 items-start">
-              <div className="border-l-4 border-amber-400 pl-6">
-                <h3 className="text-xl font-bold text-amber-700 mb-3">Le Gers : Le royaume de la brique jaune</h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Le sol possède des <strong>molasses calcaires</strong>. Le calcaire "blanchit" l'oxyde de fer pendant la cuisson. 
-                  La brique prend des teintes crème, jaune pâle ou moutarde.
-                </p>
-                <p className="text-xs text-amber-800 font-bold uppercase tracking-wide">Où en voir ? Bastides (Gimont, Lectoure) et haute vallée de la Save.</p>
-              </div>
-              <div className="border-l-4 border-red-800 pl-6">
-                <h3 className="text-xl font-bold text-red-900 mb-3">Le Lauragais et le Tarn : Les nuances d'ocre</h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Vers <strong>Castres et Albi</strong>, la terre riche en fer donne les briques les plus sombres (Cathédrale d'Albi). 
-                  Vers <strong>Castelnaudary (Lauragais)</strong>, on obtient un orangé ou ocre chaleureux.
-                </p>
-              </div>
-            </div>
+{/* 3. GÉOGRAPHIE DES COULEURS (Gers, Lauragais, Tarn) */}
+<section className="mb-24 bg-white p-10 rounded-3xl border border-orange-100 shadow-sm">
+  <h2 className="text-3xl font-bold text-[#8b4513] mb-10 flex items-center gap-3">
+    <MapPin className="text-[#d2691e]" /> Géographie de la Couleur
+  </h2>
+  
+  <div className="space-y-12">
+    <div className="grid md:grid-cols-2 gap-8 items-start">
+      {/* GERS */}
+      <div className="border-l-4 border-amber-400 pl-6">
+        <h3 className="text-xl font-bold text-amber-700 mb-3">Le Gers : Le royaume de la brique jaune</h3>
+        <p className="text-gray-600 text-sm leading-relaxed mb-4">
+          Le sol possède des <strong>molasses calcaires</strong>. Le calcaire "blanchit" l'oxyde de fer pendant la cuisson. 
+          La brique prend des teintes crème, jaune pâle ou moutarde.
+        </p>
+        <p className="text-xs text-amber-800 font-bold uppercase tracking-wide">Où en voir ? Bastides (Gimont, Lectoure) et haute vallée de la Save.</p>
+      </div>
 
-            <div className="bg-orange-50 p-6 rounded-xl border border-orange-100">
-              <h3 className="text-lg font-bold text-[#8b4513] mb-2 flex items-center gap-2">
-                <Layers size={20} /> Les "zones de rencontre" (Toulouse Ouest)
-              </h3>
-              <p className="text-gray-700 text-sm leading-relaxed">
-                À <strong>Lardenne</strong> ou <strong>Tournefeuille</strong>, les bâtisseurs utilisaient la brique jaune du Gers pour les encadrements de fenêtres afin de créer un contraste avec la brique rouge locale. On appelle cela le <strong>"jeu de briques"</strong>.
-              </p>
-            </div>
-          </div>
-        </section>
-        
-          {/* TABLEAU RÉCAPITULATIF DES PROVENANCES */}
-          <div className="mt-12 overflow-hidden rounded-xl border border-gray-100">
-            <table className="w-full text-left text-sm bg-orange-50/30">
-              <thead className="bg-[#8b4513] text-white">
-                <tr>
-                  <th className="p-3">Couleur</th>
-                  <th className="p-3">Provenance historique</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-orange-100">
-                  <td className="p-3 font-medium text-red-600">Rose / Saumon</td>
-                  <td className="p-3">Toulouse (Limon Garonne)</td>
-                </tr>
-                <tr className="border-b border-orange-100">
-                  <td className="p-3 font-medium text-red-900">Rouge Vif / Brun</td>
-                  <td className="p-3">Albi / Montauban / Tarn</td>
-                </tr>
-                <tr className="border-b border-orange-100">
-                  <td className="p-3 font-medium text-amber-600">Jaune / Crème</td>
-                  <td className="p-3">Gers (Lomagne / Vallée de la Save)</td>
-                </tr>
-                <tr>
-                  <td className="p-3 font-medium text-gray-500">Gris / Blanc</td>
-                  <td className="p-3">Briqueteries modernes (XXIe siècle)</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-        
+      {/* LAURAGAIS & TARN */}
+      <div className="border-l-4 border-red-800 pl-6">
+        <h3 className="text-xl font-bold text-red-900 mb-3">Le Lauragais et le Tarn : Les nuances d'ocre</h3>
+        <p className="text-gray-600 text-sm leading-relaxed mb-4">
+          Vers <strong>Castres et Albi</strong>, la terre riche en fer donne les briques les plus sombres (Cathédrale d'Albi). 
+          Vers <strong>Castelnaudary (Lauragais)</strong>, on obtient un orangé ou ocre chaleureux.
+        </p>
+      </div>
+    </div>
 
+    {/* ZONES DE RENCONTRE */}
+    <div className="bg-orange-50 p-6 rounded-xl border border-orange-100">
+      <h3 className="text-lg font-bold text-[#8b4513] mb-2 flex items-center gap-2">
+        <Layers size={20} /> Les "zones de rencontre" (Toulouse Ouest)
+      </h3>
+      <p className="text-gray-700 text-sm leading-relaxed">
+        À <strong>Lardenne</strong> ou <strong>Tournefeuille</strong>, les bâtisseurs utilisaient la brique jaune du Gers pour les encadrements de fenêtres afin de créer un contraste avec la brique rouge locale. On appelle cela le <strong>"jeu de briques"</strong>.
+      </p>
+    </div>
+
+    {/* TABLEAU RÉCAPITULATIF INTÉGRÉ */}
+    <div className="mt-8 overflow-hidden rounded-xl border border-gray-100 shadow-sm">
+      <table className="w-full text-left text-sm bg-orange-50/20">
+        <thead className="bg-[#8b4513] text-white">
+          <tr>
+            <th className="p-3">Couleur</th>
+            <th className="p-3">Provenance historique</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="border-b border-orange-100">
+            <td className="p-3 font-medium text-red-600">Rose / Saumon</td>
+            <td className="p-3">Toulouse (Limon Garonne)</td>
+          </tr>
+          <tr className="border-b border-orange-100">
+            <td className="p-3 font-medium text-red-900">Rouge Vif / Brun</td>
+            <td className="p-3">Albi / Montauban / Tarn</td>
+          </tr>
+          <tr className="border-b border-orange-100">
+            <td className="p-3 font-medium text-amber-600">Jaune / Crème</td>
+            <td className="p-3">Gers (Lomagne / Vallée de la Save)</td>
+          </tr>
+          <tr className="bg-white/50">
+            <td className="p-3 font-medium text-gray-500">Gris / Blanc</td>
+            <td className="p-3">Briqueteries modernes (XXIe siècle)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+        
         {/* 4. LA BRIQUE ACTUELLE (XXIe SIÈCLE) */}
         <section className="mb-24">
           <h2 className="text-3xl font-bold text-slate-800 mb-10 flex items-center gap-3">
