@@ -6,7 +6,7 @@ export default function DesktopQRCode() {
   return (
     <div className="p-3 bg-white dark:bg-gray-900 rounded-lg shadow-md flex flex-col items-center">
       <QRCodeCanvas
-        value="https://faistasortieatoulouse.online"
+        value="https://www.ftstoulouse.online/"
         size={170}
         includeMargin
       />
