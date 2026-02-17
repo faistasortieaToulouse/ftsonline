@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from "next/link";
-import { ArrowLeft, Droplets, Flame, MapPin, Hammer, Factory, Layers } from "lucide-react";
+import { ArrowLeft, Droplets, Flame, MapPin, Hammer, Factory, Layers, ThermometerSnowflake, DraftingCompass, CloudOff } from "lucide-react";
 
 async function getArchiToulouse() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
