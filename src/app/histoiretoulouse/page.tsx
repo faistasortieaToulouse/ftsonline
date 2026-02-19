@@ -14,10 +14,21 @@ export default function HistoireToulousePage() {
       .then(json => {
         setData(json);
         setLoading(false);
+      })
+      .catch(err => {
+        console.error("Erreur de chargement:", err);
+        setLoading(false);
       });
   }, []);
 
-  if (loading) return <div className="p-20 text-center animate-pulse font-serif italic text-amber-800">En cours de chargement...</div>;
+  // 1. Affichage pendant le chargement
+  if (loading) return <div className="p-20 text-center animate-pulse font-serif italic text-amber-800">Parcours des manuscrits anciens...</div>;
+
+  // 2. Sécurité si les données sont manquantes
+  if (!data) return <div className="p-20 text-center text-red-600 font-bold">Erreur : Impossible de charger les données historiques.</div>;
+
+  // 3. On définit la liste des événements de manière sécurisée (fallback sur tableau vide)
+  const listeChronologie = data.chronologie || [];
 
   return (
     <main className="max-w-5xl mx-auto p-6 bg-[#fffcf5] min-h-screen my-10 shadow-2xl rounded-xl border border-amber-100">
@@ -47,10 +58,10 @@ export default function HistoireToulousePage() {
           <Sparkles className="text-rose-400 shrink-0" />
           <div>
             <h2 className="text-xl font-bold text-rose-600 mb-2 uppercase tracking-tight">
-              {data.symboles.surnom}
+              {data.symboles?.surnom || "La Ville Rose"}
             </h2>
             <p className="text-slate-700 leading-relaxed">
-              {data.symboles.explication}
+              {data.symboles?.explication}
             </p>
           </div>
         </div>
@@ -61,7 +72,8 @@ export default function HistoireToulousePage() {
         <div className="absolute left-4 md:left-1/2 h-full w-0.5 bg-amber-200 transform md:-translate-x-1/2"></div>
 
         <div className="space-y-12">
-          {data.chronology.map((event: any, i: number) => (
+          {/* UTILISATION DE LA VARIABLE SÉCURISÉE ICI */}
+          {listeChronologie.map((event: any, i: number) => (
             <div key={i} className={`relative flex flex-col md:flex-row items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
               
               {/* Point sur la ligne */}
@@ -87,14 +99,13 @@ export default function HistoireToulousePage() {
                 </div>
               </div>
 
-              {/* Espace vide pour l'autre côté en desktop */}
               <div className="hidden md:block md:w-5/12"></div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Footer style parchemin */}
+      {/* Footer */}
       <footer className="mt-32 pt-10 border-t border-amber-200 text-center pb-10">
         <div className="flex justify-center gap-4 text-amber-800/40 mb-4">
           <BookOpen size={20} />
