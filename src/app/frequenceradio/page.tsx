@@ -24,7 +24,7 @@ export default function FrequenceRadioPage() {
       
       {/* Navigation */}
       <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-black hover:bg-blue-50 p-2 rounded-md transition-all mb-10">
-        <ArrowLeft size={20} /> RETOUR
+        <ArrowLeft size={20} /> Retour à l'Accueil
       </Link>
 
       {/* Header style "Tuner" */}
