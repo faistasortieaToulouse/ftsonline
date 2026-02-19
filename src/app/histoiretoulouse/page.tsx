@@ -22,7 +22,7 @@ export default function HistoireToulousePage() {
   }, []);
 
   // 1. Affichage pendant le chargement
-  if (loading) return <div className="p-20 text-center animate-pulse font-serif italic text-amber-800">Parcours des manuscrits anciens...</div>;
+  if (loading) return <div className="p-20 text-center animate-pulse font-serif italic text-amber-800">Chargement du parcours historique de Toulouse...</div>;
 
   // 2. Sécurité si les données sont manquantes
   if (!data) return <div className="p-20 text-center text-red-600 font-bold">Erreur : Impossible de charger les données historiques.</div>;
