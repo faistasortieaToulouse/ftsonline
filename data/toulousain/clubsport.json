@@ -3,7 +3,7 @@
   "clubs_professionnels": [
     { "nom": "Stade toulousain", "sport": "Rugby à XV", "division": "Top 14", "stade": "Ernest-Wallon / Stadium", "fondation": "1907", "titres": 24 },
     { "nom": "Toulouse Football Club", "sport": "Football", "division": "Ligue 1", "stade": "Stadium", "fondation": "1970", "titres": 0 },
-    { "nom": "Toulouse olympique XIII", "sport": "Rugby à XIII", "division": "Super League", "stade": "Stade Ernest-Wallon", "fondation": "1937", "titres": 6 },
+    { "nom": "Toulouse olympique XIII", "sport": "Rugby à XIII", "division": "Super League", "stade": "Stade Paul-Arnauné", "fondation": "1937", "titres": 6 },
     { "nom": "Fenix Toulouse Handball", "sport": "Handball", "division": "StarLigue", "stade": "Palais des sports", "fondation": "1964", "titres": 0 },
     { "nom": "Spacer's Toulouse Volley", "sport": "Volley-ball", "division": "Ligue A", "stade": "Palais des sports", "fondation": "1994", "titres": 0 },
     { "nom": "Toulouse Métropole Basket", "sport": "Basket-ball (F)", "division": "LBWL", "stade": "Petit palais des sports", "fondation": "2008", "titres": 0 },
@@ -27,6 +27,8 @@
     { "nom": "Coquelicot Toulouse Gym", "sport": "Gymnastique", "details": "Club de haut niveau" }
   ],
   "omnisports": [
+    { "nom": "ASPTT Toulouse", "nom_complet": "Association Sportive des Postes, Télégraphes et Téléphones", "sections": 28, "principaux": "Natation, Athlétisme, Tennis, Judo, Golf" },
+    { "nom": "Stade Toulousain", "nom_complet": "Stade Toulousain Omnisports", "sections": 22, "principaux": "Rugby, Tennis, Natation, Athlétisme, Baseball, Pelote basque" },
     { "nom": "TOAC", "nom_complet": "Toulouse Olympique Aérospatiale Club", "sections": 38, "principaux": "Basket, Natation, Tennis" },
     { "nom": "TUC", "nom_complet": "Toulouse Université Club", "sections": 20, "principaux": "Athlétisme, Rugby, Aviron" },
     { "nom": "TCMS", "nom_complet": "Toulouse Cheminots Marengo Sports", "sections": 26, "principaux": "Pelote basque, Rugby, Plongée" }
