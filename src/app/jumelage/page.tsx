@@ -18,7 +18,7 @@ export default function JumelagePage() {
       .catch(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-20 text-center animate-pulse text-blue-600 font-bold">Connexion aux serveurs internationaux...</div>;
+  if (loading) return <div className="p-20 text-center animate-pulse text-blue-600 font-bold">En cours de chargement...</div>;
   if (!data) return <div className="p-20 text-center text-red-500 font-bold">Données indisponibles.</div>;
 
   const jumelages = data.relations_internationales?.jumelages || [];
@@ -29,7 +29,7 @@ export default function JumelagePage() {
       
       {/* Retour */}
       <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-bold hover:bg-blue-50 p-2 rounded-md transition-all mb-10">
-        <ArrowLeft size={20} /> RETOUR AU RÉPERTOIRE
+        <ArrowLeft size={20} /> Retour à l'Accueil
       </Link>
 
       {/* Header */}
