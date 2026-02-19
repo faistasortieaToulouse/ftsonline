@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Navigation } from "lucide-react";
+import { ArrowLeft, MapPin, Navigation, AlertCircle } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 
 export default function RdvJolimontPage() {
@@ -18,7 +18,7 @@ export default function RdvJolimontPage() {
       if (!mapRef.current || mapInstance.current) return;
       const L = (await import('leaflet')).default;
 
-      // Correction icône Leaflet
+      // Correction icône Leaflet (obligatoire pour Next.js)
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -28,16 +28,15 @@ export default function RdvJolimontPage() {
 
       mapInstance.current = L.map(mapRef.current, {
         scrollWheelZoom: true
-      }).setView(coords, 16);
+      }).setView(coords, 17); // Zoom un peu plus serré pour plus de précision
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
+        attribution: '© OpenStreetMap'
       }).addTo(mapInstance.current);
 
-      // Ajout du marqueur unique
       L.marker(coords)
         .addTo(mapInstance.current)
-        .bindPopup(`<strong>${titre}</strong><br/>Sortie métro Jolimont`)
+        .bindPopup(`<strong>${titre}</strong><br/>Sortie Haut (Sommet)`)
         .openPopup();
 
       setIsReady(true);
@@ -64,8 +63,25 @@ export default function RdvJolimontPage() {
           <h1 className="text-2xl md:text-3xl font-black text-slate-900 flex items-center gap-2">
             <MapPin className="text-red-500" fill="currentColor" /> {titre}
           </h1>
-          <p className="text-slate-600 mt-1">Sortie de station de métro Jolimont, 31500 Toulouse</p>
+          <p className="text-slate-600 mt-1 italic font-medium">Sortie de station de métro Jolimont, 31500 Toulouse</p>
         </header>
+
+        {/* BLOC ATTENTION - LES 4 SORTIES */}
+        <div className="mb-8 bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r-xl">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="text-amber-600 flex-shrink-0 mt-1" size={24} />
+            <div>
+              <h3 className="font-bold text-amber-900 text-lg">Attention !</h3>
+              <p className="text-amber-800 leading-relaxed">
+                Il y a 4 portes de sorties du métro à la station Jolimont (1 en bas, 1 en haut, 1 à gauche, 1 à droite). 
+                <strong> Nous serons à celle en HAUT, au sommet du plateau (colline).</strong>
+              </p>
+              <p className="mt-3 text-amber-900 font-semibold underline">
+                Repères : Il y a un parking et, juste en face, une agence France Travail.
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* CARTE */}
         <div className="relative overflow-hidden rounded-2xl border-2 border-slate-100 shadow-inner">
@@ -89,15 +105,15 @@ export default function RdvJolimontPage() {
             Y aller avec Google Maps
           </a>
           
-          <div className="flex-1 bg-slate-100 p-4 rounded-xl">
-            <h3 className="font-bold text-slate-800 text-sm uppercase mb-1">Coordonnées GPS</h3>
+          <div className="flex-1 bg-slate-100 p-4 rounded-xl flex flex-col justify-center">
+            <h3 className="font-bold text-slate-800 text-sm uppercase mb-1 tracking-wider">Coordonnées GPS</h3>
             <p className="text-slate-600 font-mono text-xs">{coords[0]}, {coords[1]}</p>
           </div>
         </div>
       </div>
 
       <footer className="mt-8 text-center text-slate-400 text-xs">
-        Pensez à arriver 5 à 10 minutes avant l'heure de départ prévue.
+        Le rendez-vous est devant la porte de sortie du métro à la station Jolimont (Haut).
       </footer>
     </div>
   );
