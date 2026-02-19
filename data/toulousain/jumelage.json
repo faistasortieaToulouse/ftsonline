@@ -1,0 +1,21 @@
+{
+  "ville_principale": "Toulouse",
+  "relations_internationales": {
+    "jumelages": [
+      { "ville": "Tel Aviv-Jaffa", "pays": "Israël", "annee": 1962 },
+      { "ville": "Atlanta", "pays": "États-Unis", "annee": 1975 },
+      { "ville": "Kiev", "pays": "Ukraine", "annee": 1975 },
+      { "ville": "Bologne", "pays": "Italie", "annee": 1981 },
+      { "ville": "Elche", "pays": "Espagne", "annee": 1981 },
+      { "ville": "Chongqing", "pays": "Chine", "annee": 1981 }
+    ],
+    "accords_cooperation": [
+      { "ville": "N'Djaména", "pays": "Tchad", "annee": 1988 },
+      { "ville": "Hanoï", "pays": "Vietnam", "annee": 1996 },
+      { "ville": "Saragosse", "pays": "Espagne", "annee": 2000 },
+      { "ville": "Saint-Louis", "pays": "Sénégal", "annee": 2003 },
+      { "ville": "Düsseldorf", "pays": "Allemagne", "annee": 2003 },
+      { "ville": "Ramallah", "pays": "Palestine", "annee": 2004 }
+    ]
+  }
+}
