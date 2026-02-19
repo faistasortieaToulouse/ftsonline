@@ -75,6 +75,7 @@ export default function RdvJolimontPage() {
               <p className="text-amber-800 leading-relaxed">
                 Il y a 4 portes de sorties du métro à la station Jolimont (1 en bas, 1 en haut, 1 à gauche, 1 à droite). 
                 <strong> Nous serons à celle en HAUT, au sommet du plateau (colline).</strong>
+                <strong> Nous serons devant la porte de sortie de la station de métro Jolimont.</strong>
               </p>
               <p className="mt-3 text-amber-900 font-semibold underline">
                 Repères : Il y a un parking et, juste en face, une agence France Travail.
