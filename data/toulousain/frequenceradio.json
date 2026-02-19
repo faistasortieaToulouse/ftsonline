@@ -1,0 +1,33 @@
+{
+  "ville": "Toulouse",
+  "emetteur_actuel": "Pech David",
+  "frequences": [
+    { "nom": "RTL2 Toulouse", "frequence": "88.7", "type": "National", "details": "Antenne locale" },
+    { "nom": "FMR", "frequence": "89.1", "type": "Associatif", "details": "Partage avec Booster, New wave/Punk" },
+    { "nom": "Booster", "frequence": "89.1", "type": "Associatif", "details": "Partage avec FMR" },
+    { "nom": "Radio Mon Païs", "frequence": "90.1", "type": "Associatif", "details": "Militante (CGT)" },
+    { "nom": "Ici Occitanie", "frequence": "90.5", "type": "Public", "details": "Ex-France Bleu Toulouse" },
+    { "nom": "Canal Sud", "frequence": "92.2", "type": "Associatif", "details": "Libre et indépendante" },
+    { "nom": "Toulouse FM", "frequence": "92.6", "type": "Commercial", "details": "Groupe Mediameeting, matchs du TFC" },
+    { "nom": "Ado", "frequence": "93.1", "type": "Commercial", "details": "Hip-hop/R&B" },
+    { "nom": "Altitude FM", "frequence": "93.5", "type": "Associatif", "details": "Émet depuis Blagnac" },
+    { "nom": "Campus FM", "frequence": "94.0", "type": "Étudiant", "details": "Radio universitaire" },
+    { "nom": "Néo", "frequence": "94.8", "type": "Associatif", "details": "Nouvelle scène musicale" },
+    { "nom": "Chérie FM Toulouse", "frequence": "97.4", "type": "National", "details": "Antenne locale" },
+    { "nom": "Radio Présence", "frequence": "97.9", "type": "Religieux", "details": "Radio catholique" },
+    { "nom": "Radio Occitania", "frequence": "98.3", "type": "Associatif", "details": "Programmes en langue occitane" },
+    { "nom": "RFM Toulouse", "frequence": "99.1", "type": "National", "details": "Antenne locale" },
+    { "nom": "Nostalgie Toulouse", "frequence": "99.5", "type": "National", "details": "Antenne locale" },
+    { "nom": "NRJ Toulouse", "frequence": "100.4", "type": "National", "details": "Antenne locale" },
+    { "nom": "Radio Kol Aviv", "frequence": "101.0", "type": "Associatif", "details": "Communauté juive" },
+    { "nom": "Sud Radio", "frequence": "101.4", "type": "Commercial", "details": "Fiducial Médias, studios à Labège" },
+    { "nom": "Europe 2 Midi-Pyrénées", "frequence": "102.4", "type": "National", "details": "Antenne locale" },
+    { "nom": "Fun Radio Midi-Pyrénées", "frequence": "105.9", "type": "National", "details": "Antenne locale" },
+    { "nom": "Radio Radio", "frequence": "106.8", "type": "Associatif", "details": "Émet 24h/24 (inclut Radio Radio +)" }
+  ],
+  "archives": [
+    { "nom": "Radio Plus", "frequence": "106.8", "statut": "Arrêtée en 2012", "motif": "Changement d'activité" },
+    { "site": "Bonhoure", "statut": "Démantelé", "motif": "Esthétique et pollution électromagnétique" },
+    { "site": "Moscou (Lafilaire)", "statut": "Démantelé", "operateur": "Towercast" }
+  ]
+}
