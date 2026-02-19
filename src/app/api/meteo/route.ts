@@ -20,10 +20,13 @@ export async function GET() {
   const urlCurrent = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&${params}`;
   const urlPast = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${lastYearStart}&end_date=${lastYearEnd}&${params}`;
 
-  try {
+    try {
+    // On ajoute un cache d'une heure (3600s) pour éviter les Timeouts sur Vercel
+    const fetchOptions = { next: { revalidate: 3600 } };
+
     const [resCurrent, resPast] = await Promise.all([
-      fetch(urlCurrent).then(r => r.json()),
-      fetch(urlPast).then(r => r.json())
+      fetch(urlCurrent, fetchOptions).then(r => r.json()),
+      fetch(urlPast, fetchOptions).then(r => r.json())
     ]);
 
     if (!resCurrent.daily || !resPast.daily) throw new Error("Données non disponibles");
