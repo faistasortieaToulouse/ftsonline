@@ -44,7 +44,7 @@ import * as Astronomy from 'astronomy-engine';
 
 // --- COMPTEURS MANUELS ---
 const nbAgenda = 16;
-const nbActualites = 2;
+const nbActualites = 3;
 const nbMeetup = 6;
 const nbToulouseEvents = 2;
 const nbSpectacles = 2;
@@ -56,18 +56,18 @@ const nbDiscord = 1;
 const nbFacebook = 1;
 const nbFS = 1;
 const nbCommunaute = 2;
-const nbSport = 5;
+const nbSport = 6;
 const nbMusee = 13;
 const nbVisite = 11;
 const nbOccitanie = 18;
-const nbTransport = 16;
+const nbTransport = 17;
 const nbCafeLangue = 2;
 const nbConsomamtion = 3;
 const nbEmploi = 4;
 const nbFlore = 2;
 const nbEquipement = 3;
-const nbGeographie = 5;
-const nbHistoire = 3;
+const nbGeographie = 6;
+const nbHistoire = 4;
 const nbMonument = 3;
 const nbLittératureEt = 7;
 const nbLittératureFr = 22;
@@ -78,7 +78,7 @@ const nbFete = 2;
 const nbFrancais = 3;
 const nbHierarchie = 23;
 const nbSaHistoire = 12;
-const nbLangue = 1;
+const nbLangue = 2;
 const nbMonde = 37;
 const nbReligion = 3;
 const nbTerritoire = 8;
@@ -126,9 +126,10 @@ const categories = [
 	
   { title: "Actualités nationale et locale", href: "/actualites", icon: Newspaper, isActualites: true, actualitesSources: [
     { title: "Presse", href: "/presse" },
-    { title: "Médias locaux", href: "/media" }
+    { title: "Médias locaux", href: "/media" },
+    { title: "Fréquence des radios", href: "/frequenceradio" }
   ]},
-// const nbActualites = 2;	
+// const nbActualites = 3;	
 
   { title: "Événements Meetup à Toulouse", href: "/meetup-full", icon: Music, isMeetup: true, meetupSources: [
     { title: "Les évènements Meetup", href: "/meetup-full" },
@@ -221,9 +222,10 @@ const categories = [
     { title: "Cinémas de Toulouse et sa banlieue", href: "/cinemas31" },
     { title: "Galeries d'art de Toulouse", href: "/visitegalerieart" },
     { title: "Équipements de sport à Toulouse", href: "/sport" },
+    { title: "Clubs de sport à Toulouse", href: "/clubsport" },
     { title: "Parcs et jardins de Toulouse", href: "/parcjardin" },
   ]},
-//  const nbSport = 5;
+//  const nbSport = 6;
 
   { title: "Musées à Toulouse et en banlieue", href: "/musee", icon: Archive, isMusee: true, museeSources: [
     { title: "Occitanie", href: "/museeoccitanie" },
@@ -294,9 +296,10 @@ const categories = [
     { title: "Voyage", href: "/voyagetoulouse" },
     { title: "Automobile", href: "/automobile" },
     { title: "Circulation", href: "/voitures" },
-	{ title: "Trafic Automobile", href: "/tomtom" },
+    { title: "Trafic Automobile", href: "/tomtom" },
+    { title: "Lignes aériennes", href: "/voltoulouse" },
   ]},
-//  const nbTransport = 16;
+//  const nbTransport = 17;
 
 
   /* ---------------- TOULOUSE ---------------- */
@@ -332,7 +335,7 @@ const categories = [
       { title: "Evènements Emploi", href: "/toulousetravail" },
       { title: "Atelier Emploi", href: "/atelieremploi" },
       { title: "Entreprises à Toulouse", href: "/entreprisetoulouse" },
-	  { title: "Formation et Orientation", href: "/formation" },
+      { title: "Formation et Orientation", href: "/formation" },
     ] 
   },
 //  const nbEmploi = 4;
@@ -356,15 +359,17 @@ const categories = [
     { title: "Hydrographie", href: "/hydrographie" },
     { title: "Quartiers", href: "/quartiertoulouse" },
     { title: "Voies (carte)", href: "/voiesmap" },
+    { title: "Jumelage", href: "/jumelage" },
   ]},
-//  const nbGeographie = 5;
+//  const nbGeographie = 6;
 
   { title: "Toulouse : Histoire", href: "/parcellaire", icon: History, isOccitanie: true, occitanieSources: [
     { title: "Capitale", href: "/capitale_toulouse" },
     { title: "Parcellaire de 1830", href: "/parcellaire" },
     { title: "Terminus des transports en 1863 et 1957", href: "/terminus" },
+    { title: "Histoire de Toulouse", href: "/histoiretoulouse" },
   ]},
-//  const nbHistoire = 3;
+//  const nbHistoire = 4;
 
   { title: "Toulouse : Monuments", href: "/lagrave", icon: Castle, isOccitanie: true, occitanieSources: [
     { title: "Hôpital de la Grave", href: "/lagrave" },
@@ -547,9 +552,10 @@ const categories = [
     isSavoirsLangues: true, 
     savoirsLanguesSources: [
       { title: "Les Langues", href: "/langues" },
+      { title: "Dialectes en France", href: "/languesfrance" },
     ]
   },
-//  const nbLangue = 1;
+//  const nbLangue = 2;
 
   // --- SAVOIRS : MONDE ---
   { 
