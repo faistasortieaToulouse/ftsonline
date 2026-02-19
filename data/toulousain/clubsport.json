@@ -1,0 +1,34 @@
+{
+  "ville": "Toulouse",
+  "clubs_professionnels": [
+    { "nom": "Stade toulousain", "sport": "Rugby à XV", "division": "Top 14", "stade": "Ernest-Wallon / Stadium", "fondation": "1907", "titres": 24 },
+    { "nom": "Toulouse Football Club", "sport": "Football", "division": "Ligue 1", "stade": "Stadium", "fondation": "1970", "titres": 0 },
+    { "nom": "Toulouse olympique XIII", "sport": "Rugby à XIII", "division": "Super League", "stade": "Stade Ernest-Wallon", "fondation": "1937", "titres": 6 },
+    { "nom": "Fenix Toulouse Handball", "sport": "Handball", "division": "StarLigue", "stade": "Palais des sports", "fondation": "1964", "titres": 0 },
+    { "nom": "Spacer's Toulouse Volley", "sport": "Volley-ball", "division": "Ligue A", "stade": "Palais des sports", "fondation": "1994", "titres": 0 },
+    { "nom": "Toulouse Métropole Basket", "sport": "Basket-ball (F)", "division": "LBWL", "stade": "Petit palais des sports", "fondation": "2008", "titres": 0 },
+    { "nom": "Toulouse Basketball Club", "sport": "Basket-ball (H)", "division": "Nationale 1", "stade": "Petit palais des sports", "fondation": "2004", "titres": 0 }
+  ],
+  "autres_clubs_et_disciplines": [
+    { "nom": "Dauphins du TOEC", "sport": "Natation", "details": "Un des meilleurs clubs de France" },
+    { "nom": "Toulouse Iron Club", "sport": "Handibasket", "division": "Nationale A", "details": "Anciennement Toulouse Invalides Club" },
+    { "nom": "Ours de Toulouse", "sport": "Football américain", "division": "D2", "fondation": "1986" },
+    { "nom": "Bélougas (Toulouse Blagnac Hockey Club)", "sport": "Hockey sur glace", "division": "D1", "patinoire": "Jacques-Raynaud" },
+    { "nom": "Stade toulousain baseball", "sport": "Baseball", "details": "Section du Stade Toulousain" },
+    { "nom": "Stade toulousain rugby féminin", "sport": "Rugby à XV féminin", "details": "Haut niveau national" },
+    { "nom": "Aviron toulousain", "sport": "Aviron", "details": "Affilié FFA" },
+    { "nom": "Émulation nautique Toulouse (ENT)", "sport": "Aviron", "details": "Affilié FFA" },
+    { "nom": "Stade toulousain Hawks", "sport": "Football australien", "details": "Intègre les anciens Crocodiles" },
+    { "nom": "Tolosa Despòrt Gaelic", "sport": "Football gaélique", "details": "Sport celte" },
+    { "nom": "Roller Derby Toulouse", "sport": "Roller derby", "details": "Pratique féminine et masculine" },
+    { "nom": "Toulouse Fontaines Club", "sport": "Football", "details": "Club historique du quartier des Fontaines" },
+    { "nom": "UJS Toulousains", "sport": "Futsal", "details": "Union des Jeunes Sportifs" },
+    { "nom": "Tech 1 Racing", "sport": "Compétition automobile", "details": "Écurie de course" },
+    { "nom": "Coquelicot Toulouse Gym", "sport": "Gymnastique", "details": "Club de haut niveau" }
+  ],
+  "omnisports": [
+    { "nom": "TOAC", "nom_complet": "Toulouse Olympique Aérospatiale Club", "sections": 38, "principaux": "Basket, Natation, Tennis" },
+    { "nom": "TUC", "nom_complet": "Toulouse Université Club", "sections": 20, "principaux": "Athlétisme, Rugby, Aviron" },
+    { "nom": "TCMS", "nom_complet": "Toulouse Cheminots Marengo Sports", "sections": 26, "principaux": "Pelote basque, Rugby, Plongée" }
+  ]
+}
