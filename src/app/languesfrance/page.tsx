@@ -6,7 +6,7 @@ import { ArrowLeft, Globe2, AlertTriangle } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 
 interface Langue {
-  id: number; // Désormais obligatoire pour l'affichage
+  id: number;
   nom: string;
   famille: string;
   zone?: string;
@@ -28,7 +28,10 @@ export default function LanguesFrancePage() {
     fetch("/api/languesfrance")
       .then(async (res) => {
         const data = await res.json();
-        if (Array.isArray(data)) setLangues(data);
+        // On s'assure de récupérer la totalité des données
+        if (Array.isArray(data)) {
+          setLangues(data);
+        }
       })
       .catch(console.error);
   }, []);
@@ -40,7 +43,7 @@ export default function LanguesFrancePage() {
 
       if (!mapInstance.current) {
         mapInstance.current = L.map(mapRef.current, {
-          scrollWheelZoom: false,
+          scrollWheelZoom: true, // RÉACTIVÉ : Zoom à la molette possible
           tap: true
         }).setView([46.6033, 1.8883], 5);
 
@@ -51,7 +54,6 @@ export default function LanguesFrancePage() {
         setIsReady(true);
       }
 
-      // Suppression des anciens marqueurs pour éviter les doublons
       mapInstance.current.eachLayer((layer: any) => {
         if (layer instanceof L.Marker) mapInstance.current.removeLayer(layer);
       });
@@ -59,7 +61,6 @@ export default function LanguesFrancePage() {
       if (langues.length > 0) {
         langues.forEach(langue => {
           if (langue.lat && langue.lng) {
-            // Création d'une icône personnalisée avec le numéro
             const customIcon = L.divIcon({
               className: 'custom-div-icon',
               html: `<div style="
@@ -111,12 +112,12 @@ export default function LanguesFrancePage() {
         Retour à l'accueil
       </Link>
 
-      <header className="mb-6 md:mb-10">
-        <h1 className="text-3xl md:text-5xl font-black text-slate-900 flex items-center gap-3">
+      <header className="mb-6 md:mb-10 text-center md:text-left">
+        <h1 className="text-3xl md:text-5xl font-black text-slate-900 flex flex-wrap justify-center md:justify-start items-center gap-3">
           <Globe2 size={40} className="text-indigo-600" /> Langues de France
         </h1>
-        <p className="text-gray-600 mt-2 italic max-w-2xl">
-          Inventaire numéroté de la diversité linguistique (Métropole et Outre-mer).
+        <p className="text-gray-600 mt-2 italic max-w-2xl mx-auto md:mx-0">
+          Exploration cartographique et numérotée de la diversité linguistique.
         </p>
       </header>
 
@@ -126,7 +127,7 @@ export default function LanguesFrancePage() {
           <div className="absolute inset-0 flex items-center justify-center bg-slate-100/50 backdrop-blur-sm rounded-3xl z-10">
              <div className="flex flex-col items-center gap-2">
                 <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                <p className="font-bold text-indigo-600 text-sm">Chargement des 131 langues...</p>
+                <p className="font-bold text-indigo-600 text-sm">Chargement des {langues.length || 131} langues...</p>
              </div>
           </div>
         )}
@@ -134,7 +135,7 @@ export default function LanguesFrancePage() {
 
       <div className="flex items-center gap-4 mb-8">
         <h2 className="text-xl font-bold text-slate-800 uppercase tracking-widest flex items-center gap-3">
-          Inventaire <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-black">{langues.length}</span>
+          NOMBRE DE DIALECTES <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-black">{langues.length}</span>
         </h2>
         <div className="h-px flex-1 bg-slate-200"></div>
       </div>
@@ -167,7 +168,7 @@ export default function LanguesFrancePage() {
 
             <div className="space-y-1 mb-4 text-[11px]">
               <p><span className="font-bold text-slate-400 uppercase tracking-tighter mr-2">Famille</span><span className="text-slate-700">{langue.famille}</span></p>
-              <p><span className="font-bold text-slate-400 uppercase tracking-tighter mr-2">Zone</span><span className="text-slate-700">{langue.zone || "France"}</span></p>
+              <p><span className="font-bold text-slate-400 uppercase tracking-tighter mr-2">Zone</span><span className="text-slate-700 font-medium">{langue.zone || "France"}</span></p>
             </div>
 
             {langue.details && (
@@ -190,7 +191,7 @@ export default function LanguesFrancePage() {
       </div>
 
       <footer className="mt-20 py-10 text-center border-t border-slate-200 text-slate-400 text-xs">
-        Atlas linguistique • {new Date().getFullYear()}
+        Atlas linguistique des langues de France • {new Date().getFullYear()}
       </footer>
     </div>
   );
