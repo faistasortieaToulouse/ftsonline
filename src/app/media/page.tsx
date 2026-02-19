@@ -2,6 +2,8 @@ import React from 'react';
 import { ArrowLeft, Search, Settings, Tractor, Info, Sprout } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 async function getMedia() {
   // On utilise une URL absolue pour le serveur et relative pour le client
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
