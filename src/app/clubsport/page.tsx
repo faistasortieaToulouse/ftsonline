@@ -21,7 +21,7 @@ export default function ClubSportPage() {
   if (loading) {
     return (
       <div className="p-20 text-center animate-pulse font-bold text-red-600 uppercase tracking-widest">
-        Chargement de la ville rose...
+        Chargement des clubs de sport de la ville rose...
       </div>
     );
   }
