@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Globe2, AlertTriangle, MapPin } from "lucide-react";
+import { ArrowLeft, Globe2, AlertTriangle } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 
 interface Langue {
-  id?: number;
+  id: number; // Désormais obligatoire pour l'affichage
   nom: string;
   famille: string;
   zone?: string;
@@ -24,7 +24,6 @@ export default function LanguesFrancePage() {
   const [langues, setLangues] = useState<Langue[]>([]);
   const [isReady, setIsReady] = useState(false);
 
-  // 1. Récupération des données via ton API
   useEffect(() => {
     fetch("/api/languesfrance")
       .then(async (res) => {
@@ -34,21 +33,12 @@ export default function LanguesFrancePage() {
       .catch(console.error);
   }, []);
 
-  // 2. Initialisation et Mise à jour de la carte
   useEffect(() => {
     const updateMap = async () => {
       if (!mapRef.current) return;
       const L = (await import('leaflet')).default;
 
-      // Initialisation de l'instance si elle n'existe pas
       if (!mapInstance.current) {
-        delete (L.Icon.Default.prototype as any)._getIconUrl;
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        });
-
         mapInstance.current = L.map(mapRef.current, {
           scrollWheelZoom: false,
           tap: true
@@ -61,29 +51,45 @@ export default function LanguesFrancePage() {
         setIsReady(true);
       }
 
-      // Ajout des marqueurs quand les langues sont chargées
+      // Suppression des anciens marqueurs pour éviter les doublons
+      mapInstance.current.eachLayer((layer: any) => {
+        if (layer instanceof L.Marker) mapInstance.current.removeLayer(layer);
+      });
+
       if (langues.length > 0) {
-        const markers: any[] = [];
-        
         langues.forEach(langue => {
           if (langue.lat && langue.lng) {
-            const marker = L.marker([langue.lat, langue.lng])
+            // Création d'une icône personnalisée avec le numéro
+            const customIcon = L.divIcon({
+              className: 'custom-div-icon',
+              html: `<div style="
+                background-color: #4f46e5;
+                color: white;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px;
+                font-weight: bold;
+                border: 2px solid white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              ">${langue.id}</div>`,
+              iconSize: [24, 24],
+              iconAnchor: [12, 12]
+            });
+
+            L.marker([langue.lat, langue.lng], { icon: customIcon })
               .addTo(mapInstance.current)
               .bindPopup(`
-                <div style="font-family: sans-serif;">
-                  <strong style="color: #4f46e5; font-size: 14px;">${langue.nom}</strong><br/>
+                <div style="font-family: sans-serif; padding: 5px;">
+                  <strong style="color: #4f46e5; font-size: 14px;">#${langue.id} - ${langue.nom}</strong><br/>
                   <span style="font-size: 12px; color: #64748b;">${langue.famille}</span>
                 </div>
               `);
-            markers.push([langue.lat, langue.lng]);
           }
         });
-
-        // Optionnel : Ajuster la vue pour voir tous les points (Métropole + DOM-TOM)
-        if (markers.length > 0) {
-            // On ne le fait qu'une fois au chargement
-            // mapInstance.current.fitBounds(markers, { padding: [20, 20] });
-        }
       }
     };
 
@@ -95,81 +101,73 @@ export default function LanguesFrancePage() {
         mapInstance.current = null;
       }
     };
-  }, [langues]); // Se déclenche quand les langues arrivent
+  }, [langues]);
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
       
-      {/* BOUTON RETOUR */}
       <Link href="/" className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 hover:underline mb-6 transition-colors group text-sm font-medium">
         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
         Retour à l'accueil
       </Link>
 
-      <header className="mb-6 md:mb-10 text-center md:text-left">
-        <h1 className="text-3xl md:text-5xl font-black text-slate-900 flex flex-wrap justify-center md:justify-start items-center gap-3">
+      <header className="mb-6 md:mb-10">
+        <h1 className="text-3xl md:text-5xl font-black text-slate-900 flex items-center gap-3">
           <Globe2 size={40} className="text-indigo-600" /> Langues de France
         </h1>
-        <p className="text-gray-600 mt-2 italic text-sm md:text-base max-w-2xl">
-          Un inventaire cartographique de la diversité linguistique, du Gallo à l'Ajië, en passant par les langues de Guyane.
+        <p className="text-gray-600 mt-2 italic max-w-2xl">
+          Inventaire numéroté de la diversité linguistique (Métropole et Outre-mer).
         </p>
       </header>
 
-      {/* CARTE */}
       <div className="relative">
-        <div
-          ref={mapRef}
-          className="h-[40vh] md:h-[50vh] w-full mb-10 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden z-0"
-        />
+        <div ref={mapRef} className="h-[40vh] md:h-[55vh] w-full mb-10 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden z-0" />
         {!isReady && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-100/50 backdrop-blur-sm rounded-3xl z-10">
              <div className="flex flex-col items-center gap-2">
                 <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                <p className="font-bold text-indigo-600">Chargement des données...</p>
+                <p className="font-bold text-indigo-600 text-sm">Chargement des 131 langues...</p>
              </div>
           </div>
         )}
       </div>
 
-      {/* SEPARATEUR ET TITRE GRILLE */}
       <div className="flex items-center gap-4 mb-8">
         <h2 className="text-xl font-bold text-slate-800 uppercase tracking-widest flex items-center gap-3">
-          Inventaire <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-black">{langues.length}</span>
+          Inventaire <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-black">{langues.length}</span>
         </h2>
         <div className="h-px flex-1 bg-slate-200"></div>
       </div>
 
-      {/* GRILLE DES LANGUES */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {langues.map((langue, i) => (
+        {langues.map((langue) => (
           <div 
-            key={langue.id || i} 
+            key={langue.id} 
             className="group flex flex-col p-5 bg-white shadow-sm border border-slate-200 rounded-2xl hover:shadow-xl hover:border-indigo-200 transition-all duration-300"
           >
             <div className="flex justify-between items-start mb-3 gap-2">
-              <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
-                {langue.nom}
-              </h3>
+              <div className="flex items-center gap-2">
+                <span className="flex-shrink-0 w-7 h-7 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-lg flex items-center justify-center text-[10px] font-black">
+                  {langue.id}
+                </span>
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
+                  {langue.nom}
+                </h3>
+              </div>
               {langue.statut && (
-                <span className={`flex-shrink-0 flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded-full border ${
+                <span className={`flex-shrink-0 text-[8px] font-black px-1.5 py-0.5 rounded border uppercase ${
                   langue.statut === 'mort' || langue.statut === 'disparu' 
                   ? 'bg-red-50 text-red-600 border-red-100' 
                   : 'bg-amber-50 text-amber-700 border-amber-100'
                 }`}>
-                  <AlertTriangle size={10} /> {langue.statut.toUpperCase()}
+                  {langue.statut}
                 </span>
               )}
             </div>
 
-            <div className="space-y-1.5 mb-4">
-              <div className="flex items-center gap-2 text-[11px]">
-                <span className="font-bold text-slate-400 uppercase tracking-tighter w-14">Famille</span> 
-                <span className="text-slate-700 font-medium truncate">{langue.famille}</span>
-              </div>
-              <div className="flex items-center gap-2 text-[11px]">
-                <span className="font-bold text-slate-400 uppercase tracking-tighter w-14">Zone</span> 
-                <span className="text-slate-700 truncate">{langue.zone || "France"}</span>
-              </div>
+            <div className="space-y-1 mb-4 text-[11px]">
+              <p><span className="font-bold text-slate-400 uppercase tracking-tighter mr-2">Famille</span><span className="text-slate-700">{langue.famille}</span></p>
+              <p><span className="font-bold text-slate-400 uppercase tracking-tighter mr-2">Zone</span><span className="text-slate-700">{langue.zone || "France"}</span></p>
             </div>
 
             {langue.details && (
@@ -179,9 +177,9 @@ export default function LanguesFrancePage() {
             )}
 
             {(langue.varietes || langue.sous_varietes) && (
-              <div className="flex flex-wrap gap-1 mt-auto pt-2">
+              <div className="flex flex-wrap gap-1 mt-auto">
                 {(langue.varietes || langue.sous_varietes)?.map((v, idx) => (
-                  <span key={idx} className="text-[9px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded border border-slate-200">
+                  <span key={idx} className="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200">
                     {v}
                   </span>
                 ))}
@@ -191,9 +189,8 @@ export default function LanguesFrancePage() {
         ))}
       </div>
 
-      <footer className="mt-20 py-10 text-center border-t border-slate-200">
-        <p className="text-slate-400 text-[10px] uppercase tracking-widest font-bold mb-2">Source des données</p>
-        <p className="text-slate-500 text-xs font-medium">Atlas linguistique des langues de France • {new Date().getFullYear()}</p>
+      <footer className="mt-20 py-10 text-center border-t border-slate-200 text-slate-400 text-xs">
+        Atlas linguistique • {new Date().getFullYear()}
       </footer>
     </div>
   );
