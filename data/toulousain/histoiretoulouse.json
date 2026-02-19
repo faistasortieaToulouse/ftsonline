@@ -1,0 +1,24 @@
+{
+  "ville": "Toulouse",
+  "nom_antique": "Tolosa",
+  "chronologie": [
+    { "periode": "Antiquité", "evenement": "Occupation par les Volques Tectosages", "date": "IIIe siècle av. J.-C.", "details": "Peuple celte attiré par la position stratégique sur la Garonne." },
+    { "periode": "Antiquité", "evenement": "Conquête romaine", "date": "107 av. J.-C.", "details": "La ville devient une importante cité gallo-romaine (Provincia)." },
+    { "periode": "Moyen Âge", "evenement": "Royaume Wisigoth", "date": "418 - 507", "details": "Toulouse devient la capitale du royaume des Wisigoths." },
+    { "periode": "Moyen Âge", "evenement": "Bataille de Toulouse", "date": "721", "details": "Victoire d'Eudes d'Aquitaine contre les Sarrasins." },
+    { "periode": "Moyen Âge", "evenement": "Création du Comté de Toulouse", "date": "IXe siècle", "details": "Début de la dynastie des comtes de Toulouse (les Raimondins)." },
+    { "periode": "Moyen Âge", "evenement": "Croisade contre les Albigeois", "date": "1209 - 1229", "details": "Guerre contre le catharisme se terminant par le rattachement au domaine royal." },
+    { "periode": "Moyen Âge", "evenement": "Fondation de l'Université", "date": "1229", "details": "L'une des plus anciennes universités d'Europe." },
+    { "periode": "Moyen Âge", "evenement": "Création des Capitouls", "date": "1147", "details": "Mise en place du pouvoir municipal dirigé par des magistrats locaux." },
+    { "periode": "Renaissance", "evenement": "L'âge d'or du Pastel", "date": "1450 - 1550", "details": "Fortune immense de la ville grâce à l'exportation du colorant bleu." },
+    { "periode": "XVIIe siècle", "evenement": "Canal du Midi", "date": "1666 - 1681", "details": "Œuvre de Pierre-Paul Riquet reliant la Garonne à la Méditerranée." },
+    { "periode": "XIXe siècle", "evenement": "Bataille de Toulouse (Napoléon)", "date": "1814", "details": "Affrontement entre les troupes de Soult et de Wellington." },
+    { "periode": "XXe siècle", "evenement": "Essor de l'aviation", "date": "1917 - 1927", "details": "Installation de Latécoère et début de l'épopée de l'Aéropostale." },
+    { "periode": "XXe siècle", "evenement": "L'exil espagnol (Retirada)", "date": "1939", "details": "Arrivée massive de réfugiés espagnols, marquant l'identité culturelle de la ville." },
+    { "periode": "XXIe siècle", "evenement": "Capitale européenne de l'espace", "date": "Actuel", "details": "Siège d'Airbus et du CNES, leader mondial de l'aéronautique." }
+  ],
+  "symboles": {
+    "surnom": "La Ville Rose",
+    "explication": "Usage de la brique de terre cuite en raison de l'absence de pierre de taille à proximité."
+  }
+}
