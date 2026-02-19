@@ -40,7 +40,7 @@ export default function VolToulousePage() {
       
       {/* Navigation */}
       <Link href="/" className="inline-flex items-center gap-2 text-sky-700 font-bold hover:bg-sky-50 p-2 rounded-lg transition-all mb-8">
-        <ArrowLeft size={20} /> RETOUR AU RÉPERTOIRE
+        <ArrowLeft size={20} /> Retour à l'Accueil
       </Link>
 
       {/* Header style Terminal */}
