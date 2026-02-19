@@ -31,7 +31,7 @@ export default function ClubSportPage() {
       
       {/* Navigation */}
       <Link href="/" className="inline-flex items-center gap-2 text-red-600 font-black hover:bg-red-50 p-2 rounded-md transition-all mb-10">
-        <ArrowLeft size={20} /> RETOUR
+        <ArrowLeft size={20} /> Retour à l'Accueil
       </Link>
 
       <header className="border-l-8 border-red-600 pl-6 mb-16">
