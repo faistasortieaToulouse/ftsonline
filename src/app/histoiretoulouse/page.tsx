@@ -17,14 +17,14 @@ export default function HistoireToulousePage() {
       });
   }, []);
 
-  if (loading) return <div className="p-20 text-center animate-pulse font-serif italic text-amber-800">Parcours des manuscrits anciens...</div>;
+  if (loading) return <div className="p-20 text-center animate-pulse font-serif italic text-amber-800">En cours de chargement...</div>;
 
   return (
     <main className="max-w-5xl mx-auto p-6 bg-[#fffcf5] min-h-screen my-10 shadow-2xl rounded-xl border border-amber-100">
       
       {/* Retour */}
       <Link href="/" className="inline-flex items-center gap-2 text-amber-800 font-bold hover:bg-amber-50 p-2 rounded-md transition-all mb-10">
-        <ArrowLeft size={20} /> RETOUR AU RÉPERTOIRE
+        <ArrowLeft size={20} /> Retour à l'Accueil
       </Link>
 
       {/* Header Historique */}
