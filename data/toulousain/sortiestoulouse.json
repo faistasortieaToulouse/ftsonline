@@ -475,6 +475,18 @@
   "url": "https://befriend.app/",
   "description": "Application toulousaine misant sur la bienveillance pour construire des relations amicales locales et durables à travers des activités partagées.",
   "tags": ["bienveillance", "rencontres-amicales", "local"]
+},
+{
+  "id": 44,
+  "name": "AIESEC Toulouse",
+  "slug": "aiesec-toulouse",
+  "type": "organisation-internationale",
+  "categories": ["etudiants", "leadership", "international", "volontariat"],
+  "city": "Toulouse",
+  "url": "https://www.instagram.com/aiesecintoulouse/?hl=fr",
+  "description": "Organisation internationale gérée par des étudiants, l'AIESEC Toulouse propose des échanges, des stages à l'étranger et des projets de volontariat pour développer le leadership des jeunes.",
+  "tags": ["leadership", "échange-international", "engagement"]
 }
   ]
 }
+
