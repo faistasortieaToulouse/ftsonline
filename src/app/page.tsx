@@ -691,16 +691,26 @@ export default function HomePage() {
   const dureeMinutes = Math.floor((dureeMs % 3600000) / 60000);
 
 	
-  // --- AJOUT POUR L'HEURE DORÉE ET BLEUE ---
-// 'goldenHour' est la fin de l'heure dorée le soir
-const heureDoree = sunTimes.goldenHour.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-// 'dusk' correspond à la fin du crépuscule civil (début de l'heure bleue profonde)
-const heureBleue = sunTimes.dusk.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+// --- CALCUL DYNAMIQUE UV ---
+const uvValeur = previsions.midi.uv || 0;
+const getUvLabel = (val: number) => {
+  if (val <= 2) return "Faible";
+  if (val <= 5) return "Modéré";
+  if (val <= 7) return "Élevé";
+  return "Très élevé";
+};
+const indiceUV = `${getUvLabel(uvValeur)} (${uvValeur.toFixed(1)})`;
 
-// --- POUR L'INDICE UV / AIR ---
-// Si votre API météo ne renvoie pas encore l'UV, on peut l'initialiser par défaut
-const indiceUV = "Faible (1)"; 
-const qualiteAir = "Bon (Indice 22)"; // Idéalement à mapper sur meteo.air
+// --- CALCUL DYNAMIQUE AIR (Indice ATMO / AQI) ---
+const airValeur = previsions.midi.air || 0;
+const getAirStatus = (val: number) => {
+  if (val <= 20) return { label: "Excellent", color: "text-emerald-700" };
+  if (val <= 40) return { label: "Bon", color: "text-green-600" };
+  if (val <= 60) return { label: "Moyen", color: "text-yellow-600" };
+  if (val <= 80) return { label: "Médiocre", color: "text-orange-600" };
+  return { label: "Mauvais", color: "text-red-600" };
+};
+const airStatus = getAirStatus(airValeur);
 	
 
   // 3. Calculs Lune
@@ -777,11 +787,17 @@ useEffect(() => {
 
       // APPEL 2 : La météo en direct et prévisions (Open-Meteo)
       const resMeteo = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=43.6045&longitude=1.4442&hourly=temperature_2m,weathercode,windspeed_10m&timezone=Europe%2FParis`
+        `https://api.open-meteo.com/v1/forecast?latitude=43.6045&longitude=1.4442&hourly=temperature_2m,weathercode,windspeed_10m,uv_index&timezone=Europe%2FParis`
+      );
+		
+		// APPEL 3 : Qualité de l'Air (Nouvel appel API spécifique)
+      const resAir = await fetch(
+        `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=43.6045&longitude=1.4442&hourly=european_aqi&timezone=Europe%2FParis`
       );
       
-      if (resMeteo.ok) {
+        if (resMeteo.ok && resAir.ok) {
         const data = await resMeteo.json();
+        const dataAir = await resAir.json(); // <-- IL MANQUAIT ÇA
 
         const parseCond = (code: number) => {
           if (code === 0) return "Soleil";
@@ -970,13 +986,15 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Air */}
-      <div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
-        <span className="text-sm">🍃</span>
-        <span className="whitespace-nowrap">
-          Air : <span className="text-emerald-700 font-extrabold">{qualiteAir}</span>
-        </span>
-      </div>
+{/* Air */}
+<div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
+  <span className="text-sm">🍃</span>
+  <span className="whitespace-nowrap">
+    Air : <span className={`${airStatus.color} font-extrabold`}>
+      {airStatus.label} ({airValeur})
+    </span>
+  </span>
+</div>
 
 {/* UV */}
 <div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
@@ -985,6 +1003,7 @@ useEffect(() => {
     UV : <b className="text-indigo-900">{indiceUV}</b>
   </span>
 </div>
+		
     </div>
 
   </div>
