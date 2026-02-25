@@ -821,16 +821,22 @@ useEffect(() => {
             temp: `${Math.round(data.hourly.temperature_2m[9])}°C`, 
             cond: parseCond(data.hourly.weathercode[9]),
             vent: `${Math.round(data.hourly.windspeed_10m[9])} km/h` 
+			uv: data.hourly.uv_index[9], // Ajout UV matin
+            air: dataAir.hourly.european_aqi[9] // Ajout Air matin
           },
           midi: { 
             temp: `${Math.round(data.hourly.temperature_2m[14])}°C`, 
             cond: parseCond(data.hourly.weathercode[14]),
             vent: `${Math.round(data.hourly.windspeed_10m[14])} km/h` 
+            uv: data.hourly.uv_index[14], // C'est celui-ci que vous affichez plus bas !
+            air: dataAir.hourly.european_aqi[14] // Et celui-ci pour l'air !			
           },
           soir: { 
             temp: `${Math.round(data.hourly.temperature_2m[20])}°C`, 
             cond: parseCond(data.hourly.weathercode[20]),
             vent: `${Math.round(data.hourly.windspeed_10m[20])} km/h` 
+            uv: data.hourly.uv_index[20],
+            air: dataAir.hourly.european_aqi[20]
           }
         });
       }
@@ -997,19 +1003,22 @@ useEffect(() => {
 
 {/* Air */}
 <div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
-  <span className="text-sm">🍃</span>
+  <span className="text-sm" title="Qualité de l'air">🍃</span>
   <span className="whitespace-nowrap">
     Air : <span className={`${airStatus.color} font-extrabold`}>
-      {airStatus.label} ({airValeur})
+      {/* On vérifie si on a une donnée, sinon on affiche "chargement" */}
+      {previsions.midi.air !== "--" ? `${airStatus.label} (${airValeur})` : "Calcul..."}
     </span>
   </span>
 </div>
 
 {/* UV */}
 <div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
-  <span className="text-sm">🕶️</span>
+  <span className="text-sm" title="Indice UV">🕶️</span>
   <span className="whitespace-nowrap">
-    UV : <b className="text-indigo-900">{indiceUV}</b>
+    UV : <b className="text-indigo-900">
+      {previsions.midi.uv !== "--" ? indiceUV : "Calcul..."}
+    </b>
   </span>
 </div>
 		
