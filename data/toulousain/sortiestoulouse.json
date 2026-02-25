@@ -486,7 +486,50 @@
   "url": "https://www.instagram.com/aiesecintoulouse/?hl=fr",
   "description": "Organisation internationale gérée par des étudiants, l'AIESEC Toulouse propose des échanges, des stages à l'étranger et des projets de volontariat pour développer le leadership des jeunes.",
   "tags": ["leadership", "échange-international", "engagement"]
+},
+{
+  "id": 45,
+  "name": "Language Exchange International (LEI)",
+  "slug": "lei-toulouse",
+  "type": "association-culturelle",
+  "categories": ["langues", "international", "sorties"],
+  "city": "Toulouse",
+  "url": "http://www.lei-web.click/",
+  "description": "Association dédiée aux échanges linguistiques et culturels à Toulouse, organisant des rencontres régulières pour pratiquer les langues dans une ambiance conviviale.",
+  "tags": ["langues", "expatriés", "échanges"]
+},
+{
+  "id": 46,
+  "name": "Happy People 31",
+  "slug": "happy-people-31",
+  "type": "groupe-loisirs",
+  "categories": ["sorties", "amitié", "loisirs"],
+  "city": "Toulouse",
+  "url": "http://www.happypeople.fr.nf/",
+  "description": "Réseau de sorties locales pour les Toulousains souhaitant élargir leur cercle amical à travers des activités variées : restos, ciné, balades et soirées.",
+  "tags": ["rencontres", "convivialité", "activités"]
+},
+{
+  "id": 47,
+  "name": "Toulangues",
+  "slug": "toulangues",
+  "type": "portail-linguistique",
+  "categories": ["langues", "culture", "éducation"],
+  "city": "Toulouse",
+  "url": "http://www.toulangues.org/",
+  "description": "Le portail des langues à Toulouse. Répertorie les ressources, les cafés linguistiques et les événements liés à la diversité culturelle et l'apprentissage des langues.",
+  "tags": ["ressources", "multilinguisme", "culture"]
+},
+{
+  "id": 48,
+  "name": "Café des Langues Toulouse",
+  "slug": "cafe-des-langues-toulouse",
+  "type": "événement-social",
+  "categories": ["langues", "international", "rencontres"],
+  "city": "Toulouse",
+  "url": "https://www.cafedeslanguestoulouse.com/",
+  "description": "Rencontres hebdomadaires dans des bars toulousains pour pratiquer toutes les langues du monde avec des natifs et des passionnés dans un cadre décontracté.",
+  "tags": ["pratique-langues", "international", "soirées"]
 }
   ]
 }
-
