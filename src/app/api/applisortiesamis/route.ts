@@ -13,13 +13,16 @@ export async function GET() {
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const data = JSON.parse(fileContents);
 
-    // Tri alphabétique par le nom de l'application
-    data.applications.sort((a: any, b: any) => 
-      a.Application.localeCompare(b.Application)
-    );
+    // Sécurité : on vérifie que applications est bien un tableau avant de trier
+    if (data && Array.isArray(data.applications)) {
+      data.applications.sort((a: any, b: any) => 
+        (a.Application || "").localeCompare(b.Application || "")
+      );
+    }
 
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Erreur API:", error);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }
