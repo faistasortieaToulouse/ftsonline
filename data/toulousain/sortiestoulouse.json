@@ -43,7 +43,7 @@
       "categories": ["jeux", "ateliers", "participatif"],
       "city": "Toulouse",
       "url": "https://atelatoi.fr/",
-      "description": "Association organisant des événements conviviaux pour renforcer les liens sociaux, lutter contre l’isolement et favoriser des échanges authentiques grâce à des jeux de questions."",
+      "description": "Association organisant des événements conviviaux pour renforcer les liens sociaux, lutter contre l’isolement et favoriser des échanges authentiques grâce à des jeux de questions.",
       "tags": ["durable", "atelier", "local"]
     },
     {
@@ -400,4 +400,5 @@
 }
   ]
 }
+
 
