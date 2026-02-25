@@ -408,9 +408,66 @@
   "url": "https://out-app.com/",
   "description": "Une application toulousaine très pratique pour les noctambules. Elle permet de trouver des bars/clubs, de commander via son téléphone et même de voir où se trouvent les événements étudiants et afterworks.",
   "tags": ["nocturne", "afterwork", "commandes"]
+},
+{
+  "id": 38,
+  "name": "Nocto",
+  "slug": "nocto-app",
+  "type": "application-mobile",
+  "categories": ["noctambules", "clubs", "concerts", "musique", "evenements"],
+  "city": "Toulouse",
+  "url": "https://nocto.events/",
+  "googlePlay": "https://play.google.com/store/apps/details?id=com.ezyostudio.nocto&hl=fr",
+  "description": "L'application de référence pour les oiseaux de nuit. Elle centralise les soirées en clubs, les concerts et les événements musicaux avec des recommandations personnalisées selon vos goûts.",
+  "tags": ["vie nocturne", "musique live", "recommandations"]
+},
+{
+  "id": 39,
+  "name": "Toulouse Greeters",
+  "slug": "toulouse-greeters",
+  "type": "association-tourisme",
+  "categories": ["visites", "rencontres", "patrimoine", "insolite"],
+  "city": "Toulouse",
+  "url": "https://toulousegreeters.fr/",
+  "description": "Découvrez Toulouse autrement grâce à des habitants passionnés (les Greeters) qui vous font visiter bénévolement leurs quartiers et partager leurs coups de cœur loin des sentiers battus.",
+  "tags": ["bénévolat", "authentique", "balades"]
+},
+{
+  "id": 40,
+  "name": "Toulouse ERASMUS FUN",
+  "slug": "toulouse-erasmus-fun",
+  "type": "communaute-etudiante",
+  "categories": ["etudiants", "soirees", "rencontres", "international"],
+  "city": "Toulouse",
+  "url": "https://www.facebook.com/toulouseerasmusfun/",
+  "description": "Une communauté dynamique organisant des soirées thématiques, des voyages et des événements festifs pour les étudiants Erasmus et internationaux de passage dans la ville rose.",
+  "tags": ["festif", "erasmus", "integration"]
+},
+{
+  "id": 41,
+  "name": "AEGEE Toulouse",
+  "slug": "aegee-toulouse",
+  "type": "association-europeenne",
+  "categories": ["etudiants", "culture", "voyages", "europe"],
+  "city": "Toulouse",
+  "url": "https://aegeetoulouse.com/",
+  "description": "L'antenne toulousaine du Forum des Étudiants Européens. Elle promeut l'échange culturel et la coopération européenne à travers des projets locaux, des conférences et des événements sociaux.",
+  "tags": ["réseau", "interculturel", "jeunesse"]
+},
+{
+  "id": 42,
+  "name": "ESN Toulouse",
+  "slug": "esn-toulouse",
+  "type": "reseau-etudiant",
+  "categories": ["etudiants", "international", "sorties", "culture"],
+  "city": "Toulouse",
+  "url": "https://linktr.ee/esn.toulouse",
+  "description": "Membre de l'Erasmus Student Network, cette association accompagne les étudiants étrangers dans leur intégration à Toulouse via des parrainages (Buddy System), des visites culturelles et des activités ludiques.",
+  "tags": ["accompagnement", "mobilité", "buddy"]
 }
   ]
 }
+
 
 
 
