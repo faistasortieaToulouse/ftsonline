@@ -899,7 +899,7 @@ useEffect(() => {
           <span className="text-[10px] uppercase font-black text-purple-400">Matin</span>
           <WeatherIcon condition={previsions.matin.cond} />
           <span className="font-bold text-lg leading-none mt-1">{previsions.matin.temp}</span>
-          <span className="text-[9px] text-purple-400 font-medium">{previsions.matin.vent}</span>
+          <span className="text-[9px] text-purple-400 font-medium">💨 vent : {previsions.matin.vent}</span>
         </div>
         
         <div className="w-px h-10 bg-purple-200 hidden sm:block" />
@@ -909,7 +909,7 @@ useEffect(() => {
           <span className="text-[10px] uppercase font-black text-purple-400">Midi</span>
           <WeatherIcon condition={previsions.midi.cond} />
           <span className="font-bold text-lg leading-none mt-1">{previsions.midi.temp}</span>
-          <span className="text-[9px] text-purple-400 font-medium">{previsions.midi.vent}</span>
+          <span className="text-[9px] text-purple-400 font-medium">💨 vent :{previsions.midi.vent}</span>
         </div>
 
         <div className="w-px h-10 bg-purple-200 hidden sm:block" />
@@ -919,7 +919,7 @@ useEffect(() => {
           <span className="text-[10px] uppercase font-black text-purple-400">Soir</span>
           <WeatherIcon condition={previsions.soir.cond} />
           <span className="font-bold text-lg leading-none mt-1">{previsions.soir.temp}</span>
-          <span className="text-[9px] text-purple-400 font-medium">{previsions.soir.vent}</span>
+          <span className="text-[9px] text-purple-400 font-medium">💨 vent :{previsions.soir.vent}</span>
         </div>
       </div> 
     </div> {/* <--- Fermeture de la Ligne 1 (ESSENTIEL) */}
