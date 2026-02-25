@@ -820,21 +820,21 @@ useEffect(() => {
           matin: { 
             temp: `${Math.round(data.hourly.temperature_2m[9])}°C`, 
             cond: parseCond(data.hourly.weathercode[9]),
-            vent: `${Math.round(data.hourly.windspeed_10m[9])} km/h` 
+            vent: `${Math.round(data.hourly.windspeed_10m[9])} km/h`,
 			uv: data.hourly.uv_index[9], // Ajout UV matin
             air: dataAir.hourly.european_aqi[9] // Ajout Air matin
           },
           midi: { 
             temp: `${Math.round(data.hourly.temperature_2m[14])}°C`, 
             cond: parseCond(data.hourly.weathercode[14]),
-            vent: `${Math.round(data.hourly.windspeed_10m[14])} km/h` 
+            vent: `${Math.round(data.hourly.windspeed_10m[14])} km/h`,
             uv: data.hourly.uv_index[14], // C'est celui-ci que vous affichez plus bas !
             air: dataAir.hourly.european_aqi[14] // Et celui-ci pour l'air !			
           },
           soir: { 
             temp: `${Math.round(data.hourly.temperature_2m[20])}°C`, 
             cond: parseCond(data.hourly.weathercode[20]),
-            vent: `${Math.round(data.hourly.windspeed_10m[20])} km/h` 
+            vent: `${Math.round(data.hourly.windspeed_10m[20])} km/h`,
             uv: data.hourly.uv_index[20],
             air: dataAir.hourly.european_aqi[20]
           }
