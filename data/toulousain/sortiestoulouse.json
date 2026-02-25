@@ -464,10 +464,17 @@
   "url": "https://linktr.ee/esn.toulouse",
   "description": "Membre de l'Erasmus Student Network, cette association accompagne les étudiants étrangers dans leur intégration à Toulouse via des parrainages (Buddy System), des visites culturelles et des activités ludiques.",
   "tags": ["accompagnement", "mobilité", "buddy"]
+},
+{
+  "id": 43,
+  "name": "BeFriend",
+  "slug": "befriend",
+  "type": "application-mobile",
+  "categories": ["amitié", "social", "proximité"],
+  "city": "Toulouse",
+  "url": "https://befriend.app/",
+  "description": "Application toulousaine misant sur la bienveillance pour construire des relations amicales locales et durables à travers des activités partagées.",
+  "tags": ["bienveillance", "rencontres-amicales", "local"]
 }
   ]
 }
-
-
-
-
