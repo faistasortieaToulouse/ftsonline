@@ -892,35 +892,37 @@ useEffect(() => {
         </div>
       </div>
 
-   {/* BLOC DROIT : Météo Matin / Midi / Soir */}
-   <div className="flex items-center gap-6 bg-purple-50 p-3 rounded-2xl border border-purple-100 shadow-sm">
-    {/* Matin */}
-    <div className="flex flex-col items-center min-w-[60px]">
-      <span className="text-[10px] uppercase font-black text-purple-400">Matin</span>
-      <WeatherIcon condition={previsions.matin.cond} />
-      <span className="font-bold text-lg leading-none mt-1">{previsions.matin.temp}</span>
-      <span className="text-[9px] text-purple-400 font-medium">{previsions.matin.vent}</span>
-    </div>
-
-    {/* Ligne 2 : Célébrations textuelles */}
-    <div className="bg-purple-200/50 border-t border-purple-200 py-2 px-6">
-      <div className="flex items-center justify-center gap-3 w-full">
-        <span className="text-pink-500 text-lg">✨</span>
-        <p className="text-sm font-bold text-purple-900 text-center">{celebrations.join(" • ")}</p>
-        <span className="text-pink-500 text-lg">✨</span>
-      </div>
-    </div>
-
-    {/* Ligne 3 : Conseil Jardinage */}
-    <div className="bg-green-100/50 border-t border-purple-200 py-3 px-6">
-      <div className="flex items-center gap-3 w-full">
-        <span className="text-xl">🌱</span>
-        <div className="flex flex-col text-left">
-          <span className="text-[10px] font-bold uppercase text-green-700">Le conseil jardinage du mois</span>
-          <p className="text-xs md:text-sm text-gray-700 italic">{conseilJardin}</p>
+{/* BLOC DROIT : Météo Matin / Midi / Soir */}
+      <div className="flex items-center gap-6 bg-purple-50 p-3 rounded-2xl border border-purple-100 shadow-sm">
+        {/* Matin */}
+        <div className="flex flex-col items-center min-w-[60px]">
+          <span className="text-[10px] uppercase font-black text-purple-400">Matin</span>
+          <WeatherIcon condition={previsions.matin.cond} />
+          <span className="font-bold text-lg leading-none mt-1">{previsions.matin.temp}</span>
+          <span className="text-[9px] text-purple-400 font-medium">{previsions.matin.vent}</span>
         </div>
-      </div>
-    </div>
+        
+        <div className="w-px h-10 bg-purple-200 hidden sm:block" />
+
+        {/* Midi */}
+        <div className="flex flex-col items-center min-w-[60px]">
+          <span className="text-[10px] uppercase font-black text-purple-400">Midi</span>
+          <WeatherIcon condition={previsions.midi.cond} />
+          <span className="font-bold text-lg leading-none mt-1">{previsions.midi.temp}</span>
+          <span className="text-[9px] text-purple-400 font-medium">{previsions.midi.vent}</span>
+        </div>
+
+        <div className="w-px h-10 bg-purple-200 hidden sm:block" />
+
+        {/* Soir */}
+        <div className="flex flex-col items-center min-w-[60px]">
+          <span className="text-[10px] uppercase font-black text-purple-400">Soir</span>
+          <WeatherIcon condition={previsions.soir.cond} />
+          <span className="font-bold text-lg leading-none mt-1">{previsions.soir.temp}</span>
+          <span className="text-[9px] text-purple-400 font-medium">{previsions.soir.vent}</span>
+        </div>
+      </div> 
+    </div> {/* <--- Fermeture de la Ligne 1 (ESSENTIEL) */}
 
 {/* --- Bloc unique : Éphéméride & Environnement --- */}
 <div className="bg-indigo-900/10 border-t border-purple-200 py-6 px-4 md:py-4 md:px-6">
