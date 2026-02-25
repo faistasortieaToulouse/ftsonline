@@ -699,7 +699,7 @@ const heureBleue = sunTimes.dusk.toLocaleTimeString('fr-FR', {hour:'2-digit', mi
 
 // --- POUR L'INDICE UV / AIR ---
 // Si votre API météo ne renvoie pas encore l'UV, on peut l'initialiser par défaut
-const indiceUV = meteo.uv || "Faible (1)"; 
+const indiceUV = "Faible (1)"; 
 const qualiteAir = "Bon (Indice 22)"; // Idéalement à mapper sur meteo.air
 	
 
@@ -962,10 +962,10 @@ useEffect(() => {
         <span className="text-sm">💨</span>
         <div className="flex flex-col leading-tight">
           <span className="whitespace-nowrap">
-            Vent : <b className="text-indigo-900">{meteo?.vitesseVent || '--'} km/h</b>
+            Vent : <b className="text-indigo-900">{previsions.midi.vent || '--'}</b>
           </span>
           <span className="text-[9px] opacity-70 italic">
-             Autan : {meteo?.condition?.includes("Vent") ? "Actif" : "Calme"}
+             Autan : {previsions.midi.cond.includes("Vent") ? "Actif" : "Calme"}
           </span>
         </div>
       </div>
@@ -978,13 +978,13 @@ useEffect(() => {
         </span>
       </div>
 
-      {/* UV */}
-      <div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
-        <span className="text-sm">🕶️</span>
-        <span className="whitespace-nowrap">
-          UV : <b className="text-indigo-900">{indiceUV}</b>
-        </span>
-      </div>
+{/* UV */}
+<div className="flex items-center gap-2 border-l border-indigo-100 pl-4">
+  <span className="text-sm">🕶️</span>
+  <span className="whitespace-nowrap">
+    UV : <b className="text-indigo-900">{indiceUV}</b>
+  </span>
+</div>
     </div>
 
   </div>
