@@ -699,6 +699,11 @@ const getUvLabel = (val: number) => {
   if (val <= 7) return "Élevé";
   return "Très élevé";
 };
+
+// 'goldenHour' est la fin de l'heure dorée le soir
+const heureDoree = sunTimes.goldenHour.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+// 'dusk' correspond à la fin du crépuscule civil (début de l'heure bleue profonde)
+const heureBleue = sunTimes.dusk.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
 const indiceUV = `${getUvLabel(uvValeur)} (${uvValeur.toFixed(1)})`;
 
 // --- CALCUL DYNAMIQUE AIR (Indice ATMO / AQI) ---
