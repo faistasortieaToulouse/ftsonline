@@ -26,7 +26,7 @@
     },
     {
       "id": 3,
-      "name": "Expats in Toulouse - Language Café & Free Events",
+      "name": "Expats in Toulouse - Language Café & Free Events (Meetup)",
       "slug": "meetup-expats-toulouse",
       "type": "meetup",
       "categories": ["expats", "langues", "language-exchange", "evenements"],
@@ -40,10 +40,10 @@
       "name": "Atélatoi",
       "slug": "atelatoi",
       "type": "association",
-      "categories": ["ecologie", "ateliers", "participatif"],
+      "categories": ["jeux", "ateliers", "participatif"],
       "city": "Toulouse",
       "url": "https://atelatoi.fr/",
-      "description": "Ateliers collaboratifs et initiatives écologiques à Toulouse.",
+      "description": ""description": "Association organisant des événements conviviaux pour renforcer les liens sociaux, lutter contre l’isolement et favoriser des échanges authentiques grâce à des jeux de questions."",
       "tags": ["durable", "atelier", "local"]
     },
     {
@@ -76,7 +76,7 @@
       "categories": ["sorties", "evenements"],
       "city": "Toulouse",
       "url": "https://www.ftstoulouse.online/",
-      "description": "Version locale de FTS dédiée à Toulouse.",
+      "description": "Le guide des sorties à Toulouse.",
       "tags": ["local", "activites"]
     },
     {
@@ -109,7 +109,7 @@
       "categories": ["sorties", "evenements", "rencontres"],
       "city": "Toulouse",
       "url": "https://www.sortida.fr/",
-      "description": "Site de sorties et rencontres amicales en France, incluant Toulouse.",
+      "description": "Site de sorties et rencontres amicales à Toulouse.",
       "tags": ["amical", "loisirs"]
     },
     {
@@ -131,7 +131,7 @@
       "categories": ["evenements", "billetterie", "soirees"],
       "city": "Toulouse",
       "url": "https://linktr.ee/billeon",
-      "description": "Organisation d’événements et soirées, présence via Linktree.",
+      "description": "Organisation d’événements et soirées, présence.",
       "tags": ["soirees", "jeunes"]
     },
     {
