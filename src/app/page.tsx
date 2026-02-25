@@ -708,6 +708,10 @@ const indiceUV = `${getUvLabel(uvValeur)} (${uvValeur.toFixed(1)})`;
 
 // --- CALCUL DYNAMIQUE AIR (Indice ATMO / AQI) ---
 const airValeur = previsions.midi.air || 0;
+
+// 2. Le mouchard pour vérifier dans la console du navigateur (F12)
+console.log("Valeurs reçues :", { uv: uvValeur, air: airValeur });
+	
 const getAirStatus = (val: number) => {
   if (val <= 20) return { label: "Excellent", color: "text-emerald-700" };
   if (val <= 40) return { label: "Bon", color: "text-green-600" };
