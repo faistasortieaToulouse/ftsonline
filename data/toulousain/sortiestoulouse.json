@@ -397,8 +397,20 @@
   "url": "https://blendora.bio/Toulouse",
   "description": "Plateforme regroupant des informations et contenus locaux.",
   "tags": ["media", "ville"]
+},
+{
+  "id": 37,
+  "name": "OUT",
+  "slug": "out-app",
+  "type": "application-mobile",
+  "categories": ["sorties", "noctambules", "bars", "clubs", "evenements", "etudiants"],
+  "city": "Toulouse",
+  "url": "https://out-app.com/",
+  "description": "Une application toulousaine très pratique pour les noctambules. Elle permet de trouver des bars/clubs, de commander via son téléphone et même de voir où se trouvent les événements étudiants et afterworks.",
+  "tags": ["nocturne", "afterwork", "commandes"]
 }
   ]
 }
+
 
 
