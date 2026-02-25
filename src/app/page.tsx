@@ -670,8 +670,12 @@ const WeatherIcon = ({ condition }: { condition: string }) => {
 // --- COMPOSANT PRINCIPAL ---
 export default function HomePage() {
   const [heure, setHeure] = useState(new Date());
-  const [meteo, setMeteo] = useState({ temperature: "--", condition: "--", vitesseVent: "--" // On prépare la case pour le vent
-});
+// On remplace l'ancien état "meteo" par celui-ci :
+  const [previsions, setPrevisions] = useState({
+    matin: { temp: "--", cond: "--", vent: "--" },
+    midi: { temp: "--", cond: "--", vent: "--" },
+    soir: { temp: "--", cond: "--", vent: "--" }
+  });
 
 // --- AJOUT : État pour les statistiques annuelles ---
   const [annuelData, setAnnuelData] = useState<any>(null);
@@ -756,37 +760,64 @@ const iconeLumiere = estEnBaisse ? "📉" : "📈";
   const ascendant = getAscendant(heure);
 
 useEffect(() => {
-    // 1. Gestion de l'horloge (mise à jour toutes les minutes)
-    const timer = setInterval(() => {
-      setHeure(new Date());
-    }, 60000);
+  // 1. Gestion de l'horloge
+  const timer = setInterval(() => {
+    setHeure(new Date());
+  }, 60000);
 
-    // 2. Fonction unique pour récupérer toutes les données
-    const fetchData = async () => {
-      try {
-        const resMeteo = await fetch('/api/meteo');
-        
-        if (resMeteo.ok) {
-          const m = await resMeteo.json();
-          
-          setAnnuelData(m); 
-          
-          setMeteo({
-            temperature: `${m.stats?.avgTemp || '--'}°C`,
-            condition: m.condition || 'Ensoleillé',
-            vitesseVent: m.vitesseVent || 0
-          });
-        }
-      } catch (e) {
-        console.error("Erreur lors de la récupération des données:", e);
+  // 2. Fonction pour récupérer les données (Météo temps réel + Prévisions + Stats)
+  const fetchData = async () => {
+    try {
+      // APPEL 1 : Tes statistiques annuelles (ton API locale)
+      const resStats = await fetch('/api/meteo');
+      if (resStats.ok) {
+        const s = await resStats.json();
+        setAnnuelData(s);
       }
-    };
 
-    fetchData();
+      // APPEL 2 : La météo en direct et prévisions (Open-Meteo)
+      const resMeteo = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=43.6045&longitude=1.4442&hourly=temperature_2m,weathercode,windspeed_10m&timezone=Europe%2FParis`
+      );
+      
+      if (resMeteo.ok) {
+        const data = await resMeteo.json();
 
-    // Nettoyage à la fermeture de la page
-    return () => clearInterval(timer);
-  }, []); // Le tableau vide [] signifie "exécuter une seule fois au chargement"
+        const parseCond = (code: number) => {
+          if (code === 0) return "Soleil";
+          if (code < 4) return "Nuageux";
+          if (code < 70) return "Pluie";
+          return "Orage";
+        };
+
+        // On remplit notre nouvel état "previsions"
+        setPrevisions({
+          matin: { 
+            temp: `${Math.round(data.hourly.temperature_2m[9])}°C`, 
+            cond: parseCond(data.hourly.weathercode[9]),
+            vent: `${Math.round(data.hourly.windspeed_10m[9])} km/h` 
+          },
+          midi: { 
+            temp: `${Math.round(data.hourly.temperature_2m[14])}°C`, 
+            cond: parseCond(data.hourly.weathercode[14]),
+            vent: `${Math.round(data.hourly.windspeed_10m[14])} km/h` 
+          },
+          soir: { 
+            temp: `${Math.round(data.hourly.temperature_2m[20])}°C`, 
+            cond: parseCond(data.hourly.weathercode[20]),
+            vent: `${Math.round(data.hourly.windspeed_10m[20])} km/h` 
+          }
+        });
+      }
+    } catch (e) {
+      console.error("Erreur lors de la récupération des données:", e);
+    }
+  };
+
+  fetchData();
+
+  return () => clearInterval(timer);
+}, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-purple-50">
@@ -861,14 +892,14 @@ useEffect(() => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 min-w-[160px] justify-end">
-        <WeatherIcon condition={meteo.condition} />
-        <div className="flex flex-col text-right">
-          <span className="text-[10px] uppercase font-bold opacity-60">Météo Toulouse</span>
-          <span className="font-bold text-2xl leading-none">{meteo.temperature}</span>
-          <span className="text-xs font-medium capitalize">{meteo.condition}</span>
-        </div>
-      </div>
+   {/* BLOC DROIT : Météo Matin / Midi / Soir */}
+   <div className="flex items-center gap-6 bg-purple-50 p-3 rounded-2xl border border-purple-100 shadow-sm">
+    {/* Matin */}
+    <div className="flex flex-col items-center min-w-[60px]">
+      <span className="text-[10px] uppercase font-black text-purple-400">Matin</span>
+      <WeatherIcon condition={previsions.matin.cond} />
+      <span className="font-bold text-lg leading-none mt-1">{previsions.matin.temp}</span>
+      <span className="text-[9px] text-purple-400 font-medium">{previsions.matin.vent}</span>
     </div>
 
     {/* Ligne 2 : Célébrations textuelles */}
