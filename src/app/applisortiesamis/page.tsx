@@ -10,24 +10,31 @@ export default function ApplisAmisPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetch('/api/applisortiesamis') // Assure-toi que la route API correspond
+    fetch('/api/applisortiesamis')
       .then(res => res.json())
       .then(json => {
         setData(json);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        console.error("Erreur fetch:", err);
+        setLoading(false);
+      });
   }, []);
 
   if (loading) return <div className="p-20 text-center animate-pulse text-primary">Chargement des applications...</div>;
-  if (!data) return <div className="p-20 text-center">Erreur de chargement.</div>;
+  
+  // Sécurité anti-crash : on définit un tableau vide si data.applications est absent
+  const appsList = data?.applications || [];
 
-  // Filtrage basé sur le nom de l'app, la ville ou la particularité
-  const filteredApps = data.applications.filter((app: any) =>
-    app.Application.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    app.Ville.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    app.Particularité.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredApps = appsList.filter((app: any) => {
+    const s = searchTerm.toLowerCase();
+    return (
+      (app.Application?.toLowerCase() || "").includes(s) ||
+      (app.Ville?.toLowerCase() || "").includes(s) ||
+      (app.Particularité?.toLowerCase() || "").includes(s)
+    );
+  });
 
   return (
     <main className="max-w-7xl mx-auto p-4 md:p-8 min-h-screen">
@@ -40,12 +47,13 @@ export default function ApplisAmisPage() {
           <h1 className="text-4xl font-black tracking-tight">
              Réseaux & <span className="text-primary">Sorties</span>
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Dernière mise à jour : {new Date(data.updated).toLocaleDateString('fr-FR')}
-          </p>
+          {data?.updated && (
+            <p className="text-muted-foreground mt-2">
+              Dernière mise à jour : {new Date(data.updated).toLocaleDateString('fr-FR')}
+            </p>
+          )}
         </div>
 
-        {/* Recherche */}
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input
@@ -85,7 +93,7 @@ export default function ApplisAmisPage() {
 
       {filteredApps.length === 0 && (
         <div className="text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
-          <p className="text-muted-foreground italic">Aucune application ne correspond à votre recherche.</p>
+          <p className="text-muted-foreground italic">Aucune application trouvée.</p>
         </div>
       )}
     </main>
