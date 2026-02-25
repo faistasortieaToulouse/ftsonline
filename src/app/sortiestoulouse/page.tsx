@@ -33,7 +33,7 @@ export default function SortiesToulousePage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
         <div>
           <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 transition-colors">
-            <ArrowLeft size={18} /> Retour
+            <ArrowLeft size={18} /> Retour à l'Accueil
           </Link>
           <h1 className="text-4xl font-black tracking-tight flex items-center gap-3">
              Sorties & Réseaux <span className="text-primary">Toulouse</span>
