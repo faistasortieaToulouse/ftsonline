@@ -1545,6 +1545,8 @@ useEffect(() => {
   </Button>
 </div>
 </section>
+
+			</div>
 			
 {/* LA CORRECTION EST ICI : Ajout des {` et `} */}
 <style jsx>{`
