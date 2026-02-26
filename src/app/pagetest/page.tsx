@@ -851,7 +851,62 @@ useEffect(() => {
 }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-purple-50">
+    <main className="flex min-h-screen bg-slate-50">
+
+<aside className="sticky top-0 h-screen w-80 bg-white border-r shadow-2xl flex flex-col z-50 shrink-0">
+  {/* Header de la Sidebar */}
+  <div className="p-6 border-b bg-pink-600 text-white">
+    <h2 className="text-xl font-bold uppercase tracking-tight">Rubriques</h2>
+    <p className="text-xs opacity-80">{totalArticles} Articles disponibles</p>
+  </div>
+
+  {/* Navigation */}
+  <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-pink-200 p-3 space-y-1 bg-slate-50/50">
+    {categories.map((cat, idx) => (
+      <Link 
+        key={idx} 
+        href={cat.href}
+        /* AJOUT : 'sidebar-link' pour le CSS et 'relative' pour le positionnement du triangle */
+        className="group sidebar-link relative flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow-md transition-all duration-200 border border-transparent hover:border-pink-100"
+      >
+        <div className="p-2 bg-pink-50 rounded-lg group-hover:bg-pink-500 transition-colors">
+          <cat.icon size={18} className="text-pink-500 group-hover:text-white" />
+        </div>
+        <span className="text-sm font-semibold text-slate-700 group-hover:text-pink-600 truncate">
+          {cat.title}
+        </span>
+      </Link>
+    ))}
+  </nav>
+
+  {/* Style JSX - Placé ici pour être encapsulé dans le composant */}
+  <style jsx>{`
+    /* Le triangle n'apparaît que sur les liens avec la classe .sidebar-link */
+    .sidebar-link:hover::after {
+      content: '';
+      position: absolute;
+      /* On le place à l'extérieur droit du lien (-1px pour couvrir la bordure de l'aside) */
+      right: -13px; 
+      top: 50%;
+      transform: translateY(-50%);
+      
+      /* Création du triangle vers la droite */
+      border-style: solid;
+      border-width: 10px 12px 10px 0;
+      
+      /* Couleur : #f8fafc correspond au bg-slate-50 (ton fond de contenu à droite) */
+      /* Cela crée l'effet de "découpe" ou de flèche pointant vers le contenu */
+      border-color: transparent #f8fafc transparent transparent;
+      
+      z-index: 100;
+      pointer-events: none;
+    }
+  `}</style>
+</aside>
+
+		<div className="flex-1 overflow-y-auto"> 
+   {/* Tout ton code actuel (Hero, Météo, etc.) va ici */}
+		
       {/* Hero Section */}
       <section className="text-center py-16 px-4 bg-pink-500 text-white rounded-b-3xl shadow-lg">
         <h1 className="text-5xl sm:text-6xl font-bold mb-4 drop-shadow-lg text-white">
@@ -1491,5 +1546,25 @@ useEffect(() => {
 </div>
 </section>
     </div>
+		
+{/* LA CORRECTION EST ICI : Ajout des {` et `} */}
+<style jsx>{`
+  /* On cible spécifiquement les liens de la sidebar */
+  .sidebar-link:hover::after {
+    content: '';
+    position: absolute;
+    /* On le colle à l'extrême droite du lien */
+    right: -13px; 
+    top: 50%;
+    transform: translateY(-50%);
+    border-style: solid;
+    /* Taille du triangle */
+    border-width: 10px 12px 10px 0;
+    /* Couleur : #f8fafc correspond au bg-slate-50 de ta zone de droite */
+    border-color: transparent #f8fafc transparent transparent;
+    z-index: 50;
+  }
+`}</style>
+		
   );
 }
