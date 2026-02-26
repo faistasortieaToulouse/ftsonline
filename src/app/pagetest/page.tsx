@@ -1545,8 +1545,7 @@ useEffect(() => {
   </Button>
 </div>
 </section>
-    </div>
-		
+			
 {/* LA CORRECTION EST ICI : Ajout des {` et `} */}
 <style jsx>{`
   /* On cible spécifiquement les liens de la sidebar */
@@ -1565,6 +1564,8 @@ useEffect(() => {
     z-index: 50;
   }
 `}</style>
-		
+			
+    </div>
+				
   );
 }
