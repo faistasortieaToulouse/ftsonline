@@ -1,6 +1,6 @@
 {
   "name": "Applications Sorties et Amis",
-  "updated": "2026-02-24",
+  "updated": "2026-02-26",
   "applications": [
     {"Portée / Pays": "Allemagne / International", "Ville": "Francfort", "Application": "Meet5", "Particularité": "Origine allemande, cartonne en Alsace et dans l'Est avec ses tablées de 6 à 12 au restaurant.", "Web": "https://www.meet5.fr/"},
     {"Portée / Pays": "France (Réunion)", "Ville": "Saint-Denis (La Réunion)", "Application": "SortiPéi", "Particularité": "Application 100% réunionnaise pour les festivals, concerts et la vie locale.", "Web": "https://play.google.com/store/apps/details?id=re.sortipei&hl=fr"},
