@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { 
   Book, Film, MapPin, Music, Globe, Gamepad, Calendar, 
-  Theater, Palette, Archive, Building, Bus,
+  Theater, Palette, Archive, Building, Bus, Sun,
   Cloud, CloudRain, CloudLightning, CloudSnow,
   MessageSquare, Facebook, Laptop, ShoppingCart, Apple,
   Leaf, Sprout, Landmark, Files, Map, History, Scroll,
