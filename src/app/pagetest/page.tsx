@@ -24,20 +24,20 @@ import DesktopOnly from "@/components/DesktopOnly";
 import DesktopQRCode from "@/components/DesktopQRCode";
 import { Button } from "@/components/ui/button";
 
-import { getSaintDuJour } from "../lib/saints";
-import { getDictonDuJour } from "../lib/dictons";
-import { getCelebrationsDuJour } from "../lib/celebrations";
-import { getConseilsJardin } from "../lib/jardin";
-import { getSigneZodiaque, getAscendant } from "../lib/astro";
+import { getSaintDuJour } from "../../lib/saints";
+import { getDictonDuJour } from "../../lib/dictons";
+import { getCelebrationsDuJour } from "../../lib/celebrations";
+import { getConseilsJardin } from "../../lib/jardin";
+import { getSigneZodiaque, getAscendant } from "../../lib/astro";
 
 // Ces lignes doivent être AVANT le "export default function..."
 // Si tes fichiers sont dans src/data/celebration/
-import annuellesData from "../../data/celebration/celebrations_annuelles.json";
-import religieusesData from "../../data/celebration/celebrations_religieuses.json";
-import saintsData from "../../data/celebration/celebrations_saints.json";
-import bienheureuxData from "../../data/celebration/celebrations_bienheureux.json";
-import orthodoxesData from "../../data/celebration/celebrations_orthodoxes.json";
-import prenomsData from "../../data/celebration/prenoms_du_jour.json";
+import annuellesData from "../../../data/celebration/celebrations_annuelles.json";
+import religieusesData from "../../../data/celebration/celebrations_religieuses.json";
+import saintsData from "../../../data/celebration/celebrations_saints.json";
+import bienheureuxData from "../../../data/celebration/celebrations_bienheureux.json";
+import orthodoxesData from "../../../data/celebration/celebrations_orthodoxes.json";
+import prenomsData from "../../../data/celebration/prenoms_du_jour.json";
 
 import SunCalc from 'suncalc';
 import * as Astronomy from 'astronomy-engine';
