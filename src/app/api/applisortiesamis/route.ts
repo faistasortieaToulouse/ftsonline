@@ -5,7 +5,7 @@ import path from 'path';
 export async function GET() {
   try {
     // Utilisation de process.cwd() pour pointer à la racine du projet
-    const filePath = path.join(process.cwd(), 'data', 'toulousain', 'applisortiesfrance.json');
+    const filePath = path.join(process.cwd(), 'data', 'toulousain', 'applisortiesamis.json');
     
     // Log pour débugger sur Vercel si besoin
     console.log("Tentative d'accès au fichier :", filePath);
