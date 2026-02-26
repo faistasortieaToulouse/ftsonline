@@ -552,6 +552,18 @@
   "url": "https://www.facebook.com/p/Maman-sort-ce-soir-61572986032717/",
   "description": "Concept dédié aux mamans qui souhaitent s'accorder une pause, sortir de leur quotidien et rencontrer d'autres mères lors d'événements conviviaux.",
   "tags": ["parentalité", "afterwork", "bien-être"]
+},
+{
+  "id": 51,
+  "name": "P.A.R.L.E. (Promotion Activités Rencontres Langues Étrangères)",
+  "slug": "parle-toulouse-langues",
+  "type": "association",
+  "categories": ["langues", "culture", "rencontres"],
+  "city": "Toulouse",
+  "url": "https://www.facebook.com/p/PARLE-Promotion-Activit%C3%A9s-Rencontres-Langues-%C3%89trang%C3%A8res-100083155489680/",
+  "description": "Association toulousaine dynamique proposant des cafés polyglottes, des ateliers linguistiques et des sorties culturelles pour pratiquer les langues étrangères dans la convivialité.",
+  "tags": ["échange-linguistique", "multiculturel", "ateliers", "toulouse"]
 }
   ]
 }
+
