@@ -1404,7 +1404,7 @@ useEffect(() => {
               (cat.isLivresPrix && (cat as any).livresPrixSources) ||
               (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
               [];
-	</div
+
             return (
 <div key={cat.href} className="break-inside-avoid-column mb-8 flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100 overflow-hidden">
   {/* HAUT DE CARTE : Toujours visible */}
