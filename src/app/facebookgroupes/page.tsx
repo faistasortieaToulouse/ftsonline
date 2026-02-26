@@ -19,7 +19,7 @@ export default async function FacebookGroupsPage() {
     <div className="min-h-screen bg-[#f0f2f5] py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <nav className="max-w-6xl mx-auto mb-8">
         <Link href="/" className="inline-flex items-center gap-2 text-[#1877f2] hover:underline font-bold transition-all">
-          <ArrowLeft size={20} /> Retour à la plateforme
+          <ArrowLeft size={20} /> Retour à l'Accueil
         </Link>
       </nav>
 
