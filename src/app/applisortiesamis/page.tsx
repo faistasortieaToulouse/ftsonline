@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Search, MapPin, Globe, Info } from "lucide-react";
+// Ajout de ExternalLink pour les liens Web
+import { ArrowLeft, Search, MapPin, Globe, Info, ExternalLink } from "lucide-react";
 
 export default function ApplisAmisPage() {
   const [data, setData] = useState<any>(null);
@@ -13,7 +14,7 @@ export default function ApplisAmisPage() {
     fetch('/api/applisortiesamis')
       .then(res => res.json())
       .then(json => {
-        console.log("Données reçues de l'API :", json); // AJOUTEZ CECI
+        console.log("Données reçues de l'API :", json);
         setData(json);
         setLoading(false);
       })
@@ -23,9 +24,8 @@ export default function ApplisAmisPage() {
       });
   }, []);
 
-  if (loading) return <div className="p-20 text-center animate-pulse text-primary">Chargement des applications...</div>;
+  if (loading) return <div className="p-20 text-center animate-pulse text-primary font-bold">Chargement des applications...</div>;
   
-  // Sécurité anti-crash : on définit un tableau vide si data.applications est absent
   const appsList = data?.applications || [];
 
   const filteredApps = appsList.filter((app: any) => {
@@ -42,7 +42,7 @@ export default function ApplisAmisPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
         <div>
-          <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 transition-colors">
+          <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-4 transition-colors font-medium">
             <ArrowLeft size={18} /> Retour à l'Accueil
           </Link>
           <h1 className="text-4xl font-black tracking-tight">
@@ -69,7 +69,7 @@ export default function ApplisAmisPage() {
       {/* Grille */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredApps.map((app: any, index: number) => (
-          <div key={index} className="group bg-card rounded-2xl border p-6 hover:shadow-xl hover:border-primary/50 transition-all">
+          <div key={index} className="group flex flex-col bg-card rounded-2xl border p-6 hover:shadow-xl hover:border-primary/50 transition-all">
             <div className="flex justify-between items-start mb-4">
               <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-primary/10 text-primary rounded flex items-center gap-1">
                 <Globe size={12} /> {app["Portée / Pays"]}
@@ -84,17 +84,32 @@ export default function ApplisAmisPage() {
               {app.Application}
             </h3>
             
-            <div className="flex gap-2 items-start text-sm text-muted-foreground leading-relaxed">
+            <div className="flex gap-2 items-start text-sm text-muted-foreground leading-relaxed flex-1">
               <div className="mt-1 shrink-0"><Info size={14} className="text-primary" /></div>
               <p>{app.Particularité}</p>
             </div>
+
+            {/* SECTION LIEN WEB - Si l'URL existe */}
+            {app.Web && (
+              <div className="mt-6 pt-4 border-t border-dashed">
+                <a 
+                  href={app.Web} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-secondary hover:bg-primary hover:text-white rounded-xl text-sm font-bold transition-all active:scale-95"
+                >
+                  Découvrir <ExternalLink size={14} />
+                </a>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
+      {/* État vide */}
       {filteredApps.length === 0 && (
         <div className="text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
-          <p className="text-muted-foreground italic">Aucune application trouvée.</p>
+          <p className="text-muted-foreground italic font-medium">Aucune application trouvée pour votre recherche.</p>
         </div>
       )}
     </main>
