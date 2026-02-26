@@ -1404,7 +1404,7 @@ useEffect(() => {
               [];
 
             return (
-<div key={cat.href} className="flex flex-col h-full bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100 overflow-hidden">
+<div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100 overflow-hidden">
   {/* HAUT DE CARTE : Toujours visible */}
   <div className="p-6 flex flex-col items-center flex-grow">
     <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
