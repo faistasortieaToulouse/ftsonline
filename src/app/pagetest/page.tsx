@@ -1546,28 +1546,7 @@ useEffect(() => {
 </div>
 </section>
 
-			</div>
-			
-{/* LA CORRECTION EST ICI : Ajout des {` et `} */}
-<style jsx>{`
-  /* On cible spécifiquement les liens de la sidebar */
-  .sidebar-link:hover::after {
-    content: '';
-    position: absolute;
-    /* On le colle à l'extrême droite du lien */
-    right: -13px; 
-    top: 50%;
-    transform: translateY(-50%);
-    border-style: solid;
-    /* Taille du triangle */
-    border-width: 10px 12px 10px 0;
-    /* Couleur : #f8fafc correspond au bg-slate-50 de ta zone de droite */
-    border-color: transparent #f8fafc transparent transparent;
-    z-index: 50;
-  }
-`}</style>
-			
     </div>
-				
+							
   );
 }
