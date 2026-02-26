@@ -42,6 +42,29 @@ import prenomsData from "../../../data/celebration/prenoms_du_jour.json";
 import SunCalc from 'suncalc';
 import * as Astronomy from 'astronomy-engine';
 
+// Fonction pour récupérer les sources selon la catégorie
+function getSourcesForCategory(cat: any) {
+  // On retourne les sources d'agenda si c'est une catégorie Agenda
+  if (cat.isAgenda) {
+    return [
+      { title: "Agenda Toulouse", href: "/agendatoulouse" },
+      { title: "Agenda Trad Haute-Garonne", href: "/agendatrad" },
+      // Ajoute ici tes autres sources d'agenda si besoin
+    ];
+  }
+
+  // On retourne les sources Meetup si c'est une catégorie Meetup
+  if (cat.isMeetup) {
+    return [
+      { title: "Évènements Meetup", href: "/meetup" },
+      { title: "Nos évènements Meetup", href: "/nosmeetup" },
+    ];
+  }
+
+  // Par défaut, si aucune source spécifique n'est définie
+  return [];
+}
+
 // --- COMPTEURS MANUELS ---
 const nbAgenda = 16;
 const nbActualites = 3;
