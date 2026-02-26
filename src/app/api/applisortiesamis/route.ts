@@ -4,18 +4,22 @@ import path from 'path';
 
 export async function GET() {
   try {
-    // Mise à jour du chemin vers ton nouveau nom de fichier : applisortiesfrance.json
+    // Utilisation de process.cwd() pour pointer à la racine du projet
     const filePath = path.join(process.cwd(), 'data', 'toulousain', 'applisortiesfrance.json');
     
+    // Log pour débugger sur Vercel si besoin
+    console.log("Tentative d'accès au fichier :", filePath);
+
     if (!fs.existsSync(filePath)) {
-      console.error(`Fichier introuvable à l'adresse : ${filePath}`);
-      return NextResponse.json({ error: 'Fichier non trouvé' }, { status: 404 });
+      return NextResponse.json({ 
+        error: 'Fichier non trouvé',
+        debugPath: filePath 
+      }, { status: 404 });
     }
 
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const data = JSON.parse(fileContents);
 
-    // Tri par nom d'Application (A-Z)
     if (data && Array.isArray(data.applications)) {
       data.applications.sort((a: any, b: any) => 
         (a.Application || "").localeCompare(b.Application || "", 'fr', { sensitivity: 'base' })
