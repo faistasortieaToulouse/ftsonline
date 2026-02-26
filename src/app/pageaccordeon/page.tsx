@@ -1368,7 +1368,9 @@ useEffect(() => {
 		 <p className="text-center mt-8 mb-10 text-slate-600 font-medium">
 		   Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
 		 </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
+			{/* AJOUTE break-inside-avoid-column à ta carte */}
+
           {categories.map((cat) => {
             const Icon = cat.icon;
             const sources =
@@ -1402,9 +1404,9 @@ useEffect(() => {
               (cat.isLivresPrix && (cat as any).livresPrixSources) ||
               (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
               [];
-
+	</div
             return (
-<div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100 overflow-hidden">
+<div key={cat.href} className="break-inside-avoid-column mb-8 flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100 overflow-hidden">
   {/* HAUT DE CARTE : Toujours visible */}
   <div className="p-6 flex flex-col items-center flex-grow">
     <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
