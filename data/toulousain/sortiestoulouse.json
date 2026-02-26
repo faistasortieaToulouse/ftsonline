@@ -488,15 +488,15 @@
   "tags": ["leadership", "échange-international", "engagement"]
 },
 {
-  "id": 45,
-  "name": "Language Exchange International (LEI)",
-  "slug": "lei-toulouse",
-  "type": "association-culturelle",
-  "categories": ["langues", "international", "sorties"],
+"id": 45,
+  "name": "EIMA (Erasmus International Mirail Association)",
+  "slug": "eima-toulouse-erasmus",
+  "type": "association-etudiante",
+  "categories": ["international", "etudiants", "rencontres"],
   "city": "Toulouse",
-  "url": "http://www.lei-web.click/",
-  "description": "Association dédiée aux échanges linguistiques et culturels à Toulouse, organisant des rencontres régulières pour pratiquer les langues dans une ambiance conviviale.",
-  "tags": ["langues", "expatriés", "échanges"]
+  "url": "https://www.instagram.com/eimatoulouse/?hl=fr",
+  "description": "Association d'accueil des étudiants internationaux à Toulouse. Organisation de sorties, de voyages et de soirées d'intégration pour favoriser le brassage culturel.",
+  "tags": ["erasmus", "international", "étudiants", "soirées"]
 },
 {
   "id": 46,
@@ -530,6 +530,28 @@
   "url": "https://www.cafedeslanguestoulouse.com/",
   "description": "Rencontres hebdomadaires dans des bars toulousains pour pratiquer toutes les langues du monde avec des natifs et des passionnés dans un cadre décontracté.",
   "tags": ["pratique-langues", "international", "soirées"]
+},
+{
+  "id": 49,
+  "name": "Les GIRLS CONNEXION 31",
+  "slug": "girls-connexion-31",
+  "type": "groupe-facebook",
+  "categories": ["femmes", "sorties", "entraide"],
+  "city": "Toulouse",
+  "url": "https://www.facebook.com/groups/267755472853667/",
+  "description": "Communauté Facebook dédiée aux femmes de Toulouse et ses environs pour organiser des sorties, des rencontres et favoriser l'entraide féminine locale.",
+  "tags": ["100%-féminin", "sorties-toulouse", "réseau-social"]
+},
+{
+  "id": 50,
+  "name": "Maman sort ce soir",
+  "slug": "maman-sort-ce-soir",
+  "type": "communauté",
+  "categories": ["mamans", "sorties", "détente"],
+  "city": "Toulouse",
+  "url": "https://www.facebook.com/p/Maman-sort-ce-soir-61572986032717/",
+  "description": "Concept dédié aux mamans qui souhaitent s'accorder une pause, sortir de leur quotidien et rencontrer d'autres mères lors d'événements conviviaux.",
+  "tags": ["parentalité", "afterwork", "bien-être"]
 }
   ]
 }
