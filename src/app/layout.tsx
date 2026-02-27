@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from '@/components/Footer';
 import GoogleTranslate from '@/components/GoogleTranslate';
+import Script from 'next/script';
 
 // 1. Configuration du Viewport (Optimisé pour mobile et thèmes)
 export const viewport: Viewport = {
