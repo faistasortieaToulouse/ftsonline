@@ -11,20 +11,27 @@ export async function GET() {
     },
     {
       id: 2,
-      title: "Happy People Toulouse",
+      title: "Happy People 31",
       url: "http://www.happyPeople.fr.nf/",
       description: "Communauté pour faire des rencontres et pratiquer les langues.",
       tag: "Social"
     },
     {
       id: 3,
-      title: "Déclic Toulousain",
-      url: "http://declictoulousain.fr.nf/",
-      description: "Portail toulousain pour la vie locale et communautaire.",
-      tag: "Portail"
+      title: "Happy People Toulouse",
+      url: "http://www.happyPeople.fr.nf/",
+      description: "Communauté pour faire des rencontres et pratiquer les langues.",
+      tag: "Social"
     },
     {
       id: 4,
+      title: "Déclic Toulousain",
+      url: "http://www.happypeople.biz.st/",
+      description: "Happy People, Site Web ou sur Facebook.",
+      tag: "Portail"
+    },
+    {
+      id: 5,
       title: "Atelier FLE sur le Drive",
       url: "https://drive.google.com/drive/folders/1_V-3M7AXzYW1ix1lbS4n_wrnRjrZceo8?usp=drive_link",
       description: "Français Langue Étrangère : supports et ressources pédagogiques.",
