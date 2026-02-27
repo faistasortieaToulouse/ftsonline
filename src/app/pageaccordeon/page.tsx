@@ -5,8 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { 
   Book, Film, MapPin, Music, Globe, Gamepad, Calendar, 
-  Theater, Palette, Archive, Building, Bus, Sun,
-  Cloud, CloudRain, CloudLightning, CloudSnow,
+  Theater, Palette, Archive, Building, Bus,
+  Sun, Cloud, CloudRain, CloudLightning, CloudSnow,
   MessageSquare, Facebook, Laptop, ShoppingCart, Apple,
   Leaf, Sprout, Landmark, Files, Map, History, Scroll,
   Castle, Home, DraftingCompass, Construction, Cake,
@@ -24,20 +24,20 @@ import DesktopOnly from "@/components/DesktopOnly";
 import DesktopQRCode from "@/components/DesktopQRCode";
 import { Button } from "@/components/ui/button";
 
-import { getSaintDuJour } from "../../lib/saints";
-import { getDictonDuJour } from "../../lib/dictons";
-import { getCelebrationsDuJour } from "../../lib/celebrations";
-import { getConseilsJardin } from "../../lib/jardin";
-import { getSigneZodiaque, getAscendant } from "../../lib/astro";
+import { getSaintDuJour } from "../lib/saints";
+import { getDictonDuJour } from "../lib/dictons";
+import { getCelebrationsDuJour } from "../lib/celebrations";
+import { getConseilsJardin } from "../lib/jardin";
+import { getSigneZodiaque, getAscendant } from "../lib/astro";
 
 // Ces lignes doivent être AVANT le "export default function..."
 // Si tes fichiers sont dans src/data/celebration/
-import annuellesData from "../../../data/celebration/celebrations_annuelles.json";
-import religieusesData from "../../../data/celebration/celebrations_religieuses.json";
-import saintsData from "../../../data/celebration/celebrations_saints.json";
-import bienheureuxData from "../../../data/celebration/celebrations_bienheureux.json";
-import orthodoxesData from "../../../data/celebration/celebrations_orthodoxes.json";
-import prenomsData from "../../../data/celebration/prenoms_du_jour.json";
+import annuellesData from "../../data/celebration/celebrations_annuelles.json";
+import religieusesData from "../../data/celebration/celebrations_religieuses.json";
+import saintsData from "../../data/celebration/celebrations_saints.json";
+import bienheureuxData from "../../data/celebration/celebrations_bienheureux.json";
+import orthodoxesData from "../../data/celebration/celebrations_orthodoxes.json";
+import prenomsData from "../../data/celebration/prenoms_du_jour.json";
 
 import SunCalc from 'suncalc';
 import * as Astronomy from 'astronomy-engine';
@@ -1358,105 +1358,103 @@ useEffect(() => {
 </div>
 
 {/* Catégories */}
-      <section id="categories" className="py-8 px-4 container mx-auto">
-        <h2 className="text-3xl font-bold mb-10 text-center text-purple-700">Nos rubriques</h2>
-		  {/* AJOUTE CETTE LIGNE CI-DESSOUS */}
-		  {/* TON COMPTEUR ICI */}
-		    <div className="text-center mb-4 font-medium text-slate-500 italic">
- 		     Nombre total de ressources : <span className="font-bold text-purple-600">{totalArticles}</span> articles
-		    </div>
-		 <p className="text-center mt-8 mb-10 text-slate-600 font-medium">
-		   Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
-		 </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
-			{/* AJOUTE break-inside-avoid-column à ta carte */}
-
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            const sources =
-              (cat.isAgenda && eventSources) ||
-              (cat.isMeetup && (cat as any).meetupSources) ||
-              ((cat as any).isToulouseEvents && (cat as any).toulouseEventsSources) ||
-              (cat.isCulture && (cat as any).cultureSources) ||
-              (cat.isLibrairie && (cat as any).librairieSources) ||
-              (cat.isCinema && (cat as any).cinemaSources) ||
-              (cat.isJeux && (cat as any).jeuxSources) ||
-              (cat.isSites && (cat as any).sitesSources) ||
-              (cat.isMusee && (cat as any).museeSources) ||
-              (cat.isActualites && (cat as any).actualitesSources) ||
-              (cat.isVisites && (cat as any).visitesSources) ||
-              
-              // --- NOUVELLES CATÉGORIES AJOUTÉES ICI ---
-              (cat.isCafeLangues && (cat as any).cafeLanguesSources) ||
-              (cat.isCommuSorties && (cat as any).commuSortiesSources) ||
-              (cat.isSavoirsLangues && (cat as any).savoirsLanguesSources) ||
-              (cat.isSavoirsMonde && (cat as any).savoirsMondeSources) ||
-              // -----------------------------------------
-
-              (cat.isSpectacle && (cat as any).spectacleSources) ||
-              (cat.isEmploi && (cat as any).emploiSources) ||
-              (cat.isTransport && (cat as any).transportSources) ||
-              (cat.isEurope && (cat as any).savoirsEuropeSources) ||
-              (cat.isOccitanie && (cat as any).occitanieSources) ||
-              (cat.savoirSources && (cat as any).savoirSources) ||
-              (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
-              (cat.isLitteratureFrancaise && (cat as any).litteratureFrancaiseSources) ||
-              (cat.isLivresPrix && (cat as any).livresPrixSources) ||
-              (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
-              [];
-
-            return (
-   
-	<div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden h-fit">
-    {/* Le h-fit aide aussi à dire "ne prend que la hauteur nécessaire" */}
-	{/* HAUT DE CARTE : Toujours visible */}
-  <div className="p-6 flex flex-col items-center flex-grow">
-    <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
-    <h3 className="text-2xl font-semibold mb-2 text-purple-700 text-center">{cat.title}</h3>
-    <div className="text-gray-500 text-sm text-center mb-4">
-      {cat.isAgenda 
-        ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
-        : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
-    </div>
+<section id="categories" className="py-8 px-4 container mx-auto">
+  <h2 className="text-3xl font-bold mb-10 text-center text-purple-700">Nos rubriques</h2>
+  
+  <div className="text-center mb-4 font-medium text-slate-500 italic">
+    Nombre total de ressources : <span className="font-bold text-purple-600">{totalArticles}</span> articles
   </div>
 
-  {/* BAS DE CARTE : Soit un bouton simple, soit l'accordéon */}
-  {sources.length === 0 ? (
-    <div className="p-4 mt-auto">
-      <Link href={cat.href} className="block w-full bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-2 px-4 rounded-xl transition text-center">
-        Voir la rubrique
-      </Link>
-    </div>
-  ) : (
-    <details className="group border-t border-purple-50 mt-auto">
-      <summary className="flex items-center justify-between p-4 cursor-pointer list-none bg-purple-50/50 hover:bg-pink-50 transition-colors">
-        <span className="text-[11px] font-black text-purple-700 uppercase tracking-widest">
-          Explorer les sources ({sources.length})
-        </span>
-        <ChevronDown size={18} className="text-purple-500 transition-transform duration-300 group-open:rotate-180" />
-      </summary>
+  <p className="text-center mt-8 mb-10 text-slate-600 font-medium">
+    Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
+  </p>
 
-      <div className="p-2 bg-white animate-in fade-in slide-in-from-top-1">
-        <div className="grid grid-cols-1 gap-1">
-          {sources.map((src: any) => (
-            <Link 
-              key={src.href} 
-              href={src.href} 
-              className="p-3 hover:bg-purple-50 rounded-xl transition-colors text-slate-700 text-sm flex items-center gap-3 group/link"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-pink-400 group-hover/link:scale-150 transition-transform" />
-              {src.title}
-            </Link>
-          ))}
+  <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
+    {categories.map((cat) => {
+      const Icon = cat.icon;
+      const sources =
+        (cat.isAgenda && eventSources) ||
+        (cat.isMeetup && (cat as any).meetupSources) ||
+        ((cat as any).isToulouseEvents && (cat as any).toulouseEventsSources) ||
+        (cat.isCulture && (cat as any).cultureSources) ||
+        (cat.isLibrairie && (cat as any).librairieSources) ||
+        (cat.isCinema && (cat as any).cinemaSources) ||
+        (cat.isJeux && (cat as any).jeuxSources) ||
+        (cat.isSites && (cat as any).sitesSources) ||
+        (cat.isMusee && (cat as any).museeSources) ||
+        (cat.isActualites && (cat as any).actualitesSources) ||
+        (cat.isVisites && (cat as any).visitesSources) ||
+        (cat.isCafeLangues && (cat as any).cafeLanguesSources) ||
+        (cat.isCommuSorties && (cat as any).commuSortiesSources) ||
+        (cat.isSavoirsLangues && (cat as any).savoirsLanguesSources) ||
+        (cat.isSavoirsMonde && (cat as any).savoirsMondeSources) ||
+        (cat.isSpectacle && (cat as any).spectacleSources) ||
+        (cat.isEmploi && (cat as any).emploiSources) ||
+        (cat.isTransport && (cat as any).transportSources) ||
+        (cat.isEurope && (cat as any).savoirsEuropeSources) ||
+        (cat.isOccitanie && (cat as any).occitanieSources) ||
+        (cat.savoirSources && (cat as any).savoirSources) ||
+        (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
+        (cat.isLitteratureFrancaise && (cat as any).litteratureFrancaiseSources) ||
+        (cat.isLivresPrix && (cat as any).livresPrixSources) ||
+        (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
+        [];
+
+      return (
+        <div 
+          key={cat.href} 
+          className="inline-flex flex-col w-full break-inside-avoid mb-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 relative"
+          /* Suppression de overflow-hidden ici pour laisser sortir la liste flottante */
+        >
+          {/* HAUT DE CARTE */}
+          <div className="p-6 flex flex-col items-center">
+            <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
+            <h3 className="text-xl font-bold mb-2 text-purple-700 text-center leading-tight">{cat.title}</h3>
+            <div className="text-gray-500 text-sm text-center mb-4 min-h-[40px]">
+              {cat.isAgenda 
+                ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
+                : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
+            </div>
+          </div>
+
+          {/* BAS DE CARTE */}
+          {sources.length === 0 ? (
+            <div className="p-4 mt-auto">
+              <Link href={cat.href} className="block w-full bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-2 px-4 rounded-xl transition text-center">
+                Voir la rubrique
+              </Link>
+            </div>
+          ) : (
+            <details className="group border-t border-purple-50 relative">
+              <summary className="flex items-center justify-between p-4 cursor-pointer list-none bg-purple-50/50 hover:bg-pink-50 transition-colors rounded-b-2xl group-open:rounded-b-none">
+                <span className="text-[11px] font-black text-purple-700 uppercase tracking-widest">
+                  Explorer les sources ({sources.length})
+                </span>
+                <ChevronDown size={18} className="text-purple-500 transition-transform duration-300 group-open:rotate-180" />
+              </summary>
+
+              {/* LISTE FLOTTANTE (Position Absolute) */}
+              <div className="absolute left-0 right-0 z-[100] bg-white shadow-2xl rounded-b-2xl max-h-64 overflow-y-auto border-x border-b border-purple-100 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="flex flex-col p-1">
+                  {sources.map((src: any) => (
+                    <Link 
+                      key={src.href} 
+                      href={src.href} 
+                      className="p-3 hover:bg-purple-50 rounded-lg transition-colors text-slate-700 text-sm flex items-center gap-3 border-b border-slate-50 last:border-0"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-pink-400 shrink-0" />
+                      <span className="truncate">{src.title}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </details>
+          )}
         </div>
-      </div>
-    </details>
-  )}
-</div>
-            );
-          })}
-        </div>
-      </section>
+      );
+    })}
+  </div>
+</section>
 		
 {/* Section téléchargement / partage */}
 <section className="flex flex-col items-center gap-6 p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl w-full overflow-hidden">
