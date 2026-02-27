@@ -67,7 +67,7 @@ const gaId = process.env.NEXT_PUBLIC_GA_ID;
           </>
         )}
         {/* ------------------------------------------------------ */}
-
+        
         {/* Préconnexion aux polices pour la performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
