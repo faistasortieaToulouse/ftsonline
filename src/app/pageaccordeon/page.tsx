@@ -1368,7 +1368,7 @@ useEffect(() => {
 		 <p className="text-center mt-8 mb-10 text-slate-600 font-medium">
 		   Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
 		 </p>
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 			{/* AJOUTE break-inside-avoid-column à ta carte */}
 
           {categories.map((cat) => {
@@ -1406,8 +1406,8 @@ useEffect(() => {
               [];
 
             return (
-<div key={cat.href} className="break-inside-avoid-column mb-8 flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100 overflow-hidden">
-  {/* HAUT DE CARTE : Toujours visible */}
+<div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100 overflow-hidden">
+	{/* HAUT DE CARTE : Toujours visible */}
   <div className="p-6 flex flex-col items-center flex-grow">
     <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
     <h3 className="text-2xl font-semibold mb-2 text-purple-700 text-center">{cat.title}</h3>
@@ -1455,6 +1455,7 @@ useEffect(() => {
           })}
         </div>
       </section>
+		
 {/* Section téléchargement / partage */}
 <section className="flex flex-col items-center gap-6 p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl w-full overflow-hidden">
   
