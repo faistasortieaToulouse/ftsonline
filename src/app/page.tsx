@@ -1369,9 +1369,26 @@ useEffect(() => {
     Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
   </p>
 
-  {/* LE PARENT : On utilise columns. gap-8 gère l'espace horizontal entre colonnes. */}
+  {/* Conteneur Columns */}
   <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
-    {categories.map((cat) => {
+    {Array.from({ length: categories.length }).map((_, i) => {
+      const numCols = 3;
+      const total = categories.length;
+      const numRows = Math.ceil(total / numCols);
+      
+      /** * NOUVEAU CALCUL CORRIGÉ 
+       * Pour que l'index 1 (Actualités) passe en haut de la colonne 2
+       * et l'index 2 (Meetup) passe en haut de la colonne 3.
+       */
+      const row = i % numRows;
+      const col = Math.floor(i / numRows);
+      const index = row * numCols + col;
+      
+      const cat = categories[index];
+      
+      // Sécurité si le calcul tombe sur un index inexistant (fin de tableau)
+      if (!cat) return null;
+
       const Icon = cat.icon;
       const sources =
         (cat.isAgenda && eventSources) ||
@@ -1402,17 +1419,15 @@ useEffect(() => {
         [];
 
       return (
-        /* LA CARTE : inline-flex + w-full est le secret pour columns-3. 
-           mb-8 gère l'espace vertical uniquement pour la carte qui descend. */
         <div 
           key={cat.href} 
-          className="inline-flex flex-col w-full break-inside-avoid mb-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden"
+          className="inline-flex flex-col w-full break-inside-avoid mb-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 relative"
         >
           {/* HAUT DE CARTE */}
           <div className="p-6 flex flex-col items-center">
             <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
             <h3 className="text-xl font-bold mb-2 text-purple-700 text-center leading-tight">{cat.title}</h3>
-            <div className="text-gray-500 text-sm text-center mb-4">
+            <div className="text-gray-500 text-sm text-center mb-4 min-h-[40px]">
               {cat.isAgenda 
                 ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
                 : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
@@ -1427,15 +1442,16 @@ useEffect(() => {
               </Link>
             </div>
           ) : (
-            <details className="group border-t border-purple-50">
-              <summary className="flex items-center justify-between p-4 cursor-pointer list-none bg-purple-50/50 hover:bg-pink-50 transition-colors">
+            <details className="group border-t border-purple-50 relative">
+              <summary className="flex items-center justify-between p-4 cursor-pointer list-none bg-purple-50/50 hover:bg-pink-50 transition-colors rounded-b-2xl group-open:rounded-b-none">
                 <span className="text-[11px] font-black text-purple-700 uppercase tracking-widest">
                   Explorer les sources ({sources.length})
                 </span>
                 <ChevronDown size={18} className="text-purple-500 transition-transform duration-300 group-open:rotate-180" />
               </summary>
 
-              <div className="bg-white max-h-60 overflow-y-auto border-t border-slate-50">
+              {/* LISTE FLOTTANTE (Absolute) */}
+              <div className="absolute left-0 right-0 z-[100] bg-white shadow-2xl rounded-b-2xl max-h-64 overflow-y-auto border-x border-b border-purple-100 animate-in fade-in slide-in-from-top-1 duration-200">
                 <div className="flex flex-col p-1">
                   {sources.map((src: any) => (
                     <Link 
