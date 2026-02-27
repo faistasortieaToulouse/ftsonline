@@ -1368,7 +1368,7 @@ useEffect(() => {
 		 <p className="text-center mt-8 mb-10 text-slate-600 font-medium">
 		   Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
 		 </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const sources =
@@ -1404,7 +1404,7 @@ useEffect(() => {
               [];
 
 return (
-  <div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden h-full">
+    <div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden h-fit">
     {/* HAUT DE CARTE : Toujours fixe */}
     <div className="p-6 flex flex-col items-center">
       <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
