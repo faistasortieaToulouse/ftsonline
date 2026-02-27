@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { BarChart3, ExternalLink, Lock, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, BarChart3, ExternalLink, Lock, CheckCircle2 } from 'lucide-react';
+import Link from "next/link";
 
 export default function AnalysePage() {
   const [password, setPassword] = useState('');
@@ -9,7 +10,7 @@ export default function AnalysePage() {
   const [error, setError] = useState(false);
 
   // Le lien direct vers ton interface Analytics
-  const analyticsUrl = "https://analytics.google.com/analytics/web/?authuser=1#/a373025182p510564670/reports/intelligenthome";
+  const analyticsUrl = "https://analytics.google.com/analytics/web/?authuser=1#/a373025182p510564670/admin/streams/table/";
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +25,14 @@ export default function AnalysePage() {
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
+      
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+      
       {!isAuthorized ? (
         /* FORMULAIRE DE CONNEXION DISCRET */
         <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-purple-50">
