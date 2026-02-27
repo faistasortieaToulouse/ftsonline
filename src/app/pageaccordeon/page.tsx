@@ -1406,7 +1406,7 @@ useEffect(() => {
               [];
 
             return (
-   {/* <div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100 overflow-hidden"> */}
+   
 	<div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden h-fit">
     {/* Le h-fit aide aussi à dire "ne prend que la hauteur nécessaire" */}
 	{/* HAUT DE CARTE : Toujours visible */}
