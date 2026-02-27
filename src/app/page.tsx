@@ -1369,8 +1369,8 @@ useEffect(() => {
     Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
   </p>
 
-  {/* On utilise columns pour éviter l'étirement des voisins, avec un espace entre les colonnes */}
-  <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
+  {/* LE PARENT : On utilise columns. gap-8 gère l'espace horizontal entre colonnes. */}
+  <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
     {categories.map((cat) => {
       const Icon = cat.icon;
       const sources =
@@ -1402,13 +1402,17 @@ useEffect(() => {
         [];
 
       return (
-        /* break-inside-avoid empêche la carte de se couper entre deux colonnes */
-        <div key={cat.href} className="break-inside-avoid mb-8 flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden h-fit">
+        /* LA CARTE : inline-flex + w-full est le secret pour columns-3. 
+           mb-8 gère l'espace vertical uniquement pour la carte qui descend. */
+        <div 
+          key={cat.href} 
+          className="inline-flex flex-col w-full break-inside-avoid mb-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden"
+        >
           {/* HAUT DE CARTE */}
           <div className="p-6 flex flex-col items-center">
             <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
             <h3 className="text-xl font-bold mb-2 text-purple-700 text-center leading-tight">{cat.title}</h3>
-            <div className="text-gray-500 text-sm text-center mb-4 min-h-[40px]">
+            <div className="text-gray-500 text-sm text-center mb-4">
               {cat.isAgenda 
                 ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
                 : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
@@ -1423,7 +1427,7 @@ useEffect(() => {
               </Link>
             </div>
           ) : (
-            <details className="group border-t border-purple-50 mt-auto">
+            <details className="group border-t border-purple-50">
               <summary className="flex items-center justify-between p-4 cursor-pointer list-none bg-purple-50/50 hover:bg-pink-50 transition-colors">
                 <span className="text-[11px] font-black text-purple-700 uppercase tracking-widest">
                   Explorer les sources ({sources.length})
@@ -1431,7 +1435,7 @@ useEffect(() => {
                 <ChevronDown size={18} className="text-purple-500 transition-transform duration-300 group-open:rotate-180" />
               </summary>
 
-              <div className="bg-white max-h-48 overflow-y-auto border-t border-slate-50">
+              <div className="bg-white max-h-60 overflow-y-auto border-t border-slate-50">
                 <div className="flex flex-col p-1">
                   {sources.map((src: any) => (
                     <Link 
