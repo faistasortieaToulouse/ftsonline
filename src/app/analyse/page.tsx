@@ -35,56 +35,58 @@ export default function AnalysePage() {
       </nav>
       
       {!isAuthorized ? (
-        /* FORMULAIRE DE CONNEXION */
         <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-purple-50">
           <div className="flex justify-center mb-6">
             <div className="p-3 bg-purple-100 rounded-full">
               <Lock className="text-purple-600" size={24} />
             </div>
           </div>
-          <h1 className="text-xl font-bold text-center text-slate-800 mb-6">Espace Analyse</h1>
+          <h1 className="text-xl font-bold text-center text-slate-800 mb-6 text-balance">Accès Statistiques</h1>
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="password"
               placeholder="Mot de passe"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={`w-full px-4 py-3 rounded-xl border ${error ? 'border-red-500' : 'border-slate-200'} focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all`}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if(error) setError(false);
+              }}
+              className={`w-full px-4 py-3 rounded-xl border ${error ? 'border-red-500 animate-shake' : 'border-slate-200'} focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all`}
             />
             <button
               type="submit"
               className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-purple-200"
             >
-              Accéder
+              Se connecter
             </button>
-            {error && <p className="text-red-500 text-xs text-center font-medium mt-2">Mot de passe incorrect</p>}
+            {error && <p className="text-red-500 text-xs text-center font-medium">Mot de passe incorrect</p>}
           </form>
         </div>
       ) : (
         /* LE BOUTON D'ACCÈS DIRECT (Visible sur ta capture d'écran) */
         <div className="w-full max-w-md animate-in fade-in zoom-in duration-300">
-          <div className="bg-white p-10 rounded-3xl shadow-2xl border-2 border-green-50 text-center">
+          <div className="bg-white p-8 rounded-3xl shadow-2xl border-2 border-green-100 text-center">
             <div className="flex justify-center mb-4">
-              <CheckCircle2 className="text-green-500" size={56} />
+              <CheckCircle2 className="text-green-500" size={48} />
             </div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Accès Autorisé</h2>
-            <p className="text-slate-500 mb-8">Cliquez sur le bouton ci-dessous pour ouvrir vos rapports Google Analytics.</p>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">Bonjour Happy People !</h2>
+            <p className="text-slate-500 mb-8">Vos données d'analyse sont prêtes.</p>
             
             <a 
               href={analyticsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center justify-between p-6 bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl text-white font-bold hover:scale-[1.02] transition-all shadow-xl shadow-purple-200"
+              className="group flex items-center justify-between p-6 bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl text-white font-bold hover:scale-[1.02] transition-all shadow-xl shadow-purple-100"
             >
               <div className="flex items-center gap-4">
                 <BarChart3 size={28} />
-                <span className="text-lg">Ouvrir Analytics</span>
+                <span className="text-lg">Ouvrir Google Analytics</span>
               </div>
               <ExternalLink size={20} className="opacity-70 group-hover:opacity-100 transition-opacity" />
             </a>
             
-            <p className="mt-8 text-xs text-slate-400 italic">
-              Vérifiez que vous êtes connecté à votre compte Google Happy People.
+            <p className="mt-6 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+              Propriété : ftstoulouse.online
             </p>
           </div>
         </div>
