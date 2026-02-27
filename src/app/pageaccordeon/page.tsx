@@ -1369,20 +1369,25 @@ useEffect(() => {
     Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
   </p>
 
+  {/* Conteneur Columns */}
   <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
-    {/* CALCUL MATHÉMATIQUE : On transforme l'index pour que le remplissage vertical paraisse horizontal */}
     {Array.from({ length: categories.length }).map((_, i) => {
-      const numCols = 3; 
-      const numRows = Math.ceil(categories.length / numCols);
+      const numCols = 3;
+      const total = categories.length;
+      const numRows = Math.ceil(total / numCols);
       
-      // Cette formule va chercher les éléments dans ton tableau trié par colonnes
-      // pour les placer de gauche à droite sur chaque ligne
-      const col = i % numCols;
-      const row = Math.floor(i / numCols);
-      const index = col * numRows + row;
+      /** * NOUVEAU CALCUL CORRIGÉ 
+       * Pour que l'index 1 (Actualités) passe en haut de la colonne 2
+       * et l'index 2 (Meetup) passe en haut de la colonne 3.
+       */
+      const row = i % numRows;
+      const col = Math.floor(i / numRows);
+      const index = row * numCols + col;
       
       const cat = categories[index];
-      if (!cat) return null; // Sécurité si le tableau n'est pas un multiple exact
+      
+      // Sécurité si le calcul tombe sur un index inexistant (fin de tableau)
+      if (!cat) return null;
 
       const Icon = cat.icon;
       const sources =
