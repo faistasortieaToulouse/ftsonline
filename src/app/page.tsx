@@ -1403,33 +1403,54 @@ useEffect(() => {
               (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
               [];
 
-            return (
-              <div key={cat.href} className="flex flex-col h-full p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition border border-gray-100">
-                <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
-                <h3 className="text-2xl font-semibold mb-2 text-purple-700 text-center">{cat.title}</h3>
-                <div className="text-gray-500 text-sm text-center mb-4 flex-grow">
-                  {cat.isAgenda 
-                    ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
-                    : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
-                </div>
+return (
+  <div key={cat.href} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden h-full">
+    {/* HAUT DE CARTE : Toujours fixe */}
+    <div className="p-6 flex flex-col items-center">
+      <Icon className="w-10 h-10 text-pink-500 mb-3 mx-auto" />
+      <h3 className="text-xl font-bold mb-2 text-purple-700 text-center leading-tight">{cat.title}</h3>
+      <div className="text-gray-500 text-sm text-center mb-4 min-h-[40px]">
+        {cat.isAgenda 
+          ? "Accédez à l’agenda complet ou choisissez une source spécifique." 
+          : `Cliquez pour explorer ${cat.title.toLowerCase()}.`}
+      </div>
+    </div>
 
-                {sources.length === 0 ? (
-                  <Link href={cat.href} className="mt-auto bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-2 px-4 rounded-xl transition text-center">
-                    Voir la rubrique
-                  </Link>
-                ) : (
-                  <div className="overflow-x-auto w-full py-2 mt-auto">
-                    <div className="flex gap-4">
-                      {sources.map((src: any) => (
-                        <Link key={src.href} href={src.href} className="flex-shrink-0 w-52 bg-purple-50 rounded-xl shadow-sm p-3 hover:shadow-md transition text-center border border-gray-100">
-                          <p className="text-purple-700 font-medium text-sm">{src.title}</p>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
+    {/* BAS DE CARTE : Accordéon avec scroll interne */}
+    {sources.length === 0 ? (
+      <div className="p-4 mt-auto">
+        <Link href={cat.href} className="block w-full bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-2 px-4 rounded-xl transition text-center">
+          Voir la rubrique
+        </Link>
+      </div>
+    ) : (
+      <details className="group border-t border-purple-50 mt-auto">
+        <summary className="flex items-center justify-between p-4 cursor-pointer list-none bg-purple-50/50 hover:bg-pink-50 transition-colors">
+          <span className="text-[11px] font-black text-purple-700 uppercase tracking-widest">
+            Explorer les sources ({sources.length})
+          </span>
+          <ChevronDown size={18} className="text-purple-500 transition-transform duration-300 group-open:rotate-180" />
+        </summary>
+
+        {/* C'est ici que la magie opère : max-h limite l'étirement et overflow permet de scroller */}
+        <div className="bg-white max-h-48 overflow-y-auto border-t border-slate-50">
+          <div className="flex flex-col p-1">
+            {sources.map((src: any) => (
+              <Link 
+                key={src.href} 
+                href={src.href} 
+                className="p-3 hover:bg-purple-50 rounded-lg transition-colors text-slate-700 text-sm flex items-center gap-3 border-b border-slate-50 last:border-0"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-pink-400 shrink-0" />
+                <span className="truncate">{src.title}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </details>
+    )}
+  </div>
+);
           })}
         </div>
       </section>
