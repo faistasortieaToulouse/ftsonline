@@ -1369,6 +1369,7 @@ useEffect(() => {
     Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
   </p>
 
+  {/* Colonnes configurées pour le tri vertical qui simule l'horizontal */}
   <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
     {categories.map((cat) => {
       const Icon = cat.icon;
@@ -1404,7 +1405,6 @@ useEffect(() => {
         <div 
           key={cat.href} 
           className="inline-flex flex-col w-full break-inside-avoid mb-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 relative"
-          /* Suppression de overflow-hidden ici pour laisser sortir la liste flottante */
         >
           {/* HAUT DE CARTE */}
           <div className="p-6 flex flex-col items-center">
@@ -1433,7 +1433,7 @@ useEffect(() => {
                 <ChevronDown size={18} className="text-purple-500 transition-transform duration-300 group-open:rotate-180" />
               </summary>
 
-              {/* LISTE FLOTTANTE (Position Absolute) */}
+              {/* LISTE FLOTTANTE : Ne pousse pas la carte du bas */}
               <div className="absolute left-0 right-0 z-[100] bg-white shadow-2xl rounded-b-2xl max-h-64 overflow-y-auto border-x border-b border-purple-100 animate-in fade-in slide-in-from-top-1 duration-200">
                 <div className="flex flex-col p-1">
                   {sources.map((src: any) => (
