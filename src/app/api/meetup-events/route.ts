@@ -9,15 +9,13 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/Espanoles-en-Toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/activites-tls-jeux-de-societe-diners-art-vin-outdoor/events/ical/",
     "https://www.meetup.com/fr-FR/play-english-board-games-in-toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/8f97cfe6-9d63-4268-bba2-e2b16db340bb/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-galleries-meetup-group/events/ical/",
     "https://www.meetup.com/fr-FR/creative-mornings-running/events/ical/",
     "https://www.meetup.com/fr-FR/agile-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/espritwafu/events/ical/",
-    "https://www.meetup.com/fr-FR/meetup-group-qbmdpprq/events/ical/",
     "https://www.meetup.com/fr-FR/speakenglishtoulouse/events/ical/",
     "https://www.meetup.com/fr-FR/yolo-toulouse-socializing-concerts-outings/events/ical/",
-    "https://www.meetup.com/fr-FR/toulouse-sociale-meetup-group/events/ical/",
+    "https://www.meetup.com/club-de-reflexion-discussions-sur-l-actualite/events/ical/",
     "https://www.meetup.com/colocation-logement-hebergement-emploi-job-stage-toulouse/events/ical/",
     "https://www.meetup.com/toulouse-sorties-evenements-soirees-balades-visites-randos/events/ical/",
     "https://www.meetup.com/expats-in-toulouse/events/ical/"
@@ -35,18 +33,16 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/the_art_of_noticing_toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/cafe-das-maes/events/ical/",
     "https://www.meetup.com/fr-FR/frenchproduit-sudouest-toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/les-rendez-vous-de-la-bulle-mage/events/ical/"
-  ],
+    ],
   // Lot 3
   [
-    "https://www.meetup.com/fr-FR/les-rendez-vous-de-la-bulle-mage/events/ical/",
     "https://www.meetup.com/fr-FR/the-friendly-debate/events/ical/",
+    "https://www.meetup.com/fr-FR/toulouse-sociale-meetup-group/events/ical/",
     "https://www.meetup.com/fr-FR/colocation-logement-hebergement-emploi-job-stage-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-sorties-evenements-soirees-balades-visites-randos/events/ical/",
     "https://www.meetup.com/fr-FR/expats-in-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-free-evenements-to-discover/events/ical/",
     "https://www.meetup.com/fr-FR/meetup-group-iozolhsj/events/ical/",
-    "https://www.meetup.com/fr-FR/toulouse-free-evenements-to-discover/events/ical/",
     "https://www.meetup.com/fr-FR/international-mondays-tower-of-london/events/ical/",
     "https://www.meetup.com/fr-FR/Yellow-Chatters-Toulouse-International-Community/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-hiking-meetup-group/events/ical/",
@@ -62,17 +58,13 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/el-patio-lab/events/ical/",
     "https://www.meetup.com/fr-FR/danse-flamenco/events/ical/",
     "https://www.meetup.com/fr-FR/danses-traditionnelles-indiennes-a-toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/toulouse-k-pop-dance-evolution/events/ical/",
-    "https://www.meetup.com/fr-FR/la-bulle-creative/events/ical/",
     "https://www.meetup.com/fr-FR/pages-n-pies/events/ical/",
     "https://www.meetup.com/fr-FR/se-faire-des-amis-en-randonnant-%EF%B8%8F/events/ical/"
   ],
   // Lot 5
   [
-    "https://www.meetup.com/fr-FR/toulouse-diy-do-it-yourself-meetup-group/events/ical/",
     "https://www.meetup.com/fr-FR/studio-video-photo-podcast-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/le-club-des-curieux/events/ical/",
-    "https://www.meetup.com/fr-FR/rencontre-creative-en-bioceramique/events/ical/",
     "https://www.meetup.com/fr-FR/occitania-hikes/events/ical/",
     "https://www.meetup.com/fr-FR/Toulouse-travel-photography/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-petanque/events/ical/",
@@ -86,11 +78,9 @@ const ICAL_GROUPS: string[][] = [
   [
     "https://www.meetup.com/femmes-sensibles-solidaires-toulouse/events/ical/",
     "https://www.meetup.com/myapero-toulouse/events/ical/",
-    "https://www.meetup.com/club-de-reflexion-discussions-sur-l-actualite/events/ical/",
     "https://www.meetup.com/conscience-spiritualite-toulouse/events/ical/",
     "https://www.meetup.com/happy-nouvelle-vie/events/ical/",
     "https://www.meetup.com/cercle-dambition-morale/events/ical/",
-    "https://www.meetup.com/rotary-toulouse-ovalie/events/ical/",
     "https://www.meetup.com/malaia-collective-yoga-movement-intentional-living/events/ical/",
     "https://www.meetup.com/pages-n-pals/events/ical/",
     "https://www.meetup.com/cercle-de-femme-et-art-therapie-toulouse/events/ical/",
@@ -100,10 +90,10 @@ const ICAL_GROUPS: string[][] = [
       // Lot 7
   [
     "https://www.meetup.com/la-sauce-viens-relever-ta-creativite-au-sol-entre-meufs/events/ical/",
-    "https://www.meetup.com/meetup-group-pdfpdjis/events/ical/",
     "https://www.meetup.com/star-wars-imperial-assault-in-toulouse/events/ical/",
-    "https://www.meetup.com/espritwafu/events/ical/"
-  ]
+    "https://www.meetup.com/toulouse-women-personal-development-meetup-group/events/ical/",
+    "https://www.meetup.com/bring-me-the-horizon-occitanie/events/ical/",
+    ]
 ];
 
 // --- Types de données ---
