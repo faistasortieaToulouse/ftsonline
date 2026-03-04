@@ -1,0 +1,66 @@
+{
+  "metropole": "Toulouse",
+  "surnom": "Ville Rose",
+  "annee_analyse": 2026,
+  "caracteristiques_majeures": {
+    "industrie_dominante": "Aéronautique et Spatial",
+    "population_etudiante": 130000,
+    "particularite_demographique": "Taux record de ménages solos (environ 50%)",
+    "etalement_urbain": "L'un des plus vastes de France"
+  },
+  "structure_geographique": [
+    {
+      "secteur": "L'Ouest (Croissant de l'Aéronautique)",
+      "zones": ["Blagnac", "Colomiers", "Tournefeuille"],
+      "profil_habitants": "Cadres ingénieurs, familles aisées, actifs Airbus.",
+      "dynamique": "Pôle de richesse autonome concurrençant le centre-ville."
+    },
+    {
+      "secteur": "Le Centre Historique",
+      "zones": ["Carmes", "Capitole", "Saint-Cyprien"],
+      "profil_habitants": "Étudiants, cadres célibataires, 'solos'.",
+      "dynamique": "Gigantesque colocation urbaine ; éviction progressive des familles."
+    },
+    {
+      "secteur": "Le Sud-Ouest (Fracture sociale)",
+      "zones": ["Le Mirail", "Bagatelle", "Reynerie"],
+      "profil_habitants": "Familles monoparentales, demandeurs d'emploi.",
+      "dynamique": "Grands ensembles, zone de forte précarité."
+    },
+    {
+      "secteur": "Le Sud-Est (Patrimonial)",
+      "zones": ["Côte Pavée", "Busca"],
+      "profil_habitants": "Familles historiques, grandes fortunes, notables.",
+      "dynamique": "Quartiers résidentiels chics, maisons 'Toulousaines'."
+    },
+    {
+      "secteur": "Zones de Mutation (Nouveaux arrivants)",
+      "zones": ["Borderouge", "Montaudran", "La Cépière"],
+      "profil_habitants": "Jeunes couples, cadres mutants (ex-parisiens).",
+      "dynamique": "Quartiers denses, modernes, forte pression immobilière."
+    }
+  ],
+  "classement_richesse": {
+    "intra_muros": [
+      { "quartier": "Saint-Étienne", "type": "Richesse historique", "details": "Hôtels particuliers, luxe, population discrète." },
+      { "quartier": "Les Carmes / Esquirol", "type": "Richesse active", "details": "Professions libérales, cadres supérieurs, hyper-centre." },
+      { "quartier": "Le Busca", "type": "Richesse résidentielle", "details": "Villas élégantes, calme, proximité Jardin des Plantes." },
+      { "quartier": "La Côte Pavée", "type": "Richesse intellectuelle", "details": "Magistrats, chefs d'entreprise, grandes parcelles." },
+      { "quartier": "Saint-Georges", "type": "Richesse moderne", "details": "Appartements de standing, hyper-centre commerçant." }
+    ],
+    "banlieue_premium": [
+      { "commune": "Vieille-Toulouse", "profil": "Ultra-riche", "details": "Coteaux sud, vue Pyrénées, golf, propriétés de luxe." },
+      { "commune": "Vigoulet-Auzil / Pechbusque", "profil": "Cadres dirigeants", "details": "Hauteurs du Sicoval, exclusivité." },
+      { "commune": "Balma", "profil": "Familles CSP+", "details": "Métro, écoles de qualité, maisons modernes." },
+      { "commune": "Pin-Balma / Mondouzil", "profil": "Enclaves rurales chics", "details": "Villages à l'Est, prix fonciers record." },
+      { "commune": "Tournefeuille", "profil": "Cadres Aéronautique", "details": "Référence résidentielle de l'Ouest toulousain." }
+    ]
+  },
+  "zones_charnieres": {
+    "la_cepiere": {
+      "statut": "Zone en transition",
+      "composition": "Classes moyennes, retraités, nouveaux résidents.",
+      "enjeu": "Dernière réserve foncière proche du centre, convoitée par les promoteurs."
+    }
+  }
+}
