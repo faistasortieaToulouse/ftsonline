@@ -1,73 +1,82 @@
-import Link from 'next/link';
+"use client";
 
-// Interface pour typer tes données (adapte-la selon la structure de ton JSON)
-interface EventInternet {
-  nom?: string;
-  evenement?: string;
-  date: string;
+import Link from 'next/link';
+// Importation directe du fichier JSON depuis le dossier data
+import histoireData from '../../../../data/mondecategories/histoireinternet.json';
+
+// Interface calquée sur la structure réelle de ton fichier JSON
+interface SiteHistorique {
+  id: number;
+  nom: string;
+  annee: number | string;
   description: string;
 }
 
-async function getHistoireInternet() {
-  // On appelle l'URL absolue en interne ou relative si configurée
-  // Note : En développement local, utilise http://localhost:3000
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api/histoireinternet`, {
-    cache: 'no-store', // Pour toujours avoir les données à jour
-  });
-
-  if (!res.ok) {
-    throw new Error('Erreur lors de la récupération des données');
-  }
-
-  return res.json();
-}
-
 export default async function HistoireInternetPage() {
-  let data: EventInternet[] = [];
-  
-  try {
-    data = await getHistoireInternet();
-  } catch (error) {
-    console.error(error);
-  }
+  // On récupère la liste "sites_importants_popular_mechanics" du JSON
+  const sites: SiteHistorique[] = histoireData.sites_importants_popular_mechanics || [];
 
   return (
     <main className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-4xl mx-auto">
         
-        {/* En-tête avec bouton retour */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-blue-800">Histoire de l'Internet</h1>
+        {/* En-tête avec titre et intro dynamiques */}
+        <div className="flex flex-col md:flex-row md:items-start justify-between mb-10 gap-6">
+          <div className="flex-1">
+            <h1 className="text-4xl font-extrabold text-blue-900 tracking-tight">
+              {histoireData.titre}
+            </h1>
+            <p className="mt-4 text-lg text-gray-700 leading-relaxed border-l-4 border-blue-200 pl-4 italic">
+              {histoireData.introduction}
+            </p>
+          </div>
           <Link 
             href="/" 
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg active:transform active:scale-95 whitespace-nowrap"
           >
             ← Retour à l'Accueil
           </Link>
         </div>
 
-        {/* Liste des événements */}
-        <div className="space-y-6">
-          {data.length > 0 ? (
-            data.map((item, index) => (
-              <div key={index} className="p-6 bg-white rounded-lg shadow-md border-l-4 border-blue-500">
-                <div className="flex justify-between items-start mb-2">
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    {item.nom || item.evenement}
+        {/* Timeline / Liste des sites */}
+        <div className="relative space-y-8">
+          {sites.length > 0 ? (
+            sites.map((item) => (
+              <section 
+                key={item.id} 
+                className="relative p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 transition-colors group"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
+                  <h2 className="text-2xl font-bold text-gray-800 group-hover:text-blue-700 transition-colors">
+                    {item.nom}
                   </h2>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-bold rounded-full">
-                    {item.date}
+                  <span className="inline-block px-4 py-1 bg-blue-600 text-white text-sm font-black rounded-full shadow-sm">
+                    {item.annee}
                   </span>
                 </div>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 text-lg leading-relaxed">
                   {item.description}
                 </p>
-              </div>
+              </section>
             ))
           ) : (
-            <p className="text-center text-gray-500">Aucune donnée disponible pour le moment.</p>
+            <div className="text-center py-20 bg-white rounded-2xl shadow-inner border border-dashed border-gray-300">
+              <p className="text-gray-400 text-xl font-medium">
+                Aucune donnée historique trouvée.
+              </p>
+            </div>
           )}
         </div>
+
+        {/* Conclusion stylisée */}
+        <footer className="mt-16 p-10 bg-gradient-to-br from-blue-900 to-blue-800 rounded-2xl text-white shadow-xl">
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <span>🚀</span> En résumé
+          </h3>
+          <p className="text-blue-100 text-lg leading-relaxed italic opacity-90">
+            {histoireData.conclusion}
+          </p>
+        </footer>
 
       </div>
     </main>
