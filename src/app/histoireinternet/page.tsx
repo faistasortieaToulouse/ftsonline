@@ -11,7 +11,7 @@ interface EventInternet {
 async function getHistoireInternet() {
   // On appelle l'URL absolue en interne ou relative si configurée
   // Note : En développement local, utilise http://localhost:3000
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/histoireinternet`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api/histoireinternet`, {
     cache: 'no-store', // Pour toujours avoir les données à jour
   });
 
