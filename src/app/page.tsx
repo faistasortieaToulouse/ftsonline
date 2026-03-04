@@ -922,19 +922,7 @@ useEffect(() => {
           Dicton du jour : <span className="font-bold text-purple-900 italic">"{dictonDuJour}"</span>
         </div>
       </div>
-		
-{/* BLOC CÉLÉBRATIONS (Remplace Fête Nationale) */}
-  <div className="flex flex-col items-center text-center min-w-[250px] bg-white/50 p-2 rounded-xl border border-purple-100 shadow-sm">
-    <span className="text-[10px] font-black uppercase text-purple-400 tracking-widest mb-1">Célébrations & Fêtes</span>
-    <div className="flex flex-col gap-1">
-      {getCelebrationsDuJour(heure).map((fete, index) => (
-        <span key={index} className="text-[11px] font-bold text-purple-900 leading-tight">
-          {fete}
-        </span>
-      ))}
-    </div>
-  </div>
-		
+			
 {/* BLOC DROIT : Météo Matin / Midi / Soir */}
       <div className="flex items-center gap-6 bg-purple-50 p-3 rounded-2xl border border-purple-100 shadow-sm">
         {/* Matin */}
@@ -966,6 +954,21 @@ useEffect(() => {
         </div>
       </div> 
     </div> {/* <--- Fermeture de la Ligne 1 (ESSENTIEL) */}
+
+	  {/* NOUVELLE LIGNE : CÉLÉBRATIONS & FÊTES (Ligne 1.5) */}
+    <div className="bg-white/40 py-2 px-6 border-b border-purple-200">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+        <span className="text-[10px] font-black uppercase text-purple-500 tracking-widest border-r border-purple-200 pr-4">
+          Célébrations & Fêtes
+        </span>
+        <div className="flex flex-wrap justify-center gap-3">
+          {getCelebrationsDuJour(heure).map((fete, index) => (
+            <span key={index} className="text-[11px] font-bold text-purple-900 bg-purple-200/50 px-3 py-0.5 rounded-full shadow-sm">
+              ✨ {fete}
+            </span>
+          ))}
+        </div>
+      </div>
 
 {/* --- Bloc unique : Éphéméride & Environnement --- */}
 <div className="bg-indigo-900/10 border-t border-purple-200 py-6 px-4 md:py-4 md:px-6">
