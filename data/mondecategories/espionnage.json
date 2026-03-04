@@ -36,8 +36,9 @@
     "Mimétisme social: Dans des sociétés sans écriture, l'observation directe et l'apprentissage par les pairs étaient les seuls vecteurs de copie.",
     "Troc et Prestige: Posséder un objet lointain (hache en pierre polie, parure en ambre) forçait à essayer de reproduire sa technique localement.",
     "Savoir-faire sacré: Les techniques (poterie, forge) étaient souvent liées à des rituels, rendant leur 'vol' ou leur 'don' très symbolique."
-  ]
-},
+      ]
+    }
+  ],
   "chronologie_du_transfert": [
     {
       "ere": "1. L'Antiquité : Le berceau du transfert",
@@ -132,7 +133,8 @@
         "Transferts Forcés: Joint-ventures chinoises imposées aux géants de l'éolien, du solaire et du ferroviaire (TGV).",
         "Rétro-ingénierie 3D: Utilisation de scanners haute précision et microscopes électroniques pour copier les puces de pointe."
       ]
-    },
+    }
+  ],
   "analyse_du_succes": [
     "1. L'acquisition: Obtenue par le vol, l'espionnage ou le commerce.",
     "2. L'assimilation: Capacité à améliorer la technologie, comme l'Égypte avec le char ou la Chine avec le train à grande vitesse.",
@@ -258,4 +260,5 @@
   "conclusion": "L'acquisition n'est rien sans l'assimilation : la puissance réside dans la transformation d'une copie en levier d'innovation."
 
 }
+
 
