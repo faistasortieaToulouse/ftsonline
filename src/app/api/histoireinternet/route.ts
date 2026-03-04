@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 // Importation directe du JSON avec typage automatique par TypeScript
-import histoireData from '../../../../../data/mondecategories/histoireinternet.json';
+import histoireData from '../../../../data/mondecategories/histoireinternet.json';
 
 export async function GET() {
   try {
