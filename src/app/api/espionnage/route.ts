@@ -7,7 +7,7 @@ export async function GET() {
      * Le chemin remonte depuis : src/app/api/mondecategories/espionnage/route.ts
      * (4 niveaux) pour atteindre /data/mondecategories/espionnage.json
      */
-    const espionnageModule = await import('../../../../../data/mondecategories/espionnage.json');
+    const espionnageModule = await import('../../../../data/mondecategories/espionnage.json');
     
     // Les imports de JSON renvoient un objet avec une propriété 'default'
     const espionnageData = espionnageModule.default;
