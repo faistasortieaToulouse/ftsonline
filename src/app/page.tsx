@@ -969,6 +969,7 @@ useEffect(() => {
           ))}
         </div>
       </div>
+	</div>
 
 {/* --- Bloc unique : Éphéméride & Environnement --- */}
 <div className="bg-indigo-900/10 border-t border-purple-200 py-6 px-4 md:py-4 md:px-6">
