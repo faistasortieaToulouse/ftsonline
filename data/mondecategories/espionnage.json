@@ -101,7 +101,7 @@
         "Le vol du Thé (1848): L'écossais Robert Fortune s'infiltre en Chine déguisé pour voler des plants et les implanter en Inde.",
         "Mission Iwakura (1871): Le Japon 'choisit' et copie le meilleur de l'Occident (Marine anglaise, Armée prussienne, Droit français).",
         "Le vol du Caoutchouc (1876): Henry Wickham sort clandestinement 70 000 graines d'hévéa du Brésil pour les plantations britanniques.",
-        "Chimie des Colorants: Récupération de la mauvéine anglaise par les Allemands (BASF/Bayer) pour dominer 85% du marché mondial en 1914.",
+        "Chimie des Colorants: Récupération de la mauvéine anglaise par les Allemands (BASF/Bayer) pour dominer 85% du marché mondial en 1914."
       ]
     },
     {
@@ -122,8 +122,8 @@
       "evenements": [
         "TGV Chinois (2000): Transfert de technologie forcé via des joint-ventures avec Alstom et Siemens.",
         "Guerre des Semi-conducteurs (Aujourd'hui): Bataille mondiale pour le savoir-faire de lithographie EUV (ASML).",
-        "sujet": "Acier de Damas", "info": "Un secret perdu car l'Europe n'a jamais pu copier la structure chimique exacte du fer Wootz indien.",
-        "sujet": "Joint-ventures chinoises", "info": "L'accès au marché chinois est le prix payé par l'Occident pour livrer ses secrets industriels de pointe.",
+        "Acier de Damas : Un secret perdu car l'Europe n'a jamais pu copier la structure chimique exacte du fer Wootz indien.",
+        "Joint-ventures chinoises : L'accès au marché chinois est le prix payé par l'Occident pour livrer ses secrets industriels de pointe.",
         "Dôme de Fer (2010s): Innovation israélienne financée par les USA, rachetée ensuite par le 'maître' américain.",
         "Rétro-ingénierie Iranienne (2011): Capture du drone furtif US RQ-170 Sentinel pour créer la copie locale Saegheh.",
         "Cyber-espionnage (2020s): Vol des plans du F-35 américain pour concevoir le chasseur furtif chinois J-20.",
@@ -132,12 +132,11 @@
         "Transferts Forcés: Joint-ventures chinoises imposées aux géants de l'éolien, du solaire et du ferroviaire (TGV).",
         "Rétro-ingénierie 3D: Utilisation de scanners haute précision et microscopes électroniques pour copier les puces de pointe."
       ]
-    }
-  ],
+    },
   "analyse_du_succes": [
     "1. L'acquisition: Obtenue par le vol, l'espionnage ou le commerce.",
-    "2. L'assimilation: Capacité à améliorer la technologie, comme l'Égypte avec le char ou la Chine avec le train à grande vitesse."
-    "3. L'inovation: Innovation pure à partir de la base technique acquise."
+    "2. L'assimilation: Capacité à améliorer la technologie, comme l'Égypte avec le char ou la Chine avec le train à grande vitesse.",
+    "3. L'inovation: Innovation pure à partir de la base technique acquise.",
     "4. Savoir incarné: Dans l'Antiquité, le transfert passait par la capture physique de l'artisan (source vivante du savoir).",
     "5. Rétro-ingénierie précoce: Rome démontant une galère carthaginoise pour en comprendre l'assemblage standardisé.",
     "6. Siècles de traduction: Phase où l'Europe a agi comme une éponge pour rattraper 500 ans de retard sur le monde arabe."
@@ -157,7 +156,7 @@
     "Imprimerie à caractères mobiles: Existait en Chine et en Corée bien avant l'invention de Gutenberg."
   ],
   "analyse_historique": [
-    "Simplification: Le passage des hiéroglyphes à l'alphabet phénicien est la plus grande 'optimisation' de savoir-faire de l'histoire."
+    "Simplification: Le passage des hiéroglyphes à l'alphabet phénicien est la plus grande 'optimisation' de savoir-faire de l'histoire.",
     "Conquérir ou être conquis: Dans l'Antiquité, le transfert de savoir-faire passait souvent par la capture physique des savants (esclaves savants).",
     "Coût de la R&D: L'espionnage permet un 'saut technologique' immédiat sans les coûts de recherche initiaux.",
     "Absence de brevets: Dans l'Antiquité, le secret était la seule protection; la sortie d'un objet de Chine lançait sa copie mondiale.",
@@ -257,4 +256,5 @@
     {"sujet": "Le J-20 Chinois", "info": "Considéré comme un héritier technique du F-35 suite à des intrusions informatiques majeures."}
   ],
   "conclusion": "L'acquisition n'est rien sans l'assimilation : la puissance réside dans la transformation d'une copie en levier d'innovation."
+
 }
