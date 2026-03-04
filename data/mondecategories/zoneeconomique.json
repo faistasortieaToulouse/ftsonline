@@ -1,0 +1,30 @@
+{
+  "zones_libre_echange": {
+    "Amerique": [
+      { "nom": "ACEUM", "signification": "Accord Canada-États-Unis-Mexique", "creation": "2020", "membres": "USA, Canada, Mexique", "objectif": "Remplacement ALENA, règles auto/numérique" },
+      { "nom": "Alliance du Pacifique", "signification": "Alliance du Pacifique", "creation": "2011", "membres": "Chili, Colombie, Mexique, Pérou", "objectif": "Bloc libéral tourné vers l'Asie" },
+      { "nom": "CARICOM", "signification": "Communauté caribéenne", "creation": "1973", "membres": "15 États Caraïbes", "objectif": "Marché unique et libre-échange" },
+      { "nom": "CAN", "signification": "Communauté andine", "creation": "1969", "membres": "Bolivie, Colombie, Équateur, Pérou", "objectif": "Intégration économique andine" },
+      { "nom": "MERCOSUR", "signification": "Marché commun du Sud", "creation": "1991", "membres": "Argentine, Brésil, Uruguay, Paraguay", "objectif": "Marché commun du cône sud" }
+    ],
+    "Afrique": [
+      { "nom": "ZLECAF", "signification": "Zone de libre-échange continentale africaine", "creation": "2019", "membres": "54 États de l'UA", "objectif": "Fusion des blocs régionaux" },
+      { "nom": "IGAD", "signification": "Autorité intergouvernementale pour le développement", "creation": "1986", "membres": "7 États Corne de l'Afrique", "objectif": "Marché commun et développement" },
+      { "nom": "SADC", "signification": "Communauté de développement d'Afrique australe", "creation": "1992", "membres": "16 États Afrique australe", "objectif": "Coopération et libre-échange" },
+      { "nom": "CEN-SAD", "signification": "Communauté des États sahélo-sahariens", "creation": "1998", "membres": "28 États Sahélo-sahariens", "objectif": "Zone de libre-échange et social" },
+      { "nom": "CEDEAO", "signification": "Communauté économique des États de l'Afrique de l'Ouest", "creation": "1975", "membres": "15 États", "objectif": "Union économique et monétaire" },
+      { "nom": "CEEAC", "signification": "Communauté économique des États de l'Afrique centrale", "creation": "1980", "membres": "11 États", "objectif": "Autonomie économique régionale" },
+      { "nom": "COMESA", "signification": "Marché commun de l'Afrique orientale et australe", "creation": "1994", "membres": "21 États", "objectif": "Union douanière" }
+    ],
+    "Asie_Oceanie": [
+      { "nom": "RCEP", "signification": "Partenariat régional économique global", "creation": "2022", "membres": "ASEAN+5 (Chine, Japon...)", "objectif": "Plus gros accord mondial (30% PIB)" },
+      { "nom": "CPTPP", "signification": "Accord de partenariat transpacifique global et progressiste", "creation": "2018", "membres": "11 pays + Royaume-Uni", "objectif": "Libre-échange haut standard" },
+      { "nom": "ASEAN", "signification": "Association des nations de l'Asie du Sud-Est", "creation": "1967", "membres": "10 États", "objectif": "Zone de libre-échange (AFTA)" }
+    ],
+    "Europe": [
+      { "nom": "CEFTA", "signification": "Accord de libre-échange centre-européen", "creation": "1992", "membres": "7 États Balkans/Moldavie", "objectif": "Zone pré-adhésion UE" },
+      { "nom": "AELE", "signification": "Association européenne de libre-échange", "creation": "1960", "membres": "Islande, Norvège, Liechtenstein, Suisse", "objectif": "Libre-échange sans union politique" },
+      { "nom": "Union Européenne", "signification": "Union Européenne", "creation": "1992", "membres": "27 États membres", "objectif": "Marché unique et union politique" }
+    ]
+  }
+}
