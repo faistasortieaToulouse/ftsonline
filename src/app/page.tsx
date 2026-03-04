@@ -923,19 +923,16 @@ useEffect(() => {
         </div>
       </div>
 		
-  {/* Fête Nationale (Nouveau Bloc) */}
+{/* BLOC CÉLÉBRATIONS (Remplace Fête Nationale) */}
   <div className="flex flex-col items-center text-center min-w-[250px] bg-white/50 p-2 rounded-xl border border-purple-100 shadow-sm">
-    <span className="text-[10px] font-black uppercase text-purple-400 tracking-widest">Fête Nationale</span>
-    {getFeteNationale(heure, fetesData) ? (
-      <div className="flex flex-col">
-        <span className="font-bold text-purple-900">{getFeteNationale(heure, fetesData).pays}</span>
-        <span className="text-[11px] text-slate-500 leading-tight">
-          {getFeteNationale(heure, fetesData).evenement}
+    <span className="text-[10px] font-black uppercase text-purple-400 tracking-widest mb-1">Célébrations & Fêtes</span>
+    <div className="flex flex-col gap-1">
+      {getCelebrationsDuJour(heure).map((fete, index) => (
+        <span key={index} className="text-[11px] font-bold text-purple-900 leading-tight">
+          {fete}
         </span>
-      </div>
-    ) : (
-      <span className="text-xs italic text-slate-400">Aucune fête ce jour</span>
-    )}
+      ))}
+    </div>
   </div>
 		
 {/* BLOC DROIT : Météo Matin / Midi / Soir */}
