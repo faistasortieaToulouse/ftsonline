@@ -922,7 +922,22 @@ useEffect(() => {
           Dicton du jour : <span className="font-bold text-purple-900 italic">"{dictonDuJour}"</span>
         </div>
       </div>
-
+		
+  {/* Fête Nationale (Nouveau Bloc) */}
+  <div className="flex flex-col items-center text-center min-w-[250px] bg-white/50 p-2 rounded-xl border border-purple-100 shadow-sm">
+    <span className="text-[10px] font-black uppercase text-purple-400 tracking-widest">Fête Nationale</span>
+    {getFeteNationale(heure, fetesData) ? (
+      <div className="flex flex-col">
+        <span className="font-bold text-purple-900">{getFeteNationale(heure, fetesData).pays}</span>
+        <span className="text-[11px] text-slate-500 leading-tight">
+          {getFeteNationale(heure, fetesData).evenement}
+        </span>
+      </div>
+    ) : (
+      <span className="text-xs italic text-slate-400">Aucune fête ce jour</span>
+    )}
+  </div>
+		
 {/* BLOC DROIT : Météo Matin / Midi / Soir */}
       <div className="flex items-center gap-6 bg-purple-50 p-3 rounded-2xl border border-purple-100 shadow-sm">
         {/* Matin */}
