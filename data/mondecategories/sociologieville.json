@@ -1,0 +1,92 @@
+{
+  "titre": "Sociologie des Métropoles Françaises en 2026",
+  "description": "Analyse de la répartition de la population selon la distance au centre-ville et l'accès aux transports.",
+  "zones": [
+    {
+      "nom": "Centre-Ville",
+      "caracteristiques": "Zone dense, coûteuse, lieu de polarisation sociale.",
+      "populations": {
+        "majoritaire": "Cadres et professions intellectuelles supérieures (CSP+)",
+        "secondaires": ["Étudiants", "Gentrifieurs", "Propriétaires âgés de longue date"],
+        "dynamique_sociale": "Cohabitation entre extrême richesse et poches de pauvreté résiduelles (gentrification en cours)."
+      }
+    },
+    {
+      "nom": "Ville-Centre (hors hyper-centre)",
+      "caracteristiques": "Zone périphérique au cœur historique, mélange d'habitat ancien et de logements sociaux.",
+      "populations": {
+        "profils": ["Familles de classe moyenne", "Nouveaux arrivants", "Quartiers prioritaires"],
+        "quartiers_prioritaires": ["Familles nombreuses", "Demandeurs d'emploi", "Jeunes"],
+        "dynamique": "Premier point de chute des actifs mutants et concentration de logements sociaux."
+      }
+    },
+    {
+      "nom": "Banlieue (Petite et Grande Couronne)",
+      "caracteristiques": "Espace fragmenté en trois sous-catégories distinctes.",
+      "typologies": [
+        {
+          "type": "Banlieue pavillonnaire",
+          "habitants": ["Familles avec enfants", "Retraités"],
+          "atouts": "Calme, jardin, prix abordables pour la classe moyenne.",
+          "aisee": "Enclaves de grande richesse en périphérie."
+        },
+        {
+          "type": "Banlieue populaire (Grands ensembles)",
+          "habitants": ["Ouvriers", "Immigrés", "Revenus modestes"],
+          "populaire": "Ouvriers et populations à revenus modestes (Grands ensembles).",
+          "indicateurs": "Taux de chômage statistiquement plus élevé."
+        },
+        {
+          "type": "Banlieue aisée",
+          "exemples": ["Ouest Parisien", "Monts d'Or à Lyon"],
+          "habitants": ["Très hauts revenus"]
+        }
+      ]
+    }
+  ],
+  "structure_foyers": [
+    {
+      "type": "Solos (Personnes vivant seules)",
+      "localisation": "Hyper-centre et quartiers péricentraux denses.",
+      "profils": ["Étudiants", "Jeunes actifs", "Seniors veufs"],
+      "moteurs": "Petits logements, économie du célibat, réseau social de proximité."
+    },
+    {
+      "type": "Couples sans enfants (DINKs)",
+      "localisation": "Quartiers branchés, centres-villes rénovés, banlieues de standing.",
+      "profils": ["Jeunes cadres 25-35 ans", "Seniors 'Empty Nesters'"],
+      "moteurs": "Double revenu, fort pouvoir d'achat, proximité des loisirs."
+    },
+    {
+      "type": "Familles (Couples avec enfants)",
+      "localisation": "Banlieue pavillonnaire et grande couronne.",
+      "profils": ["Classes moyennes et supérieures"],
+      "moteurs": "Besoin d'espace (chambres, jardin), sécurité, proximité des écoles."
+    },
+    {
+      "type": "Familles Monoparentales",
+      "localisation": "Quartiers HLM (Ville-centre ou banlieue proche), péricentre dégradé.",
+      "profils": ["Parents isolés"],
+      "moteurs": "Dépendance au parc social et aux transports en commun (contrainte d'un seul revenu)."
+    }
+  ],
+  "synthese_categories": [
+    { "categorie": "Étudiants", "lieu": "Centre-ville", "raison": "Vie nocturne, transports, petits logements." },
+    { "categorie": "Cadres (CSP+)", "lieu": "Centre-ville / Banlieue chic", "raison": "Proximité des centres de décision." },
+    { "categorie": "Familles", "lieu": "Banlieue (Couronne)", "raison": "Espace et jardin à prix abordable." },
+    { "categorie": "Retraités", "lieu": "Banlieue pavillonnaire", "raison": "Propriété immobilière historique, calme." },
+    { "categorie": "Pauvres / Chômeurs", "lieu": "Quartiers sociaux", "raison": "Parc HLM." },
+    { "categorie": "Nouveaux arrivants", "lieu": "Ville-centre", "raison": "Marché locatif dynamique." }
+  ],
+  "synthese_habitat": [
+    { "foyer": "Vivre seul", "zone": "Hyper-centre", "habitat": "Studio / T2" },
+    { "foyer": "Couple sans enfant", "zone": "Centre / Proche banlieue", "habitat": "Appartement de standing" },
+    { "foyer": "Famille (2 parents)", "zone": "Banlieue / Périurbain", "habitat": "Maison individuelle" },
+    { "foyer": "Parent solo", "zone": "Quartiers sociaux / Péricentre", "habitat": "Grand appartement (loyer modéré)" }
+  ],
+  "phenomenes_particuliers": {
+    "gentrification_familiale": "Apparition de 'bulles' familiales très aisées en centre-ville via la réunion d'appartements ou rénovation de maisons ouvrières.",
+    "desserrement_urbain": "Exode des familles vers le périurbain lointain via le télétravail.",
+    "vieillissement_peripherique": "Concentration de retraités dans les zones pavillonnaires historiques (1970-1980)."
+  }
+}
