@@ -1,0 +1,159 @@
+{
+  "titre": "Histoire d'Internet et des sites Web",
+  "introduction": "C'est fascinant de replonger dans cette époque où \"surfer\" sur le web demandait une patience de moine zen et faisait un bruit de modem strident ! On oublie souvent que l'Internet tel qu'on le connaît est né d'un mélange de projets militaires et de recherches universitaires.",
+  "chronologie_detaillee": [
+    {"periode": "1991-1993", "titre": "L'éveil et la naissance technique", "evenements": ["1991 (6 août): Le Web devient public avec le premier site de Tim Berners-Lee (info.cern.ch).", "1992: Environ 10 sites (universités); le terme 'Surfer sur Internet' est popularisé.", "1993: Navigateur Mosaic (images), le CERN place le Web dans le domaine public (600 sites)."]},
+    {"periode": "1994-1995", "titre": "La conquête et l'entrée du monde réel", "evenements": ["1994: Netscape, Yahoo!, Lycos; Pizza Hut (première commande); première pub sur Wired (~10 000 sites).", "1995: Internet Explorer, Amazon, eBay, JavaScript; sites officiels (Maison Blanche, CNN)."]},
+    {"periode": "1996-1997", "titre": "L'ère du design et de l'animation", "evenements": ["1996: 100 000 sites, arrivée de Flash, premier site Apple, Nokia 9000 Communicator (mobile).", "1997: 1 million de sites, le Web devient une 'vitrine', début de Google (BackRub), lancement du Wi-Fi."]},
+    {"periode": "1998-1999", "titre": "L'explosion, la bulle et la maturité", "evenements": ["1998: Fondation de Google.com (interface épurée), lancement de l'iMac G3.", "1999: ~3 millions de sites, Napster (MP3), Blogger (blogs pour tous), 280 millions d'utilisateurs."]}
+  ],
+  "pionniers_web": [
+    {"nom": "Le tout premier site", "annee": 1991, "description": "Créé par Tim Berners-Lee au CERN, texte brut sans images."},
+    {"nom": "Mosaic", "annee": 1993, "description": "Premier navigateur grand public permettant d'afficher des images."},
+    {"nom": "Yahoo!", "annee": 1994, "description": "À l'origine, un simple annuaire thématique."},
+    {"nom": "GeoCities", "annee": 1994, "description": "Ancêtre des réseaux sociaux avec des pages perso par quartiers."},
+    {"site": "Amazon", "annee": 1995, "categorie": "E-commerce"},
+    {"site": "eBay", "annee": 1995, "categorie": "Enchères"},
+    {"site": "Google", "annee": "1997/98", "categorie": "Moteur de recherche"}
+  ],
+  "comparatif_1991_1999": [
+    {"caracteristique": "Nombre de sites", "1991": "~1", "1999": "~3 millions"},
+    {"caracteristique": "Connexion type", "1991": "RTC (Modem 14.4k)", "1999": "Modem 56k / Début ADSL"},
+    {"caracteristique": "Contenu principal", "1991": "Texte pur", "1999": "Texte, images, GIFs, MP3"},
+    {"caracteristique": "Usage", "1991": "Académique", "1999": "Divertissement et Commerce"}
+  ],
+  "sites_et_services_cles": [
+    {"periode": "1991-1993: Les Fondations", "sites": ["1991: info.cern.ch (Premier site de l'histoire).", "1992: WWW Virtual Library (Premier annuaire manuel).", "1993: IMDb (Base de données films) et Bloomberg.com (Infos financières)."]},
+    {"periode": "1994: L'année de l'explosion", "sites": ["Janvier: Yahoo! (Annuaire thématique).", "Avril: WebCrawler (Premier moteur à texte complet).", "Août: PizzaNet (Première commande de pizza).", "Octobre: HotWired (Première bannière publicitaire).", "Décembre: Netscape.com (Site du navigateur leader)."]},
+    {"periode": "1995: Commerce et Social", "sites": ["Juillet: Amazon.com (Librairie en ligne).", "Août: Microsoft.com (Lancement IE et Windows 95).", "Septembre: eBay (Vente aux enchères).", "Décembre: Altavista (Moteur de recherche rapide)."]},
+    {"periode": "1996-1997: Multimédia", "sites": ["1996: Hotmail (Mail gratuit) et Internet Archive (Wayback Machine).", "1997: Netflix (Location DVD par courrier) et Google.com (Nom de domaine)."]},
+    {"periode": "1998-1999: Maturité", "sites": ["1998: PayPal (Paiement en ligne) et MSN.com (Portail Microsoft).", "1999: Blogger (Démocratisation des blogs) et Napster (Partage MP3)."]}
+  ],
+  "evolution_structure_et_design": [
+    {"ere": "1991-1993: Texte brut (Read-Only)", "points_cles": ["1991: Pas de mise en page, hyperliens purs.", "1992: Balise <img> créée mais sur une ligne séparée.", "1993: Mosaic permet l'image à côté du texte (Design visuel)."]},
+    {"ere": "1994-1995: Couleurs et Tableaux", "points_cles": ["1994: Création du W3C et des fonds colorés.", "1995: Tableaux HTML détournés pour créer des colonnes.", "Naissance d'Amazon avec ses liens bleus denses."]},
+    {"ere": "1996-1997: Bling-Bling numérique", "points_cles": ["1996: Flash apporte l'animation et le son; balise <blink>.", "1997: Introduction du CSS pour séparer le contenu du style."]},
+    {"ere": "1998-1999: Web moderne et commercial", "points_cles": ["1998: Sobriété de Google (barre de recherche sur fond blanc).", "1999: Blogger lance l'ère du contenu individuel (Blogs)."]}
+  ],
+  "anatomie_site_typique_1999": [
+    {"element": "Navigation", "details": "Barre latérale à gauche."},
+    {"element": "Animations", "details": "GIFs animés (enveloppes, flammes)."},
+    {"element": "Social", "details": "Compteur de visites en bas de page."},
+    {"element": "Technique", "details": "Résolution 800x600 et bannières publicitaires en haut."}
+  ],
+  "paradigmes": [
+    {"version": "Web 1.0", "nom": "Web Statique", "caracteristiques": "Pages HTML fixes, communication à sens unique, pas d'interaction utilisateur, contenu créé par des professionnels."},
+    {"version": "Web 2.0", "nom": "Web Social", "caracteristiques": "Interactivité, réseaux sociaux (Facebook, YT), blogs et forums. L'utilisateur devient contributeur et partage des médias."},
+    {"version": "Web 3.0", "nom": "Web Sémantique", "caracteristiques": "Données liées, intelligence des machines, décentralisation via la blockchain et meilleur contrôle des données personnelles."},
+    {"version": "Web 4.0", "nom": "Web Symbiotique", "caracteristiques": "Convergence physique/numérique, IA omniprésente, Internet des Objets (IoT) et interfaces invisibles ou vocales."}
+  ],
+  "technologies_cles": [
+    {"nom": "HTML/CSS/JS", "role": "Passage du texte brut aux animations et à l'interactivité sophistiquée."},
+    {"nom": "IA & VR", "role": "Révolution de l'expérience utilisateur vers l'immersion et la personnalisation prédictive."},
+    {"nom": "Blockchain", "role": "Sécurisation et transparence des échanges de données sans intermédiaires."}
+  ],
+  "impact_metiers": [
+    {"domaine": "Développement", "info": "Nécessité de maîtriser l'IA et la blockchain."},
+    {"domaine": "Design UX", "info": "Création d'interfaces immersives et naturelles (voix, réalité augmentée)."},
+    {"domaine": "Cybersécurité", "info": "Demande accrue pour protéger les données dans un monde décentralisé."}
+  ],
+  "messagerie": [
+    {"type": "Email", "nom": "Premier email", "annee": 1971, "details": "Envoyé par Ray Tomlinson, invention du @."},
+    {"type": "Email", "nom": "Hotmail", "annee": 1996, "details": "Premier service de messagerie gratuite sur le Web."},
+    {"type": "Chat", "nom": "IRC", "annee": 1988, "details": "Grands-pères des salons de discussion."},
+    {"type": "Chat", "nom": "ICQ", "annee": 1996, "details": "Messagerie avec le célèbre son 'Uh-oh!'."},
+    {"type": "Chat", "nom": "MSN Messenger", "annee": 1999, "details": "Époque des Wizz et des émojis rudimentaires."}
+  ],
+  "dossiers_speciaux": [
+    {"sujet": "Le Bug de l'an 2000", "description": "Fin 1999, panique mondiale sur la gestion des dates par les ordinateurs. Résolu grâce à un travail colossal des ingénieurs."},
+    {"sujet": "La Pizza en ligne", "description": "En 1994, PizzaNet (Pizza Hut) permettait déjà de commander une pizza, l'un des premiers objets vendus sur le Web."},
+    {"sujet": "Note sur les dates", "description": "Plusieurs sites sont nés de projets plus anciens (ex: BackRub en 1996), mais les dates indiquées correspondent à leur nom définitif ou ouverture au public."}
+  ],
+  "anecdotes": [
+    {"sujet": "Minitel/BBS", "info": "Systèmes connectés avant le Web, principalement en texte."},
+    {"sujet": "Al Gore", "info": "A financé l'infrastructure mais n'a pas inventé le réseau."}
+  ],
+"sites_importants_popular_mechanics": [
+  {"id": 1, "nom": "Cern", "annee": 1990, "description": "Le site où tout a commencé le 20 décembre 1990, partagé au public un an plus tard par Tim Berners-Lee."},
+  {"id": 2, "nom": "Aol", "annee": 1993, "description": "Portail d'accueil emblématique renvoyant vers la boîte mail, l'horoscope et les infos du jour après le bruit du modem."},
+  {"id": 3, "nom": "Amazon", "annee": 1994, "description": "L'empire de Jeff Bezos qui, dès 1996, gagnait des millions en vendant exclusivement des livres."},
+  {"id": 4, "nom": "Snopes", "annee": 1994, "description": "Pionnier du fact-checking contre les rumeurs et canulars, très actif sur les théories post-11 septembre."},
+  {"id": 5, "nom": "Yahoo", "annee": 1994, "description": "Initialement un guide d'utilisation du web, il a régné sur la recherche avant l'arrivée de Google."},
+  {"id": 6, "nom": "The Electric Postcard", "annee": 1994, "description": "Service d'envoi d'e-cartes, classé dans le top 10 des sites les plus consultés en 1998."},
+  {"id": 7, "nom": "Salon", "annee": 1995, "description": "L'un des premiers médias pure player, célèbre pour ses tribunes politiques et ses colonnes spécial sexe."},
+  {"id": 8, "nom": "Ebay", "annee": 1995, "description": "Créé par le Français Pierre Omidyar (Auction Web), il a connu un succès fulgurant grâce à la bulle des peluches Beanie Baby."},
+  {"id": 9, "nom": "Match", "annee": 1995, "description": "Pionnier des sites de rencontre dont le fondateur ambitionnait d'apporter plus d'amour à la planète que n'importe qui d'autre."},
+  {"id": 10, "nom": "Suck", "annee": 1995, "description": "Considéré comme l'un des inventeurs du format 'blog' avec ses textes sarcastiques sur la pop culture et la politique."},
+  {"id": 11, "nom": "Craigslist", "annee": 1996, "description": "Simple newsletter devenue géant mondial de la petite annonce, conservant encore aujourd'hui son design brut des années 90."},
+  {"id": 12, "nom": "Hotmail", "annee": 1996, "description": "Premier service à démocratiser l'email gratuit grâce à une signature virale automatique en bas de chaque message."},
+  {"id": 13, "nom": "Hampster Dance", "annee": 1997, "description": "Né d'un défi sur Geocities, ce site de rongeurs dansants est devenu l'un des tout premiers mèmes viraux de l'histoire du web."},
+  {"id": 14, "nom": "WhiteHouse", "annee": 1997, "description": "Site au nom trompeur souvent confondu avec la Maison Blanche (.gov), ayant navigué entre porno, satire et sondages politiques."},
+  {"id": 15, "nom": "Drudge Report", "annee": 1997, "description": "Blog conservateur célèbre pour avoir brisé le silence sur l'affaire Lewinsky avant les grands médias traditionnels."},
+  {"id": 16, "nom": "The Best Page in the Universe", "annee": 1997, "description": "Site satirique culte créé par Maddox, pilier de l'humour brut des débuts du web."},
+  {"id": 17, "nom": "Rotten.com", "annee": 1996, "description": "Site pionnier et controversé spécialisé dans le contenu morbide et les curiosités choquantes."},
+  {"id": 18, "nom": "Slashdot", "annee": 1997, "description": "Site d'actualités technologiques célèbre pour son slogan 'News for Nerds. Stuff that matters'."},
+  {"id": 19, "nom": "Google", "annee": 1998, "description": "Lancement de la version Beta et fondation de l'entreprise qui a révolutionné la recherche web."},
+  {"id": 20, "nom": "Television Without Pity", "annee": 1998, "description": "D'abord nommé Mighty Big TV, ce site a popularisé les récapitulatifs sarcastiques de séries télé."},
+  {"id": 21, "nom": "Blogger", "annee": 1999, "description": "Plateforme qui a permis la démocratisation massive de la création de blogs personnels."},
+  {"id": 22, "nom": "MetaFilter", "annee": 1999, "description": "L'un des premiers blogs communautaires au monde, axé sur le partage de liens et de discussions."},
+  {"id": 23, "nom": "Fark", "annee": 1999, "description": "Site communautaire d'actualités insolites et satiriques connu pour ses titres accrocheurs."},
+  {"id": 24, "nom": "LiveJournal", "annee": 1999, "description": "Plateforme hybride entre blog et réseau social, très populaire auprès des communautés créatives."},
+  {"id": 25, "nom": "Homestar Runner", "annee": 2000, "description": "Site de dessins animés en Flash, emblématique de l'animation web du début des années 2000."},
+  {"id": 26, "nom": "Wikipedia", "annee": 2001, "description": "Lancement de l'encyclopédie libre et collaborative qui a transformé l'accès à la connaissance."},
+  {"id": 27, "nom": "eBaum’s World", "annee": 2001, "description": "Plateforme majeure de partage de contenus viraux, mèmes, vidéos et jeux flash."},
+  {"id": 28, "nom": "The Wayback Machine", "annee": 2001, "description": "Lancement public par Internet Archive permettant de consulter les versions passées des sites web."},
+  {"id": 29, "nom": "4Chan", "annee": 2003, "description": "Imageboard anonyme influent, berceau de nombreux mèmes et de la culture hacktiviste."},
+  {"id": 30, "nom": "MySpace", "annee": 2003, "description": "Premier réseau social à connaître un succès mondial massif, centré sur la musique et les profils personnalisés."},
+  {"id": 31, "nom": "The Pirate Bay", "annee": 2003, "description": "Site de partage de fichiers BitTorrent devenu le symbole de la lutte pour la liberté de partage en ligne."},
+  {"id": 32, "nom": "Gawker", "annee": 2003, "description": "Blog phare spécialisé dans les potins sur les célébrités et les médias new-yorkais."},
+  {"id": 33, "nom": "Flickr", "annee": 2004, "description": "Service pionnier de partage de photos et d'organisation de communautés autour de l'image."},
+  {"id": 34, "nom": "Facebook", "annee": 2004, "description": "Lancé sous le nom TheFacebook par Mark Zuckerberg, initialement réservé aux étudiants d'Harvard."},
+  {"id": 35, "nom": "Oh No They Didn’t", "annee": 2004, "description": "Communauté culte sur LiveJournal dédiée aux potins de stars, précurseur des réseaux sociaux modernes."},
+  {"id": 36, "nom": "YouTube", "annee": 2005, "description": "Première plateforme de partage vidéo grand public, révolutionnant la consommation de médias."},
+  {"id": 37, "nom": "Reddit", "annee": 2005, "description": "Plateforme communautaire de partage et de vote, souvent surnommée 'la page d'accueil d'Internet'."},
+  {"id": 38, "nom": "Etsy", "annee": 2005, "description": "Place de marché dédiée aux produits faits main et au vintage, soutenant les petits créateurs."},
+  {"id": 39, "nom": "Twitter", "annee": 2006, "description": "Service de microblogging qui a redéfini la communication instantanée et l'actualité en temps réel."},
+  {"id": 40, "nom": "BuzzFeed", "annee": 2006, "description": "Média pionnier du contenu viral et des listes, transformant le journalisme numérique."},
+  {"id": 41, "nom": "WikiLeaks", "annee": 2006, "description": "Organisation publiant des documents confidentiels pour dénoncer les abus de pouvoir mondiaux."},
+  {"id": 42, "nom": "Tumblr", "annee": 2007, "description": "Plateforme de microblogging visuelle favorisant les communautés de fans et la culture visuelle."},
+  {"id": 43, "nom": "Pornhub", "annee": 2007, "description": "Géant de l'industrie pour adultes ayant profondément transformé le secteur par le streaming gratuit."},
+  {"id": 44, "nom": "Stack Overflow", "annee": 2008, "description": "Site de questions-réponses devenu la référence incontournable pour les développeurs du monde entier."},
+  {"id": 45, "nom": "Archive of Our Own", "annee": 2008, "description": "Plateforme communautaire de fanfictions gérée par les utilisateurs et préservant la culture fan."},
+  {"id": 46, "nom": "GoFundMe", "annee": 2010, "description": "Plateforme leader de financement participatif pour les causes personnelles et caritatives."},
+  {"id": 47, "nom": "Pinterest", "annee": 2010, "description": "Moteur de découverte visuelle permettant de 'pingler' des idées et inspirations."},
+  {"id": 48, "nom": "Silk Road", "annee": 2011, "description": "Premier marché noir majeur du Dark Web utilisant le Bitcoin avant sa fermeture par le FBI."},
+  {"id": 49, "nom": "Coinbase", "annee": 2012, "description": "Plateforme majeure facilitant l'achat et la vente de cryptomonnaies pour le grand public."},
+  {"id": 50, "nom": "The Athletic", "annee": 2016, "description": "Média sportif sur abonnement ayant prouvé la viabilité du journalisme payant de haute qualité."}
+],
+"histoire_france_web": {
+  "titre": "L'exception française : du Minitel au Web",
+  "dates_cles_France": [
+    {"phase": "Le Minitel (1980-1982)", "evenements": ["1980: Test de l'annuaire électronique à Saint-Malo.", "1981: Test Télétel à Vélizy (banque, train).", "1982: Lancement commercial officiel et distribution gratuite des terminaux par les PTT."]},
+    {"phase": "L'Âge d'Or et Transition (1984-1997)", "evenements": ["1984: Lancement du 3615 (Kiosque) et messageries type 3615 ULLA. .", "1991: Succès massif du 3615 pendant que le Web naît au CERN.", "1993: Apogée du Minitel avec 14 millions d'utilisateurs.", "1994: Fondation de WorldNet (FAI) et ouverture de premier-ministre.fr.", "1997: Lionel Jospin annonce le basculement officiel vers Internet."]},
+    {"phase": "Les Pionniers du Web (1992-1999)", "evenements": ["1992: Premier serveur Web français au CC-IN2P3 (Lyon) et création du réseau Renater.", "1994: Ouverture de premier-ministre.fr et du premier FAI WorldNet.", "1995: Lancement de Wanadoo et arrivée de Libération.fr.", "1996: Naissance de Caramail (messagerie) et Allociné (cinéma).", "1999: Lancement de Free par Xavier Niel (accès sans abonnement)."]},
+    {"phase": "L'Explosion des Startups (1998-1999)", "evenements": ["1998: Lancement de Voila.fr et succès de l'hébergeur Multimania dans le quartier du Sentier.", "1999: Free lance l'accès sans abonnement; création de Cdiscount et LDLC."]},
+    {"phase": "La Fin du Minitel (2012)", "evenements": ["2012 (30 juin): Arrêt définitif du réseau Minitel après 30 ans de service."]}
+  ],
+  "tableau_comparatif": [
+    {"caracteristique": "Vitesse", "minitel": "1,2 kbit/s", "internet": "56 kbit/s (Modem)"},
+    {"caracteristique": "Affichage", "minitel": "Texte et 'pavés' graphiques", "internet": "Images et couleurs"},
+    {"caracteristique": "Facturation", "minitel": "À la minute (cher !)", "internet": "Abonnement ou prix local"},
+    {"caracteristique": "Modele", "minitel": "Fermé (France Télécom)", "internet": "Ouvert (Mondial)"}
+  ],
+  "sites_web_France": [
+    {"categorie": "Pionniers Institutionnels (1992-1994)", "evenements": ["1992: Premier serveur Web français au CC-IN2P3 (Lyon), le 5ème au monde.", "1993: CNRS et INRIA ouvrent leurs premiers sites de recherche.", "1994 (Janvier): Ouverture de premier-ministre.fr par Édouard Balladur."]},
+    {"categorie": "Pionniers Médias et Services (1995-1996)", "evenements": ["1995 (Février): Libération.fr, premier grand quotidien national en ligne.", "1995 (Mai): Lancement de Wanadoo (France Télécom) et portail La Redoute.", "1996 (Juin): Allociné bascule du téléphone vers le Web.", "1996: Lancement de Caramail, messagerie culte des internautes français."]},
+    {"categorie": "Explosion Commerciale (1997-1999)", "evenements": ["1997: Le Monde.fr rejoint le Web massivement.", "1998: Lancement de Voilà.fr, Multimania (pages perso gratuites) et Cdiscount.", "1999: Free.fr lance l'accès sans abonnement, révolutionnant le marché."]}
+  ],
+  "anecdotes_France": [
+    {"sujet": "Signification", "info": "Minitel signifie 'Médium interactif par numérisation d'information téléphonique'."},
+    {"sujet": "PizzaNet", "info": "La France a été l'un des premiers pays à adopter le e-commerce sur les bases de la vente par correspondance."},
+    {"sujet": "E-commerce", "info": "La France a transposé sa forte culture de la vente par correspondance (VPC) directement sur le Web."},
+    {"sujet": "Le cas de 1994", "info": "Il n'existait que quelques dizaines de sites en France, répertoriés dans des annuaires papier comme SVM."},
+    {"sujet": "Jacques Chirac", "info": "En 1997, il qualifiait encore le Web d''outil anglo-saxon' avant le rattrapage rapide via l'ADSL."},
+    {"sujet": "Usage domestique", "info": "Se connecter au Web impliquait de débrancher le téléphone fixe, rendant la ligne occupée pour toute la maison."},
+    {"sujet": "Usage", "info": "Le Minitel est resté populaire très tard grâce à l'annuaire 3611, utilisé par 2 millions de personnes jusqu'en 2012."}
+  ]
+}
+  "conclusion": "C'est un saut dans le passé vertigineux. Entre 1991 et 1999, on est passés d'un projet de laboratoire à une explosion mondiale, du texte brut aux prémices de la vidéo et du commerce en ligne. Le design a radicalement changé en seulement 9 ans, passant d'un document scientifique à un outil commercial complexe."
+}
