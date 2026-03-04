@@ -1,37 +1,29 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 export async function GET() {
   try {
-    // On construit le chemin de manière robuste
-    const filePath = path.join(
-      process.cwd(), 
-      'data', 
-      'mondecategories', 
-      'histoireinternet.json'
-    );
-
-    // On vérifie si le fichier existe physiquement
-    if (!fs.existsSync(filePath)) {
-      console.error(`Fichier non trouvé au chemin : ${filePath}`);
-      return NextResponse.json(
-        { error: "Le fichier de données est introuvable" },
-        { status: 404 }
-      );
-    }
-
-    // On lit le fichier
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    /**
+     * SOLUTION VERCEL : L'import dynamique.
+     * En important le JSON ainsi, Next.js comprend qu'il doit inclure ce fichier 
+     * dans le bundle de déploiement. Plus besoin de s'inquiéter de 'fs' ou de 'path'.
+     * * Le chemin remonte depuis : src/app/api/histoireinternet/route.ts
+     * vers la racine pour atteindre /data/mondecategories/
+     */
+    const histoireModule = await import('../../../../data/mondecategories/histoireinternet.json');
     
-    // On parse le JSON
-    const histoireData = JSON.parse(fileContent);
+    // Les imports de JSON renvoient un objet avec une propriété 'default'
+    const histoireData = histoireModule.default;
 
     return NextResponse.json(histoireData);
+
   } catch (error) {
-    console.error("Erreur API Histoire:", error);
+    console.error("Erreur API Histoire Internet:", error);
+    
     return NextResponse.json(
-      { error: "Impossible de charger les données historiques" },
+      { 
+        error: "Impossible de charger les données historiques",
+        details: error instanceof Error ? error.message : "Erreur inconnue"
+      },
       { status: 500 }
     );
   }
