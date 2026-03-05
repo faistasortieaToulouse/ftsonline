@@ -4,29 +4,30 @@ import path from 'path';
 
 export async function GET() {
   try {
-    // Construction du chemin absolu depuis la racine du projet
-    const filePath = path.join(process.cwd(), 'data', 'mondecategories', 'jsontest.json');
-    
-    // Vérification de l'existence du fichier
-    if (!fs.existsSync(filePath)) {
-      console.error(`[API Error] Fichier introuvable au chemin : ${filePath}`);
-      return NextResponse.json({ error: "Fichier de données manquant" }, { status: 404 });
-    }
+    // On utilise exactement la même méthode que pour tes lacs
+    const filePath = path.join(
+      process.cwd(),
+      "data",
+      "mondecategories",
+      "jsontest.json"
+    );
 
-    // Lecture du contenu texte
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    
-    // Transformation du texte en objet JSON
-    const data = JSON.parse(fileContents);
-    
-    return NextResponse.json(data);
+    if (fs.existsSync(filePath)) {
+      const fileContents = fs.readFileSync(filePath, "utf-8");
+      const data = JSON.parse(fileContents);
+      return NextResponse.json(data);
+    } else {
+      // Debug pour voir où Vercel cherche réellement le fichier
+      console.error("Fichier manquant au chemin :", filePath);
+      return NextResponse.json(
+        { error: "Fichier introuvable", debugPath: filePath },
+        { status: 404 }
+      );
+    }
   } catch (error) {
-    console.error("[API Error] Erreur critique :", error);
+    console.error("Erreur lecture jsontest :", error);
     return NextResponse.json(
-      { 
-        error: "Erreur lors du traitement des données",
-        details: error instanceof Error ? error.message : "Erreur inconnue"
-      }, 
+      { error: "Erreur lors du traitement des données" },
       { status: 500 }
     );
   }
