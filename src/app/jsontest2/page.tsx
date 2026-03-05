@@ -19,7 +19,7 @@ export default function Jsontest2Page() {
 
   useEffect(() => {
     // Appel de l'API espionnage qui contient les anecdotes
-    fetch('/api/espionnage')
+    fetch('/api/jsontest')
       .then(res => {
         if (!res.ok) throw new Error("Erreur lors de la récupération des données");
         return res.json();
