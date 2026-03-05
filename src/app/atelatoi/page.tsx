@@ -1,130 +1,230 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { ArrowLeft, MapPin, Calendar, ExternalLink, Info } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button"; 
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
-// Image de secours si Meetup ne renvoie rien
-const PLACEHOLDER_IMAGE = "https://via.placeholder.com/800x400?text=Evénement+Atélatoi";
+// On garde le même placeholder pour la cohérence
+const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Atélatoi";
 
-export default function TestAtelatoiPage() {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+type MeetupEvent = {
+  title: string;
+  link: string;
+  startDate: Date;          
+  location: string; 
+  description: string;      
+  dateFormatted: string;   
+  fullAddress: string;     
+  image?: string;           
+  categories?: string[];
+};
+
+export default function AtelatoiEventsPage() { 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = useState<MeetupEvent[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<MeetupEvent[]>([]);
+  
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  async function fetchEvents() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // ON APPELLE L'API SPÉCIFIQUE ATELATOI
+      const res = await fetch("/api/atelatoi");
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || `Erreur API: ${res.status}`);
+      }
+
+      const data = await res.json();
+      if (!data.events) return;
+
+      const mapped: MeetupEvent[] = data.events.map((ev: any) => {
+        const dateRaw = ev.startDate ? new Date(ev.startDate) : null;
+        const dateFormatted = dateRaw
+          ? dateRaw.toLocaleString("fr-FR", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "Date non précisée";
+
+        return {
+          title: ev.title || "Événement sans titre",
+          link: ev.link || '#',
+          startDate: dateRaw!,
+          location: ev.location || 'Lieu non spécifié',
+          description: ev.description || '',
+          dateFormatted,
+          fullAddress: ev.fullAddress || ev.location || 'Lieu non spécifié',
+          // L'API renvoie coverImage, on le mappe sur image pour le composant
+          image: ev.coverImage || PLACEHOLDER_IMAGE,
+          categories: ev.categories || [],
+        } as MeetupEvent;
+      });
+
+      setEvents(mapped);
+      setFilteredEvents(mapped);
+
+    } catch (err: any) {
+      setError(err.message || "Erreur lors du chargement des événements Atélatoi.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Filtrage identique à meetup-events
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    const filtered = events.filter(ev =>
+      ev.title.toLowerCase().includes(q) ||
+      ev.description.toLowerCase().includes(q) ||
+      ev.location.toLowerCase().includes(q) ||
+      (ev.dateFormatted.toLowerCase().includes(q))
+    );
+
+    setFilteredEvents(filtered);
+  }, [searchQuery, events]);
 
   useEffect(() => {
-    fetch('/api/atelatoi')
-      .then(res => res.json())
-      .then(json => {
-        setData(json);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Erreur de chargement:", err);
-        setLoading(false);
-      });
+    fetchEvents();
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
-        
-        {/* Navigation */}
-        <Link href="/" className="inline-flex items-center gap-2 text-purple-600 font-bold mb-8 hover:translate-x-1 transition-transform">
-          <ArrowLeft size={20} /> Retour à l'accueil
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
         </Link>
+      </nav>
 
-        {/* Header */}
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Test Filtrage Atelatoi</h1>
-        <p className="text-slate-500 mb-8">Vérification des événements de Bordeaux délocalisés à Toulouse.</p>
+      <h1 className="text-3xl font-bold mb-4">Test Filtrage : Atélatoi Toulouse</h1>
+      
+      <p className="text-muted-foreground mb-6">
+        Affichage des événements du groupe "Atélatoi Bordeaux" qui ont lieu à Toulouse.
+      </p>
 
-        {loading ? (
-          /* Skeleton loader pendant le chargement */
-          <div className="animate-pulse space-y-4">
-            <div className="h-64 bg-slate-200 rounded-3xl w-full"></div>
-            <div className="h-10 bg-slate-200 rounded-xl w-1/2"></div>
-            <div className="h-32 bg-slate-100 rounded-xl w-full"></div>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            
-            {/* Compteur d'événements */}
-            <div className="bg-purple-100 p-4 rounded-xl text-purple-800 font-medium flex items-center gap-2">
-              <Info size={18} />
-              Résultat : {data?.count || 0} événement(s) trouvé(s) pour Toulouse.
-            </div>
+      {/* Barre de recherche */}
+      <input
+        type="text"
+        placeholder="Rechercher dans les événements Atélatoi..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-purple-300"
+      />
 
-            {data?.events?.map((event: any, i: number) => (
-              <div key={i} className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-                
-                {/* 1. PHOTO DE COUVERTURE AVEC FALLBACK */}
-                <div className="relative h-48 md:h-64 w-full bg-slate-200">
-                  <img 
-                    src={event.coverImage || PLACEHOLDER_IMAGE} 
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE;
-                    }}
-                  />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-purple-600 shadow-sm border border-purple-100">
-                    Flux Bordeaux → Toulouse
-                  </div>
-                </div>
+      <div className="flex flex-wrap gap-4 mb-6">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setViewMode("card")}
+            className={`px-4 py-2 rounded font-medium ${viewMode === "card" ? "bg-purple-600 text-white" : "bg-gray-200"}`}
+          >
+            🗂️ Cards
+          </button>
+          <button
+            onClick={() => setViewMode("list")}
+            className={`px-4 py-2 rounded font-medium ${viewMode === "list" ? "bg-purple-600 text-white" : "bg-gray-200"}`}
+          >
+            📋 Liste
+          </button>
+        </div>
 
-                <div className="p-6 md:p-8">
-                  <h2 className="text-2xl font-bold text-slate-800 mb-4">{event.title}</h2>
-                  
-                  {/* Date et Lieu */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="flex items-center gap-3 text-slate-600">
-                      <Calendar size={20} className="text-pink-500 shrink-0" />
-                      <span className="text-sm">
-                        {new Date(event.startDate).toLocaleDateString('fr-FR', { 
-                          weekday: 'long', 
-                          day: 'numeric', 
-                          month: 'long', 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-slate-600">
-                      <MapPin size={20} className="text-pink-500 shrink-0" />
-                      <span className="font-semibold text-sm line-clamp-1">{event.location}</span>
-                    </div>
-                  </div>
-
-                  {/* 2. DESCRIPTION AVEC FORMATAGE */}
-                  <div className="mb-8">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3 border-b pb-2">À propos de l'événement</h3>
-                    <div className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-inner">
-                      {event.description || "Aucune description fournie."}
-                    </div>
-                  </div>
-
-                  {/* Bouton vers Meetup */}
-                  <a 
-                    href={event.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-purple-600 text-white w-full py-4 rounded-2xl font-bold hover:bg-purple-700 transition-all shadow-lg shadow-purple-100 active:scale-[0.98]"
-                  >
-                    Voir l'événement sur Meetup <ExternalLink size={18} />
-                  </a>
-                </div>
-              </div>
-            ))}
-
-            {/* État vide */}
-            {(!data?.events || data.events.length === 0) && (
-              <div className="text-center p-16 bg-white rounded-[2.5rem] border-2 border-dashed border-slate-200 text-slate-400">
-                <p className="text-lg font-medium">Aucun événement trouvé.</p>
-                <p className="text-sm">Le scraper a bien fonctionné, mais aucun événement Atélatoi ne mentionne "Toulouse" actuellement.</p>
-              </div>
-            )}
-          </div>
-        )}
+        <Button onClick={fetchEvents} disabled={loading} variant="outline" className="border-purple-600 text-purple-600 hover:bg-purple-50">
+          {loading ? "Chargement..." : "🔄 Rafraîchir"}
+        </Button>
       </div>
+
+      <p className="mb-4 font-semibold text-purple-800">Événements trouvés : {filteredEvents.length}</p>
+
+      {error && (
+        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
+          <strong>Erreur :</strong> {error}
+        </div>
+      )}
+
+      {filteredEvents.length === 0 && !loading && (
+        <div className="mt-6 text-xl text-gray-500 p-12 border border-dashed rounded-lg text-center bg-white">
+          Aucun événement "Toulouse" trouvé dans le flux Atélatoi.
+        </div>
+      )}
+
+      {/* Rendu des cartes (Card Mode) */}
+      {viewMode === "card" && filteredEvents.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {filteredEvents.map((event, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col border border-gray-100 transition-hover hover:shadow-xl">
+              <div className="relative aspect-[16/9] bg-gray-100">
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
+                />
+              </div>
+              <div className="p-4 flex flex-col flex-1">
+                <h2 className="text-lg font-bold mb-2 text-purple-900 line-clamp-2">{event.title}</h2>
+                <p className="text-sm font-semibold mb-1">📅 {event.dateFormatted}</p>
+                <p className="text-sm text-gray-600 mb-3 italic">📍 {event.location}</p>
+                <p className="text-sm text-gray-700 mb-4 flex-1 line-clamp-3 whitespace-pre-wrap">{event.description}</p>
+                
+                <a
+                  href={event.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-auto block w-full bg-purple-600 text-white text-center py-2 rounded font-bold hover:bg-purple-700 transition"
+                >
+                  Voir sur Meetup ↗
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Rendu liste (List Mode) */}
+      {viewMode === "list" && filteredEvents.length > 0 && (
+        <div className="space-y-4 mt-6">
+          {filteredEvents.map((event, index) => (
+            <div key={index} className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg shadow-sm bg-white items-start sm:items-center">
+              <img
+                src={event.image}
+                alt={event.title}
+                className="w-full sm:w-24 h-32 sm:h-24 object-cover rounded shadow-inner"
+                onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
+              />
+              <div className="flex-1">
+                <h2 className="text-lg font-bold text-purple-900">{event.title}</h2>
+                <p className="text-sm font-medium">{event.dateFormatted} — {event.location}</p>
+                <p className="text-sm text-gray-600 line-clamp-1">{event.description}</p>
+              </div>
+              <a
+                href={event.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-600 font-bold hover:underline"
+              >
+                Voir →
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
