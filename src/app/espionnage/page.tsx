@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import Link from "next/link";
 import { 
   ShieldAlert, 
   History, 
@@ -10,7 +11,8 @@ import {
   Landmark,
   Loader2,
   FileText,
-  Search
+  Search,
+  ArrowLeft
 } from 'lucide-react';
 
 export default function Jsontest2Page() {
@@ -44,6 +46,11 @@ export default function Jsontest2Page() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans pb-20">
       
+      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline mb-6 transition-colors group">
+        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+        Retour à l'accueil
+      </Link>
+            
       {/* HEADER : STYLE DOSSIER SECRET */}
       <header className="bg-red-900/10 border-b border-red-900/30 py-20 px-4 text-center relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/20 via-transparent to-transparent opacity-50"></div>
