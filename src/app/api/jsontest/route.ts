@@ -1,27 +1,27 @@
 import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 export async function GET() {
   try {
-    /**
-     * SOLUTION VERCEL : L'import dynamique.
-     * Le chemin remonte depuis : src/app/api/mondecategories/espionnage/route.ts
-     * (4 niveaux) pour atteindre /data/mondecategories/espionnage.json
-     */
-    const espionnageModule = await import('../../../../../data/mondecategories/jsontest.json');
+    // process.cwd() part de la racine du projet, c'est beaucoup plus propre
+    const filePath = path.join(process.cwd(), 'data/mondecategories/jsontest.json');
     
-    // Les imports de JSON renvoient un objet avec une propriété 'default'
-    const espionnageData = espionnageModule.default;
-
-    return NextResponse.json(espionnageData);
-
+    // Lecture du fichier de manière synchrone
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    
+    // Analyse du JSON et renvoi de la réponse
+    const data = JSON.parse(fileContents);
+    
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Erreur API Espionnage Industriel:", error);
+    console.error("Erreur lors de la lecture du fichier JSON d'espionnage :", error);
     
     return NextResponse.json(
       { 
-        error: "Impossible de charger les données sur l'espionnage", 
+        error: "Erreur lors de la lecture des données d'espionnage",
         details: error instanceof Error ? error.message : "Erreur inconnue"
-      },
+      }, 
       { status: 500 }
     );
   }
