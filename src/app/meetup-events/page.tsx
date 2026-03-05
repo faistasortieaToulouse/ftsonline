@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button"; 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-center"; // Note: vérifie si c'est 'lucide-react' dans ton projet
+import { ArrowLeft } from "lucide-react"; // Note: vérifie si c'est 'lucide-react' dans ton projet
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Meetup";
 
