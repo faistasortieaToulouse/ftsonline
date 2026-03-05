@@ -134,6 +134,57 @@
       ]
     }
   ],  
+  
+  "analyse_du_succes": [
+    "1. L'acquisition: Obtenue par le vol, l'espionnage ou le commerce.",
+    "2. L'assimilation: Capacité à améliorer la technologie, comme l'Égypte avec le char ou la Chine avec le train à grande vitesse.",
+    "3. L'inovation: Innovation pure à partir de la base technique acquise.",
+    "4. Savoir incarné: Dans l'Antiquité, le transfert passait par la capture physique de l'artisan (source vivante du savoir).",
+    "5. Rétro-ingénierie précoce: Rome démontant une galère carthaginoise pour en comprendre l'assemblage standardisé.",
+    "6. Siècles de traduction: Phase où l'Europe a agi comme une éponge pour rattraper 500 ans de retard sur le monde arabe.",
+    "7. Mémoire photographique: Technique de Lowell ou Slater pour contourner l'interdiction britannique de dessiner les plans.",
+    "8. Industrialisation de la copie: Capacité allemande à transformer une invention isolée (colorant) en une hégémonie industrielle mondiale.",
+    "9. Leapfrogging: Sauter des étapes de développement en volant la technologie la plus avancée du moment.",
+    "10. Recrutement de transfuges: Utiliser les talents rejetés par l'adversaire (Orban) pour changer le cours de l'histoire.",
+    "11. Kidnapping technique: Capture physique d'artisans (potiers coréens) pour importer une industrie complète.",
+    "12. Exfiltration de talents: Corrompre des experts protégés (Murano) pour briser un monopole d'État.",
+    "13. Assimilation: La copie échoue sans une base industrielle locale capable de l'améliorer (exemple du Tu-144).",
+    "14. Copier-Coller institutionnel: Gagner un siècle de stabilité en adoptant des codes juridiques déjà éprouvés (Suisse/Italie).",
+    "15. Saut technologique (Leapfrogging): Passer de l'achat de matériel étranger à la production autonome par rétro-ingénierie (Drones)."
+  ],
+  "technologies_clefs_transferees": [
+    "Boussole magnétique: Transmise via les navigateurs arabes puis européens.",
+    "Poudre à canon: Arrivée en Europe au XIIIe siècle via les transferts de savoir-faire mongols.",
+    "Imprimerie à caractères mobiles: Existait en Chine et en Corée bien avant l'invention de Gutenberg."
+  ],
+  "analyse_historique": [
+    "Simplification: Le passage des hiéroglyphes à l'alphabet phénicien est la plus grande optimisation de savoir-faire de l'histoire.",
+    "Conquérir ou être conquis: Dans l'Antiquité, le transfert de savoir-faire passait souvent par la capture physique des savants (esclaves savants).",
+    "Coût de la R&D: L'espionnage permet un saut technologique immédiat sans les coûts de recherche initiaux.",
+    "Absence de brevets: Dans l'Antiquité, le secret était la seule protection; la sortie d'un objet de Chine lançait sa copie mondiale.",
+    "Rééquilibrage permanent: Dès qu'une région prend de l'avance, les autres envoient des espions (prêtres, botanistes).",
+    "Biopiraterie: L'instinct de vol du vivant a radicalement changé les équilibres économiques mondiaux.",
+    "La Cartographie comme arme: Au XVIe siècle, posséder une carte maritime précise équivaut à posséder une arme de destruction massive économique.",
+    "Cycle de domination: La Chine fut le réservoir mondial (An -100 à 1500), puis la cible (1800-1950), avant de redevenir un acteur offensif (depuis 1980).",
+    "Cycle de domination: L'Europe fut une zone de réception (Moyen Âge) avant de devenir une puissance émettrice puis prédatrice.",
+    "Rectificatif: Contrairement aux légendes, les cerises étaient déjà connues des Romains bien avant Marco Polo.",
+    "Révolution financière: Le vol de l'idée du papier-monnaie a permis la création de la monnaie fiduciaire moderne.",
+    "Protectionnisme technologique: L'Angleterre du XIXe interdisait l'exportation de machines, traitant ses secrets comme des armes de guerre.",
+    "Bureau de Commerce: Création par les États d'agences de renseignement technique pour organiser le pillage du savoir-faire étranger.",
+    "Rôle du CNAM: Le Conservatoire National des Arts et Métiers (Napoléon) comme musée de la copie légale des machines étrangères.",
+    "Biopiraterie d'État: Déplacement des centres de production mondiaux (thé, caoutchouc, épices) par le vol de semences.",
+    "Modernisation forcée: L'exemple de Pierre le Grand montre comment l'importation de techniciens étrangers peut transformer une puissance en une génération.",
+    "Écriture comme vecteur: Une fois l'écriture simplifiée (alphabet), elle devient le support de stockage de tous les futurs vols techniques.",
+    "Aspirateur de savoirs: L'Empire ottoman a survécu en recyclant les structures perses et les sciences arabes.",
+    "Centralisation impériale: La conquête ne servait pas qu'à prendre des terres, mais à rapatrier les cerveaux vers la capitale.",
+    "Souveraineté par la technologie: Le cas des drones turcs montre que le copieur devient un leader dès qu'il maîtrise la R&D.",
+    "Souveraineté technologique: Le vol est souvent une réponse au protectionnisme des puissances dominantes (Angleterre XIXe, USA aujourd'hui).",
+    "Révolution Verte Amérindienne: Le vol des semences (maïs, pomme de terre) a sauvé l'Europe de la famine et permis son explosion démographique.",
+    "Cycle immuable: Le volé d'hier (Chine, USA au XIXe) devient le protecteur de brevets d'aujourd'hui.",
+    "Le cycle de l'élève et du maître: Le Japon a copié la Chine, puis l'Occident, avant d'être lui-même copié par la Corée.",
+    "La Technologie comme Survie: Les puissances qui n'ont pas su voler ou innover (Amérindiens, Byzantins) ont disparu."
+  ],
+  
   "anecdotes_celebres": [
     {"sujet": "Le char égyptien", "info": "L'Égypte a bâti sa puissance militaire sur une technologie qu'elle avait initialement subie des envahisseurs Hyksôs."},
     {"sujet": "Les esclaves de Rome", "info": "Rome ne volait pas seulement l'or, mais importait des artisans phéniciens pour maîtriser le soufflage du verre."},
