@@ -66,9 +66,11 @@ export async function GET() {
       { name: "Ancrage", url: "https://www.ancrage.org", status: "✅ Actif", comment: "Mémoire des métissages et des quartiers populaires." },
       { name: "Pyrénées Magazine", url: "https://www.pyrenees-magazine.com", status: "✅ Actif", comment: "Bimensuel dédié à la montagne et au patrimoine." },
       { name: "Le Patrimoine", url: "https://www.editions-du-patrimoine-occitanie.com", status: "✅ Actif", comment: "Revue sur l'histoire et les richesses régionales." },
+      { name: "L'art vues", url: "https://www.lartvues.com", status: "✅ Actif", comment: "L'Art-vues est le magazine culturel en région..." },
       { name: "Radici", url: "https://www.radici-press.net", status: "✅ Actif", comment: "Actualité et culture italo-occitane." },
       { name: "Ramdam", url: "http://www.ramdam-mag.info", status: "✅ Actif", comment: "L'agenda culturel des sorties toulousaines." },
       { name: "L'Exploreur", url: "https://exploreur.univ-toulouse.fr", status: "✅ Actif", comment: "Média de culture scientifique (Université de Toulouse)." },
+      { name: "Sortir Occitanie", url: "https://sortir.eu/region/occitanie", status: "✅ Actif", comment: "Sortir à Toulouse et en Ocitanie." },
       { name: "L'Indic", url: "http://l-indic.fr", status: "🟠 Rare", comment: "Le fanzine dédié au roman noir et au polar." }
     ],
     institutionnel_quartiers: [
