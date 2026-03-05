@@ -4,22 +4,27 @@ import path from 'path';
 
 export async function GET() {
   try {
-    // process.cwd() part de la racine du projet, c'est beaucoup plus propre
-    const filePath = path.join(process.cwd(), 'data/mondecategories/jsontest.json');
+    // Construction du chemin absolu depuis la racine du projet
+    const filePath = path.join(process.cwd(), 'data', 'mondecategories', 'jsontest.json');
     
-    // Lecture du fichier de manière synchrone
+    // Vérification de l'existence du fichier
+    if (!fs.existsSync(filePath)) {
+      console.error(`[API Error] Fichier introuvable au chemin : ${filePath}`);
+      return NextResponse.json({ error: "Fichier de données manquant" }, { status: 404 });
+    }
+
+    // Lecture du contenu texte
     const fileContents = fs.readFileSync(filePath, 'utf8');
     
-    // Analyse du JSON et renvoi de la réponse
+    // Transformation du texte en objet JSON
     const data = JSON.parse(fileContents);
     
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Erreur lors de la lecture du fichier JSON d'espionnage :", error);
-    
+    console.error("[API Error] Erreur critique :", error);
     return NextResponse.json(
       { 
-        error: "Erreur lors de la lecture des données d'espionnage",
+        error: "Erreur lors du traitement des données",
         details: error instanceof Error ? error.message : "Erreur inconnue"
       }, 
       { status: 500 }
