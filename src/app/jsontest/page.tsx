@@ -9,7 +9,7 @@ export default function EspionnagePage() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/mondecategories/jsontest')
+    fetch('/api/jsontest')
       .then(res => res.json())
       .then(json => setData(json));
   }, []);
