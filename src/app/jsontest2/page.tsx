@@ -261,7 +261,65 @@ export default function Jsontest2Page() {
               </table>
             </div>
           </div>
+          
+{/* TABLEAU 3: TRANSFERTS OTTOMANS & TURCS */}
+            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="bg-slate-800/50 p-4 border-b border-slate-700 flex justify-between items-center">
+                <h3 className="text-sm font-black uppercase text-amber-500 tracking-widest">Focus : Transferts Ottomans & Turcs</h3>
+                <span className="text-[10px] bg-amber-500/20 text-amber-500 px-2 py-1 rounded">Géo-Stratégie</span>
+              </div>
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="text-slate-500 border-b border-slate-800 uppercase">
+                    <th className="p-4">Époque</th>
+                    <th className="p-4">Savoir</th>
+                    <th className="p-4">Méthode</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {data.tableau_transferts_ottomans_turcs?.map((row: any, i: number) => (
+                    <tr key={i} className="hover:bg-amber-900/10 transition-colors">
+                      <td className="p-4 font-bold text-slate-300">{row.Epoque}</td>
+                      <td className="p-4">
+                        <div className="text-amber-500 font-medium">{row.Savoir}</div>
+                        <div className="text-[10px] text-slate-500">Source: {row.Donneur}</div>
+                      </td>
+                      <td className="p-4 text-slate-400 italic text-[10px]">{row.Methode}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
+            {/* TABLEAU 4: FLUX MOYEN-ORIENT (MODERNE) */}
+            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="bg-slate-800/50 p-4 border-b border-slate-700 flex justify-between items-center">
+                <h3 className="text-sm font-black uppercase text-blue-500 tracking-widest">Flux Contemporains Moyen-Orient</h3>
+                <span className="text-[10px] bg-blue-500/20 text-blue-500 px-2 py-1 rounded">Top Secret</span>
+              </div>
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="text-slate-500 border-b border-slate-800 uppercase">
+                    <th className="p-4">Acteur</th>
+                    <th className="p-4">Domaine</th>
+                    <th className="p-4">Source / Cible</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {data.tableau_flux_moyen_orient?.map((row: any, i: number) => (
+                    <tr key={i} className="hover:bg-blue-900/10 transition-colors">
+                      <td className="p-4 font-bold text-blue-400">{row.Acteur}</td>
+                      <td className="p-4 text-slate-200 uppercase text-[10px] tracking-tighter">{row.Domaine}</td>
+                      <td className="p-4">
+                        <div className="text-slate-400 text-[10px]">Src: {row.Source}</div>
+                        <div className="text-slate-500 text-[10px]">Dest: {row.Cible}</div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          
           {/* SECTION COMPARATIVE HIER VS AUJOURD'HUI */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 shadow-2xl">
              <h3 className="text-xl font-black uppercase text-slate-100 mb-8 text-center tracking-[0.2em]">Évolution des Modes Opératoires</h3>
