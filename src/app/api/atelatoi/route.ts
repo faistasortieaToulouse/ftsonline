@@ -1,48 +1,54 @@
 import { NextResponse } from 'next/server';
 import ical, { VEvent } from 'ical';
+import * as cheerio from 'cheerio';
+
+// Fonction pour récupérer l'image de couverture
+async function getCoverImage(url: string) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    return $('meta[property="og:image"]').attr('content');
+  } catch { return null; }
+}
 
 export async function GET() {
   try {
     const url = "https://www.meetup.com/atelatoi-des-rencontres-et-discussion-a-bordeaux/events/ical/";
-    const res = await fetch(url, { cache: 'no-store' }); // On force la fraîcheur pour le test
+    const res = await fetch(url, { cache: 'no-store' });
     const icsData = await res.text();
     const calendar = ical.parseICS(icsData);
 
-    const filteredEvents = [];
+    const events = [];
 
     for (const key in calendar) {
       const event = calendar[key] as VEvent;
-      
       if (event.type === 'VEVENT' && event.start) {
         const title = event.summary || "";
         const description = event.description || "";
         const location = event.location || "";
         
-        // --- LOGIQUE DE FILTRAGE AMÉLIORÉE ---
-        // On cherche "TOULOUSE" partout (Titre, Description ou Lieu)
-        const contentToSearch = `${title} ${description} ${location}`.toLowerCase();
-        
-        if (contentToSearch.includes("toulouse")) {
-          filteredEvents.push({
-            title: title,
+        if (`${title} ${description} ${location}`.toLowerCase().includes("toulouse")) {
+          const eventUrl = event.url || `https://www.meetup.com/fr-FR/events/${event.uid?.split('@')[0]}/`;
+          
+          // On récupère l'image (attention, cela ralentit un peu l'API de test)
+          const coverImage = await getCoverImage(eventUrl);
+
+          events.push({
+            title,
+            description, // On ajoute la description ici
             date: event.start,
-            // Si le lieu est vide dans le iCal, on met une valeur par défaut sympa
-            location: location || "Toulouse (Lieu à confirmer dans la description)",
-            link: event.url || `https://www.meetup.com/atelatoi-des-rencontres-et-discussion-a-bordeaux/events/${event.uid?.split('@')[0]}/`
+            location: location || "Toulouse (Lieu dans la description)",
+            link: eventUrl,
+            coverImage // On ajoute l'image ici
           });
         }
       }
     }
 
-    // Tri par date pour être propre
-    filteredEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-    return NextResponse.json({ 
-      source: "Atelatoi Bordeaux", 
-      count: filteredEvents.length,
-      events: filteredEvents 
-    });
+    return NextResponse.json({ events });
   } catch (error) {
-    return NextResponse.json({ error: "Erreur de récupération" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur" }, { status: 500 });
   }
 }
