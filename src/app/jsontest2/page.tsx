@@ -195,6 +195,104 @@ export default function Jsontest2Page() {
           </div>
         </section>
         
+{/* SECTION : TABLEAUX DE SYNTHÈSE ET DUELS */}
+        <section className="space-y-20">
+          <div className="flex items-center gap-4 mb-10">
+            <div className="bg-emerald-700 p-3 rounded-lg shadow-[0_0_15px_rgba(5,150,105,0.4)]">
+              <Landmark className="text-white" size={28} />
+            </div>
+            <div>
+              <h2 className="text-3xl font-black uppercase text-slate-100 tracking-tight">Tableaux de Bord Stratégiques</h2>
+              <p className="text-emerald-500 text-sm font-medium uppercase tracking-widest">Visualisation des flux de puissance</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            
+            {/* TABLEAU 1: SYNTHÈSE 2000 ANS */}
+            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="bg-slate-800/50 p-4 border-b border-slate-700">
+                <h3 className="text-sm font-black uppercase text-emerald-500 tracking-widest">Synthèse 2000 Ans de Flux</h3>
+              </div>
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="text-slate-500 border-b border-slate-800 uppercase">
+                    <th className="p-4">Époque</th>
+                    <th className="p-4">Objet</th>
+                    <th className="p-4">Origine</th>
+                    <th className="p-4">Cible</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {data.tableau_synthese_2000_ans?.map((row: any, i: number) => (
+                    <tr key={i} className="hover:bg-emerald-900/10 transition-colors">
+                      <td className="p-4 font-bold text-slate-300">{row.Epoque}</td>
+                      <td className="p-4 text-emerald-400 font-medium">{row.Objet}</td>
+                      <td className="p-4 text-slate-400">{row.De}</td>
+                      <td className="p-4 text-slate-400 italic">→ {row.Vers}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* TABLEAU 2: DUELS RÉGIONAUX */}
+            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="bg-slate-800/50 p-4 border-b border-slate-700">
+                <h3 className="text-sm font-black uppercase text-red-500 tracking-widest">Duels & Prédations</h3>
+              </div>
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="text-slate-500 border-b border-slate-800 uppercase">
+                    <th className="p-4">Pr prédateur</th>
+                    <th className="p-4">Proie</th>
+                    <th className="p-4">Savoir volé</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {data.tableau_duels_regionaux?.map((row: any, i: number) => (
+                    <tr key={i} className="hover:bg-red-900/10 transition-colors">
+                      <td className="p-4 font-bold text-red-400">{row.Predateur}</td>
+                      <td className="p-4 text-slate-300">{row.Proie}</td>
+                      <td className="p-4 text-slate-500 italic">{row.Savoir}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* SECTION COMPARATIVE HIER VS AUJOURD'HUI */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 shadow-2xl">
+             <h3 className="text-xl font-black uppercase text-slate-100 mb-8 text-center tracking-[0.2em]">Évolution des Modes Opératoires</h3>
+             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {data.tableau_comparatif_hier_vs_aujourdhui?.map((row: any, i: number) => (
+                  <div key={i} className="bg-slate-950/50 border border-slate-800 p-6 rounded-xl hover:border-emerald-500/50 transition-all">
+                    <div className="text-emerald-500 font-black mb-2">{row.Epoque}</div>
+                    <div className="text-slate-200 text-sm font-bold mb-4">{row.Outil}</div>
+                    <div className="space-y-2">
+                      <div className="text-[10px] text-red-500 uppercase font-black">Risque: {row.Risque}</div>
+                      <div className="text-[10px] text-blue-400 uppercase font-black">Vitesse: {row.Vitesse}</div>
+                    </div>
+                  </div>
+                ))}
+             </div>
+          </div>
+
+          {/* PILIERS DE L'INTELLIGENCE ÉCONOMIQUE */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {data.piliers_intelligence_economique?.map((pilier: string, i: number) => {
+              const [title, desc] = pilier.split(':');
+              return (
+                <div key={i} className="bg-emerald-950/20 border border-emerald-900/30 p-4 rounded-xl">
+                  <h4 className="text-emerald-500 font-black text-xs uppercase mb-2">{title}</h4>
+                  <p className="text-[11px] text-slate-400 italic leading-relaxed">{desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+        
         {/* SECTION 2: ANECDOTES CÉLÈBRES (LA GRILLE) */}
         <section className="relative">
           <div className="flex items-center gap-4 mb-10">
