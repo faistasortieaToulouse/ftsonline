@@ -22,8 +22,23 @@
           "Le tour de potier : Invention mésopotamienne dont la technique a mis des siècles à être empruntée et diffusée vers l'Occident.",
           "Alphabet Phénicien : Transfert et simplification des hiéroglyphes égyptiens pour faciliter la circulation du savoir."
         ]
-      }
-    ]
+      },
+    {
+      "secteur": "Métallurgie : Le premier grand secret",
+      "evenements": [
+        "Age du Bronze: La maîtrise du feu et des alliages (cuivre plus étain) était un secret jalousement gardé par les forgerons itinérants.",
+        "Transfert par migration: Les Peuples de la Mer ou les vagues migratoires ont brutalement diffusé les armes en fer, rendant le bronze obsolète.",
+        "La route de l'étain: Nécessité de commercer sur de longues distances, forçant le partage des techniques de navigation et de cartographie mentale."
+      ]
+    }      
+    ],
+  "analyse_du_transfert_primitif": [
+    "Mimétisme social: Dans des sociétés sans écriture, l'observation directe et l'apprentissage par les pairs étaient les seuls vecteurs de copie.",
+    "Troc et Prestige: Posséder un objet lointain (hache en pierre polie, parure en ambre) forçait à essayer de reproduire sa technique localement.",
+    "Savoir-faire sacré: Les techniques (poterie, forge) étaient souvent liées à des rituels, rendant leur vol ou leur don très symbolique."
+      ]
+    }
+  ],
   },
   "conclusion": "L'acquisition n'est rien sans l'assimilation : la puissance réside dans la transformation d'une copie en levier d'innovation."
 }
