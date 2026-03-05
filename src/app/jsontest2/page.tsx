@@ -144,8 +144,57 @@ export default function Jsontest2Page() {
       ))}
     </div>
   </section>
-)}       
+)}  
+        
+{/* SECTION : ANALYSE DU SUCCÈS & TECHNOLOGIES */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Colonne de gauche : Analyse du succès */}
+          <div className="lg:col-span-2 space-y-6">
+            <h2 className="text-2xl font-black uppercase text-blue-500 tracking-widest flex items-center gap-2">
+              <ShieldAlert size={24} /> Matrice du succès
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.analyse_du_succes?.map((item: string, i: number) => (
+                <div key={i} className="bg-slate-900/40 border-l-2 border-blue-600 p-4 text-xs text-slate-400 font-mono">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
 
+          {/* Colonne de droite : Technologies clés */}
+          <div className="bg-blue-900/10 border border-blue-900/30 rounded-3xl p-6">
+            <h3 className="text-xl font-black uppercase text-slate-100 mb-6 flex items-center gap-2">
+              <FlaskConical size={20} className="text-blue-500" /> Flux Critiques
+            </h3>
+            <ul className="space-y-4">
+              {data.technologies_clefs_transferees?.map((tech: string, i: number) => (
+                <li key={i} className="text-sm bg-slate-950/50 p-3 rounded-lg border border-slate-800 text-blue-200 italic">
+                  {tech}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* SECTION : ANALYSE HISTORIQUE GLOBALE */}
+        <section className="bg-slate-900/20 border border-slate-800 rounded-[3rem] p-10">
+          <div className="flex flex-col items-center mb-12">
+            <h2 className="text-3xl font-black uppercase tracking-tighter text-slate-100">Leçons de l'Histoire</h2>
+            <div className="w-24 h-1 bg-red-600 mt-2"></div>
+          </div>
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+            {data.analyse_historique?.map((note: string, i: number) => (
+              <div key={i} className="break-inside-avoid bg-slate-900/60 border border-slate-800 p-6 rounded-2xl hover:bg-slate-800/40 transition-colors">
+                <p className="text-sm leading-relaxed text-slate-300">
+                  <span className="text-red-500 font-black mr-2">#</span>
+                  {note}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+        
         {/* SECTION 2: ANECDOTES CÉLÈBRES (LA GRILLE) */}
         <section className="relative">
           <div className="flex items-center gap-4 mb-10">
