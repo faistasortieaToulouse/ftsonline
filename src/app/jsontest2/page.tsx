@@ -99,6 +99,52 @@ export default function Jsontest2Page() {
             </div>
           </section>
         )}
+        
+{/* SECTION : CHRONOLOGIE HISTOIRE DU TRANSFERT */}
+{data.chronologie_du_transfert && (
+  <section className="relative">
+    <div className="flex items-center gap-4 mb-10">
+      <div className="bg-blue-700 p-3 rounded-lg shadow-[0_0_15px_rgba(29,78,216,0.4)]">
+        <Layers className="text-white" size={28} />
+      </div>
+      <div>
+        <h2 className="text-3xl font-black uppercase text-slate-100 tracking-tight">Chronologie Stratégique</h2>
+        <p className="text-blue-500 text-sm font-medium uppercase tracking-widest">Évolution des méthodes de captation de savoir</p>
+      </div>
+    </div>
+
+    <div className="space-y-12">
+      {data.chronologie_du_transfert.map((item: any, i: number) => (
+        <div key={i} className="relative pl-8 border-l-2 border-slate-800 hover:border-blue-600 transition-colors group">
+          {/* Point sur la timeline */}
+          <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-800 group-hover:bg-blue-600 border-2 border-slate-950 transition-colors"></div>
+          
+          <h3 className="text-xl font-black text-blue-500 uppercase mb-6 tracking-tighter">
+            {item.ere}
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {item.evenements?.map((event: string, idx: number) => {
+              const [title, description] = event.split(':');
+              return (
+                <div key={idx} className="bg-slate-900/30 p-4 rounded-xl border border-slate-800/50 hover:bg-slate-900/60 transition-all">
+                  <p className="text-sm leading-relaxed">
+                    <span className="text-blue-400 font-bold uppercase text-[10px] block mb-1 tracking-widest">
+                      {title}
+                    </span>
+                    <span className="text-slate-400 font-serif italic">
+                      {description}
+                    </span>
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+)}       
 
         {/* SECTION 2: ANECDOTES CÉLÈBRES (LA GRILLE) */}
         <section className="relative">
