@@ -153,7 +153,7 @@ export default function Jsontest2Page() {
   </section>
 )}  
         
-{/* SECTION : ANALYSE DU SUCCÈS & TECHNOLOGIES */}
+        {/* SECTION : ANALYSE DU SUCCÈS & TECHNOLOGIES */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Colonne de gauche : Analyse du succès */}
           <div className="lg:col-span-2 space-y-6">
@@ -202,7 +202,7 @@ export default function Jsontest2Page() {
           </div>
         </section>
         
-{/* SECTION : TABLEAUX DE SYNTHÈSE ET DUELS */}
+        {/* SECTION : TABLEAUX DE SYNTHÈSE ET DUELS */}
         <section className="space-y-20">
           <div className="flex items-center gap-4 mb-10">
             <div className="bg-emerald-700 p-3 rounded-lg shadow-[0_0_15px_rgba(5,150,105,0.4)]">
@@ -269,7 +269,7 @@ export default function Jsontest2Page() {
             </div>
           </div>
           
-{/* TABLEAU 3: TRANSFERTS OTTOMANS & TURCS */}
+            {/* TABLEAU 3: TRANSFERTS OTTOMANS & TURCS */}
             <div className="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden">
               <div className="bg-slate-800/50 p-4 border-b border-slate-700 flex justify-between items-center">
                 <h3 className="text-sm font-black uppercase text-amber-500 tracking-widest">Focus : Transferts Ottomans & Turcs</h3>
