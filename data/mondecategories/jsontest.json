@@ -134,8 +134,7 @@
       ]
     }
   ],  
-  
-  "analyse_du_succes": [
+    "analyse_du_succes": [
     "1. L'acquisition: Obtenue par le vol, l'espionnage ou le commerce.",
     "2. L'assimilation: Capacité à améliorer la technologie, comme l'Égypte avec le char ou la Chine avec le train à grande vitesse.",
     "3. L'inovation: Innovation pure à partir de la base technique acquise.",
@@ -184,8 +183,49 @@
     "Le cycle de l'élève et du maître: Le Japon a copié la Chine, puis l'Occident, avant d'être lui-même copié par la Corée.",
     "La Technologie comme Survie: Les puissances qui n'ont pas su voler ou innover (Amérindiens, Byzantins) ont disparu."
   ],
-  
-  "anecdotes_celebres": [
+    "tableau_synthese_2000_ans": [
+    {"Epoque": "Ier siècle", "Objet": "Verre soufflé", "De": "Phéniciens", "Vers": "Empire Romain"},
+    {"Epoque": "VIIIe siècle", "Objet": "Papier", "De": "Chine", "Vers": "Monde Arabe"},
+    {"Epoque": "XIIe siècle", "Objet": "Chiffres / Zéro", "De": "Inde", "Vers": "Europe (via Arabes)"},
+    {"Epoque": "XVIe siècle", "Objet": "Cartographie", "De": "Portugal", "Vers": "Reste de l'Europe"},
+    {"Epoque": "XVIIe siècle", "Objet": "Quinine", "De": "Amérindiens", "Vers": "Europe"},
+    {"Epoque": "XIXe siècle", "Objet": "Thé", "De": "Chine", "Vers": "Empire Britannique"},
+    {"Epoque": "XXe siècle", "Objet": "Fusées / Atome", "De": "Allemagne", "Vers": "USA / URSS"},
+    {"Epoque": "XXIe siècle", "Objet": "IA / Puces", "De": "USA / Europe", "Vers": "Chine / Monde entier"}
+  ],
+  "tableau_duels_regionaux": [
+    {"Region": "Europe", "Predateur": "France (Colbert)", "Proie": "Venise", "Savoir": "Miroirs et Verre de cristal"},
+    {"Region": "Europe", "Predateur": "Angleterre", "Proie": "France", "Savoir": "Secrets de la soie et dentelle d'Alençon"},
+    {"Region": "Asie", "Predateur": "Japon", "Proie": "Corée", "Savoir": "Porcelaine et Imprimerie"},
+    {"Region": "Asie", "Predateur": "Chine", "Proie": "Japon", "Savoir": "Forge de l'acier (Katana)"},
+    {"Region": "Guerre Mondiale", "Predateur": "USA", "Proie": "Angleterre", "Savoir": "Brevets du Radar après 1945"}
+  ],
+  "tableau_transferts_ottomans_turcs": [
+    {"Epoque": "XVe siècle", "Donneur": "Hongrie / Europe", "Savoir": "Artillerie lourde (Canons)", "Methode": "Recrutement d'ingénieurs"},
+    {"Epoque": "XVIe siècle", "Donneur": "Égypte (Mamelouks)", "Savoir": "Administration et Science", "Methode": "Conquête et déportation"},
+    {"Epoque": "XVIIIe siècle", "Donneur": "France", "Savoir": "Fortifications et Tactique", "Methode": "Conseillers militaires"},
+    {"Epoque": "1920s", "Donneur": "Europe (Suisse/Italie)", "Savoir": "Système juridique et Alphabet", "Methode": "Adoption politique forcée"},
+    {"Epoque": "2020s", "Donneur": "USA / Israël", "Savoir": "Technologie des Drones", "Methode": "Rétro-ingénierie et Indépendance"}
+  ],
+  "tableau_flux_moyen_orient": [
+    {"Acteur": "Pakistan", "Source": "Europe (vol)", "Cible": "Iran, Corée du Nord", "Domaine": "Nucléaire"},
+    {"Acteur": "Iran", "Source": "USA (capture)", "Cible": "Russie, Hezbollah", "Domaine": "Drones et Missiles"},
+    {"Acteur": "Israël", "Source": "USA (coopération)", "Cible": "Monde entier", "Domaine": "Cyber et Défense"},
+    {"Acteur": "Arabie Saoudite", "Source": "Chine / USA", "Cible": "Local (Vision 2030)", "Domaine": "Industrie de défense"}
+  ],
+  "tableau_comparatif_hier_vs_aujourdhui": [
+    {"Epoque": "Antiquité", "Outil": "Capture d'artisans (esclaves)", "Risque": "Mort au combat", "Vitesse": "Des décennies"},
+    {"Epoque": "XVIIIe siècle", "Outil": "Mémoire d'ouvrier, dessins cachés", "Risque": "Pendaison / Prison", "Vitesse": "Quelques années"},
+    {"Epoque": "Années 1960", "Outil": "Microfilm, appareil photo caché", "Risque": "Expulsion / Exécution", "Vitesse": "Quelques mois"},
+    {"Epoque": "2026", "Outil": "Virus informatique (Malware)", "Risque": "Sanctions diplomatiques", "Vitesse": "Quelques secondes"}
+  ],
+  "piliers_intelligence_economique": [
+    "Cyber-espionnage: Aspiration de données distantes (plans, formules, codes sources).",
+    "Brain Drain: Captation du capital humain hautement qualifié pour éviter des décennies de formation.",
+    "Transfert Forcé: Monnayage de l'accès à un marché contre la livraison de secrets industriels.",
+    "Reverse Engineering: Désossage technique de produits concurrents pour annuler l'avantage R&D."
+  ],
+    "anecdotes_celebres": [
     {"sujet": "Le char égyptien", "info": "L'Égypte a bâti sa puissance militaire sur une technologie qu'elle avait initialement subie des envahisseurs Hyksôs."},
     {"sujet": "Les esclaves de Rome", "info": "Rome ne volait pas seulement l'or, mais importait des artisans phéniciens pour maîtriser le soufflage du verre."},
     {"sujet": "Thalès et Pythagore", "info": "Leurs découvertes sont souvent des théorèmes babyloniens et égyptiens qu'ils ont ramenés et théorisés en Grèce."},
