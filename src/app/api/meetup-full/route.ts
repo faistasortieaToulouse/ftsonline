@@ -6,6 +6,7 @@ const API_ROUTES = [
     "meetup-expats",
     "meetup-coloc",
     "meetup-sorties",
+    "atelatoi",
 ];
 
 // 🤘 IMPORTANT : Meetup renvoie du HTML ou bloque → route doit être dynamique
