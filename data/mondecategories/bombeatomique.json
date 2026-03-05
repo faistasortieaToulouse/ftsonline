@@ -77,7 +77,7 @@
     "URSS: Retard technologique comblé par l'infiltration d'espions comme Klaus Fuchs à Los Alamos  au cœur du Projet Manhattan.",
     "Troc Corée du Nord: Échange du savoir d'enrichissement pakistanais contre la technologie des missiles de Pyongyang.",
     "Vente à l'Iran: Khan vend les plans des modèles P1 et P2 à Téhéran, base de leur programme nucléaire actuel.",
-    "Détournement Indien: L'Inde utilise le réacteur civil CIRUS (Canada/USA) pour produire son premier essai 'Bouddha Souriant'."
+    "Détournement Indien: L'Inde utilise le réacteur civil CIRUS (Canada/USA) pour produire son premier essai 'Bouddha Souriant'.",
     "Israël: Stratégie d'innovation locale financée par les USA pour atteindre une supériorité cyber et nucléaire."
   ],
   "le_pacte_secret_france_israel": [
@@ -103,7 +103,7 @@
     "Libye: Abandon complet du programme en 2003 avec remise des centrifugeuses A.Q. Khan aux USA.",
     "Taïwan: Programme secret stoppé net par les USA pour préserver l'équilibre avec la Chine populaire.",
     "Japon: Puissance 'à un tour de tournevis', maîtrisant tout le cycle sans franchir le pas militaire."
-  ]
+  ],
   "etat_des_lieux_mondial_2026": [
     "Puissances Officielles: USA, Russie, Chine, France et Royaume-Uni (membres permanents de l'ONU).",
     "Puissance Non-Dite: Israël (secret de Polichinelle, entre 80 et 200 têtes via l'aide initiale française).",
@@ -125,8 +125,10 @@
     "Sanctions: Utilisation du levier financier international pour bloquer l'importation de composants double usage."
   ],
   "conclusion_anecdotique": "À Farm Hall, les savants nazis capturés ont cru à un bluff pour Hiroshima, tant ils se croyaient en avance.",
+    "notes_finales": {
     "note_v2_atome": "Le IIIe Reich possédait le vecteur (V2) mais n'a jamais réussi à miniaturiser la charge (Bombe).",
     "Reaction en chaine: Les Allemands découvrent, les exilés apportent, les Russes volent, les Pakistanais copient.",
     "Souveraineté: Le savoir nucléaire reste le bouclier ultime, du bâton de bambou des moines au code binaire de Stuxnet.",
     "Personne n'a inventé la bombe seul : c'est un cycle de transferts où le copieur finit par dominer l'inventeur."
+  }
 }
