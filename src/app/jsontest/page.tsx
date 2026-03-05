@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { 
   ShieldAlert, Scroll, History, FlaskConical, Globe, 
-  Binary, Landmark, Swords, Search, BookOpen 
+  Binary, Landmark, Swords, Search, BookOpen, ArrowLeft
 } from 'lucide-react';
 
 export default function EspionnagePage() {
@@ -18,6 +18,12 @@ export default function EspionnagePage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans pb-20">
+      
+      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline mb-6 transition-colors group">
+        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+        Retour à l'accueil
+      </Link>
+      
       {/* HEADER : STYLE DOSSIER SECRET */}
       <header className="bg-red-900/20 border-b border-red-900/50 py-16 px-4 text-center relative overflow-hidden">
         <div className="absolute top-4 right-10 opacity-10 rotate-12">
