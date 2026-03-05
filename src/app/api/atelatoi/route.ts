@@ -2,15 +2,24 @@ import { NextResponse } from 'next/server';
 import ical, { VEvent } from 'ical';
 import * as cheerio from 'cheerio';
 
-// Fonction pour récupérer l'image de couverture
-async function getCoverImage(url: string) {
+type MeetupEventItem = {
+  title: string;
+  link: string;
+  startDate: Date;
+  location: string;
+  fullAddress: string;
+  description: string;
+  coverImage?: string;
+};
+
+async function scrapeImage(url: string) {
   try {
     const res = await fetch(url);
-    if (!res.ok) return null;
+    if (!res.ok) return undefined;
     const html = await res.text();
     const $ = cheerio.load(html);
     return $('meta[property="og:image"]').attr('content');
-  } catch { return null; }
+  } catch { return undefined; }
 }
 
 export async function GET() {
@@ -20,7 +29,7 @@ export async function GET() {
     const icsData = await res.text();
     const calendar = ical.parseICS(icsData);
 
-    const events = [];
+    const filteredEvents: MeetupEventItem[] = [];
 
     for (const key in calendar) {
       const event = calendar[key] as VEvent;
@@ -29,25 +38,27 @@ export async function GET() {
         const description = event.description || "";
         const location = event.location || "";
         
-        if (`${title} ${description} ${location}`.toLowerCase().includes("toulouse")) {
-          const eventUrl = event.url || `https://www.meetup.com/fr-FR/events/${event.uid?.split('@')[0]}/`;
-          
-          // On récupère l'image (attention, cela ralentit un peu l'API de test)
-          const coverImage = await getCoverImage(eventUrl);
+        // Scan global pour trouver Toulouse (Choix B)
+        const searchZone = `${title} ${description} ${location}`.toLowerCase();
+        
+        if (searchZone.includes("toulouse")) {
+          const eventLink = event.url || `https://www.meetup.com/fr-FR/events/${event.uid?.split('@')[0]}/`;
+          const coverImage = await scrapeImage(eventLink);
 
-          events.push({
+          filteredEvents.push({
             title,
-            description, // On ajoute la description ici
-            date: event.start,
-            location: location || "Toulouse (Lieu dans la description)",
-            link: eventUrl,
-            coverImage // On ajoute l'image ici
+            link: eventLink,
+            startDate: new Date(event.start),
+            location: location || "Toulouse",
+            fullAddress: location || "Toulouse (voir description)",
+            description: String(description),
+            coverImage
           });
         }
       }
     }
 
-    return NextResponse.json({ events });
+    return NextResponse.json({ events: filteredEvents, count: filteredEvents.length });
   } catch (error) {
     return NextResponse.json({ error: "Erreur" }, { status: 500 });
   }
