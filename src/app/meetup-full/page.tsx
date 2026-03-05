@@ -41,6 +41,7 @@ export default function MeetupFullPage() {
         "/api/meetup-expats",
         "/api/meetup-coloc",
         "/api/meetup-sorties",
+        "/api/atelatoi",
       ];
 
       const responses = await Promise.all(
