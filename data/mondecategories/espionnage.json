@@ -9,25 +9,25 @@
       "secteur": "Lithique : L'industrie de la pierre",
       "evenements": [
         "Obsidienne: Ce verre volcanique circulait en Méditerranée dès le Néolithique, propageant les techniques de taille du Proche-Orient à l'Europe.",
-        "Silex du Grand-Pressigny: Exportation massive de 'livres de beurre' (grandes lames de silex) à travers l'Europe, signe d'un savoir-faire spécialisé.",
-        "Mimétisme: Les clans voisins copiaient les formes de pointes de flèches les plus efficaces, créant des 'modes' culturelles régionales.",
-        "La Roue: Invention mésopotamienne dont le concept a 'ruisselé' vers l'Europe, révolutionnant le transport néolithique."
+        "Silex du Grand-Pressigny: Exportation massive de livres de beurre (grandes lames de silex) à travers l'Europe, signe d'un savoir-faire spécialisé.",
+        "Mimétisme: Les clans voisins copiaient les formes de pointes de flèches les plus efficaces, créant des modes culturelles régionales.",
+        "La Roue: Invention mésopotamienne dont le concept a ruisselé vers l'Europe, révolutionnant le transport néolithique."
       ]
     },
     {
       "secteur": "Céramique : La révolution du Néolithique",
       "evenements": [
         "Culture Rubanée: Diffusion de la poterie décorée de rubans depuis le Danube, marquant l'expansion des premiers agriculteurs.",
-        "Vase Campaniforme: Véritable 'standard' européen (2500 av. J.-C.), ces vases en forme de cloche témoignent d'un transfert culturel et technique total.",
-        "Le tour de potier: Invention mésopotamienne dont la technique a mis des siècles à être 'empruntée' et diffusée vers l'Occident.",
+        "Vase Campaniforme: Véritable standard européen (2500 av. J.-C.), ces vases en forme de cloche témoignent d'un transfert culturel et technique total.",
+        "Le tour de potier: Invention mésopotamienne dont la technique a mis des siècles à être empruntée et diffusée vers l'Occident.",
         "Alphabet Phénicien: Transfert et simplification des hiéroglyphes égyptiens pour faciliter la circulation du savoir."
       ]
     },
     {
       "secteur": "Métallurgie : Le premier grand secret",
       "evenements": [
-        "Âge du Bronze: La maîtrise du feu et des alliages (cuivre + étain) était un secret jalousement gardé par les forgerons itinérants.",
-        "Transfert par migration: Les 'Peuples de la Mer' ou les vagues migratoires ont brutalement diffusé les armes en fer, rendant le bronze obsolète.",
+        "Age du Bronze: La maîtrise du feu et des alliages (cuivre plus étain) était un secret jalousement gardé par les forgerons itinérants.",
+        "Transfert par migration: Les Peuples de la Mer ou les vagues migratoires ont brutalement diffusé les armes en fer, rendant le bronze obsolète.",
         "La route de l'étain: Nécessité de commercer sur de longues distances, forçant le partage des techniques de navigation et de cartographie mentale."
       ]
     }
@@ -35,7 +35,7 @@
   "analyse_du_transfert_primitif": [
     "Mimétisme social: Dans des sociétés sans écriture, l'observation directe et l'apprentissage par les pairs étaient les seuls vecteurs de copie.",
     "Troc et Prestige: Posséder un objet lointain (hache en pierre polie, parure en ambre) forçait à essayer de reproduire sa technique localement.",
-    "Savoir-faire sacré: Les techniques (poterie, forge) étaient souvent liées à des rituels, rendant leur 'vol' ou leur 'don' très symbolique."
+    "Savoir-faire sacré: Les techniques (poterie, forge) étaient souvent liées à des rituels, rendant leur vol ou leur don très symbolique."
       ]
     }
   ],
@@ -49,7 +49,7 @@
         "Le Fer (1200 av. J.-C.): Après l'effondrement des Hittites, les forgerons dispersent le secret de la métallurgie du fer en Égypte et en Grèce.",
         "Médecine Inde-Grèce: Alexandre le Grand importe des médecins indiens (chirurgie, cataracte) dont les traités influenceront Galien.",
         "Le Chariot de Guerre: Les Hyksôs apportent le char en Égypte; les Égyptiens le copient et l'améliorent pour devenir une superpuissance.",
-        "Mathématiques et Astres: Pythagore et les Grecs théorisent des savoirs (théorème, base 60) 'empruntés' aux Babyloniens et aux Égyptiens.",
+        "Mathématiques et Astres: Pythagore et les Grecs théorisent des savoirs (théorème, base 60) empruntés aux Babyloniens et aux Égyptiens.",
         "Bitume et Étanchéité: Les Phéniciens récupèrent le savoir-faire babylonien du bitume pour rendre leurs trières aptes à la navigation hauturière.",
         "Fonte liquide (IVe s. av. J.-C.): Invention chinoise des hauts-fourneaux permettant le moulage d'outils en série.",
         "La flotte de Rome: Durant la 1ère guerre punique, Rome copie pièce par pièce une galère carthaginoise échouée pour créer sa propre flotte et gagner la guerre.",
@@ -58,7 +58,7 @@
       ]
     },
     {
-      "ere": "2. Le Moyen Âge : Les passeurs de savoir",
+      "ere": "2. Le Moyen Age : Les passeurs de savoir",
       "evenements": [
         "Chiffres Arabes: Récupération du zéro et de la trigonométrie en Inde par les savants arabes, puis transmission à l'Europe.",
         "Chute de Byzance (1453): Fuite des savants grecs vers l'Italie avec leurs manuscrits, déclenchant littéralement la Renaissance.",
@@ -67,7 +67,7 @@
         "Boussole et Gouvernail: Technologies chinoises récupérées via les navigateurs arabes, essentielles aux futures caravelles européennes.",
         "Poudre à canon: La composition chimique fuite vers le monde arabe puis est traduite en latin (Roger Bacon), lançant l'artillerie européenne.",
         "Fonte et Acier: Le savoir-faire des hauts-fourneaux chinois fuite via les Mongols et les Perses le long de la Route de la Soie.",
-        "Médecine (Avicenne): Traduction du 'Canon de la médecine' à Tolède, restant la base des facultés européennes jusqu'au XVIIe siècle.",
+        "Médecine (Avicenne): Traduction du Canon de la médecine à Tolède, restant la base des facultés européennes jusqu'au XVIIe siècle.",
         "Optique (Alhazen): Transfert des théories sur la lumière et la chambre noire, menant à l'invention des lunettes en Italie (XIIIe s.).",
         "Architecture Gothique: Adoption de l'arc brisé, déjà utilisé dans les mosquées abbassides, pour construire des cathédrales plus hautes.",
         "Technologies de l'eau: Copie des Norias syriennes et espagnoles pour l'irrigation et importation de cultures (sucre, coton, épinard).",
@@ -82,7 +82,7 @@
         "Planisphère de Cantino (1502): Vol d'une carte royale portugaise par un espion italien, révélant la route des Indes à toute l'Europe.",
         "Centralisation Ottomane (1517): Déportation massive des savants et manuscrits du Caire vers Istanbul après la conquête de l'Égypte.",
         "La Guerre des Potiers (1592): Le Japon kidnappe des milliers d'artisans coréens pour acquérir le savoir-faire de la porcelaine blanche.",
-        "Cartographie (XVIe s.): Piri Reis dessine sa carte mondiale en compilant des croquis 'volés' à Christophe Colomb via des navires espagnols.",
+        "Cartographie (XVIe s.): Piri Reis dessine sa carte mondiale en compilant des croquis volés à Christophe Colomb via des navires espagnols.",
         "Jan Huygen van Linschoten: Infiltration hollandaise à Goa pour copier les journaux de bord et les routes secrètes des Portugais.",
         "Quinine (XVIIe s.): Transfert du secret amérindien de l'écorce de Quinquina par les Jésuites pour soigner le paludisme.",
         "L'Indigo (XVIIe s.): Capture des techniques de fermentation africaines et indiennes pour l'industrie textile des Caraïbes.",
@@ -95,12 +95,12 @@
         "Conseillers Militaires (XVIIIe s.): Les Ottomans recrutent des officiers français (Baron de Tott) pour trahir les secrets des fortifications Vauban.",
         "Le secret de la Rhubarbe (XVIIIe s.): Biopiraterie de la variété médicinale Rheum palmatum par les Russes et Britanniques pour briser le monopole chinois.",
         "Guerre de la Porcelaine: Fuite du secret du kaolin de Meissen (Saxe) vers Vienne puis Sèvres via l'évasion d'ouvriers spécialisés.",
-        "Gabriel Jars (1764): Ingénieur français infiltrant les mines anglaises pour 'voler' la technologie de la machine de Newcomen.",
+        "Gabriel Jars (1764): Ingénieur français infiltrant les mines anglaises pour voler la technologie de la machine de Newcomen.",
         "William Wilkinson (1782): Consultant anglais recruté par la France pour transférer le savoir-faire de la fonte au coke au Creusot.",
         "Francis Cabot Lowell (1810): Américain à la mémoire photographique mémorisant les métiers à tisser de Manchester pour lancer l'industrie US.",
         "Samuel Slater: Mémorisation illégale des plans des machines textiles britanniques pour les reconstruire aux États-Unis au XIXe siècle.",
         "Le vol du Thé (1848): L'écossais Robert Fortune s'infiltre en Chine déguisé pour voler des plants et les implanter en Inde.",
-        "Mission Iwakura (1871): Le Japon 'choisit' et copie le meilleur de l'Occident (Marine anglaise, Armée prussienne, Droit français).",
+        "Mission Iwakura (1871): Le Japon choisit et copie le meilleur de l'Occident (Marine anglaise, Armée prussienne, Droit français).",
         "Le vol du Caoutchouc (1876): Henry Wickham sort clandestinement 70 000 graines d'hévéa du Brésil pour les plantations britanniques.",
         "Chimie des Colorants: Récupération de la mauvéine anglaise par les Allemands (BASF/Bayer) pour dominer 85% du marché mondial en 1914."
       ]
@@ -125,7 +125,7 @@
         "Guerre des Semi-conducteurs (Aujourd'hui): Bataille mondiale pour le savoir-faire de lithographie EUV (ASML).",
         "Acier de Damas : Un secret perdu car l'Europe n'a jamais pu copier la structure chimique exacte du fer Wootz indien.",
         "Joint-ventures chinoises : L'accès au marché chinois est le prix payé par l'Occident pour livrer ses secrets industriels de pointe.",
-        "Dôme de Fer (2010s): Innovation israélienne financée par les USA, rachetée ensuite par le 'maître' américain.",
+        "Dôme de Fer (2010s): Innovation israélienne financée par les USA, rachetée ensuite par le maître américain.",
         "Rétro-ingénierie Iranienne (2011): Capture du drone furtif US RQ-170 Sentinel pour créer la copie locale Saegheh.",
         "Cyber-espionnage (2020s): Vol des plans du F-35 américain pour concevoir le chasseur furtif chinois J-20.",
         "Drones Bayraktar (2020s): Rétro-ingénierie turque sur les technologies US/Israël et débauchage d'ingénieurs formés au MIT.",
@@ -158,9 +158,9 @@
     "Imprimerie à caractères mobiles: Existait en Chine et en Corée bien avant l'invention de Gutenberg."
   ],
   "analyse_historique": [
-    "Simplification: Le passage des hiéroglyphes à l'alphabet phénicien est la plus grande 'optimisation' de savoir-faire de l'histoire.",
+    "Simplification: Le passage des hiéroglyphes à l'alphabet phénicien est la plus grande optimisation de savoir-faire de l'histoire.",
     "Conquérir ou être conquis: Dans l'Antiquité, le transfert de savoir-faire passait souvent par la capture physique des savants (esclaves savants).",
-    "Coût de la R&D: L'espionnage permet un 'saut technologique' immédiat sans les coûts de recherche initiaux.",
+    "Coût de la R&D: L'espionnage permet un saut technologique immédiat sans les coûts de recherche initiaux.",
     "Absence de brevets: Dans l'Antiquité, le secret était la seule protection; la sortie d'un objet de Chine lançait sa copie mondiale.",
     "Rééquilibrage permanent: Dès qu'une région prend de l'avance, les autres envoient des espions (prêtres, botanistes).",
     "Biopiraterie: L'instinct de vol du vivant a radicalement changé les équilibres économiques mondiaux.",
@@ -177,10 +177,10 @@
     "Écriture comme vecteur: Une fois l'écriture simplifiée (alphabet), elle devient le support de stockage de tous les futurs vols techniques.",
     "Aspirateur de savoirs: L'Empire ottoman a survécu en recyclant les structures perses et les sciences arabes.",
     "Centralisation impériale: La conquête ne servait pas qu'à prendre des terres, mais à rapatrier les cerveaux vers la capitale.",
-    "Souveraineté par la technologie: Le cas des drones turcs montre que le 'copieur' devient un leader dès qu'il maîtrise la R&D.",
+    "Souveraineté par la technologie: Le cas des drones turcs montre que le copieur devient un leader dès qu'il maîtrise la R&D.",
     "Souveraineté technologique: Le vol est souvent une réponse au protectionnisme des puissances dominantes (Angleterre XIXe, USA aujourd'hui).",
     "Révolution Verte Amérindienne: Le vol des semences (maïs, pomme de terre) a sauvé l'Europe de la famine et permis son explosion démographique.",
-    "Cycle immuable: Le 'volé' d'hier (Chine, USA au XIXe) devient le 'protecteur' de brevets d'aujourd'hui.",
+    "Cycle immuable: Le volé d'hier (Chine, USA au XIXe) devient le protecteur de brevets d'aujourd'hui.",
     "Le cycle de l'élève et du maître: Le Japon a copié la Chine, puis l'Occident, avant d'être lui-même copié par la Corée.",
     "La Technologie comme Survie: Les puissances qui n'ont pas su voler ou innover (Amérindiens, Byzantins) ont disparu."
   ],
@@ -228,19 +228,19 @@
   ],
   "anecdotes_celebres": [
     {"sujet": "Le char égyptien", "info": "L'Égypte a bâti sa puissance militaire sur une technologie qu'elle avait initialement subie des envahisseurs Hyksôs."},
-    {"sujet": "Les esclaves de Rome", "info": "Rome ne volait pas seulement l'or, mais 'importait' des artisans phéniciens pour maîtriser le soufflage du verre."},
-    {"sujet": "Thalès et Pythagore", "info": "Leurs 'découvertes' sont souvent des théorèmes babyloniens et égyptiens qu'ils ont ramenés et théorisés en Grèce."},
+    {"sujet": "Les esclaves de Rome", "info": "Rome ne volait pas seulement l'or, mais importait des artisans phéniciens pour maîtriser le soufflage du verre."},
+    {"sujet": "Thalès et Pythagore", "info": "Leurs découvertes sont souvent des théorèmes babyloniens et égyptiens qu'ils ont ramenés et théorisés en Grèce."},
     {"sujet": "Le secret de la soie", "info": "Au VIe siècle, deux moines ont volé des œufs de vers à soie cachés dans des cannes de bambou pour Byzance."},
     {"sujet": "Bataille de Talas", "info": "Le point de bascule où le secret millénaire du papier est passé du monde chinois au monde arabe."},
     {"sujet": "L'hévéa du Brésil", "info": "Henry Wickham a ruiné l'économie brésilienne en volant des graines de caoutchouc pour la Malaisie britannique."},
     {"sujet": "Le gouvernail d'étambot", "info": "Cette invention chinoise a permis aux Européens de diriger des navires assez gros pour traverser l'Atlantique."},
     {"sujet": "Piri Reis", "info": "Sa carte de 1513 prouve que les services de renseignement ottomans opéraient déjà sur les secrets maritimes de Colomb."},
-    {"sujet": "L'Itinerario de Linschoten", "info": "Ce livre, basé sur des données volées aux Portugais, est devenu la 'bible' qui a permis la création de la puissance hollandaise en Asie."},
+    {"sujet": "L'Itinerario de Linschoten", "info": "Ce livre, basé sur des données volées aux Portugais, est devenu la bible qui a permis la création de la puissance hollandaise en Asie."},
     {"sujet": "Pierre Poivre", "info": "Son nom est resté célèbre pour avoir brisé le monopole hollandais sur les épices en risquant sa vie pour des graines de muscade."},
     {"sujet": "La rhubarbe médicinale", "info": "Objet d'une biopiraterie intense au XVIIIe siècle car elle était le purgatif le plus puissant connu."},
     {"sujet": "La Galerie des Glaces", "info": "Symbole de la puissance française, elle est le fruit d'un espionnage industriel réussi contre Venise."},
     {"sujet": "Le Tsar Charpentier", "info": "Pierre le Grand est le seul monarque à s'être déguisé en ouvrier pour voler des techniques de construction navale à l'étranger."},
-    {"sujet": "La Quinine", "info": "Sans ce remède 'emprunté' aux Andes, la colonisation de l'Afrique aurait été freinée par le paludisme."},
+    {"sujet": "La Quinine", "info": "Sans ce remède emprunté aux Andes, la colonisation de l'Afrique aurait été freinée par le paludisme."},
     {"sujet": "La pompe à feu de Chaillot", "info": "Première machine à vapeur française issue de l'espionnage de Gabriel Jars en Angleterre."},
     {"sujet": "L'ouvrier de Meissen", "info": "Le secret de la porcelaine était si bien gardé que les ouvriers étaient enfermés dans un château pour éviter les fuites."},
     {"sujet": "Wernher von Braun", "info": "Le cerveau des fusées V2 nazies est devenu le père du programme Apollo américain grâce à l'Opération Paperclip."},
@@ -254,11 +254,12 @@
     {"sujet": "L'ordinateur ES EVM", "info": "L'URSS a cloné IBM, mais a perdu son génie propre, se condamnant à être toujours en retard d'un train."},
     {"sujet": "Joint-ventures chinoises", "info": "L'accès au marché chinois est le prix payé par l'Occident pour livrer ses secrets industriels de pointe."},
     {"sujet": "ASML", "info": "La machine la plus complexe du monde est aujourd'hui le secret le mieux gardé de la planète, protégé par des embargos d'État."},
-    {"sujet": "Le secret du Radar", "info": "Même entre alliés (USA/UK), le partage de savoir-faire se termine souvent par un vol de brevets."},
+    {"sujet": "Le secret du Radar", "info": "Même entre alliés (USA et UK), le partage de savoir-faire se termine souvent par un vol de brevets."},
     {"sujet": "Le J-20 Chinois", "info": "Considéré comme un héritier technique du F-35 suite à des intrusions informatiques majeures."}
   ],
   "conclusion": "L'acquisition n'est rien sans l'assimilation : la puissance réside dans la transformation d'une copie en levier d'innovation."
 
 }
+
 
 
