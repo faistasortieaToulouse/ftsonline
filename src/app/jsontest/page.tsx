@@ -239,6 +239,66 @@ export default function JsonTestPage() {
         </div>
       </section>
 
+      {/* 12. Les Échecs et Renoncements */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-zinc-700">
+          <span className="text-zinc-500">🏳️</span> Échecs et Renoncements
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {data?.les_echecs_et_renoncements && data.les_echecs_et_renoncements.map((item: string, i: number) => (
+            <div key={i} className="p-3 bg-zinc-50 border border-zinc-200 rounded text-sm text-zinc-600 italic">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 13. État des Lieux Mondial 2026 */}
+      <section className="mb-10 p-6 bg-red-900 text-white rounded-2xl shadow-xl">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <span className="text-red-400">🌐</span> État des Lieux Mondial 2026
+        </h2>
+        <div className="space-y-4">
+          {data?.etat_des_lieux_mondial_2026 && data.etat_des_lieux_mondial_2026.map((item: string, i: number) => (
+            <div key={i} className="border-b border-red-800 pb-2 last:border-0 text-sm sm:text-base opacity-90 hover:opacity-100 transition-opacity">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 14. Analyse du Savoir-Faire */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 text-indigo-900 border-l-4 border-indigo-600 pl-4">
+          🧠 Analyse du Savoir-Faire
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {data?.analyse_du_savoir_faire && data.analyse_du_savoir_faire.map((item: string, i: number) => {
+            const [label, text] = item.split(': ');
+            return (
+              <div key={i} className="p-4 bg-indigo-50/30 rounded-lg border border-indigo-100">
+                <span className="font-bold text-indigo-800 block mb-1 uppercase text-xs">{label}</span>
+                <p className="text-gray-700 text-sm">{text}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 15. Méthodes de Blocage Modernes */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-orange-900">
+          <span className="text-orange-600">🛡️</span> Méthodes de Blocage Modernes
+        </h2>
+        <div className="space-y-4">
+          {data?.methodes_de_blocage_modernes && data.methodes_de_blocage_modernes.map((item: string, i: number) => (
+            <div key={i} className="p-4 bg-orange-50 border-l-4 border-orange-500 rounded-r-lg font-medium text-orange-950 shadow-sm">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="bg-zinc-900 text-yellow-500 p-8 rounded-2xl mb-12 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-10">
           <span className="text-6xl font-black italic">!</span>
