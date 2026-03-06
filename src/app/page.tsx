@@ -1179,50 +1179,53 @@ useEffect(() => {
 return sections.map((sec, idx) => {
   const isOpen = openMenu === idx;
 
-  return (
-    <div key={idx} className="relative menu-container">
-      {/* Bouton de déclenchement */}
-      <button 
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation(); // Empêche le clic de se propager à la fenêtre
-          setOpenMenu(isOpen ? null : idx);
-        }}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm outline-none ${
-          isOpen ? 'bg-purple-600 text-white' : 'bg-white/80 text-purple-700 hover:bg-purple-100'
-        }`}
-      >
-        {sec.label}
-        <ChevronDown className={`w-4 h-4 opacity-50 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
+            return (
+              <div key={idx} className="relative menu-container">
+                {/* Bouton de déclenchement */}
+                <button 
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Empêche le clic de se propager à la fenêtre
+                    setOpenMenu(isOpen ? null : idx);
+                  }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm outline-none ${
+                    isOpen ? 'bg-purple-600 text-white' : 'bg-white/80 text-purple-700 hover:bg-purple-100'
+                  }`}
+                >
+                  {sec.label}
+                  <ChevronDown className={`w-4 h-4 opacity-50 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                </button>
 
-      {/* Menu (Affiché uniquement si isOpen est vrai) */}
-      {isOpen && (
-        <div 
-          onClick={(e) => e.stopPropagation()} // Empêche de fermer si on clique DANS le menu
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-50 p-4 animate-in fade-in zoom-in duration-150"
-        >
-          <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
-            {sec.label} du {jourMois}
-          </div>
-          <ul className="max-h-60 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-purple-200 pr-2">
-            {sec.data && sec.data.length > 0 ? (
-              sec.data.map((text: string, i: number) => (
-                <li key={i} className="text-base text-slate-700 leading-relaxed list-none pl-0 border-b border-slate-50 last:border-0 pb-2">
-                  • {text}
-                </li>
-              ))
-            ) : (
-              <li className="text-sm text-gray-400 italic text-center py-2">Aucune donnée</li>
-            )}
-          </ul>
-          {/* Petite flèche en bas */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
-        </div>
-      )}
+                {/* Menu (Affiché uniquement si isOpen est vrai) */}
+                {isOpen && (
+                  <div 
+                    onClick={(e) => e.stopPropagation()} // Empêche de fermer si on clique DANS le menu
+                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-50 p-4 animate-in fade-in zoom-in duration-150"
+                  >
+                    <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
+                      {sec.label} du {jourMois}
+                    </div>
+                    <ul className="max-h-60 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-purple-200 pr-2">
+                      {sec.data && sec.data.length > 0 ? (
+                        sec.data.map((text: string, i: number) => (
+                          <li key={i} className="text-base text-slate-700 leading-relaxed list-none pl-0 border-b border-slate-50 last:border-0 pb-2">
+                            • {text}
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-sm text-gray-400 italic text-center py-2">Aucune donnée</li>
+                      )}
+                    </ul>
+                    {/* Petite flèche en bas */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
+                  </div>
+                )}
+              </div>
+            );
+          });
+        })()}
+      </div>
     </div>
-  );
-});
 
     {/* Ligne 6 : ÉPHÉMÉRIDES ASTRONOMIQUES */}
     <div className="bg-blue-600 text-yellow-400 border-t border-purple-200 py-3 px-6">
