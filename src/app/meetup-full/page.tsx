@@ -38,9 +38,6 @@ export default function MeetupFullPage() {
     try {
       const endpoints = [
         "/api/meetup-events",
-        "/api/meetup-expats",
-        "/api/meetup-coloc",
-        "/api/meetup-sorties",
         "/api/atelatoi",
       ];
 
