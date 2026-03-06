@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import ical from 'ical';
 
-// --- Configuration des Flux iCalendar (Nettoyée des doublons) ---
+// --- Configuration des Flux ---
 const ICAL_GROUPS: string[][] = [
   // Lot 1
   [
@@ -73,56 +73,56 @@ const ICAL_GROUPS: string[][] = [
   ],
   // Lot 6
   [
-    "https://www.meetup.com/femmes-sensibles-solidaires-toulouse/events/ical/",
-    "https://www.meetup.com/myapero-toulouse/events/ical/",
-    "https://www.meetup.com/conscience-spiritualite-toulouse/events/ical/",
-    "https://www.meetup.com/happy-nouvelle-vie/events/ical/",
-    "https://www.meetup.com/malaia-collective-yoga-movement-intentional-living/events/ical/",
-    "https://www.meetup.com/pages-n-pals/events/ical/",
-    "https://www.meetup.com/cercle-de-femme-et-art-therapie-toulouse/events/ical/"
+    "https://www.meetup.com/fr-FR/femmes-sensibles-solidaires-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/myapero-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/conscience-spiritualite-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/happy-nouvelle-vie/events/ical/",
+    "https://www.meetup.com/fr-FR/malaia-collective-yoga-movement-intentional-living/events/ical/",
+    "https://www.meetup.com/fr-FR/pages-n-pals/events/ical/",
+    "https://www.meetup.com/fr-FR/cercle-de-femme-et-art-therapie-toulouse/events/ical/"
   ],
   // Lot 7
   [
-    "https://www.meetup.com/star-wars-imperial-assault-in-toulouse/events/ical/",
-    "https://www.meetup.com/toulouse-women-personal-development-meetup-group/events/ical/",
-    "https://www.meetup.com/bring-me-the-horizon-occitanie/events/ical/",
-    "https://www.meetup.com/les-grognards-de-la-marne/events/ical/",
-    "https://www.meetup.com/scene-ouverte-chant-piano-guitare/events/ical/"
+    "https://www.meetup.com/fr-FR/star-wars-imperial-assault-in-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/toulouse-women-personal-development-meetup-group/events/ical/",
+    "https://www.meetup.com/fr-FR/bring-me-the-horizon-occitanie/events/ical/",
+    "https://www.meetup.com/fr-FR/les-grognards-de-la-marne/events/ical/",
+    "https://www.meetup.com/fr-FR/scene-ouverte-chant-piano-guitare/events/ical/"
   ]
 ];
+
+// Nettoie l'URL pour éviter les doublons de langue et de slash
+const normalizeUrl = (url: string) => {
+  return url
+    .replace(/https:\/\/www\.meetup\.com\/(?:[a-z]{2}-[A-Z]{2}\/)?/, 'https://www.meetup.com/')
+    .split('?')[0] // Supprime les paramètres de suivi
+    .replace(/\/$/, ''); // Supprime le slash final
+};
 
 async function scrapeEventData(url: string) {
   try {
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' },
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36' },
       next: { revalidate: 3600 }
     });
     if (!res.ok) return {};
     const html = await res.text();
     const $ = cheerio.load(html);
     
-    // Tentative 1: Balises Meta OG
     let coverImage = $('meta[property="og:image"]').attr('content');
     let fullAddress: string | undefined;
 
-    // Tentative 2: JSON-LD (Données structurées)
     $('script[type="application/ld+json"]').each((_, elem) => {
       try {
         const data = JSON.parse($(elem).html() || '');
         const event = Array.isArray(data) ? data.find(i => i['@type'] === 'Event') : data;
-        
         if (event && event['@type'] === 'Event') {
-          if (!coverImage && event.image) {
-            coverImage = Array.isArray(event.image) ? event.image[0] : event.image;
-          }
+          if (!coverImage && event.image) coverImage = Array.isArray(event.image) ? event.image[0] : event.image;
           const addr = event.location?.address;
-          if (addr?.streetAddress) {
-            fullAddress = `${addr.streetAddress}, ${addr.addressLocality || ''}`.trim().replace(/,$/, '');
-          }
+          if (addr?.streetAddress) fullAddress = `${addr.streetAddress}, ${addr.addressLocality || ''}`.trim();
         }
       } catch {}
     });
-
     return { coverImage, fullAddress };
   } catch { return {}; }
 }
@@ -133,33 +133,48 @@ async function fetchLot(lot: string[]) {
     return ical.parseICS(await res.text());
   }));
 
-  const events: any[] = [];
+  const rawEvents: any[] = [];
   allCalendars.forEach(result => {
     if (result.status === 'fulfilled') {
       const calendar = result.value;
       for (const key in calendar) {
         const event = calendar[key];
-        if (event.type === 'VEVENT' && event.start) events.push(event);
+        if (event.type === 'VEVENT' && event.start) rawEvents.push(event);
       }
     }
   });
 
-  return await Promise.all(events.map(async e => {
-    let url = typeof e.url === "string" ? e.url : e.url?.val;
-    // Reconstruction d'URL si manquante
-    if (!url && e.uid) url = `https://www.meetup.com/events/${e.uid.split('@')[0]}/`;
+  // --- ÉTAPE 1 : Dédoublonnage AVANT le scraping ---
+  const uniqueEventsMap = new Map();
+  rawEvents.forEach(e => {
+    const title = (e.summary || "").trim().toLowerCase();
+    const date = e.start.toISOString();
+    const key = `${title}-${date}`; // Clé unique par titre + date
+
+    if (!uniqueEventsMap.has(key)) {
+      uniqueEventsMap.set(key, e);
+    }
+  });
+
+  const uniqueEvents = Array.from(uniqueEventsMap.values());
+
+  // --- ÉTAPE 2 : Scraping des données uniquement pour les uniques ---
+  return await Promise.all(uniqueEvents.map(async e => {
+    let rawUrl = typeof e.url === "string" ? e.url : e.url?.val;
+    if (!rawUrl && e.uid) rawUrl = `https://www.meetup.com/events/${e.uid.split('@')[0]}/`;
     
+    const url = rawUrl ? normalizeUrl(rawUrl) : "";
     const extra = url ? await scrapeEventData(url) : {};
     const finalAddress = (e.location || extra.fullAddress || "Lieu non spécifié").trim();
 
     return {
       title: e.summary || "Événement sans titre",
-      link: url || "",
+      link: url,
       startDate: e.start.toISOString(),
       location: finalAddress.split(',')[0],
       fullAddress: finalAddress,
       description: String(e.description || "").replace(/\\n/g, '\n'),
-      coverImage: extra.coverImage,
+      coverImage: extra.coverImage || null,
     };
   }));
 }
@@ -173,20 +188,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ events: [], nextLot: null });
     }
 
-    const rawEvents = await fetchLot(ICAL_GROUPS[lotIndex]);
-
-    // Dédoublonnage par lien URL (clé la plus fiable)
-    const uniqueMap = new Map();
-    rawEvents.forEach(ev => {
-      if (ev.link && !uniqueMap.has(ev.link)) {
-        uniqueMap.set(ev.link, ev);
-      }
-    });
+    const events = await fetchLot(ICAL_GROUPS[lotIndex]);
 
     const now = new Date();
-    const endFilter = new Date(now.getTime() + 31 * 86400000);
+    const endFilter = new Date(now.getTime() + 31 * 86400000); // 31 jours
     
-    const filtered = Array.from(uniqueMap.values())
+    const filtered = events
       .filter(e => {
         const d = new Date(e.startDate);
         return d >= now && d < endFilter;
