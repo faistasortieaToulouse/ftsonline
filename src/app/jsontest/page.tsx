@@ -126,11 +126,11 @@ export default function JsonTestPage() {
         </div>
       </section>
 
-      {/* 4. Operation Epsilon */}
+{/* 4. Operation Epsilon */}
       <section className="mb-10 p-6 bg-zinc-100 rounded-lg border-l-4 border-zinc-800">
         <h2 className="text-2xl font-bold mb-4 text-zinc-900">🕵️ Opération Epsilon (Farm Hall)</h2>
         <div className="space-y-3">
-          {data.operation_epsilon_farm_hall?.map((item: string, i: number) => (
+          {data.operation_epsilon_farm_hall && data.operation_epsilon_farm_hall.map((item: string, i: number) => (
             <p key={i} className="text-sm italic text-zinc-700">"{item}"</p>
           ))}
         </div>
@@ -142,8 +142,8 @@ export default function JsonTestPage() {
           <span className="text-red-600">💥</span> Dénouement 1945
         </h2>
         <div className="space-y-4">
-          {data.denouement_1945?.map((item: string, i: number) => (
-            <div key={i} className="p-4 bg-red-50 border border-red-100 rounded-lg font-medium text-red-900">
+          {data.denouement_1945 && data.denouement_1945.map((item: string, i: number) => (
+            <div key={i} className="p-4 bg-red-50 border border-red-100 rounded-lg font-medium text-red-900 shadow-sm">
               {item}
             </div>
           ))}
@@ -152,12 +152,14 @@ export default function JsonTestPage() {
 
       {/* 6. Synthèse Stratégique */}
       <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {data.synthese_strategique?.map((item: string, i: number) => {
-          const [pays, texte] = item.split(': ');
+        {data.synthese_strategique && data.synthese_strategique.map((item: string, i: number) => {
+          // Sécurisation au cas où il n'y aurait pas de ":"
+          const [pays, ...rest] = item.split(': ');
+          const texte = rest.join(': '); 
           return (
-            <div key={i} className="p-5 border rounded-xl shadow-sm bg-white">
-              <h3 className="font-black text-lg mb-2 underline decoration-red-500">{pays}</h3>
-              <p className="text-gray-600 text-sm">{texte}</p>
+            <div key={i} className="p-5 border rounded-xl shadow-sm bg-white hover:border-red-300 transition-colors">
+              <h3 className="font-black text-lg mb-2 underline decoration-red-500 text-gray-800">{pays}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{texte}</p>
             </div>
           );
         })}
@@ -169,10 +171,11 @@ export default function JsonTestPage() {
           <span className="text-4xl">🇫🇷</span> Le Cas de la France
         </h2>
         <div className="grid grid-cols-1 gap-4">
-          {data.le_cas_particulier_de_la_france?.map((item: string, i: number) => (
-            <div key={i} className="flex gap-4 items-center border-b border-blue-800 pb-4 last:border-0">
-              <span className="text-blue-400 font-mono font-bold">{1939 + (i * 3)}...</span> 
-              <p className="text-blue-50 text-sm leading-relaxed">{item}</p>
+          {data.le_cas_particulier_de_la_france && data.le_cas_particulier_de_la_france.map((item: string, i: number) => (
+            <div key={i} className="flex gap-4 items-start border-b border-blue-800 pb-4 last:border-0">
+              {/* On enlève la logique de calcul de date car elle ne correspondait pas aux vraies dates du texte */}
+              <div className="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0" />
+              <p className="text-blue-50 text-sm sm:text-base leading-relaxed">{item}</p>
             </div>
           ))}
         </div>
