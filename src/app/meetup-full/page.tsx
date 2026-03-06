@@ -15,6 +15,7 @@ type MeetupEvent = {
   description: string;
   fullAddress: string;
   image?: string;
+  coverImage?: string; // Ajouté pour la compatibilité avec Atélatoi
 };
 
 export default function MeetupFullPage() {
@@ -148,12 +149,15 @@ export default function MeetupFullPage() {
                 weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit"
             });
 
+            // Priorité à image, puis coverImage, puis placeholder
+            const eventImg = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
+
             return viewMode === "card" ? (
               /* Vue Carte */
-              <div key={`${ev.link}-${index}`} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div key={`${ev.link || index}-${index}`} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden">
                   <img 
-                    src={ev.image || PLACEHOLDER_IMAGE} 
+                    src={eventImg} 
                     alt={ev.title} 
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
@@ -184,9 +188,9 @@ export default function MeetupFullPage() {
               </div>
             ) : (
               /* Vue Liste (Vignette) */
-              <div key={`${ev.link}-${index}`} className="group flex flex-col sm:flex-row gap-4 p-4 bg-white border border-gray-100 rounded-2xl hover:border-red-200 hover:shadow-md transition-all items-center shadow-sm">
+              <div key={`${ev.link || index}-${index}`} className="group flex flex-col sm:flex-row gap-4 p-4 bg-white border border-gray-100 rounded-2xl hover:border-red-200 hover:shadow-md transition-all items-center shadow-sm">
                 <img 
-                  src={ev.image || PLACEHOLDER_IMAGE} 
+                  src={eventImg} 
                   className="w-full sm:w-24 h-40 sm:h-24 rounded-xl object-cover shrink-0 bg-gray-50" 
                   alt="" 
                   onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
