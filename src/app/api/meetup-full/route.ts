@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
         let currentLot = 0;
         let hasNextLot = true;
 
-        // 1. Récupération exhaustive
-        while (hasNextLot && currentLot < 20) { 
+        // 1. Récupération exhaustive de tous les lots
+        while (hasNextLot && currentLot < 25) { // Sécurité augmentée à 25 lots
             const res = await fetch(`${BASE_URL}/api/meetup-events?lot=${currentLot}`, {
                 cache: 'no-store'
             });
@@ -26,7 +26,8 @@ export async function GET(request: NextRequest) {
                 allEvents = [...allEvents, ...data.events];
             }
 
-            if (data.nextLot !== null && data.nextLot !== undefined) {
+            // Gestion sécurisée de la suite des lots
+            if (data.nextLot !== null && data.nextLot !== undefined && data.nextLot > currentLot) {
                 currentLot = data.nextLot;
             } else {
                 hasNextLot = false;
@@ -36,6 +37,7 @@ export async function GET(request: NextRequest) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        // 2. Dédoublonnage par URL (Le lien est l'identifiant le plus fiable)
         const uniqueMap = new Map<string, any>();
 
         allEvents.forEach(ev => {
@@ -43,6 +45,7 @@ export async function GET(request: NextRequest) {
             let d = rawDate ? new Date(rawDate) : null;
             if (!d || isNaN(d.getTime())) return;
 
+            // Correction des dates passées vers aujourd'hui
             if (d < today) {
                 d = new Date(today.getFullYear(), today.getMonth(), today.getDate(), d.getHours(), d.getMinutes());
             }
@@ -50,15 +53,18 @@ export async function GET(request: NextRequest) {
             const eventImage = ev.coverImage || ev.image;
             const hasRealImage = eventImage && eventImage.startsWith('http') && !eventImage.includes('placeholder');
 
-            // CLÉ ROBUSTE : On combine le titre normalisé et la date courte (YYYY-MM-DD)
-            // Cela permet de garder Atelatoi même si l'URL est différente mais le titre unique.
-            const dateKey = d.toISOString().split('T')[0];
-            const titleKey = (ev.title || "").toLowerCase().trim();
-            const key = `${titleKey}-${dateKey}`;
+            /**
+             * LA CLÉ : On utilise l'URL (ev.link). 
+             * Si Atélatoi a un lien unique, il ne sera plus écrasé par un autre événement.
+             * Si pas de lien, on crée une clé de secours Titre + Timestamp.
+             */
+            const key = ev.link || `${(ev.title || "").toLowerCase().trim()}-${d.getTime()}`;
 
             const existing = uniqueMap.get(key);
             
-            // On garde si nouveau OU si la nouvelle version apporte une image
+            // On garde si :
+            // - C'est un nouvel événement
+            // - OU si l'existant n'avait pas d'image et que celui-ci en a une
             if (!existing || (!existing.hasImage && hasRealImage)) {
                 uniqueMap.set(key, {
                     ...ev,
@@ -70,6 +76,7 @@ export async function GET(request: NextRequest) {
             }
         });
 
+        // 3. Tri chronologique final
         const unifiedEvents = Array.from(uniqueMap.values()).sort((a, b) => {
             return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
         });
@@ -81,7 +88,7 @@ export async function GET(request: NextRequest) {
 
     } catch (err: any) {
         return NextResponse.json(
-            { events: [], error: err.message || "Erreur" },
+            { events: [], error: err.message || "Erreur lors de l'agrégation" },
             { status: 500 }
         );
     }
