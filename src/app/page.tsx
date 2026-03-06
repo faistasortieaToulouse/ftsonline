@@ -1162,36 +1162,84 @@ useEffect(() => {
 
           return sections.map((sec, idx) => (
             <div key={idx} className="relative group">
-            <button 
-              tabIndex={0}
-              className="flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-purple-600 hover:text-white text-purple-700 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm focus:outline-none focus:pointer-events-none"
-            >
-              {sec.label}
-              <ChevronDown className="w-4 h-4 opacity-50 transition-transform group-focus-within:rotate-180" />
-            </button>
+<details className="relative group">
+  {/* Le bouton devient un <summary> (le déclencheur natif) */}
+  <summary className="list-none cursor-pointer flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-purple-600 hover:text-white text-purple-700 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm outline-none">
+    {sec.label}
+    <ChevronDown className="w-4 h-4 opacity-50 transition-transform group-open:rotate-180" />
+  </summary>
 
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl opacity-0 invisible scale-95 pointer-events-none group-focus:opacity-100 group-focus:visible group-focus:scale-100 group-focus:pointer-events-auto transition-all duration-200 z-50 p-4">
-                <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
-                  {sec.label} du {jourMois}
-                </div>
-                <ul className="max-h-60 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-purple-200 pr-2">
-                  {sec.data && sec.data.length > 0 ? (
-                    sec.data.map((text: string, i: number) => (
-                      <li key={i} className="text-base text-slate-700 leading-relaxed list-none pl-0 border-b border-slate-50 last:border-0 pb-2">
-                        • {text}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-sm text-gray-400 italic text-center py-2">Aucune donnée pour aujourd'hui</li>
-                  )}
-                </ul>
-                <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
-              </div>
+{/* Ligne 5 : MENUS DÉROULANTS */}
+<div className="bg-white/40 border-t border-purple-200 py-3 px-6">
+  <div className="flex flex-wrap justify-center gap-3">
+    <span className="text-sm font-bold text-purple-900/60 uppercase tracking-wider mr-2 self-center">
+      Célébrations :
+    </span>
+
+    {(() => {
+      const jourMois = heure.toLocaleDateString("fr-FR", { day: "numeric", month: "long" }).toLowerCase();
+      
+      const sections = [
+        { 
+          label: "Nationales", 
+          data: (() => {
+            const specific = annuellesData.find(d => d.date.toLowerCase().trim() === jourMois);
+            if (specific) return specific.details;
+            const generales = annuellesData.find(d => d.date === "Internationales et nationales");
+            return generales ? generales.details : [];
+          })()
+        },
+        { label: "Religieuses", data: religieusesData.find(d => d.date.toLowerCase() === jourMois)?.celebrations },
+        { label: "Saints", data: saintsData.find(d => d.date.toLowerCase() === jourMois)?.saints },
+        { label: "Bienheureux", data: bienheureuxData.find(d => d.date_standard.toLowerCase() === jourMois)?.personnalites },
+        { label: "Orthodoxes", data: orthodoxesData.find(d => d.date_propre.toLowerCase() === jourMois)?.saints },
+        { label: "Prénoms", data: prenomsData.find(d => d.date.toLowerCase() === jourMois)?.prenoms },
+      ];
+
+      return sections.map((sec, idx) => (
+        <details key={idx} className="relative group list-none">
+          {/* LE BOUTON (SUMMARY) */}
+          <summary className="list-none cursor-pointer flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-purple-600 hover:text-white text-purple-700 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm outline-none">
+            {sec.label}
+            <ChevronDown className="w-4 h-4 opacity-50 transition-transform group-open:rotate-180" />
+          </summary>
+
+          {/* LE MENU DÉROULANT (DIV) */}
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-50 p-4">
+            <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
+              {sec.label} du {jourMois}
             </div>
-          ));
-        })()}
-      </div>
-    </div>
+            
+            <ul className="max-h-60 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-purple-200 pr-2">
+              {sec.data && sec.data.length > 0 ? (
+                sec.data.map((text, i) => (
+                  <li key={i} className="text-base text-slate-700 leading-relaxed list-none pl-0 border-b border-slate-50 last:border-0 pb-2">
+                    • {text}
+                  </li>
+                ))
+              ) : (
+                <li className="text-sm text-gray-400 italic text-center py-2">Aucune donnée pour aujourd'hui</li>
+              )}
+            </ul>
+
+            {/* Flèche décorative sous le menu */}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
+
+            {/* ZONE DE FERMETURE : Ferme le menu si on clique n'importe où ailleurs */}
+            <div 
+              className="fixed inset-0 z-[-1] cursor-default bg-transparent" 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.currentTarget.closest('details').removeAttribute('open');
+              }}
+            ></div>
+          </div>
+        </details>
+      ));
+    })()}
+  </div>
+</div>
 
     {/* Ligne 6 : ÉPHÉMÉRIDES ASTRONOMIQUES */}
     <div className="bg-blue-600 text-yellow-400 border-t border-purple-200 py-3 px-6">
