@@ -130,11 +130,9 @@ export default function JsonTestPage() {
       <section className="mb-10 p-6 bg-zinc-100 rounded-lg border-l-4 border-zinc-800">
         <h2 className="text-2xl font-bold mb-4 text-zinc-900">🕵️ Opération Epsilon (Farm Hall)</h2>
         <div className="space-y-3">
-          {Array.isArray(data?.operation_epsilon_farm_hall) ? (
-            data.operation_epsilon_farm_hall.map((item: string, i: number) => (
-              <p key={i} className="text-sm italic text-zinc-700">"{item}"</p>
-            ))
-          )}
+          {data?.operation_epsilon_farm_hall && data.operation_epsilon_farm_hall.map((item: string, i: number) => (
+            <p key={i} className="text-sm italic text-zinc-700">"{item}"</p>
+          ))}
         </div>
       </section>
 
