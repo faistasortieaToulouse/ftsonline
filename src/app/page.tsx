@@ -119,9 +119,6 @@ const totalArticles =
     }
   };
 
-// --- PLIER DEPLIER MENU DEROULANT ---
-const [openMenu, setOpenMenu] = useState(null);
-
 // --- DONNÉES DES CATÉGORIES ---
 const categories = [
   { title: "Agenda des événements à Toulouse", href: "/agendatoulouse", icon: Calendar, isAgenda: true },
@@ -680,6 +677,9 @@ export default function HomePage() {
     soir: { temp: "--", cond: "--", vent: "--" }
   });
 
+// --- PLIER DEPLIER MENU DEROULANT ---
+const [openMenu, setOpenMenu] = useState(null);
+	
 // --- AJOUT : État pour les statistiques annuelles ---
   const [annuelData, setAnnuelData] = useState<any>(null);
 
