@@ -13,11 +13,10 @@ export async function GET(request: NextRequest) {
         let currentLot = 0;
         let hasNextLot = true;
 
-        // 1. Boucle pour récupérer la TOTALITÉ des événements par lots
-        // On s'arrête si hasNextLot est null ou si on dépasse 10 lots (sécurité)
-        while (hasNextLot && currentLot < 10) {
+        // 1. Récupération de TOUS les lots (jusqu'à épuisement pour avoir les 86+)
+        while (hasNextLot && currentLot < 15) { // Sécurité à 15 lots
             const res = await fetch(`${BASE_URL}/api/meetup-events?lot=${currentLot}`, {
-                next: { revalidate: 3600 }
+                cache: 'no-store' // On évite le cache ici pour être sûr d'avoir les derniers lots
             });
             
             if (!res.ok) break;
@@ -37,7 +36,7 @@ export async function GET(request: NextRequest) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // 2. Traitement et Dédoublonnage intelligent
+        // 2. Traitement et Dédoublonnage par URL (Le plus précis)
         const uniqueMap = new Map<string, any>();
 
         allEvents.forEach(ev => {
@@ -46,7 +45,7 @@ export async function GET(request: NextRequest) {
 
             if (!d || isNaN(d.getTime())) return;
 
-            // Correction date passée -> aujourd'hui
+            // Ta logique de correction de date
             if (d < today) {
                 d = new Date(
                     today.getFullYear(),
@@ -57,29 +56,35 @@ export async function GET(request: NextRequest) {
                 );
             }
 
-            // Normalisation de l'image (priorité aux vraies images sur les placeholders)
             const eventImage = ev.coverImage || ev.image;
-            const hasRealImage = eventImage && !eventImage.includes('placeholder');
+            // Vérification si l'image est valide (pas un placeholder vide)
+            const hasRealImage = eventImage && 
+                                 eventImage.startsWith('http') && 
+                                 !eventImage.includes('placeholder');
 
-            // Clé : Titre + Date (YYYY-MM-DD)
-            const dateKey = d.toISOString().split("T")[0];
-            const titleKey = (ev.title || "no-title").toLowerCase().trim();
-            const key = `${titleKey}-${dateKey}`;
+            /**
+             * LA CLÉ : On utilise l'URL (ev.link). 
+             * C'est le seul identifiant vraiment unique entre Atélatoi et Meetup.
+             */
+            const key = ev.link || `${(ev.title || "").toLowerCase()}-${d.getTime()}`;
 
             const existing = uniqueMap.get(key);
             
-            // On garde si nouveau OU si l'existant n'a pas d'image et le nouveau en a une
-            if (!existing || (!existing.image && hasRealImage)) {
+            // On garde si :
+            // - C'est nouveau
+            // - OU si l'existant n'a pas d'image et que cette version en a une
+            if (!existing || (!existing.hasImage && hasRealImage)) {
                 uniqueMap.set(key, {
                     ...ev,
                     startDate: d.toISOString(),
                     image: eventImage,
+                    hasImage: hasRealImage, // On stocke l'info pour la comparaison
                     fullAddress: ev.fullAddress || ev.location || "Toulouse"
                 });
             }
         });
 
-        // 3. Tri final
+        // 3. Tri chronologique final
         const unifiedEvents = Array.from(uniqueMap.values()).sort((a, b) => {
             return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
         });
