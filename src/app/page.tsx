@@ -1161,13 +1161,28 @@ useEffect(() => {
           ];
 
 return sections.map((sec, idx) => (
-            <details key={idx} className="relative group list-none">
-              <summary className="list-none cursor-pointer flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-purple-600 hover:text-white text-purple-700 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm outline-none">
+            <div key={idx} className="relative group">
+              {/* Le bouton déclencheur */}
+              <button 
+                className="flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-purple-600 hover:text-white text-purple-700 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+                onClick={(e) => {
+                  const menu = e.currentTarget.nextElementSibling;
+                  menu.classList.toggle('hidden');
+                }}
+                onBlur={(e) => {
+                  // Ferme le menu après un léger délai pour permettre le clic interne
+                  setTimeout(() => {
+                    const menu = e.target.nextElementSibling;
+                    if (menu) menu.classList.add('hidden');
+                  }, 150);
+                }}
+              >
                 {sec.label}
-                <ChevronDown className="w-4 h-4 opacity-50 transition-transform group-open:rotate-180" />
-              </summary>
+                <ChevronDown className="w-4 h-4 opacity-50" />
+              </button>
 
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-50 p-4">
+              {/* Le menu : on utilise 'hidden' par défaut au lieu de opacity/invisible */}
+              <div className="hidden absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-50 p-4">
                 <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
                   {sec.label} du {jourMois}
                 </div>
@@ -1183,17 +1198,8 @@ return sections.map((sec, idx) => (
                   )}
                 </ul>
                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
-                
-                {/* Overlay invisible pour fermer au clic ailleurs */}
-                <div 
-                  className="fixed inset-0 z-[-1] cursor-default bg-transparent" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.currentTarget.closest('details')?.removeAttribute('open');
-                  }}
-                ></div>
               </div>
-            </details>
+            </div>
           ));
         })()}
       </div>
