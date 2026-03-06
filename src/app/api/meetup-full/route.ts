@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
         let currentLot = 0;
         let hasNextLot = true;
 
-        // 1. Récupération exhaustive de tous les lots
-        while (hasNextLot && currentLot < 25) { // Sécurité augmentée à 25 lots
+        // 1. Récupération des lots Meetup classiques
+        while (hasNextLot && currentLot < 25) {
             const res = await fetch(`${BASE_URL}/api/meetup-events?lot=${currentLot}`, {
                 cache: 'no-store'
             });
@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
                 allEvents = [...allEvents, ...data.events];
             }
 
-            // Gestion sécurisée de la suite des lots
             if (data.nextLot !== null && data.nextLot !== undefined && data.nextLot > currentLot) {
                 currentLot = data.nextLot;
             } else {
@@ -34,10 +33,23 @@ export async function GET(request: NextRequest) {
             }
         }
 
+        // 2. Récupération spécifique d'Atelatoi (ton 86ème élément)
+        try {
+            const atelatoiRes = await fetch(`${BASE_URL}/api/atelatoi`, { cache: 'no-store' });
+            if (atelatoiRes.ok) {
+                const atelatoiData = await atelatoiRes.json();
+                if (atelatoiData.events && atelatoiData.events.length > 0) {
+                    allEvents = [...allEvents, ...atelatoiData.events];
+                }
+            }
+        } catch (e) {
+            console.error("Erreur lors de la récupération d'Atelatoi:", e);
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // 2. Dédoublonnage par URL (Le lien est l'identifiant le plus fiable)
+        // 3. Dédoublonnage et Unification
         const uniqueMap = new Map<string, any>();
 
         allEvents.forEach(ev => {
@@ -53,18 +65,11 @@ export async function GET(request: NextRequest) {
             const eventImage = ev.coverImage || ev.image;
             const hasRealImage = eventImage && eventImage.startsWith('http') && !eventImage.includes('placeholder');
 
-            /**
-             * LA CLÉ : On utilise l'URL (ev.link). 
-             * Si Atélatoi a un lien unique, il ne sera plus écrasé par un autre événement.
-             * Si pas de lien, on crée une clé de secours Titre + Timestamp.
-             */
+            // Utilisation du lien (URL) comme identifiant unique
             const key = ev.link || `${(ev.title || "").toLowerCase().trim()}-${d.getTime()}`;
 
             const existing = uniqueMap.get(key);
             
-            // On garde si :
-            // - C'est un nouvel événement
-            // - OU si l'existant n'avait pas d'image et que celui-ci en a une
             if (!existing || (!existing.hasImage && hasRealImage)) {
                 uniqueMap.set(key, {
                     ...ev,
@@ -76,7 +81,7 @@ export async function GET(request: NextRequest) {
             }
         });
 
-        // 3. Tri chronologique final
+        // 4. Tri chronologique
         const unifiedEvents = Array.from(uniqueMap.values()).sort((a, b) => {
             return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
         });
