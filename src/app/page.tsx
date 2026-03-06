@@ -782,17 +782,20 @@ const iconeLumiere = estEnBaisse ? "📉" : "📈";
   const ascendant = getAscendant(heure);
 	
 useEffect(() => {
-  const handleClickDehors = (e: MouseEvent) => {
-    // Si on clique sur quelque chose qui n'est pas un bouton de menu, on ferme
-    if (!(e.target as Element).closest('.menu-container')) {
-      setOpenMenu(null);
+  const handleClickInterieurOuExterieur = (e: MouseEvent) => {
+    // On cherche si le clic a eu lieu à l'intérieur d'un composant 'menu-item'
+    const cible = e.target as HTMLElement;
+    if (!cible.closest('.menu-item')) {
+      setOpenMenu(null); // On ferme tout si on clique ailleurs
     }
   };
-  if (openMenu !== null) {
-    window.addEventListener('click', handleClickDehors);
-  }
-  return () => window.removeEventListener('click', handleClickDehors);
-}, [openMenu]);
+  // On écoute le 'mousedown' (plus réactif que 'click' sur ordi)
+  document.addEventListener('mousedown', handleClickInterieurOuExterieur);
+  // Nettoyage quand on quitte la page
+  return () => {
+    document.removeEventListener('mousedown', handleClickInterieurOuExterieur);
+  };
+}, []);
 	
 useEffect(() => {
   // 1. Gestion de l'horloge
@@ -1177,38 +1180,30 @@ useEffect(() => {
           ];
 
 return sections.map((sec, idx) => {
-  const isOpen = openMenu === idx;
+            const isOpen = openMenu === idx;
 
             return (
-              <div key={idx} className="relative menu-container">
-                {/* Bouton de déclenchement */}
+              <div key={idx} className="relative menu-item"> {/* CLASSE CRUCIALE ICI */}
                 <button 
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Empêche le clic de se propager à la fenêtre
-                    setOpenMenu(isOpen ? null : idx);
-                  }}
+                  onClick={() => setOpenMenu(isOpen ? null : idx)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm outline-none ${
                     isOpen ? 'bg-purple-600 text-white' : 'bg-white/80 text-purple-700 hover:bg-purple-100'
                   }`}
                 >
                   {sec.label}
-                  <ChevronDown className={`w-4 h-4 opacity-50 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {/* Menu (Affiché uniquement si isOpen est vrai) */}
                 {isOpen && (
-                  <div 
-                    onClick={(e) => e.stopPropagation()} // Empêche de fermer si on clique DANS le menu
-                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-50 p-4 animate-in fade-in zoom-in duration-150"
-                  >
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-[100] p-4 animate-in fade-in zoom-in duration-150">
                     <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
                       {sec.label} du {jourMois}
                     </div>
-                    <ul className="max-h-60 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-purple-200 pr-2">
+                    <ul className="max-h-60 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-purple-200">
                       {sec.data && sec.data.length > 0 ? (
                         sec.data.map((text: string, i: number) => (
-                          <li key={i} className="text-base text-slate-700 leading-relaxed list-none pl-0 border-b border-slate-50 last:border-0 pb-2">
+                          <li key={i} className="text-base text-slate-700 leading-relaxed border-b border-slate-50 last:border-0 pb-2">
                             • {text}
                           </li>
                         ))
@@ -1216,7 +1211,7 @@ return sections.map((sec, idx) => {
                         <li className="text-sm text-gray-400 italic text-center py-2">Aucune donnée</li>
                       )}
                     </ul>
-                    {/* Petite flèche en bas */}
+                    {/* Flèche décorative */}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
                   </div>
                 )}
