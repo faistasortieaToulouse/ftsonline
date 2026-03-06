@@ -94,16 +94,16 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/star-wars-imperial-assault-in-toulouse/events/ical/",
     "https://www.meetup.com/toulouse-women-personal-development-meetup-group/events/ical/",
     "https://www.meetup.com/bring-me-the-horizon-occitanie/events/ical/",
-    "https://www.meetup.com/fr-fr/bring-me-the-horizon-occitanie/events/ical/",
-    "https://www.meetup.com/fr-fr/les-grognards-de-la-marne/events/ical/"
+    "https://www.meetup.com/les-grognards-de-la-marne/events/ical/",
+    "https://www.meetup.com/scene-ouverte-chant-piano-guitare/events/ical/"
     ]
 ];
 
-// --- Types de données ---
+// --- Types ---
 type MeetupEventItem = {
   title: string;
   link: string;
-  startDate: Date;
+  startDate: string;
   location: string;
   fullAddress: string;
   description: string;
@@ -113,110 +113,112 @@ type MeetupEventItem = {
 // --- Scraping ---
 async function scrapeEventData(url: string): Promise<{ coverImage?: string; fullAddress?: string }> {
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { next: { revalidate: 3600 } });
     if (!res.ok) return {};
     const html = await res.text();
     const $ = cheerio.load(html);
-
     const ogImage = $('meta[property="og:image"]').attr('content');
     let fullAddress: string | undefined;
 
     $('script[type="application/ld+json"]').each((_, elem) => {
       try {
-        const json = $(elem).html();
-        if (!json) return;
-        const data = JSON.parse(json);
-        if (data['@type'] === 'Event' || data['@type'] === 'FoodEvent') {
+        const data = JSON.parse($(elem).html() || '');
+        if (data['@type'] === 'Event') {
           const addr = data.location?.address;
           if (addr?.streetAddress) {
             fullAddress = `${addr.streetAddress}, ${addr.addressLocality || ''}`.trim().replace(/,$/, '');
-            return false;
           }
         }
       } catch {}
     });
-
     return { coverImage: ogImage, fullAddress };
   } catch { return {}; }
 }
 
-// --- Fonction de récupération d’un lot ---
+// --- Fetcher un Lot ---
 async function fetchLot(lot: string[]): Promise<MeetupEventItem[]> {
-  const allCalendars = await Promise.all(lot.map(async url => {
-    const res = await fetch(url);
-    const data = await res.text();
-    return ical.parseICS(data);
+  const allCalendars = await Promise.allSettled(lot.map(async url => {
+    const res = await fetch(url, { next: { revalidate: 3600 } });
+    return ical.parseICS(await res.text());
   }));
 
   const uniqueMap = new Map<string, VEvent>();
-  for (const calendar of allCalendars) {
-    for (const key in calendar) {
-      const event = calendar[key] as VEvent;
-      if (event.type === 'VEVENT' && event.start) {
-        const id = event.uid || event.summary + event.start.toISOString();
-        uniqueMap.set(id, event);
+  allCalendars.forEach(result => {
+    if (result.status === 'fulfilled') {
+      const calendar = result.value;
+      for (const key in calendar) {
+        const event = calendar[key] as VEvent;
+        if (event.type === 'VEVENT' && event.start) {
+          const id = event.uid || (event.summary + event.start.toISOString());
+          uniqueMap.set(id, event);
+        }
       }
     }
-  }
+  });
 
   const events = Array.from(uniqueMap.values());
-
-  const processed = await Promise.all(events.map(async e => {
-    let url: string | undefined;
-    if (typeof e.url === "string" && e.url.startsWith("http")) url = e.url;
-    else if (typeof e.url === "object" && e.url?.val?.startsWith("http")) url = e.url.val;
-    else url = e.uid ? `https://www.meetup.com/fr-FR/events/${e.uid}/` : undefined;
-
+  return await Promise.all(events.map(async e => {
+    let url = typeof e.url === "string" ? e.url : (e.url as any)?.val;
+    if (!url && e.uid) url = `https://www.meetup.com/fr-FR/events/${e.uid}/`;
+    
     const extra = url ? await scrapeEventData(url) : {};
-
-    const icalAddress = (e.location || '').trim();
-    const jsonAddress = extra.fullAddress || '';
-    const finalAddress = icalAddress || jsonAddress || "Lieu non spécifié";
+    const finalAddress = (e.location || extra.fullAddress || "Lieu non spécifié").trim();
 
     return {
       title: e.summary || "Événement sans titre",
       link: url || "",
-      startDate: new Date(e.start),
-      location: e.location?.split(",")[0] || finalAddress,
+      startDate: e.start.toISOString(),
+      location: finalAddress.split(',')[0],
       fullAddress: finalAddress,
-      description: String(e.description || "Pas de description"),
+      description: String(e.description || ""),
       coverImage: extra.coverImage,
-    } as MeetupEventItem;
+    };
   }));
-
-  return processed;
 }
 
-// --- Cache global en mémoire ---
-let CACHE: MeetupEventItem[] = [];
-
 // --- Route API ---
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const lotParam = searchParams.get('lot');
+  const getAll = searchParams.get('all') === 'true';
+
   try {
+    let finalEvents: MeetupEventItem[] = [];
+    let nextLot: number | null = null;
+
+    if (getAll) {
+      // Pour meetup-full : on récupère tout (lent mais complet)
+      const allResults = await Promise.all(ICAL_GROUPS.map(lot => fetchLot(lot)));
+      finalEvents = allResults.flat();
+    } else {
+      // Pour Solution B : on récupère lot par lot
+      const index = parseInt(lotParam || '0');
+      if (index >= 0 && index < ICAL_GROUPS.length) {
+        finalEvents = await fetchLot(ICAL_GROUPS[index]);
+        nextLot = index + 1 < ICAL_GROUPS.length ? index + 1 : null;
+      }
+    }
+
+    // Filtrage dates futures + tri
     const now = new Date();
+    const endFilter = new Date(now.getTime() + 31 * 86400000);
+    
+    const filtered = finalEvents
+      .filter(e => {
+        const d = new Date(e.startDate);
+        return d >= now && d < endFilter;
+      })
+      .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
-    // --- Lot 1 : immédiat et en parallèle ---
-    const lot1Events = await fetchLot(ICAL_GROUPS[0]);
-    CACHE = lot1Events;
-
-    // --- Lots 2 à 5 : chargement progressif toutes les 10 minutes ---
-    ICAL_GROUPS.slice(1).forEach((lot, index) => {
-      setTimeout(async () => {
-        const lotEvents = await fetchLot(lot);
-        CACHE = [...CACHE, ...lotEvents];
-        console.log(`Lot ${index + 2} rafraîchi avec ${lotEvents.length} événements.`);
-      }, (index + 1) * 10 * 60 * 1000); // 10 minutes
+    return NextResponse.json({ 
+      events: filtered, 
+      nextLot, 
+      totalLots: ICAL_GROUPS.length 
+    }, {
+      headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600' }
     });
 
-    // --- Filtrage 31 jours à venir ---
-    const endFilter = new Date(now.getTime() + 31 * 86400000);
-    const filtered = CACHE.filter(e => e.startDate >= now && e.startDate < endFilter);
-    filtered.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
-
-    const headers = { 'Cache-Control': `public, s-maxage=3600, stale-while-revalidate=3600` };
-
-    return NextResponse.json({ events: filtered, totalEvents: filtered.length }, { status: 200, headers });
   } catch (err) {
-    return NextResponse.json({ error: "Erreur lors de la récupération des événements" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur", events: [] }, { status: 500 });
   }
 }
