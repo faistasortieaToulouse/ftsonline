@@ -57,6 +57,44 @@
     "Souveraineté gaullienne: En 1958, De Gaulle lance l'autonomie totale (uranium du Limousin et usine de Marcoule).",
     "Gerboise Bleue: En 1960, l'explosion dans le désert algérien fait de la France la 4e puissance nucléaire mondiale."
   ],
+    "la_souverainete_reconquise_du_royaume_uni": [
+    "Tube Alloys: Projet britannique pionnier dès 1940, boosté par le mémorandum Frisch-Peierls et l'eau lourde française.",
+    "Fusion Manhattan: En 1943, le Royaume-Uni fusionne son projet avec les USA, partageant tout son savoir-faire.",
+    "Trahison McMahon: En 1946, les USA votent l'interdiction de partager les secrets nucléaires, éjectant leurs alliés anglais.",
+    "Effort National: Churchill lance une R&D forcée pour reconstruire les usines de plutonium sans l'aide américaine.",
+    "Opération Hurricane: En 1952, le Royaume-Uni teste sa première bombe atomique et devient la 3e puissance nucléaire.",
+    "Succès de la Bombe H: Le test réussi de 1957 force les USA à rouvrir la coopération via l'Accord de défense mutuelle de 1958.",
+    "Espionnage Fuchs: Le physicien Klaus Fuchs transmet les plans de la bombe à implosion à l'URSS via le réseau britannique."
+  ],
+  "proliferations_et_vols_modernes": [
+    "A.Q. Khan: Physicien pakistanais ayant dérobé les plans des centrifugeuses chez URENCO aux Pays-Bas.",
+    "Supermarché nucléaire: Diffusion du savoir-faire pakistanais vers l'Iran, la Libye et la Corée du Nord.",
+    "Troc Sino-Pakistanais: Échange soupçonné des plans de la bombe (Chine) contre les centrifugeuses (Pakistan).",
+    "Rétro-ingénierie: Capture et copie de technologies de pointe (drones, missiles) par l'Iran et ses alliés."
+  ],
+"synthese_geopolitique_acteurs": [
+    "Pakistan: Pivot mondial ayant transformé un vol industriel en un bouclier de survie souverain.",
+    "URSS: Retard technologique comblé par l'infiltration d'espions comme Klaus Fuchs à Los Alamos au cœur du Projet Manhattan.",
+    "Troc Corée du Nord: Échange du savoir d'enrichissement pakistanais contre la technologie des missiles de Pyongyang.",
+    "Vente à l'Iran: Khan vend les plans des modèles P1 et P2 à Téhéran, base de leur programme nucléaire actuel.",
+    "Détournement Indien: L'Inde utilise le réacteur civil CIRUS (Canada/USA) pour produire son premier essai 'Bouddha Souriant'.",
+    "Israël: Stratégie d'innovation locale financée par les USA pour atteindre une supériorité cyber et nucléaire."
+  ],
+  "le_pacte_secret_france_israel": [
+    "Alliance Suez (1956): La France de Guy Mollet voit en Israël un allié stratégique contre le nationalisme arabe.",
+    "Transfert Dimona: La France fournit les plans, les ingénieurs et le réacteur nucléaire dans le désert du Néguev.",
+    "Usine de Retraitement: Fourniture française d'une unité de plutonium, indispensable au passage du civil au militaire.",
+    "Fait accompli: De Gaulle tente de freiner l'aide en 1958, mais le savoir-faire est déjà assimilé par les Israéliens.",
+    "Ambiguïté opaque: Israël possède entre 80 et 200 têtes nucléaires sans jamais confirmer officiellement leur existence."
+  ],
+  "synthese_des_transferts_par_pays": [
+    "USA: Accueil des savants exilés d'Europe fuyant le nazisme et le fascisme.",
+    "URSS: Vol des secrets du Projet Manhattan via des espions infiltrés comme Klaus Fuchs.",
+    "Chine: Aide initiale de l'URSS dans les années 50 avant une rupture politique forçant l'autonomie.",
+    "Pakistan: Espionnage industriel massif en Europe pour créer un 'supermarché nucléaire' mondial.",
+    "Israël: Accès à la bombe dès les années 60 grâce à une coopération secrète majeure avec la France (Dimona).",
+    "Vente à l'Irak: Livraison du réacteur Osirak à Saddam Hussein, détruit par Israël en 1981 par peur de la bombe."
+  ],
   "conclusion_anecdotique": "À Farm Hall, les savants nazis capturés ont cru à un bluff pour Hiroshima, tant ils se croyaient en avance.",
     "notes_finales": {
     "note_v2_atome": "Le IIIe Reich possédait le vecteur (V2) mais n'a jamais réussi à miniaturiser la charge (Bombe).",
