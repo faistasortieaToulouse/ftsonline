@@ -134,8 +134,6 @@ export default function JsonTestPage() {
             data.operation_epsilon_farm_hall.map((item: string, i: number) => (
               <p key={i} className="text-sm italic text-zinc-700">"{item}"</p>
             ))
-          ) : (
-            <p className="text-red-500 text-xs">Données non trouvées dans le JSON...</p>
           )}
         </div>
       </section>
@@ -182,6 +180,64 @@ export default function JsonTestPage() {
               <p className="text-blue-50 text-sm sm:text-base leading-relaxed">{item}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 8. Royaume-Uni */}
+      <section className="mb-10 p-6 bg-slate-50 border border-slate-200 rounded-xl">
+        <h2 className="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2">
+          <span className="text-slate-500">🇬🇧</span> Souveraineté du Royaume-Uni
+        </h2>
+        <ul className="space-y-3">
+          {data.la_souverainete_reconquise_du_royaume_uni?.map((item: string, i: number) => (
+            <li key={i} className="text-sm text-slate-700 list-disc list-inside">{item}</li>
+          ))}
+        </ul>
+      </section>
+
+      {/* 9. Proliférations Modernes (A.Q. Khan) */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 text-emerald-800 flex items-center gap-2">
+          <span className="text-emerald-600">🕵️‍♂️</span> Proliférations et Vols
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {data.proliferations_et_vols_modernes?.map((item: string, i: number) => (
+            <div key={i} className="p-4 bg-emerald-50/50 border-r-4 border-emerald-600 rounded-l-lg shadow-sm">
+              <p className="text-sm text-gray-800">{item}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 10. Pacte France-Israël */}
+      <section className="mb-10 bg-gradient-to-r from-blue-50 to-white p-8 rounded-2xl border-y-2 border-blue-200">
+        <h2 className="text-2xl font-bold mb-6 text-blue-900 flex items-center gap-2">
+          <span className="text-blue-600">🇮🇱</span> Le Pacte Secret (Dimona)
+        </h2>
+        <div className="space-y-4">
+          {data.le_pacte_secret_france_israel?.map((item: string, i: number) => (
+            <div key={i} className="flex gap-3 text-gray-700 italic border-l-2 border-blue-300 pl-4">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 11. Synthèse des Transferts par Pays */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 border-b-2 border-gray-900 pb-2">
+          🌍 Synthèse Mondiale des Transferts
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {data.synthese_des_transferts_par_pays?.map((item: string, i: number) => {
+            const [pays, info] = item.split(': ');
+            return (
+              <div key={i} className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <span className="font-black text-red-800 block mb-1 uppercase text-xs tracking-tighter">{pays}</span>
+                <p className="text-xs text-gray-600 leading-tight">{info}</p>
+              </div>
+            );
+          })}
         </div>
       </section>
 
