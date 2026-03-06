@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; 
 import Link from "next/link";
 import { ArrowLeft, Loader2, Search, MapPin, Calendar, ExternalLink } from "lucide-react";
 
@@ -11,14 +11,16 @@ type MeetupEvent = {
   title: string;
   link: string;
   startDate: string;
-  location: string;
-  description: string;
-  fullAddress: string;
-  image?: string;
-  coverImage?: string; // Ajouté pour la compatibilité avec Atélatoi
+  location: string; 
+  description: string;      
+  fullAddress: string;     
+  image?: string;           
+  coverImage?: string; // Compatibilité Atélatoi
+  categories?: string[];
+  sourceLabel?: string; 
 };
 
-export default function MeetupFullPage() {
+export default function MeetupFullPage() { 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<MeetupEvent[]>([]);
@@ -33,7 +35,13 @@ export default function MeetupFullPage() {
       if (!res.ok) throw new Error("Erreur lors de la récupération des données");
       
       const data = await res.json();
-      setEvents(data.events || []);
+      
+      // Tri chronologique indispensable pour la fusion des sources
+      const sorted = (data.events || []).sort((a: any, b: any) => 
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      );
+      
+      setEvents(sorted);
     } catch (err: any) {
       setError(err.message || "Erreur de connexion");
     } finally {
@@ -45,7 +53,6 @@ export default function MeetupFullPage() {
     fetchAllEvents();
   }, []);
 
-  // Filtrage intelligent : inclut titre, description, lieu et date formatée
   const filteredEvents = useMemo(() => {
     const query = search.toLowerCase().trim();
     if (!query) return events;
@@ -59,6 +66,7 @@ export default function MeetupFullPage() {
       return (
         ev.title?.toLowerCase().includes(query) ||
         ev.description?.toLowerCase().includes(query) ||
+        ev.location?.toLowerCase().includes(query) ||
         ev.fullAddress?.toLowerCase().includes(query) ||
         dateStr.includes(query)
       );
@@ -66,7 +74,7 @@ export default function MeetupFullPage() {
   }, [search, events]);
 
   return (
-    <div className="container mx-auto py-10 px-4 max-w-7xl">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       {/* Navigation */}
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
@@ -75,159 +83,159 @@ export default function MeetupFullPage() {
         </Link>
       </nav>
 
-      {/* Header avec Compteur dynamique */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2 text-gray-900 tracking-tight">Agenda Complet Toulouse</h1>
-          <p className="text-muted-foreground flex items-center gap-2">
-            <Calendar size={18} className="text-red-600" />
-            {loading ? "Mise à jour..." : `${filteredEvents.length} événements à l'affiche`}
-          </p>
-        </div>
-        
-        <Button 
-          onClick={fetchAllEvents} 
-          disabled={loading} 
-          className="bg-red-600 hover:bg-red-700 text-white font-bold transition-all shadow-md active:scale-95"
-        >
-          {loading ? <Loader2 className="animate-spin mr-2" size={18} /> : "🔄"} 
-          Actualiser l'agenda
-        </Button>
-      </div>
+      <h1 className="text-3xl font-bold mb-4">Évènements Meetup Toulouse</h1>
+      
+      <p className="text-muted-foreground mb-6">
+        Prochains événements consolidés des groupes Meetup toulousains (incluant Atélatoi), sur 31 jours.
+      </p>
 
-      {/* Barre de recherche */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-        <input
-          type="text"
-          placeholder="Filtrer par mot-clé, lieu ou date..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all shadow-sm"
-        />
-      </div>
+      {/* Barre de recherche (Ancien style) */}
+      <input
+        type="text"
+        placeholder="Rechercher par titre, description, catégorie, lieu, date..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-red-300"
+      />
 
-      {/* Sélecteur de vue stylisé */}
-      <div className="flex gap-2 mb-8 bg-gray-100 p-1.5 rounded-xl w-fit border border-gray-200">
+      {/* Compteur d'événements */}
+      <p className="mb-4 font-semibold italic text-gray-600">
+        {loading ? "Chargement..." : `Événements affichés : ${filteredEvents.length}`}
+      </p>
+
+      {/* Boutons Vue (Ancien style) */}
+      <div className="flex gap-4 mb-6">
         <button
           onClick={() => setViewMode("card")}
-          className={`px-5 py-2 rounded-lg font-bold transition-all ${
-            viewMode === "card" ? "bg-white shadow-md text-red-600" : "text-gray-500 hover:text-gray-700"
-          }`}
+          className={`px-4 py-2 rounded transition-colors ${viewMode === "card" ? "bg-red-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
         >
-          🗂️ Grille
+          🗂️ Plein écran
         </button>
         <button
           onClick={() => setViewMode("list")}
-          className={`px-5 py-2 rounded-lg font-bold transition-all ${
-            viewMode === "list" ? "bg-white shadow-md text-red-600" : "text-gray-500 hover:text-gray-700"
-          }`}
+          className={`px-4 py-2 rounded transition-colors ${viewMode === "list" ? "bg-red-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
         >
-          📋 Liste
+          📋 Vignette
         </button>
       </div>
 
+      <Button onClick={fetchAllEvents} disabled={loading} className="mb-6 bg-red-600 hover:bg-red-700">
+        {loading ? <Loader2 className="animate-spin mr-2" size={18} /> : "🔄"} 
+        Rafraîchir les événements
+      </Button>
+
       {error && (
-        <div className="p-4 mb-6 border-l-4 border-red-500 bg-red-50 text-red-700 rounded-r-xl animate-in fade-in slide-in-from-left-2">
-          <p className="font-bold">Oups !</p>
-          <p className="text-sm">{error}</p>
+        <div className="mt-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded">
+          <strong>Erreur :</strong> {error}
         </div>
       )}
 
-      {/* Chargement & Grille */}
       {loading && events.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-32 text-gray-400">
-          <Loader2 className="animate-spin mb-6 text-red-600" size={56} />
-          <p className="text-xl font-medium">Synchronisation des événements...</p>
-          <p className="text-sm italic">Recherche parmi les sources de Toulouse</p>
+        <div className="text-center py-20">
+          <Loader2 className="animate-spin mx-auto text-red-600 mb-4" size={40} />
+          <p className="text-gray-500">Synchronisation des sources...</p>
         </div>
       ) : (
-        <div className={viewMode === "card" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-4"}>
-          {filteredEvents.map((ev, index) => {
-            const dateObj = new Date(ev.startDate);
-            const dateFormatted = dateObj.toLocaleString("fr-FR", {
-                weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit"
-            });
+        <>
+          {filteredEvents.length === 0 && !loading && (
+            <p className="mt-6 text-xl text-gray-500 p-8 border border-dashed rounded-lg text-center">
+              Aucun événement à venir trouvé.
+            </p>
+          )}
 
-            // Priorité à image, puis coverImage, puis placeholder
-            const eventImg = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
+          {/* Mode Plein Écran (Card) */}
+          {viewMode === "card" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {filteredEvents.map((ev, index) => {
+                const dateFormatted = new Date(ev.startDate).toLocaleString("fr-FR", {
+                  weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit"
+                });
+                const eventImg = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
 
-            return viewMode === "card" ? (
-              /* Vue Carte */
-              <div key={`${ev.link || index}-${index}`} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden">
-                  <img 
-                    src={eventImg} 
-                    alt={ev.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
-                  />
-                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter text-red-600 shadow-sm">
-                    Toulouse
+                return (
+                  <div key={`${ev.link}-${index}`} className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col border border-gray-100 relative">
+                    {ev.sourceLabel === 'Atélatoi' && (
+                      <div className="absolute top-2 right-2 z-10 bg-purple-600 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-md uppercase">
+                        ATÉLATOI
+                      </div>
+                    )}
+                    <img
+                      src={eventImg}
+                      alt={ev.title}
+                      className="w-full aspect-[16/9] object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
+                    />
+                    <div className="p-4 flex flex-col flex-1">
+                      <h2 className="text-xl font-semibold mb-2 text-red-700 line-clamp-2">{ev.title}</h2>
+                      <p className="text-sm font-medium mb-1 flex items-center gap-1">
+                        <MapPin size={14} className="text-gray-400" /> {ev.fullAddress || ev.location}
+                      </p>
+                      <p className="text-sm text-gray-600 mb-3 font-semibold flex items-center gap-1">
+                        <Calendar size={14} className="text-gray-400" /> {dateFormatted}
+                      </p>
+                      <p className="text-sm text-gray-700 mb-4 flex-1 line-clamp-4 whitespace-pre-wrap">
+                        {ev.description || "Pas de description."}
+                      </p>
+                      <p className="text-xs text-muted-foreground italic mb-3">Source : {ev.sourceLabel || "Meetup"}</p>
+                      <a
+                        href={ev.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-auto inline-block bg-red-600 text-white text-center py-2 px-3 rounded hover:bg-red-700 transition"
+                      >
+                        🔗 Voir l’événement Meetup
+                      </a>
+                    </div>
                   </div>
-                </div>
-                <div className="p-6 flex flex-col flex-1">
-                  <h2 className="text-lg font-extrabold text-gray-900 mb-2 line-clamp-2 min-h-[3.5rem] leading-snug">{ev.title}</h2>
-                  <p className="text-xs text-red-600 font-black mb-4 uppercase tracking-widest">{dateFormatted}</p>
-                  <p className="text-sm text-gray-500 mb-6 flex-1 line-clamp-3 leading-relaxed">
-                    {ev.description || "Pas de description détaillée pour cet événement."}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-5 pb-5 border-b border-gray-50">
-                    <MapPin size={14} className="shrink-0 text-red-400" />
-                    <span className="truncate font-medium">{ev.fullAddress}</span>
-                  </div>
-                  <a 
-                    href={ev.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full py-3.5 bg-red-600 text-white rounded-xl text-center font-bold hover:bg-red-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-red-200"
-                  >
-                    Voir l'évènement <ExternalLink size={16} />
-                  </a>
-                </div>
-              </div>
-            ) : (
-              /* Vue Liste (Vignette) */
-              <div key={`${ev.link || index}-${index}`} className="group flex flex-col sm:flex-row gap-4 p-4 bg-white border border-gray-100 rounded-2xl hover:border-red-200 hover:shadow-md transition-all items-center shadow-sm">
-                <img 
-                  src={eventImg} 
-                  className="w-full sm:w-24 h-40 sm:h-24 rounded-xl object-cover shrink-0 bg-gray-50" 
-                  alt="" 
-                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
-                />
-                <div className="flex-1 min-w-0 text-center sm:text-left">
-                  <h2 className="font-extrabold text-gray-900 truncate text-lg group-hover:text-red-600 transition-colors">{ev.title}</h2>
-                  <p className="text-sm text-red-600 font-bold mt-1 uppercase tracking-tight">{dateFormatted}</p>
-                  <p className="text-xs text-gray-400 truncate mt-2 flex items-center justify-center sm:justify-start gap-1">
-                    <MapPin size={12} /> {ev.fullAddress}
-                  </p>
-                </div>
-                <a 
-                  href={ev.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all text-sm shrink-0 flex items-center justify-center gap-2"
-                >
-                  Détails <ExternalLink size={14} />
-                </a>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                );
+              })}
+            </div>
+          )}
 
-      {/* État Vide */}
-      {!loading && filteredEvents.length === 0 && (
-        <div className="text-center py-32 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
-          <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-             <Search size={24} className="text-gray-300" />
-          </div>
-          <p className="text-gray-500 text-xl font-bold">Aucun résultat trouvé</p>
-          <p className="text-gray-400 mt-1">Essayez de modifier vos termes de recherche.</p>
-          <Button variant="link" onClick={() => setSearch("")} className="mt-4 text-red-600 font-bold">
-            Effacer la recherche
-          </Button>
-        </div>
+          {/* Mode Vignette (List) */}
+          {viewMode === "list" && (
+            <div className="space-y-4 mt-6">
+              {filteredEvents.map((ev, index) => {
+                const dateFormatted = new Date(ev.startDate).toLocaleString("fr-FR", {
+                  weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit"
+                });
+                const eventImg = ev.image || ev.coverImage || PLACEHOLDER_IMAGE;
+
+                return (
+                  <div key={`${ev.link}-${index}`} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
+                    <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden flex items-center justify-center shrink-0">
+                      <img
+                        src={eventImg}
+                        alt={ev.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-lg font-semibold line-clamp-1">{ev.title}</h2>
+                        {ev.sourceLabel === 'Atélatoi' && (
+                          <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold uppercase">Atélatoi</span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 line-clamp-1 italic">{ev.description}</p>
+                      <p className="text-sm mt-1 font-medium">📍 {ev.fullAddress || ev.location}</p>
+                      <p className="text-sm text-gray-500 font-bold">{dateFormatted}</p>
+                      <a
+                        href={ev.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-red-600 underline text-sm mt-1 block font-bold"
+                      >
+                        Voir l'événement →
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
