@@ -858,6 +858,14 @@ useEffect(() => {
           Bienvenue sur <span className="text-purple-200">FTS Toulouse</span>
         </h1>
         <div className="flex justify-center gap-4 flex-wrap">
+		  {/* TON NOUVEAU BOUTON */}
+ 		     <Link 
+  		      href="#download-section" 
+  		      className="bg-green-500 hover:bg-green-400 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center gap-2"
+  		    >
+   		     <Download className="h-5 w-5" /> 
+   		     Installer FTS Toulouse
+  		    </Link>
           <Link href="#categories" className="bg-purple-700 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg transition">
             Explorer les rubriques
           </Link>
@@ -1154,12 +1162,12 @@ useEffect(() => {
 
           return sections.map((sec, idx) => (
             <div key={idx} className="relative group">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-purple-600 hover:text-white text-purple-700 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm">
-                {sec.label}
-                <ChevronDown className="w-4 h-4 opacity-50" />
-              </button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-purple-600 hover:text-white text-purple-700 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm focus:outline-none">
+              {sec.label}
+              <ChevronDown className="w-4 h-4 opacity-50 transition-transform group-focus-within:rotate-180" />
+            </button>
 
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 p-4">
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl opacity-0 invisible scale-95 pointer-events-none group-focus-within:opacity-100 group-focus-within:visible group-focus-within:scale-100 group-focus-within:pointer-events-auto transition-all duration-200 z-50 p-4">
                 <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
                   {sec.label} du {jourMois}
                 </div>
@@ -1490,7 +1498,7 @@ useEffect(() => {
 </section>
 		
 {/* Section téléchargement / partage */}
-<section className="flex flex-col items-center gap-6 p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl w-full overflow-hidden">
+<section id="download-section" className="flex flex-col items-center gap-6 p-4 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl w-full overflow-hidden">
   
   {/* Ligne supérieure : Google Play + APK */}
   <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 w-full">
