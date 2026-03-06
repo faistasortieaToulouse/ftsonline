@@ -1,24 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Liste de TOUTES les routes API à agréger
+// Liste optimisée : on ne garde que les sources uniques
 const API_ROUTES = [
-    "meetup-events",
-    "meetup-expats",
-    "meetup-coloc",
-    "meetup-sorties",
-    "atelatoi",
+    "meetup-events", // Contient déjà les sorties, colocs et expats
+    "atelatoi",      // Source spécifique avec scraping d'images
 ];
 
-// 🤘 IMPORTANT : Meetup renvoie du HTML ou bloque → route doit être dynamique
 export const dynamic = "force-dynamic";
-export const revalidate = 3600; // 1h
+export const revalidate = 3600; // Cache d'une heure
 
 export async function GET(request: NextRequest) {
-
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ||
                      request.nextUrl.origin ||
                      "http://localhost:3000";
 
+    // 1. Lancement des appels en parallèle
     const fetchPromises = API_ROUTES.map(route =>
         fetch(`${BASE_URL}/api/${route}`, {
             next: { revalidate: 3600 }
@@ -26,73 +22,82 @@ export async function GET(request: NextRequest) {
         .then(res => res.json())
         .catch(err => {
             console.error(`Erreur de fetch pour /api/${route}:`, err);
-            return [];
+            return { events: [] };
         })
     );
 
     try {
         const results = await Promise.all(fetchPromises);
 
-        // 2. Normalisation et Agrégation
-        let events: any[] = results.flatMap(r => {
+        // 2. Extraction et Normalisation
+        const rawEvents: any[] = results.flatMap(r => {
             if (Array.isArray(r.events)) return r.events;
             if (Array.isArray(r)) return r;
             return [];
         });
 
-        // --------------------------------------------------
-        // 🟧  CORRECTION : si la date est passée -> mettre aujourd’hui
-        // --------------------------------------------------
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        events = events.map(ev => {
-            const raw = ev.date || ev.startDate || ev.start;
-            const d = raw ? new Date(raw) : null;
+        // 3. Traitement et Dédoublonnage intelligent
+        const uniqueMap = new Map<string, any>();
 
-            if (!d || isNaN(d.getTime())) return ev;
+        rawEvents.forEach(ev => {
+            // Normalisation de la date
+            const rawDate = ev.startDate || ev.date || ev.start;
+            let d = rawDate ? new Date(rawDate) : null;
 
+            if (!d || isNaN(d.getTime())) return;
+
+            // Correction si la date est passée (ton ancienne logique)
             if (d < today) {
-                // Conserve l’heure d’origine si elle existe
-                const corrected = new Date(
+                d = new Date(
                     today.getFullYear(),
                     today.getMonth(),
                     today.getDate(),
                     d.getHours(),
-                    d.getMinutes(),
-                    d.getSeconds()
+                    d.getMinutes()
                 );
-                return { ...ev, date: corrected.toISOString() };
             }
 
-            return ev;
+            // Normalisation de l'image (très important pour ne pas la perdre)
+            const eventImage = ev.coverImage || ev.image;
+
+            // Clé de dédoublonnage : Titre + Date (YYYY-MM-DD)
+            const dateKey = d.toISOString().split("T")[0];
+            const titleKey = (ev.title || "no-title").toLowerCase().trim();
+            const key = `${titleKey}-${dateKey}`;
+
+            const existing = uniqueMap.get(key);
+            
+            // PRIORITÉ : On garde l'événement si :
+            // - Il est nouveau
+            // - OU l'existant n'a pas d'image mais celui-ci en a une (cas d'Atélatoi)
+            const hasRealImage = eventImage && !eventImage.includes('placeholder');
+
+            if (!existing || (!existing.image && hasRealImage)) {
+                uniqueMap.set(key, {
+                    ...ev,
+                    date: d.toISOString(), // Date corrigée/normalisée
+                    image: eventImage,     // Clé d'image unique pour le front
+                    fullAddress: ev.fullAddress || ev.location || "Toulouse"
+                });
+            }
         });
-        // --------------------------------------------------
 
-        // 3. Supprimer doublons
-        const uniqueMap = new Map<string, any>();
-        events.forEach(ev => {
-            const rawDate = ev.date || ev.startDate || ev.start;
-            const rawTitle = ev.title || "No Title";
-            const rawLocation = ev.location || ev.fullAddress || "No Location";
-
-            const key = ev.id || `${rawTitle}-${new Date(rawDate).toISOString().split("T")[0]}-${rawLocation}`;
-
-            if (!uniqueMap.has(key)) uniqueMap.set(key, ev);
-        });
-
-        // 4. Trier par date croissante
+        // 4. Tri chronologique final
         const unifiedEvents = Array.from(uniqueMap.values()).sort((a, b) => {
-            const da = new Date(a.date || a.startDate || a.start);
-            const db = new Date(b.date || b.startDate || b.start);
-            return da.getTime() - db.getTime();
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
         });
 
-        return NextResponse.json({ events: unifiedEvents });
+        return NextResponse.json({ 
+            events: unifiedEvents,
+            count: unifiedEvents.length 
+        });
 
     } catch (err: any) {
         return NextResponse.json(
-            { events: [], error: err.message || "Erreur lors de l'agrégation des données" },
+            { events: [], error: err.message || "Erreur lors de l'agrégation" },
             { status: 500 }
         );
     }
