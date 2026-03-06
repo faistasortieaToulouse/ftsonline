@@ -126,6 +126,58 @@ export default function JsonTestPage() {
         </div>
       </section>
 
+      {/* 4. Operation Epsilon */}
+      <section className="mb-10 p-6 bg-zinc-100 rounded-lg border-l-4 border-zinc-800">
+        <h2 className="text-2xl font-bold mb-4 text-zinc-900">🕵️ Opération Epsilon (Farm Hall)</h2>
+        <div className="space-y-3">
+          {data.operation_epsilon_farm_hall?.map((item: string, i: number) => (
+            <p key={i} className="text-sm italic text-zinc-700">"{item}"</p>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. Dénouement 1945 */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-red-700">
+          <span className="text-red-600">💥</span> Dénouement 1945
+        </h2>
+        <div className="space-y-4">
+          {data.denouement_1945?.map((item: string, i: number) => (
+            <div key={i} className="p-4 bg-red-50 border border-red-100 rounded-lg font-medium text-red-900">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. Synthèse Stratégique */}
+      <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {data.synthese_strategique?.map((item: string, i: number) => {
+          const [pays, texte] = item.split(': ');
+          return (
+            <div key={i} className="p-5 border rounded-xl shadow-sm bg-white">
+              <h3 className="font-black text-lg mb-2 underline decoration-red-500">{pays}</h3>
+              <p className="text-gray-600 text-sm">{texte}</p>
+            </div>
+          );
+        })}
+      </section>
+
+      {/* 7. Le Cas Particulier de la France */}
+      <section className="mb-10 p-8 bg-blue-900 text-white rounded-3xl shadow-2xl">
+        <h2 className="text-3xl font-black mb-6 flex items-center gap-3">
+          <span className="text-4xl">🇫🇷</span> Le Cas de la France
+        </h2>
+        <div className="grid grid-cols-1 gap-4">
+          {data.le_cas_particulier_de_la_france?.map((item: string, i: number) => (
+            <div key={i} className="flex gap-4 items-center border-b border-blue-800 pb-4 last:border-0">
+              <span className="text-blue-400 font-mono font-bold">{1939 + (i * 3)}...</span> 
+              <p className="text-blue-50 text-sm leading-relaxed">{item}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="bg-zinc-900 text-yellow-500 p-8 rounded-2xl mb-12 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-10">
           <span className="text-6xl font-black italic">!</span>
