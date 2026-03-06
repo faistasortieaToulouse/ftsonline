@@ -75,6 +75,57 @@ export default function JsonTestPage() {
         </div>
       </section>
 
+      {/* 1. Le rendez-vous manqué V2 / Atome */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-zinc-800">
+          <span className="text-zinc-600">🚀</span> Le rendez-vous manqué (V2 & Atome)
+        </h2>
+        <div className="space-y-4">
+          {data.le_rendez_vous_manque_v2_atome?.map((item: string, i: number) => {
+            const [label, content] = item.split(': ');
+            return (
+              <div key={i} className="p-4 bg-zinc-50 border border-zinc-200 rounded-lg">
+                <span className="font-bold text-zinc-900">{label} :</span>{" "}
+                <span className="text-gray-700">{content}</span>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 2. Désintérêt stratégique de Hitler */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-red-800">
+          <span className="text-red-600">📉</span> Désintérêt Stratégique
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {data.desinteret_strategique_de_hitler?.map((item: string, i: number) => {
+            const [label, content] = item.split(': ');
+            return (
+              <div key={i} className="p-4 border-t-2 border-red-800 bg-white shadow-sm">
+                <span className="block font-bold text-red-900 text-xs uppercase mb-1">{label}</span>
+                <span className="text-gray-700 text-sm">{content}</span>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 3. Projet Manhattan USA */}
+      <section className="mb-10 bg-blue-50/30 p-6 rounded-xl border border-blue-100">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-blue-900">
+          <span className="text-blue-700">🇺🇸</span> Projet Manhattan (USA)
+        </h2>
+        <div className="space-y-3">
+          {data.projet_manhattan_usa?.map((item: string, i: number) => (
+            <div key={i} className="flex gap-3 items-start">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 shrink-0" />
+              <p className="text-gray-800 text-sm sm:text-base">{item}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="bg-zinc-900 text-yellow-500 p-8 rounded-2xl mb-12 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-10">
           <span className="text-6xl font-black italic">!</span>
