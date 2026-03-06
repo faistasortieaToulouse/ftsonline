@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button"; 
 import Link from "next/link";
-import { ArrowLeft, Loader2, MapPin, Calendar } from "lucide-center"; 
+import { ArrowLeft, Loader2, MapPin, Calendar } from "lucide-react"; 
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x200?text=Événement+Meetup";
 
