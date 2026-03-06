@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
-import ical, { VEvent } from 'ical';
+import ical from 'ical';
 
-// --- Configuration des Flux iCalendar ---
+// --- Configuration des Flux iCalendar (Nettoyée des doublons) ---
 const ICAL_GROUPS: string[][] = [
   // Lot 1
   [
@@ -16,7 +16,6 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/speakenglishtoulouse/events/ical/",
     "https://www.meetup.com/fr-FR/yolo-toulouse-socializing-concerts-outings/events/ical/",
     "https://www.meetup.com/club-de-reflexion-discussions-sur-l-actualite/events/ical/",
-    "https://www.meetup.com/colocation-logement-hebergement-emploi-job-stage-toulouse/events/ical/",
     "https://www.meetup.com/toulouse-sorties-evenements-soirees-balades-visites-randos/events/ical/",
     "https://www.meetup.com/expats-in-toulouse/events/ical/"
   ],
@@ -34,14 +33,12 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/cafe-das-maes/events/ical/",
     "https://www.meetup.com/fr-FR/frenchproduit-sudouest-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/franglish-improv-club/events/ical/"
-    ],
+  ],
   // Lot 3
   [
     "https://www.meetup.com/fr-FR/the-friendly-debate/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-sociale-meetup-group/events/ical/",
     "https://www.meetup.com/fr-FR/colocation-logement-hebergement-emploi-job-stage-toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/toulouse-sorties-evenements-soirees-balades-visites-randos/events/ical/",
-    "https://www.meetup.com/fr-FR/expats-in-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-free-evenements-to-discover/events/ical/",
     "https://www.meetup.com/fr-FR/meetup-group-iozolhsj/events/ical/",
     "https://www.meetup.com/fr-FR/international-mondays-tower-of-london/events/ical/",
@@ -72,95 +69,85 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/toulouse-viajes-aventura-meetup-group/events/ical/",
     "https://www.meetup.com/fr-FR/meetup-group-ogveclmn/events/ical/",
     "https://www.meetup.com/fr-FR/Gnosis-Toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/The-Freedom-Trail-Trek-Meetup/events/ical/",
-    "https://www.meetup.com/pages-n-pies/events/ical/"
+    "https://www.meetup.com/fr-FR/The-Freedom-Trail-Trek-Meetup/events/ical/"
   ],
-    // Lot 6
+  // Lot 6
   [
     "https://www.meetup.com/femmes-sensibles-solidaires-toulouse/events/ical/",
     "https://www.meetup.com/myapero-toulouse/events/ical/",
     "https://www.meetup.com/conscience-spiritualite-toulouse/events/ical/",
     "https://www.meetup.com/happy-nouvelle-vie/events/ical/",
-    "https://www.meetup.com/cercle-dambition-morale/events/ical/",
     "https://www.meetup.com/malaia-collective-yoga-movement-intentional-living/events/ical/",
     "https://www.meetup.com/pages-n-pals/events/ical/",
-    "https://www.meetup.com/cercle-de-femme-et-art-therapie-toulouse/events/ical/",
-    "https://www.meetup.com/crea-toulouse/events/ical/",
-    "https://www.meetup.com/toulouse-sociale-meetup-group/events/ical/"
+    "https://www.meetup.com/cercle-de-femme-et-art-therapie-toulouse/events/ical/"
   ],
-      // Lot 7
+  // Lot 7
   [
-    "https://www.meetup.com/la-sauce-viens-relever-ta-creativite-au-sol-entre-meufs/events/ical/",
     "https://www.meetup.com/star-wars-imperial-assault-in-toulouse/events/ical/",
     "https://www.meetup.com/toulouse-women-personal-development-meetup-group/events/ical/",
     "https://www.meetup.com/bring-me-the-horizon-occitanie/events/ical/",
     "https://www.meetup.com/les-grognards-de-la-marne/events/ical/",
     "https://www.meetup.com/scene-ouverte-chant-piano-guitare/events/ical/"
-    ]
+  ]
 ];
 
-// --- Types ---
-type MeetupEventItem = {
-  title: string;
-  link: string;
-  startDate: string;
-  location: string;
-  fullAddress: string;
-  description: string;
-  coverImage?: string;
-};
-
-// --- Scraping ---
-async function scrapeEventData(url: string): Promise<{ coverImage?: string; fullAddress?: string }> {
+async function scrapeEventData(url: string) {
   try {
-    const res = await fetch(url, { next: { revalidate: 3600 } });
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' },
+      next: { revalidate: 3600 }
+    });
     if (!res.ok) return {};
     const html = await res.text();
     const $ = cheerio.load(html);
-    const ogImage = $('meta[property="og:image"]').attr('content');
+    
+    // Tentative 1: Balises Meta OG
+    let coverImage = $('meta[property="og:image"]').attr('content');
     let fullAddress: string | undefined;
 
+    // Tentative 2: JSON-LD (Données structurées)
     $('script[type="application/ld+json"]').each((_, elem) => {
       try {
         const data = JSON.parse($(elem).html() || '');
-        if (data['@type'] === 'Event') {
-          const addr = data.location?.address;
+        const event = Array.isArray(data) ? data.find(i => i['@type'] === 'Event') : data;
+        
+        if (event && event['@type'] === 'Event') {
+          if (!coverImage && event.image) {
+            coverImage = Array.isArray(event.image) ? event.image[0] : event.image;
+          }
+          const addr = event.location?.address;
           if (addr?.streetAddress) {
             fullAddress = `${addr.streetAddress}, ${addr.addressLocality || ''}`.trim().replace(/,$/, '');
           }
         }
       } catch {}
     });
-    return { coverImage: ogImage, fullAddress };
+
+    return { coverImage, fullAddress };
   } catch { return {}; }
 }
 
-// --- Fetcher un Lot ---
-async function fetchLot(lot: string[]): Promise<MeetupEventItem[]> {
+async function fetchLot(lot: string[]) {
   const allCalendars = await Promise.allSettled(lot.map(async url => {
     const res = await fetch(url, { next: { revalidate: 3600 } });
     return ical.parseICS(await res.text());
   }));
 
-  const uniqueMap = new Map<string, VEvent>();
+  const events: any[] = [];
   allCalendars.forEach(result => {
     if (result.status === 'fulfilled') {
       const calendar = result.value;
       for (const key in calendar) {
-        const event = calendar[key] as VEvent;
-        if (event.type === 'VEVENT' && event.start) {
-          // CLÉ UNIQUE : On utilise l'UID de l'événement s'il existe, sinon Titre + Date
-          const id = event.uid || `${event.summary}-${event.start.toISOString()}`;
-          uniqueMap.set(id, event);
-        }
+        const event = calendar[key];
+        if (event.type === 'VEVENT' && event.start) events.push(event);
       }
     }
   });
 
-  const events = Array.from(uniqueMap.values());
   return await Promise.all(events.map(async e => {
-    let url = typeof e.url === "string" ? e.url : (e.url as any)?.val;
-    if (!url && e.uid) url = `https://www.meetup.com/fr-FR/events/${e.uid}/`;
+    let url = typeof e.url === "string" ? e.url : e.url?.val;
+    // Reconstruction d'URL si manquante
+    if (!url && e.uid) url = `https://www.meetup.com/events/${e.uid.split('@')[0]}/`;
     
     const extra = url ? await scrapeEventData(url) : {};
     const finalAddress = (e.location || extra.fullAddress || "Lieu non spécifié").trim();
@@ -171,50 +158,35 @@ async function fetchLot(lot: string[]): Promise<MeetupEventItem[]> {
       startDate: e.start.toISOString(),
       location: finalAddress.split(',')[0],
       fullAddress: finalAddress,
-      description: String(e.description || ""),
+      description: String(e.description || "").replace(/\\n/g, '\n'),
       coverImage: extra.coverImage,
     };
   }));
 }
 
-// --- Route API ---
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const lotParam = searchParams.get('lot');
-  const getAll = searchParams.get('all') === 'true';
+  const lotIndex = parseInt(searchParams.get('lot') || '0');
 
   try {
-    let finalEvents: MeetupEventItem[] = [];
-    let nextLot: number | null = null;
-
-    if (getAll) {
-      const allResults = await Promise.all(ICAL_GROUPS.map(lot => fetchLot(lot)));
-      finalEvents = allResults.flat();
-    } else {
-      const index = parseInt(lotParam || '0');
-      if (index >= 0 && index < ICAL_GROUPS.length) {
-        finalEvents = await fetchLot(ICAL_GROUPS[index]);
-        nextLot = index + 1 < ICAL_GROUPS.length ? index + 1 : null;
-      }
+    if (lotIndex < 0 || lotIndex >= ICAL_GROUPS.length) {
+      return NextResponse.json({ events: [], nextLot: null });
     }
 
-    // 1. FILTRAGE DOUBLONS (AVANT LE TRI)
-    // On utilise une Map basée sur le lien (URL) de l'événement qui est l'identifiant le plus fiable
-    const deduplicatedMap = new Map<string, MeetupEventItem>();
-    
-    finalEvents.forEach(event => {
-      // On utilise le lien ou une combinaison Titre+Date comme clé unique
-      const key = event.link || `${event.title}-${event.startDate}`;
-      if (!deduplicatedMap.has(key)) {
-        deduplicatedMap.set(key, event);
+    const rawEvents = await fetchLot(ICAL_GROUPS[lotIndex]);
+
+    // Dédoublonnage par lien URL (clé la plus fiable)
+    const uniqueMap = new Map();
+    rawEvents.forEach(ev => {
+      if (ev.link && !uniqueMap.has(ev.link)) {
+        uniqueMap.set(ev.link, ev);
       }
     });
 
-    // 2. FILTRAGE DATES FUTURES + TRI
     const now = new Date();
     const endFilter = new Date(now.getTime() + 31 * 86400000);
     
-    const filtered = Array.from(deduplicatedMap.values())
+    const filtered = Array.from(uniqueMap.values())
       .filter(e => {
         const d = new Date(e.startDate);
         return d >= now && d < endFilter;
@@ -223,10 +195,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ 
       events: filtered, 
-      nextLot, 
+      nextLot: lotIndex + 1 < ICAL_GROUPS.length ? lotIndex + 1 : null,
       totalLots: ICAL_GROUPS.length 
-    }, {
-      headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600' }
     });
 
   } catch (err) {
