@@ -33,6 +33,7 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/the_art_of_noticing_toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/cafe-das-maes/events/ical/",
     "https://www.meetup.com/fr-FR/frenchproduit-sudouest-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/franglish-improv-club/events/ical/"
     ],
   // Lot 3
   [
@@ -93,6 +94,8 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/star-wars-imperial-assault-in-toulouse/events/ical/",
     "https://www.meetup.com/toulouse-women-personal-development-meetup-group/events/ical/",
     "https://www.meetup.com/bring-me-the-horizon-occitanie/events/ical/",
+    "https://www.meetup.com/fr-fr/bring-me-the-horizon-occitanie/events/ical/",
+    "https://www.meetup.com/fr-fr/les-grognards-de-la-marne/events/ical/"
     ]
 ];
 
