@@ -149,7 +149,8 @@ async function fetchLot(lot: string[]): Promise<MeetupEventItem[]> {
       for (const key in calendar) {
         const event = calendar[key] as VEvent;
         if (event.type === 'VEVENT' && event.start) {
-          const id = event.uid || (event.summary + event.start.toISOString());
+          // CLÉ UNIQUE : On utilise l'UID de l'événement s'il existe, sinon Titre + Date
+          const id = event.uid || `${event.summary}-${event.start.toISOString()}`;
           uniqueMap.set(id, event);
         }
       }
@@ -187,11 +188,9 @@ export async function GET(request: Request) {
     let nextLot: number | null = null;
 
     if (getAll) {
-      // Pour meetup-full : on récupère tout (lent mais complet)
       const allResults = await Promise.all(ICAL_GROUPS.map(lot => fetchLot(lot)));
       finalEvents = allResults.flat();
     } else {
-      // Pour Solution B : on récupère lot par lot
       const index = parseInt(lotParam || '0');
       if (index >= 0 && index < ICAL_GROUPS.length) {
         finalEvents = await fetchLot(ICAL_GROUPS[index]);
@@ -199,11 +198,23 @@ export async function GET(request: Request) {
       }
     }
 
-    // Filtrage dates futures + tri
+    // 1. FILTRAGE DOUBLONS (AVANT LE TRI)
+    // On utilise une Map basée sur le lien (URL) de l'événement qui est l'identifiant le plus fiable
+    const deduplicatedMap = new Map<string, MeetupEventItem>();
+    
+    finalEvents.forEach(event => {
+      // On utilise le lien ou une combinaison Titre+Date comme clé unique
+      const key = event.link || `${event.title}-${event.startDate}`;
+      if (!deduplicatedMap.has(key)) {
+        deduplicatedMap.set(key, event);
+      }
+    });
+
+    // 2. FILTRAGE DATES FUTURES + TRI
     const now = new Date();
     const endFilter = new Date(now.getTime() + 31 * 86400000);
     
-    const filtered = finalEvents
+    const filtered = Array.from(deduplicatedMap.values())
       .filter(e => {
         const d = new Date(e.startDate);
         return d >= now && d < endFilter;
