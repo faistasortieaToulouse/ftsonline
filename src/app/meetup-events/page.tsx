@@ -29,11 +29,10 @@ export default function MeetupEventsPage() {
   const [viewMode, setViewMode] = useState<"card" | "list">("card");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // États pour la Solution B (Gestion des lots)
   const [currentLot, setCurrentLot] = useState(0);
   const [totalLots, setTotalLots] = useState(0);
 
-  // --- LOGIQUE DE CHARGEMENT PAR LOTS ---
+  // --- LOGIQUE DE CHARGEMENT PAR LOTS (CORRIGÉE POUR DOUBLONS) ---
   const loadMeetupLot = useCallback(async (lotIndex: number) => {
     try {
       const res = await fetch(`/api/meetup-events?lot=${lotIndex}`);
@@ -52,20 +51,31 @@ export default function MeetupEventsPage() {
               weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit",
             }),
             image: ev.coverImage || ev.image || PLACEHOLDER_IMAGE,
-            sourceLabel: 'Meetup'
+            sourceLabel: ev.sourceLabel || 'Meetup'
           };
         });
 
+        // 🛡️ FILTRAGE DES DOUBLONS CÔTÉ CLIENT
         setEvents(prev => {
           const combined = [...prev, ...newEvents];
-          return combined.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+          const uniqueMap = new Map<string, MeetupEvent>();
+          
+          combined.forEach(ev => {
+            // On utilise le lien (URL) comme identifiant unique
+            if (!uniqueMap.has(ev.link)) {
+              uniqueMap.set(ev.link, ev);
+            }
+          });
+
+          return Array.from(uniqueMap.values()).sort((a, b) => 
+            a.startDate.getTime() - b.startDate.getTime()
+          );
         });
       }
 
-      // 🛡️ SÉCURITÉ : Si un lot suivant existe, on attend 2s et on l'appelle
       if (data.nextLot !== null) {
         setCurrentLot(data.nextLot);
-        setTimeout(() => loadMeetupLot(data.nextLot), 2000);
+        setTimeout(() => loadMeetupLot(data.nextLot), 1500); // Réduit à 1.5s pour plus de fluidité
       } else {
         setLoading(false);
       }
@@ -81,7 +91,7 @@ export default function MeetupEventsPage() {
     setCurrentLot(0);
 
     try {
-      // 1. Charger Atélatoi immédiatement (rapide)
+      // 1. Charger Atélatoi
       const resAtelatoi = await fetch("/api/atelatoi");
       if (resAtelatoi.ok) {
         const data = await resAtelatoi.json();
@@ -99,7 +109,7 @@ export default function MeetupEventsPage() {
         }
       }
 
-      // 2. Lancer la cascade Meetup (Lot 0)
+      // 2. Lancer la cascade Meetup
       loadMeetupLot(0);
 
     } catch (err: any) {
@@ -108,7 +118,6 @@ export default function MeetupEventsPage() {
     }
   }
 
-  // --- TON FILTRAGE (INCHANGÉ) ---
   useEffect(() => {
     if (!searchQuery) {
       setFilteredEvents(events);
@@ -143,7 +152,6 @@ export default function MeetupEventsPage() {
         Prochains événements consolidés des groupes Meetup toulousains (incluant Atélatoi), sur 31 jours.
       </p>
 
-      {/* --- AJOUT : BARRE DE PROGRESSION DISCRÈTE --- */}
       {loading && (
         <div className="mb-6 p-3 bg-red-50 border border-red-100 rounded-lg flex flex-col gap-2">
            <div className="flex items-center gap-2 text-red-700 text-sm font-bold">
@@ -159,91 +167,97 @@ export default function MeetupEventsPage() {
         </div>
       )}
 
-      {/* --- LA SUITE DE TON CODE (INPUT, BOUTONS, GRILLE) RESTE STRICTEMENT IDENTIQUE --- */}
       <input
         type="text"
-        placeholder="Rechercher par titre, description, catégorie, lieu, date..."
+        placeholder="Rechercher par titre, description, lieu, date..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         className="w-full mb-4 p-2 border rounded focus:outline-none focus:ring focus:border-red-300"
       />
 
-      <p className="mb-4 font-semibold">Événements affichés : {filteredEvents.length}</p>
-
-      <div className="flex gap-4 mb-6">
-        <button onClick={() => setViewMode("card")} className={`px-4 py-2 rounded ${viewMode === "card" ? "bg-red-600 text-white" : "bg-gray-200"}`}>
-          🗂️ Plein écran
-        </button>
-        <button onClick={() => setViewMode("list")} className={`px-4 py-2 rounded ${viewMode === "list" ? "bg-red-600 text-white" : "bg-gray-200"}`}>
-          📋 Vignette
-        </button>
+      <div className="flex justify-between items-center mb-6">
+        <p className="font-semibold text-gray-700">Événements affichés : {filteredEvents.length}</p>
+        <div className="flex gap-2">
+          <button onClick={() => setViewMode("card")} className={`px-3 py-1.5 text-sm rounded transition ${viewMode === "card" ? "bg-red-600 text-white" : "bg-gray-100 hover:bg-gray-200"}`}>
+            🗂️ Plein écran
+          </button>
+          <button onClick={() => setViewMode("list")} className={`px-3 py-1.5 text-sm rounded transition ${viewMode === "list" ? "bg-red-600 text-white" : "bg-gray-100 hover:bg-gray-200"}`}>
+            📋 Vignette
+          </button>
+        </div>
       </div>
 
-      <Button onClick={fetchEvents} disabled={loading} className="mb-6 bg-red-600 hover:bg-red-700">
-        {loading ? "Chargement des lots..." : "🔄 Rafraîchir les événements"}
+      <Button onClick={fetchEvents} disabled={loading} className="mb-8 bg-red-600 hover:bg-red-700 w-full sm:w-auto">
+        {loading ? "Chargement en cours..." : "🔄 Rafraîchir la liste"}
       </Button>
 
-      {/* ... Le reste de tes rendus Card/List (inchangés) ... */}
-      {viewMode === "card" && filteredEvents.length > 0 && (
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-           {filteredEvents.map((event, index) => (
-             <div key={index} className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col border border-gray-100 relative">
-               {event.sourceLabel === 'Atélatoi' && (
-                 <div className="absolute top-2 right-2 z-10 bg-purple-600 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-md">
-                   ATÉLATOI
-                 </div>
-               )}
-               <img
-                 src={event.image}
-                 alt={event.title}
-                 className="w-full aspect-[16/9] object-cover"
-                 onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
-               />
-               <div className="p-4 flex flex-col flex-1">
-                 <h2 className="text-xl font-semibold mb-2 text-red-700">{event.title}</h2>
-                 <p className="text-sm font-medium mb-1">📍 {event.fullAddress}</p>
-                 <p className="text-sm text-gray-600 mb-3 font-semibold">{event.dateFormatted}</p>
-                 <p className="text-sm text-gray-700 mb-2 flex-1 line-clamp-4 whitespace-pre-wrap">{event.description}</p>
-                 <a
-                   href={event.link}
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   className="mt-auto inline-block bg-red-600 text-white text-center py-2 px-3 rounded hover:bg-red-700 transition"
-                 >
-                   🔗 Voir l’événement Meetup
-                 </a>
-               </div>
-             </div>
-           ))}
-         </div>
-      )}
-
-      {/* ... Idem pour le mode List ... */}
-      {viewMode === "list" && filteredEvents.length > 0 && (
-        <div className="space-y-4 mt-6">
-          {filteredEvents.map((event, index) => (
-            <div key={index} className="flex items-center gap-4 p-4 border rounded-lg shadow bg-white">
-              <div className="w-24 h-24 bg-gray-200 rounded overflow-hidden flex items-center justify-center shrink-0">
+      {/* Rendu Grille (Card) */}
+      {viewMode === "card" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredEvents.map((event, idx) => (
+            <div key={event.link || idx} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col border border-gray-100 relative group hover:shadow-xl transition-shadow">
+              {event.sourceLabel === 'Atélatoi' && (
+                <div className="absolute top-2 right-2 z-10 bg-purple-600 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-md">
+                  ATÉLATOI
+                </div>
+              )}
+              <div className="relative aspect-[16/9] overflow-hidden">
                 <img
                   src={event.image}
                   alt={event.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
                 />
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold line-clamp-2">{event.title}</h2>
-                  {event.sourceLabel === 'Atélatoi' && (
-                    <span className="text-[9px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold uppercase">Atélatoi</span>
-                  )}
+              <div className="p-4 flex flex-col flex-1">
+                <h2 className="text-lg font-bold mb-2 text-red-700 line-clamp-2 leading-tight">{event.title}</h2>
+                <div className="space-y-1 mb-3">
+                  <p className="text-xs font-medium text-gray-800">📍 {event.location}</p>
+                  <p className="text-xs text-gray-600 font-semibold">{event.dateFormatted}</p>
                 </div>
-                <p className="text-sm mt-1 font-medium">📍 {event.fullAddress}</p>
-                <p className="text-sm text-gray-500">{event.dateFormatted}</p>
-                <a href={event.link} target="_blank" rel="noopener noreferrer" className="text-red-600 underline text-sm mt-1 block font-bold">
-                  Voir l'événement →
+                <p className="text-sm text-gray-600 mb-4 line-clamp-3 italic">
+                  {event.description?.substring(0, 120)}...
+                </p>
+                <a
+                  href={event.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-auto block w-full bg-red-600 text-white text-center py-2 rounded font-bold hover:bg-red-700 transition"
+                >
+                  Voir sur Meetup
                 </a>
               </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Rendu Liste */}
+      {viewMode === "list" && (
+        <div className="space-y-4">
+          {filteredEvents.map((event, idx) => (
+            <div key={event.link || idx} className="flex items-center gap-4 p-3 border rounded-lg bg-white hover:bg-gray-50 transition">
+              <div className="w-20 h-20 shrink-0">
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="w-full h-full object-cover rounded shadow-sm"
+                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h2 className="font-bold text-gray-900 truncate">{event.title}</h2>
+                  {event.sourceLabel === 'Atélatoi' && (
+                    <span className="text-[8px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold uppercase">Atélatoi</span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 truncate">📍 {event.fullAddress}</p>
+                <p className="text-xs font-medium text-red-600">{event.dateFormatted}</p>
+              </div>
+              <a href={event.link} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-red-600 whitespace-nowrap p-2 hover:underline">
+                Détails →
+              </a>
             </div>
           ))}
         </div>
