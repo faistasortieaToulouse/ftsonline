@@ -126,13 +126,17 @@ export default function JsonTestPage() {
         </div>
       </section>
 
-{/* 4. Operation Epsilon */}
+      {/* 4. Operation Epsilon */}
       <section className="mb-10 p-6 bg-zinc-100 rounded-lg border-l-4 border-zinc-800">
         <h2 className="text-2xl font-bold mb-4 text-zinc-900">🕵️ Opération Epsilon (Farm Hall)</h2>
         <div className="space-y-3">
-          {data.operation_epsilon_farm_hall && data.operation_epsilon_farm_hall.map((item: string, i: number) => (
-            <p key={i} className="text-sm italic text-zinc-700">"{item}"</p>
-          ))}
+          {Array.isArray(data?.operation_epsilon_farm_hall) ? (
+            data.operation_epsilon_farm_hall.map((item: string, i: number) => (
+              <p key={i} className="text-sm italic text-zinc-700">"{item}"</p>
+            ))
+          ) : (
+            <p className="text-red-500 text-xs">Données non trouvées dans le JSON...</p>
+          )}
         </div>
       </section>
 
