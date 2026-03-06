@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Loader2, MapPin, Calendar } from "lucide-react"; 
 
-const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop"; // Image plus qualitative
+const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop";
 
 type MeetupEvent = {
   title: string;
@@ -15,7 +15,7 @@ type MeetupEvent = {
   description: string;      
   dateFormatted: string;   
   fullAddress: string;     
-  image?: string;           
+  image?: string;            
   sourceLabel?: string;
 };
 
@@ -28,21 +28,19 @@ export default function MeetupEventsPage() {
   const [currentLot, setCurrentLot] = useState(0);
   const [totalLots, setTotalLots] = useState(7);
 
-  // --- LOGIQUE DE DÉDOUBLONNAGE CLIENT AMÉLIORÉE ---
+  // --- LOGIQUE DE DÉDOUBLONNAGE ET TRI ---
   const addEventsUnique = useCallback((newEvents: any[]) => {
     setEvents(prev => {
       const combined = [...prev, ...newEvents];
       const uniqueMap = new Map<string, MeetupEvent>();
       
       combined.forEach(ev => {
-        // Clé unique identique à l'API (Titre + Date ISO)
         const dateStr = ev.startDate instanceof Date ? ev.startDate.toISOString() : ev.startDate;
         const key = `${ev.title.toLowerCase().trim()}-${dateStr}`;
         
         if (!uniqueMap.has(key)) {
           uniqueMap.set(key, ev);
         } else {
-          // Si on a un doublon, on garde celui qui a une image
           const existing = uniqueMap.get(key);
           if (!existing?.image?.includes('placeholder') && ev.image && !ev.image.includes('placeholder')) {
              uniqueMap.set(key, ev);
@@ -82,7 +80,6 @@ export default function MeetupEventsPage() {
 
       if (data.nextLot !== null) {
         setCurrentLot(data.nextLot);
-        // Délai pour laisser respirer l'API et éviter les blocages d'images
         setTimeout(() => loadMeetupLot(data.nextLot), 800);
       } else {
         setLoading(false);
@@ -100,7 +97,6 @@ export default function MeetupEventsPage() {
     setCurrentLot(0);
 
     try {
-      // 1. Atélatoi
       const resAtelatoi = await fetch("/api/atelatoi");
       if (resAtelatoi.ok) {
         const data = await resAtelatoi.json();
@@ -117,7 +113,6 @@ export default function MeetupEventsPage() {
           addEventsUnique(mapped);
         }
       }
-      // 2. Meetup
       loadMeetupLot(0);
     } catch (err) {
       setError("Impossible de charger les événements.");
@@ -127,61 +122,88 @@ export default function MeetupEventsPage() {
 
   useEffect(() => { fetchEvents(); }, []);
 
-  // Filtrage optimisé
   const filteredEvents = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return events;
     return events.filter(ev =>
       ev.title.toLowerCase().includes(q) ||
       ev.description.toLowerCase().includes(q) ||
-      ev.location.toLowerCase().includes(q)
+      ev.location.toLowerCase().includes(q) ||
+      ev.dateFormatted.toLowerCase().includes(q)
     );
   }, [searchQuery, events]);
 
   return (
     <div className="container mx-auto py-10 px-4 max-w-7xl">
-      <nav className="mb-8">
-        <Link href="/" className="inline-flex items-center gap-2 text-red-600 hover:text-red-800 font-bold transition-all group">
+      {/* NAVIGATION */}
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour
+          Retour à l'accueil
         </Link>
       </nav>
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">L'Agenda Toulousain</h1>
-          <p className="text-muted-foreground">Les 31 prochains jours de sorties consolidées.</p>
-        </div>
-        <div className="flex bg-gray-100 p-1 rounded-lg">
-          <button onClick={() => setViewMode("card")} className={`px-4 py-2 rounded-md text-sm font-medium transition ${viewMode === "card" ? "bg-white shadow-sm text-red-600" : "text-gray-500"}`}>Grille</button>
-          <button onClick={() => setViewMode("list")} className={`px-4 py-2 rounded-md text-sm font-medium transition ${viewMode === "list" ? "bg-white shadow-sm text-red-600" : "text-gray-500"}`}>Liste</button>
-        </div>
-      </div>
+      <h1 className="text-3xl font-bold mb-2">L'Agenda Toulousain</h1>
+      
+      <p className="text-muted-foreground mb-6">
+        Fusion des groupes Meetup de loisirs — {filteredEvents.length} évènement(s)
+      </p>
 
-      {loading && (
-        <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-xl">
-           <div className="flex items-center gap-3 text-red-700 font-semibold mb-3">
-             <Loader2 size={20} className="animate-spin" />
-             Synchronisation des groupes... ({currentLot + 1} / {totalLots})
-           </div>
-           <div className="w-full bg-red-200 h-2 rounded-full overflow-hidden">
-             <div className="bg-red-600 h-full transition-all duration-700" style={{ width: `${((currentLot + 1) / totalLots) * 100}%` }}></div>
-           </div>
-        </div>
-      )}
-
-      <div className="relative mb-8">
+      {/* BARRE DE RECHERCHE */}
+      <div className="relative mb-6">
         <input
           type="text"
-          placeholder="Filtrer par titre, lieu..."
+          placeholder="Rechercher un évènement (titre, lieu, description, date...)"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full p-4 pl-12 border-2 border-gray-100 rounded-2xl focus:border-red-500 focus:outline-none transition-all shadow-sm text-lg"
+          className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-red-500 focus:outline-none"
         />
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔍</span>
       </div>
 
-      {/* --- AJOUTEZ LE BLOC CI-DESSOUS --- */}
+      {/* BOUTON REFRESH / LOADER DE SYNCHRO */}
+      <div className="flex flex-col gap-4 mb-6">
+        <Button
+          onClick={fetchEvents}
+          disabled={loading}
+          className="w-fit bg-red-600 hover:bg-red-700"
+        >
+          {loading ? (
+            <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={18} /> Synchronisation...</span>
+          ) : "🔄 Rafraîchir les événements"}
+        </Button>
+
+        {loading && (
+          <div className="w-full max-w-md bg-red-50 p-3 rounded-lg border border-red-100">
+            <p className="text-xs text-red-700 font-semibold mb-2">Chargement lot {currentLot + 1} sur {totalLots}...</p>
+            <div className="w-full bg-red-200 h-1.5 rounded-full overflow-hidden">
+              <div className="bg-red-600 h-full transition-all duration-500" style={{ width: `${((currentLot + 1) / totalLots) * 100}%` }}></div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* CHOIX DU MODE D'AFFICHAGE */}
+      <div className="flex gap-4 mb-8">
+        <button
+          onClick={() => setViewMode("card")}
+          className={`px-4 py-2 rounded transition flex items-center gap-2 ${
+            viewMode === "card" ? "bg-red-600 text-white shadow" : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+          }`}
+        >
+          🗂️ Plein écran
+        </button>
+
+        <button
+          onClick={() => setViewMode("list")}
+          className={`px-4 py-2 rounded transition flex items-center gap-2 ${
+            viewMode === "list" ? "bg-red-600 text-white shadow" : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+          }`}
+        >
+          📋 Vignette
+        </button>
+      </div>
+
+      {/* COMPTEUR DYNAMIQUE (LE BLOC QUE VOUS VOULIEZ) */}
       <div className="bg-white border border-gray-100 rounded-2xl p-4 mb-8 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
           <div className="bg-red-600 text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg shadow-inner">
@@ -192,66 +214,69 @@ export default function MeetupEventsPage() {
               {filteredEvents.length > 1 ? "Événements trouvés" : "Événement trouvé"}
             </h3>
             <p className="text-sm text-gray-500">
-              {loading 
-                ? `Synchronisation... (${events.length} chargés)` 
-                : "Tous les groupes sont à jour"}
+              {loading ? `Synchronisation en cours...` : "Tous les groupes sont à jour"}
             </p>
           </div>
         </div>
-        
         <div className="hidden sm:block text-right">
           <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold">Période</p>
           <p className="text-sm font-bold text-gray-700">31 prochains jours</p>
         </div>
       </div>
-      {/* --- FIN DE L'AJOUT --- */}
 
+      {error && (
+        <div className="p-4 mb-4 border border-red-500 bg-red-50 text-red-700 rounded">
+          Erreur : {error}
+        </div>
+      )}
+
+      {/* AFFICHAGE DES ÉVÉNEMENTS */}
       {filteredEvents.length === 0 && !loading ? (
-        <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed">
-          <p className="text-gray-500 text-lg">Aucun événement trouvé pour votre recherche.</p>
-          <Button onClick={() => setSearchQuery("")} variant="link" className="text-red-600">Effacer les filtres</Button>
-        </div>
+        <p className="mt-6 text-xl text-gray-500 text-center p-8 border border-dashed rounded">
+          Aucun événement trouvé.
+        </p>
       ) : (
-        <div className={viewMode === "card" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-4"}>
-          {filteredEvents.map((event, idx) => (
-            <div key={event.link || idx} className={`${viewMode === "card" ? "flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl" : "flex items-center gap-4 p-4 bg-white border border-gray-100 rounded-xl"} transition-all duration-300 overflow-hidden group`}>
-              
-              <div className={viewMode === "card" ? "relative aspect-[16/9] w-full" : "relative w-24 h-24 shrink-0"}>
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE; }}
-                />
-                {event.sourceLabel === 'Atélatoi' && (
-                  <span className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] px-2 py-1 rounded-full font-bold">ATÉLATOI</span>
-                )}
-              </div>
-
-              <div className="p-5 flex flex-col flex-1">
-                <h2 className={`font-bold text-gray-900 mb-2 leading-tight ${viewMode === "card" ? "text-xl line-clamp-2" : "text-base truncate"}`}>{event.title}</h2>
-                
-                <div className="flex flex-col gap-1.5 mb-4 text-sm text-gray-600">
-                  <div className="flex items-center gap-2"><MapPin size={14} className="text-red-500" /> <span className="truncate">{event.location}</span></div>
-                  <div className="flex items-center gap-2 font-medium text-gray-800"><Calendar size={14} className="text-red-500" /> <span>{event.dateFormatted}</span></div>
+        <>
+          {viewMode === "card" ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredEvents.map((ev, index) => (
+                <div key={ev.link || index} className="bg-white rounded-xl shadow overflow-hidden border flex flex-col h-full group hover:shadow-lg transition-all">
+                  <div className="relative">
+                    <img src={ev.image} alt={ev.title} className="w-full aspect-[16/9] object-cover" />
+                    {ev.sourceLabel === 'Atélatoi' && (
+                      <span className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] px-2 py-1 rounded-full font-bold">ATÉLATOI</span>
+                    )}
+                  </div>
+                  <div className="p-4 flex flex-col flex-1">
+                    <h2 className="text-xl font-semibold text-red-700 mb-2 line-clamp-2">{ev.title}</h2>
+                    <p className="font-medium text-sm mb-1">📍 {ev.location}</p>
+                    <p className="text-gray-600 text-sm mb-3 font-medium">{ev.dateFormatted}</p>
+                    <p className="text-sm mb-6 line-clamp-4 text-gray-500 italic">{ev.description}</p>
+                    <a href={ev.link} target="_blank" className="mt-auto bg-red-600 text-white py-2 px-3 rounded text-center hover:bg-red-700 font-bold transition">
+                      🔗 Voir l’événement
+                    </a>
+                  </div>
                 </div>
-
-                {viewMode === "card" && (
-                  <p className="text-gray-500 text-sm line-clamp-3 mb-6 italic">{event.description?.substring(0, 150)}...</p>
-                )}
-
-                <a
-                  href={event.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${viewMode === "card" ? "mt-auto w-full py-3" : "px-6 py-2 ml-auto"} bg-red-600 text-white text-center rounded-xl font-bold hover:bg-red-700 transition shadow-md hover:shadow-lg`}
-                >
-                  {viewMode === "card" ? "Voir l'évènement" : "Détails"}
-                </a>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredEvents.map((ev, index) => (
+                <div key={ev.link || index} className="flex items-center gap-4 p-3 border rounded-lg bg-white shadow-sm hover:border-red-200 transition">
+                  <img src={ev.image} className="w-24 h-24 rounded object-cover flex-shrink-0" alt={ev.title} />
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <h2 className="text-lg font-semibold text-red-700 truncate">{ev.title}</h2>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-gray-600">
+                       <span className="flex items-center gap-1"><MapPin size={14} /> {ev.location}</span>
+                       <span className="flex items-center gap-1 font-medium"><Calendar size={14} /> {ev.dateFormatted}</span>
+                    </div>
+                    <a href={ev.link} target="_blank" className="mt-2 text-red-600 underline font-bold text-sm">Voir l'évènement →</a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
