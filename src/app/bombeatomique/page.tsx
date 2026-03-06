@@ -1,173 +1,324 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from 'react';
-import { 
-  Atom, 
-  Radiation, 
-  Skull, 
-  Zap, 
-  Microscope, 
-  ShieldCheck, 
-  Globe, 
-  AlertTriangle,
-  Loader2,
-  Database,
-  ArrowLeft
-} from 'lucide-react';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
-export default function BombeAtomiquePage() {
+export default function JsonTestPage() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/bombeatomique')
-      .then(res => res.json())
-      .then(json => setData(json));
+    fetch("/api/bombeatomique")
+      .then((res) => res.json())
+      .then((json) => setData(json))
+      .catch((err) => console.error(err));
   }, []);
 
   if (!data) return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center text-emerald-500 font-mono">
-      <Radiation className="animate-spin mb-4" size={48} />
-      <p className="animate-pulse tracking-[0.3em]">CHARGEMENT DU PROTOCOLE TRINITY...</p>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-800 mb-4"></div>
+      <p className="text-gray-600 font-medium">Chargement de l'histoire atomique...</p>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans selection:bg-emerald-500/30">
+    <div className="max-w-4xl mx-auto p-6 sm:p-10 font-sans leading-relaxed">
       
-      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline mb-6 transition-colors group">
-        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
-        Retour à l'accueil
-      </Link>
-            
-      {/* HERO SECTION */}
-      <header className="relative py-24 px-6 border-b border-emerald-900/30 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-transparent to-transparent">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-emerald-500/50 text-emerald-500 text-xs font-black tracking-widest uppercase mb-8 bg-emerald-950/30">
-            <Atom size={14} /> Classification : Top Secret / Manhattan Level
-          </div>
-          <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-6 uppercase">
-            {data.titre}
-          </h1>
-          <p className="text-xl text-slate-400 font-serif italic max-w-3xl mx-auto leading-relaxed">
-            {data.introduction}
-          </p>
-        </div>
+      {/* Navigation Retour */}
+      <nav className="mb-10">
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 text-red-800 hover:text-red-600 font-bold transition-all group"
+        >
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
+      </nav>
+
+      <header className="mb-12">
+        <h1 className="text-4xl font-extrabold text-red-900 mb-6 tracking-tight">
+          {data.titre}
+        </h1>
+        <p className="text-xl italic text-gray-700 border-l-4 border-red-600 pl-6 py-2 bg-red-50/50">
+          {data.introduction}
+        </p>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-20 space-y-32">
-
-        {/* CHRONOLOGIE ET ÉCHEC NAZI */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div className="space-y-8">
-            <h2 className="text-2xl font-black text-emerald-500 flex items-center gap-3 uppercase tracking-wider">
-              <Microscope /> Genèse Scientifique
-            </h2>
-            <div className="space-y-4">
-              {data.chronologie_scientifique?.map((step: string, i: number) => (
-                <div key={i} className="p-4 bg-slate-900/50 border-l-4 border-emerald-600 rounded-r-xl text-sm">
-                  <span className="text-emerald-400 font-bold block mb-1">{step.split(':')[0]}</span>
-                  {step.split(':')[1]}
-                </div>
-              ))}
+      <section className="mb-10 bg-white shadow-sm border border-gray-100 rounded-xl p-6">
+        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 text-gray-800">
+          <span className="text-red-600">🔬</span> Chronologie Scientifique
+        </h2>
+        <div className="space-y-3">
+          {data.chronologie_scientifique.map((item: string, i: number) => (
+            <div key={i} className="flex gap-3 items-start p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <span className="font-mono text-red-700 font-bold">0{i+1}</span>
+              <span className="text-gray-800 text-sm sm:text-base">{item}</span>
             </div>
-          </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="space-y-8 bg-red-950/10 border border-red-900/20 p-8 rounded-3xl">
-            <h2 className="text-2xl font-black text-red-500 flex items-center gap-3 uppercase tracking-wider">
-              <AlertTriangle /> L'Échec de l'Uranprojekt
-            </h2>
-            <ul className="space-y-6">
-              {data.echec_nazi_uranprojekt?.map((item: string, i: number) => (
-                <li key={i} className="flex gap-4 text-sm leading-relaxed">
-                  <span className="text-red-600 font-bold">0{i+1}</span>
-                  <div>
-                    <strong className="text-slate-100 block uppercase text-xs">{item.split(':')[0]}</strong>
-                    <span className="text-slate-400">{item.split(':')[1]}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        
-
-        {/* PROJET MANHATTAN VS V2 */}
-        <section className="bg-emerald-950/10 border border-emerald-900/30 rounded-[3rem] p-8 md:p-12">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
-            <div>
-              <h2 className="text-3xl font-black text-white mb-8 uppercase italic underline decoration-emerald-500 underline-offset-8">Manhattan Project (USA)</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {data.projet_manhattan_usa?.map((item: string, i: number) => (
-                  <div key={i} className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 text-xs leading-relaxed">
-                    <Zap className="text-emerald-500 mb-2" size={16} />
-                    {item}
-                  </div>
-                ))}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-orange-800">
+          <span className="text-orange-600">⚠️</span> L'échec nazi (Uranprojekt)
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {data.echec_nazi_uranprojekt.map((item: string, i: number) => {
+            const [label, content] = item.split(': ');
+            return (
+              <div key={i} className="p-4 border-l-2 border-orange-400 bg-orange-50/30">
+                <span className="block font-bold text-orange-900 text-xs uppercase mb-1">{label}</span>
+                <span className="text-gray-700 text-sm">{content}</span>
               </div>
-            </div>
-            <div className="space-y-6">
-              <h2 className="text-3xl font-black text-slate-500 mb-8 uppercase italic">Le Rendez-vous manqué (V2)</h2>
-              {data.le_rendez_vous_manque_v2_atome?.map((item: string, i: number) => (
-                <div key={i} className="flex items-center gap-4 p-4 border-b border-slate-800 group hover:bg-slate-900/40 transition-colors">
-                  <span className="text-2xl font-black text-slate-800 group-hover:text-emerald-900 tracking-tighter italic">V2-A</span>
-                  <p className="text-sm text-slate-400 italic">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+            );
+          })}
+        </div>
+      </section>
 
-        {/* ÉTAT DES LIEUX MONDIAL 2026 */}
-        <section>
-          <div className="flex flex-col items-center mb-12">
-            <Globe className="text-emerald-500 mb-4 animate-pulse" size={40} />
-            <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Échiquier Nucléaire 2026</h2>
-          </div>
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            {data.etat_des_lieux_mondial_2026?.map((item: string, i: number) => (
-              <div key={i} className="break-inside-avoid p-6 bg-slate-900/40 border border-slate-800 rounded-2xl hover:border-emerald-500 transition-all group">
-                <div className="text-emerald-500 font-black text-xs uppercase mb-3 flex items-center justify-between">
-                  <span>{item.split(':')[0]}</span>
-                  <ShieldCheck size={14} className="opacity-0 group-hover:opacity-100" />
-                </div>
-                <p className="text-sm text-slate-400 font-serif leading-relaxed">
-                  {item.split(':')[1]}
-                </p>
+      {/* 1. Le rendez-vous manqué V2 / Atome */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-zinc-800">
+          <span className="text-zinc-600">🚀</span> Le rendez-vous manqué (V2 & Atome)
+        </h2>
+        <div className="space-y-4">
+          {data.le_rendez_vous_manque_v2_atome?.map((item: string, i: number) => {
+            const [label, content] = item.split(': ');
+            return (
+              <div key={i} className="p-4 bg-zinc-50 border border-zinc-200 rounded-lg">
+                <span className="font-bold text-zinc-900">{label} :</span>{" "}
+                <span className="text-gray-700">{content}</span>
               </div>
-            ))}
-          </div>
-        </section>
+            );
+          })}
+        </div>
+      </section>
 
-        {/* MÉTHODES DE BLOCAGE & CYBER */}
-        <footer className="relative bg-black rounded-[4rem] p-12 border border-emerald-900/50 overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.1)]">
-          <div className="absolute top-0 right-0 p-8 opacity-10">
-            <Database size={200} />
-          </div>
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-black text-emerald-500 uppercase mb-6 tracking-widest flex items-center gap-2">
-                <Skull size={24} /> Guerre de l'ombre
-              </h3>
-              <div className="space-y-4">
-                {data.methodes_de_blocage_modernes?.map((m: string, i: number) => (
-                  <div key={i} className="flex gap-3 text-sm border-l-2 border-emerald-900 pl-4 py-1">
-                    <span className="text-emerald-600 font-bold">»</span> {m}
-                  </div>
-                ))}
+      {/* 2. Désintérêt stratégique de Hitler */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-red-800">
+          <span className="text-red-600">📉</span> Désintérêt Stratégique
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {data.desinteret_strategique_de_hitler?.map((item: string, i: number) => {
+            const [label, content] = item.split(': ');
+            return (
+              <div key={i} className="p-4 border-t-2 border-red-800 bg-white shadow-sm">
+                <span className="block font-bold text-red-900 text-xs uppercase mb-1">{label}</span>
+                <span className="text-gray-700 text-sm">{content}</span>
               </div>
-            </div>
-            <div className="bg-emerald-900/10 p-8 rounded-[2rem] border border-emerald-500/20 italic font-serif text-lg text-emerald-200">
-              "{data.conclusion_anecdotique}"
-            </div>
-          </div>
-        </footer>
+            );
+          })}
+        </div>
+      </section>
 
-      </main>
+      {/* 3. Projet Manhattan USA */}
+      <section className="mb-10 bg-blue-50/30 p-6 rounded-xl border border-blue-100">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-blue-900">
+          <span className="text-blue-700">🇺🇸</span> Projet Manhattan (USA)
+        </h2>
+        <div className="space-y-3">
+          {data.projet_manhattan_usa?.map((item: string, i: number) => (
+            <div key={i} className="flex gap-3 items-start">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 shrink-0" />
+              <p className="text-gray-800 text-sm sm:text-base">{item}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <div className="text-center py-10 text-[10px] text-slate-600 font-mono uppercase tracking-[1em]">
-        Atomic-Clock-Sync: OK | Radiation-Level: Normal | End-Of-File
+      {/* 4. Operation Epsilon */}
+      <section className="mb-10 p-6 bg-zinc-100 rounded-lg border-l-4 border-zinc-800">
+        <h2 className="text-2xl font-bold mb-4 text-zinc-900">🕵️ Opération Epsilon (Farm Hall)</h2>
+        <div className="space-y-3">
+          {data?.operation_epsilon_farm_hall && data.operation_epsilon_farm_hall.map((item: string, i: number) => (
+            <p key={i} className="text-sm italic text-zinc-700">"{item}"</p>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. Dénouement 1945 */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-red-700">
+          <span className="text-red-600">💥</span> Dénouement 1945
+        </h2>
+        <div className="space-y-4">
+          {data.denouement_1945 && data.denouement_1945.map((item: string, i: number) => (
+            <div key={i} className="p-4 bg-red-50 border border-red-100 rounded-lg font-medium text-red-900 shadow-sm">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. Synthèse Stratégique */}
+      <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {data.synthese_strategique && data.synthese_strategique.map((item: string, i: number) => {
+          // Sécurisation au cas où il n'y aurait pas de ":"
+          const [pays, ...rest] = item.split(': ');
+          const texte = rest.join(': '); 
+          return (
+            <div key={i} className="p-5 border rounded-xl shadow-sm bg-white hover:border-red-300 transition-colors">
+              <h3 className="font-black text-lg mb-2 underline decoration-red-500 text-gray-800">{pays}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{texte}</p>
+            </div>
+          );
+        })}
+      </section>
+
+      {/* 7. Le Cas Particulier de la France */}
+      <section className="mb-10 p-8 bg-blue-900 text-white rounded-3xl shadow-2xl">
+        <h2 className="text-3xl font-black mb-6 flex items-center gap-3">
+          <span className="text-4xl">🇫🇷</span> Le Cas de la France
+        </h2>
+        <div className="grid grid-cols-1 gap-4">
+          {data.le_cas_particulier_de_la_france && data.le_cas_particulier_de_la_france.map((item: string, i: number) => (
+            <div key={i} className="flex gap-4 items-start border-b border-blue-800 pb-4 last:border-0">
+              {/* On enlève la logique de calcul de date car elle ne correspondait pas aux vraies dates du texte */}
+              <div className="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0" />
+              <p className="text-blue-50 text-sm sm:text-base leading-relaxed">{item}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 8. Royaume-Uni */}
+      <section className="mb-10 p-6 bg-slate-50 border border-slate-200 rounded-xl">
+        <h2 className="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2">
+          <span className="text-slate-500">🇬🇧</span> Souveraineté du Royaume-Uni
+        </h2>
+        <ul className="space-y-3">
+          {data.la_souverainete_reconquise_du_royaume_uni?.map((item: string, i: number) => (
+            <li key={i} className="text-sm text-slate-700 list-disc list-inside">{item}</li>
+          ))}
+        </ul>
+      </section>
+
+      {/* 9. Proliférations Modernes (A.Q. Khan) */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 text-emerald-800 flex items-center gap-2">
+          <span className="text-emerald-600">🕵️‍♂️</span> Proliférations et Vols
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {data.proliferations_et_vols_modernes?.map((item: string, i: number) => (
+            <div key={i} className="p-4 bg-emerald-50/50 border-r-4 border-emerald-600 rounded-l-lg shadow-sm">
+              <p className="text-sm text-gray-800">{item}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 10. Pacte France-Israël */}
+      <section className="mb-10 bg-gradient-to-r from-blue-50 to-white p-8 rounded-2xl border-y-2 border-blue-200">
+        <h2 className="text-2xl font-bold mb-6 text-blue-900 flex items-center gap-2">
+          <span className="text-blue-600">🇮🇱</span> Le Pacte Secret (Dimona)
+        </h2>
+        <div className="space-y-4">
+          {data.le_pacte_secret_france_israel?.map((item: string, i: number) => (
+            <div key={i} className="flex gap-3 text-gray-700 italic border-l-2 border-blue-300 pl-4">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 11. Synthèse des Transferts par Pays */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 border-b-2 border-gray-900 pb-2">
+          🌍 Synthèse Mondiale des Transferts
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {data.synthese_des_transferts_par_pays?.map((item: string, i: number) => {
+            const [pays, info] = item.split(': ');
+            return (
+              <div key={i} className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <span className="font-black text-red-800 block mb-1 uppercase text-xs tracking-tighter">{pays}</span>
+                <p className="text-xs text-gray-600 leading-tight">{info}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 12. Les Échecs et Renoncements */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-zinc-700">
+          <span className="text-zinc-500">🏳️</span> Échecs et Renoncements
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {data?.les_echecs_et_renoncements && data.les_echecs_et_renoncements.map((item: string, i: number) => (
+            <div key={i} className="p-3 bg-zinc-50 border border-zinc-200 rounded text-sm text-zinc-600 italic">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 13. État des Lieux Mondial 2026 */}
+      <section className="mb-10 p-6 bg-red-900 text-white rounded-2xl shadow-xl">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <span className="text-red-400">🌐</span> État des Lieux Mondial 2026
+        </h2>
+        <div className="space-y-4">
+          {data?.etat_des_lieux_mondial_2026 && data.etat_des_lieux_mondial_2026.map((item: string, i: number) => (
+            <div key={i} className="border-b border-red-800 pb-2 last:border-0 text-sm sm:text-base opacity-90 hover:opacity-100 transition-opacity">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 14. Analyse du Savoir-Faire */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 text-indigo-900 border-l-4 border-indigo-600 pl-4">
+          🧠 Analyse du Savoir-Faire
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {data?.analyse_du_savoir_faire && data.analyse_du_savoir_faire.map((item: string, i: number) => {
+            const [label, text] = item.split(': ');
+            return (
+              <div key={i} className="p-4 bg-indigo-50/30 rounded-lg border border-indigo-100">
+                <span className="font-bold text-indigo-800 block mb-1 uppercase text-xs">{label}</span>
+                <p className="text-gray-700 text-sm">{text}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 15. Méthodes de Blocage Modernes */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-orange-900">
+          <span className="text-orange-600">🛡️</span> Méthodes de Blocage Modernes
+        </h2>
+        <div className="space-y-4">
+          {data?.methodes_de_blocage_modernes && data.methodes_de_blocage_modernes.map((item: string, i: number) => (
+            <div key={i} className="p-4 bg-orange-50 border-l-4 border-orange-500 rounded-r-lg font-medium text-orange-950 shadow-sm">
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="bg-zinc-900 text-yellow-500 p-8 rounded-2xl mb-12 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-4 opacity-10">
+          <span className="text-6xl font-black italic">!</span>
+        </div>
+        <h3 className="text-sm font-black mb-2 uppercase tracking-[0.2em] text-yellow-600">Le Saviez-vous ?</h3>
+        <p className="text-xl font-medium leading-snug">{data.conclusion_anecdotique}</p>
       </div>
+
+      <footer className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8 border-t border-gray-200">
+        {Object.entries(data.notes_finales).map(([key, value]: [string, any], i) => (
+          <div key={i} className="group">
+            <h4 className="font-bold text-red-700 text-xs uppercase mb-2 tracking-wider group-hover:text-red-500 transition-colors">
+              {key.replace(/_/g, ' ')}
+            </h4>
+            <p className="text-sm text-gray-600 italic leading-relaxed">
+              "{value}"
+            </p>
+          </div>
+        ))}
+      </footer>
     </div>
   );
 }
