@@ -14,6 +14,27 @@
     "Sabotage: Les Alliés détruisent l'usine d'eau lourde de Vemork en Norvège lors de raids héroïques.",
     "Désorganisation: Concurrence stérile entre les équipes de la Poste, de l'Armée et des SS."
   ],
+    ],
+  "le_rendez_vous_manque_v2_atome": [
+    "Cloisonnement: Von Braun (V2) et Heisenberg (Atome) travaillaient sur deux projets parallèles sans jamais collaborer.",
+    "Limitation technique: La V2 ne pouvait porter qu'une tonne, alors que les nazis croyaient la bombe bien plus lourde.",
+    "Priorité Hitler: Fascination pour les 'armes de vengeance' (V1/V2) bruyantes plutôt que pour la discrète physique nucléaire.",
+    "Le Camion sans charge: Hitler possédait le vecteur le plus avancé du monde mais n'avait que de l'explosif classique pour l'armer."
+  ],
+  "desinteret_strategique_de_hitler": [
+    "Incrédulité: Hitler jugeait la physique nucléaire trop abstraite et 'magique' par rapport aux résultats immédiats.",
+    "Erreur de délai: En 1942, Hitler coupe les budgets massifs car il refuse d'investir dans une arme prête après 3 ou 4 ans.",
+    "Projet Uranium: Créé en 1939, l'Uranverein avait pourtant deux ans d'avance sur les Américains au début du conflit.",
+    "Echec final: En 1945, le réacteur expérimental de la grotte de Haigerloch n'avait même pas atteint la divergence."
+  ],
+  "projet_manhattan_usa": [
+    "Direction: Pilotage par J. Robert Oppenheimer (science) et Leslie Groves (militaire) dès 1942.",
+    "Moyens: Mobilisation industrielle de 130 000 personnes pour un coût de 2 milliards de dollars.",
+    "Cerveaux: Transfert massif de savoir-faire grâce aux physiciens européens fuyant le nazisme.",
+    "Lieu: Construction du laboratoire secret de Los Alamos au Nouveau-Mexique pour l'assemblage.",
+    "Juillet 1945: Succès du Trinity Test à Alamogordo, marquant le début de l'ère nucléaire.",
+    "Août 1945: Bombardements d'Hiroshima et Nagasaki entraînant la reddition définitive du Japon."
+  ],
   "conclusion_anecdotique": "À Farm Hall, les savants nazis capturés ont cru à un bluff pour Hiroshima, tant ils se croyaient en avance.",
     "notes_finales": {
     "note_v2_atome": "Le IIIe Reich possédait le vecteur (V2) mais n'a jamais réussi à miniaturiser la charge (Bombe).",
