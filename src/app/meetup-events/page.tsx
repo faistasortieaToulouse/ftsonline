@@ -181,6 +181,31 @@ export default function MeetupEventsPage() {
         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔍</span>
       </div>
 
+      {/* --- AJOUTEZ LE BLOC CI-DESSOUS --- */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-4 mb-8 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-4">
+          <div className="bg-red-600 text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg shadow-inner">
+            {filteredEvents.length}
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-900 text-lg">
+              {filteredEvents.length > 1 ? "Événements trouvés" : "Événement trouvé"}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {loading 
+                ? `Synchronisation... (${events.length} chargés)` 
+                : "Tous les groupes sont à jour"}
+            </p>
+          </div>
+        </div>
+        
+        <div className="hidden sm:block text-right">
+          <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold">Période</p>
+          <p className="text-sm font-bold text-gray-700">31 prochains jours</p>
+        </div>
+      </div>
+      {/* --- FIN DE L'AJOUT --- */}
+
       {filteredEvents.length === 0 && !loading ? (
         <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed">
           <p className="text-gray-500 text-lg">Aucun événement trouvé pour votre recherche.</p>
