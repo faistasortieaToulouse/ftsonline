@@ -246,7 +246,7 @@ export default function MeetupEventsPage() {
                   rel="noopener noreferrer"
                   className={`${viewMode === "card" ? "mt-auto w-full py-3" : "px-6 py-2 ml-auto"} bg-red-600 text-white text-center rounded-xl font-bold hover:bg-red-700 transition shadow-md hover:shadow-lg`}
                 >
-                  {viewMode === "card" ? "Réserver ma place" : "Détails"}
+                  {viewMode === "card" ? "Voir l'évènement" : "Détails"}
                 </a>
               </div>
             </div>
