@@ -780,23 +780,7 @@ const iconeLumiere = estEnBaisse ? "📉" : "📈";
   const conseilJardin = getConseilsJardin(heure);
   const signeZodiaque = getSigneZodiaque(heure);
   const ascendant = getAscendant(heure);
-	
-useEffect(() => {
-  const handleClickInterieurOuExterieur = (e: MouseEvent) => {
-    // On cherche si le clic a eu lieu à l'intérieur d'un composant 'menu-item'
-    const cible = e.target as HTMLElement;
-    if (!cible.closest('.menu-item')) {
-      setOpenMenu(null); // On ferme tout si on clique ailleurs
-    }
-  };
-  // On écoute le 'mousedown' (plus réactif que 'click' sur ordi)
-  document.addEventListener('mousedown', handleClickInterieurOuExterieur);
-  // Nettoyage quand on quitte la page
-  return () => {
-    document.removeEventListener('mousedown', handleClickInterieurOuExterieur);
-  };
-}, []);
-	
+		
 useEffect(() => {
   // 1. Gestion de l'horloge
   const timer = setInterval(() => {
@@ -1183,11 +1167,12 @@ return sections.map((sec, idx) => {
             const isOpen = openMenu === idx;
 
             return (
-              <div key={idx} className="relative menu-item"> {/* CLASSE CRUCIALE ICI */}
+              <div key={idx} className="relative">
+                {/* Bouton de déclenchement */}
                 <button 
                   type="button"
                   onClick={() => setOpenMenu(isOpen ? null : idx)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm outline-none ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all border border-purple-200 shadow-sm outline-none relative z-50 ${
                     isOpen ? 'bg-purple-600 text-white' : 'bg-white/80 text-purple-700 hover:bg-purple-100'
                   }`}
                 >
@@ -1196,24 +1181,32 @@ return sections.map((sec, idx) => {
                 </button>
 
                 {isOpen && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-[100] p-4 animate-in fade-in zoom-in duration-150">
-                    <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
-                      {sec.label} du {jourMois}
+                  <>
+                    {/* LE BOUCLIER : Une div invisible qui prend TOUT l'écran */}
+                    <div 
+                      className="fixed inset-0 z-40 bg-black/0 cursor-default" 
+                      onClick={() => setOpenMenu(null)}
+                    />
+
+                    {/* LE MENU : Placé au-dessus du bouclier (z-50) */}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-white border border-purple-200 shadow-2xl rounded-xl z-50 p-4 animate-in fade-in zoom-in duration-150">
+                      <div className="text-xs font-black uppercase text-purple-400 mb-2 border-b border-purple-50 pb-2">
+                        {sec.label} du {jourMois}
+                      </div>
+                      <ul className="max-h-60 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-purple-200">
+                        {sec.data && sec.data.length > 0 ? (
+                          sec.data.map((text: string, i: number) => (
+                            <li key={i} className="text-base text-slate-700 leading-relaxed border-b border-slate-50 last:border-0 pb-2">
+                              • {text}
+                            </li>
+                          ))
+                        ) : (
+                          <li className="text-sm text-gray-400 italic text-center py-2">Aucune donnée</li>
+                        )}
+                      </ul>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
                     </div>
-                    <ul className="max-h-60 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-purple-200">
-                      {sec.data && sec.data.length > 0 ? (
-                        sec.data.map((text: string, i: number) => (
-                          <li key={i} className="text-base text-slate-700 leading-relaxed border-b border-slate-50 last:border-0 pb-2">
-                            • {text}
-                          </li>
-                        ))
-                      ) : (
-                        <li className="text-sm text-gray-400 italic text-center py-2">Aucune donnée</li>
-                      )}
-                    </ul>
-                    {/* Flèche décorative */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white"></div>
-                  </div>
+                  </>
                 )}
               </div>
             );
