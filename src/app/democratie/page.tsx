@@ -28,12 +28,14 @@ export default function DemocratiePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      
+          <Link href="/" className="inline-flex items-center gap-2 text-blue-400 hover:text-white mb-6 font-bold transition-all">
+            <ArrowLeft size={20} /> Retour à l'Accueil
+          </Link>
+      
       {/* Header Institutionnel */}
       <div className="bg-slate-900 text-white py-12 border-b-4 border-blue-600">
         <div className="container mx-auto px-4 max-w-5xl">
-          <Link href="/" className="inline-flex items-center gap-2 text-blue-400 hover:text-white mb-6 font-bold transition-all">
-            <ArrowLeft size={20} /> Retour au portail
-          </Link>
           <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4 flex items-center gap-4">
             <Landmark className="text-blue-500" size={40} />
             {data.titre}
