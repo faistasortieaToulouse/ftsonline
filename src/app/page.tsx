@@ -1467,6 +1467,7 @@ return sections.map((sec, idx) => {
         (cat.isEmploi && (cat as any).emploiSources) ||
         (cat.isTransport && (cat as any).transportSources) ||
         (cat.isEurope && (cat as any).savoirsEuropeSources) ||
+		(cat.isRiche && (cat as any).richeSources) ||
         (cat.isOccitanie && (cat as any).occitanieSources) ||
         (cat.savoirSources && (cat as any).savoirSources) ||
         (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
