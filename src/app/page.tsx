@@ -16,7 +16,8 @@ import {
   Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
   Newspaper, Speech, Users, UserGroup, Smile, Handshake,
   ChevronDown, Wind, Droplets, Sun as SunIcon, Navigation,
-  Timer, Mountain, Store, Share2, Download
+  Timer, Mountain, Store, Share2, Download, Gem, Euro, Baby,
+  GraduationCap
 } from "lucide-react";
 import APKDownloadModal from "@/components/APKDownloadModal";
 import InstallPWAiOS from "@/components/InstallPWAiOS";
@@ -69,6 +70,7 @@ const nbEquipement = 3;
 const nbGeographie = 6;
 const nbHistoire = 4;
 const nbMonument = 3;
+const nbRiche = 3;
 const nbLittératureEt = 7;
 const nbLittératureFr = 22;
 const nbPrix = 21;
@@ -377,6 +379,13 @@ const categories = [
     { title: "Style toulousain", href: "/brique" },
   ]},
 //  const nbMonument = 3;
+
+	{ title: "Toulouse : Sociologie", href: "/riche", icon: Gem, isRiche: true, occitanieSources: [
+    { title: "Hôpital de la Grave", href: "/sociologietoulouse" },
+    { title: "Hôtel-Dieu", href: "/banlieuetoulouse" },
+    { title: "Style toulousain", href: "/quartierstoulouse" },
+  ]},
+//  const nbRiche = 3;
 
 
   /* ---------------- LITTERATURE ---------------- */
