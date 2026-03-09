@@ -94,10 +94,11 @@ const totalArticles =
   nbCommunaute + nbSport + nbMusee + nbVisite + 
   nbOccitanie + nbTransport + nbCafeLangue + nbConsomamtion + 
   nbEmploi + nbFlore + nbEquipement + nbGeographie + 
-  nbHistoire + nbMonument + nbLittératureEt + nbLittératureFr + 
-  nbPrix + nbArchitecture + nbEurope + nbFete + 
+  nbHistoire + nbMonument + nbRiche + nbLittératureEt + 
+  nbLittératureFr + nbPrix + nbArchitecture + nbEurope + nbFete + 
   nbFrancais + nbHierarchie + nbSaHistoire + nbLangue + 
-  nbMonde + nbReligion + nbTerritoire;
+  nbMondeEconomie +nbMondeGeo + nbMondeHistoire + nbMondeNiveauVie + 
+  nbReligion + nbMondeVilles + nbTerritoire;
 
   const handleShare = async () => {
     if (navigator.share) {
