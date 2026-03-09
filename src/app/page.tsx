@@ -379,12 +379,17 @@ const categories = [
   ]},
 //  const nbMonument = 3;
 
-	{ title: "Toulouse : Sociologie", href: "/riche", icon: Gem, isRiche: true, occitanieSources: [
+{ 
+  title: "Toulouse : Sociologie", 
+  href: "/sociologietoulouse", 
+  icon: Gem, 
+  isRiche: true, 
+  richeSources: [ // Change occitanieSources en richeSources
     { title: "Hôpital de la Grave", href: "/sociologietoulouse" },
     { title: "Hôtel-Dieu", href: "/banlieuetoulouse" },
     { title: "Style toulousain", href: "/quartierstoulouse" },
-  ]},
-//  const nbRiche = 3;
+  ]
+},
 
 
   /* ---------------- LITTERATURE ---------------- */
@@ -620,7 +625,7 @@ const categories = [
   ]},
 //  const nbReligion = 3;
 
-  { title: "Savoirs : Territoires français", href: "/territoires-francais", icon: Hexagon,
+	  { title: "Savoirs : Territoires français", href: "/territoires-francais", icon: Hexagon,
     isSavoirsTerritoires: true,
     savoirsTerritoiresSources: [
 	{ title: "France", href: "/France" },
