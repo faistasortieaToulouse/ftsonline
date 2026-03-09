@@ -86,7 +86,7 @@ export default function MeetupFullPage() {
       <h1 className="text-3xl font-bold mb-4">Évènements Meetup Toulouse</h1>
       
       <p className="text-muted-foreground mb-6">
-        Prochains événements consolidés des groupes Meetup toulousains (incluant Atélatoi), sur 31 jours.
+        Prochains événements des groupes Meetup toulousains de Loisirs sur 31 jours.
       </p>
 
       {/* Barre de recherche (Ancien style) */}
