@@ -37,7 +37,7 @@ export default function QuartiersToulousePage() {
 
       <header className="mb-12 border-b-4 border-blue-900 pb-6">
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter flex items-center gap-3">
-          <LayoutGrid className="text-blue-600" /> Les 70 Quartiers de Toulouse
+          <LayoutGrid className="text-blue-600" />Quartiers de Toulouse
         </h1>
         <p className="text-slate-500 font-medium mt-2">Analyse de la stratification urbaine et des dynamiques sociales</p>
         <p className="text-slate-500 font-medium mt-2">Classement des quartiers les plus riches de Toulouse</p>
