@@ -16,8 +16,7 @@ import {
   Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
   Newspaper, Speech, Users, UserGroup, Smile, Handshake,
   ChevronDown, Wind, Droplets, Sun as SunIcon, Navigation,
-  Timer, Mountain, Store, Share2, Download, Gem, Euro, Baby,
-  GraduationCap
+  Timer, Mountain, Store, Share2, Download, Gem, Euro, Baby
 } from "lucide-react";
 import APKDownloadModal from "@/components/APKDownloadModal";
 import InstallPWAiOS from "@/components/InstallPWAiOS";
