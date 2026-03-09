@@ -1487,11 +1487,23 @@ return sections.map((sec, idx) => {
     Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
   </p>
 
-{/* Conteneur Columns - On laisse le flux naturel pour éviter les décalages */}
-<div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
-  {categories.map((cat, i) => {
-    // On utilise directement "cat" depuis le map, c'est l'index naturel
-    const Icon = cat.icon;
+  {/* Conteneur Columns */}
+  <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
+    {Array.from({ length: categories.length }).map((_, i) => {
+      const numCols = 3;
+      const total = categories.length;
+      const numRows = Math.ceil(total / numCols);
+
+      // i est la position visuelle dans la grille (0, 1, 2...)
+      // On calcule l'index dans le tableau pour simuler un remplissage par ligne
+      const row = Math.floor(i / numCols);
+      const col = i % numCols;
+      const index = col * numRows + row;
+
+      const cat = categories[index];
+
+      // Sécurité indispensable
+      if (!cat) return null;
     
     const sources =
       (cat.isAgenda && eventSources) ||
