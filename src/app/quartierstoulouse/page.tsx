@@ -31,7 +31,7 @@ export default function QuartiersToulousePage() {
     <div className="container mx-auto py-10 px-4 max-w-6xl">
       <nav className="mb-8">
         <Link href="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 font-bold transition-colors">
-          <ArrowLeft size={20} /> Retour
+          <ArrowLeft size={20} /> Retour à l'Accueil
         </Link>
       </nav>
 
@@ -40,6 +40,7 @@ export default function QuartiersToulousePage() {
           <LayoutGrid className="text-blue-600" /> Les 70 Quartiers de Toulouse
         </h1>
         <p className="text-slate-500 font-medium mt-2">Analyse de la stratification urbaine et des dynamiques sociales</p>
+        <p className="text-slate-500 font-medium mt-2">Classement des quartiers les plus riches de Toulouse</p>
       </header>
 
       {/* GRILLE DES QUARTIERS */}
