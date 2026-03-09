@@ -30,12 +30,16 @@ export default function RevolutionPage() {
     <div className="container mx-auto py-10 px-4 max-w-5xl">
       <nav className="mb-8">
         <Link href="/" className="inline-flex items-center gap-2 text-red-700 hover:underline font-bold">
-          <ArrowLeft size={20} /> Retour
+          <ArrowLeft size={20} /> Retour à l'Accueil
         </Link>
       </nav>
 
       <h1 className="text-3xl font-black mb-2 uppercase text-slate-900">{data.titre}</h1>
-      <p className="text-sm text-gray-500 mb-8 italic">Source : {data.source}</p>
+      <p className="text-sm text-gray-500 mb-8 italic">
+        Source : <a href={data.source} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+          Chronologie de révolutions et de rébellions (Wikipedia)
+        </a>
+      </p>
 
       {/* Synthèse Historique */}
       <div className="bg-amber-50 border-l-4 border-amber-500 p-6 mb-10 rounded-r-lg">
