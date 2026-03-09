@@ -1488,22 +1488,30 @@ return sections.map((sec, idx) => {
   </p>
 
   {/* Conteneur Columns */}
-  <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
-    {Array.from({ length: categories.length }).map((_, i) => {
-      const numCols = 3;
-      const total = categories.length;
-      const numRows = Math.ceil(total / numCols);
+<div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
+  {Array.from({ length: categories.length }).map((_, i) => {
+    const numCols = 3;
+    const total = categories.length;
+    const numRows = Math.ceil(total / numCols);
 
-      // i est la position visuelle dans la grille (0, 1, 2...)
-      // On calcule l'index dans le tableau pour simuler un remplissage par ligne
-      const row = Math.floor(i / numCols);
-      const col = i % numCols;
-      const index = col * numRows + row;
+    /**
+     * LOGIQUE DE LA GRILLE :
+     * Si i = 0 (Haut Col 1) -> index = 0 * numRows + 0 = 0
+     * Si i = 1 (Haut Col 2) -> index = 1 * numRows + 0 = numRows
+     * Si i = 2 (Haut Col 3) -> index = 2 * numRows + 0 = 2 * numRows
+     * * Pour que ça marche, ton tableau 'categories' doit être trié ainsi :
+     * index 0 : Agenda
+     * index 1 : Actualités
+     * index 2 : Meetup
+     */
+    const col = Math.floor(i / numRows);
+    const row = i % numRows;
+    const index = row * numCols + col; 
 
-      const cat = categories[index];
+    const cat = categories[index];
 
-      // Sécurité indispensable
-      if (!cat) return null;
+    // Sécurité si la cellule est vide (fin de tableau)
+    if (!cat) return null;
 
 	const Icon = cat.icon;
     
