@@ -1504,6 +1504,8 @@ return sections.map((sec, idx) => {
 
       // Sécurité indispensable
       if (!cat) return null;
+
+	const Icon = cat.icon;
     
     const sources =
       (cat.isAgenda && eventSources) ||
