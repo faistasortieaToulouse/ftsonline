@@ -1458,6 +1458,7 @@ return sections.map((sec, idx) => {
         (cat.isMusee && (cat as any).museeSources) ||
         (cat.isActualites && (cat as any).actualitesSources) ||
         (cat.isVisites && (cat as any).visitesSources) ||
+		(cat.isRiche && (cat as any).richeSources) ||
         (cat.isCafeLangues && (cat as any).cafeLanguesSources) ||
         (cat.isCommuSorties && (cat as any).commuSortiesSources) ||
         (cat.isSavoirsLangues && (cat as any).savoirsLanguesSources) ||
@@ -1466,7 +1467,6 @@ return sections.map((sec, idx) => {
         (cat.isEmploi && (cat as any).emploiSources) ||
         (cat.isTransport && (cat as any).transportSources) ||
         (cat.isEurope && (cat as any).savoirsEuropeSources) ||
-		(cat.isRiche && (cat as any).richeSources) ||
         (cat.isOccitanie && (cat as any).occitanieSources) ||
         (cat.savoirSources && (cat as any).savoirSources) ||
         (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
