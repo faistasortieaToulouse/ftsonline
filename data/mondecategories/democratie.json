@@ -25,7 +25,7 @@
     "Philippines (Barangay): Gouvernance par consensus et procès publics pour limiter l'arbitraire du chef.",
     "Bengale (750): Élection de Gopala par les notables pour mettre fin à l'anarchie (Matsyanyaya).",
     "Mayas: Effondrement systémique provoqué par l'abandon massif des cités face à la prédation des élites.",
-    "Chrétienté primitive: Tradition de l'élection populaire des dirigeants communautaires (évêques)."
+    "Chrétienté primitive: Tradition de l'élection populaire des dirigeants communautaires (évêques).",
     "Islande (930-1262): L'Althing, assemblée souveraine sans chef d'État permanent, pas de monarque.",
     "Europe du Nord: Pratique du Thing, souveraineté des hommes libres par le consensus guerrier.",
     "Inde: Pérennité des Panchayats (conseils de village) comme rempart contre la prédation impériale.",
@@ -51,7 +51,7 @@
     "Italie (XIe-XIVe): Républiques urbaines (Florence, Venise) réinventant le tirage au sort et le conseil.",
     "Iroquois (v. 1142): Grande Loi de la Paix instaurant une démocratie représentative avec pouvoir féminin.",
     "Pays_Basque (v. 1150 - 1789): Biltzar et Silviet, assemblées paysannes souveraines garantissant l'autonomie fiscale et juridique face aux couronnes de France et d'Angleterre.",
-    "Hanse (XIIe-XVe): Confédération de villes libres gérant leur souveraineté commerciale par le conseil."
+    "Hanse (XIIe-XVe): Confédération de villes libres gérant leur souveraineté commerciale par le conseil.",
     "1215 (Angleterre): Magna Carta, premier frein juridique à la prédation royale et fiscale.",
     "1265 (Angleterre): Parlement de De Montfort, introduction de l'élection des représentants des bourgs.",
     "Mali (1222): Charte du Manden et conseil du Gbara limitant l'absolutisme royal.",
@@ -124,9 +124,10 @@
     "Perse (1906): Révolution constitutionnelle pour limiter la prédation royale.",
     "Portugal (1910-1911): Chute de la monarchie et instauration d'une république laïque radicale.",
     "Chine (1912): Fin de l'empire et proclamation de la république par Sun Yat-sen."
-]
-  [
+],
+ "synthese_historique" [
     "Savoir-faire: L'Asie a inventé le vote et le droit à la révolution bien avant l'influence occidentale.",
     "Pensée: Emergence du contrat social (Locke, Rousseau) contre le droit divin."
   ]
 }
+
