@@ -1430,55 +1430,40 @@ return sections.map((sec, idx) => {
     Rejoins <a href="https://faistasortieatoulouse31.vercel.app/" className="text-blue-600 hover:underline font-bold">Fais ta Sortie à Toulouse</a> pour organiser tes sorties !
   </p>
 
-  {/* Conteneur Columns */}
-  <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
-    {Array.from({ length: categories.length }).map((_, i) => {
-      const numCols = 3;
-      const total = categories.length;
-      const numRows = Math.ceil(total / numCols);
-      
-      /** * NOUVEAU CALCUL CORRIGÉ 
-       * Pour que l'index 1 (Actualités) passe en haut de la colonne 2
-       * et l'index 2 (Meetup) passe en haut de la colonne 3.
-       */
-      const row = i % numRows;
-      const col = Math.floor(i / numRows);
-      const index = row * numCols + col;
-      
-      const cat = categories[index];
-      
-      // Sécurité si le calcul tombe sur un index inexistant (fin de tableau)
-      if (!cat) return null;
-
-      const Icon = cat.icon;
-      const sources =
-        (cat.isAgenda && eventSources) ||
-        (cat.isMeetup && (cat as any).meetupSources) ||
-        ((cat as any).isToulouseEvents && (cat as any).toulouseEventsSources) ||
-        (cat.isCulture && (cat as any).cultureSources) ||
-        (cat.isLibrairie && (cat as any).librairieSources) ||
-        (cat.isCinema && (cat as any).cinemaSources) ||
-        (cat.isJeux && (cat as any).jeuxSources) ||
-        (cat.isSites && (cat as any).sitesSources) ||
-        (cat.isMusee && (cat as any).museeSources) ||
-        (cat.isActualites && (cat as any).actualitesSources) ||
-        (cat.isVisites && (cat as any).visitesSources) ||
-		(cat.isRiche && (cat as any).richeSources) ||
-        (cat.isCafeLangues && (cat as any).cafeLanguesSources) ||
-        (cat.isCommuSorties && (cat as any).commuSortiesSources) ||
-        (cat.isSavoirsLangues && (cat as any).savoirsLanguesSources) ||
-        (cat.isSavoirsMonde && (cat as any).savoirsMondeSources) ||
-        (cat.isSpectacle && (cat as any).spectacleSources) ||
-        (cat.isEmploi && (cat as any).emploiSources) ||
-        (cat.isTransport && (cat as any).transportSources) ||
-        (cat.isEurope && (cat as any).savoirsEuropeSources) ||
-        (cat.isOccitanie && (cat as any).occitanieSources) ||
-        (cat.savoirSources && (cat as any).savoirSources) ||
-        (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
-        (cat.isLitteratureFrancaise && (cat as any).litteratureFrancaiseSources) ||
-        (cat.isLivresPrix && (cat as any).livresPrixSources) ||
-        (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
-        [];
+{/* Conteneur Columns - On laisse le flux naturel pour éviter les décalages */}
+<div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
+  {categories.map((cat, i) => {
+    // On utilise directement "cat" depuis le map, c'est l'index naturel
+    const Icon = cat.icon;
+    
+    const sources =
+      (cat.isAgenda && eventSources) ||
+      (cat.isMeetup && (cat as any).meetupSources) ||
+      ((cat as any).isToulouseEvents && (cat as any).toulouseEventsSources) ||
+      (cat.isCulture && (cat as any).cultureSources) ||
+      (cat.isLibrairie && (cat as any).librairieSources) ||
+      (cat.isCinema && (cat as any).cinemaSources) ||
+      (cat.isJeux && (cat as any).jeuxSources) ||
+      (cat.isSites && (cat as any).sitesSources) ||
+      (cat.isMusee && (cat as any).museeSources) ||
+      (cat.isActualites && (cat as any).actualitesSources) ||
+      (cat.isVisites && (cat as any).visitesSources) ||
+      (cat.isRiche && (cat as any).richeSources) ||
+      (cat.isCafeLangues && (cat as any).cafeLanguesSources) ||
+      (cat.isCommuSorties && (cat as any).commuSortiesSources) ||
+      (cat.isSavoirsLangues && (cat as any).savoirsLanguesSources) ||
+      (cat.isSavoirsMonde && (cat as any).savoirsMondeSources) ||
+      (cat.isSpectacle && (cat as any).spectacleSources) ||
+      (cat.isEmploi && (cat as any).emploiSources) ||
+      (cat.isTransport && (cat as any).transportSources) ||
+      (cat.isEurope && (cat as any).savoirsEuropeSources) ||
+      (cat.isOccitanie && (cat as any).occitanieSources) ||
+      (cat.savoirSources && (cat as any).savoirSources) ||
+      (cat.isLitteratureEtrangere && (cat as any).litteratureEtrangereSources) ||
+      (cat.isLitteratureFrancaise && (cat as any).litteratureFrancaiseSources) ||
+      (cat.isLivresPrix && (cat as any).livresPrixSources) ||
+      (cat.isSavoirsTerritoires && (cat as any).savoirsTerritoiresSources) ||
+      [];
 
       return (
         <div 
