@@ -94,7 +94,7 @@ const totalArticles =
   nbCommunaute + nbSport + nbMusee + nbVisite + 
   nbOccitanie + nbTransport + nbCafeLangue + nbConsomamtion + 
   nbEmploi + nbFlore + nbEquipement + nbGeographie + 
-  nbHistoire + nbMonument + nbRiche + nbLittératureEt + 
+  nbHistoire + nbMonument + nbSociologie + nbLittératureEt + 
   nbLittératureFr + nbPrix + nbArchitecture + nbEurope + nbFete + 
   nbFrancais + nbHierarchie + nbSaHistoire + nbLangue + 
   nbMondeEconomie +nbMondeGeo + nbMondeHistoire + nbMondeNiveauVie + 
