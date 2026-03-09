@@ -68,5 +68,6 @@
   "rang_67": {"quartier": "Empalot", "revenu_median": "9215", "profil": "Démolition-reconstruction (ANRU)"},
   "rang_68": {"quartier": "Bellefontaine", "revenu_median": "7764", "profil": "Pilier du Mirail, revenus très bas"},
   "rang_69": {"quartier": "La Faourette", "revenu_median": "5075", "profil": "Grande précarité, aide sociale"},
-  "rang_70": {"quartier": "La Reynerie", "revenu_median": "< 5000", "profil": "Quartier le plus pauvre de la ville"}
+  "rang_70": {"quartier": "La Reynerie (Nord)", "revenu_median": "< 5000", "profil": "Quartier le moins riche de la ville"}
+
 }
