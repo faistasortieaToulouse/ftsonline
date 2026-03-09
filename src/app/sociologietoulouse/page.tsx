@@ -25,7 +25,7 @@ export default function SociologieToulousePage() {
     <div className="container mx-auto py-10 px-4 max-w-6xl">
       <nav className="mb-8">
         <Link href="/" className="inline-flex items-center gap-2 text-rose-800 hover:underline font-bold">
-          <ArrowLeft size={20} /> Retour
+          <ArrowLeft size={20} /> Retour à l'Accueil
         </Link>
       </nav>
 
