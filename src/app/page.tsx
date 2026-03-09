@@ -69,7 +69,7 @@ const nbEquipement = 3;
 const nbGeographie = 6;
 const nbHistoire = 4;
 const nbMonument = 3;
-const nbRiche = 3;
+const nbSociologie = 3;
 const nbLittératureEt = 7;
 const nbLittératureFr = 22;
 const nbPrix = 21;
@@ -80,7 +80,11 @@ const nbFrancais = 3;
 const nbHierarchie = 23;
 const nbSaHistoire = 12;
 const nbLangue = 2;
-const nbMonde = 37;
+const nbMondeEconomie = 4;
+const nbMondeGeo = 2;
+const nbMondeHistoire = 4;
+const nbMondeNiveauVie = 16;
+const nbMondeVilles = 19;
 const nbReligion = 3;
 const nbTerritoire = 8;
 const totalArticles = 
@@ -391,6 +395,8 @@ const categories = [
   ]
 },
 
+//  const nbSociologie = 3;
+
 
   /* ---------------- LITTERATURE ---------------- */
 
@@ -570,53 +576,103 @@ const categories = [
   },
 //  const nbLangue = 2;
 
-  // --- SAVOIRS : MONDE ---
-  { 
-    title: "Savoirs : Monde", 
-    href: "/pib", 
-    icon: Globe, 
-    isSavoirsMonde: true, 
-    savoirsMondeSources: [
-      { title: "Mapmonde", href: "/mapmonde" },
-      { title: "PIB (PPA/Nominal)", href: "/pib" },
-      { title: "Villes d'Afrique du Sud ", href: "/afriquedusud" },
-      { title: "Villes d'Andorre ", href: "/andorre" },
-      { title: "Villes d'Argentine ", href: "/argentine" },
-      { title: "Villes d'Australie ", href: "/australie" },
-      { title: "Villes du Brésil", href: "/bresil" },
-      { title: "Villes du Canada", href: "/canada" },
-      { title: "Villes du Chili", href: "/chili" },
-      { title: "Villes de la Chine", href: "/chine" },
-      { title: "Villes de la Colombie", href: "/colombie" },
-      { title: "Villes des Etats-Unis ", href: "/etatsunis" },
-      { title: "Villes en Europe", href: "/europeen" },
-      { title: "Villes d'Inde", href: "/inde" },
-      { title: "Villes d'Iran ", href: "/iran" },
-      { title: "Villes du Japon", href: "/japon" },
-      { title: "Villes du Mexique", href: "/mexique" },
-      { title: "Villes du Pérou", href: "/perou" },
-      { title: "Villes de Russie", href: "/russie" },
-      { title: "Villes de Turquie", href: "/turquie" },
-      { title: "Pays et villes du monde", href: "/monde" },
-      { title: "Niveau d'alphabétisation", href: "/pays_alphabetisation" },
-      { title: "Bonheur National Brut", href: "/pays_bonheur_national" },
-      { title: "Niveau d'éducation", href: "/pays_education" },
-      { title: "Indice d'inégalités", href: "/pays_indice_inegalites" },
-      { title: "Mécanisation agricole", href: "/pays_mecanique_agricole" },
-      { title: "Natalité et Fécondité", href: "/pays_natalite_fecondite" },
-      { title: "Niveau de développement", href: "/pays_niveau_developpement" },
-      { title: "Niveau de vie", href: "/pays_niveau_vie" },
-      { title: "Pauvreté d'apprentissage", href: "/pays_pauvrete_apprentissage" },
-      { title: "Niveau de pollution", href: "/pays_pollution" },
-      { title: "Pouvoir d'achat", href: "/pays_pouvoir_achat" },
-      { title: "Niveau de la Recherche", href: "/pays_recherche" },
-      { title: "Taux de pauvreté", href: "/pays_taux_pauvrete" },
-      { title: "Niveau technologique", href: "/pays_technologie" },
-      { title: "Valeur des monnaies", href: "/pays_valeur_monnaie" },
-      { title: "Vie par pays", href: "/vivrebienpays" },
-    ]
-  },
-//  const nbMonde = 37;
+// --- SAVOIRS : MONDE ---
+
+{  
+  title: "Savoirs : Monde, économie", 
+  href: "/pib", 
+  icon: Globe, 
+  isSavoirsMondeEco: true, 
+  savoirsMondeSources: [
+    { title: "PIB (PPA/Nominal)", href: "/pib" },
+    { title: "Espionnage", href: "/espionnage" },
+    { title: "Bombe atomique", href: "/bombeatomique" },
+    { title: "Zones économiques", href: "/zoneeconomique" }
+  ]
+},
+// const nbMondeEconomie = 4;
+
+{  
+  title: "Savoirs : Monde, géographie et sociologie", 
+  href: "/mapmonde", 
+  icon: Globe, 
+  isSavoirsMondeGeo: true, 
+  savoirsMondeSources: [
+    { title: "Mapmonde", href: "/mapmonde" },
+    { title: "Sociologie des villes", href: "/sociologieville" }
+  ]
+},
+// const nbMondeGeo = 2;
+
+{  
+  title: "Savoirs : Monde, histoire", 
+  href: "/histoireinternet", 
+  icon: Globe, 
+  isSavoirsMondeHist: true, 
+  savoirsMondeSources: [
+    { title: "Internet", href: "/histoireinternet" },
+    { title: "Révolutions", href: "/revolution" },
+    { title: "Démocratie", href: "/democratie" },
+    { title: "Guerres", href: "/guerres" }
+  ]
+},
+// const nbMondeHistoire = 4;
+
+{  
+  title: "Savoirs : Monde, niveau de vie", 
+  href: "/pays_niveau_vie", 
+  icon: Globe, 
+  isSavoirsMondeVie: true, 
+  savoirsMondeSources: [
+    { title: "Niveau d'alphabétisation", href: "/pays_alphabetisation" },
+    { title: "Bonheur National Brut", href: "/pays_bonheur_national" },
+    { title: "Niveau d'éducation", href: "/pays_education" },
+    { title: "Indice d'inégalités", href: "/pays_indice_inegalites" },
+    { title: "Mécanisation agricole", href: "/pays_mecanique_agricole" },
+    { title: "Natalité et Fécondité", href: "/pays_natalite_fecondite" },
+    { title: "Niveau de développement", href: "/pays_niveau_developpement" },
+    { title: "Niveau de vie", href: "/pays_niveau_vie" },
+    { title: "Pauvreté d'apprentissage", href: "/pays_pauvrete_apprentissage" },
+    { title: "Niveau de pollution", href: "/pays_pollution" },
+    { title: "Pouvoir d'achat", href: "/pays_pouvoir_achat" },
+    { title: "Niveau de la Recherche", href: "/pays_recherche" },
+    { title: "Taux de pauvreté", href: "/pays_taux_pauvrete" },
+    { title: "Niveau technologique", href: "/pays_technologie" },
+    { title: "Valeur des monnaies", href: "/pays_valeur_monnaie" },
+    { title: "Vie par pays", href: "/vivrebienpays" }
+  ]
+},
+// const nbMondeNiveauVie = 16;
+
+{  
+  title: "Savoirs : Monde, villes", 
+  href: "/monde", 
+  icon: Globe, 
+  isSavoirsMondeVilles: true, 
+  savoirsMondeSources: [
+    { title: "Villes d'Afrique du Sud", href: "/afriquedusud" },
+    { title: "Villes d'Andorre", href: "/andorre" },
+    { title: "Villes d'Argentine", href: "/argentine" },
+    { title: "Villes d'Australie", href: "/australie" },
+    { title: "Villes du Brésil", href: "/bresil" },
+    { title: "Villes du Canada", href: "/canada" },
+    { title: "Villes du Chili", href: "/chili" },
+    { title: "Villes de la Chine", href: "/chine" },
+    { title: "Villes de la Colombie", href: "/colombie" },
+    { title: "Villes des États-Unis", href: "/etatsunis" },
+    { title: "Villes en Europe", href: "/europeen" },
+    { title: "Villes d'Inde", href: "/inde" },
+    { title: "Villes d'Iran", href: "/iran" },
+    { title: "Villes du Japon", href: "/japon" },
+    { title: "Villes du Mexique", href: "/mexique" },
+    { title: "Villes du Pérou", href: "/perou" },
+    { title: "Villes de Russie", href: "/russie" },
+    { title: "Villes de Turquie", href: "/turquie" },
+    { title: "Pays et villes du monde", href: "/monde" }
+  ]
+},
+// const nbMondeVilles = 19;
+
 
     { title: "Savoirs : Religion", href: "/religion", icon: Church, isOccitanie: true, occitanieSources: [
     { title: "Religion Chine", href: "/religionchine" },
@@ -1453,6 +1509,11 @@ return sections.map((sec, idx) => {
       (cat.isCommuSorties && (cat as any).commuSortiesSources) ||
       (cat.isSavoirsLangues && (cat as any).savoirsLanguesSources) ||
       (cat.isSavoirsMonde && (cat as any).savoirsMondeSources) ||
+      (cat.isSavoirsMondeEco && (cat as any).savoirsMondeSources) ||
+      (cat.isSavoirsMondeGeo && (cat as any).savoirsMondeSources) ||
+      (cat.isSavoirsMondeHist && (cat as any).savoirsMondeSources) ||
+      (cat.isSavoirsMondeVie && (cat as any).savoirsMondeSources) ||
+      (cat.isSavoirsMondeVilles && (cat as any).savoirsMondeSources) ||
       (cat.isSpectacle && (cat as any).spectacleSources) ||
       (cat.isEmploi && (cat as any).emploiSources) ||
       (cat.isTransport && (cat as any).transportSources) ||
