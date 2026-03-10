@@ -1645,7 +1645,7 @@ return sections.map((sec, idx) => {
             <details className="group border-t border-purple-50 relative">
               <summary className="flex items-center justify-between p-4 cursor-pointer list-none bg-purple-50/50 hover:bg-pink-50 transition-colors rounded-b-2xl group-open:rounded-b-none">
                 <span className="text-[11px] font-black text-purple-700 uppercase tracking-widest">
-                  Explorer les sources ({sources.length})
+                  Explorer les rubriques ({sources.length})
                 </span>
                 <ChevronDown size={18} className="text-purple-500 transition-transform duration-300 group-open:rotate-180" />
               </summary>
