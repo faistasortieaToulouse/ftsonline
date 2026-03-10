@@ -1531,7 +1531,7 @@ return sections.map((sec, idx) => {
             {/* Lézignan */}
             <a href="https://meteofrance.com/previsions-meteo-france/lezignan-corbieres/11200" target="_blank" rel="noopener noreferrer" 
                className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-sky-500/50 transition-all group">
-              <span className="text-sm font-bold text-slate-300 group-hover:text-white uppercase italic">Lézignan</span>
+              <span className="text-sm font-bold text-slate-300 group-hover:text-white">Lézignan</span>
               <ExternalLink size={14} className="text-slate-600 group-hover:text-sky-500" />
             </a>
           </div>
