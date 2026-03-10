@@ -609,22 +609,6 @@ const categories = [
 // const nbMondeGeo = 2;
 	
 {  
-  title: "Savoirs : Monde, sociologie", 
-  href: "/mapmonde", 
-  icon: UserRound, 
-  isSavoirsMondeSocio: true, 
-  savoirsMondeSources: [
-    { title: "Sociologie des villes", href: "/sociologieville" },
-    { title: "Autocratie", href: "/autocratie" },
-	{ title: "Productivité", href: "/productivite" },
-	{ title: "Immigration", href: "/immigration" },
-	{ title: "Emigration", href: "/emigration" },
-	{ title: "Internet", href: "/connectes" }
-  ]
-},
-// const nbMondeSocio = 6;
-	
-{  
   title: "Savoirs : Monde, histoire", 
   href: "/histoireinternet", 
   icon: Globe, 
@@ -663,7 +647,23 @@ const categories = [
   ]
 },
 // const nbMondeNiveauVie = 16;
-
+	
+{  
+  title: "Savoirs : Monde, sociologie", 
+  href: "/mapmonde", 
+  icon: UserRound, 
+  isSavoirsMondeSocio: true, 
+  savoirsMondeSources: [
+    { title: "Sociologie des villes", href: "/sociologieville" },
+    { title: "Autocratie", href: "/autocratie" },
+	{ title: "Productivité", href: "/productivite" },
+	{ title: "Immigration", href: "/immigration" },
+	{ title: "Emigration", href: "/emigration" },
+	{ title: "Internet", href: "/connectes" }
+  ]
+},
+// const nbMondeSocio = 6;
+	
 {  
   title: "Savoirs : Monde, villes", 
   href: "/monde", 
