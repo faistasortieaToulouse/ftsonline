@@ -77,34 +77,89 @@ export default async function AutocratiePage() {
         </div>
       </section>
 
-      {/* --- SECTION 02: REGIMES --- */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <span className="bg-slate-900 text-white px-3 py-1 rounded mr-3 text-sm">02</span> 
-          Classement des Régimes (V-Dem)
-        </h2>
-        
-        <div className="bg-red-50 border-2 border-red-100 p-8 rounded-3xl mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="text-center md:text-left">
-              <p className="text-5xl font-black text-red-600 mb-2 leading-none">
-                {data.classement_regimes_politiques.donnees_v_dem_2025_2026.population_concernee_par_autocratie}
-              </p>
-              <p className="text-red-800 font-bold uppercase tracking-widest text-xs">De la population mondiale sous autocratie</p>
-            </div>
-            <div className="flex gap-4">
-               <div className="bg-white px-6 py-4 rounded-2xl shadow-sm text-center">
-                  <p className="text-3xl font-bold">{data.classement_regimes_politiques.donnees_v_dem_2025_2026.total_autocraties}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase">Autocraties</p>
-               </div>
-               <div className="bg-white px-6 py-4 rounded-2xl shadow-sm text-center border-green-100 border">
-                  <p className="text-3xl font-bold text-green-600">{data.classement_regimes_politiques.donnees_v_dem_2025_2026.total_democraties}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase">Démocraties</p>
-               </div>
-            </div>
-          </div>
+{/* --- SECTION 02: REGIMES (V-Dem) --- */}
+<section className="mb-12">
+  <h2 className="text-2xl font-bold mb-6 flex items-center">
+    <span className="bg-slate-900 text-white px-3 py-1 rounded mr-3 text-sm">02</span> 
+    Classement des Régimes (V-Dem)
+  </h2>
+  
+  <div className="bg-red-50 border-2 border-red-100 p-8 rounded-3xl mb-8">
+    <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+      <div className="text-center md:text-left">
+        <p className="text-5xl font-black text-red-600 mb-2 leading-none">
+          {data.classement_regimes_politiques.donnees_v_dem_2025_2026.population_concernee_par_autocratie}
+        </p>
+        <p className="text-red-800 font-bold uppercase tracking-widest text-xs">De la population mondiale sous autocratie</p>
+      </div>
+      <div className="flex gap-4">
+         <div className="bg-white px-6 py-4 rounded-2xl shadow-sm text-center">
+            <p className="text-3xl font-bold">{data.classement_regimes_politiques.donnees_v_dem_2025_2026.total_autocraties}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase">Autocraties</p>
+         </div>
+         <div className="bg-white px-6 py-4 rounded-2xl shadow-sm text-center border-green-100 border">
+            <p className="text-3xl font-bold text-green-600">{data.classement_regimes_politiques.donnees_v_dem_2025_2026.total_democraties}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase">Démocraties</p>
+         </div>
+      </div>
+    </div>
+  </div>
+
+  {/* AJOUT : Catégories d'autocraties (V-Dem) */}
+  <div className="grid md:grid-cols-2 gap-6 mb-12">
+    {data.classement_regimes_politiques.donnees_v_dem_2025_2026.categories_autocraties.map((cat: any, i: number) => (
+      <div key={i} className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg">
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="font-bold text-red-400 uppercase text-sm tracking-wider">{cat.type}</h3>
+          <span className="text-2xl font-black">{cat.nombre}</span>
         </div>
-      </section>
+        <div className="flex flex-wrap gap-2">
+          {cat.exemples.map((ex: string, j: number) => (
+            <span key={j} className="text-[10px] bg-white/10 px-2 py-1 rounded border border-white/5 italic">
+              {ex}
+            </span>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+{/* NOUVELLE SECTION : EIU (The Economist) */}
+<section className="mb-12">
+  <h2 className="text-2xl font-bold mb-6 flex items-center text-indigo-900">
+    <span className="bg-indigo-900 text-white px-3 py-1 rounded mr-3 text-sm">03</span> 
+    Indice EIU (Démocraties)
+  </h2>
+
+  <div className="bg-indigo-50 border-2 border-indigo-100 p-8 rounded-3xl">
+    <div className="grid md:grid-cols-2 gap-8">
+      {/* Démocraties Pleines */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100">
+        <h3 className="text-green-600 font-black uppercase text-xs mb-3 flex justify-between">
+          Démocraties Pleines 
+          <span>{data.classement_regimes_politiques.donnees_economist_intelligence_unit.democraties_pleines.nombre}</span>
+        </h3>
+        <p className="text-xs text-slate-500 mb-4 font-medium italic">Exemples : {data.classement_regimes_politiques.donnees_economist_intelligence_unit.democraties_pleines.exemples.join(", ")}</p>
+      </div>
+
+      {/* Démocraties Imparfaites */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-amber-100">
+        <h3 className="text-amber-600 font-black uppercase text-xs mb-3 flex justify-between">
+          Démocraties Imparfaites
+          <span>{data.classement_regimes_politiques.donnees_economist_intelligence_unit.democraties_imparfaites.nombre}</span>
+        </h3>
+        <p className="text-xs text-slate-500 mb-4 font-medium italic">Exemples : {data.classement_regimes_politiques.donnees_economist_intelligence_unit.democraties_imparfaites.exemples.join(", ")}</p>
+      </div>
+    </div>
+    
+    <div className="mt-6 text-center">
+      <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest">
+        Total Démocraties (EIU) : {data.classement_regimes_politiques.donnees_economist_intelligence_unit.total_democraties_eiu}
+      </p>
+    </div>
+  </div>
+</section>
 
       {/* --- TYPOLOGIE --- */}
       <section className="grid md:grid-cols-2 gap-8 items-start pb-12">
