@@ -50,6 +50,7 @@
     },
     {
       "nom": "Empire ottoman",
+      "periode": "1299 – 1922",
       "structure": "Provinces (Eyalets/Vilayets)",
       "zones_majeures": ["Moyen-Orient", "Afrique du Nord", "Balkans", "Caucase"],
       "points_cles": "Système de califat avec une administration complexe basée sur la religion et le tribut."
@@ -66,4 +67,5 @@
       "note": "Inclut les puissances émergentes de la fin du XIXe siècle et les tentatives coloniales éphémères."
     }
   ]
+
 }
