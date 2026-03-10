@@ -42,9 +42,10 @@ export default function GuerresPage() {
         <div className="flex flex-col gap-2">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Sources consultées :</p>
           {data.source_urls?.map((url: string, i: number) => (
-            <a key={i} href={url} target="_blank" className="text-blue-600 hover:underline text-sm flex items-center gap-2 italic">
-              <ExternalLink size={14} /> {url.split('/').pop()?.replace(/_/g, ' ') || url}
-            </a>
+<a key={i} href={url} target="_blank" className="text-blue-600 hover:underline text-sm flex items-center gap-2 italic">
+  <ExternalLink size={14} /> 
+  {decodeURIComponent(url.split('/').pop()?.replace(/_/g, ' ') || url)}
+</a>
           ))}
         </div>
       </header>
