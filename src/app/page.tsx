@@ -62,7 +62,7 @@ const nbMusee = 13;
 const nbVisite = 11;
 const nbOccitanie = 18;
 const nbTransport = 17;
-const nbCafeLangue = 2;
+const nbCafeLangue = 3;
 const nbConsomamtion = 3;
 const nbEmploi = 4;
 const nbFlore = 2;
@@ -83,6 +83,7 @@ const nbSaHistoire = 12;
 const nbLangue = 2;
 const nbMondeEconomie = 4;
 const nbMondeGeo = 2;
+const nbMondeSocio = 6;
 const nbMondeHistoire = 4;
 const nbMondeNiveauVie = 16;
 const nbMondeVilles = 19;
@@ -98,8 +99,8 @@ const totalArticles =
   nbHistoire + nbMonument + nbSociologie + nbLittératureEt + 
   nbLittératureFr + nbPrix + nbArchitecture + nbEurope + nbFete + 
   nbFrancais + nbHierarchie + nbSaHistoire + nbLangue + 
-  nbMondeEconomie +nbMondeGeo + nbMondeHistoire + nbMondeNiveauVie + 
-  nbReligion + nbMondeVilles + nbTerritoire;
+  nbMondeEconomie +nbMondeGeo + nbMondeSocio + nbMondeHistoire + 
+  nbMondeNiveauVie + nbReligion + nbMondeVilles + nbTerritoire;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -312,7 +313,7 @@ const categories = [
   /* ---------------- TOULOUSE ---------------- */
 
 
-  // --- Toulouse : Café des langues ---
+  // --- Toulouse : Café des langues et savoirs ---
   { 
     title: "Toulouse : Café des langues", 
     href: "/langue", 
@@ -321,9 +322,10 @@ const categories = [
     cafeLanguesSources: [
       { title: "Café des Langues", href: "/langue" },
       { title: "Forum des Langues", href: "/forum" },
+	  { title: "Café des savoirs", href: "/cafesavoirs" },
     ]
   },
-//  const nbCafeLangue = 2;
+//  const nbCafeLangue = 3;
 
   { title: "Toulouse : Consommation", href: "/marches", icon: Apple, isOccitanie: true, occitanieSources: [
     { title: "Marchés", href: "/marches" },
@@ -595,17 +597,33 @@ const categories = [
 // const nbMondeEconomie = 4;
 
 {  
-  title: "Savoirs : Monde, géographie et sociologie", 
+  title: "Savoirs : Monde, géographie", 
   href: "/mapmonde", 
   icon: Globe, 
   isSavoirsMondeGeo: true, 
   savoirsMondeSources: [
     { title: "Mapmonde", href: "/mapmonde" },
-    { title: "Sociologie des villes", href: "/sociologieville" }
+    { title: "Empires coloniaux", href: "/colonies" }
   ]
 },
 // const nbMondeGeo = 2;
-
+	
+{  
+  title: "Savoirs : Monde, sociologie", 
+  href: "/mapmonde", 
+  icon: UserRound, 
+  isSavoirsMondeGeo: true, 
+  savoirsMondeSources: [
+    { title: "Sociologie des villes", href: "/sociologieville" },
+    { title: "Autocratie", href: "/autocratie" },
+	{ title: "Productivité", href: "/productivite" },
+	{ title: "Immigration", href: "/immigration" },
+	{ title: "Emigration", href: "/emigration" },
+	{ title: "Internet", href: "/connectes" }
+  ]
+},
+// const nbMondeSocio = 6;
+	
 {  
   title: "Savoirs : Monde, histoire", 
   href: "/histoireinternet", 
