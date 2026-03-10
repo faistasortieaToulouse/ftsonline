@@ -38,7 +38,7 @@ export default async function CafesSavoirsPage() {
       {/* Navigation */}
       <nav className="mb-8">
         <Link href="/" className="inline-flex items-center gap-2 text-xs font-black text-slate-400 hover:text-rose-600 transition-all uppercase tracking-widest">
-          <ArrowLeft size={16} /> Retour Toulouse
+          <ArrowLeft size={16} /> Retour à l'Accueil
         </Link>
       </nav>
 
@@ -110,12 +110,6 @@ export default async function CafesSavoirsPage() {
         <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
           Agenda collaboratif – Toulouse Métropole 2026
         </p>
-        <Link 
-          href="/" 
-          className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-rose-600 transition-all"
-        >
-          Retour à l'accueil
-        </Link>
       </footer>
     </main>
   );
