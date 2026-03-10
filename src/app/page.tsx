@@ -17,7 +17,7 @@ import {
   Newspaper, Palette, PartyPopper, PenTool, Plane,
   Scroll, Share2, ShoppingCart, Smile, Speech, Sprout,
   Store, Sun as SunIcon, Theater, Ticket, Timer, TrainFront,
-  TramFront, Trees, Trophy, UserGroup, Users, Wind
+  TramFront, Trees, Trophy, UserGroup, UserRound, Users, Wind
 } from "lucide-react";
 import APKDownloadModal from "@/components/APKDownloadModal";
 import InstallPWAiOS from "@/components/InstallPWAiOS";
