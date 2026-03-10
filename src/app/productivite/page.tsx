@@ -34,7 +34,7 @@ export default async function ProductivitePage() {
 
       {/* Header Dynamique */}
       <header className="mb-12 border-b-4 border-orange-500 pb-8">
-        <h1 className="text-3xl md:text-6xl font-black uppercase tracking-tighter mb-4 italic">
+        <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4 italic">
           {data.nom}
         </h1>
         <div className="flex flex-wrap items-center gap-6">
@@ -110,13 +110,6 @@ export default async function ProductivitePage() {
         <p className="text-slate-400 text-sm max-w-md mx-auto mb-8 font-medium leading-relaxed">
           Les écarts de productivité entre les leaders (Irlande) et les zones en crise soulignent la fracture technologique mondiale de 2026.
         </p>
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-3 px-8 py-4 bg-orange-600 text-white rounded-xl font-black uppercase text-xs tracking-[0.2em] hover:bg-white hover:text-slate-900 transition-all"
-        >
-          <ArrowLeft size={16} />
-          Retour au Dashboard
-        </Link>
       </div>
     </main>
   );
