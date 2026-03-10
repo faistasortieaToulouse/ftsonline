@@ -1,0 +1,69 @@
+{
+  "titre": "Répertoire des Empires Coloniaux",
+  "description": "Synthèse historique des domaines coloniaux mondiaux",
+  "empires": [
+    {
+      "nom": "Empire colonial portugais",
+      "periode": "1415 – 1999",
+      "zones_majeures": ["Brésil", "Angola", "Mozambique", "Goa (Inde)", "Macao (Chine)"],
+      "points_cles": "Premier empire mondial globalisé ; fondé sur les comptoirs maritimes et le commerce des épices."
+    },
+    {
+      "nom": "Empire espagnol",
+      "periode": "1492 – 1976",
+      "zones_majeures": ["Amérique latine (sauf Brésil)", "Philippines", "Guinée espagnole"],
+      "points_cles": "L'empire 'où le soleil ne se couche jamais' ; domination basée sur l'extraction d'or et d'argent."
+    },
+    {
+      "nom": "Empire britannique",
+      "periode": "1583 – 1997",
+      "zones_majeures": ["Inde", "Australie", "Canada", "Afrique de l'Est et du Sud", "Égypte"],
+      "points_cles": "Le plus vaste empire de l'histoire (33 millions de km²) ; domination navale et commerciale totale au XIXe siècle."
+    },
+    {
+      "nom": "Empire colonial français",
+      "periode": "1534 – 1980",
+      "zones_majeures": ["Afrique occidentale (AOF)", "Afrique équatoriale (AEF)", "Indochine", "Maghreb", "Québec (premier empire)"],
+      "points_cles": "Deuxième empire mondial ; caractérisé par une politique d'assimilation et d'administration centralisée."
+    },
+    {
+      "nom": "Empire colonial belge",
+      "periode": "1885 – 1962",
+      "zones_majeures": ["Congo belge", "Ruanda-Urundi"],
+      "points_cles": "Démarré comme propriété privée de Léopold II (État indépendant du Congo) avant de devenir une colonie d'État."
+    },
+    {
+      "nom": "Empire colonial néerlandais",
+      "periode": "1602 – 1975",
+      "zones_majeures": ["Indonésie (Indes orientales)", "Suriname", "Antilles néerlandaises"],
+      "points_cles": "Piloté initialement par la puissante Compagnie des Indes orientales (VOC) ; axé sur le commerce maritime."
+    },
+    {
+      "nom": "Autres Empires coloniaux européens",
+      "entites": ["Allemagne", "Italie", "Danemark", "Suède"],
+      "observations": "Expansion plus tardive (Allemagne/Italie) ou limitée à des comptoirs spécifiques (Scandinavie)."
+    },
+    {
+      "nom": "Empires euro-asiatiques",
+      "entites": ["Empire russe", "Empire japonais"],
+      "particularite": "Expansion territoriale contiguë (Russie) ou domination régionale en Asie de l'Est (Japon)."
+    },
+    {
+      "nom": "Empire ottoman",
+      "structure": "Provinces (Eyalets/Vilayets)",
+      "zones_majeures": ["Moyen-Orient", "Afrique du Nord", "Balkans", "Caucase"],
+      "points_cles": "Système de califat avec une administration complexe basée sur la religion et le tribut."
+    },
+    {
+      "nom": "Empire d'Oman",
+      "periode": "1692 – 1856",
+      "zones_majeures": ["Oman", "Zanzibar", "Côte swahilie"],
+      "points_cles": "Puissance maritime arabe rivalisant avec le Portugal dans l'Océan Indien ; centre du commerce de l'ivoire et des esclaves."
+    },
+    {
+      "nom": "Autres empires coloniaux",
+      "exemples": ["États-Unis (Philippines, Porto Rico)", "Courlande"],
+      "note": "Inclut les puissances émergentes de la fin du XIXe siècle et les tentatives coloniales éphémères."
+    }
+  ]
+}

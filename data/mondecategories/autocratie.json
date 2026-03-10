@@ -1,0 +1,91 @@
+{
+  "sujet": "État de la démocratie et du suffrage universel dans le monde (Données 2026)",
+  "suffrage_universel": {
+    "statistiques_globales": {
+      "pays_pratiquants": "Environ 190 sur 195",
+      "tendance": "Norme mondiale théorique",
+      "repartition": [
+        {
+          "categorie": "Suffrage Universel",
+          "etat_des_lieux": "Adopté par la grande majorité des États membres de l'ONU."
+        },
+        {
+          "categorie": "Suffrage Restreint",
+          "etat_des_lieux": "Extrêmement rare (liés à des critères de cens ou de genre)."
+        },
+        {
+          "categorie": "Absence de vote",
+          "etat_des_lieux": "Poignée d'États (monarchies absolues ou régimes de transition)."
+        }
+      ]
+    },
+    "nuances_et_exceptions": {
+      "limites_theoriques": [
+        "Âge minimum (généralement 18 ans, 16 ans dans certains pays comme l'Autriche ou le Brésil)",
+        "Exclusions (détenus, tutelle, non-résidents)",
+        "Distinction entre élection et démocratie (élections manipulées)"
+      ],
+      "exceptions_notables": [
+        {
+          "entite": "Vatican",
+          "type": "Monarchie élective restreinte",
+          "details": "Élection du Pape par les cardinaux de moins de 80 ans uniquement."
+        },
+        {
+          "entite": "Émirats arabes unis",
+          "type": "Suffrage restreint",
+          "details": "Système de Grands Électeurs sélectionnés par les dirigeants."
+        },
+        {
+          "entite": "Brunei et Arabie Saoudite",
+          "type": "Monarchies absolues",
+          "details": "Absence d'élections nationales directes."
+        },
+        {
+          "entite": "Chine",
+          "type": "Suffrage indirect",
+          "details": "Élection des assemblées locales qui élisent les échelons supérieurs."
+        }
+      ]
+    }
+  },
+  "classement_regimes_politiques": {
+    "donnees_v_dem_2025_2026": {
+      "total_autocraties": 91,
+      "total_democraties": 88,
+      "population_concernee_par_autocratie": "72% de la population mondiale",
+      "categories_autocraties": [
+        {
+          "type": "Autocraties fermées",
+          "nombre": 35,
+          "exemples": ["Corée du Nord", "Érythrée"]
+        },
+        {
+          "type": "Autocraties électorales",
+          "nombre": 56,
+          "exemples": ["Russie", "Turquie"]
+        }
+      ]
+    },
+    "donnees_economist_intelligence_unit": {
+      "democraties_pleines": {
+        "nombre": 25,
+        "exemples": ["Norvège", "Nouvelle-Zélande", "Canada", "France"]
+      },
+      "democraties_imparfaites": {
+        "nombre": 46,
+        "exemples": ["États-Unis", "Italie", "Brésil", "Argentine"]
+      },
+      "total_democraties_eiu": 71
+    }
+  },
+  "typologie_des_dictatures_modernes": [
+    "Monarchies absolues (Arabie Saoudite, Oman, Brunei)",
+    "Régimes à parti unique ou militaires (Chine, Viêt Nam, Birmanie, Mali)",
+    "Autocraties personnelles (Bélarus, Nicaragua)"
+  ],
+  "ressources_complementaires": {
+    "video": "https://www.youtube.com/watch?v=R9K13e1uWAs",
+    "description": "L'histoire du suffrage universel"
+  }
+}
