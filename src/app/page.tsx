@@ -748,12 +748,12 @@ const eventSources = [
 const WeatherIcon = ({ condition }: { condition: string }) => {
   const iconProps = { size: 36, strokeWidth: 2 };
   const cond = condition?.toLowerCase() || "";
-  if (cond.includes("soleil") || cond.includes("ensoleillé")) return <Sun {...iconProps} className="text-orange-500 fill-orange-100" />;
+  if (cond.includes("soleil") || cond.includes("ensoleillé")) return <SunIcon {...iconProps} className="text-orange-500 fill-orange-100" />;
   if (cond.includes("nuage") || cond.includes("couvert")) return <Cloud {...iconProps} className="text-gray-400 fill-gray-100" />;
   if (cond.includes("pluie") || cond.includes("averse")) return <CloudRain {...iconProps} className="text-blue-500" />;
   if (cond.includes("orage")) return <CloudLightning {...iconProps} className="text-yellow-600" />;
   if (cond.includes("neige")) return <CloudSnow {...iconProps} className="text-blue-200" />;
-  return <Sun {...iconProps} className="text-orange-500" />;
+  return <SunIcon {...iconProps} className="text-orange-500" />;
 };
 
 // --- COMPOSANT PRINCIPAL ---
@@ -1453,7 +1453,7 @@ return sections.map((sec, idx) => {
           <Link href="/meteoplage" className="group">
             <div className="bg-orange-600/10 hover:bg-orange-600 border border-orange-500/30 p-4 rounded-2xl transition-all duration-300 flex items-center gap-4 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] group-hover:-translate-y-1">
               <div className="bg-orange-500 text-white p-2 rounded-xl group-hover:bg-white group-hover:text-orange-600 transition-colors">
-                <Sun size={22} />
+                <SunIcon size={22} />
               </div>
               <div className="flex flex-col">
                 <span className="text-orange-400 group-hover:text-white text-[10px] font-bold uppercase tracking-tight">Météo de</span>
