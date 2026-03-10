@@ -1,0 +1,86 @@
+{
+  "ville": "Toulouse",
+  "categorie": "Cafés thématiques, Débats et Clubs",
+  "themes": {
+    "Sciences et Curiosités": [
+      { "nom": "Café Euclide - Quai des savoirs", "url": "https://quaidessavoirs.toulouse-metropole.fr/cafe-euclide/" },
+      { "nom": "EURÊKAFÉ – le café des curiosités", "url": "https://eurekafe.fr" },
+      { "nom": "Les Cafés du Quai", "url": "https://www.univ-toulouse.fr/evenements/cafes-du-quai" },
+      { "nom": "Cafés de l'IMT (Institut de Mathématiques)", "url": "https://perso.math.univ-toulouse.fr/les-cafes-de-l-imt/" },
+      { "nom": "Cafés des Maths - Académie des Sciences", "url": "https://www.academie-sciences-lettres-toulouse.fr" }
+    ],
+    "Philosophie et Psychanalyse": [
+      { "nom": "Café philo Toulouse (Aldéran)", "url": "https://www.alderan-philo.org/cafe-philo-de-toulouse/" },
+      { "nom": "Cafés philo - Elias Samrakandi (Cave Poésie)", "url": "https://www.cave-poesie.com/cafes-philo-2/" },
+      { "nom": "Université Populaire de Philosophie", "url": "https://www.facebook.com/UPPToulouse/" },
+      { "nom": "Café Philo Nouvelle Acropole", "url": "https://toulouse.nouvelle-acropole.fr/component/jem/event/1091-cafe-philo" },
+      { "nom": "Café Psy - Ombres Blanches", "url": "https://www.ombres-blanches.fr/posts/30/Nos-evenements" },
+      { "nom": "Café PSY - Éditions Érès / Serge Vallon", "url": "https://www.editions-eres.com/agenda" },
+      { "nom": "Conversations Socratiques (Arnaud Bernard)", "url": "https://www.arnaud-bernard.net/conversations-socratiques/" }
+    ],
+    "Politique et Citoyenneté": [
+      { "nom": "Café Citoyen Toulouse", "url": "https://www.cafes-citoyens.fr/arcadies/toulouse" },
+      { "nom": "L'Itinéraire-Bis – Café culturel et politique", "url": "https://itinerairebiscafe.fr" },
+      { "nom": "Le Café Politique", "url": "http://lecafepolitique.free.fr" },
+      { "nom": "Café débat La Cimade", "url": "https://www.lacimade.org/cafe-debat-a-toulouse-40-propositions-de-la-cimade/" },
+      { "nom": "Collectif Esprit Ardent (L'Escabel)", "url": "https://www.infolocale.fr/associations/organisme-l-escabel-cafe-associatif-565416" }
+    ],
+    "Histoire et Géographie": [
+      { "nom": "Les Cafés Géographiques de Toulouse", "url": "http://cafe-geo.net/cafes-geo-toulouse/" },
+      { "nom": "Café Histoire (APHG)", "url": "https://www.aphg.fr/+-Cafe-histoire-+" },
+      { "nom": "Tempus Historiae", "url": "https://blogs.univ-tlse2.fr/tempushistoriae/" },
+      { "nom": "Séances de la société d'Archéologie du Midi", "url": "https://societearcheologiquedumidi.fr/spip.php?rubrique23" },
+      { "nom": "Les Mardis de l’Hôtel d’Assézat", "url": "https://www.academie-sciences-lettres-toulouse.fr/?p=1267" }
+    ],
+"Littérature, Éloquence et Écriture": [
+      { "nom": "Café-débat / Éloquence - Europa Toulouse", "url": "https://www.europatoulouse.fr/page/1103349-cafe-debat-eloquence" },
+      { "nom": "Plume et Café", "url": "https://fr.mappy.com/poi/65a0bd8464824556bacd9277" },
+      { "nom": "Café littéraire - Saint-Orens", "url": "https://www.ville-saint-orens.fr/agenda/1142-cafe-litteraire-7" },
+      { "nom": "Café littéraire 'Spécial Polar' - Tournefeuille", "url": "https://tournefeuille-pom.c3rb.org/component/c3rbevenement/103-cafe-litteraire-special-polar" },
+      { "nom": "L'Echangeoir d'écriture - Lâchez les mots", "url": "https://lechangeoirdecriture.fr/atelier/atelier-decriture-a-toulouse-lachez-les-mots/" },
+      { "nom": "Ateliers d'écriture - Toulouse Métropole", "url": "https://metropole.toulouse.fr/recherche?key=%C3%A9criture" },
+      { "nom": "L'abri de mots", "url": "https://www.facebook.com/labridemots/" },
+      { "nom": "Atelier d'écriture - Université Jean Jaurès", "url": "https://www.univ-tlse2.fr/accueil/formation-insertion/flaeop8v-atelier-decriture" },
+      { "nom": "Atelier d'écriture - Bibliothèque de Toulouse", "url": "https://bibliotheque.toulouse.fr/atelier-decriture-2570978" },
+      { "nom": "Lâchez les mots - Madame Bovary 31", "url": "https://madamebovary31.com/ateliers-decriture-a-toulouse/" },
+      { "nom": "Atelier jeux d'écriture - ATSCAF Haute-Garonne", "url": "https://www.atscaf31.fr/page/1208487-atelier-jeux-d-ecriture" },
+      { "nom": "Les Art Eliers", "url": "https://www.lesarteliers.com/ecriture-ateliers-decriture/" },
+      { "nom": "Atelier d'écriture créative et ludique - L'Astronef", "url": "https://cafe-lastronef.fr/programmation/atelier-decriture-creative-et-ludique-2/2024-05-17/" },
+      { "nom": "Club des Écrivains - Toulouse", "url": "https://www.clubdesecrivains.com/ville/toulouse" },
+      { "nom": "Ateliers d'Écriture Créative et Littéraire - Trouver un cours", "url": "https://www.trouver-un-cours.fr/arts-loisirs-creatifs/atelier-ecriture/toulouse/" },
+      { "nom": "Le Chameau Sauvage - Ateliers d'écriture", "url": "https://librairielechameausauvage.fr/ateliers-decriture/" },
+      { "nom": "Écrire ma biographie - Ateliers autobiographiques", "url": "https://ecriremabiographie.fr/ateliers-decriture-toulouse-2/" },
+      { "nom": "Répertoire Spectable - Ateliers d'écriture Toulouse", "url": "https://www.spectable.com/?text=Ateliers+d%27%C3%A9criture+%C3%A0+Toulouse&s=1" },
+      { "nom": "Atelier d'écriture - Aldéran Philo", "url": "https://www.alderan-philo.org/atelier-decriture/" },
+      { "nom": "Accent tonique - Ateliers écriture", "url": "https://www.accent-tonique-31.com/ateliers-ecriture/" },
+      { "nom": "Atelier débridé", "url": "https://atelierdebride.wordpress.com/" },
+      { "nom": "La Chaufferie de langue - Toulouse Action Chanson", "url": "https://www.lachaufferiedelangue.net/" },
+      { "nom": "Collectif Moonlight Flowers - Ateliers collectifs", "url": "https://www.collectif-moonlight-flowers.fr/le-collectif/ateliers" },
+      { "nom": "Atelier d'initiation à l'écriture - Centre d'Arts Urbains", "url": "https://www.centredesartsurbains.fr/service-page/atelier-d-initiation-%C3%A0-l-%C3%A9criture" }
+    ],
+    "Langues et Cultures": [
+      { "nom": "Alliance Française", "url": "https://www.eventbrite.fr/o/alliance-francaise-59903085753" },
+      { "nom": "Café des langues", "url": "https://www.bilingue.fr.nf/" },
+      { "nom": "Café Occitan (La Topina)", "url": "https://latopina.com/#cultura" },
+      { "nom": "Café Occitan (L'Estancabra)", "url": "http://estancabra.com/fr/" },
+      { "nom": "Ostal d’Occitània", "url": "https://www.ostaldoccitania.eu/" },
+      { "nom": "IEO Haute-Garonne", "url": "https://ieo-opm.com/ieo-haute-garonne/" },
+      { "nom": "Association Òsca (Université Jean Jaurès)", "url": "https://www.univ-tlse2.fr/accueil/vie-campus/vie-etudiante/osca" }
+    ],
+    "Société et Soutien": [
+      { "nom": "Café-débat Bi-Pan (To bi or not to bi)", "url": "https://www.eventbrite.fr/o/association-to-bi-or-not-to-bi-18031874703" },
+      { "nom": "Les Cafés Débats de l'Esperluette (Handicap)", "url": "http://lesperluette31.wifeo.com/les-cafes-debats.php" },
+      { "nom": "Association Apedys (Dyslexie)", "url": "https://apedysmidip.fr" },
+      { "nom": "Café-sexo Toulouse", "url": "https://polyamour.info/evenement/-AB-/Cafe-sexo-TOULOUSE/" }
+    ],
+    "Bricolage et Artisanat": [
+      { "nom": "Café Bricole", "url": "https://cafebricol.fr" },
+      { "nom": "Café Couture Toulouse", "url": "https://www.helloasso.com/associations/cafe-couture-toulouse" }
+    ],
+    "Business et Vie Professionnelle": [
+      { "nom": "Café Business", "url": "https://www.eventbrite.fr/o/les-cafes-business-48870715993" },
+      { "nom": "Les Cafés de la Culture", "url": "https://www.facebook.com/LescafesdelaCulture/" },
+      { "nom": "Café In - Soirées débats", "url": "https://cafeinsainto.fr/events/cafe-debat/" }
+    ]
+  }
+}
