@@ -1469,7 +1469,56 @@ return sections.map((sec, idx) => {
             </div>
           </Link>
 
+        </div>	
+		  
+        {/* --- DÉBUT INSERTION MÉTEO FRANCE --- */}
+        <div className="mt-16 pt-10 border-t border-white/5">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+            <div>
+              <h3 className="text-[10px] uppercase font-black tracking-[0.3em] text-sky-500 mb-2">
+                Service Officiel
+              </h3>
+              <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
+                Météo <span className="text-sky-500">France</span>
+              </h2>
+            </div>
+            <p className="text-slate-500 text-xs font-medium max-w-xs md:text-right italic">
+              Liens directs vers les prévisions de l'institut national.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* Toulouse */}
+            <a href="https://meteofrance.com/previsions-meteo-france/toulouse/31000" target="_blank" rel="noopener noreferrer" 
+               className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-sky-500/50 transition-all group">
+              <span className="text-sm font-bold text-slate-300 group-hover:text-white">Toulouse (31)</span>
+              <ExternalLink size={14} className="text-slate-600 group-hover:text-sky-500" />
+            </a>
+
+            {/* Haute-Garonne */}
+            <a href="https://meteofrance.com/previsions-meteo-france/haute-garonne/31" target="_blank" rel="noopener noreferrer" 
+               className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-sky-500/50 transition-all group">
+              <span className="text-sm font-bold text-slate-300 group-hover:text-white">Hte-Garonne</span>
+              <ExternalLink size={14} className="text-slate-600 group-hover:text-sky-500" />
+            </a>
+
+            {/* Aude */}
+            <a href="https://meteofrance.com/previsions-meteo-france/aude/11" target="_blank" rel="noopener noreferrer" 
+               className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-sky-500/50 transition-all group">
+              <span className="text-sm font-bold text-slate-300 group-hover:text-white">Aude (11)</span>
+              <ExternalLink size={14} className="text-slate-600 group-hover:text-sky-500" />
+            </a>
+
+            {/* Lézignan */}
+            <a href="https://meteofrance.com/previsions-meteo-france/lezignan-corbieres/11200" target="_blank" rel="noopener noreferrer" 
+               className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-sky-500/50 transition-all group">
+              <span className="text-sm font-bold text-slate-300 group-hover:text-white uppercase italic">Lézignan</span>
+              <ExternalLink size={14} className="text-slate-600 group-hover:text-sky-500" />
+            </a>
+          </div>
         </div>
+        {/* --- FIN INSERTION MÉTEO FRANCE --- */}
+		  
       </div>
     </div>
   </section>
