@@ -70,7 +70,7 @@ export default async function ColoniesPage() {
             <div className="bg-stone-50 p-4 rounded-lg border border-stone-100">
               <div className="flex gap-2 items-start text-sm leading-relaxed text-stone-700 italic">
                 <Info size={16} className="text-stone-400 mt-1 shrink-0" />
-                <p>{empire.points_cles || empire.observations || empire.note || "Analyse en cours..."}</p>
+                <p>{empire.points_cles || empire.observations || empire.note || empire.particularite || "Analyse en cours..."}</p>
               </div>
             </div>
 
