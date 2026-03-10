@@ -19,7 +19,7 @@
     "Asie Centrale: Cités-oasis gérées par des conseils d'usagers pour la survie technologique (eau).",
     "Corée (Traditions Hwabaek): Système de décision à l'unanimité empêchant le pouvoir absolu d'un chef."
 ],
-"resilience_democratique_0_1000": [
+"resilience_democratique_0_-_1000": [
     "Venise (697): L'Arengo, assemblée populaire, élit le premier Doge contre le pouvoir impérial.",
     "Espagne (Behetrias): Paysans libres ayant le droit constitutionnel de choisir et changer leur seigneur.",
     "Philippines (Barangay): Gouvernance par consensus et procès publics pour limiter l'arbitraire du chef.",
@@ -42,7 +42,7 @@
     "Anasazi (USA): Architecture des Kivas témoignant d'une gouvernance délibérative et égalitaire.",
     "Afrique de l'Ouest: Fédéralisme villageois préservant le savoir-faire agricole de la prédation fiscale."
 ],
-"le_renouveau_des_libertes_1000_1500": [
+"le_renouveau_des_libertes_1000_-_1500": [
     "Iroquois (v. 1142/1450): Grande Loi de la Paix, système bicaméral et pouvoir de révocation féminin.",
     "Tlaxcala (Mexique): République sénatoriale résistant au modèle impérial prédateur des Aztèques.",
     "Dithmarschen (Allemagne): République paysanne sans seigneur, gérée par le conseil des 48 régents.",
@@ -67,7 +67,7 @@
     "Raguse (1358): Mandat de un mois pour le chef d'État (Recteur) contre la corruption.",
     "Sakai (1450-1580): République marchande japonaise dirigée par le conseil des Egoshu."
 ],
-"le_siecle_des_lumieres_politiques_1500_1780": [
+"le_siecle_des_lumieres_politiques_1500_-_1780": [
     "1505 (Pologne): Loi Nihil Novi instaurant la République nobiliaire et l'élection du Roi.",
     "Appenzell (Suisse, 1513 - Toujours active): Maintien de la Landesgemeinde (vote direct sur le budget).",
     "Sitch Zaporogue (Ukraine, v. 1550 - 1775): Démocratie directe guerrière et élection annuelle de l'Ataman.",
@@ -82,14 +82,14 @@
     "Nassau (1706): République pirate, démocratie élective et partage social des richesses.",
     "Corse (1755 - 1769): Première constitution moderne et suffrage (partiel) féminin."
 ],
-"le_tournant_revolutionnaire_1780_1800": [
+"le_tournant_revolutionnaire_1780_-_1800": [
     "USA (1787-1791): Institutionnalisation de la séparation des pouvoirs et du Bill of Rights.",
     "France (1789-1799): Passage de la souveraineté royale à la souveraineté nationale (République).",
     "Pologne (1791-1792): Constitution du 3 Mai, tentative de démocratie parlementaire moderne.",
     "Haïti (1791-1804): Révolution anti-esclavagiste et naissance de la première république noire.",
     "Républiques Sœurs (1795-1800): Exportation du modèle républicain en Europe (Italie, Suisse, Pays-Bas)."
 ],
-"l_ere_des_nations_et_du_suffrage_1800_1880": [
+"l_ere_des_nations_et_du_suffrage_1800_-_1880": [
     "Grèce (1822-1832): Indépendance et retour du modèle constitutionnel en Méditerranée.",
     "Amérique Latine (1810-1830): Vague républicaine balayant la prédation coloniale espagnole.",
     "Îles Ioniennes (1815-1864): République sous protectorat, laboratoire parlementaire en Méditerranée.",
@@ -111,7 +111,7 @@
     "Suisse (1874): Introduction du référendum facultatif au niveau fédéral (pouvoir de veto populaire).",
     "Belgique (1877): Introduction de l'isoloir pour protéger le vote des ouvriers face aux pressions cléricales et patronales."
 ],
-"apogee_de_la_belle_epoque_1880_1914": [
+"apogee_de_la_belle_epoque_1880_-_1914": [
     "France (1880-1905): Stabilisation républicaine, école laïque et séparation Église/État.",
     "USA (1888-1892): Adoption massive du bulletin secret pour briser la corruption des machines politiques.",
     "Nouvelle-Zélande (1893): Premier suffrage universel total (femmes incluses).",
@@ -130,6 +130,7 @@
     "Pensée: Emergence du contrat social (Locke, Rousseau) contre le droit divin."
   ]
 }
+
 
 
 
