@@ -68,7 +68,7 @@ export default async function ImmigrationPage() {
               <tr className="bg-slate-900 text-white">
                 <th className="px-4 py-5 font-bold text-xs uppercase tracking-widest w-16 text-center">Rang</th>
                 <th className="px-6 py-5 font-bold text-xs uppercase tracking-widest">Pays d'accueil</th>
-                <th className="px-6 py-5 font-bold text-xs uppercase tracking-widest text-right">Stock (M)</th>
+                <th className="px-6 py-5 font-bold text-xs uppercase tracking-widest text-right">nbre (mil.)</th>
                 <th className="px-6 py-5 font-bold text-xs uppercase tracking-widest hidden md:table-cell">Analyse & Contexte</th>
               </tr>
             </thead>
@@ -117,13 +117,7 @@ export default async function ImmigrationPage() {
           <Users size={24} />
           <span className="text-xs font-bold uppercase tracking-widest">Fin de la liste - 100 Pays</span>
         </div>
-        <Link 
-          href="/" 
-          className="group flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-full font-black uppercase text-sm tracking-widest hover:bg-blue-600 transition-all shadow-xl"
-        >
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          Retour à l'accueil global
-        </Link>
+
       </div>
 
       <footer className="text-center pb-10 text-[10px] text-slate-400 uppercase tracking-[0.2em]">
