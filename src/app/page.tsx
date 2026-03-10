@@ -149,9 +149,9 @@ const categories = [
   ]},
 // const nbMeetup = 6;
 	
-/* 1. Évènements Toulouse */
+/* 1. Évènements Culture et Science Toulouse */
 { 
-    title: "Evènements Toulouse", 
+    title: "Evènements Culture et Science Toulouse", 
     href: "/toulouse-edu-events", // Clé unique
     icon: CalendarDays, 
     isToulouseEvents: true, 
