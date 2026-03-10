@@ -315,7 +315,7 @@ const categories = [
 
   // --- Toulouse : Café des langues et savoirs ---
   { 
-    title: "Toulouse : Café des langues", 
+    title: "Toulouse : Café des langues et savoirs", 
     href: "/langue", 
     icon: Coffee, 
     isCafeLangues: true, 
