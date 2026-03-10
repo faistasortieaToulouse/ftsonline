@@ -393,9 +393,9 @@ const categories = [
   icon: Gem, 
   isRiche: true, 
   richeSources: [ // Change occitanieSources en richeSources
-    { title: "Hôpital de la Grave", href: "/sociologietoulouse" },
-    { title: "Hôtel-Dieu", href: "/banlieuetoulouse" },
-    { title: "Style toulousain", href: "/quartierstoulouse" },
+    { title: "Socio-démographie de Toulouse", href: "/sociologietoulouse" },
+    { title: "Banlieue de Toulouse", href: "/banlieuetoulouse" },
+    { title: "Quartiers de Toulouse", href: "/quartierstoulouse" },
   ]
 },
 
