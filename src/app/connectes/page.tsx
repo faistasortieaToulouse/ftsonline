@@ -107,13 +107,7 @@ export default async function ConnectesPage() {
 
       {/* Footer / CTA */}
       <footer className="mt-16 text-center pb-20">
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-3 px-10 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-emerald-600 transition-all shadow-xl"
-        >
-          <ArrowLeft size={20} />
-          Quitter le rapport
-        </Link>
+
         <p className="mt-8 text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em]">
           Données consolidées : UIT, Banque Mondiale & rapports nationaux
         </p>
