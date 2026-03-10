@@ -4,20 +4,21 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { 
-  Book, Film, MapPin, Music, Globe, Gamepad, Calendar, 
-  Theater, Palette, Archive, Building, Bus,
-  Sun, Cloud, CloudRain, CloudLightning, CloudSnow,
-  MessageSquare, Facebook, Laptop, ShoppingCart, Apple,
-  Leaf, Sprout, Landmark, Files, Map, History, Scroll,
-  Castle, Home, DraftingCompass, Construction, Cake,
-  PartyPopper, Church, GraduationCap, Lightbulb, BookOpen,
-  Library, Flower, TrainFront, TramFront, Car, Bike, Plane,
-  Amphora, CalendarDays, Trees, Hexagon, Languages, PenTool,
-  Trophy, Medal, Award, Job, Ticket, Briefcase, Coffee,
-  Newspaper, Speech, Users, UserGroup, Smile, Handshake,
-  ChevronDown, Wind, Droplets, Sun as SunIcon, Navigation,
-  Timer, Mountain, Store, Share2, Download, Gem, Euro, Baby,
-  ExternalLink
+  Amphora, Apple, Archive, Award, Baby, Bike, Book, BookOpen,
+  Briefcase, Building, Bus, Cake, Calendar, CalendarDays,
+  Car, Castle, ChevronDown, Church, Cloud, CloudLightning,
+  CloudRain, CloudSnow, Coffee, Compass, Construction,
+  Download, DraftingCompass, Droplets, Euro, ExternalLink,
+  Facebook, Files, Film, Flower, Gamepad, Gem, Globe,
+  GraduationCap, Handshake, Hexagon, History, Home,
+  Job, Landmark, Languages, Laptop, Leaf, Library,
+  Lightbulb, Map, MapPin, MapPinned, Medal, MessageSquare,
+  MessageSquareText, Mountain, Music, Navigation, Network,
+  Newspaper, Palette, PartyPopper, PenTool, Plane,
+  Scroll, Share2, ShoppingCart, Smile, Speech, Sprout,
+  Store, Sun as SunIcon, Theater, Ticket, Timer, TrainFront,
+  TramFront, Trees, Trophy, UserGroup, UserRound, Users,
+  Wind
 } from "lucide-react";
 import APKDownloadModal from "@/components/APKDownloadModal";
 import InstallPWAiOS from "@/components/InstallPWAiOS";
@@ -612,7 +613,7 @@ const categories = [
   title: "Savoirs : Monde, sociologie", 
   href: "/mapmonde", 
   icon: UserRound, 
-  isSavoirsMondeGeo: true, 
+  isSavoirsMondeSocio: true, 
   savoirsMondeSources: [
     { title: "Sociologie des villes", href: "/sociologieville" },
     { title: "Autocratie", href: "/autocratie" },
@@ -1602,7 +1603,8 @@ return sections.map((sec, idx) => {
       (cat.isSavoirsMonde && (cat as any).savoirsMondeSources) ||
       (cat.isSavoirsMondeEco && (cat as any).savoirsMondeSources) ||
       (cat.isSavoirsMondeGeo && (cat as any).savoirsMondeSources) ||
-      (cat.isSavoirsMondeHist && (cat as any).savoirsMondeSources) ||
+      (cat.isSavoirsMondeSocio && (cat as any).savoirsMondeSources) ||
+	  (cat.isSavoirsMondeHist && (cat as any).savoirsMondeSources) ||
       (cat.isSavoirsMondeVie && (cat as any).savoirsMondeSources) ||
       (cat.isSavoirsMondeVilles && (cat as any).savoirsMondeSources) ||
       (cat.isSpectacle && (cat as any).spectacleSources) ||
