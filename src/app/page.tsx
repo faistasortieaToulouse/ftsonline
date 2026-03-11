@@ -79,7 +79,7 @@ const nbEurope = 6;
 const nbFete = 2;
 const nbFrancais = 3;
 const nbHierarchie = 23;
-const nbSaHistoire = 12;
+const nbSaHistoire = 13;
 const nbLangue = 2;
 const nbMondeEconomie = 4;
 const nbMondeGeo = 2;
@@ -564,8 +564,9 @@ const categories = [
     { title: "Hordes & Khanats Simple", href: "/hordes_khanats_simple" },
     { title: "Royaumes France Simple", href: "/royaumes_france_simple" },
     { title: "Entrée des Etats aux USA", href: "/EtatsUSA" },
+	{ title: "Empires", href: "/empire" },
   ]},
-//  const nbSaHistoire = 12;
+//  const nbSaHistoire = 13;
 
   // --- SAVOIRS : LANGUES ---
   { 
