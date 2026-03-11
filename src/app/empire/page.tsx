@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { ArrowLeft } from "lucide-react";
 
 interface Empire {
   Empire: string;
@@ -35,6 +36,13 @@ export default function EmpirePage() {
 
   return (
     <main className="min-h-screen p-8 bg-gray-50">
+      
+      <nav className="mb-8">
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-black text-slate-400 hover:text-indigo-600 transition-all uppercase tracking-[0.2em]">
+          <ArrowLeft size={16} /> Retour à l'Accueil
+        </Link>
+      </nav>
+      
       <div className="max-w-6xl mx-auto">
         
         {/* Header avec lien de retour */}
