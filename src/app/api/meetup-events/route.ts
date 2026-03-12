@@ -44,7 +44,10 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/international-mondays-tower-of-london/events/ical/",
     "https://www.meetup.com/fr-FR/Yellow-Chatters-Toulouse-International-Community/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-hiking-meetup-group/events/ical/",
-    "https://www.meetup.com/fr-FR/rando-entre-femmes-nature-convivialite/events/ical/"
+    "https://www.meetup.com/fr-FR/rando-entre-femmes-nature-convivialite/events/ical/",
+    "https://www.meetup.com/fr-FR/toulouse-crossfit-et-paleo-meetup/events/ical/",
+    "https://www.meetup.com/fr-FR/cercle-de-femmes-toulouse-centre/events/ical/",
+    "https://www.meetup.com/fr-FR/la-melee-toulouse/events/ical/"
   ],
   // Lot 4
   [
@@ -79,7 +82,10 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/happy-nouvelle-vie/events/ical/",
     "https://www.meetup.com/fr-FR/malaia-collective-yoga-movement-intentional-living/events/ical/",
     "https://www.meetup.com/fr-FR/pages-n-pals/events/ical/",
-    "https://www.meetup.com/fr-FR/cercle-de-femme-et-art-therapie-toulouse/events/ical/"
+    "https://www.meetup.com/fr-FR/cercle-de-femme-et-art-therapie-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/hygienisme-hormese-et-vitalite-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/le-flow-lab-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/meetup-des-organisateurs-de-toulouse/events/ical/"
   ],
   // Lot 7
   [
@@ -88,7 +94,10 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/bring-me-the-horizon-occitanie/events/ical/",
     "https://www.meetup.com/fr-FR/les-grognards-de-la-marne/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-speakers-toastmasters-club/events/ical/",
-    "https://www.meetup.com/fr-FR/scene-ouverte-chant-piano-guitare/events/ical/"
+    "https://www.meetup.com/fr-FR/scene-ouverte-chant-piano-guitare/events/ical/",
+    "https://www.meetup.com/fr-FR/artilect-fablab/events/ical/",
+    "https://www.meetup.com/fr-FR/the-purpose-circle/events/ical/",
+    "https://www.meetup.com/fr-FR/partage-autour-de-lagilite/events/ical/"
   ]
 ];
 
