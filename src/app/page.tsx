@@ -72,7 +72,7 @@ const nbHistoire = 4;
 const nbMonument = 3;
 const nbSociologie = 3;
 const nbLittératureEt = 7;
-const nbLittératureFr = 22;
+const nbLittératureFr = 23;
 const nbPrix = 21;
 const nbArchitecture = 2;
 const nbEurope = 6;
@@ -427,6 +427,7 @@ const categories = [
     icon: PenTool,
     isLitteratureFrancaise: true, 
     litteratureFrancaiseSources: [
+	  { title: "Dernières parutions de livres", href: "/livres" },
       { title: "Littérature d'Amour", href: "/LitteratureAmour" },
       { title: "Littérature autobiographique", href: "/LitteratureAutoBiographie" },
       { title: "Littérature d'aventure", href: "/LitteratureAventure" },
@@ -451,7 +452,7 @@ const categories = [
       { title: "Littérature de Voyage", href: "/LitteratureVoyage" }
     ]
   },
-//  const nbLittératureFr = 22;
+//  const nbLittératureFr = 23;
 
   { 
     title: "Livres : Prix littéraires", 
