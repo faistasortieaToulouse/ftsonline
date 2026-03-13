@@ -4,7 +4,7 @@ export async function GET() {
   try {
     // Ici, on renvoie directement les informations sans lire de fichier
     return NextResponse.json({
-      titre: "Chronologie des Épidémies",
+      titre: "Chronologie des Épidémies dans le monde",
       source: "https://fr.wikipedia.org/wiki/Liste_d%27%C3%A9pid%C3%A9mies"
     });
   } catch (error) {
