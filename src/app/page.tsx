@@ -84,7 +84,7 @@ const nbLangue = 2;
 const nbMondeEconomie = 4;
 const nbMondeGeo = 2;
 const nbMondeSocio = 6;
-const nbMondeHistoire = 4;
+const nbMondeHistoire = 6;
 const nbMondeNiveauVie = 16;
 const nbMondeVilles = 19;
 const nbReligion = 3;
@@ -618,10 +618,12 @@ const categories = [
     { title: "Internet", href: "/histoireinternet" },
     { title: "Révolutions", href: "/revolution" },
     { title: "Démocratie", href: "/democratie" },
-    { title: "Guerres", href: "/guerres" }
+    { title: "Guerres", href: "/guerres" },
+	{ title: "Crises", href: "/crise" },
+	{ title: "Epidemies", href: "/epidemie" }
   ]
 },
-// const nbMondeHistoire = 4;
+// const nbMondeHistoire = 6;
 
 {  
   title: "Savoirs : Monde, niveau de vie", 
