@@ -5,15 +5,19 @@ export async function GET(request: NextRequest) {
   const page = searchParams.get('page') || '1';
   const limit = '100';
   
-  // Requête ciblée : Français + Fiction + Trié par nouveautés
-  const url = `https://openlibrary.org/search.json?q=language:fre+subject:fiction&sort=new&limit=${limit}&page=${page}`;
+  // ÉLARGISSEMENT DE LA REQUÊTE :
+  // On cherche "fiction" OU "romans" OU "french fiction" pour capter les 100 derniers
+  const query = 'language:fre AND (subject:fiction OR subject:romans OR subject:"french fiction")';
+  
+  const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&sort=new&limit=${limit}&page=${page}`;
 
   try {
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'FTSToulouse/1.0 (contact: admin@ftstoulouse.online)'
       },
-      next: { revalidate: 86400 } // Cache 24h
+      // Cache réduit à 1h (3600s) pour mieux voir les nouveautés pendant tes tests
+      next: { revalidate: 3600 } 
     });
 
     if (!response.ok) {
@@ -26,20 +30,20 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
 
     const livres = data.docs
-      .filter((book: any) => book.cover_i) // On garde uniquement ceux avec couverture
+      .filter((book: any) => book.cover_i) // Filtre de sécurité pour les images
       .map((book: any) => ({
-        // L'ID sert à construire le lien vers la fiche détaillée plus tard
         id: book.key.replace('/works/', ''), 
         titre: book.title,
         auteur: book.author_name ? book.author_name[0] : "Auteur inconnu",
         image: `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`,
         annee: book.first_publish_year || "N/C",
         
-        // --- NOUVELLES INFOS AJOUTÉES ---
-        sujets: book.subject ? book.subject.slice(0, 3) : [], // On prend les 3 premiers thèmes
-        nbEditions: book.edition_count || 1,
-        // Lien direct vers Open Library au cas où
-        url_ol: `https://openlibrary.org${book.key}`
+        // --- LIEN VERS LA DESCRIPTION ---
+        // Ce lien renvoie vers la page Open Library qui contient le résumé complet
+        url_description: `https://openlibrary.org${book.key}`,
+        
+        sujets: book.subject ? book.subject.slice(0, 3) : [],
+        nbEditions: book.edition_count || 1
       }));
 
     return NextResponse.json(livres);
@@ -47,7 +51,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Erreur OpenLibrary:", error);
     return NextResponse.json(
-      { error: "Erreur serveur lors de la récupération des livres" }, 
+      { error: "Erreur serveur" }, 
       { status: 500 }
     );
   }
