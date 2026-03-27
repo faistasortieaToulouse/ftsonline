@@ -1,0 +1,75 @@
+{
+  "reseau_transports_toulouse": {
+    "metro": [
+      {
+        "ligne": "A",
+        "evenements": [
+          { "date": "26 juin 1993", "evenement": "Inauguration (Basso Cambo - Jolimont)" },
+          { "date": "18 decembre 2003", "evenement": "Prolongement vers Balma-Gramont" },
+          { "date": "2020", "evenement": "Doublement de la capacite (rames de 52m)" }
+        ]
+      },
+      {
+        "ligne": "B",
+        "evenements": [
+          { "date": "30 juin 2007", "evenement": "Inauguration (Borderouge - Ramonville)" },
+          { "date": "Horizon ete 2027", "evenement": "Prolongement Connection Ligne B vers Labege" }
+        ]
+      },
+      {
+        "ligne": "C (3eme ligne)",
+        "evenements": [
+          { "date": "Decembre 2022", "evenement": "Debut des travaux de genie civil" },
+          { "date": "Horizon fin 2028", "evenement": "Mise en service prevue (Colomiers - Labege)" }
+        ]
+      }
+    ],
+    "tramway": [
+      {
+        "ligne": "T1",
+        "evenements": [
+          { "date": "11 decembre 2010", "evenement": "Inauguration (Arenes - Aeroconstellation)" },
+          { "date": "20 decembre 2013", "evenement": "Prolongement vers Palais de Justice" },
+          { "date": "2023", "evenement": "Creation du nouveau terminus Odyssud / MEETT" }
+        ]
+      },
+      {
+        "ligne": "T2 (Ancienne)",
+        "evenements": [
+          { "date": "11 avril 2015", "evenement": "Inauguration desserte Aeroport" },
+          { "date": "5 juin 2023", "evenement": "Fermeture pour transformation en Aeroport Express" }
+        ]
+      },
+      {
+        "ligne": "Aeroport Express",
+        "evenements": [
+          { "date": "Horizon 2028", "evenement": "Ouverture prevue avec rames dediees toutes les 5 min" }
+        ]
+      }
+    ],
+    "ferroviaire_rer": [
+      {
+        "nom": "Ligne Arenes-Colomiers",
+        "details": "Ancienne ligne C ferroviaire, cadencee depuis juin 1993. Renommee en 2023."
+      },
+      {
+        "nom": "Ligne de Muret",
+        "statut": "Abandonnee en tant que projet de metro lourd, desservie par TER liO."
+      },
+      {
+        "nom": "RER Nord / SERM",
+        "details": "Projet de desserte cadenciee vers Castelnau-d'Estretefonds lie a la LGV et l'Etoile Ferroviaire.",
+        "statut": "En cours d'amenagement (Horizon 2030+)"
+      }
+    ],
+    "cable": [
+      {
+        "nom": "Teleo",
+        "evenements": [
+          { "date": "13 mai 2022", "evenement": "Inauguration (Oncopole - Paul Sabatier)" },
+          { "statut": "Prolongements vers Est ou Ouest actuellement non prioritaires/suspendus" }
+        ]
+      }
+    ]
+  }
+}
