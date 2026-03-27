@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Train, History, MapPin, Sparkles, BookOpen, Info } from "lucide-react";
+import { ArrowLeft, Train, History, MapPin, Sparkles, BookOpen, Info, Ghost, Map as MapIcon } from "lucide-react";
 
 export default function GareToulousePage() {
   const [data, setData] = useState<any>(null);
@@ -43,32 +43,72 @@ export default function GareToulousePage() {
         </div>
       </section>
 
-      {/* 2. SECTION DISPARUES & FANTÔMES */}
+      {/* 2. SECTION DISPARUES & FANTÔMES (Mise à jour pour inclure les gares fantômes) */}
       <section className="mb-16 bg-white p-6 md:p-10 rounded-3xl border border-slate-200 shadow-inner">
         <div className="flex items-center gap-3 mb-8 text-amber-600">
           <History size={32} />
           <h2 className="text-3xl font-black uppercase tracking-tighter">Mémoire Ferroviaire</h2>
         </div>
         
-        <div className="space-y-8">
-          {data.disparues.map((gare: any, i: number) => (
-            <div key={i} className="border-l-4 border-amber-400 pl-6 py-2">
-              <div className="flex flex-wrap items-center gap-3 mb-1">
-                <h4 className="font-black text-slate-800 uppercase">{gare.nom}</h4>
-                {gare.epoque && <span className="text-[10px] bg-slate-100 px-2 rounded font-mono">{gare.epoque}</span>}
-              </div>
-              <p className="text-sm text-slate-600 leading-relaxed mb-2">{gare.destin || gare.note}</p>
-              {gare.details && (
-                <div className="text-[11px] text-slate-400 bg-slate-50 p-3 rounded-lg italic">
-                  {gare.details.histoire} — {gare.details.ce_qu_il_reste || gare.details.vestiges}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Sous-section : Gares Disparues */}
+          <div>
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2"><MapPin size={20}/> Sites Historiques</h3>
+            <div className="space-y-6">
+              {data.disparues.map((gare: any, i: number) => (
+                <div key={i} className="border-l-4 border-amber-400 pl-4 py-1">
+                  <h4 className="font-bold text-slate-800 text-sm uppercase">{gare.nom}</h4>
+                  <p className="text-xs text-slate-600 mt-1">{gare.destin || gare.note || gare.usage_actuel}</p>
                 </div>
-              )}
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Sous-section : Gares Fantômes Urbaines (NOUVEAU) */}
+          <div className="bg-slate-50 p-6 rounded-2xl border border-dashed border-slate-300">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-700"><Ghost size={20}/> Fantômes Urbains</h3>
+            <div className="space-y-6">
+              {data.gares_fantomes_urbaines.map((gare: any, i: number) => (
+                <div key={i} className="group">
+                  <h4 className="font-bold text-slate-800 text-sm">{gare.nom}</h4>
+                  <p className="text-[11px] text-slate-500 italic mb-1">{gare.emplacement || gare.statut}</p>
+                  <p className="text-xs text-slate-600 leading-snug">{gare.histoire || gare.note || gare.destin}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 3. SECTION FUTUR (MATABIAU 2) */}
+      {/* 3. RÉSEAU SECONDAIRE & HALTES (NOUVEAU) */}
+      <section className="mb-16">
+        <div className="flex items-center gap-3 mb-8">
+          <MapIcon className="text-emerald-600" />
+          <h2 className="text-2xl font-black uppercase text-slate-800">Le Réseau Secondaire (CFSO)</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+            <h3 className="font-bold text-emerald-800 mb-4 uppercase text-sm tracking-widest">Secteur Lardenne</h3>
+            {data.reseau_secondaire_et_haltes.lardenne_cfso.map((h: any, i: number) => (
+              <div key={i} className="mb-3 pb-3 border-b border-emerald-200 last:border-0">
+                <p className="font-bold text-sm text-emerald-900">{h.nom}</p>
+                <p className="text-xs text-emerald-700">{h.note}</p>
+              </div>
+            ))}
+          </div>
+          <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+            <h3 className="font-bold text-blue-800 mb-4 uppercase text-sm tracking-widest">Secteur Nord & Est</h3>
+            {data.reseau_secondaire_et_haltes.nord_et_est.map((h: any, i: number) => (
+              <div key={i} className="mb-3 pb-3 border-b border-blue-200 last:border-0">
+                <p className="font-bold text-sm text-blue-900">{h.nom}</p>
+                <p className="text-xs text-blue-700">{h.note || h.usage || h.quartier}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. SECTION FUTUR */}
       <section className="mb-16 bg-gradient-to-br from-blue-700 to-indigo-800 text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
@@ -86,7 +126,7 @@ export default function GareToulousePage() {
                 ))}
               </ul>
             </div>
-            <div className="bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/20">
+            <div className="bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/20 text-center">
               <span className="text-[10px] font-black uppercase text-blue-200">Livraison estimée</span>
               <p className="text-3xl font-black text-white">{data.nouvelle_gare.horizon}</p>
             </div>
@@ -94,7 +134,7 @@ export default function GareToulousePage() {
         </div>
       </section>
 
-      {/* 4. GUIDE & BIBLIO */}
+      {/* 5. GUIDE & BIBLIO */}
       <footer className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-slate-800 text-white p-8 rounded-3xl">
         <div>
           <h3 className="font-black uppercase mb-4 flex items-center gap-2 text-blue-400">
