@@ -3,6 +3,8 @@
 import React from 'react';
 // On importe directement le JSON pour éviter le fetch interne qui échoue sur Vercel
 import transportData from '@/../data/toulousain/transports.json';
+import Link from 'next/link';
+import { ArrowLeft } from "lucide-react";
 
 export default function TransportsPage() {
   // Les données sont chargées immédiatement via l'import
@@ -20,6 +22,12 @@ export default function TransportsPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 p-6 md:p-12">
+      
+      <div className="p-10 text-center">
+        <p className="mb-4">Chargement des données impossible (Fichier introuvable)...</p>
+        <Link href="/" className="text-blue-600 underline font-bold">Retour à l'accueil</Link>
+      </div>
+      
       <div className="max-w-6xl mx-auto">
         <header className="mb-12 border-l-8 border-red-600 pl-6">
           <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tight">
