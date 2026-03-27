@@ -3,6 +3,8 @@
     {
       "peuple": "Roms / Gitans / Tsiganes",
       "origine": "Inde du Nord (Rajasthan / Pendjab)",
+      "titre_theme": "La survie par le voyage",
+      "trajet": "Partis du Pendjab vers l'an 1000, ils ont traversé la Perse et l'Empire Byzantin avant d'arriver en Europe au XIVe siècle.",
       "etymologie": {
         "terme": "Gitan",
         "origine_erreur": "Petite Égypte",
@@ -11,7 +13,10 @@
       "legendes": [
         {
           "nom": "La légende des 10 000 musiciens",
-          "protagonistes": ["Roi Vahrâm Gûr (Perse)", "Maharajah d'Inde"],
+          "protagonistes": [
+            "Roi Vahrâm Gûr (Perse)",
+            "Maharajah d'Inde"
+          ],
           "recit": "Le roi de Perse demanda 10 000 musiciens (Luris) pour divertir son peuple. Il leur offrit terres et blé, mais les musiciens consommèrent les ressources sans cultiver la terre.",
           "consequence": "Le roi les condamna à l'errance éternelle avec leurs instruments.",
           "analyse_sociologique": [
@@ -24,44 +29,58 @@
       "contexte_depart_inde": {
         "periode": "Vers l'an 1000 de notre ère (XIe siècle)",
         "region": "Pendjab et Rajasthan (Inde du Nord)",
-        "nature_depart": "Mélange de guerres d'invasion et de pressions sociales (système de castes).",
+        "nature_depart": "Mélange de guerres d'invasion et de système de castes.",
         "raisons_principales": [
           {
             "titre": "Les invasions de Mahmoud de Ghazni (Cause militaire)",
-            "description": "17 campagnes de pillage sanglantes menées par le conquérant afghan en Inde du Nord.",
-            "role_roms": "Troupes non régulières : forgerons, soigneurs de chevaux, musiciens de guerre.",
-            "resultat": "Exode vers l'Ouest (Perse/Iran) pour fuir les massacres ou suite à des captures comme prisonniers de guerre."
+            "description": "Au début du XIe siècle, Mahmoud de Ghazni mène 17 campagnes de pillage sanglantes en Inde du Nord.",
+            "role_roms": "Servant de forgerons, soigneurs de chevaux ou musiciens de guerre dans les troupes non régulières.",
+            "resultat": "Exode vers l'Ouest (Perse) pour fuir les massacres ou emmenés comme prisonniers de guerre."
           },
           {
             "titre": "Le système des castes (Cause sociale)",
-            "description": "Appartenance aux groupes 'Dom', artisans et musiciens itinérants.",
-            "marginalisation": "Statut d'intouchables ou hors-caste, rendant l'attachement à une terre spécifique très faible face au danger.",
-            "vulnerabilite": "Plus facile de partir que de rester dans une société qui les rejetait déjà socialement."
+            "description": "Appartenance aux groupes 'Dom' (artisans itinérants, musiciens).",
+            "marginalisation": "Considérés comme 'intouchables', leur attachement à une terre précise était faible, facilitant le départ lors des conflits.",
+            "vulnerabilite": "Société qui les rejetait déjà socialement."
           },
           {
-            "titre": "L'effondrement des protecteurs (L'armée de l'ombre)",
-            "description": "Les Maharajahs utilisaient ces populations comme main-d'œuvre mobile pour suivre les armées.",
-            "consequence": "À la chute des royaumes Rajpoutes, ces groupes nomades ont perdu leurs patrons royaux et ont continué vers l'Ouest en quête de nouveaux marchés et de sécurité."
+            "titre": "L'armée de l'ombre (Le choix des Maharajahs)",
+            "description": "Utilisés comme main-d'œuvre mobile pour suivre les armées.",
+            "consequence": "À l'effondrement des royaumes, ces groupes n'avaient plus de protecteurs (patrons) et ont continué vers l'Ouest en quête de sécurité."
           }
         ]
       },
       "realite_historique": {
         "contexte": "Déplacements massifs liés aux guerres entre l'Inde et la Perse.",
-        "strategie_survie": "N'ayant plus de racines, ils ont transformé l'art (musique) et l'artisanat (forge) en métiers transportables pour survivre aux expulsions répétées.",
+        "destin": "Siècles de persécutions : esclavage en Roumanie jusqu'en 1856, génocide par les Nazis en 1944 (Porajmos).",
+        "strategie_survie": "N'ayant plus de racines, ils ont transformé l'art et l'artisanat en métiers transportables.",
         "citation_cle": "Mieux vaut avoir son métier dans ses mains que dans un champ que l'on devra abandonner."
+      },
+      "etat_actuel": {
+        "population": "Plus grande minorité ethnique d'Europe (10 à 12 millions de personnes).",
+        "situation": "Malgré une sédentarisation massive, maintien d'une culture orale et musicale forte.",
+        "influence": "Influence profonde sur l'Occident via le Flamenco et le Jazz Manouche."
       },
       "heritage_musical_et_transformations": [
         {
           "etape": "Racine Indienne",
           "lieu": "Rajasthan",
-          "elements_cles": ["Claquement de mains (Khartal)", "Chant ornementé de la gorge"],
+          "elements_cles": [
+            "Claquement de mains (Khartal)",
+            "Chant ornementé de la gorge"
+          ],
           "influence": "Base du rythme et de la modulation."
         },
         {
           "etape": "Naissance du Flamenco",
           "lieu": "Andalousie, Espagne (XVe siècle)",
-          "melange": ["Rythmes indiens", "Chants chrétiens", "Mélodies arabes", "Musique juive séfarade"],
-          "evolution": "La guitare remplace les percussions indiennes, mais est frappée comme un instrument de forgeron."
+          "melange": [
+            "Rythmes indiens",
+            "Chants chrétiens",
+            "Mélodies arabes",
+            "Musique juive séfarade"
+          ],
+          "evolution": "La guitare remplace les percussions indiennes, frappée comme un instrument de forgeron."
         },
         {
           "etape": "Europe de l'Est et Jazz",
