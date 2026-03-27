@@ -23,10 +23,10 @@ export default function TransportsPage() {
   return (
     <main className="min-h-screen bg-gray-50 p-6 md:p-12">
       
-      <div className="p-10 text-center">
-        <p className="mb-4">Chargement des données impossible (Fichier introuvable)...</p>
-        <Link href="/" className="text-blue-600 underline font-bold">Retour à l'accueil</Link>
-      </div>
+        <Link href="/" className="inline-flex items-center gap-2 text-indigo-700 hover:text-indigo-900 font-bold transition-all group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour à l'accueil
+        </Link>
       
       <div className="max-w-6xl mx-auto">
         <header className="mb-12 border-l-8 border-red-600 pl-6">
