@@ -1,0 +1,21 @@
+{
+  "ville": "Toulouse",
+  "reseau": "ICI Toilettes",
+  "etablissements": [
+    { "nom": "Le Père Peinard", "adresse": "1 rue des Chalets, 31000 Toulouse", "lat": 43.6119, "lon": 1.4439, "note": "Ambassadeur historique" },
+    { "nom": "Le Délirium Café", "adresse": "54 Allée Jean Jaurès, 31000 Toulouse", "lat": 43.6063, "lon": 1.4485, "note": "Proche métro Jean-Jaurès" },
+    { "nom": "La Brasserie du Levant", "adresse": "15 Boulevard de Marengo, 31500 Toulouse", "lat": 43.6105, "lon": 1.4542, "note": "Quartier Gare" },
+    { "nom": "Tempête", "adresse": "10 Rue de la Colombette, 31000 Toulouse", "lat": 43.6056, "lon": 1.4512, "note": "Quartier Saint-Aubin" },
+    { "nom": "Tito Mojito", "adresse": "13 Rue des Filatiers, 31000 Toulouse", "lat": 43.5998, "lon": 1.4438, "note": "Quartier Esquirol" },
+    { "nom": "Le Mami Wata", "adresse": "12 Rue d'Embarthe, 31000 Toulouse", "lat": 43.6091, "lon": 1.4385, "note": "Quartier Arnaud-Bernard" },
+    { "nom": "The Melting Pot", "adresse": "26 Boulevard de Strasbourg, 31000 Toulouse", "lat": 43.6078, "lon": 1.4461, "note": "Quartier Strasbourg" },
+    { "nom": "Blastodice", "adresse": "52 Avenue de l'URSS, 31400 Toulouse", "lat": 43.5842, "lon": 1.4515, "note": "Quartier Saint-Michel / Saint-Cyprien" },
+    { "nom": "L'Autruche", "adresse": "1 Rue André Mercadier, 31000 Toulouse", "lat": 43.6052, "lon": 1.4528, "note": "Micro-brasserie engagée" },
+    { "nom": "Le Breughel l'Ancien", "adresse": "30 Rue de la Chaîne, 31000 Toulouse", "lat": 43.6095, "lon": 1.4392, "note": "Classique Arnaud Bernard" },
+    { "nom": "Le Café de la Concorde", "adresse": "17 Rue de la Concorde, 31000 Toulouse", "lat": 43.6134, "lon": 1.4447, "note": "Lieu historique" },
+    { "nom": "L'Évasion", "adresse": "29 Grande Rue Saint-Nicolas, 31300 Toulouse", "lat": 43.5985, "lon": 1.4348, "note": "Près place St-Cyprien" },
+    { "nom": "Le Bistroglo", "adresse": "37 Rue des Couteliers, 31000 Toulouse", "lat": 43.5992, "lon": 1.4405, "note": "Centre ville" },
+    { "nom": "Le Bar du Matin", "adresse": "16 Place des Carmes, 31000 Toulouse", "lat": 43.5968, "lon": 1.4449, "note": "Quartier des Carmes" },
+    { "nom": "Le Biergarten", "adresse": "60 Grande Rue Saint-Michel, 31400 Toulouse", "lat": 43.5905, "lon": 1.4468, "note": "Grand espace extérieur" }
+  ]
+}
