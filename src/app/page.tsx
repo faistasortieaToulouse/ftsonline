@@ -61,7 +61,7 @@ const nbSport = 6;
 const nbMusee = 13;
 const nbVisite = 11;
 const nbOccitanie = 19;
-const nbTransport = 18;
+const nbTransport = 19;
 const nbCafeLangue = 3;
 const nbConsomamtion = 3;
 const nbEmploi = 4;
@@ -302,6 +302,7 @@ const categories = [
     { title: "Tisséo par quartier", href: "/tisseotia" },
     { title: "Tisséo itinéraire par quartier", href: "/tisseotiaiti" },
     { title: "Tisséo Vél'O Toulouse", href: "/tisseovelo" },
+    { title: "Transports à Toulouse", href: "/transports" },
     { title: "Gares à Toulouse", href: "/garetoulouse" },
     { title: "train 1 euro Occitanie", href: "/train1euro" },
     { title: "Voyage", href: "/voyagetoulouse" },
@@ -310,7 +311,7 @@ const categories = [
     { title: "Trafic Automobile", href: "/tomtom" },
     { title: "Lignes aériennes", href: "/voltoulouse" },
   ]},
-//  const nbTransport = 18;
+//  const nbTransport = 19;
 
 
   /* ---------------- TOULOUSE ---------------- */
