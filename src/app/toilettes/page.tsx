@@ -1,149 +1,219 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { ArrowLeft, Beer, MapPin, Search } from 'lucide-react';
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
-export default function ToilettesPage() {
-  const [data, setData] = useState<any>(null);
+interface ResistancePlace {
+  nom: string;
+  num: string;
+  type_rue: string;
+  nom_rue: string;
+  appartient: string;
+  site: string;
+  quartier: string;
+  etablissement: string;
+  sigles: string;
+  signification: string;
+  lat?: number; // Requis pour éviter le géocodage
+  lng?: number; // Requis pour éviter le géocodage
+}
+
+const TOULOUSE_CENTER: [number, number] = [43.6045, 1.444];
+
+export default function VisiteResistancePage() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
+  const [places, setPlaces] = useState<ResistancePlace[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [L, setL] = useState<any>(null);
+  const [openDetailsId, setOpenDetailsId] = useState<number | null>(null);
 
+  const toggleDetails = (id: number) => {
+    setOpenDetailsId((prevId) => (prevId === id ? null : id));
+  };
+
+  // 1. Chargement des données
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch('/api/toilettes');
-        if (res.ok) {
-          const json = await res.json();
-          setData(json);
-        }
-      } catch (error) {
-        console.error("Erreur de récupération :", error);
-      } finally {
+    fetch("/api/visiteresistance")
+      .then((res) => res.json())
+      .then((data: ResistancePlace[]) => {
+        setPlaces(data);
         setLoading(false);
-      }
-    }
-    fetchData();
+      })
+      .catch(console.error);
   }, []);
 
-  // Filtrage simple pour la recherche
-  const filteredBars = data?.bars?.filter((bar: any) => 
-    bar.nom.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    bar.adresse.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 2. Initialisation Leaflet (Méthode OTAN)
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || loading) return;
 
-  if (loading) return (
-    <div className="flex h-screen items-center justify-center text-pink-600 font-medium animate-pulse">
-      Chargement des sanitaires toulousains...
-    </div>
-  );
+    const initMap = async () => {
+      const Leaflet = (await import("leaflet")).default;
+      setL(Leaflet);
+
+      if (mapInstance.current) return;
+
+      mapInstance.current = Leaflet.map(mapRef.current!).setView(TOULOUSE_CENTER, 14);
+
+      Leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap contributors',
+      }).addTo(mapInstance.current);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [loading]);
+
+  // 3. Ajout des marqueurs (Sans Géocodage)
+  useEffect(() => {
+    if (!L || !mapInstance.current || places.length === 0) return;
+
+    places.forEach((place, i) => {
+      if (place.lat === undefined || place.lng === undefined) return;
+
+      const id = i + 1;
+      const color = place.appartient.toLowerCase() === "résistance" ? "#22c55e" : "#ef4444";
+
+      const customIcon = L.divIcon({
+        className: "custom-marker",
+        html: `
+          <div style="
+            background-color: ${color};
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          ">
+            ${id}
+          </div>
+        `,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+
+      const marker = L.marker([place.lat, place.lng], { icon: customIcon })
+        .addTo(mapInstance.current!)
+        .bindPopup(`<strong>${id}. ${place.nom}</strong>`);
+
+      marker.on("click", () => {
+        toggleDetails(id);
+        mapInstance.current.setView([place.lat, place.lng], 16);
+        document.getElementById(`place-item-${id}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      });
+    });
+  }, [L, places]);
 
   return (
-    <main className="max-w-5xl mx-auto p-6 font-sans">
-      {/* NAVIGATION AVEC LUCIDE-REACT */}
-      <nav className="mb-8">
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-800 transition-colors font-semibold group"
-        >
+    <div className="p-4 max-w-7xl mx-auto">
+      <nav className="mb-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          Retour à l'Accueil
+          Retour à l'accueil
         </Link>
       </nav>
 
-      <header className="mb-10 text-center md:text-left">
-        <h1 className="text-4xl font-black mb-2 text-gray-900 tracking-tight">
-          Toilettes <span className="text-pink-600">Publiques</span>
-        </h1>
-        <p className="text-gray-500">Trouver un lieu de secours à Toulouse (Bars partenaires & Sanisettes)</p>
-      </header>
+      <h1 className="text-3xl font-extrabold mb-6 text-slate-900">
+        🏛️ Visite Résistance — Toulouse ({places.length} Lieux)
+      </h1>
 
-      {/* PARTIE 1 : LIEN OFFICIEL */}
-      <section className="mb-12 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 rounded-xl shadow-sm">
-        <div className="flex items-start gap-4">
-          <div className="bg-blue-500 p-2 rounded-lg text-white">
-            <MapPin size={24} />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-blue-900 mb-1">Guide Officiel ICI Toilettes</h2>
-            <p className="text-blue-800/80 mb-3 text-sm">
-              Le réseau partenaire qui transforme les bars en services publics.
-            </p>
-            <a 
-              href="https://ici-toilettes.fr/toilettes-publiques-toulouse/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block bg-white px-4 py-2 rounded-lg text-blue-600 font-bold border border-blue-200 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+      {/* Conteneur de la Carte */}
+      <div
+        ref={mapRef}
+        style={{ height: "65vh", width: "100%" }}
+        className="mb-8 border-4 border-slate-200 rounded-xl bg-gray-100 flex items-center justify-center relative z-0 overflow-hidden shadow-xl"
+      >
+        {loading && <p className="text-gray-500 font-bold animate-pulse">Chargement de la carte...</p>}
+      </div>
+
+      <h2 className="text-2xl font-bold mb-4 border-b pb-2 text-slate-800">
+        Liste des lieux détaillés
+      </h2>
+
+      {/* Liste des lieux avec Accordéon */}
+      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {places.map((place, i) => {
+          const id = i + 1;
+          const isDetailsOpen = openDetailsId === id;
+
+          return (
+            <li
+              key={i}
+              id={`place-item-${id}`}
+              className={`p-5 border rounded-xl transition-all duration-300 cursor-pointer flex flex-col ${
+                isDetailsOpen 
+                ? "bg-slate-50 border-blue-400 shadow-md ring-1 ring-blue-100" 
+                : "bg-white border-slate-200 shadow hover:shadow-lg"
+              }`}
+              onClick={() => toggleDetails(id)}
             >
-              Consulter la carte interactive
-            </a>
-          </div>
-        </div>
-      </section>
+              <div className="flex justify-between items-start">
+                <p className="text-lg font-bold text-slate-900">
+                  <span className="text-blue-600 mr-2">{id}.</span> {place.nom}
+                </p>
+                <span className={`text-xl text-black font-bold transition-transform duration-300 ${isDetailsOpen ? "rotate-180" : "rotate-0"}`}>
+                  ▼
+                </span>
+              </div>
 
-      {/* PARTIE 2 : BARS PARTENAIRES */}
-      <section className="mb-16">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-          <h2 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
-            <Beer className="text-pink-600" /> 
-            Les 15 Bars Partenaires
-          </h2>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text"
-              placeholder="Rechercher un bar ou un quartier..."
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 w-full md:w-64"
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredBars?.map((bar: any, index: number) => (
-            <div key={index} className="group border border-gray-100 p-5 rounded-2xl shadow-sm bg-white hover:shadow-md hover:border-pink-100 transition-all">
-              <h3 className="font-bold text-lg text-gray-900 group-hover:text-pink-600 transition-colors">{bar.nom}</h3>
-              <p className="text-gray-500 text-sm mb-3 flex items-start gap-1">
-                <MapPin size={14} className="mt-1 shrink-0" /> {bar.adresse}
+              <p className="text-sm italic text-slate-600 mt-1">
+                📍 {place.num} {place.type_rue} {place.nom_rue} ({place.quartier})
               </p>
-              {bar.note && (
-                <div className="bg-pink-50 text-pink-700 text-xs p-2 rounded-lg italic">
-                  "{bar.note}"
+
+              {isDetailsOpen && (
+                <div className="mt-3 pt-3 border-t border-slate-200 animate-in fade-in slide-in-from-top-1 duration-300 space-y-2">
+                  <p className="text-sm"><span className="font-bold text-slate-700">Établissement :</span> {place.etablissement}</p>
+                  <p className="text-sm"><span className="font-bold text-slate-700">Site :</span> {place.site}</p>
+                  <p className="text-sm"><span className="font-bold text-slate-700">Appartient :</span> {place.appartient}</p>
+                  {place.sigles && <p className="text-sm"><span className="font-bold text-slate-700">Sigles :</span> {place.sigles}</p>}
+                  {place.signification && (
+                    <div className="p-3 bg-white rounded border italic text-sm text-slate-600">
+                      {place.signification}
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
-          ))}
-        </div>
-      </section>
+            </li>
+          );
+        })}
+      </ul>
 
-      {/* PARTIE 3 : SANISETTES */}
-      <section>
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">🚻 Réseau des Sanisettes Municipales</h2>
-        <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm">
-          <table className="w-full text-left border-collapse bg-white">
-            <thead>
-              <tr className="bg-gray-50 text-gray-400 uppercase text-[10px] tracking-widest font-bold">
-                <th className="p-4 border-b">Adresse / Emplacement</th>
-                <th className="p-4 border-b">Type</th>
-                <th className="p-4 border-b text-center">PMR</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm">
-              {data?.sanisettes?.map((item: any, index: number) => (
-                <tr key={index} className="hover:bg-gray-50 transition-colors">
-                  <td className="p-4 border-b font-medium text-gray-700">{item.route}</td>
-                  <td className="p-4 border-b text-gray-500 text-xs">{item.type}</td>
-                  <td className="p-4 border-b text-center">
-                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${item.pmr.includes('Non') ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'}`}>
-                      {item.pmr.includes('Non') ? 'NON' : 'OUI'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </main>
+      {/* Tableau des Sigles - Reste identique */}
+      <h2 className="text-2xl font-semibold mt-10 mb-4">📑 Sigles et significations</h2>
+      <div className="overflow-x-auto">
+        <table className="table-auto border-collapse border border-gray-400 w-full text-sm">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-400 px-2 py-1 text-left">Sigles</th>
+              <th className="border border-gray-400 px-2 py-1 text-left">Signification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td className="border px-2 py-1 font-bold">CNT</td><td className="border px-2 py-1">Comité national des Travailleurs</td></tr>
+            <tr><td className="border px-2 py-1 font-bold">UGT</td><td className="border px-2 py-1">Union générale des travailleurs</td></tr>
+            <tr><td className="border px-2 py-1 font-bold">AIT</td><td className="border px-2 py-1">Association internationale des travailleurs</td></tr>
+            {/* ... Reste des lignes du tableau ... */}
+            <tr><td className="border px-2 py-1 font-bold">AG</td><td className="border px-2 py-1">Assemblée Générale</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
