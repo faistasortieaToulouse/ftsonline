@@ -18,7 +18,7 @@ export default function GareToulousePage() {
       
       {/* Navigation & Header */}
       <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:bg-blue-100 p-2 rounded-lg transition-all mb-8 font-bold">
-        <ArrowLeft size={20} /> Retour
+        <ArrowLeft size={20} /> Retour à l'Accueil
       </Link>
 
       <header className="bg-slate-900 text-white p-8 rounded-2xl mb-12 shadow-lg border-b-4 border-blue-500">
