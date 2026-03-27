@@ -1,14 +1,21 @@
 import { NextResponse } from 'next/server';
-
-// On utilise @ pour partir de la racine du projet (souvent configuré dans tsconfig.json)
-// Si @ ne marche pas, utilise : import evenementsData from '../../../data/toulouseain/evenementsToulouse.json';
-// @ts-ignore
-import evenementsData from '@/../data/toulouseain/evenementsToulouse.json';
+import fs from 'fs';
+import path from 'path';
 
 export async function GET() {
   try {
-    return NextResponse.json(evenementsData);
+    // On utilise exactement le même dossier 'toulousain' que pour les radios
+    const filePath = path.join(process.cwd(), 'data/toulousain/evenementsToulouse.json');
+    
+    // Lecture synchrone comme dans ton exemple radio
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    
+    return NextResponse.json(JSON.parse(fileContents));
   } catch (error) {
-    return NextResponse.json({ error: "Erreur de chargement" }, { status: 500 });
+    console.error("Erreur lecture evenements:", error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la lecture des événements' }, 
+      { status: 500 }
+    );
   }
 }
