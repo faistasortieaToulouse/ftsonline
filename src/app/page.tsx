@@ -302,7 +302,7 @@ const categories = [
     { title: "Tisséo par quartier", href: "/tisseotia" },
     { title: "Tisséo itinéraire par quartier", href: "/tisseotiaiti" },
     { title: "Tisséo Vél'O Toulouse", href: "/tisseovelo" },
-    { title: "Gares à Toulouse", href: "/garetoulouse },
+    { title: "Gares à Toulouse", href: "/garetoulouse" },
     { title: "train 1 euro Occitanie", href: "/train1euro" },
     { title: "Voyage", href: "/voyagetoulouse" },
     { title: "Automobile", href: "/automobile" },
