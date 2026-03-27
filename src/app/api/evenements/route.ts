@@ -1,37 +1,34 @@
 import { NextResponse } from 'next/server';
+import fs from 'fs';
 import path from 'path';
-import { promises as fs } from 'fs';
-
-// Définition de l'interface pour le typage TypeScript
-interface EvenementSource {
-  Nom: string;
-  Lien: string;
-}
-
-interface EvenementsData {
-  Titre: string;
-  Sources: EvenementSource[];
-}
 
 export async function GET() {
   try {
-    // 1. Définir le chemin du fichier JSON
-    // process.cwd() pointe à la racine du projet
-    const filePath = path.join(process.cwd(), 'data', 'toulouseain', 'evenementsToulouse.json');
+    // On utilise exactement la même méthode que pour tes autres catégories
+    const filePath = path.join(
+      process.cwd(),
+      "data",
+      "toulouseain", // Ton dossier spécifique
+      "evenementsToulouse.json" // Ton fichier d'événements
+    );
 
-    // 2. Lire le contenu du fichier
-    const fileContents = await fs.readFile(filePath, 'utf8');
-
-    // 3. Parser le JSON
-    const data: EvenementsData = JSON.parse(fileContents);
-
-    // 4. Retourner la réponse
-    return NextResponse.json(data);
-    
+    // Vérification de l'existence du fichier
+    if (fs.existsSync(filePath)) {
+      const fileContents = fs.readFileSync(filePath, "utf-8");
+      const data = JSON.parse(fileContents);
+      return NextResponse.json(data);
+    } else {
+      // Ce log est crucial pour débugger dans la console Vercel si le fichier n'est pas trouvé
+      console.error("Fichier Toulouse manquant au chemin :", filePath);
+      return NextResponse.json(
+        { error: "Fichier introuvable", debugPath: filePath },
+        { status: 404 }
+      );
+    }
   } catch (error) {
-    console.error("Erreur API Evenements:", error);
+    console.error("Erreur lecture json toulouse :", error);
     return NextResponse.json(
-      { error: "Impossible de charger les événements" },
+      { error: "Erreur lors du traitement des données" },
       { status: 500 }
     );
   }
