@@ -49,7 +49,7 @@
     ],
     "ferroviaire_rer": [
       {
-        "nom": "Ligne Arenes-Colomiers",
+        "nom": "Ligne Arenes-Colomiers - RERE Est",
         "details": "Ancienne ligne C ferroviaire, cadencee depuis juin 1993. Renommee en 2023."
       },
       {
@@ -58,7 +58,7 @@
       },
       {
         "nom": "RER Nord / SERM",
-        "details": "Projet de desserte cadenciee vers Castelnau-d'Estretefonds lie a la LGV et l'Etoile Ferroviaire.",
+        "details": "Projet de desserte cadenciee vers Castelnau-d'Estretefonds lie a la LGV et l'Etoile Ferroviaire pour 2029.",
         "statut": "En cours d'amenagement (Horizon 2030+)"
       }
     ],
