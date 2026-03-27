@@ -47,7 +47,7 @@ import * as Astronomy from 'astronomy-engine';
 const nbAgenda = 16;
 const nbActualites = 3;
 const nbMeetup = 6;
-const nbToulouseEvents = 2;
+const nbToulouseEvents = 3;
 const nbSpectacles = 2;
 const nbCulture = 2;
 const nbLibrairie = 5;
@@ -161,7 +161,7 @@ const categories = [
       { title: "Agenda des évènements", href: "/evenements" },
     ] 
   },
-	// const nbToulouseEvents = 2;
+	// const nbToulouseEvents = 3;
 	
 /* 2. Billet spectacle */
   { 
