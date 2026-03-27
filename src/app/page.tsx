@@ -60,7 +60,7 @@ const nbCommunaute = 2;
 const nbSport = 6;
 const nbMusee = 13;
 const nbVisite = 11;
-const nbOccitanie = 18;
+const nbOccitanie = 19;
 const nbTransport = 17;
 const nbCafeLangue = 3;
 const nbConsomamtion = 3;
@@ -269,6 +269,7 @@ const categories = [
 //  const nbVisite = 11;
 
   { title: "Visites en Occitanie", href: "/visites-occitanie", icon: MapPin, isOccitanie: true, occitanieSources: [
+    { title: "Gares proche de la plage", href: "/gareplage" },
     { title: "Plages de mer", href: "/plages" },
     { title: "Plages de lac", href: "/lacbaignade" },
     { title: "Stations de ski", href: "/ski" },
@@ -288,7 +289,7 @@ const categories = [
     { title: "Tarn-Garonne", href: "/tarngaronne" },
     { title: "Cirque et sommet", href: "/montcirque" },
   ]},
-//  const nbOccitanie = 18;
+//  const nbOccitanie = 19;
 
   { title: "Transports & Trafic", href: "/transports-tisseo", icon: Bus, isTransport: true, transportSources: [
     { title: "Tisséo Arrêts par itinéraire", href: "/tisseoarretitineraire" },
