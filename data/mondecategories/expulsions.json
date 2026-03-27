@@ -1,0 +1,171 @@
+{
+  "migrations_forcees": [
+    {
+      "peuple": "Roms / Gitans / Tsiganes",
+      "origine": "Inde du Nord (Rajasthan / Pendjab)",
+      "etymologie": {
+        "terme": "Gitan",
+        "origine_erreur": "Petite Égypte",
+        "explication": "À leur arrivée en Europe, ils se présentaient comme des pèlerins d'Égypte pour obtenir protection. 'Gitan' et 'Gypsy' sont des déformations d'Égyptien."
+      },
+      "legendes": [
+        {
+          "nom": "La légende des 10 000 musiciens",
+          "protagonistes": ["Roi Vahrâm Gûr (Perse)", "Maharajah d'Inde"],
+          "recit": "Le roi de Perse demanda 10 000 musiciens (Luris) pour divertir son peuple. Il leur offrit terres et blé, mais les musiciens consommèrent les ressources sans cultiver la terre.",
+          "consequence": "Le roi les condamna à l'errance éternelle avec leurs instruments.",
+          "analyse_sociologique": [
+            "Conflit entre sédentaires (agriculture) et nomades (art).",
+            "Spécialisation artistique face au travail manuel forcé.",
+            "Justification historique du rejet et des stéréotypes."
+          ]
+        }
+      ],
+      "contexte_depart_inde": {
+        "periode": "Vers l'an 1000 de notre ère (XIe siècle)",
+        "region": "Pendjab et Rajasthan (Inde du Nord)",
+        "nature_depart": "Mélange de guerres d'invasion et de pressions sociales (système de castes).",
+        "raisons_principales": [
+          {
+            "titre": "Les invasions de Mahmoud de Ghazni (Cause militaire)",
+            "description": "17 campagnes de pillage sanglantes menées par le conquérant afghan en Inde du Nord.",
+            "role_roms": "Troupes non régulières : forgerons, soigneurs de chevaux, musiciens de guerre.",
+            "resultat": "Exode vers l'Ouest (Perse/Iran) pour fuir les massacres ou suite à des captures comme prisonniers de guerre."
+          },
+          {
+            "titre": "Le système des castes (Cause sociale)",
+            "description": "Appartenance aux groupes 'Dom', artisans et musiciens itinérants.",
+            "marginalisation": "Statut d'intouchables ou hors-caste, rendant l'attachement à une terre spécifique très faible face au danger.",
+            "vulnerabilite": "Plus facile de partir que de rester dans une société qui les rejetait déjà socialement."
+          },
+          {
+            "titre": "L'effondrement des protecteurs (L'armée de l'ombre)",
+            "description": "Les Maharajahs utilisaient ces populations comme main-d'œuvre mobile pour suivre les armées.",
+            "consequence": "À la chute des royaumes Rajpoutes, ces groupes nomades ont perdu leurs patrons royaux et ont continué vers l'Ouest en quête de nouveaux marchés et de sécurité."
+          }
+        ]
+      },
+      "realite_historique": {
+        "contexte": "Déplacements massifs liés aux guerres entre l'Inde et la Perse.",
+        "strategie_survie": "N'ayant plus de racines, ils ont transformé l'art (musique) et l'artisanat (forge) en métiers transportables pour survivre aux expulsions répétées.",
+        "citation_cle": "Mieux vaut avoir son métier dans ses mains que dans un champ que l'on devra abandonner."
+      },
+      "heritage_musical_et_transformations": [
+        {
+          "etape": "Racine Indienne",
+          "lieu": "Rajasthan",
+          "elements_cles": ["Claquement de mains (Khartal)", "Chant ornementé de la gorge"],
+          "influence": "Base du rythme et de la modulation."
+        },
+        {
+          "etape": "Naissance du Flamenco",
+          "lieu": "Andalousie, Espagne (XVe siècle)",
+          "melange": ["Rythmes indiens", "Chants chrétiens", "Mélodies arabes", "Musique juive séfarade"],
+          "evolution": "La guitare remplace les percussions indiennes, mais est frappée comme un instrument de forgeron."
+        },
+        {
+          "etape": "Europe de l'Est et Jazz",
+          "lieu": "Balkans / France",
+          "evolutions": [
+            {
+              "style": "Violon Tzigane",
+              "note": "Maîtrise virtuose ayant impressionné Liszt et Brahms."
+            },
+            {
+              "style": "Jazz Manouche",
+              "figure_cle": "Django Reinhardt (1930)",
+              "note": "Fusion entre musique tzigane et Jazz américain."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "themes": {
+    "definition_diaspora": "L'histoire de l'humanité est marquée par ces migrations forcées, que l'on appelle souvent des diasporas (du grec 'dispersion'). Ces peuples ont dû reconstruire leur identité sans terre, tout en conservant leur culture.",
+    "point_commun_psychologique": "Le mythe du retour (l'espoir de revenir un jour sur la terre des ancêtres) et une culture de la résilience. La langue et la religion deviennent souvent leur seule 'patrie' transportable."
+  },
+  "peuples_expulses": [
+    {
+      "id": "parsis",
+      "nom": "Les Parsis",
+      "titre_theme": "L'élite de l'Inde",
+      "cause_exil": "Fuyant la conquête musulmane de la Perse au VIIIe siècle pour protéger le Zoroastrisme.",
+      "destin_historique": "Installation au Gujarat. Devenus une communauté riche et éduquée, piliers de l'industrialisation (famille Tata, Freddie Mercury).",
+      "etat_actuel": "Communauté en déclin démographique (60 000 pers.) due à l'absence de prosélytisme et mariages endogames.",
+      "tags": ["Perse", "Inde", "Zoroastrisme"]
+    },
+    {
+      "id": "afro-americains",
+      "nom": "Les Afro-Américains",
+      "titre_theme": "La création d'une nouvelle nation",
+      "contexte": "Déportation massive par l'esclavage, sans bagages culturels matériels.",
+      "destin_historique": "Réinvention d'une culture à partir de rien : mélange de racines africaines et christianisme imposé.",
+      "etat_actuel": "Naissance du Blues, Jazz, Gospel. Puissance culturelle mondiale après la conquête des droits civiques (1960).",
+      "tags": ["Afrique", "USA", "Résilience"]
+    },
+    {
+      "id": "rohingyas",
+      "nom": "Les Rohingyas",
+      "titre_theme": "Le peuple le plus persécuté au monde",
+      "cause_exil": "Refus de citoyenneté par la Birmanie (État d'Arakan) les considérant comme immigrés illégaux.",
+      "destin_historique": "Campagne militaire brutale en 2017 poussant 1 million de personnes vers le Bangladesh.",
+      "etat_actuel": "Vivent à Kutupalong (plus grand camp de réfugiés). Peuple apatride sans reconnaissance officielle.",
+      "tags": ["Birmanie", "Bangladesh", "Apatride"]
+    },
+    {
+      "id": "circassiens",
+      "nom": "Les Circassiens",
+      "titre_theme": "Les exilés de l'Empire Ottoman",
+      "cause_exil": "Défaite face à l'Empire Russe en 1864, expulsion de 90% du peuple du Caucase.",
+      "destin_historique": "Devenus garde d'élite en Jordanie. Fusion dans les sociétés turque, jordanienne et syrienne.",
+      "etat_actuel": "Diaspora de 4 millions. Militent pour la reconnaissance d'un génocide.",
+      "tags": ["Caucase", "Moyen-Orient", "Militaire"]
+    },
+    {
+      "id": "armeniens",
+      "nom": "Les Arméniens",
+      "titre_theme": "La Diaspora de survie",
+      "cause_exil": "Génocide de 1915 et chassés de l'Empire ottoman (Turquie).",
+      "migration": "Dispersion au Liban, Syrie, France et États-Unis.",
+      "identite": "Soudée par la religion orthodoxe et la mémoire du traumatisme.",
+      "tags": ["Caucase", "Génocide", "Chrétienté"]
+    },
+    {
+      "id": "acadiens",
+      "nom": "Les Acadiens",
+      "titre_theme": "Le Grand Dérangement",
+      "cause_exil": "Expulsion par les Britanniques en 1755 (Nouvelle-Écosse) pour refus d'allégeance.",
+      "migration": "Déportés vers la France ou la Louisiane, devenant les 'Cajuns'.",
+      "culture": "Recréation d'une culture unique (cuisine, musique) malgré la perte des terres.",
+      "tags": ["Canada", "Louisiane", "Francophonie"]
+    },
+    {
+      "id": "palestiniens",
+      "nom": "Les Palestiniens",
+      "titre_theme": "La Nakba",
+      "cause_exil": "Création de l'État d'Israël en 1948 (700 000 expulsés).",
+      "migration": "Camps de réfugiés au Liban, Jordanie, Syrie et monde entier.",
+      "identite": "Symbole de 'la clé' de la maison transmis de génération en génération.",
+      "tags": ["Moyen-Orient", "Réfugiés", "Mémoire"]
+    },
+    {
+      "id": "huguenots",
+      "nom": "Les Huguenots",
+      "titre_theme": "L'exil religieux français",
+      "cause_exil": "Révocation de l'Édit de Nantes en 1685 par Louis XIV.",
+      "migration": "200 000 fuient vers l'Allemagne, Pays-Bas, Angleterre et Afrique du Sud.",
+      "impact": "Apport de savoir-faire précieux (horlogerie, textile) aux pays d'accueil.",
+      "tags": ["France", "Europe", "Protestantisme"]
+    },
+    {
+      "id": "chagossiens",
+      "nom": "Les Chagossiens",
+      "titre_theme": "L'expulsion silencieuse",
+      "cause_exil": "Expulsion par le Royaume-Uni (1960-70) pour louer l'île aux USA (base militaire).",
+      "migration": "Déportés vers Maurice et les Seychelles.",
+      "etat_actuel": "Bataille juridique internationale pour le droit au retour.",
+      "tags": ["Océan Indien", "Justice", "Base Militaire"]
+    }
+  ]
+}
