@@ -8,11 +8,20 @@ export default function FrequenceRadioPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch('/api/frequenceradio')
-      .then(res => res.json())
-      .then(json => {
+useEffect(() => {
+    fetch('/api/evenements')
+      .then((res) => {
+        if (!res.ok) throw new Error("Erreur serveur");
+        return res.json();
+      })
+      .then((json) => {
         setData(json);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Erreur de fetch:", err);
+        // On met un objet vide pour éviter le crash du .map()
+        setData({ Titre: "Erreur", Sources: [] });
         setLoading(false);
       });
   }, []);
