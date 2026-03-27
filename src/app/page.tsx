@@ -158,6 +158,7 @@ const categories = [
     toulouseEventsSources: [
       { title: "Evènements Toulouse", href: "/toulouseevent" },
       { title: "Évènements à l'université", href: "/universites" },
+      { title: "Agenda des évènements", href: "/evenements" },
     ] 
   },
 	// const nbToulouseEvents = 2;
