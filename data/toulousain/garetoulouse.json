@@ -1,0 +1,184 @@
+{
+  "titre": "Patrimoine Ferroviaire Toulousain",
+  "description": "Inventaire des 4 gares, 7 haltes actives et des stations disparues de la Ville Rose.",
+  "actuelles": [
+    { "nom": "Toulouse-Matabiau", "type": "Gare Principale", "info": "Cœur du réseau Occitanie et TGV." },
+    { "nom": "Toulouse-Saint-Cyprien Arènes", "type": "Gare", "info": "Connexion Métro A et Tramway." },
+    { "nom": "Toulouse-Saint-Agne", "type": "Gare", "info": "Dessert le sud de la ville et le pôle universitaire." },
+    { "nom": "Toulouse-Lardenne", "type": "Gare", "info": "Située sur la ligne C vers Colomiers." },
+    { "nom": "Gallieni-Cancéropôle", "type": "Halte", "info": "Dessert l'Oncopole et l'Île du Ramier." },
+    { "nom": "Montaudran", "type": "Halte", "info": "Au cœur de la Piste des Géants (Aéropostale)." },
+    { "nom": "Saint-Martin-du-Touch", "type": "Halte", "info": "Ligne C, zone aéronautique Airbus." },
+    { "nom": "Les Ramassiers", "type": "Halte", "info": "Ligne C, limite Toulouse/Colomiers." },
+    { "nom": "Le Toec", "type": "Halte", "info": "Ligne C, proche du Zénith." },
+    { "nom": "Route de Launaguet", "type": "Halte", "info": "Ligne vers Bordeaux/Montauban." },
+    { "nom": "Lacourtensourt", "type": "Halte", "info": "Limite nord de la commune." }
+  ],
+  "disparues": [
+    {
+      "nom": "Gare de Toulouse-Roguet",
+      "emplacement": "Quartier Saint-Cyprien (Place Roguet)",
+      "destin": "Tête de ligne du CFSO vers Lombez. Fermée fin 1940, détruite pour des immeubles.",
+      "epoque": "1900 - 1949"
+    },
+    {
+      "nom": "Gare de Toulouse-Pont-Neuf",
+      "emplacement": "Rive gauche, près du Pont-Neuf",
+      "destin": "Gare du Capitole. Servait au transport local le long de la Garonne. Démantelée avec les voies des quais.",
+      "epoque": "XIXe Siècle"
+    },
+    {
+      "nom": "Halte des Abattoirs",
+      "emplacement": "Derrière l'actuel Musée des Abattoirs",
+      "destin": "Usage industriel pour le bétail. Fermée en 1988 avec la fin de l'activité du site.",
+      "epoque": "Fermée en 1988"
+    },
+    {
+      "nom": "Gare des Ponts-Jumeaux",
+      "emplacement": "Jonction des trois canaux",
+      "destin": "Transbordement rail/canal. Supprimée avec le déclin du fret fluvial.",
+      "epoque": "Désaffectée"
+    },
+    {
+      "nom": "Gare de Toulouse-Raynal",
+      "type": "Gare Technique / Fret",
+      "info": "Ancien poumon économique de Toulouse. Aujourd'hui centre de maintenance.",
+      "details": {
+        "histoire": "Ouverte au XIXe siècle, c'était la principale gare de marchandises.",
+        "lien_archives": "Les Archives Départementales (1955) occupent ses anciens terrains.",
+        "vestiges": "Halles de briques visibles avenue de Lyon."
+      }
+    },
+    {
+      "nom": "Gare de marchandises du Canal (Gare du Midi)",
+      "emplacement": "Boulevard Griffoul-Dorval / Pont des Demoiselles",
+      "destin": "Gare d'interface Rail-Canal pour le transbordement direct des péniches.",
+      "details": {
+        "histoire": "Point stratégique de commerce. Rails traversant le boulevard vers les entrepôts.",
+        "ce_qu_il_reste": "Bâtiments bas en briques rouges typiques du XIXe."
+      }
+    },
+    {
+      "nom": "Ancien Entrepôt des Minimes",
+      "usage_actuel": "Centre Culturel des Minimes (Salle Claude Nougaro)",
+      "adresse": "6, rue du Caillou-Gris, Toulouse",
+      "details": {
+        "histoire": "Ancien entrepôt technique lié à Raynal et au Canal.",
+        "architecture": "Réhabilité en 2014 avec un mélange brique, verre et métal."
+      }
+    },
+    {
+      "nom": "Gare de Toulouse-Casseneuil",
+      "emplacement": "Quartier Saint-Simon",
+      "destin": "Fermée car trop proche de Lardenne.",
+      "details": { "ce_qu_il_reste": "Devenue une maison d'habitation privée." }
+    },
+    {
+      "nom": "Gare de Croix-Daurade",
+      "emplacement": "Quartier Croix-Daurade",
+      "destin": "Supprimée au milieu du XXe pour fluidifier le trafic."
+    },
+    {
+      "nom": "Gare des Amidonniers",
+      "type": "Fret Industriel",
+      "destin": "Desservait la Manufacture des Tabacs. Remplacée par la Coulée Verte."
+    },
+    {
+      "nom": "Gare de l'Avenue de Muret",
+      "quartier": "Fer à Cheval",
+      "note": "Halte du 'Petit Train' vers la campagne commingeoise."
+    },
+    {
+      "nom": "Gare de la Juncasse",
+      "quartier": "Jolimont",
+      "note": "Activité industrielle effacée par la ligne A du métro et les grands ensembles."
+    },
+    {
+      "nom": "Gare de Saint-Sauveur",
+      "type": "Fret Canal",
+      "note": "Lien vital rail-canal pour les grains et le vin, près de la Halle aux Grains."
+    },
+    {
+      "nom": "Halte de la Croix du Pouech",
+      "type": "Halte Voyageurs (Ligne Revel)",
+      "note": "Totalement disparue sous les lotissements modernes du secteur Est."
+    },
+    {
+      "nom": "Halte de la Colombette",
+      "type": "Halte Urbaine",
+      "note": "Ancien point d'arrêt du 'Petit Train' situé à l'entrée du centre-ville historique."
+    }
+  ],
+  "gares_fantomes_urbaines": [
+    {
+      "nom": "Toulouse-Saint-Agne (L'originale)",
+      "statut": "Détruite / Remplacée",
+      "histoire": "Le bâtiment voyageurs d'origine en briques du XIXe a été détruit pour la ligne B du métro.",
+      "le_saviez_vous": "C'était un triage crucial pour les usines du sud (Empalot et l'Onia/AZF)."
+    },
+    {
+      "nom": "Gare de Lalande",
+      "emplacement": "Entre métro La Vache et Lalande (Ligne Bordeaux)",
+      "destin": "Servait à l'expédition des fruits et légumes des maraîchers. Abandonnée avec la fin de la ceinture maraîchère.",
+      "aujourd_hui": "Quais à l'abandon et murs végétalisés le long des voies."
+    },
+    {
+      "nom": "La Halte de l'Exposition (1887)",
+      "emplacement": "Allée Serge-Ravanel (Busca / Grand Rond)",
+      "concept": "Gare éphémère pour l'Exposition Internationale de 1887. Démontée juste après l'événement."
+    }
+  ],
+  "reseau_secondaire_et_haltes": {
+    "lardenne_cfso": [
+      { "nom": "Halte de Lardenne-Bourg", "note": "Style tramway à voie métrique." },
+      { "nom": "Halte de Lardenne-Rond-Point", "note": "Ancien réseau vers Boulogne-sur-Gesse." }
+    ],
+    "nord_et_est": [
+      { "nom": "Gare de la Route de Launaguet", "quartier": "Les Izards" },
+      { "nom": "Gare de l'Église de Lalande", "note": "Halte départementale devant l'église." },
+      { "nom": "Halte de l'Ormeau", "ligne": "Toulouse-Revel" }
+    ]
+  },
+  "gares_fantomes_urbaines": [
+    { "nom": "Toulouse-Saint-Agne (L'originale)", "note": "Bâtiment XIXe détruit pour le métro." },
+    { "nom": "Gare de Lalande (SNCF)", "note": "Quais à l'abandon le long des voies." },
+    { "nom": "La Halte de l'Exposition (1887)", "note": "Gare éphémère au Grand Rond." }
+  ],
+  "nouvelle_gare": {
+    "nom": "Grand Matabiau Quais d'Oc (Matabiau 2)",
+    "horizon": "2028 - 2030",
+    "concept": "Second cœur de gare côté Marengo.",
+    "points_cles": [
+      "Nouveau Hall Marengo en bois et paille",
+      "Connexion LGV Bordeaux-Toulouse",
+      "Végétalisation de l'avenue de Lyon"
+    ]
+  },
+  "guide_patrimoine": {
+    "associations": ["Ensemble pour le Patrimoine Ferroviaire", "Actu' Ferroccitan"],
+    "lieux_a_visiter": [
+      { "nom": "Musée des Ambulants", "info": "Mémoire de la poste ferroviaire." },
+      { "nom": "Dépôts de Périole", "info": "Ouvert aux Journées du Patrimoine." }
+    ],
+    "balade_conseillee": "De la Place Roguet au Musée des Abattoirs (Halte bétail)."
+  },
+  "bibliographie_ressources": [
+    {
+      "type": "Livre",
+      "titre": "Patrimoine extraordinaire du chemin de fer dans les Pyrénées",
+      "auteur": "P. Desmichel & F. Faucon",
+      "editeur": "Bonneton"
+    },
+    {
+      "type": "Web",
+      "nom": "Lignes-Oubliees.com",
+      "description": "Répertoire de 1700 gares fermées avec fiches détaillées sur Toulouse."
+    },
+    {
+      "type": "Video",
+      "nom": "Actu' Ferroccitan (YouTube)",
+      "sujet": "Reportages sur les haltes disparues des Izards et de Lalande."
+    }
+  ],
+  "note_historique": "Le bâtiment d'origine de Matabiau (1856) a été totalement reconstruit entre 1903 et 1905."
+}
