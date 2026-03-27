@@ -28,7 +28,7 @@ export default function EvenementsPage() {
 
   if (loading) return (
     <div className="p-20 text-center animate-pulse font-bold text-blue-600 uppercase tracking-widest">
-      Synchronisation de l'agenda toulousain...
+      Chargement des sites Web de l'agenda toulousain...
     </div>
   );
 
