@@ -7,7 +7,9 @@
       { "nom": "EURÊKAFÉ – le café des curiosités", "url": "https://eurekafe.fr" },
       { "nom": "Les Cafés du Quai", "url": "https://www.univ-toulouse.fr/evenements/cafes-du-quai" },
       { "nom": "Cafés de l'IMT (Institut de Mathématiques)", "url": "https://perso.math.univ-toulouse.fr/les-cafes-de-l-imt/" },
-      { "nom": "Cafés des Maths - Académie des Sciences", "url": "https://www.academie-sciences-lettres-toulouse.fr" }
+      { "nom": "Cafés des Maths - Académie des Sciences", "url": "https://www.academie-sciences-lettres-toulouse.fr" },
+      { "nom": "Cafés IA - Ramonville Saint-Agne", "url": "https://www.ramonville.fr/evenements/cafe-ia-5831222/" },
+      { "nom": "Cafés IA en Métropole", "url": "https://cafeia.org/carte-interactive/" }
     ],
     "Philosophie et Psychanalyse": [
       { "nom": "Café philo Toulouse (Aldéran)", "url": "https://www.alderan-philo.org/cafe-philo-de-toulouse/" },
