@@ -1,0 +1,54 @@
+{
+  "titre": "Gares proches de la Plage en Occitanie",
+  "description": "Sélection des arrêts de train permettant un accès direct ou rapide au littoral sans voiture.",
+  "gares": [
+    {
+      "nom": "Port-la-Nouvelle",
+      "departement": "Aude",
+      "distance": "1 km (15 min à pied)",
+      "description": "L'une des gares les plus proches du sable. Le chemin longe le canal de la Robine.",
+      "plus": "Accès très direct et balade agréable le long de l'eau.",
+      "type": "Direct"
+    },
+    {
+      "nom": "Marseillan-Plage",
+      "departement": "Hérault",
+      "distance": "500 mètres",
+      "description": "La gare est littéralement à deux pas de la mer. C'est l'arrêt idéal pour une journée baignade.",
+      "plus": "L'arrêt le plus proche de la plage sur cette ligne.",
+      "type": "Direct"
+    },
+    {
+      "nom": "Leucate-la-Franqui",
+      "departement": "Aude",
+      "distance": "2 km (25 min à pied)",
+      "description": "Dessert la station sauvage de La Franqui, célèbre pour ses falaises et ses pins.",
+      "plus": "Plage moins urbanisée et cadre naturel exceptionnel.",
+      "type": "Navette/Vélo"
+    },
+    {
+      "nom": "Collioure / Banyuls",
+      "departement": "Pyrénées-Orientales",
+      "distance": "5-10 min à pied",
+      "description": "Le train longe la corniche. Les gares sont au cœur des centres historiques et des criques.",
+      "plus": "Paysages de cartes postales et accès immédiat aux rochers.",
+      "type": "Direct"
+    },
+    {
+      "nom": "Argelès-sur-Mer",
+      "departement": "Pyrénées-Orientales",
+      "distance": "10 min en navette",
+      "description": "La gare est au village. Des navettes 'Bus à 1€' font la liaison vers la plage.",
+      "plus": "Très pratique pour rejoindre les grandes plages de sable.",
+      "type": "Navette"
+    },
+    {
+      "nom": "Salses-le-Château",
+      "departement": "Pyrénées-Orientales",
+      "distance": "15-20 min (Étang)",
+      "description": "Proximité immédiate de l'étang de Salses-Leucate et de sa forteresse.",
+      "plus": "Idéal pour les paysages lagunaires et le calme.",
+      "type": "Étang"
+    }
+  ]
+}
