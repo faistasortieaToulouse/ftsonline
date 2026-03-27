@@ -66,7 +66,7 @@ const nbCafeLangue = 3;
 const nbConsomamtion = 3;
 const nbEmploi = 4;
 const nbFlore = 2;
-const nbEquipement = 3;
+const nbEquipement = 4;
 const nbGeographie = 6;
 const nbHistoire = 4;
 const nbMonument = 3;
@@ -360,11 +360,12 @@ const categories = [
 //  const nbFlore = 2;
 
   { title: "Toulouse : Equipements", href: "/administration", icon: Home, isOccitanie: true, occitanieSources: [
+    { title: "Toilettes Publiques", href: "/toilettes" },
     { title: "Administration", href: "/administration" },
     { title: "Salles de conférences", href: "/conference" },
     { title: "École & Culture", href: "/ecoleculture" },
   ]},
-//  const nbEquipement = 3;
+//  const nbEquipement = 4;
 
   { title: "Toulouse : Géographie", href: "/altitudes", icon: Map, isOccitanie: true, occitanieSources: [
     { title: "Altitudes", href: "/altitudes" },
