@@ -1,20 +1,19 @@
+"use client"; // On garde la directive client
+
 import React from 'react';
+// On importe directement le JSON pour éviter le fetch interne qui échoue sur Vercel
+import transportData from '@/../data/toulousain/transports.json';
 
-async function getTransports() {
-  // On appelle l'API interne que nous venons de créer
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/transports`, {
-    cache: 'no-store'
-  });
-  
-  if (!res.ok) return null;
-  return res.json();
-}
-
-export default async function TransportsPage() {
-  const data = await getTransports();
+export default function TransportsPage() {
+  // Les données sont chargées immédiatement via l'import
+  const data = transportData;
 
   if (!data || !data.reseau_transports_toulouse) {
-    return <div className="p-10 text-red-500">Données indisponibles. Vérifiez le fichier JSON.</div>;
+    return (
+      <div className="p-10 text-red-500 font-mono">
+        Données indisponibles. Vérifiez le fichier JSON.
+      </div>
+    );
   }
 
   const { metro, tramway, ferroviaire_rer, cable } = data.reseau_transports_toulouse;
@@ -62,9 +61,11 @@ export default async function TransportsPage() {
               {tramway.map((t: any, idx: number) => (
                 <div key={idx} className="bg-white p-5 rounded-lg shadow-sm border-t-4 border-blue-600">
                   <h3 className="font-bold text-blue-900 mb-3">{t.ligne}</h3>
-                  <div className="text-sm space-y-2">
+                  <div className="text-sm space-y-2 text-gray-700">
                     {t.evenements.map((ev: any, i: number) => (
-                      <p key={i}><span className="font-semibold">{ev.date}</span> — {ev.evenement}</p>
+                      <p key={i}>
+                        <span className="font-semibold text-gray-900">{ev.date}</span> — {ev.evenement}
+                      </p>
                     ))}
                   </div>
                 </div>
@@ -75,11 +76,11 @@ export default async function TransportsPage() {
           {/* RER & CABLE */}
           <section className="space-y-12">
             <div>
-              <h2 className="text-xl font-bold mb-6">🚆 Étoile Ferroviaire</h2>
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">🚆 Étoile Ferroviaire</h2>
               <div className="bg-gray-900 text-gray-100 p-6 rounded-xl">
                 {ferroviaire_rer.map((f: any, i: number) => (
                   <div key={i} className="mb-4 last:mb-0 pb-4 last:pb-0 border-b border-gray-800 last:border-0">
-                    <h4 className="font-bold text-yellow-500">{f.nom}</h4>
+                    <h4 className="font-bold text-yellow-500 uppercase tracking-wide text-sm">{f.nom}</h4>
                     <p className="text-xs text-gray-400 mt-1">{f.details || f.statut}</p>
                   </div>
                 ))}
@@ -87,17 +88,19 @@ export default async function TransportsPage() {
             </div>
 
             <div>
-              <h2 className="text-xl font-bold mb-6">🚠 Transport par câble</h2>
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">🚠 Transport par câble</h2>
               <div className="bg-green-600 text-white p-6 rounded-xl shadow-lg shadow-green-100">
-                <h4 className="text-2xl font-black">{cable[0].nom}</h4>
-                <p className="mt-2 text-green-100 text-sm">
-                  {cable[0].evenements[0].date} : {cable[0].evenements[0].evenement}
-                </p>
-                {cable[0].evenements[1] && (
-                    <p className="mt-4 text-xs bg-green-700 p-2 rounded italic">
-                        Note : {cable[0].evenements[1].statut}
-                    </p>
-                )}
+                <h4 className="text-2xl font-black uppercase tracking-tighter">{cable[0].nom}</h4>
+                <div className="mt-4 space-y-3">
+                  <p className="text-green-50 text-sm leading-snug">
+                    <span className="font-bold">{cable[0].evenements[0].date}</span> : {cable[0].evenements[0].evenement}
+                  </p>
+                  {cable[0].evenements[1] && (
+                    <div className="text-xs bg-green-700/50 p-3 rounded-lg border border-green-500/30 italic">
+                      Note : {cable[0].evenements[1].statut || cable[0].evenements[1].evenement}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </section>
