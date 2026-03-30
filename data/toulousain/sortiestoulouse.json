@@ -43,7 +43,7 @@
       "categories": ["jeux", "ateliers", "participatif"],
       "city": "Toulouse",
       "url": "https://atelatoi.fr/",
-      "description": "Association organisant des événements conviviaux pour renforcer les liens sociaux, lutter contre l’isolement et favoriser des échanges authentiques grâce à des jeux de questions.",
+      "description": "Association organisant des événements conviviaux pour renforcer les liens sociaux, lutter contre l’isolement et favoriser des échanges authentiques grâce à des jeux de questions. Présent à Bordeaux et Toulouse.",
       "tags": ["durable", "atelier", "local"]
     },
     {
@@ -142,7 +142,7 @@
       "categories": ["sport", "running", "rencontres"],
       "city": "Toulouse",
       "url": "https://play.google.com/store/apps/details?id=com.jog.jogapp&hl=ln",
-      "description": "Application mobile pour rencontrer des partenaires de course à pied.",
+      "description": "Application mobile pour rencontrer des partenaires de course à pied. Créée à Toulouse.",
       "tags": ["sport", "running", "communauté"]
     },
     {
@@ -153,7 +153,7 @@
       "categories": ["rencontres", "sorties", "reseau-social"],
       "city": "Toulouse",
       "url": "https://www.instagram.com/pinkin_app/?hl=fr",
-      "description": "Application sociale permettant d’organiser des sorties et rencontres.",
+      "description": "Application sociale permettant d’organiser des sorties et rencontres à Toulouse avec carte de la ville rose à l'appui.",
       "tags": ["social", "app"]
     },
 {
@@ -164,7 +164,7 @@
   "categories": ["sorties", "evenements", "reseau-social"],
   "city": "Toulouse",
   "url": "https://www.instagram.com/weezitapp/",
-  "description": "Application sociale permettant d’organiser et rejoindre des sorties et événements.",
+  "description": "Application sociale permettant d’organiser et rejoindre des sorties et événements. Créée à Toulouse.",
   "tags": ["app", "jeunes", "communauté"]
 },
 {
@@ -175,7 +175,7 @@
   "categories": ["rencontres", "sorties", "evenements"],
   "city": "Toulouse",
   "url": "http://www.shhaker.com",
-  "description": "Plateforme de rencontres sociales et d’organisation d’événements.",
+  "description": "Plateforme de rencontres sociales et d’organisation d’événements. Créée à Toulouse.",
   "tags": ["social", "soirées"]
 },
 {
@@ -197,7 +197,7 @@
   "categories": ["reseau-social", "etudiants", "local"],
   "city": "Toulouse",
   "url": "https://jodel.com/en/",
-  "description": "Réseau social local anonyme populaire auprès des étudiants.",
+  "description": "Réseau social local anonyme populaire auprès des étudiants. Créée à Toulouse.",
   "tags": ["communauté", "étudiants"]
 },
 {
@@ -208,7 +208,7 @@
   "categories": ["sorties", "rencontres", "loisirs"],
   "city": "Toulouse",
   "url": "https://alowaa.fr/",
-  "description": "Plateforme permettant d’organiser et rejoindre des activités et sorties.",
+  "description": "Plateforme permettant d’organiser et rejoindre des activités et sorties. Trouve des gens pour faire des voyages.",
   "tags": ["loisirs", "communauté"]
 },
 {
@@ -307,7 +307,7 @@
   "categories": ["sorties", "rencontres", "communautes"],
   "city": "Toulouse",
   "url": "https://hanghub.fr/",
-  "description": "Application pour organiser et rejoindre des sorties et activités locales.",
+  "description": "Application pour organiser et rejoindre des sorties et activités locales. Créée à Toulouse.",
   "tags": ["social", "app"]
 },
 {
@@ -318,7 +318,7 @@
   "categories": ["musique", "evenements", "electro", "soirees"],
   "city": "Toulouse",
   "url": "https://kigs.app/",
-  "description": "Application dédiée aux passionnés de musique électronique et aux événements associés.",
+  "description": "Application dédiée aux passionnés de musique électronique et aux événements associés. Créée à Toulouse.",
   "tags": ["electro", "club", "soirees"]
 },
 {
@@ -373,7 +373,7 @@
   "categories": ["musique", "concerts", "soirees"],
   "city": "Toulouse",
   "url": "https://zikzap.fr/",
-  "description": "Plateforme pour organiser et participer à des soirées musicales et concerts.",
+  "description": "Plateforme pour organiser et participer à des soirées musicales et concerts. Créée à Toulouse.",
   "tags": ["musique", "live"]
 },
 {
@@ -395,8 +395,8 @@
   "categories": ["actualites", "infos", "local"],
   "city": "Toulouse",
   "url": "https://blendora.bio/Toulouse",
-  "description": "Plateforme regroupant des informations et contenus locaux.",
-  "tags": ["media", "ville"]
+"description": "Plateforme toulousaine dédiée à l'organisation de sorties thématiques : randonnées, auberges espagnoles et événements originaux pour créer de vrais liens.",
+"tags": ["sorties-toulouse", "communaute", "activites-groupe", "rencontres"]
 },
 {
   "id": 37,
@@ -574,6 +574,28 @@
   "url": "https://www.facebook.com/profile.php?id=61583553613719",
   "description": "Réseau toulousain d'échange de temps et de services gratuits. TimeShare favorise la solidarité de proximité en permettant aux habitants de partager leurs compétences et de s'entraider librement.",
   "tags": ["échange-de-temps", "solidarité", "service-gratuit", "toulouse", "proximité"]
+},
+{
+  "id": 53,
+  "name": "Beer Bike Social",
+  "slug": "beer-bike-social",
+  "type": "insolite-loisirs",
+  "categories": ["animation", "groupe", "insolite"],
+  "city": "Toulouse",
+  "url": "https://www.beerbiketoulouse.fr/",
+  "description": "Une expérience conviviale unique à Toulouse : parcourez la ville sur un vélo collectif tout en partageant une boisson entre amis ou collègues.",
+  "tags": ["velo-apero", "team-building", "animation-groupe", "insolite-toulouse", "fun"]
+},
+{
+  "id": 54,
+  "name": "Planète Sorties",
+  "slug": "planete-sorties",
+  "type": "plateforme-communautaire",
+  "categories": ["rencontres-amicales", "loisirs", "culture"],
+  "city": "Toulouse",
+  "url": "https://www.planete-sorties.net/",
+  "description": "Le réseau social toulousain 100% gratuit pour organiser des sorties réelles : restos, balades et activités culturelles sans algorithme de dating.",
+  "tags": ["sorties-gratuites", "communaute", "bienveillance", "local-toulouse", "rencontres"]
 }
   ]
 }
