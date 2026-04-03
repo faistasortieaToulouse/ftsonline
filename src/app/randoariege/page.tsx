@@ -57,6 +57,7 @@ export default function RandoAriegePage() {
 
       activitesData.forEach((act, i) => {
         const count = i + 1;
+        // Note: Utilisation de coordonnées fixes ou aléatoires selon ton API
         const lat = ARIEGE_CENTER[0] + (Math.random() - 0.5) * 0.4;
         const lng = ARIEGE_CENTER[1] + (Math.random() - 0.5) * 0.4;
 
@@ -68,10 +69,13 @@ export default function RandoAriegePage() {
         });
 
         const popupContent = `
-          <div style="font-family: Arial; font-size: 14px;">
-            <strong>${count}. ${act.commune}</strong><br/>
-            <b>Type :</b> ${act.type}<br/>
-            <b>Détails :</b> ${act.details}
+          <div style="font-family: Arial; font-size: 13px; max-width: 200px;">
+            <strong style="display: block; color: #1d4ed8; margin-bottom: 4px;">${count}. ${act.commune}</strong>
+            <b style="color: #475569;">Type :</b> ${act.type}<br/>
+            <b style="color: #475569;">Détails :</b> ${act.details}
+            <div style="margin-top: 8px; border-top: 1px solid #e2e8f0; pt-8px;">
+              <a href="#rando-${count}" style="display: inline-block; background-color: #1d4ed8; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 10px; font-weight: bold; margin-top: 6px;">Voir dans la liste ↓</a>
+            </div>
           </div>
         `;
 
@@ -92,7 +96,7 @@ export default function RandoAriegePage() {
   }, [activitesData]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="p-4 max-w-7xl mx-auto bg-white min-h-screen">
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -123,14 +127,13 @@ export default function RandoAriegePage() {
         <table className="w-full border-collapse">
           <thead className="bg-gray-100">
             <tr>
-              <th style={tableHeaderStyle} className="w-12">#</th>
+              <th style={tableHeaderStyle} className="w-12 text-center">#</th>
               <th style={tableHeaderStyle}>Commune</th>
               <th style={tableHeaderStyle}>Type d'activité / Site</th>
-              {/* Masqué sur mobile, affiché sur PC (md:table-cell) */}
               <th style={tableHeaderStyle} className="hidden md:table-cell">Détails</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200">
             {activitesData.map((act, i) => (
               <ActivityRow key={act.id} act={act} index={i} />
             ))}
@@ -144,34 +147,33 @@ export default function RandoAriegePage() {
 // --- Sous-composant pour la ligne du tableau ---
 function ActivityRow({ act, index }: { act: ActiviteAriege; index: number }) {
   const [isOpen, setIsOpen] = useState(false);
+  const count = index + 1;
 
   return (
     <>
       <tr 
-        className={`border-b border-gray-200 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"} md:hover:bg-blue-50/30 cursor-pointer md:cursor-default`}
+        id={`rando-${count}`}
+        className={`transition-colors scroll-mt-20 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"} md:hover:bg-blue-50/30 cursor-pointer md:cursor-default`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <td style={tableCellStyle} className="text-blue-600 font-bold">{index + 1}</td>
-        <td style={tableCellStyle}>{act.commune}</td>
+        <td style={tableCellStyle} className="text-blue-600 font-bold text-center">{count}</td>
+        <td style={tableCellStyle} className="font-semibold text-slate-800">{act.commune}</td>
         <td style={tableCellStyle}>
           <div className="flex items-center justify-between">
             <span>{act.type}</span>
-            {/* Icône d'état uniquement sur mobile */}
             <span className="md:hidden">
               {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </span>
           </div>
         </td>
-        {/* Colonne détails : masquée sur mobile */}
         <td style={tableCellStyle} className="hidden md:table-cell text-slate-600">
           {act.details}
         </td>
       </tr>
 
-      {/* Détails en accordéon : Affichés uniquement sur mobile quand isOpen est vrai */}
       {isOpen && (
         <tr className="md:hidden bg-blue-50/50">
-          <td colSpan={3} className="p-4 text-sm text-slate-700 border-b border-gray-200">
+          <td colSpan={3} className="p-4 text-sm text-slate-700">
             <div className="flex flex-col gap-1">
               <span className="font-bold text-blue-800 text-xs uppercase tracking-wider">Détails de l'activité :</span>
               <p className="italic leading-relaxed">{act.details}</p>
@@ -185,4 +187,4 @@ function ActivityRow({ act, index }: { act: ActiviteAriege; index: number }) {
 
 // Styles
 const tableHeaderStyle: CSSProperties = { padding: "12px 10px", textAlign: "left", fontSize: "14px", fontWeight: "600" };
-const tableCellStyle: CSSProperties = { padding: "10px 8px", fontSize: "14px" };
+const tableCellStyle: CSSProperties = { padding: "14px 10px", fontSize: "14px" };
