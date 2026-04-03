@@ -973,7 +973,7 @@ useEffect(() => {
             Explorer les rubriques
           </Link>
 		 {/* BOUTON FAIS TA SORTIE */}
-          <a href="https://faistasortieatoulouse31.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-pink-100 text-pink-600 font-semibold py-3 px-6 rounded-full shadow-lg transition">
+          <a href="https://faistasortieatoulouse.online/" target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-pink-100 text-pink-600 font-semibold py-3 px-6 rounded-full shadow-lg transition">
             Fais Ta sortie à Toulouse
           </a>
 		 {/* BOUTON REJOINDRE LES RÉSEAUX (NOUVEAU) */}
