@@ -55,17 +55,15 @@ export default function MontCirqueMapPage() {
     fetchPoints();
   }, []);
 
-  // ---- 2. Initialisation Leaflet (Méthode OTAN) ----
+  // ---- 2. Initialisation Leaflet ----
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
 
     const initMap = async () => {
       const L = (await import('leaflet')).default;
-      await import('leaflet/dist/leaflet.css');
-
       if (mapInstance.current) return;
 
-      mapInstance.current = L.map(mapRef.current).setView(OCCITANIE_CENTER, 8);
+      mapInstance.current = L.map(mapRef.current!).setView(OCCITANIE_CENTER, 8);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
@@ -116,11 +114,14 @@ export default function MontCirqueMapPage() {
         
         const marker = L.marker([point.lat, point.lng], { icon: customIcon });
         marker.bindPopup(`
-          <div style="font-family: Arial; font-size: 14px; color: black;"> 
+          <div style="font-family: Arial; font-size: 14px; color: black; text-align: center;"> 
             <strong>${point.id}. ${point.name}</strong><br/> 
-            <b>Massif :</b> ${point.massif}<br/>
-            <b>Type :</b> ${getPointTypeDisplay(point.type)}
-            ${altitudeDisplay}
+            <div style="text-align: left; margin: 5px 0;">
+              <b>Massif :</b> ${point.massif}<br/>
+              <b>Type :</b> ${getPointTypeDisplay(point.type)}
+              ${altitudeDisplay}
+            </div>
+            <a href="#site-mc-${point.id}" style="display: inline-block; margin-top: 8px; background-color: ${pointColor}; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 11px;">Voir dans la liste ↓</a>
           </div>
         `);
         marker.addTo(mapInstance.current);
@@ -131,7 +132,7 @@ export default function MontCirqueMapPage() {
   }, [isReady, pointsData]);
 
   return ( 
-    <div className="p-4 max-w-7xl mx-auto"> 
+    <div className="p-4 max-w-7xl mx-auto min-h-screen bg-slate-50"> 
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -184,10 +185,14 @@ export default function MontCirqueMapPage() {
             </tr> 
           </thead> 
           <tbody>
-            {pointsData.map((point, i) => {
+            {pointsData.map((point) => {
               const pointColor = COLOR_MAP[point.type] || '#7F8C8D';
               return (
-                <tr key={point.id} className="border-t hover:bg-slate-50 transition-colors"> 
+                <tr 
+                  key={point.id} 
+                  id={`site-mc-${point.id}`}
+                  className="border-t hover:bg-slate-50 transition-colors scroll-mt-20"
+                > 
                   <td className="p-3 font-bold" style={{ color: pointColor }}>{point.id}</td> 
                   <td className="p-3 font-semibold text-slate-900">{point.name}</td> 
                   <td className="p-3">
