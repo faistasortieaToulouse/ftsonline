@@ -46,7 +46,6 @@ export default function HautesPyreneesMapPage() {
         if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
         let data = await response.json();
         
-        // Normalisation et mapping de 'site' vers 'description' si nécessaire
         const formattedData: SiteHP[] = data.map((item: any) => ({
           ...item,
           description: item.site || item.description,
@@ -104,15 +103,22 @@ export default function HautesPyreneesMapPage() {
       
       filteredSites.forEach((site, i) => {
         const color = getMarkerColor(site.categorie);
+        const currentNum = i + 1;
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `<div style="background-color: ${color}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
+          html: `<div style="background-color: ${color}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${currentNum}</div>`,
           iconSize: [26, 26],
           iconAnchor: [13, 13]
         });
         
         L.marker([site.lat, site.lng], { icon: customIcon })
-          .bindPopup(`<strong>${site.commune}</strong><br/>${site.description}`)
+          .bindPopup(`
+            <div style="text-align: center; font-family: sans-serif; min-width: 150px;">
+              <strong style="color: ${color}; font-size: 14px;">#${currentNum} - ${site.commune}</strong><br/>
+              <p style="margin: 4px 0 8px 0; font-size: 12px; color: #475569;">${site.description}</p>
+              <a href="#site-hp-${currentNum}" style="display: inline-block; background-color: ${color}; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">Détails ↓</a>
+            </div>
+          `)
           .addTo(markersLayer.current);
       });
     };
@@ -180,8 +186,9 @@ export default function HautesPyreneesMapPage() {
             {filteredSites.map((site, i) => (
               <React.Fragment key={`hp-${site.id}`}>
                 <tr 
+                  id={`site-hp-${i + 1}`}
                   onClick={() => setExpandedId(expandedId === i ? null : i)}
-                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-sky-50/30' : 'hover:bg-slate-50'}`}
+                  className={`cursor-pointer transition-colors scroll-mt-20 ${expandedId === i ? 'bg-sky-50/30' : 'hover:bg-slate-50'}`}
                 >
                   <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
                   
