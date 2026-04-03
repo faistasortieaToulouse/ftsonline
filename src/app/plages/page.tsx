@@ -91,7 +91,7 @@ export default function PlagesPage() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
       
       <Link href="/" className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-800 mb-6 transition-colors font-medium">
-        <ArrowLeft size={18} /> Retour
+        <ArrowLeft size={18} /> Retour à l'Accueil
       </Link>
 
       <header className="mb-8">
