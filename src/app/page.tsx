@@ -1578,6 +1578,8 @@ return sections.map((sec, idx) => {
           { name: "Fais ta Sortie à Toulouse", url: "https://www.faistasortieatoulouse.online/" },
           { name: "FTS Toulouse", url: "http://www.ftstoulouse.online/" },
           { name: "Café des Langues Toulouse", url: "http://www.cafedeslanguestoulouse.com/" }
+	      { name: "Meetup Sorties et Soirées", url: "https://www.ftstoulouse.online/meetup-full" },
+	      { name: "Groupes Facebook", url: "https://ftstoulouse.vercel.app/facebookgroupes" },
         ].map((app, i) => (
           <a key={i} href={app.url} target="_blank" rel="noopener noreferrer" 
              className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg shadow-sm transition-transform hover:scale-105">
@@ -1597,7 +1599,6 @@ return sections.map((sec, idx) => {
           { name: "Toulouse Randonnée", url: "https://toulouserandonee.vercel.app/" },
           { name: "Toulouse Play Games & Sport", url: "https://toulouseplaygames31.vercel.app/" },
           { name: "Toulouse Books Club", url: "https://toulousebooksclub.vercel.app/" },
-          { name: "Meetup Sorties et Soirées", url: "https://www.ftstoulouse.online/meetup-full" },
           { name: "Wikidoc", url: "https://wikidoc31-six.vercel.app/" }
         ].map((app, i) => (
           <a key={i} href={app.url} target="_blank" rel="noopener noreferrer" 
