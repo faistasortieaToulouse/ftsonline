@@ -1564,7 +1564,72 @@ return sections.map((sec, idx) => {
     </div>
   </section>
 </div>
+		
+{/* NOUVELLE SECTION : ÉTAT DES APPLICATIONS */}
+<section className="py-12 px-4 bg-white">
+  <div className="container mx-auto max-w-5xl">
+    <div className="text-center mb-10">
+      <h2 className="text-3xl font-bold text-slate-800 mb-2">État des applications</h2>
+      <div className="flex flex-wrap justify-center gap-4 text-sm mt-4">
+        <span className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full font-medium border border-green-200">
+          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+          Bouton vert : Fonctionnelle (Installez-la !)
+        </span>
+        <span className="flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 rounded-full font-medium border border-red-200">
+          <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+          Bouton rouge : En cours (Maquette uniquement)
+        </span>
+      </div>
+    </div>
 
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Colonne Applications OK */}
+      <div className="space-y-4">
+        <h3 className="font-bold text-green-600 flex items-center gap-2 mb-4">
+          ✅ Applications Prêtes
+        </h3>
+        <div className="grid gap-3">
+          {[
+            { name: "Fais ta Sortie à Toulouse", url: "https://www.faistasortieatoulouse.online/" },
+            { name: "FTS Toulouse", url: "http://www.ftstoulouse.online/" },
+            { name: "Café des Langues Toulouse", url: "http://www.cafedeslanguestoulouse.com/" }
+          ].map((app, i) => (
+            <a key={i} href={app.url} target="_blank" rel="noopener noreferrer" 
+               className="flex items-center justify-between p-4 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-sm transition-all hover:-translate-y-1 font-bold">
+              {app.name}
+              <ExternalLink size={18} />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Colonne Applications en cours */}
+      <div className="space-y-4">
+        <h3 className="font-bold text-red-600 flex items-center gap-2 mb-4">
+          🚧 En cours de construction
+        </h3>
+        <div className="grid gap-3">
+          {[
+            { name: "Tolosa", url: "https://www.tolosa.site/" },
+            { name: "Sortir à Toulouse", url: "https://sortiratoulouse.vercel.app/" },
+            { name: "Toulouse Randonnée", url: "https://toulouserandonee.vercel.app/" },
+            { name: "Toulouse Play Games & Sport", url: "https://toulouseplaygames31.vercel.app/" },
+            { name: "Toulouse Books Club", url: "https://toulousebooksclub.vercel.app/" },
+            { name: "Meetup Sorties et Soirées", url: "https://www.ftstoulouse.online/meetup-full" },
+            { name: "Wikidoc", url: "https://wikidoc31-six.vercel.app/" }
+          ].map((app, i) => (
+            <a key={i} href={app.url} target="_blank" rel="noopener noreferrer" 
+               className="flex items-center justify-between p-3 bg-red-500 hover:bg-red-600 text-white rounded-xl shadow-sm transition-all hover:opacity-90 text-sm font-semibold">
+              {app.name}
+              <span className="text-[10px] bg-white/20 px-2 py-1 rounded">MAQUETTE</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+		
 {/* Catégories */}
 <section id="categories" className="py-8 px-4 container mx-auto">
   <h2 className="text-3xl font-bold mb-10 text-center text-purple-700">Nos rubriques</h2>
