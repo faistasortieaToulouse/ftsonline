@@ -55,19 +55,20 @@ export default function LacBaignadePage() {
     };
   }, []);
 
-  // Ajout des marqueurs numérotés
+  // Ajout des marqueurs numérotés avec lien d'ancrage
   useEffect(() => {
     if (!isReady || !mapInstance.current || Object.keys(data).length === 0) return;
 
     const addMarkers = async () => {
       const L = (await import('leaflet')).default;
       const markersGroup = L.featureGroup();
-      let globalCounter = 1; // Compteur pour la numérotation
+      let globalCounter = 1;
 
       Object.entries(data).forEach(([dept, lacs]) => {
         lacs.forEach((lac) => {
           if (lac.lat && lac.lng) {
-            // Création d'une icône personnalisée avec le numéro
+            const currentMarkerId = globalCounter;
+            
             const numberIcon = L.divIcon({
               className: 'custom-number-marker',
               html: `<div style="
@@ -82,36 +83,36 @@ export default function LacBaignadePage() {
                 font-weight: bold; 
                 border: 2px solid white; 
                 box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                font-size: 12px;">${globalCounter}</div>`,
+                font-size: 12px;">${currentMarkerId}</div>`,
               iconSize: [28, 28],
               iconAnchor: [14, 14]
             });
 
             const marker = L.marker([lac.lat, lac.lng], { icon: numberIcon });
             
-marker.bindPopup(`
-  <div style="font-family: sans-serif; text-align: center; min-width: 150px;">
-    <strong style="color: #2563eb; display: block; margin-bottom: 5px;">
-      #${globalCounter} - ${lac.nom}
-    </strong>
-    <small style="color: #64748b; display: block; margin-bottom: 10px;">
-      ${lac.ville}
-    </small>
-    <a href="#lac-num-${globalCounter}" 
-       style="
-        display: inline-block;
-        background-color: #2563eb;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 11px;
-        font-weight: bold;
-       ">
-       Voir la description ↓
-    </a>
-  </div>
-`);
+            marker.bindPopup(`
+              <div style="font-family: sans-serif; text-align: center; min-width: 150px;">
+                <strong style="color: #2563eb; display: block; margin-bottom: 5px;">
+                  #${currentMarkerId} - ${lac.nom}
+                </strong>
+                <small style="color: #64748b; display: block; margin-bottom: 10px;">
+                  ${lac.ville}
+                </small>
+                <a href="#lac-num-${currentMarkerId}" 
+                   style="
+                    display: inline-block;
+                    background-color: #2563eb;
+                    color: white;
+                    padding: 6px 12px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-size: 11px;
+                    font-weight: bold;
+                   ">
+                   Voir la description ↓
+                </a>
+              </div>
+            `);
             marker.addTo(markersGroup);
             globalCounter++;
           }
@@ -128,11 +129,6 @@ marker.bindPopup(`
   let displayCounter = 1;
 
   return (
-    <div 
-    key={i} 
-    id={`lac-num-${currentNum}`} // <--- ON AJOUTE L'ID ICI
-    className="group p-6 bg-white shadow-sm border ... scroll-mt-10"
-    >
     <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
       
       <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-6 transition-colors group">
@@ -163,7 +159,11 @@ marker.bindPopup(`
             {lacs.map((lac, i) => {
               const currentNum = displayCounter++;
               return (
-                <div key={i} className="group p-6 bg-white shadow-sm border border-slate-200 rounded-2xl hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+                <div 
+                  key={`${departement}-${i}`} 
+                  id={`lac-num-${currentNum}`}
+                  className="group p-6 bg-white shadow-sm border border-slate-200 rounded-2xl hover:shadow-lg transition-all duration-300 relative overflow-hidden scroll-mt-10"
+                >
                   {/* Badge de numéro */}
                   <div className="absolute top-0 right-0 bg-blue-600 text-white font-black px-4 py-2 rounded-bl-2xl">
                     #{currentNum}
@@ -181,14 +181,14 @@ marker.bindPopup(`
                       "{lac.description}"
                     </p>
 
-<a 
-  href={`https://www.google.com/maps/dir/?api=1&destination=${lac.lat},${lac.lng}`}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="flex items-center justify-center gap-2 ..."
->
-  <Navigation size={14} /> Itinéraire
-</a>
+                    <a 
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${lac.lat},${lac.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors"
+                    >
+                      <Navigation size={14} /> Itinéraire
+                    </a>
                   </div>
                 </div>
               );
