@@ -78,6 +78,9 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth; /* <--- AJOUTE-LE ICI */
+  }
   body {
     @apply bg-background text-foreground;
   }
