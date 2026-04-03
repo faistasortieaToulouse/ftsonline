@@ -59,7 +59,7 @@ const nbFS = 1;
 const nbCommunaute = 2;
 const nbSport = 6;
 const nbMusee = 13;
-const nbVisite = 11;
+const nbVisite = 12;
 const nbOccitanie = 19;
 const nbTransport = 19;
 const nbCafeLangue = 3;
@@ -262,11 +262,12 @@ const categories = [
     { title: "Quartier Jolimont", href: "/visitejolimont" },
     { title: "Fontaines de Toulouse", href: "/visitefontaines" },
     { title: "Hôtels particuliers de Toulouse", href: "/hotelsparticuliers" },
+    { title: "Anciens commerces de Toulouse", href: "/visitecommerce" },
     { title: "Monuments actuels et disparus de Toulouse", href: "/visitetoulousetotal" },
     { title: "Circuits à Toulouse", href: "/balade" },
     { title: "Rando-vélo à Toulouse", href: "/randovelos" },
   ]},
-//  const nbVisite = 11;
+//  const nbVisite = 12;
 
   { title: "Visites en Occitanie", href: "/visites-occitanie", icon: MapPin, isOccitanie: true, occitanieSources: [
     { title: "Gares proche de la plage", href: "/gareplage" },
