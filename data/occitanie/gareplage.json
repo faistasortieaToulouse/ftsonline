@@ -8,7 +8,9 @@
       "distance": "1 km (15 min à pied)",
       "description": "L'une des gares les plus proches du sable. Le chemin longe le canal de la Robine.",
       "plus": "Accès très direct et balade agréable le long de l'eau.",
-      "type": "Direct"
+      "type": "Direct",
+      "lat": 43.0212,
+      "lng": 3.0441
     },
     {
       "nom": "Marseillan-Plage",
@@ -16,7 +18,9 @@
       "distance": "500 mètres",
       "description": "La gare est littéralement à deux pas de la mer. C'est l'arrêt idéal pour une journée baignade.",
       "plus": "L'arrêt le plus proche de la plage sur cette ligne.",
-      "type": "Direct"
+      "type": "Direct",
+      "lat": 43.3216,
+      "lng": 3.5542
     },
     {
       "nom": "Leucate-la-Franqui",
@@ -24,15 +28,19 @@
       "distance": "2 km (25 min à pied)",
       "description": "Dessert la station sauvage de La Franqui, célèbre pour ses falaises et ses pins.",
       "plus": "Plage moins urbanisée et cadre naturel exceptionnel.",
-      "type": "Navette/Vélo"
+      "type": "Navette/Vélo",
+      "lat": 42.9248,
+      "lng": 3.0165
     },
     {
-      "nom": "Collioure / Banyuls",
+      "nom": "Collioure",
       "departement": "Pyrénées-Orientales",
       "distance": "5-10 min à pied",
-      "description": "Le train longe la corniche. Les gares sont au cœur des centres historiques et des criques.",
+      "description": "Le train longe la corniche. La gare est au cœur du centre historique et des criques.",
       "plus": "Paysages de cartes postales et accès immédiat aux rochers.",
-      "type": "Direct"
+      "type": "Direct",
+      "lat": 42.5255,
+      "lng": 3.0831
     },
     {
       "nom": "Argelès-sur-Mer",
@@ -40,7 +48,9 @@
       "distance": "10 min en navette",
       "description": "La gare est au village. Des navettes 'Bus à 1€' font la liaison vers la plage.",
       "plus": "Très pratique pour rejoindre les grandes plages de sable.",
-      "type": "Navette"
+      "type": "Navette",
+      "lat": 42.5463,
+      "lng": 3.0232
     },
     {
       "nom": "Salses-le-Château",
@@ -48,7 +58,9 @@
       "distance": "15-20 min (Étang)",
       "description": "Proximité immédiate de l'étang de Salses-Leucate et de sa forteresse.",
       "plus": "Idéal pour les paysages lagunaires et le calme.",
-      "type": "Étang"
+      "type": "Étang",
+      "lat": 42.8331,
+      "lng": 2.9185
     }
   ]
 }
