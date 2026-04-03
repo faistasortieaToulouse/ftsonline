@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react"; // Ajout de ChevronDown
 import "leaflet/dist/leaflet.css";
 
 interface Establishment {
@@ -131,7 +131,6 @@ export default function VisiteFontainesPage() {
         toggleDetails(est.id);
         mapInstance.current.setView([est.latitude!, est.longitude!], 16, { animate: true });
         
-        // Scroll vers l'élément de la liste
         setTimeout(() => {
           document.getElementById(`fontaine-item-${est.id}`)?.scrollIntoView({
             behavior: "smooth",
@@ -142,9 +141,6 @@ export default function VisiteFontainesPage() {
     });
   }, [L, establishments]);
 
-  /* =======================
-     4. RENDER
-  ======================= */
   return (
     <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen">
       <nav className="mb-6">
@@ -158,14 +154,13 @@ export default function VisiteFontainesPage() {
 
       <header className="mb-10 text-center">
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">
-           fountain Parcours des Fontaines
+           ⛲ Parcours des Fontaines
         </h1>
         <p className="text-slate-500 font-bold mt-2 uppercase text-xs tracking-widest">
           Toulouse • {establishments.length} lieux
         </p>
       </header>
 
-      {/* CARTE */}
       <div
         ref={mapRef}
         className="mb-12 h-[55vh] border-4 border-white shadow-xl rounded-[2.5rem] bg-slate-200 relative z-0 overflow-hidden"
@@ -211,9 +206,17 @@ export default function VisiteFontainesPage() {
 
               {/* CONTENU */}
               <div className="flex-1">
-                <h3 className={`font-black uppercase text-base mb-1 transition-colors ${isOpen ? 'text-orange-700' : 'text-slate-800'}`}>
-                  {est.name}
-                </h3>
+                <div className="flex justify-between items-start">
+                    <h3 className={`font-black uppercase text-base mb-1 transition-colors ${isOpen ? 'text-orange-700' : 'text-slate-800'}`}>
+                    {est.name}
+                    </h3>
+                    {/* LE TRIANGLE ICI */}
+                    <ChevronDown 
+                        size={20} 
+                        className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-orange-600" : "text-slate-300"}`} 
+                    />
+                </div>
+                
                 <p className="text-[11px] text-slate-400 mb-3 font-bold uppercase tracking-wider">
                   📍 {est.address}
                 </p>
