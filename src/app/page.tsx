@@ -981,7 +981,7 @@ useEffect(() => {
    		     href="https://whatsappdiscord.ftstoulouse.online/" 
    		     target="_blank" 
    		     rel="noopener noreferrer" 
-   		     className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center gap-2"
+   		     className="bg-amber-500 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center gap-2"
           >
    		     <span className="text-xl">💬</span>
    		     Rejoins WhatsApp, Discord ou nos réseaux
