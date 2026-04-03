@@ -1577,7 +1577,7 @@ return sections.map((sec, idx) => {
         {[
           { name: "Fais ta Sortie à Toulouse", url: "https://www.faistasortieatoulouse.online/" },
           { name: "FTS Toulouse", url: "http://www.ftstoulouse.online/" },
-          { name: "Café des Langues Toulouse", url: "http://www.cafedeslanguestoulouse.com/" }
+          { name: "Café des Langues Toulouse", url: "http://www.cafedeslanguestoulouse.com/" },
 	      { name: "Meetup Sorties et Soirées", url: "https://www.ftstoulouse.online/meetup-full" },
 	      { name: "Groupes Facebook", url: "https://ftstoulouse.vercel.app/facebookgroupes" },
         ].map((app, i) => (
