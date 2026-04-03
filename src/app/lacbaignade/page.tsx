@@ -89,12 +89,29 @@ export default function LacBaignadePage() {
 
             const marker = L.marker([lac.lat, lac.lng], { icon: numberIcon });
             
-            marker.bindPopup(`
-              <div style="font-family: sans-serif;">
-                <strong style="color: #2563eb;">#${globalCounter} - ${lac.nom}</strong><br>
-                <small>${lac.ville}</small>
-              </div>
-            `);
+marker.bindPopup(`
+  <div style="font-family: sans-serif; text-align: center; min-width: 150px;">
+    <strong style="color: #2563eb; display: block; margin-bottom: 5px;">
+      #${globalCounter} - ${lac.nom}
+    </strong>
+    <small style="color: #64748b; display: block; margin-bottom: 10px;">
+      ${lac.ville}
+    </small>
+    <a href="#lac-num-${globalCounter}" 
+       style="
+        display: inline-block;
+        background-color: #2563eb;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: bold;
+       ">
+       Voir la description ↓
+    </a>
+  </div>
+`);
             marker.addTo(markersGroup);
             globalCounter++;
           }
@@ -111,6 +128,11 @@ export default function LacBaignadePage() {
   let displayCounter = 1;
 
   return (
+    <div 
+    key={i} 
+    id={`lac-num-${currentNum}`} // <--- ON AJOUTE L'ID ICI
+    className="group p-6 bg-white shadow-sm border ... scroll-mt-10"
+    >
     <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
       
       <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-6 transition-colors group">
@@ -159,14 +181,14 @@ export default function LacBaignadePage() {
                       "{lac.description}"
                     </p>
 
-                    <a 
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${lac.lat},${lac.lng}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors"
-                    >
-                      <Navigation size={14} /> Itinéraire
-                    </a>
+<a 
+  href={`https://www.google.com/maps/dir/?api=1&destination=${lac.lat},${lac.lng}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="flex items-center justify-center gap-2 ..."
+>
+  <Navigation size={14} /> Itinéraire
+</a>
                   </div>
                 </div>
               );
