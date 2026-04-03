@@ -11,8 +11,8 @@ interface Establishment {
   address: string;
   description: string;
   details: string;
-  latitude?: number;   // facultatif pour éviter les erreurs
-  longitude?: number;  // facultatif pour éviter les erreurs
+  latitude?: number;
+  longitude?: number;
 }
 
 const TOULOUSE_CENTER: [number, number] = [43.6047, 1.4442];
@@ -60,7 +60,7 @@ export default function VisiteFontainesPage() {
 
       if (mapInstance.current) return;
 
-      mapInstance.current = Leaflet.map(mapRef.current).setView(TOULOUSE_CENTER, 13);
+      mapInstance.current = Leaflet.map(mapRef.current).setView(TOULOUSE_CENTER, 14);
 
       Leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap",
@@ -92,7 +92,6 @@ export default function VisiteFontainesPage() {
     establishments.forEach((est, index) => {
       const fontaineNumber = index + 1;
 
-      // Vérification des coordonnées
       if (est.latitude == null || est.longitude == null) return;
 
       const customIcon = L.divIcon({
@@ -121,11 +120,24 @@ export default function VisiteFontainesPage() {
 
       const marker = L.marker([est.latitude, est.longitude], { icon: customIcon })
         .addTo(markersLayerRef.current)
-        .bindPopup(`<b>Fontaine n°${fontaineNumber}</b><br>${est.name}`);
+        .bindPopup(`
+          <div style="text-align: center; font-family: sans-serif;">
+            <b style="color: #ea580c;">Fontaine n°${fontaineNumber}</b><br>${est.name}<br/>
+            <a href="#fontaine-item-${est.id}" style="display: inline-block; background-color: #FF6600; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 10px; font-weight: bold; margin-top: 8px;">Détails ↓</a>
+          </div>
+        `);
 
       marker.on("click", () => {
         toggleDetails(est.id);
-        mapInstance.current.setView([est.latitude!, est.longitude!], 15, { animate: true });
+        mapInstance.current.setView([est.latitude!, est.longitude!], 16, { animate: true });
+        
+        // Scroll vers l'élément de la liste
+        setTimeout(() => {
+          document.getElementById(`fontaine-item-${est.id}`)?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }, 100);
       });
     });
   }, [L, establishments]);
@@ -138,15 +150,15 @@ export default function VisiteFontainesPage() {
       <nav className="mb-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-blue-800 font-bold hover:text-blue-900 transition-all"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-bold transition-all group"
         >
-          <ArrowLeft size={20} /> Retour à l'accueil
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> Retour à l'accueil
         </Link>
       </nav>
 
       <header className="mb-10 text-center">
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">
-          ⛲ Parcours des Fontaines
+           fountain Parcours des Fontaines
         </h1>
         <p className="text-slate-500 font-bold mt-2 uppercase text-xs tracking-widest">
           Toulouse • {establishments.length} lieux
@@ -156,19 +168,18 @@ export default function VisiteFontainesPage() {
       {/* CARTE */}
       <div
         ref={mapRef}
-        className="mb-12 h-[500px] border-4 border-white shadow-xl rounded-[2.5rem] bg-slate-200 relative z-0 overflow-hidden"
+        className="mb-12 h-[55vh] border-4 border-white shadow-xl rounded-[2.5rem] bg-slate-200 relative z-0 overflow-hidden"
       >
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-100/50 backdrop-blur-sm">
             <span className="animate-spin w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full"></span>
           </div>
         )}
       </div>
 
-      {/* LISTE */}
       <h2 className="text-2xl font-black mb-8 text-slate-800 flex items-center gap-3">
-        <span className="h-1 w-12 bg-orange-500 rounded-full"></span>
-        LISTE DES LIEUX
+        <span className="h-1.5 w-12 bg-orange-500 rounded-full"></span>
+        LISTE DES FONTAINES
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -181,16 +192,16 @@ export default function VisiteFontainesPage() {
               key={est.id}
               id={`fontaine-item-${est.id}`}
               onClick={() => toggleDetails(est.id)}
-              className={`p-6 rounded-3xl border-2 cursor-pointer flex gap-6 items-start transition-all ${
+              className={`p-6 rounded-3xl border-2 cursor-pointer flex gap-6 items-start transition-all scroll-mt-24 ${
                 isOpen
-                  ? "border-orange-500 bg-orange-50 shadow-lg"
+                  ? "border-orange-500 bg-white shadow-xl scale-[1.02]"
                   : "border-white bg-white shadow-sm hover:border-orange-100"
               }`}
             >
               {/* NUMÉRO */}
               <div className="flex-shrink-0">
                 <div
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl ${
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl transition-colors ${
                     isOpen ? "bg-orange-600 text-white" : "bg-slate-100 text-slate-400"
                   }`}
                 >
@@ -200,19 +211,20 @@ export default function VisiteFontainesPage() {
 
               {/* CONTENU */}
               <div className="flex-1">
-                <h3 className={`font-black uppercase text-base mb-1 ${isOpen ? 'text-orange-700' : 'text-slate-800'}`}>
+                <h3 className={`font-black uppercase text-base mb-1 transition-colors ${isOpen ? 'text-orange-700' : 'text-slate-800'}`}>
                   {est.name}
                 </h3>
                 <p className="text-[11px] text-slate-400 mb-3 font-bold uppercase tracking-wider">
                   📍 {est.address}
                 </p>
-                <p className={`text-sm leading-relaxed ${isOpen ? 'text-slate-700' : 'text-slate-600 line-clamp-2 italic'}`}>
+                <p className={`text-sm leading-relaxed transition-all ${isOpen ? 'text-slate-700' : 'text-slate-600 line-clamp-2 italic'}`}>
                   {est.description}
                 </p>
 
                 {isOpen && (
-                  <div className="mt-6 pt-6 border-t border-orange-200">
-                    <div className="text-sm text-slate-700 leading-relaxed bg-white/60 p-4 rounded-xl border border-orange-100">
+                  <div className="mt-6 pt-6 border-t border-orange-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="text-sm text-slate-700 leading-relaxed bg-orange-50/50 p-4 rounded-xl border border-orange-50 italic">
+                      <span className="font-black text-orange-800 uppercase text-[10px] not-italic block mb-1">Détails historiques :</span>
                       {est.details}
                     </div>
                   </div>
@@ -222,6 +234,12 @@ export default function VisiteFontainesPage() {
           );
         })}
       </div>
+
+      <footer className="mt-20 py-10 border-t border-slate-200 text-center">
+        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.6em]">
+            Eau & Patrimoine • Toulouse • 2026
+        </p>
+      </footer>
     </div>
   );
 }
