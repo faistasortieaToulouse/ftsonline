@@ -140,13 +140,13 @@ export default function SkiPage() {
       {data && Object.entries(data).map(([deptName, categories]: [string, any]) => (
         <section key={deptName} className="mb-20">
           <h2 className="text-3xl font-black text-slate-800 mb-10 border-l-8 border-indigo-500 pl-4 uppercase tracking-tighter">
-            {deptName.replace(/g, ' ')}
+            {deptName.replace(/_/g, ' ')}
           </h2>
 
           {Object.entries(categories).map(([catName, stations]: [string, any]) => (
             <div key={catName} className="mb-12">
               <h3 className="text-lg font-bold text-indigo-400 mb-6 flex items-center gap-2 uppercase tracking-widest text-sm">
-                <Snowflake size={16} /> {catName.replace(/g, ' ')}
+                <Snowflake size={16} /> {catName.replace(/_/g, ' ')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
