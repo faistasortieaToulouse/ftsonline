@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react"; // Ajout de ChevronDown
 
 interface Lieu {
   id: number;
@@ -16,9 +16,6 @@ interface Lieu {
 }
 
 export default function VisiteToulouseTotalPage() {
-  // ----------------------------------------------------
-  // 1. ÉTATS ET RÉFÉRENCES
-  // ----------------------------------------------------
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
   const [lieux, setLieux] = useState<Lieu[]>([]);
@@ -29,9 +26,6 @@ export default function VisiteToulouseTotalPage() {
     setOpenDetailsId((prevId) => (prevId === id ? null : id));
   };
 
-  // ----------------------------------------------------
-  // 2. RÉCUPÉRATION DES DONNÉES
-  // ----------------------------------------------------
   useEffect(() => {
     fetch('/api/visitetoulousetotal')
       .then(res => res.json())
@@ -39,10 +33,8 @@ export default function VisiteToulouseTotalPage() {
       .catch(console.error);
   }, []);
 
-  // ----------------------------------------------------
-  // 3. INITIALISATION GOOGLE MAPS
-  // ----------------------------------------------------
   useEffect(() => {
+    // Changement ici : on s'assure que mapRef.current est vide avant d'init
     if (!isReady || !mapRef.current || lieux.length === 0) return;
 
     const center = {
@@ -56,7 +48,6 @@ export default function VisiteToulouseTotalPage() {
         center,
         scrollwheel: true,
         gestureHandling: 'greedy',
-        // Style optionnel pour une carte plus "propre"
         styles: [
           { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
         ]
@@ -91,7 +82,6 @@ export default function VisiteToulouseTotalPage() {
         infowindow.open(mapInstance.current!, marker);
         toggleDetails(id);
         
-        // Défilement fluide vers l'élément de la liste
         setTimeout(() => {
           document.getElementById(`lieu-item-${id}`)?.scrollIntoView({
             behavior: "smooth",
@@ -102,9 +92,6 @@ export default function VisiteToulouseTotalPage() {
     });
   }, [isReady, lieux]);
 
-  // ----------------------------------------------------
-  // 4. RENDU
-  // ----------------------------------------------------
   return (
     <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen">
       <nav className="mb-6">
@@ -121,19 +108,20 @@ export default function VisiteToulouseTotalPage() {
       />
 
       <header className="mb-8">
-        <h1 className="text-3xl font-black mb-2 text-slate-900 tracking-tight leading-tight">
+        <h1 className="text-3xl font-black mb-2 text-slate-900 tracking-tight leading-tight uppercase">
           🗺️ Toulouse : Monuments Actuels & Disparus
         </h1>
         <p className="text-slate-500 font-medium italic">Parcours historique complet — ({lieux.length} Lieux)</p>
       </header>
 
-      {/* Conteneur Carte */}
-      <div
-        ref={mapRef}
-        className="mb-10 h-[65vh] border-4 border-white rounded-[2.5rem] bg-slate-200 relative z-0 overflow-hidden shadow-2xl"
-      >
+      {/* Conteneur Carte Corrigé */}
+      <div className="mb-10 h-[65vh] border-4 border-white rounded-[2.5rem] bg-slate-200 relative z-0 overflow-hidden shadow-2xl">
+        {/* La div de la carte doit être nue */}
+        <div ref={mapRef} className="h-full w-full" />
+        
+        {/* Le loader est en absolute par-dessus la div de la carte */}
         {!isReady && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/60 backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 z-10">
             <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
             <p className="mt-4 text-indigo-600 font-bold text-xs uppercase tracking-widest">Chargement de la carte...</p>
           </div>
@@ -145,7 +133,6 @@ export default function VisiteToulouseTotalPage() {
         DÉTAILS DU PARCOURS
       </h2>
 
-      {/* Liste en Grille avec Accordéon */}
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {lieux.map((l, i) => {
           const id = i + 1;
@@ -167,13 +154,11 @@ export default function VisiteToulouseTotalPage() {
                   <span className={`mr-2 transition-colors ${isDetailsOpen ? 'text-indigo-600' : 'text-slate-300'}`}>{id}.</span> 
                   {l.numero} {l.type_voie} {l.nom_voie}
                 </p>
-                <span
-                  className={`text-slate-400 font-bold transition-transform duration-300 ${
-                    isDetailsOpen ? "rotate-180 text-indigo-600" : "rotate-0"
-                  }`}
-                >
-                  ▼
-                </span>
+                {/* AJOUT DU TRIANGLE ICI */}
+                <ChevronDown 
+                    size={20} 
+                    className={`transition-transform duration-300 ${isDetailsOpen ? "rotate-180 text-indigo-600" : "text-slate-300"}`} 
+                />
               </div>
 
               {isDetailsOpen && (
