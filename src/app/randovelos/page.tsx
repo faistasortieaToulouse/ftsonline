@@ -36,7 +36,7 @@ export default function RandoVeloPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // 2. Initialisation de la carte Leaflet (Méthode OTAN)
+  // 2. Initialisation de la carte Leaflet
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || randos.length === 0) return;
 
@@ -44,7 +44,6 @@ export default function RandoVeloPage() {
       const L = (await import("leaflet")).default;
 
       if (!mapInstance.current) {
-        // Initialisation de la carte centrée sur Toulouse
         mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.444], 12);
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -57,7 +56,6 @@ export default function RandoVeloPage() {
       randos.forEach((r, i) => {
         const numero = i + 1;
 
-        // Création d'une icône personnalisée numérotée (Cercle vert)
         const customIcon = L.divIcon({
           className: "custom-bike-marker",
           html: `<div style="
@@ -74,19 +72,25 @@ export default function RandoVeloPage() {
           iconAnchor: [12, 12],
         });
 
-        // Marqueur du point de départ
+        // --- MODIFICATION ICI : Ajout du lien dans la popup ---
+        const popupContent = `
+          <div style="font-family: sans-serif;">
+            <strong>${numero}. ${r.nom}</strong><br/>
+            <b>Distance :</b> ${r.distance_km} km<br/>
+            <b>Difficulté :</b> ${r.difficulte ?? "-"}<br/>
+            ${r.plus_infos 
+              ? `<a href="${r.plus_infos}" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline; margin-top: 5px; display: inline-block;">Voir plus d'infos</a>` 
+              : ""
+            }
+          </div>
+        `;
+
         L.marker([r.geo_point_2d.lat, r.geo_point_2d.lon], { icon: customIcon })
           .addTo(map)
-          .bindPopup(`
-            <strong>${numero}. ${r.nom}</strong><br/>
-            Distance : ${r.distance_km} km<br/>
-            Difficulté : ${r.difficulte ?? "-"}
-          `);
+          .bindPopup(popupContent);
 
-        // Tracé de l'itinéraire (Polyline)
         const geometry = r.geo_shape?.geometry?.geometries?.[0] || r.geo_shape?.geometry;
         if (geometry?.type === "LineString") {
-          // Leaflet utilise [lat, lng] alors que GeoJSON utilise [lng, lat]
           const path = geometry.coordinates.map(([lng, lat]: [number, number]) => [lat, lng] as [number, number]);
           
           L.polyline(path, {
@@ -102,7 +106,6 @@ export default function RandoVeloPage() {
 
     initMap();
 
-    // Cleanup au démontage du composant
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
