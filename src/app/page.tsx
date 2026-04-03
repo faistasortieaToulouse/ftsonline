@@ -1589,7 +1589,7 @@ return sections.map((sec, idx) => {
 
     {/* Applications en Construction (Rouge) */}
     <div>
-      <p className="text-xs font-bold text-red-500 uppercase tracking-widest mb-3">🚧 En cours (Maquettes uniquement)</p>
+      <p className="text-xs font-bold text-red-500 uppercase tracking-widest mb-3">🚧 En cours (Maquettes uniquement) bientôt sur ton téléphone!</p>
       <div className="flex flex-wrap justify-center gap-2">
         {[
           { name: "Tolosa", url: "https://www.tolosa.site/" },
