@@ -108,7 +108,7 @@ const totalArticles =
         await navigator.share({
           title: "Mon Application TWA/PWA",
           text: "Téléchargez Mon Application pour ne rien manquer de nos événements et discussions !",
-          url: "https://faistasortieatoulouse.online",
+          url: "https://www.faistasortieatoulouse.online",
         });
         toast({ title: "Partage réussi 🎉", description: "Merci d'avoir partagé l'application !" });
       } catch {
