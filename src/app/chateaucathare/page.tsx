@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from "next/link";
-import { ArrowLeft, Fort-tower, MapPin, Info } from "lucide-react";
+import { ArrowLeft, Castle, MapPin, Info } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 // --- Importation des données ---
