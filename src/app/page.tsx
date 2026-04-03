@@ -960,7 +960,7 @@ useEffect(() => {
           Bienvenue sur <span className="text-purple-200">FTS Toulouse</span>
         </h1>
         <div className="flex justify-center gap-4 flex-wrap">
-		  {/* TON NOUVEAU BOUTON */}
+		  {/* BOUTON INSTALLER */}
  		     <Link 
   		      href="#download-section" 
   		      className="bg-green-500 hover:bg-green-400 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center gap-2"
@@ -968,11 +968,23 @@ useEffect(() => {
    		     <Download className="h-5 w-5" /> 
    		     Installer FTS Toulouse
   		    </Link>
+		 {/* BOUTON EXPLORER */}
           <Link href="#categories" className="bg-purple-700 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg transition">
             Explorer les rubriques
           </Link>
+		 {/* BOUTON FAIS TA SORTIE */}
           <a href="https://faistasortieatoulouse31.vercel.app/" target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-pink-100 text-pink-600 font-semibold py-3 px-6 rounded-full shadow-lg transition">
             Fais Ta sortie à Toulouse
+          </a>
+		 {/* BOUTON REJOINDRE LES RÉSEAUX (NOUVEAU) */}
+          <a 
+   		     href="https://whatsappdiscord.ftstoulouse.online/" 
+   		     target="_blank" 
+   		     rel="noopener noreferrer" 
+   		     className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center gap-2"
+          >
+   		     <span className="text-xl">💬</span>
+   		     Rejoins WhatsApp, Discord ou nos réseaux
           </a>
         </div>
       </section>
