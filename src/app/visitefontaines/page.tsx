@@ -32,7 +32,7 @@ export default function VisiteFontainesPage() {
   };
 
   /* =======================
-      1. FETCH API
+     1. FETCH API
   ======================= */
   useEffect(() => {
     fetch("/api/visitefontaines")
@@ -48,7 +48,7 @@ export default function VisiteFontainesPage() {
   }, []);
 
   /* =======================
-      2. INITIALISATION CARTE
+     2. INITIALISATION CARTE
   ======================= */
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || loading) return;
@@ -82,7 +82,7 @@ export default function VisiteFontainesPage() {
   }, [loading]);
 
   /* =======================
-      3. MARQUEURS NUMÉROTÉS
+     3. MARQUEURS NUMÉROTÉS
   ======================= */
   useEffect(() => {
     if (!L || !mapInstance.current || !markersLayerRef.current || establishments.length === 0) return;
@@ -92,6 +92,7 @@ export default function VisiteFontainesPage() {
     establishments.forEach((est, index) => {
       const fontaineNumber = index + 1;
 
+      // Vérification des coordonnées
       if (est.latitude == null || est.longitude == null) return;
 
       const customIcon = L.divIcon({
@@ -120,13 +121,7 @@ export default function VisiteFontainesPage() {
 
       const marker = L.marker([est.latitude, est.longitude], { icon: customIcon })
         .addTo(markersLayerRef.current)
-        .bindPopup(`
-          <div style="text-align: center; font-family: sans-serif; min-width: 140px;">
-            <strong style="color: #FF6600; font-size: 14px;">Fontaine n°${fontaineNumber}</strong><br/>
-            <p style="margin: 4px 0 8px 0; font-size: 12px; font-weight: 600;">${est.name}</p>
-            <a href="#fontaine-item-${est.id}" style="display: inline-block; background-color: #FF6600; color: white; padding: 4px 10px; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: bold;">Voir détails ↓</a>
-          </div>
-        `);
+        .bindPopup(`<b>Fontaine n°${fontaineNumber}</b><br>${est.name}`);
 
       marker.on("click", () => {
         toggleDetails(est.id);
@@ -136,16 +131,16 @@ export default function VisiteFontainesPage() {
   }, [L, establishments]);
 
   /* =======================
-      4. RENDER
+     4. RENDER
   ======================= */
   return (
-    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen font-sans">
+    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen">
       <nav className="mb-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-blue-800 font-bold hover:text-blue-900 transition-all group"
+          className="inline-flex items-center gap-2 text-blue-800 font-bold hover:text-blue-900 transition-all"
         >
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> Retour à l'accueil
+          <ArrowLeft size={20} /> Retour à l'accueil
         </Link>
       </nav>
 
@@ -154,28 +149,25 @@ export default function VisiteFontainesPage() {
           ⛲ Parcours des Fontaines
         </h1>
         <p className="text-slate-500 font-bold mt-2 uppercase text-xs tracking-widest">
-          Toulouse • {establishments.length} lieux répertoriés
+          Toulouse • {establishments.length} lieux
         </p>
       </header>
 
       {/* CARTE */}
       <div
         ref={mapRef}
-        className="mb-12 h-[500px] border-4 border-white shadow-2xl rounded-[2.5rem] bg-slate-200 relative z-0 overflow-hidden"
+        className="mb-12 h-[500px] border-4 border-white shadow-xl rounded-[2.5rem] bg-slate-200 relative z-0 overflow-hidden"
       >
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-100/50 backdrop-blur-sm">
-            <div className="flex flex-col items-center gap-3">
-              <span className="animate-spin w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full"></span>
-              <p className="text-orange-600 font-black text-xs tracking-widest uppercase">Chargement de l'eau...</p>
-            </div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="animate-spin w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full"></span>
           </div>
         )}
       </div>
 
       {/* LISTE */}
       <h2 className="text-2xl font-black mb-8 text-slate-800 flex items-center gap-3">
-        <span className="h-1.5 w-12 bg-orange-500 rounded-full"></span>
+        <span className="h-1 w-12 bg-orange-500 rounded-full"></span>
         LISTE DES LIEUX
       </h2>
 
@@ -189,16 +181,16 @@ export default function VisiteFontainesPage() {
               key={est.id}
               id={`fontaine-item-${est.id}`}
               onClick={() => toggleDetails(est.id)}
-              className={`p-6 rounded-3xl border-2 cursor-pointer flex gap-6 items-start transition-all scroll-mt-20 ${
+              className={`p-6 rounded-3xl border-2 cursor-pointer flex gap-6 items-start transition-all ${
                 isOpen
-                  ? "border-orange-500 bg-orange-50 shadow-lg scale-[1.02]"
-                  : "border-white bg-white shadow-sm hover:border-orange-100 hover:shadow-md"
+                  ? "border-orange-500 bg-orange-50 shadow-lg"
+                  : "border-white bg-white shadow-sm hover:border-orange-100"
               }`}
             >
               {/* NUMÉRO */}
               <div className="flex-shrink-0">
                 <div
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl shadow-inner transition-colors ${
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl ${
                     isOpen ? "bg-orange-600 text-white" : "bg-slate-100 text-slate-400"
                   }`}
                 >
@@ -208,19 +200,19 @@ export default function VisiteFontainesPage() {
 
               {/* CONTENU */}
               <div className="flex-1">
-                <h3 className={`font-black uppercase text-base mb-1 transition-colors ${isOpen ? 'text-orange-700' : 'text-slate-800'}`}>
+                <h3 className={`font-black uppercase text-base mb-1 ${isOpen ? 'text-orange-700' : 'text-slate-800'}`}>
                   {est.name}
                 </h3>
-                <p className="text-[11px] text-slate-400 mb-3 font-bold uppercase tracking-wider flex items-center gap-1">
-                  <span className="text-orange-400">📍</span> {est.address}
+                <p className="text-[11px] text-slate-400 mb-3 font-bold uppercase tracking-wider">
+                  📍 {est.address}
                 </p>
-                <p className={`text-sm leading-relaxed transition-all ${isOpen ? 'text-slate-700 font-medium' : 'text-slate-600 line-clamp-2 italic'}`}>
+                <p className={`text-sm leading-relaxed ${isOpen ? 'text-slate-700' : 'text-slate-600 line-clamp-2 italic'}`}>
                   {est.description}
                 </p>
 
                 {isOpen && (
-                  <div className="mt-6 pt-6 border-t border-orange-200 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div className="text-sm text-slate-700 leading-relaxed bg-white/80 p-5 rounded-2xl border border-orange-100 shadow-inner">
+                  <div className="mt-6 pt-6 border-t border-orange-200">
+                    <div className="text-sm text-slate-700 leading-relaxed bg-white/60 p-4 rounded-xl border border-orange-100">
                       {est.details}
                     </div>
                   </div>
@@ -230,12 +222,6 @@ export default function VisiteFontainesPage() {
           );
         })}
       </div>
-
-      <footer className="mt-20 py-10 border-t border-slate-200 text-center">
-        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">
-          Patrimoine Toulousain • Données Ouvertes
-        </p>
-      </footer>
     </div>
   );
 }
