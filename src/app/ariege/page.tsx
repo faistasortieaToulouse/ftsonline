@@ -92,12 +92,13 @@ export default function AriegeMapPage() {
         });
         L.marker([site.lat, site.lng], { icon: customIcon })
           .bindPopup(`
-            <div style="text-align: center; font-family: sans-serif;">
-              <strong style="color: ${color}; display: block; margin-bottom: 5px;">#${currentNum} - ${site.commune}</strong>
+            <div style="text-align: center; font-family: sans-serif; max-width: 200px;">
+              <strong style="color: ${color}; display: block; margin-bottom: 2px;">#${currentNum} - ${site.commune}</strong>
+              <p style="margin: 0 0 8px 0; font-size: 12px; color: #334155; line-height: 1.4;">${site.description}</p>
               <a href="#site-${currentNum}" style="display: inline-block; background-color: ${color}; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">Voir dans la liste ↓</a>
             </div>
           `)
-          .addTo(markersLayer.current);
+  .addTo(markersLayer.current);
       });
     };
     updateMarkers();
