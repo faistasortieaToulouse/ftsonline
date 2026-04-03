@@ -83,14 +83,20 @@ export default function AriegeMapPage() {
       markersLayer.current.clearLayers();
       filteredSites.forEach((site, i) => {
         const color = getMarkerColor(site.categorie);
+        const currentNum = i + 1;
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `<div style="background-color: ${color}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${i + 1}</div>`,
+          html: `<div style="background-color: ${color}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${currentNum}</div>`,
           iconSize: [26, 26],
           iconAnchor: [13, 13]
         });
         L.marker([site.lat, site.lng], { icon: customIcon })
-          .bindPopup(`<strong>${site.commune}</strong><br/>${site.description}`)
+          .bindPopup(`
+            <div style="text-align: center; font-family: sans-serif;">
+              <strong style="color: ${color}; display: block; margin-bottom: 5px;">#${currentNum} - ${site.commune}</strong>
+              <a href="#site-${currentNum}" style="display: inline-block; background-color: ${color}; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">Voir dans la liste ↓</a>
+            </div>
+          `)
           .addTo(markersLayer.current);
       });
     };
@@ -158,12 +164,12 @@ export default function AriegeMapPage() {
             {filteredSites.map((site, i) => (
               <React.Fragment key={`ariege-${site.id}`}>
                 <tr 
+                  id={`site-${i + 1}`}
                   onClick={() => setExpandedId(expandedId === i ? null : i)}
-                  className={`cursor-pointer transition-colors ${expandedId === i ? 'bg-emerald-50/30' : 'hover:bg-slate-50'}`}
+                  className={`cursor-pointer transition-colors scroll-mt-10 ${expandedId === i ? 'bg-emerald-50/30' : 'hover:bg-slate-50'}`}
                 >
                   <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
                   
-                  {/* Cellule Commune avec gestion de l'espace pour éviter de couper la catégorie */}
                   <td className="p-4 font-bold text-slate-900 min-w-0">
                     <div className="flex items-center gap-2 overflow-hidden">
                       <span className="truncate">{site.commune}</span>
@@ -179,7 +185,6 @@ export default function AriegeMapPage() {
                     {site.niveau}
                   </td>
 
-                  {/* Cellule Catégorie : On force l'affichage complet */}
                   <td className="p-4 text-right md:text-left font-bold text-[13px] md:text-base whitespace-nowrap" style={{ color: getMarkerColor(site.categorie) }}>
                     {site.categorie.charAt(0).toUpperCase() + site.categorie.slice(1)}
                   </td>
