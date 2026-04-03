@@ -31,9 +31,10 @@ export default function EcrivainsAudePage() {
 
       ecrivainsData.forEach((e, index) => {
         if (e.lat && e.lng) {
+          const currentNum = index + 1;
           const customIcon = L.divIcon({
             className: 'custom-div-icon',
-            html: `<div style="background-color: #1d4ed8; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; shadow: 0 2px 4px rgba(0,0,0,0.3);">${index + 1}</div>`,
+            html: `<div style="background-color: #1d4ed8; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${currentNum}</div>`,
             iconSize: [26, 26],
             iconAnchor: [13, 13]
           });
@@ -41,13 +42,16 @@ export default function EcrivainsAudePage() {
           L.marker([e.lat, e.lng], { icon: customIcon })
             .addTo(map)
             .bindPopup(`
-              <div style="font-family: sans-serif; min-width: 160px;">
-                <strong style="color: #1d4ed8; font-size: 14px;">${index + 1}. ${e.nom}</strong><br/>
-                <p style="font-size: 12px; margin-top: 5px;">
+              <div style="font-family: sans-serif; min-width: 180px; max-width: 220px;">
+                <strong style="color: #1d4ed8; font-size: 14px;">${currentNum}. ${e.nom}</strong><br/>
+                <div style="font-size: 12px; margin-top: 5px; color: #475569;">
                   <b>Commune :</b> ${e.commune}<br/>
                   <b>Dates :</b> ${e.dates || "N/A"}<br/>
-                  <b>Bio :</b> ${e.description || "Écrivain"}
-                </p>
+                  <p style="margin-top: 5px; font-style: italic;">${e.description || "Écrivain"}</p>
+                </div>
+                <div style="margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+                  <a href="#ecrivain-${currentNum}" style="display: inline-block; background-color: #1d4ed8; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">Voir la fiche ↓</a>
+                </div>
               </div>
             `);
         }
@@ -106,7 +110,11 @@ export default function EcrivainsAudePage() {
           </thead>
           <tbody>
             {ecrivainsData.map((ev, i) => (
-              <tr key={i} className="hover:bg-blue-50/50 transition-colors border-b border-slate-100">
+              <tr 
+                key={i} 
+                id={`ecrivain-${i + 1}`}
+                className="hover:bg-blue-50/50 transition-colors border-b border-slate-100 scroll-mt-10"
+              >
                 <td className="p-4 font-bold text-blue-600 text-center">{i + 1}</td>
                 <td className="p-4 font-semibold text-slate-900">{ev.nom}</td>
                 <td className="p-4 text-slate-600">{ev.commune}</td>
@@ -121,7 +129,11 @@ export default function EcrivainsAudePage() {
       {/* --- VERSION CARTES (VISIBLE SUR MOBILE) --- */}
       <div className="md:hidden space-y-4">
         {ecrivainsData.map((ev, i) => (
-          <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm relative overflow-hidden">
+          <div 
+            key={i} 
+            id={`ecrivain-${i + 1}`}
+            className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm relative overflow-hidden scroll-mt-6"
+          >
             <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
             
             <div className="flex justify-between items-start mb-2">
