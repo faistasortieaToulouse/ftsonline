@@ -26,7 +26,7 @@ export default function SkiPage() {
       
       const L = (await import('leaflet')).default;
 
-      // Correction importante pour les icônes Leaflet dans Next.js
+      // Correction icônes Leaflet
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -53,14 +53,14 @@ export default function SkiPage() {
     };
   }, []);
 
-  // 3. Ajout des MARQUEURS
+  // 3. Ajout des MARQUEURS avec Ancres
   useEffect(() => {
     if (!isReady || !mapInstance.current || !data) return;
 
     const addMarkers = async () => {
       const L = (await import('leaflet')).default;
       
-      // On nettoie les anciens marqueurs si nécessaire
+      // Nettoyage
       mapInstance.current.eachLayer((layer: any) => {
         if (layer instanceof L.Marker) mapInstance.current.removeLayer(layer);
       });
@@ -72,15 +72,27 @@ export default function SkiPage() {
         Object.values(departement).forEach((stations: any) => {
           stations.forEach((station: any) => {
             if (station.lat && station.lng) {
+              const currentId = globalCounter;
               const numberIcon = L.divIcon({
                 className: 'custom-ski-marker',
-                html: `<div style="background-color:#4f46e5; color:white; border-radius:8px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:12px; transform: rotate(45deg);"><span style="transform: rotate(-45deg);">${globalCounter}</span></div>`,
+                html: `<div style="background-color:#4f46e5; color:white; border-radius:8px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:12px; transform: rotate(45deg);"><span style="transform: rotate(-45deg);">${currentId}</span></div>`,
                 iconSize: [28, 28],
                 iconAnchor: [14, 14]
               });
 
               const marker = L.marker([station.lat, station.lng], { icon: numberIcon });
-              marker.bindPopup(`<strong>#${globalCounter} - ${station.nom}</strong>`);
+              
+              // Popup avec bouton vers l'ancre
+              marker.bindPopup(`
+                <div style="text-align:center; font-family:sans-serif;">
+                  <strong style="display:block; color:#4f46e5; margin-bottom:4px;">#${currentId} - ${station.nom}</strong>
+                  <a href="#station-num-${currentId}" 
+                     style="display:inline-block; background:#4f46e5; color:white; padding:4px 8px; border-radius:6px; text-decoration:none; font-size:10px; font-weight:bold;">
+                     Voir station ↓
+                  </a>
+                </div>
+              `);
+              
               marker.addTo(markersGroup);
               globalCounter++;
             }
@@ -113,11 +125,10 @@ export default function SkiPage() {
         <p className="text-slate-500 mt-2 italic">Pyrénées : Ariège, Haute-Garonne et Hautes-Pyrénées.</p>
       </header>
 
-      {/* ZONE CARTE AVEC HAUTEUR FIXE GARANTIE */}
       <div 
         ref={mapRef} 
-        className="h-[400px] md:h-[500px] w-full mb-12 border-4 border-white shadow-xl rounded-3xl bg-indigo-50 z-0"
-        style={{ minHeight: '400px' }} // Sécurité supplémentaire
+        className="h-[400px] md:h-[500px] w-full mb-12 border-4 border-white shadow-xl rounded-3xl bg-indigo-50 z-0 overflow-hidden"
+        style={{ minHeight: '400px' }}
       >
         {!isReady && (
           <div className="flex items-center justify-center h-full">
@@ -129,20 +140,24 @@ export default function SkiPage() {
       {data && Object.entries(data).map(([deptName, categories]: [string, any]) => (
         <section key={deptName} className="mb-20">
           <h2 className="text-3xl font-black text-slate-800 mb-10 border-l-8 border-indigo-500 pl-4 uppercase tracking-tighter">
-            {deptName.replace(/_/g, ' ')}
+            {deptName.replace(/g, ' ')}
           </h2>
 
           {Object.entries(categories).map(([catName, stations]: [string, any]) => (
             <div key={catName} className="mb-12">
               <h3 className="text-lg font-bold text-indigo-400 mb-6 flex items-center gap-2 uppercase tracking-widest text-sm">
-                <Snowflake size={16} /> {catName.replace(/_/g, ' ')}
+                <Snowflake size={16} /> {catName.replace(/g, ' ')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {stations.map((station: any, i: number) => {
                   const currentNum = displayCounter++;
                   return (
-                    <div key={i} className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-indigo-300 transition-all group shadow-sm">
+                    <div 
+                      key={`${deptName}-${catName}-${i}`}
+                      id={`station-num-${currentNum}`} // ID POUR L'ANCRE
+                      className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-indigo-300 transition-all group shadow-sm scroll-mt-10"
+                    >
                       <div className="p-6">
                         <div className="flex justify-between items-start mb-4">
                           <span className="bg-indigo-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shadow-lg shadow-indigo-200">
