@@ -14,6 +14,7 @@ interface Territoire {
   description: string;
   date_debut: number;
   date_fin: number;
+  id?: string | number; // Optionnel selon ta base
 }
 
 export default function ColonieEuropePage() {
@@ -51,10 +52,8 @@ export default function ColonieEuropePage() {
     const initMap = async () => {
       const L = (await import("leaflet")).default;
       
-      // Empêche la double initialisation
       if (mapInstance.current) return;
 
-      // On crée la carte sur la div via mapRef
       mapInstance.current = L.map(mapRef.current).setView([47.5, 7.5], 5);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -66,7 +65,6 @@ export default function ColonieEuropePage() {
 
     initMap();
 
-    // NETTOYAGE : C'est ici qu'on règle l'erreur Runtime
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -75,7 +73,7 @@ export default function ColonieEuropePage() {
     };
   }, []);
 
-  // 3. Mise à jour des Marqueurs
+  // 3. Mise à jour des Marqueurs avec LIEN ANCRE
   useEffect(() => {
     if (!isMapReady || !mapInstance.current || territoires.length === 0) return;
 
@@ -98,14 +96,28 @@ export default function ColonieEuropePage() {
           iconAnchor: [12, 12]
         });
 
+        // Génération de l'URL pour l'ancre
+        // On utilise l'ID ou on transforme le nom en slug (ex: "Mont-Tonnerre")
+        const slug = t.nom.toLowerCase().replace(/\s+/g, '-');
+        const detailUrl = `/colonies/${t.id || slug}`;
+
         L.marker([t.lat, t.lng], { icon: customIcon })
           .addTo(mapInstance.current)
           .bindPopup(`
-            <div style="color: black; font-family: sans-serif; min-width: 180px;">
-              <strong style="font-size: 14px;">#${index + 1} - ${t.nom}</strong><br />
+            <div style="color: black; font-family: sans-serif; min-width: 200px; padding: 5px;">
+              <strong style="font-size: 14px; display: block; margin-bottom: 2px;">#${index + 1} - ${t.nom}</strong>
               <span style="color: #b91c1c; font-size: 10px; font-weight: bold;">${t.date_debut} — ${t.date_fin}</span><br />
               <span style="color: #666; font-size: 10px; text-transform: uppercase; font-weight: bold;">${t.statut}</span>
-              <p style="margin-top: 8px; font-size: 12px; line-height: 1.4; margin-bottom: 0;">${t.description}</p>
+              <p style="margin-top: 8px; font-size: 12px; line-height: 1.4; color: #444; margin-bottom: 12px;">
+                ${t.description.substring(0, 100)}${t.description.length > 100 ? '...' : ''}
+              </p>
+              <a href="${detailUrl}" 
+                 style="display: block; background-color: #1e3a8a; color: white; text-align: center; padding: 8px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 11px; transition: background 0.2s;"
+                 onmouseover="this.style.backgroundColor='#1e40af'"
+                 onmouseout="this.style.backgroundColor='#1e3a8a'"
+              >
+                Explorer le territoire →
+              </a>
             </div>
           `);
       });
@@ -115,21 +127,21 @@ export default function ColonieEuropePage() {
   }, [isMapReady, territoires]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold">
-          <ArrowLeft size={20} /> Retour à l'accueil
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold group">
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> Retour à l'accueil
         </Link>
       </nav>
 
       <header className="mb-8 border-b pb-6 text-center">
         <h1 className="text-4xl font-black text-blue-900 uppercase tracking-tighter">
-          Empire Français : Territoires Annexés
+          Empire Français : <span className="text-blue-600">Territoires Annexés</span>
         </h1>
-        <p className="text-gray-600 mt-2 italic">L'Europe sous Napoléon Ier et la Révolution (1792 - 1815)</p>
+        <p className="text-gray-600 mt-2 italic font-medium">L'Europe sous Napoléon Ier et la Révolution (1792 - 1815)</p>
       </header>
 
-      {/* --- Zone de la Carte (Pilotée par Ref) --- */}
+      {/* --- Zone de la Carte --- */}
       <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden h-[60vh] relative">
         <div ref={mapRef} className="h-full w-full z-0" />
         
@@ -145,7 +157,7 @@ export default function ColonieEuropePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {territoires.map((t, index) => (
           <div key={t.nom} className="group p-5 bg-white rounded-2xl shadow-sm border border-slate-200 hover:bg-blue-900 transition-all duration-300 flex gap-4">
-            <span className="text-3xl font-black text-slate-200 group-hover:text-blue-400/30 transition-colors">
+            <span className="text-3xl font-black text-slate-200 group-hover:text-blue-400/30 transition-colors shrink-0">
               {(index + 1).toString().padStart(2, '0')}
             </span>
             <div>
