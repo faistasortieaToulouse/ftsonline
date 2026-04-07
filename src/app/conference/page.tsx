@@ -1,231 +1,244 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { ArrowLeft, Landmark, Search, Loader2, Phone, MapPin, ExternalLink } from "lucide-react";
+import { ArrowLeft, Globe, Phone, MapPin, Building2, Loader2, ExternalLink } from "lucide-react";
 
-// 1. IMPORTATION DU CSS LEAFLET
+// Importation du CSS obligatoire pour Leaflet
 import "leaflet/dist/leaflet.css";
 
-// 2. CHARGEMENT DYNAMIQUE (SSR: false est crucial ici)
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
-const MapEffect = dynamic(() => Promise.resolve(({ map }: { map: any }) => {
-    // Ce petit composant interne force le rafraîchissement de la carte
-    useEffect(() => {
-        if (map) {
-            setTimeout(() => {
-                map.invalidateSize();
-            }, 500);
-        }
-    }, [map]);
-    return null;
-}), { ssr: false });
-
-interface Administration {
-  id: string; // Ajout d'un ID pour l'ancre
-  nom: string;
-  adresse?: string;
-  commune?: string;
-  telephone?: string;
-  categorie: "mairie" | "mairie_annexe" | "maison_justice" | "maison_toulouse_services" | "point_acces_droit";
-  geo?: { lat: number; lon: number; };
+interface Conference {
+  geo_point_2d: { lon: number; lat: number };
+  nom_equipement: string;
+  gestionnaire: string;
+  telephone: string | null;
+  site_web: string | null;
+  numero: string;
+  lib_off: string;
+  ville: string;
 }
 
-export default function AdministrationPage() {
-  const [data, setData] = useState<Administration[]>([]);
-  const [L, setL] = useState<any>(null);
+export default function ConferencePage() {
+  const [conferences, setConferences] = useState<Conference[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isMapReady, setIsMapReady] = useState(false);
-  const [mapInstance, setMapInstance] = useState<any>(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapInstance = useRef<any>(null);
 
-  const [filters, setFilters] = useState<Record<Administration["categorie"], boolean>>({
-    mairie: true,
-    mairie_annexe: true,
-    maison_justice: true,
-    maison_toulouse_services: true,
-    point_acces_droit: true,
-  });
-
-  const colors: Record<Administration["categorie"], string> = {
-    mairie: "#ef4444", mairie_annexe: "#f97316", maison_justice: "#a855f7",
-    maison_toulouse_services: "#22c55e", point_acces_droit: "#3b82f6",
-  };
-
-  const labels: Record<Administration["categorie"], string> = {
-    mairie: "Mairie", mairie_annexe: "Mairie annexe", maison_justice: "Maison de Justice",
-    maison_toulouse_services: "Maison Toulouse Services", point_acces_droit: "Point d’accès au droit",
-  };
-
+  // 1. Fetch et tri alphabétique
   useEffect(() => {
-    fetch("/api/administration")
-      .then(res => res.json())
-      .then(json => {
-        // On ajoute un ID unique basé sur l'index pour les ancres
-        const withIds = json.map((item: any, i: number) => ({ ...item, id: `admin-${i}` }));
-        setData(withIds);
+    fetch("/api/conference")
+      .then((res) => res.json())
+      .then((data: Conference[]) => {
+        if (!Array.isArray(data)) return;
+        const sorted = [...data].sort((a, b) =>
+          (a.nom_equipement ?? "").localeCompare(b.nom_equipement ?? "")
+        );
+        setConferences(sorted);
       })
-      .catch(console.error);
-
-    import("leaflet").then((leaflet) => { setL(leaflet); });
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
-  const toggle = (cat: Administration["categorie"]) => {
-    setFilters(prev => ({ ...prev, [cat]: !prev[cat] }));
+  // 2. Initialisation de la carte avec FIX d'affichage
+  useEffect(() => {
+    const initMap = async () => {
+      if (!mapRef.current || conferences.length === 0 || mapInstance.current) return;
+
+      const L = (await import("leaflet")).default;
+      const map = L.map(mapRef.current).setView([43.6045, 1.444], 12);
+      mapInstance.current = map;
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap',
+      }).addTo(map);
+
+      // FIX : On force le recalcul de la taille pour éviter les tuiles grises
+      setTimeout(() => {
+        map.invalidateSize();
+        setIsMapReady(true);
+      }, 400);
+
+      conferences.forEach((c, i) => {
+        if (c.geo_point_2d) {
+          const customMarker = L.divIcon({
+            className: 'custom-div-icon',
+            html: `<div style="background-color: #2563eb; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.3);">${i + 1}</div>`,
+            iconSize: [26, 26],
+            iconAnchor: [13, 13]
+          });
+
+          L.marker([c.geo_point_2d.lat, c.geo_point_2d.lon], { icon: customMarker })
+            .addTo(map)
+            .bindPopup(`
+              <div style="font-family: sans-serif; text-align: center; min-width: 150px; padding: 5px;">
+                <strong style="color: #1e293b; display: block; margin-bottom: 4px; text-transform: uppercase; font-size: 11px;">${c.nom_equipement}</strong>
+                <p style="margin: 0 0 8px 0; font-size: 10px; color: #64748b;">${c.lib_off}</p>
+                <a href="#conf-${i}" style="display: inline-block; background: #2563eb; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 10px; font-weight: bold;">VOIR DÉTAILS ↓</a>
+              </div>
+            `);
+        }
+      });
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [conferences]);
+
+  const focusOnPoint = (lat: number, lon: number) => {
+    if (mapInstance.current) {
+      mapInstance.current.flyTo([lat, lon], 16);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  const filteredList = data.filter(d => filters[d.categorie]);
-
-  const createIcon = (index: number, color: string) => {
-    if (!L) return null;
-    return L.divIcon({
-      className: 'custom-icon',
-      html: `<div style="background-color:${color}; width:26px; height:26px; border-radius:50%; border:2px solid white; color:white; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:10px; box-shadow:0 3px 6px rgba(0,0,0,0.2);">${index}</div>`,
-      iconSize: [26, 26],
-      iconAnchor: [13, 13]
-    });
-  };
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4 bg-slate-50">
+        <Loader2 className="animate-spin text-blue-600" size={40} />
+        <p className="font-black text-xs uppercase tracking-widest text-slate-400 italic">Chargement du réseau culturel...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
-      
+    <div className="p-3 md:p-6 max-w-7xl mx-auto bg-slate-50 min-h-screen font-sans text-slate-900">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-black uppercase text-xs transition-all group">
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
-          RETOUR AU PORTAIL
+          Portail Toulouse
         </Link>
       </nav>
 
       <header className="mb-8">
-        <h1 className="text-3xl md:text-5xl font-black flex items-center gap-4 tracking-tighter italic uppercase text-slate-900">
-          <Landmark className="text-blue-700" size={40} />
-          Services <span className="text-blue-700">Publics</span>
+        <h1 className="text-2xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter italic text-center leading-none">
+          🎭 Centres <span className="text-blue-600">Culturels</span>
         </h1>
-        <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-xs">Annuaire administratif • Toulouse Métropole</p>
+        <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] text-center mt-2">Conférences & Évènements • Toulouse Métropole</p>
       </header>
 
-      {/* FILTRES STYLE BADGE */}
-      <div className="mb-8 flex flex-wrap gap-2">
-        {(Object.keys(filters) as Array<Administration["categorie"]>).map(cat => (
-          <button
-            key={cat}
-            onClick={() => toggle(cat)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all font-black text-[10px] uppercase tracking-wider ${
-              filters[cat] 
-                ? 'bg-white border-slate-900 text-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]' 
-                : 'bg-slate-100 border-transparent text-slate-400 opacity-50 grayscale'
-            }`}
-          >
-            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[cat] }}></span>
-            {labels[cat]}
-          </button>
-        ))}
-      </div>
-
-      {/* CARTE AVEC FIX D'AFFICHAGE */}
-      <div className="h-[55vh] w-full mb-12 rounded-[2rem] bg-slate-200 overflow-hidden border-4 border-white shadow-2xl relative z-0">
+      {/* Carte Responsive */}
+      <div className="relative group">
+        <div
+          ref={mapRef}
+          className="h-[45vh] md:h-[55vh] w-full mb-8 border-4 border-white shadow-2xl rounded-[2.5rem] bg-slate-200 z-0 overflow-hidden transition-all" 
+        />
         {!isMapReady && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/90 z-10 backdrop-blur-sm">
-            <Loader2 className="animate-spin h-10 w-10 text-blue-700 mb-4" />
-            <p className="text-blue-900 font-black text-xs uppercase tracking-widest italic animate-pulse">Chargement de la carte métropolitaine...</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-100/80 rounded-[2.5rem] z-10 backdrop-blur-sm">
+             <Loader2 className="animate-spin text-blue-600" size={30} />
           </div>
         )}
+      </div>
 
-        <MapContainer 
-          center={[43.6045, 1.444]} 
-          zoom={13} 
-          style={{ height: '100%', width: '100%' }}
-          whenReady={(e: any) => {
-            setMapInstance(e.target);
-            setIsMapReady(true);
-          }}
-        >
-          <TileLayer
-            attribution='&copy; OpenStreetMap'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {/* Le fix est ici : MapEffect force le recalcul des tuiles */}
-          {mapInstance && <MapEffect map={mapInstance} />}
-          
-          {L && filteredList.map((item, i) => (
-            item.geo && (
-              <Marker 
-                key={`${item.nom}-${i}`}
-                position={[item.geo.lat, item.geo.lon]}
-                icon={createIcon(i + 1, colors[item.categorie])}
-              >
-                <Popup>
-                  <div className="p-1 text-center font-sans">
-                    <strong className="text-slate-900 block border-b pb-1 mb-2 uppercase text-[11px] tracking-tight">{item.nom}</strong>
-                    <span className="text-slate-500 text-[10px] block mb-2 italic">{item.adresse}</span>
-                    <a href={`#${item.id}`} className="bg-slate-900 text-white px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest no-underline inline-block">Détails ↓</a>
+      {/* --- VERSION DESKTOP : TABLEAU --- */}
+      <div className="hidden md:block overflow-hidden rounded-[2rem] border border-slate-200 shadow-sm bg-white">
+        <table className="w-full table-auto border-collapse">
+          <thead>
+            <tr className="bg-slate-900 text-white text-left text-[10px] uppercase font-black tracking-widest">
+              <th className="p-5">#</th>
+              <th className="p-5">Nom de l'équipement</th>
+              <th className="p-5">Adresse / Ville</th>
+              <th className="p-5">Gestionnaire</th>
+              <th className="p-5 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100 text-sm">
+            {conferences.map((c, i) => (
+              <tr key={i} id={`conf-${i}`} className="hover:bg-blue-50/50 transition-colors group scroll-mt-20">
+                <td className="p-5 font-black text-slate-300 group-hover:text-blue-600 transition-colors">{i + 1}</td>
+                <td className="p-5 font-black text-slate-800 uppercase tracking-tighter">{c.nom_equipement}</td>
+                <td className="p-5 text-slate-500 italic text-xs">{c.lib_off}, {c.ville}</td>
+                <td className="p-5 text-slate-500 font-medium">{c.gestionnaire}</td>
+                <td className="p-5">
+                  <div className="flex items-center justify-center gap-2">
+                    {c.site_web && (
+                      <a 
+                        href={c.site_web.startsWith('http') ? c.site_web : `http://${c.site_web}`} 
+                        target="_blank" 
+                        className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                      >
+                        <Globe size={18} />
+                      </a>
+                    )}
+                    <button 
+                      onClick={() => focusOnPoint(c.geo_point_2d.lat, c.geo_point_2d.lon)}
+                      className="p-2 bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                    >
+                      <MapPin size={18} />
+                    </button>
                   </div>
-                </Popup>
-              </Marker>
-            )
-          ))}
-        </MapContainer>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <div className="mb-6 flex items-center justify-between border-b-4 border-slate-900 pb-2">
-        <h2 className="text-2xl font-black flex items-center gap-2 text-slate-900 italic uppercase">
-          <Search size={24} /> Résultats ({filteredList.length})
-        </h2>
-      </div>
-
-      {/* LISTE STYLE GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-        {filteredList.map((item, i) => (
-          <div 
-            key={i} 
-            id={item.id}
-            className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all scroll-mt-24 group"
-          >
-            <div className="flex items-start justify-between mb-4">
-                <span className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-white text-xs shadow-inner" style={{ backgroundColor: colors[item.categorie] }}>
-                    {i + 1}
-                </span>
-                <span className="px-2 py-1 bg-slate-100 rounded text-[9px] font-black text-slate-500 uppercase tracking-tighter">
-                    {labels[item.categorie]}
-                </span>
+      {/* --- VERSION MOBILE : CARTES --- */}
+      <div className="md:hidden space-y-4 mb-10">
+        {conferences.map((c, i) => (
+          <div key={i} id={`conf-${i}`} className="bg-white rounded-[2rem] p-6 shadow-md border border-slate-100 relative overflow-hidden scroll-mt-24">
+            <div className="absolute top-0 right-0 p-4 font-black text-slate-100 text-4xl -z-0">
+               {i + 1}
             </div>
+            
+            <div className="relative z-10">
+                <h3 className="text-lg font-black text-slate-900 leading-tight mb-4 uppercase tracking-tighter pr-8">
+                  {c.nom_equipement}
+                </h3>
 
-            <h3 className="font-black text-lg text-slate-900 leading-tight mb-2 group-hover:text-blue-700 transition-colors uppercase tracking-tighter">
-              {item.nom}
-            </h3>
+                <div className="space-y-3 text-xs mb-6">
+                  <div className="flex items-start gap-3 text-slate-600">
+                    <MapPin size={16} className="text-blue-600 shrink-0 mt-0.5" />
+                    <span className="font-medium italic">{c.lib_off}, {c.ville}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <Building2 size={16} className="text-slate-300 shrink-0" />
+                    <span className="truncate font-bold text-slate-400 uppercase tracking-widest text-[9px]">{c.gestionnaire}</span>
+                  </div>
 
-            <div className="space-y-2 text-sm">
-                {item.adresse && (
-                    <p className="text-slate-500 flex items-start gap-2 italic">
-                        <MapPin size={14} className="text-slate-300 mt-1 flex-shrink-0" />
-                        <span>{item.adresse}<br/>{item.commune}</span>
-                    </p>
-                )}
-                {item.telephone && (
-                    <a href={`tel:${item.telephone}`} className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 transition-colors bg-blue-50 px-3 py-1.5 rounded-lg text-xs mt-2">
-                        <Phone size={12} /> {item.telephone}
+                  {c.telephone && (
+                    <a href={`tel:${c.telephone}`} className="flex items-center gap-3 text-blue-600 bg-blue-50 w-fit px-3 py-1.5 rounded-lg font-black">
+                      <Phone size={14} />
+                      <span className="font-mono">{c.telephone}</span>
                     </a>
-                )}
-            </div>
+                  )}
+                </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-50 flex justify-end">
-                <button 
-                  onClick={() => {
-                    if(item.geo) {
-                        mapInstance.setView([item.geo.lat, item.geo.lon], 16);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                  }}
-                  className="text-[10px] font-black text-slate-400 hover:text-blue-600 flex items-center gap-1 uppercase tracking-widest transition-colors"
-                >
-                    Localiser sur la carte <ExternalLink size={10} />
-                </button>
+                <div className="flex gap-2">
+                    {c.site_web && (
+                    <a 
+                        href={c.site_web.startsWith('http') ? c.site_web : `http://${c.site_web}`}
+                        target="_blank"
+                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-blue-100"
+                    >
+                        <Globe size={16} /> Site Web
+                    </a>
+                    )}
+                    <button 
+                        onClick={() => focusOnPoint(c.geo_point_2d.lat, c.geo_point_2d.lon)}
+                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-slate-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-slate-100"
+                    >
+                        <MapPin size={16} /> Localiser
+                    </button>
+                </div>
             </div>
           </div>
         ))}
       </div>
+
+      <style jsx global>{`
+        .custom-div-icon { background: none !important; border: none !important; }
+        .leaflet-popup-content-wrapper { border-radius: 1.5rem; border: 3px solid #2563eb; padding: 5px; }
+        .leaflet-popup-tip { background: #2563eb; }
+      `}</style>
     </div>
   );
 }
