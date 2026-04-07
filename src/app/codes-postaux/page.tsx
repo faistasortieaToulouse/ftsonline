@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Map as MapIcon, Hash, navigation } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 interface GeoPoint { lat: number; lon: number }
@@ -17,13 +17,14 @@ interface CodePostal {
   numero?: number;
 }
 
-const COLORS = ["#2563eb","#16a34a","#dc2626","#7c3aed","#ea580c","#0891b2"];
+const COLORS = ["#2563eb", "#16a34a", "#dc2626", "#7c3aed", "#ea580c", "#0891b2"];
 
 export default function CodesPostauxPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
   const [codes, setCodes] = useState<CodePostal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   // 1. Fetch et Traitement des données
   useEffect(() => {
@@ -31,7 +32,7 @@ export default function CodesPostauxPage() {
       .then(res => res.json())
       .then(data => {
         if (!Array.isArray(data)) return;
-        const sorted = data.sort((a,b) => a.code_postal.localeCompare(b.code_postal,"fr",{numeric:true}));
+        const sorted = data.sort((a, b) => a.code_postal.localeCompare(b.code_postal, "fr", { numeric: true }));
 
         let num = 0;
         const processed: CodePostal[] = sorted.map(code => {
@@ -50,26 +51,29 @@ export default function CodesPostauxPage() {
       });
   }, []);
 
-  // 2. Initialisation de Leaflet (Méthode OTAN)
+  // 2. Initialisation de Leaflet avec FIX de rendu
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || codes.length === 0) return;
 
-    let L: any;
-
     const initMap = async () => {
-      L = (await import("leaflet")).default;
+      const L = (await import("leaflet")).default;
 
       if (mapInstance.current) return;
 
-      // Création de la carte
-      const map = L.map(mapRef.current).setView([43.6045, 1.444], 11);
+      const map = L.map(mapRef.current!).setView([43.6045, 1.444], 11);
       mapInstance.current = map;
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; OpenStreetMap'
       }).addTo(map);
 
-      // Ajout des données (Marqueurs et Polygones)
+      // FIX : Forcer le calcul de la taille pour éviter les zones grises
+      setTimeout(() => {
+        map.invalidateSize();
+        setIsMapReady(true);
+      }, 500);
+
+      // Ajout des données
       codes.forEach((code, index) => {
         const color = COLORS[index % COLORS.length];
         const numero = code.numero ?? index + 1;
@@ -78,33 +82,41 @@ export default function CodesPostauxPage() {
         if (code.geo_point_2d) {
           const customIcon = L.divIcon({
             className: 'custom-div-icon',
-            html: `<div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${numero}</div>`,
-            iconSize: [28, 28],
-            iconAnchor: [14, 14]
+            html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 11px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">${numero}</div>`,
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
           });
 
           L.marker([code.geo_point_2d.lat, code.geo_point_2d.lon], { icon: customIcon })
             .addTo(map)
-            .bindPopup(`<strong>#${numero} – ${code.code_postal}</strong><br/>${code.communes.join(", ")}`);
+            .bindPopup(`
+              <div style="font-family: sans-serif; text-align: center; padding: 5px;">
+                <div style="color: ${color}; font-weight: 900; font-size: 14px;">#${numero} – ${code.code_postal}</div>
+                <div style="font-size: 11px; color: #64748b; margin: 4px 0 8px;">${code.communes.join(", ")}</div>
+                <a href="#postal-${code.code_postal}" style="display: inline-block; background: #1e293b; color: white; padding: 5px 10px; border-radius: 6px; text-decoration: none; font-size: 10px; font-weight: bold; text-transform: uppercase;">Voir la liste ↓</a>
+              </div>
+            `);
         }
 
         // B. Ajout du Polygone (GeoShape)
         if (code.geo_shape?.geometry?.coordinates) {
           const type = code.geo_shape.geometry.type;
           const coords = code.geo_shape.geometry.coordinates;
-
-          // Fonction pour inverser [lng, lat] en [lat, lng] pour Leaflet
           const formatCoords = (c: any[]) => c.map(pt => [pt[1], pt[0]]);
 
+          const polyOptions = {
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.15,
+            weight: 3,
+            dashArray: '5, 10'
+          };
+
           if (type === "Polygon") {
-            L.polygon(formatCoords(coords[0]), {
-              color: color, fillOpacity: 0.2, weight: 2
-            }).addTo(map);
+            L.polygon(formatCoords(coords[0]), polyOptions).addTo(map);
           } else if (type === "MultiPolygon") {
             coords.forEach((poly: any) => {
-              L.polygon(formatCoords(poly[0]), {
-                color: color, fillOpacity: 0.2, weight: 2
-              }).addTo(map);
+              L.polygon(formatCoords(poly[0]), polyOptions).addTo(map);
             });
           }
         }
@@ -113,7 +125,6 @@ export default function CodesPostauxPage() {
 
     initMap();
 
-    // NETTOYAGE : Détruit la carte pour éviter le bug "Map container already initialized"
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -122,51 +133,104 @@ export default function CodesPostauxPage() {
     };
   }, [codes]);
 
+  const focusOnCode = (code: CodePostal) => {
+    if (mapInstance.current && code.geo_point_2d) {
+      mapInstance.current.flyTo([code.geo_point_2d.lat, code.geo_point_2d.lon], 13, { duration: 1.5 });
+      if (window.innerWidth < 1024) {
+        window.scrollTo({ top: 100, behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
-    <div className="p-4 max-w-7xl mx-auto min-h-screen bg-slate-50">
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 font-bold group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+    <div className="flex flex-col h-screen p-4 gap-4 bg-slate-50 font-sans text-slate-900">
+      
+      <nav className="flex justify-between items-center px-1">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-black uppercase text-xs tracking-widest transition-all group">
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+          RETOUR ACCUEIL
         </Link>
+        <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+          <MapIcon size={12} /> Toulouse Métropole
+        </div>
       </nav>
 
-      <h1 className="text-3xl font-extrabold mb-4 text-blue-700">
-        📮 Codes postaux de Toulouse Métropole ({codes.length > 0 ? codes[codes.length-1].numero : "..."})
-      </h1>
+      <header className="flex items-center gap-4 bg-white p-5 rounded-[2rem] shadow-sm border border-slate-200">
+        <div className="bg-blue-600 p-3 rounded-2xl text-white shadow-lg shadow-blue-200">
+          <Hash size={28} />
+        </div>
+        <div>
+          <h1 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tighter italic leading-none">
+            Secteurs <span className="text-blue-600">Postaux</span>
+          </h1>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Découpage géographique des communes</p>
+        </div>
+      </header>
 
-      {/* Conteneur de la Carte */}
-      <div className="relative mb-8 border-4 border-white shadow-xl rounded-2xl overflow-hidden h-[70vh] bg-slate-200">
-        <div ref={mapRef} className="h-full w-full z-0" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 overflow-hidden min-h-0">
         
-        {loading && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-100/60 backdrop-blur-sm">
-            <Loader2 className="animate-spin text-blue-600" size={48} />
-          </div>
-        )}
+        {/* LISTE DES CODES */}
+        <div className="lg:col-span-4 bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-slate-900 sticky top-0 z-20 text-white">
+              <tr>
+                <th className="p-4 text-[10px] uppercase font-black tracking-widest w-16 text-center">N°</th>
+                <th className="p-4 text-[10px] uppercase font-black tracking-widest">Code</th>
+                <th className="p-4 text-[10px] uppercase font-black tracking-widest">Communes</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {codes.map((code, index) => (
+                <tr
+                  key={code.id}
+                  id={`postal-${code.code_postal}`}
+                  onClick={() => focusOnCode(code)}
+                  className="hover:bg-blue-50/50 cursor-pointer transition-all group scroll-mt-24"
+                >
+                  <td className="p-4 text-center">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-400 font-black text-[10px] group-hover:bg-blue-600 group-hover:text-white transition-all border border-slate-200">
+                      {code.numero}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="font-black text-blue-700 text-sm group-hover:scale-110 origin-left transition-transform">
+                      {code.code_postal}
+                    </div>
+                  </td>
+                  <td className="p-4 text-xs font-bold text-slate-500 italic leading-tight">
+                    {code.communes.join(", ")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* CARTE */}
+        <div className="lg:col-span-8 bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white relative z-0">
+          {loading && (
+            <div className="absolute inset-0 z-50 bg-slate-50/90 backdrop-blur-sm flex flex-col items-center justify-center">
+              <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+              <p className="text-slate-900 font-black text-xs uppercase tracking-widest italic animate-pulse">Cartographie des secteurs...</p>
+            </div>
+          )}
+
+          <div 
+            ref={mapRef} 
+            className="h-full w-full"
+          />
+        </div>
       </div>
 
-      {/* Tableau des données */}
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead className="bg-slate-50">
-            <tr>
-              <th className="p-4 font-bold border-b">#</th>
-              <th className="p-4 font-bold border-b">Code postal</th>
-              <th className="p-4 font-bold border-b">Communes</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {codes.map((code) => (
-              <tr key={code.id} className="hover:bg-slate-50 transition-colors">
-                <td className="p-4 font-black text-blue-600">{code.numero}</td>
-                <td className="p-4 font-bold text-slate-700">{code.code_postal}</td>
-                <td className="p-4 text-slate-600">{code.communes.join(", ")}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+        .leaflet-popup-content-wrapper { border-radius: 1.2rem; border: 3px solid #1e293b; overflow: hidden; }
+        .leaflet-popup-tip { background: #1e293b; }
+        .custom-div-icon { background: none !important; border: none !important; }
+      `}</style>
     </div>
   );
 }
