@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, MapPin } from "lucide-react";
 
 interface Colonie {
   grande_entite: string;
@@ -17,13 +17,19 @@ interface Colonie {
 export default function ColonieFrancePage() {
   const [colonies, setColonies] = useState<Colonie[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // --- REFS pour la Méthode OTAN ---
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Récupération des données
+  // Utilitaire pour créer des IDs d'ancres valides
+  const slugify = (text: string) => 
+    text.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '');
+
+  // 1. Récupération et tri des données
   useEffect(() => {
     fetch("/api/coloniefrance")
       .then(async (res) => {
@@ -45,28 +51,23 @@ export default function ColonieFrancePage() {
       });
   }, []);
 
-  // 2. Initialisation MANUELLE de Leaflet
+  // 2. Initialisation de Leaflet
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current) return;
 
     const initMap = async () => {
       const L = (await import("leaflet")).default;
-      
       if (mapInstance.current) return;
 
-      // Création de la carte (Centre monde par défaut)
-      mapInstance.current = L.map(mapRef.current).setView([20, 0], 3);
-
+      mapInstance.current = L.map(mapRef.current!).setView([20, 0], 2);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
 
       setIsMapReady(true);
     };
-
     initMap();
 
-    // NETTOYAGE : Destruction de l'instance pour éviter le Runtime Error
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -75,110 +76,127 @@ export default function ColonieFrancePage() {
     };
   }, []);
 
-  // 3. Mise à jour des Marqueurs avec LIEN ANCRE
+  // 3. Mise à jour des Marqueurs avec ANCRES
   useEffect(() => {
     if (!isMapReady || !mapInstance.current || colonies.length === 0) return;
 
     const updateMarkers = async () => {
       const L = (await import("leaflet")).default;
 
-      // Nettoyage des marqueurs existants
+      // Nettoyage
       mapInstance.current.eachLayer((layer: any) => {
-        if (layer instanceof L.Marker) {
-          mapInstance.current.removeLayer(layer);
-        }
+        if (layer instanceof L.Marker) mapInstance.current.removeLayer(layer);
       });
 
-      // Recalcul du centre et ajustement de la vue
-      const avgLat = colonies.reduce((sum, c) => sum + c.lat, 0) / colonies.length;
-      const avgLng = colonies.reduce((sum, c) => sum + c.lng, 0) / colonies.length;
-      mapInstance.current.panTo([avgLat, avgLng]);
-
-      // Ajout des nouveaux marqueurs
       colonies.forEach((c, index) => {
         const customIcon = L.divIcon({
-          className: "custom-div-icon",
+          className: "custom-marker",
           html: `<div style="background-color: #1e3a8a; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${index + 1}</div>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12]
         });
 
-        // Génération d'un slug pour le lien de l'infobulle
-        const slug = c.territoire.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-        const detailUrl = `/colonies-france/${c.id || slug}`;
+        // LIEN D'ANCRE VERS LE BAS DE LA PAGE
+        const anchorId = `#territoire-${slugify(c.territoire)}`;
 
         L.marker([c.lat, c.lng], { icon: customIcon })
           .addTo(mapInstance.current)
           .bindPopup(`
-            <div style="color: black; padding: 5px; min-width: 180px; font-family: sans-serif;">
-              <strong style="font-size: 14px; display: block; margin-bottom: 2px;">#${index + 1} - ${c.territoire}</strong>
-              <span style="color: #b91c1c; font-size: 11px; font-weight: bold;">${c.periode}</span><br />
-              <span style="color: #666; font-size: 10px; text-transform: uppercase; display: block; margin-bottom: 10px;">${c.grande_entite}</span>
-              
-              <a href="${detailUrl}" 
-                 style="display: block; background-color: #4f46e5; color: white; text-align: center; padding: 6px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 10px;"
+            <div style="color: black; padding: 5px; min-width: 160px; font-family: sans-serif;">
+              <strong style="font-size: 13px; display: block; margin-bottom: 2px;">${c.territoire}</strong>
+              <span style="color: #b91c1c; font-size: 11px; font-weight: bold;">${c.periode}</span>
+              <span style="color: #64748b; font-size: 9px; text-transform: uppercase; display: block; margin-bottom: 8px;">${c.grande_entite}</span>
+              <a href="${anchorId}" 
+                 style="display: block; background-color: #1e3a8a; color: white; text-align: center; padding: 6px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 10px; text-transform: uppercase;"
               >
-                Fiche territoire →
+                Détails historiques ↓
               </a>
             </div>
           `);
       });
     };
-
     updateMarkers();
   }, [isMapReady, colonies]);
 
   const entites = Array.from(new Set(colonies.map(c => c.grande_entite)));
 
   return (
-    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900 scroll-smooth">
+      <style jsx global>{`
+        html { scroll-behavior: smooth; }
+        .custom-marker { background: none !important; border: none !important; }
+      `}</style>
+
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group uppercase text-xs tracking-widest">
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour
         </Link>
       </nav>
 
-      <header className="mb-8 border-b pb-6">
-        <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3">
-          ⚜️ Anciennes Colonies de la France
+      <header className="mb-8 border-b border-slate-200 pb-8">
+        <h1 className="text-4xl md:text-6xl font-black text-blue-950 tracking-tighter uppercase italic">
+          L'Empire <span className="text-blue-600">Colonial</span> Français
         </h1>
-        <p className="text-gray-600 mt-2 italic">Chronologie et géographie du premier empire colonial</p>
+        <p className="text-slate-500 mt-2 font-bold uppercase text-xs tracking-[0.3em]">
+          Cartographie historique et chronologie des territoires (1534 - 1980)
+        </p>
       </header>
 
-      {/* --- Zone de la Carte --- */}
-      <div className="mb-8 border-4 border-white shadow-xl rounded-3xl bg-slate-200 overflow-hidden h-[65vh] relative">
-        <div ref={mapRef} className="h-full w-full z-0" />
+      {/* --- CARTE --- */}
+      <div className="mb-12 border-4 border-white shadow-2xl rounded-[2.5rem] bg-slate-200 overflow-hidden h-[50vh] md:h-[65vh] relative z-0">
+        <div ref={mapRef} className="h-full w-full" />
         
         {(loading || !isMapReady) && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-100/80 backdrop-blur-sm">
-            <Loader2 className="animate-spin text-blue-600" size={32} />
-            <p className="font-bold text-blue-600 text-lg">Initialisation de la carte coloniale...</p>
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-100/90 backdrop-blur-md">
+            <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+            <p className="font-black text-blue-900 text-xs uppercase tracking-widest animate-pulse">
+              Déploiement des archives géographiques...
+            </p>
           </div>
         )}
       </div>
 
-      {/* --- Liste des Territoires --- */}
-      <div className="space-y-12">
+      {/* --- LISTE DES TERRITOIRES --- */}
+      <div className="space-y-16">
         {entites.map((entite) => (
-          <section key={entite} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h2 className="text-2xl font-black mb-6 text-blue-900 border-l-4 border-blue-600 pl-4">
+          <section key={entite} className="relative">
+            <h2 className="text-3xl font-black mb-8 text-blue-950 flex items-center gap-4 uppercase tracking-tighter italic">
+              <span className="h-8 w-2 bg-blue-600 rounded-full"></span>
               {entite}
             </h2>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {colonies
                 .filter(c => c.grande_entite === entite)
                 .map((c) => {
                   const globalIndex = colonies.indexOf(c);
                   return (
-                    <div key={`${c.territoire}-${globalIndex}`} className="group p-4 bg-slate-50 rounded-xl hover:bg-blue-900 transition-all duration-300 flex gap-4">
-                      <span className="text-3xl font-black text-slate-300 group-hover:text-blue-400/50 transition-colors shrink-0">
-                        {(globalIndex + 1).toString().padStart(2, '0')}
-                      </span>
+                    <div 
+                      key={`${c.territoire}-${globalIndex}`} 
+                      id={`territoire-${slugify(c.territoire)}`} // ID POUR L'ANCRE
+                      className="group p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:border-blue-600 transition-all duration-300 flex flex-col scroll-mt-10"
+                    >
+                      <div className="flex justify-between items-start mb-6">
+                        <span className="text-4xl font-black text-slate-100 group-hover:text-blue-50 transition-colors">
+                          {(globalIndex + 1).toString().padStart(2, '0')}
+                        </span>
+                        <MapPin size={20} className="text-slate-200 group-hover:text-blue-600 transition-colors" />
+                      </div>
+
                       <div>
-                        <h3 className="font-bold text-slate-900 group-hover:text-white transition-colors">{c.territoire}</h3>
-                        <div className="text-xs font-bold text-red-600 group-hover:text-red-300 mt-1">
+                        <h3 className="font-black text-xl text-slate-900 group-hover:text-blue-700 transition-colors uppercase tracking-tight">
+                          {c.territoire}
+                        </h3>
+                        <div className="inline-block px-3 py-1 bg-red-50 text-red-700 rounded-full text-[10px] font-black mt-2 uppercase tracking-wider">
                           {c.periode}
+                        </div>
+                      </div>
+
+                      <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        <span>Fiche archive</span>
+                        <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+                          →
                         </div>
                       </div>
                     </div>
@@ -188,6 +206,12 @@ export default function ColonieFrancePage() {
           </section>
         ))}
       </div>
+
+      <footer className="mt-24 py-12 border-t border-slate-200 text-center">
+        <p className="text-slate-400 font-black text-[10px] uppercase tracking-[0.5em]">
+          FTS Online Archive — Données Historiques 2026
+        </p>
+      </footer>
     </div>
   );
 }
