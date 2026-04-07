@@ -17,7 +17,6 @@ export default function VillesPIBPage() {
     fetch("/api/villespib")
       .then(res => res.json())
       .then(data => {
-        // CORRECTION ICI : On accède à la clé du JSON
         if (data && data.classement_pib_france) {
           setVilles(data.classement_pib_france);
         } else {
@@ -33,14 +32,11 @@ export default function VillesPIBPage() {
 
   // 2. Initialisation de la carte
   useEffect(() => {
-    // On attend que le chargement soit fini, que la div soit là et qu'on ait des villes
     if (loading || !mapRef.current || mapInstance.current || villes.length === 0) return;
 
     const initMap = async () => {
-      // Import dynamique de Leaflet pour éviter l'erreur SSR
       const L = (await import('leaflet')).default;
 
-      // Création de l'instance
       mapInstance.current = L.map(mapRef.current).setView([46.6, 2.2], 6);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -58,11 +54,22 @@ export default function VillesPIBPage() {
             iconAnchor: [14, 14]
           });
 
+          // Création du slug pour le lien (ex: "paris", "lyon")
+          const slug = v.ville.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+          const detailUrl = `/villes-economie/${v.id || slug}`;
+
           const marker = L.marker([v.lat, v.lng], { icon: customIcon });
           marker.bindPopup(`
-            <div style="min-width:150px">
-              <b style="font-size:14px">${v.ville}</b><br>
-              <span style="color:#16a34a; font-weight:bold">PIB: ${v.pib_mds_euros} Md€</span>
+            <div style="min-width:160px; font-family:sans-serif; padding:5px">
+              <b style="font-size:14px; display:block; margin-bottom:2px">${v.ville}</b>
+              <span style="color:#16a34a; font-weight:bold; font-size:12px; display:block; margin-bottom:10px">
+                PIB: ${v.pib_mds_euros} Md€
+              </span>
+              <a href="${detailUrl}" 
+                 style="display:block; background-color:#10b981; color:white; text-align:center; padding:6px; border-radius:6px; text-decoration:none; font-weight:bold; font-size:10px;"
+              >
+                Analyse complète →
+              </a>
             </div>
           `);
           marker.addTo(markersGroup);
@@ -71,19 +78,16 @@ export default function VillesPIBPage() {
 
       markersGroup.addTo(mapInstance.current);
       
-      // --- AJOUTE CES LIGNES JUSTE ICI ---
       setTimeout(() => {
         if (mapInstance.current) {
           mapInstance.current.invalidateSize();
-          setIsReady(true); // C'est CA qui fait disparaître le chargement
+          setIsReady(true);
         }
       }, 500);
             
-      // Ajuster la vue si des villes sont présentes
       if (villes.length > 0) {
         mapInstance.current.fitBounds(markersGroup.getBounds(), { padding: [50, 50] });
       }
-      
     };
 
     initMap();
@@ -98,8 +102,9 @@ export default function VillesPIBPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
-      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-8 font-medium">
-        <ArrowLeft size={18} /> Retour à l'accueil
+      <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-8 font-medium group">
+        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
+        Retour à l'accueil
       </Link>
 
       <header className="mb-10">
@@ -112,16 +117,14 @@ export default function VillesPIBPage() {
         </div>
       </header>
 
-      {/* --- CARTE LEAFLET - STRUCTURE CORRIGÉE --- */}
+      {/* --- CARTE LEAFLET --- */}
       <div className="mb-8 relative border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh]">
-        {/* La div de la carte doit être seule */}
         <div
           ref={mapRef}
           className="w-full h-full"
           style={{ zIndex: 0 }}
         />
 
-        {/* L'overlay de chargement doit être un FRÈRE de la div mapRef, pas un enfant */}
         {!isReady && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10">
             <Loader2 className="animate-spin h-8 w-8 text-blue-600 mb-2" />
@@ -134,17 +137,20 @@ export default function VillesPIBPage() {
 
       {/* Grille des résultats */}
       {loading ? (
-        <div className="text-center py-20">Chargement des données...</div>
+        <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+          <Loader2 className="animate-spin h-10 w-10 mb-4" />
+          <p className="italic">Récupération des indicateurs économiques...</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {villes.map((v, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col">
+            <div key={i} className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col group">
               <div className="flex justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="w-7 h-7 bg-blue-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center">
                     {v.rang}
                   </span>
-                  <h3 className="font-bold text-slate-800">{v.ville}</h3>
+                  <h3 className="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{v.ville}</h3>
                 </div>
                 <BarChart3 size={18} className="text-blue-500" />
               </div>
@@ -152,8 +158,8 @@ export default function VillesPIBPage() {
                 <div className="text-2xl font-black text-emerald-600">
                   {v.pib_mds_euros} <span className="text-xs uppercase">Md €</span>
                 </div>
-                <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase">Secteurs :</p>
-                <p className="text-xs text-slate-600 line-clamp-2">{v.secteurs_cles}</p>
+                <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter">Secteurs clés :</p>
+                <p className="text-xs text-slate-600 line-clamp-2 italic">{v.secteurs_cles}</p>
               </div>
             </div>
           ))}
