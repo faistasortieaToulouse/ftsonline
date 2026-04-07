@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Musee } from '../api/museepo/route';
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search, Loader2 } from "lucide-center";
+import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp, MapPin, Tag, Search, Loader2 } from "lucide-react";
 import { Search as SearchIcon } from "lucide-react";
 
 // CENTRE DES PYRÉNÉES-ORIENTALES (Perpignan environ)
