@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Globe2, Anchor, MapPin, ChevronRight, Info } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
 interface Territoire {
   nom: string;
@@ -17,9 +18,9 @@ export default function AssociesEuropePage() {
   const [territoires, setTerritoires] = useState<Territoire[]>([]);
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
+  const markersRef = useRef<Map<string, any>>(new Map());
   const [isReady, setIsReady] = useState(false);
 
-  // 1. Charger les données
   useEffect(() => {
     fetch("/api/associeseurope")
       .then(async (res) => {
@@ -38,29 +39,28 @@ export default function AssociesEuropePage() {
       .catch(console.error);
   }, []);
 
-  // 2. Initialisation de la carte (Méthode OTAN robuste)
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current) return;
 
     const initMap = async () => {
       const L = (await import('leaflet')).default;
-      await import('leaflet/dist/leaflet.css');
 
-      if (mapInstance.current) return; // Sécurité anti-double-initialisation
+      if (mapInstance.current) return;
 
-      // Création de l'instance sur la div ref
-      mapInstance.current = L.map(mapRef.current).setView([25, 10], 3);
+      mapInstance.current = L.map(mapRef.current!).setView([15, 10], 2);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
 
-      setIsReady(true);
+      setTimeout(() => {
+        mapInstance.current.invalidateSize();
+        setIsReady(true);
+      }, 500);
     };
 
     initMap();
 
-    // NETTOYAGE CRUCIAL au démontage
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -69,7 +69,6 @@ export default function AssociesEuropePage() {
     };
   }, []);
 
-  // 3. Ajout des marqueurs une fois la map et les données prêtes
   useEffect(() => {
     if (!isReady || !mapInstance.current || territoires.length === 0) return;
 
@@ -78,98 +77,139 @@ export default function AssociesEuropePage() {
 
       territoires.forEach((t, index) => {
         const customIcon = L.divIcon({
-          className: 'custom-icon',
+          className: 'custom-div-icon',
           html: `
             <div style="
               background-color: #1e3a8a;
               color: white;
-              width: 24px;
-              height: 24px;
-              border-radius: 50%;
+              width: 28px;
+              height: 28px;
+              border-radius: 50% 50% 50% 0;
+              transform: rotate(-45deg);
               border: 2px solid white;
               display: flex;
               align-items: center;
               justify-content: center;
               font-size: 10px;
-              font-weight: bold;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              font-weight: 900;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             ">
-              ${index + 1}
+              <span style="transform: rotate(45deg);">${index + 1}</span>
             </div>
           `,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
+          iconSize: [28, 28],
+          iconAnchor: [14, 28]
         });
 
         const marker = L.marker([t.lat, t.lng], { icon: customIcon });
         marker.bindPopup(`
-          <div style="color: black; padding: 5px; font-family: sans-serif; max-width: 200px;">
-            <strong style="font-size: 14px;">#${index + 1} - ${t.nom}</strong><br />
-            <span style="color: #1e3a8a; fontSize: 10px; text-transform: uppercase; font-weight: bold;">${t.statut}</span>
-            <p style="margin-top: 8px; font-size: 12px; line-height: 1.4;">${t.description}</p>
+          <div style="font-family: sans-serif; padding: 5px; min-width: 180px;">
+            <div style="font-[900] text-[10px] color: #1e3a8a; text-transform: uppercase; letter-spacing: 1px;">Territoire Associé</div>
+            <strong style="font-size: 16px; color: #0f172a; display: block; margin: 4px 0;">${t.nom}</strong>
+            <div style="background: #eff6ff; color: #1d4ed8; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; display: inline-block;">
+              ${t.statut}
+            </div>
+            <p style="margin-top: 10px; font-size: 12px; color: #475569; line-height: 1.5;">${t.description}</p>
           </div>
         `);
         marker.addTo(mapInstance.current);
+        markersRef.current.set(t.nom, marker);
       });
     };
 
     updateMarkers();
   }, [isReady, territoires]);
 
+  const jumpToLocation = (t: Territoire) => {
+    const marker = markersRef.current.get(t.nom);
+    if (mapInstance.current && marker) {
+      mapInstance.current.flyTo([t.lat, t.lng], 5, { duration: 2 });
+      marker.openPopup();
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
-      <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-900">
+      <nav className="mb-8">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-800 hover:text-blue-900 font-black uppercase text-[10px] tracking-widest transition-all group">
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+          Portail International
         </Link>
       </nav>
 
-      <header className="mb-8 border-b pb-6">
-        <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3">
-          🇪🇺 États et Territoires Associés à l'UE
-        </h1>
-        <p className="text-gray-600 mt-2 italic">Analyse des statuts fiscaux et douaniers des dépendances européennes</p>
+      <header className="mb-10 bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-slate-200 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-50 rounded-full -mr-48 -mt-48 -z-0"></div>
+        <div className="relative z-10 max-w-3xl">
+          <h1 className="text-4xl md:text-6xl font-black text-blue-900 uppercase tracking-tighter italic leading-none">
+            Régions & <span className="text-blue-600 italic underline decoration-blue-200 underline-offset-8">Associés</span>
+          </h1>
+          <p className="text-slate-400 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mt-6 flex items-center gap-3">
+            <Anchor size={18} className="text-blue-500" /> Analyse des Outre-mer et Dépendances Européennes
+          </p>
+        </div>
       </header>
 
-      {/* ZONE CARTE (DIV REF) */}
-      <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden relative" style={{ height: "60vh", width: "100%" }}>
-        <div ref={mapRef} className="h-full w-full z-0" />
+      {/* CARTE */}
+      <div className="relative w-full mb-16 border-4 border-white shadow-2xl rounded-[3rem] bg-slate-200 overflow-hidden z-0" style={{ height: "65vh" }}>
+        <div ref={mapRef} className="h-full w-full" />
         {!isReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-100 z-10">
-             <p className="animate-pulse text-blue-900 font-bold">Initialisation de la carte...</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/90 z-10 backdrop-blur-md">
+            <Loader2 className="animate-spin text-blue-900 mb-4" size={48} />
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 animate-pulse">Scanning Global Coordinates...</p>
           </div>
         )}
       </div>
 
-      <div className="space-y-12">
+      {/* SECTIONS PAR CONTINENT */}
+      <div className="space-y-20">
         {["Europe", "Afrique", "Amérique", "Asie", "Antarctique", "Océanie"].map((continent) => {
           const list = territoires.filter(t => t.continent === continent);
           if (list.length === 0) return null;
 
           return (
-            <section key={continent} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-              <h2 className="text-2xl font-black mb-6 text-blue-900 flex items-center justify-between border-l-4 border-blue-600 pl-4">
-                <span>{continent}</span>
-                <span className="text-sm font-normal bg-blue-50 text-blue-600 px-3 py-1 rounded-full">{list.length} territoires</span>
-              </h2>
+            <section key={continent} className="relative">
+              <div className="flex items-center gap-4 mb-10">
+                <div className="bg-blue-900 text-white p-3 rounded-2xl shadow-lg">
+                  <Globe2 size={24} />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black uppercase tracking-tighter italic text-slate-900">{continent}</h2>
+                  <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{list.length} Localisations enregistrées</p>
+                </div>
+              </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {list.map((t) => {
                   const globalIndex = territoires.indexOf(t);
                   return (
-                    <div key={t.nom} className="group p-4 bg-slate-50 rounded-xl hover:bg-blue-900 transition-all duration-300 flex gap-4 border border-slate-100 hover:border-blue-700">
-                      <span className="text-3xl font-black text-slate-300 group-hover:text-blue-400/50 transition-colors">
-                        {(globalIndex + 1).toString().padStart(2, '0')}
-                      </span>
-                      <div>
-                        <h3 className="font-bold text-slate-900 group-hover:text-white transition-colors">{t.nom}</h3>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-blue-600 group-hover:text-blue-200 mt-1">
-                          {t.statut}
+                    <div 
+                      key={t.nom} 
+                      onClick={() => jumpToLocation(t)}
+                      className="group cursor-pointer bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-500 transition-all duration-500 relative flex flex-col h-full"
+                    >
+                      <div className="flex justify-between items-start mb-6">
+                         <span className="bg-slate-100 text-slate-400 group-hover:bg-blue-900 group-hover:text-white px-4 py-1 rounded-xl font-black text-[10px] transition-all">
+                            {(globalIndex + 1).toString().padStart(2, '0')}
+                         </span>
+                         <div className="text-blue-200 group-hover:text-blue-500 transition-colors">
+                            <MapPin size={20} />
+                         </div>
+                      </div>
+
+                      <div className="flex-grow">
+                        <h3 className="font-black text-slate-900 text-xl uppercase tracking-tighter mb-2 group-hover:text-blue-800 transition-colors">{t.nom}</h3>
+                        <div className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.1em] text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-4">
+                          <Info size={10} /> {t.statut}
                         </div>
-                        <p className="text-sm text-gray-600 group-hover:text-blue-100 mt-2 leading-snug">
-                          {t.description}
+                        <p className="text-xs font-medium text-slate-500 leading-relaxed italic group-hover:text-slate-700 transition-colors">
+                          "{t.description}"
                         </p>
+                      </div>
+
+                      <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-blue-600">
+                        <span>Voir sur la carte</span>
+                        <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
                   );
@@ -179,6 +219,16 @@ export default function AssociesEuropePage() {
           );
         })}
       </div>
+
+      <footer className="mt-24 p-12 bg-slate-900 rounded-[3rem] text-center">
+         <p className="text-slate-500 font-black text-[10px] uppercase tracking-[0.5em]">Observatoire de la territorialité européenne — 2026</p>
+      </footer>
+
+      <style jsx global>{`
+        .custom-div-icon { background: none !important; border: none !important; }
+        .leaflet-popup-content-wrapper { border-radius: 2rem; border: 4px solid #1e3a8a; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .leaflet-popup-tip { background: #1e3a8a; }
+      `}</style>
     </div>
   );
 }
