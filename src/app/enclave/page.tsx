@@ -53,11 +53,20 @@ export default function EnclavesPage() {
           });
 
           const marker = L.marker([e.lat, e.lng], { icon: customIcon });
+          
+          // Construction de l'URL (adapte le chemin selon ta structure de dossiers)
+          const detailUrl = `/enclaves/${e.id || i}`;
+
           marker.bindPopup(`
-            <div style="font-family:sans-serif; padding:2px">
-              <b style="font-size:14px">${e.nom}</b><br>
+            <div style="font-family:sans-serif; padding:4px; min-width:140px">
+              <b style="font-size:14px; display:block; margin-bottom:2px">${e.nom}</b>
               <span style="color:${markerColor}; font-weight:bold; font-size:11px">${e.type}</span><br>
-              <span style="font-size:10px; color:#666">${e.appartenance}</span>
+              <span style="font-size:10px; color:#666; display:block; margin-bottom:8px">${e.appartenance}</span>
+              <a href="${detailUrl}" 
+                 style="display:inline-block; background-color:#4f46e5; color:white; padding:5px 10px; border-radius:6px; text-decoration:none; font-size:10px; font-weight:bold; text-align:center; width:100%; box-sizing:border-box;"
+              >
+                Consulter la fiche →
+              </a>
             </div>
           `);
           marker.addTo(markersGroup);
@@ -65,14 +74,13 @@ export default function EnclavesPage() {
       });
 
       markersGroup.addTo(mapInstance.current);
-      // --- AJOUTER ICI ---
+      
       setTimeout(() => {
         if (mapInstance.current) {
           mapInstance.current.invalidateSize();
-          setIsReady(true); // <--- L'interrupteur magique
+          setIsReady(true);
         }
       }, 500);
-      // ------------------
 
       if (enclaves.length > 0) {
         mapInstance.current.fitBounds(markersGroup.getBounds(), { padding: [50, 50] });
@@ -101,14 +109,13 @@ export default function EnclavesPage() {
         </div>
       </header>
 
-      {/* --- CARTE LEAFLET - VERSION CORRIGÉE --- */}
+      {/* --- CARTE LEAFLET --- */}
       <div className="mb-12 relative">
         <div
           ref={mapRef}
           className="border-4 border-white rounded-3xl bg-gray-100 shadow-xl overflow-hidden h-[40vh] md:h-[60vh] z-0"
         />
         
-        {/* Overlay de chargement */}
         {!isReady && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/80 z-10 rounded-3xl">
             <Loader2 className="animate-spin h-8 w-8 text-violet-600 mb-2" />
@@ -116,7 +123,6 @@ export default function EnclavesPage() {
           </div>
         )}
           
-        {/* Légende - Elle est maintenant BIEN à l'intérieur du conteneur parent */}
         <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur px-4 py-2 rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-widest shadow-md z-[1000] flex flex-wrap gap-4 border border-slate-100">
           <span className="flex items-center gap-1.5 text-red-600"><div className="w-2.5 h-2.5 rounded-full bg-red-500"/> Régional</span>
           <span className="flex items-center gap-1.5 text-purple-600"><div className="w-2.5 h-2.5 rounded-full bg-purple-500"/> Départemental</span>
@@ -124,7 +130,6 @@ export default function EnclavesPage() {
           <span className="flex items-center gap-1.5 text-slate-500"><div className="w-2.5 h-2.5 rounded-full bg-slate-400"/> Parcelles</span>
         </div>
       </div> 
-      {/* Un seul </div> ici pour fermer le bloc de la carte ! */}
 
       {/* SECTION ENCLAVES */}
       <section className="mb-16">
@@ -207,7 +212,6 @@ export default function EnclavesPage() {
           </a>
         </div>
 
-        {/* Déco en arrière plan */}
         <div className="absolute -bottom-10 -right-10 opacity-10 group-hover:opacity-20 transition-opacity">
           <MapIcon size={300} />
         </div>
