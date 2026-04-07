@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Search, TreePine } from "lucide-react";
 
 interface ParcJardin {
   id: number;
@@ -98,16 +98,19 @@ export default function ParcJardinPage() {
         const numero = i + 1;
         const customIcon = L.divIcon({
           className: 'custom-div-icon',
-          html: `<div style="background-color: #15803d; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${numero}</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
+          html: `<div style="background-color: #15803d; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">${numero}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
         });
 
         const popupContent = `
-          <div style="font-family: sans-serif; font-size: 13px;">
-            <strong style="color: #15803d;">${numero}. ${item.name}</strong><br/>
-            <b>Type :</b> ${item.type}<br/>
-            <b>Adresse :</b> ${item.adresse}
+          <div style="font-family: sans-serif; text-align: center; min-width: 140px; padding: 4px;">
+            <strong style="color: #15803d; display: block; margin-bottom: 2px;">${numero}. ${item.name}</strong>
+            <span style="font-size: 11px; color: #64748b; display: block; margin-bottom: 8px;">${item.type}</span>
+            <a href="#garden-row-${item.id}" 
+               style="display: inline-block; background-color: #15803d; color: white; padding: 5px 10px; border-radius: 6px; text-decoration: none; font-size: 10px; font-weight: bold; text-transform: uppercase; transition: opacity 0.2s;">
+               Voir détails ↓
+            </a>
           </div>
         `;
 
@@ -121,73 +124,90 @@ export default function ParcJardinPage() {
   }, [isMapReady, filteredItems]);
 
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-slate-50 min-h-screen">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-green-700 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
 
-      <h1 className="text-2xl md:text-3xl font-bold mb-4">🌿 Espaces verts de Toulouse</h1>
-      <p className="mb-4 font-semibold text-sm md:text-base">
-        {filteredItems.length} lieux affichés sur {items.length}.
-      </p>
+      <header className="mb-8">
+        <h1 className="text-3xl font-black mb-2 text-slate-900 tracking-tight uppercase flex items-center gap-3">
+            🌿 Espaces verts de Toulouse
+        </h1>
+        <p className="text-slate-500 font-medium italic">Découvrez les parcs, jardins et squares de la ville rose</p>
+      </header>
 
-      <input
-        type="text"
-        placeholder="Rechercher un parc ou jardin..."
-        value={searchQuery}
-        onChange={e => setSearchQuery(e.target.value)}
-        className="w-full mb-4 p-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm transition-all"
-      />
+      <div className="relative mb-8">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+        <input
+          type="text"
+          placeholder="Rechercher un parc, un jardin, un quartier..."
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          className="w-full p-4 pl-12 border-none rounded-2xl focus:ring-2 focus:ring-green-500 outline-none shadow-sm transition-all bg-white"
+        />
+      </div>
       
       {error && (
-        <div className="mb-6 p-4 border border-red-500 bg-red-50 text-red-700 rounded-lg">
+        <div className="mb-6 p-4 border border-red-200 bg-red-50 text-red-700 rounded-2xl flex items-center gap-3">
           <strong>Erreur :</strong> {error}
         </div>
       )}
 
-      {/* CARTE LEAFLET - Hauteur réduite sur mobile */}
-      <div
-        ref={mapRef}
-        className="mb-8 border rounded-2xl bg-gray-100 shadow-inner overflow-hidden h-[40vh] md:h-[60vh]"
-        style={{ zIndex: 0 }}
-      >
-        {!isMapReady && (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 animate-pulse">Chargement de la carte…</p>
+      {/* ZONE CARTE */}
+      <div className="mb-12 border-4 border-white rounded-[2.5rem] bg-slate-200 shadow-2xl relative overflow-hidden h-[50vh] md:h-[65vh] z-0">
+        <div ref={mapRef} className="h-full w-full" />
+        {(!isMapReady || loading) && (
+          <div className="absolute inset-0 bg-slate-100/80 backdrop-blur-sm flex flex-col items-center justify-center z-10">
+            <Loader2 className="animate-spin text-green-600 mb-2" size={32} />
+            <p className="text-green-600 font-black text-xs uppercase tracking-widest">Mise au vert...</p>
           </div>
         )}
       </div>
 
+      <h2 className="text-2xl font-black mb-6 text-slate-800 flex items-center gap-3">
+        <span className="h-1.5 w-12 bg-green-600 rounded-full"></span>
+        LISTE DES ESPACES ({filteredItems.length})
+      </h2>
+
       {/* TABLEAU RESPONSIVE */}
-      <div className="overflow-hidden border rounded-2xl shadow-sm bg-white dark:bg-slate-900">
+      <div className="overflow-hidden border-none rounded-3xl shadow-xl bg-white">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-              <tr>
-                <th className="p-4 font-bold text-center w-12">#</th>
-                <th className="p-4 font-bold">Nom / Adresse</th>
-                <th className="p-4 font-bold hidden sm:table-cell">Type</th>
-                <th className="p-4 font-bold hidden md:table-cell">Quartier</th>
-                <th className="p-4 font-bold hidden lg:table-cell">Commune</th>
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-900 text-white">
+                <th className="p-5 font-black uppercase text-[10px] tracking-widest w-16 text-center">#</th>
+                <th className="p-5 font-black uppercase text-[10px] tracking-widest">Nom / Adresse</th>
+                <th className="p-5 font-black uppercase text-[10px] tracking-widest hidden sm:table-cell">Type</th>
+                <th className="p-5 font-black uppercase text-[10px] tracking-widest hidden md:table-cell text-center">Quartier</th>
+                <th className="p-5 font-black uppercase text-[10px] tracking-widest hidden lg:table-cell">Commune</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100">
               {filteredItems.map((item, i) => (
-                <tr key={`${item.id}-${i}`} className="hover:bg-green-50/50 dark:hover:bg-green-900/10 transition-colors">
-                  <td className="p-4 text-center font-bold text-slate-400">{i + 1}</td>
-                  <td className="p-4">
-                    <div className="font-bold text-green-800 dark:text-green-400">{item.name}</div>
-                    {/* Adresse affichée sous le nom sur MOBILE seulement */}
-                    <div className="text-[11px] text-slate-500 md:text-sm md:text-slate-600 block">
-                      {item.adresse}
+                <tr 
+                  key={`${item.id}-${i}`} 
+                  id={`garden-row-${item.id}`} // ID UTILISÉ PAR L'ANCRE
+                  className="hover:bg-green-50/50 transition-colors scroll-mt-24"
+                >
+                  <td className="p-5 text-center font-black text-slate-300">{i + 1}</td>
+                  <td className="p-5">
+                    <div className="font-bold text-slate-900 text-base">{item.name}</div>
+                    <div className="text-xs text-slate-400 font-medium uppercase mt-1 tracking-tighter">
+                      📍 {item.adresse}
                     </div>
                   </td>
-                  <td className="p-4 hidden sm:table-cell text-slate-600 dark:text-slate-300">{item.type}</td>
-                  <td className="p-4 hidden md:table-cell text-slate-500 italic">{item.quartier}</td>
-                  <td className="p-4 hidden lg:table-cell text-slate-500">{item.commune}</td>
+                  <td className="p-5 hidden sm:table-cell text-green-700 font-bold text-sm italic">
+                    {item.type}
+                  </td>
+                  <td className="p-5 hidden md:table-cell text-center text-slate-500 font-medium text-sm italic">
+                    {item.quartier}
+                  </td>
+                  <td className="p-5 hidden lg:table-cell text-slate-400 text-xs font-bold uppercase tracking-tight">
+                    {item.commune}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -196,8 +216,16 @@ export default function ParcJardinPage() {
       </div>
 
       {filteredItems.length === 0 && !loading && (
-        <p className="text-center py-10 text-gray-400 italic">Aucun résultat trouvé.</p>
+        <div className="text-center py-20 bg-white rounded-3xl mt-6 shadow-inner">
+           <p className="text-slate-400 font-bold uppercase tracking-widest text-xs italic">Aucun espace vert ne correspond à votre recherche.</p>
+        </div>
       )}
+
+      <footer className="mt-20 py-10 border-t border-slate-200 text-center">
+        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.6em]">
+            Toulouse Verte • 2026 • Biodiversité
+        </p>
+      </footer>
     </div>
   );
 }
