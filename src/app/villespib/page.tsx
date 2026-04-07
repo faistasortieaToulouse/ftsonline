@@ -45,7 +45,7 @@ export default function VillesPIBPage() {
 
       const markersGroup = L.featureGroup();
 
-      villes.forEach((v) => {
+      villes.forEach((v, i) => {
         if (v.lat && v.lng) {
           const customIcon = L.divIcon({
             className: 'custom-marker',
@@ -54,9 +54,8 @@ export default function VillesPIBPage() {
             iconAnchor: [14, 14]
           });
 
-          // Création du slug pour le lien (ex: "paris", "lyon")
-          const slug = v.ville.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-          const detailUrl = `/villes-economie/${v.id || slug}`;
+          // CORRECTION : On utilise une ancre (#ville-card-index) au lieu d'une URL de page
+          const anchorTarget = `#ville-card-${i}`;
 
           const marker = L.marker([v.lat, v.lng], { icon: customIcon });
           marker.bindPopup(`
@@ -65,10 +64,10 @@ export default function VillesPIBPage() {
               <span style="color:#16a34a; font-weight:bold; font-size:12px; display:block; margin-bottom:10px">
                 PIB: ${v.pib_mds_euros} Md€
               </span>
-              <a href="${detailUrl}" 
+              <a href="${anchorTarget}" 
                  style="display:block; background-color:#10b981; color:white; text-align:center; padding:6px; border-radius:6px; text-decoration:none; font-weight:bold; font-size:10px;"
               >
-                Analyse complète →
+                Voir les détails ↓
               </a>
             </div>
           `);
@@ -101,7 +100,7 @@ export default function VillesPIBPage() {
   }, [loading, villes]);
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900 scroll-smooth">
       <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-8 font-medium group">
         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
         Retour à l'accueil
@@ -144,7 +143,12 @@ export default function VillesPIBPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {villes.map((v, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col group">
+            /* CORRECTION : Ajout de l'ID et de scroll-mt-10 pour ne pas coller au haut de l'écran lors du scroll */
+            <div 
+              key={i} 
+              id={`ville-card-${i}`}
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col group scroll-mt-10"
+            >
               <div className="flex justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="w-7 h-7 bg-blue-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center">
