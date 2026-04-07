@@ -11,6 +11,7 @@ interface Colonie {
   periode: string;
   lat: number;
   lng: number;
+  id?: string | number;
 }
 
 export default function ColonieFrancePage() {
@@ -74,7 +75,7 @@ export default function ColonieFrancePage() {
     };
   }, []);
 
-  // 3. Mise à jour des Marqueurs et du Centre
+  // 3. Mise à jour des Marqueurs avec LIEN ANCRE
   useEffect(() => {
     if (!isMapReady || !mapInstance.current || colonies.length === 0) return;
 
@@ -102,13 +103,23 @@ export default function ColonieFrancePage() {
           iconAnchor: [12, 12]
         });
 
+        // Génération d'un slug pour le lien de l'infobulle
+        const slug = c.territoire.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+        const detailUrl = `/colonies-france/${c.id || slug}`;
+
         L.marker([c.lat, c.lng], { icon: customIcon })
           .addTo(mapInstance.current)
           .bindPopup(`
             <div style="color: black; padding: 5px; min-width: 180px; font-family: sans-serif;">
-              <strong style="font-size: 14px;">#${index + 1} - ${c.territoire}</strong><br />
+              <strong style="font-size: 14px; display: block; margin-bottom: 2px;">#${index + 1} - ${c.territoire}</strong>
               <span style="color: #b91c1c; font-size: 11px; font-weight: bold;">${c.periode}</span><br />
-              <span style="color: #666; font-size: 10px; text-transform: uppercase;">${c.grande_entite}</span>
+              <span style="color: #666; font-size: 10px; text-transform: uppercase; display: block; margin-bottom: 10px;">${c.grande_entite}</span>
+              
+              <a href="${detailUrl}" 
+                 style="display: block; background-color: #4f46e5; color: white; text-align: center; padding: 6px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 10px;"
+              >
+                Fiche territoire →
+              </a>
             </div>
           `);
       });
@@ -120,7 +131,7 @@ export default function ColonieFrancePage() {
   const entites = Array.from(new Set(colonies.map(c => c.grande_entite)));
 
   return (
-    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -135,7 +146,7 @@ export default function ColonieFrancePage() {
         <p className="text-gray-600 mt-2 italic">Chronologie et géographie du premier empire colonial</p>
       </header>
 
-      {/* --- Zone de la Carte (Pilotée par Ref) --- */}
+      {/* --- Zone de la Carte --- */}
       <div className="mb-8 border-4 border-white shadow-xl rounded-3xl bg-slate-200 overflow-hidden h-[65vh] relative">
         <div ref={mapRef} className="h-full w-full z-0" />
         
@@ -161,7 +172,7 @@ export default function ColonieFrancePage() {
                   const globalIndex = colonies.indexOf(c);
                   return (
                     <div key={`${c.territoire}-${globalIndex}`} className="group p-4 bg-slate-50 rounded-xl hover:bg-blue-900 transition-all duration-300 flex gap-4">
-                      <span className="text-3xl font-black text-slate-300 group-hover:text-blue-400/50 transition-colors">
+                      <span className="text-3xl font-black text-slate-300 group-hover:text-blue-400/50 transition-colors shrink-0">
                         {(globalIndex + 1).toString().padStart(2, '0')}
                       </span>
                       <div>
