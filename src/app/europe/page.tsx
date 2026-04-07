@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Globe, MapPin, Landmark, Users, Maximize2 } from "lucide-react";
+import { ArrowLeft, Loader2, Globe, Landmark, Users, Maximize2, ListFilter, ChevronDown } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 interface PaysEurope {
@@ -151,9 +151,18 @@ export default function EuropePage() {
               <h1 className="text-4xl md:text-6xl font-black text-slate-900 uppercase tracking-tighter italic leading-none">
                 {data.nom_liste.split(' ')[0]} <span className="text-blue-600">{data.nom_liste.split(' ').slice(1).join(' ')}</span>
               </h1>
-              <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-3 flex items-center gap-2 italic">
-                <Landmark size={14} className="text-blue-500" /> Inventaire des nations souveraines européennes
-              </p>
+              <div className="flex flex-wrap items-center gap-4 mt-4">
+                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest flex items-center gap-2 italic">
+                  <Landmark size={14} className="text-blue-500" /> Inventaire des nations souveraines
+                </p>
+                {/* LIEN ANCRE AJOUTÉ ICI */}
+                <a 
+                  href="#liste-pays" 
+                  className="bg-blue-50 text-blue-700 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                >
+                  <ListFilter size={14} /> Explorer la liste
+                </a>
+              </div>
             </div>
             <div className="flex gap-4 z-10">
               <div className="bg-slate-900 text-white p-4 rounded-3xl text-center min-w-[100px]">
@@ -165,7 +174,7 @@ export default function EuropePage() {
       </header>
 
       {/* CARTE */}
-      <div className="relative w-full mb-12 border-4 border-white shadow-2xl rounded-[3rem] bg-slate-200 overflow-hidden z-0" style={{ height: "65vh" }}>
+      <div className="relative w-full mb-16 border-4 border-white shadow-2xl rounded-[3rem] bg-slate-200 overflow-hidden z-0" style={{ height: "65vh" }}>
         <div ref={mapRef} className="h-full w-full" />
         
         {!isReady && (
@@ -174,6 +183,14 @@ export default function EuropePage() {
             <p className="text-slate-900 font-black text-xs uppercase tracking-widest italic animate-pulse">Génération de la cartographie...</p>
           </div>
         )}
+      </div>
+
+      {/* SECTION ANCRE : TITRE DE LA GRILLE */}
+      <div id="liste-pays" className="flex items-center gap-3 mb-8 scroll-mt-10">
+        <div className="h-10 w-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+           <ChevronDown size={20} />
+        </div>
+        <h2 className="text-2xl font-black uppercase tracking-tighter italic text-slate-800">Catalogue des Nations</h2>
       </div>
 
       {/* GRILLE DES PAYS */}
@@ -195,7 +212,7 @@ export default function EuropePage() {
                   <Landmark size={18} />
                 </div>
                 {p.ue && (
-                  <span className="text-[8px] bg-blue-100 text-blue-700 px-2 py-1 rounded-lg font-black uppercase tracking-tighter">
+                  <span className="text-[8px] bg-blue-100 text-blue-700 px-2 py-1 rounded-lg font-black uppercase tracking-tighter shadow-sm border border-blue-200">
                     Union Européenne
                   </span>
                 )}
@@ -206,7 +223,7 @@ export default function EuropePage() {
               </h3>
               <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 italic mb-4">{p.capitale}</p>
 
-              <div className="space-y-2 pt-2">
+              <div className="space-y-2 pt-2 border-t border-slate-50 mt-4">
                 <div className="flex items-center gap-2 text-slate-500 group-hover:text-slate-900 transition-colors">
                   <Users size={14} className="text-slate-300 group-hover:text-blue-400" />
                   <span className="text-[11px] font-bold">{p.population}</span>
@@ -225,6 +242,7 @@ export default function EuropePage() {
         .custom-div-icon { background: none !important; border: none !important; }
         .leaflet-popup-content-wrapper { border-radius: 2rem; border: 4px solid #1e293b; overflow: hidden; }
         .leaflet-popup-tip { background: #1e293b; }
+        html { scroll-behavior: smooth; }
       `}</style>
     </div>
   );
