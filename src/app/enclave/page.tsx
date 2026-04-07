@@ -54,18 +54,18 @@ export default function EnclavesPage() {
 
           const marker = L.marker([e.lat, e.lng], { icon: customIcon });
           
-          // Construction de l'URL (adapte le chemin selon ta structure de dossiers)
-          const detailUrl = `/enclaves/${e.id || i}`;
+          // CORRECTION : Utilisation d'une ancre pour pointer vers l'ID dans la page
+          const anchorTarget = `#enclave-card-${i}`;
 
           marker.bindPopup(`
             <div style="font-family:sans-serif; padding:4px; min-width:140px">
               <b style="font-size:14px; display:block; margin-bottom:2px">${e.nom}</b>
               <span style="color:${markerColor}; font-weight:bold; font-size:11px">${e.type}</span><br>
               <span style="font-size:10px; color:#666; display:block; margin-bottom:8px">${e.appartenance}</span>
-              <a href="${detailUrl}" 
+              <a href="${anchorTarget}" 
                  style="display:inline-block; background-color:#4f46e5; color:white; padding:5px 10px; border-radius:6px; text-decoration:none; font-size:10px; font-weight:bold; text-align:center; width:100%; box-sizing:border-box;"
               >
-                Consulter la fiche →
+                Consulter la fiche ↓
               </a>
             </div>
           `);
@@ -91,7 +91,7 @@ export default function EnclavesPage() {
   }, [loading, enclaves]);
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900 scroll-smooth">
       
       <Link href="/" className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 mb-8 transition-colors font-medium group">
         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -148,7 +148,12 @@ export default function EnclavesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {enclaves.map((e, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col group">
+              /* CORRECTION : Ajout de l'ID pour l'ancre et scroll-margin pour le confort */
+              <div 
+                key={i} 
+                id={`enclave-card-${i}`} 
+                className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all p-5 flex flex-col group scroll-mt-10"
+              >
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-2">
                     <span className="flex items-center justify-center w-6 h-6 bg-slate-900 text-white text-[10px] font-bold rounded-full">
