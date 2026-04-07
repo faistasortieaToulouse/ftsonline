@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Map as MapIcon, Compass, Anchor } from "lucide-react";
 import 'leaflet/dist/leaflet.css';
 
 interface Territoire {
@@ -20,7 +20,9 @@ export default function FranceTerritoiresPage() {
   const [territoires, setTerritoires] = useState<Territoire[]>([]);
   const [isReady, setIsReady] = useState(false);
 
-  // --- 1. Charger et Trier les données ---
+  // Utilitaire pour les ancres
+  const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+
   useEffect(() => {
     fetch("/api/France")
       .then(async (res) => {
@@ -39,18 +41,13 @@ export default function FranceTerritoiresPage() {
       .catch(console.error);
   }, []);
 
-  // --- 2. Initialisation de Leaflet (Méthode OTAN) ---
   useEffect(() => {
-    // Empêche l'exécution côté serveur ou si les données ne sont pas là
     if (typeof window === "undefined" || !mapRef.current || territoires.length === 0) return;
 
     const initMap = async () => {
       const L = (await import('leaflet')).default;
-
-      // Anti-doublon pour le mode strict de React
       if (mapInstance.current) return;
 
-      // Configuration des icônes par défaut
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -68,42 +65,48 @@ export default function FranceTerritoiresPage() {
         attribution: '&copy; OpenStreetMap'
       }).addTo(map);
 
-      // --- 3. Ajout des Marqueurs ---
       territoires.forEach((t, index) => {
         if (t.lat && t.lng) {
           const color = t.continent === "Europe" ? "#1e3a8a" : "#ef4444";
           
           const customIcon = L.divIcon({
             className: 'custom-marker',
-            html: `<div style="background-color:${color}; color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:9px;">${index + 1}</div>`,
-            iconSize: [22, 22],
-            iconAnchor: [11, 11]
+            html: `<div style="background-color:${color}; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-weight:900; border:2px solid white; box-shadow:0 4px 8px rgba(0,0,0,0.3); font-size:10px; font-family:sans-serif;">${index + 1}</div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
           });
 
           const marker = L.marker([t.lat, t.lng], { icon: customIcon }).addTo(map);
 
-          marker.bindTooltip(`<strong>${t.nom}</strong>`, {
-            direction: 'top',
-            offset: [0, -10],
-            opacity: 0.9
-          });
-          
           marker.bindPopup(`
-            <div style="color: black; font-family: sans-serif; min-width: 150px; padding: 5px;">
-              <strong style="font-size: 14px;">#${index + 1} - ${t.nom}</strong><br>
-              <small style="color: #2563eb; font-weight: bold; text-transform: uppercase;">${t.statut}</small>
-              <hr style="margin: 8px 0; border: 0; border-top: 1px solid #eee;">
-              <p style="font-size: 11px; margin: 0; line-height: 1.4; color: #444;">${t.description}</p>
+            <div style="font-family: sans-serif; min-width: 180px; padding: 5px;">
+              <div style="font-size: 9px; font-weight: 900; color: ${color}; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">${t.continent}</div>
+              <strong style="font-size: 15px; color: #0f172a; display: block; text-transform: uppercase; margin-bottom: 4px;">${t.nom}</strong>
+              <div style="font-size: 11px; font-weight: 700; color: #2563eb; margin-bottom: 8px;">${t.statut}</div>
+              
+              <a href="#territoire-${slugify(t.nom)}" style="
+                display: block;
+                background: #1e293b;
+                color: white;
+                text-decoration: none;
+                padding: 6px;
+                border-radius: 6px;
+                font-size: 9px;
+                font-weight: 900;
+                text-align: center;
+                text-transform: uppercase;
+              ">Détails du territoire ↓</a>
             </div>
           `);
         }
       });
 
-      // RÉGLAGE CRITIQUE : Force le calcul de la taille après l'affichage du conteneur
       setTimeout(() => {
-        map.invalidateSize();
-        setIsReady(true);
-      }, 250);
+        if (mapInstance.current) {
+          mapInstance.current.invalidateSize();
+          setIsReady(true);
+        }
+      }, 300);
     };
 
     initMap();
@@ -114,77 +117,106 @@ export default function FranceTerritoiresPage() {
         mapInstance.current = null;
       }
     };
-  }, [territoires]); // Dépend de territoires pour s'assurer que les données sont là
+  }, [territoires]);
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-10 font-sans text-slate-900">
       
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-bold transition-colors group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+        <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-700 font-black uppercase text-[10px] tracking-widest group transition-colors">
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+          Retour Accueil
         </Link>
       </nav>
 
-      <header className="mb-8 border-b pb-6 text-center md:text-left">
-        <h1 className="text-3xl md:text-5xl font-black text-blue-900 flex flex-wrap justify-center md:justify-start items-center gap-3 uppercase tracking-tighter">
-          <span>🇫🇷</span> Territoires Français
-        </h1>
-        <p className="text-gray-500 mt-2 italic font-medium">
-          Exploration géographique des domaines de la République ({territoires.length} sites)
-        </p>
-      </header>
-
-      {/* CONTENEUR CARTE */}
-      <div className="relative h-[50vh] md:h-[65vh] w-full mb-10 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden z-0">
-        <div ref={mapRef} className="h-full w-full" />
-        {!isReady && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/80 z-10">
-            <Loader2 className="animate-spin text-blue-600 mb-2" size={32} />
-            <p className="font-bold text-blue-900 uppercase tracking-widest text-xs">Déploiement du globe...</p>
+      <div className="max-w-7xl mx-auto">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 border-b-8 border-slate-900 pb-8 gap-6">
+          <div>
+            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter italic leading-none flex items-center gap-4">
+              <Compass size={48} className="text-blue-700" />
+              République
+            </h1>
+            <p className="text-blue-700 font-black uppercase tracking-[0.2em] text-xs mt-3 italic">
+              Inventaire Géographique des Territoires & Domaines
+            </p>
           </div>
-        )}
-      </div>
+          <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Sites Répertoriés</span>
+            <span className="text-3xl font-black text-blue-900 italic">{territoires.length} Lieux</span>
+          </div>
+        </header>
 
-      <div className="space-y-12">
-        {["Europe", "Afrique", "Amérique", "Asie", "Antarctique", "Océanie"].map((continent) => {
-          const list = territoires.filter(t => t.continent === continent);
-          if (list.length === 0) return null;
+        {/* CARTE */}
+        <div className="relative w-full h-[450px] md:h-[650px] bg-slate-200 rounded-[2.5rem] mb-16 shadow-2xl border-4 md:border-[12px] border-white overflow-hidden z-0">
+          <div ref={mapRef} className="h-full w-full" />
+          {!isReady && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/90 backdrop-blur-sm z-10">
+                <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+                <p className="font-black text-slate-400 uppercase tracking-widest text-[10px]">Ouverture des archives cartographiques...</p>
+            </div>
+          )}
+        </div>
 
-          return (
-            <section key={continent} className="bg-white p-4 md:p-8 rounded-2xl shadow-sm border border-slate-100">
-              <h2 className="text-xl md:text-2xl font-black mb-8 text-blue-900 flex items-center justify-between border-l-4 border-blue-600 pl-4">
-                <span className="uppercase tracking-tight">{continent}</span>
-                <span className="text-xs font-bold bg-blue-50 text-blue-600 px-3 py-1 rounded-lg">
-                  {list.length} {list.length > 1 ? 'lieux' : 'lieu'}
-                </span>
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {list.map((t) => {
-                  const globalIndex = territoires.indexOf(t);
-                  return (
-                    <div key={t.nom} className="group p-5 bg-slate-50 rounded-2xl hover:bg-blue-900 transition-all duration-300 flex gap-4 border border-transparent hover:border-blue-700 hover:shadow-xl hover:-translate-y-1">
-                      <span className="text-2xl font-black text-slate-300 group-hover:text-blue-400 transition-colors">
-                        {(globalIndex + 1).toString().padStart(2, '0')}
-                      </span>
-                      <div className="overflow-hidden">
-                        <h3 className="font-bold text-slate-900 group-hover:text-white transition-colors truncate text-lg">{t.nom}</h3>
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-blue-600 group-hover:text-blue-300 mt-1">
-                          {t.statut}
+        {/* LISTING PAR CONTINENT */}
+        <div className="space-y-16">
+          {["Europe", "Afrique", "Amérique", "Asie", "Antarctique", "Océanie"].map((continent) => {
+            const list = territoires.filter(t => t.continent === continent);
+            if (list.length === 0) return null;
+
+            return (
+              <section key={continent} className="relative">
+                <div className="flex items-center gap-6 mb-10">
+                  <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-slate-900">
+                    {continent}
+                  </h2>
+                  <div className="h-1 flex-1 bg-slate-200 rounded-full"></div>
+                  <span className="bg-blue-900 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest">
+                    {list.length} {list.length > 1 ? 'Entités' : 'Entité'}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {list.map((t) => {
+                    const globalIndex = territoires.indexOf(t);
+                    return (
+                      <div 
+                        key={t.nom} 
+                        id={`territoire-${slugify(t.nom)}`}
+                        className="group p-6 bg-white rounded-[2rem] hover:bg-blue-900 transition-all duration-500 border border-slate-100 hover:border-blue-700 hover:shadow-2xl hover:-translate-y-2 scroll-mt-10"
+                      >
+                        <div className="flex justify-between items-start mb-6">
+                           <span className="text-3xl font-black text-slate-100 group-hover:text-blue-800 transition-colors italic">
+                             #{(globalIndex + 1).toString().padStart(2, '0')}
+                           </span>
+                           <Anchor size={20} className="text-slate-200 group-hover:text-blue-400 transition-colors" />
                         </div>
-                        <p className="text-sm text-gray-600 group-hover:text-blue-100 mt-3 leading-relaxed line-clamp-3">
-                          {t.description}
-                        </p>
+
+                        <div>
+                          <h3 className="text-xl font-black text-slate-900 group-hover:text-white transition-colors uppercase italic tracking-tight">
+                            {t.nom}
+                          </h3>
+                          <div className="inline-block px-3 py-1 rounded-lg bg-blue-50 text-blue-700 text-[9px] font-black uppercase tracking-widest mt-2 group-hover:bg-blue-800 group-hover:text-blue-100 transition-colors">
+                            {t.statut}
+                          </div>
+                          <p className="text-sm text-slate-500 group-hover:text-blue-100 mt-6 leading-relaxed line-clamp-4 transition-colors">
+                            {t.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          );
-        })}
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+        </div>
       </div>
+
+      <style jsx global>{`
+        .custom-marker { background: none !important; border: none !important; }
+        .leaflet-popup-content-wrapper { border-radius: 1.2rem; border: 1px solid #e2e8f0; }
+        html { scroll-behavior: smooth; }
+      `}</style>
     </div>
   );
 }
