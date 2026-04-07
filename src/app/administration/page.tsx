@@ -3,38 +3,43 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowLeft, Landmark, Search, Loader2 } from "lucide-react";
+import { ArrowLeft, Landmark, Search, Loader2, Phone, MapPin, ExternalLink } from "lucide-react";
 
-// 1. IMPORTATION DU CSS LEAFLET (Indispensable)
+// 1. IMPORTATION DU CSS LEAFLET
 import "leaflet/dist/leaflet.css";
 
-// 2. CHARGEMENT DYNAMIQUE (Pour éviter les erreurs Next.js/SSR)
+// 2. CHARGEMENT DYNAMIQUE (SSR: false est crucial ici)
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
+const MapEffect = dynamic(() => Promise.resolve(({ map }: { map: any }) => {
+    // Ce petit composant interne force le rafraîchissement de la carte
+    useEffect(() => {
+        if (map) {
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 500);
+        }
+    }, [map]);
+    return null;
+}), { ssr: false });
 
 interface Administration {
+  id: string; // Ajout d'un ID pour l'ancre
   nom: string;
   adresse?: string;
   commune?: string;
   telephone?: string;
-  categorie:
-    | "mairie"
-    | "mairie_annexe"
-    | "maison_justice"
-    | "maison_toulouse_services"
-    | "point_acces_droit";
-  geo?: {
-    lat: number;
-    lon: number;
-  };
+  categorie: "mairie" | "mairie_annexe" | "maison_justice" | "maison_toulouse_services" | "point_acces_droit";
+  geo?: { lat: number; lon: number; };
 }
 
 export default function AdministrationPage() {
   const [data, setData] = useState<Administration[]>([]);
-  const [L, setL] = useState<any>(null); // Instance Leaflet pour les icônes
+  const [L, setL] = useState<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [mapInstance, setMapInstance] = useState<any>(null);
 
   const [filters, setFilters] = useState<Record<Administration["categorie"], boolean>>({
     mairie: true,
@@ -45,31 +50,26 @@ export default function AdministrationPage() {
   });
 
   const colors: Record<Administration["categorie"], string> = {
-    mairie: "#ef4444",
-    mairie_annexe: "#f97316",
-    maison_justice: "#a855f7",
-    maison_toulouse_services: "#22c55e",
-    point_acces_droit: "#3b82f6",
+    mairie: "#ef4444", mairie_annexe: "#f97316", maison_justice: "#a855f7",
+    maison_toulouse_services: "#22c55e", point_acces_droit: "#3b82f6",
   };
 
   const labels: Record<Administration["categorie"], string> = {
-    mairie: "Mairie",
-    mairie_annexe: "Mairie annexe",
-    maison_justice: "Maison de Justice",
-    maison_toulouse_services: "Maison Toulouse Services",
-    point_acces_droit: "Point d’accès au droit",
+    mairie: "Mairie", mairie_annexe: "Mairie annexe", maison_justice: "Maison de Justice",
+    maison_toulouse_services: "Maison Toulouse Services", point_acces_droit: "Point d’accès au droit",
   };
 
   useEffect(() => {
     fetch("/api/administration")
       .then(res => res.json())
-      .then(setData)
+      .then(json => {
+        // On ajoute un ID unique basé sur l'index pour les ancres
+        const withIds = json.map((item: any, i: number) => ({ ...item, id: `admin-${i}` }));
+        setData(withIds);
+      })
       .catch(console.error);
 
-    // Charger Leaflet uniquement côté client
-    import("leaflet").then((leaflet) => {
-      setL(leaflet);
-    });
+    import("leaflet").then((leaflet) => { setL(leaflet); });
   }, []);
 
   const toggle = (cat: Administration["categorie"]) => {
@@ -78,45 +78,44 @@ export default function AdministrationPage() {
 
   const filteredList = data.filter(d => filters[d.categorie]);
 
-  // Création de l'icône personnalisée avec numéro
   const createIcon = (index: number, color: string) => {
     if (!L) return null;
     return L.divIcon({
       className: 'custom-icon',
-      html: `<div style="background-color:${color}; width:24px; height:24px; border-radius:50%; border:2px solid white; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.3);">${index}</div>`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
+      html: `<div style="background-color:${color}; width:26px; height:26px; border-radius:50%; border:2px solid white; color:white; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:10px; box-shadow:0 3px 6px rgba(0,0,0,0.2);">${index}</div>`,
+      iconSize: [26, 26],
+      iconAnchor: [13, 13]
     });
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-white min-h-screen text-slate-900">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
       
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-colors group">
+        <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all group">
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour au portail
+          RETOUR AU PORTAIL
         </Link>
       </nav>
 
       <header className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-black flex items-center gap-3">
-          <Landmark className="text-slate-800" size={32} />
-          Administrations et services publics
+        <h1 className="text-3xl md:text-5xl font-black flex items-center gap-4 tracking-tighter italic uppercase text-slate-900">
+          <Landmark className="text-blue-700" size={40} />
+          Services <span className="text-blue-700">Publics</span>
         </h1>
-        <p className="text-slate-500 text-xl mt-1">Toulouse Métropole</p>
+        <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-xs">Annuaire administratif • Toulouse Métropole</p>
       </header>
 
-      {/* Filtres */}
-      <div className="mb-8 flex flex-wrap gap-3">
+      {/* FILTRES STYLE BADGE */}
+      <div className="mb-8 flex flex-wrap gap-2">
         {(Object.keys(filters) as Array<Administration["categorie"]>).map(cat => (
           <button
             key={cat}
             onClick={() => toggle(cat)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all font-bold text-sm ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all font-black text-[10px] uppercase tracking-wider ${
               filters[cat] 
-                ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
-                : 'bg-slate-100 border-transparent text-slate-400 opacity-60'
+                ? 'bg-white border-slate-900 text-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]' 
+                : 'bg-slate-100 border-transparent text-slate-400 opacity-50 grayscale'
             }`}
           >
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[cat] }}></span>
@@ -125,79 +124,105 @@ export default function AdministrationPage() {
         ))}
       </div>
 
-{/* CARTE LEAFLET (Remplace Google Maps) */}
-<div className="h-[50vh] w-full mb-12 rounded-3xl bg-slate-100 overflow-hidden border shadow-inner relative z-0">
-  
-  {/* --- TON BLOC DE CHARGEMENT --- */}
-  {!isMapReady && (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-blue-50/90 z-10 border-2 border-dashed border-blue-100 rounded-3xl">
-      <Loader2 className="animate-spin h-12 w-12 text-blue-700 mb-4" />
-      <p className="text-blue-700 font-bold text-xl italic animate-pulse">
-        🚀 En cours de chargement...
-      </p>
-    </div>
-  )}
+      {/* CARTE AVEC FIX D'AFFICHAGE */}
+      <div className="h-[55vh] w-full mb-12 rounded-[2rem] bg-slate-200 overflow-hidden border-4 border-white shadow-2xl relative z-0">
+        {!isMapReady && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/90 z-10 backdrop-blur-sm">
+            <Loader2 className="animate-spin h-10 w-10 text-blue-700 mb-4" />
+            <p className="text-blue-900 font-black text-xs uppercase tracking-widest italic animate-pulse">Chargement de la carte métropolitaine...</p>
+          </div>
+        )}
 
-  <MapContainer 
-    center={[43.6045, 1.444]} 
-    zoom={12} 
-    style={{ height: '100%', width: '100%' }}
-    /* Cet événement déclenche la disparition du loader */
-    whenReady={() => setIsMapReady(true)}
-  >
-    <TileLayer
-      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    />
-    {L && filteredList.map((item, i) => (
-      item.geo && (
-        <Marker 
-          key={`${item.nom}-${i}`}
-          position={[item.geo.lat, item.geo.lon]}
-          icon={createIcon(i + 1, colors[item.categorie])}
+        <MapContainer 
+          center={[43.6045, 1.444]} 
+          zoom={13} 
+          style={{ height: '100%', width: '100%' }}
+          whenReady={(e: any) => {
+            setMapInstance(e.target);
+            setIsMapReady(true);
+          }}
         >
-          <Popup>
-            <div className="p-1">
-              <strong className="text-slate-900 block mb-1">{item.nom}</strong>
-              <span className="text-slate-600 text-xs">{item.adresse}</span>
-            </div>
-          </Popup>
-        </Marker>
-      )
-    ))}
-  </MapContainer>
-</div>
+          <TileLayer
+            attribution='&copy; OpenStreetMap'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {/* Le fix est ici : MapEffect force le recalcul des tuiles */}
+          {mapInstance && <MapEffect map={mapInstance} />}
+          
+          {L && filteredList.map((item, i) => (
+            item.geo && (
+              <Marker 
+                key={`${item.nom}-${i}`}
+                position={[item.geo.lat, item.geo.lon]}
+                icon={createIcon(i + 1, colors[item.categorie])}
+              >
+                <Popup>
+                  <div className="p-1 text-center font-sans">
+                    <strong className="text-slate-900 block border-b pb-1 mb-2 uppercase text-[11px] tracking-tight">{item.nom}</strong>
+                    <span className="text-slate-500 text-[10px] block mb-2 italic">{item.adresse}</span>
+                    <a href={`#${item.id}`} className="bg-slate-900 text-white px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest no-underline inline-block">Détails ↓</a>
+                  </div>
+                </Popup>
+              </Marker>
+            )
+          ))}
+        </MapContainer>
+      </div>
 
-      {/* Liste complète */}
-      <div className="mb-8 border-b pb-4">
-        <h2 className="text-2xl font-bold flex items-center gap-2 text-slate-800">
-          <Search size={24} />
-          Liste complète ({filteredList.length})
+      <div className="mb-6 flex items-center justify-between border-b-4 border-slate-900 pb-2">
+        <h2 className="text-2xl font-black flex items-center gap-2 text-slate-900 italic uppercase">
+          <Search size={24} /> Résultats ({filteredList.length})
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-8">
+      {/* LISTE STYLE GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
         {filteredList.map((item, i) => (
-          <div key={i} className="text-[15px] leading-relaxed">
-            <h3 className="font-bold text-base">
-              {i + 1}. {item.categorie === 'mairie' ? item.nom.toUpperCase() : item.nom} 
-              <span className="font-medium text-slate-500 ml-1">
-                ({labels[item.categorie]})
-              </span>
+          <div 
+            key={i} 
+            id={item.id}
+            className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all scroll-mt-24 group"
+          >
+            <div className="flex items-start justify-between mb-4">
+                <span className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-white text-xs shadow-inner" style={{ backgroundColor: colors[item.categorie] }}>
+                    {i + 1}
+                </span>
+                <span className="px-2 py-1 bg-slate-100 rounded text-[9px] font-black text-slate-500 uppercase tracking-tighter">
+                    {labels[item.categorie]}
+                </span>
+            </div>
+
+            <h3 className="font-black text-lg text-slate-900 leading-tight mb-2 group-hover:text-blue-700 transition-colors uppercase tracking-tighter">
+              {item.nom}
             </h3>
 
-            {item.adresse && <p className="text-slate-700">{item.adresse}</p>}
-            {item.commune && (
-              <p className={`text-slate-700 ${item.categorie === 'mairie' ? 'uppercase' : ''}`}>
-                {item.commune}
-              </p>
-            )}
+            <div className="space-y-2 text-sm">
+                {item.adresse && (
+                    <p className="text-slate-500 flex items-start gap-2 italic">
+                        <MapPin size={14} className="text-slate-300 mt-1 flex-shrink-0" />
+                        <span>{item.adresse}<br/>{item.commune}</span>
+                    </p>
+                )}
+                {item.telephone && (
+                    <a href={`tel:${item.telephone}`} className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 transition-colors bg-blue-50 px-3 py-1.5 rounded-lg text-xs mt-2">
+                        <Phone size={12} /> {item.telephone}
+                    </a>
+                )}
+            </div>
 
-            {item.telephone && (
-              <p className="mt-1 flex items-center gap-1 font-medium">
-                <span className="text-base">📞</span> {item.telephone}
-              </p>
-            )}
+            <div className="mt-6 pt-4 border-t border-slate-50 flex justify-end">
+                <button 
+                  onClick={() => {
+                    if(item.geo) {
+                        mapInstance.setView([item.geo.lat, item.geo.lon], 16);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  className="text-[10px] font-black text-slate-400 hover:text-blue-600 flex items-center gap-1 uppercase tracking-widest transition-colors"
+                >
+                    Localiser sur la carte <ExternalLink size={10} />
+                </button>
+            </div>
           </div>
         ))}
       </div>
