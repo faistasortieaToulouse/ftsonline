@@ -2,9 +2,8 @@
 
 import { useEffect, useState, useRef, CSSProperties } from "react"; 
 import Link from "next/link";
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, MapPin, Calendar, Clock, ShoppingBasket, Loader2 } from "lucide-react";
 
-// --- Interface de type ---
 interface Marche {
   id: number;
   nom: string;
@@ -19,20 +18,16 @@ interface Marche {
 }
 
 const TOULOUSE_CENTER: [number, number] = [43.6047, 1.4442];
-
-// --- Couleurs thématiques (Vert pour les marchés) ---
-const THEME_COLOR = '#16a34a'; // Vert émeraude
+const THEME_COLOR = '#16a34a'; // Vert Émeraude
 
 export default function MarchesPage() { 
   const [marches, setMarches] = useState<Marche[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   
-  // Refs pour Leaflet (Méthode OTAN)
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
-  const [isReady, setIsReady] = useState(false);
 
-  // 1. Charger les données API
   useEffect(() => {
     async function fetchMarches() {
       try {
@@ -50,25 +45,20 @@ export default function MarchesPage() {
     fetchMarches();
   }, []);
 
-  // 2. Initialisation de la carte
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
 
     const initMap = async () => {
       const L = (await import('leaflet')).default;
-      await import('leaflet/dist/leaflet.css');
-
       if (mapInstance.current) return;
 
-      mapInstance.current = L.map(mapRef.current).setView(TOULOUSE_CENTER, 12);
-
+      mapInstance.current = L.map(mapRef.current!).setView(TOULOUSE_CENTER, 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap'
       }).addTo(mapInstance.current);
 
       setIsReady(true);
     };
-
     initMap();
 
     return () => {
@@ -79,7 +69,6 @@ export default function MarchesPage() {
     };
   }, [isLoadingData]);
 
-  // 3. Ajout des marqueurs
   useEffect(() => {
     if (!isReady || !mapInstance.current || marches.length === 0) return;
 
@@ -87,87 +76,91 @@ export default function MarchesPage() {
       const L = (await import('leaflet')).default;
 
       marches.forEach((m, i) => {
+        if(!m.lat || !m.lon) return;
+
         const customIcon = L.divIcon({
           className: 'custom-marker',
-          html: `
-            <div style="
-              background-color: ${THEME_COLOR};
-              width: 28px; height: 28px;
-              border-radius: 50%; border: 2px solid white;
-              display: flex; align-items: center; justify-content: center;
-              color: white; font-weight: bold; font-size: 12px;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            ">
-              ${i + 1}
-            </div>
-          `,
-          iconSize: [28, 28],
-          iconAnchor: [14, 14]
+          html: `<div style="background-color: ${THEME_COLOR}; width: 26px; height: 26px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 11px; box-shadow: 0 3px 6px rgba(0,0,0,0.2);">${i + 1}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
         });
 
-        const marker = L.marker([m.lat, m.lon], { icon: customIcon });
-        marker.bindPopup(`
-          <div style="font-family: Arial; font-size: 14px; color: black;"> 
-            <strong>${i + 1}. ${m.nom}</strong><br/> 
-            <b>Adresse :</b> ${m.adresse}<br/>
-            <b>Jours :</b> ${m.jours_de_tenue}
+        const popupContent = `
+          <div style="text-align: center; font-family: sans-serif; padding: 5px;">
+            <strong style="color: ${THEME_COLOR}; font-size: 14px;">${i + 1}. ${m.nom}</strong><br/>
+            <span style="font-size: 11px; color: #64748b; display: block; margin: 4px 0 italic;">${m.jours_de_tenue}</span>
+            <a href="#marche-${m.id}" style="display: inline-block; background: ${THEME_COLOR}; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 10px; font-weight: bold; margin-top: 5px;">DÉTAILS ↓</a>
           </div>
-        `);
-        marker.addTo(mapInstance.current);
+        `;
+
+        L.marker([m.lat, m.lon], { icon: customIcon })
+          .bindPopup(popupContent)
+          .addTo(mapInstance.current);
       });
     };
-
     addMarkers();
   }, [isReady, marches]);
 
   return ( 
-    <div className="p-4 max-w-7xl mx-auto"> 
+    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen font-sans"> 
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-green-700 hover:text-green-900 font-bold group transition-all">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           Retour à l'accueil
         </Link>
       </nav>
 
-      <h1 className="text-3xl font-extrabold mb-6 text-green-700 text-center">
-        🥕 Marchés de Toulouse ({marches.length})
-      </h1> 
-
-      <p className="font-semibold text-lg mb-4 text-slate-700">
-        Statut : {isLoadingData ? 'Chargement...' : `${marches.length} marchés chargés.`}
-      </p>
+      <header className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-black text-slate-900 leading-tight uppercase tracking-tighter italic">
+          🥕 Les Marchés <span className="text-green-600 font-black">Toulousains</span>
+        </h1>
+        <p className="text-slate-500 font-bold italic text-sm mt-1 uppercase tracking-widest">
+           {isLoadingData ? 'Récolte des données...' : `${marches.length} rendez-vous gourmands répertoriés`}
+        </p>
+      </header>
 
       {/* ZONE CARTE */}
-      <div style={{ height: "60vh", width: "100%" }} className="mb-8 border rounded-lg bg-gray-100 relative z-0 overflow-hidden shadow-inner border-green-200"> 
+      <div
+        className="mb-12 border-4 border-white rounded-[2.5rem] bg-slate-200 shadow-2xl overflow-hidden h-[45vh] md:h-[60vh] relative z-0"
+      > 
         <div ref={mapRef} className="h-full w-full" />
-        {isLoadingData && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-            <p className="animate-pulse font-bold text-green-600">Initialisation de la carte...</p>
+        {(!isReady || isLoadingData) && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/90 z-10 backdrop-blur-sm">
+            <Loader2 className="animate-spin h-10 w-10 text-green-600 mb-2" />
+            <p className="text-green-700 font-black text-xs uppercase tracking-widest">Ouverture des étals...</p>
           </div>
         )}
       </div>
 
-      <h2 className="text-2xl font-semibold mb-4 text-slate-800">Liste complète des marchés</h2> 
+      <h2 className="text-2xl font-black mb-6 flex items-center gap-3 text-slate-800">
+        <ShoppingBasket className="text-green-600" />
+        LISTE DES MARCHÉS
+      </h2> 
 
-      <div style={{ width: "100%", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "white" }}> 
-          <thead style={{ backgroundColor: "#f1f5f9" }}> 
-            <tr> 
-              <th style={tableHeaderStyle}>#</th>
-              <th style={tableHeaderStyle}>Nom du Marché</th> 
-              <th style={tableHeaderStyle}>Adresse</th> 
-              <th className="hidden md:table-cell" style={tableHeaderStyle}>Commune</th> 
-              <th style={tableHeaderStyle}>Jours de tenue</th> 
-              <th className="hidden md:table-cell" style={tableHeaderStyle}>Type</th> 
+      <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+        <table className="w-full text-left border-collapse text-sm"> 
+          <thead className="bg-slate-900 text-white"> 
+            <tr className="uppercase text-[10px] tracking-widest font-black"> 
+              <th className="p-5 w-12 text-center">#</th>
+              <th className="p-5">Nom du Marché</th> 
+              <th className="p-5">Localisation</th> 
+              <th className="p-5 hidden md:table-cell">Jours de tenue</th> 
+              <th className="p-5 hidden lg:table-cell text-center">Type</th> 
             </tr> 
           </thead> 
-          <tbody> 
+          <tbody className="divide-y divide-slate-100"> 
             {marches.map((m, i) => ( 
               <MarcheRow key={m.id} m={m} i={i} />
             ))} 
           </tbody> 
         </table>
       </div> 
+
+      <footer className="py-12 text-center text-slate-400">
+        <p className="text-[10px] font-black uppercase tracking-[0.5em]">
+            Produits Frais • Proximité • Toulouse 2026
+        </p>
+      </footer>
     </div> 
   ); 
 }
@@ -178,31 +171,60 @@ function MarcheRow({ m, i }: { m: Marche; i: number }) {
   return (
     <>
       <tr 
-        style={{ backgroundColor: i % 2 === 0 ? "#ffffff" : "#f8fafc", cursor: "pointer" }}
+        id={`marche-${m.id}`}
+        className={`cursor-pointer transition-colors scroll-mt-24 ${isOpen ? 'bg-green-50' : 'hover:bg-slate-50'}`}
         onClick={() => setIsOpen(!isOpen)}
       > 
-        <td style={tableCellStyle}>{i + 1}</td>
-        <td style={{ ...tableCellStyle, fontWeight: 'bold', color: THEME_COLOR }}>
-          <div className="flex items-center justify-between">
-            {m.nom}
-            <span className="md:hidden">
-              {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </span>
+        <td className="p-5 text-center font-black text-green-700 align-top">{i + 1}</td>
+        <td className="p-5 align-top">
+           <div className="flex flex-col">
+              <span className="font-black text-base text-slate-900 uppercase tracking-tighter leading-tight">{m.nom}</span>
+              <span className="md:hidden text-[10px] font-bold text-green-600 uppercase mt-1 italic">{m.jours_de_tenue}</span>
+           </div>
+        </td> 
+        <td className="p-5 align-top">
+          <div className="flex items-start gap-2 text-slate-500">
+            <MapPin size={14} className="mt-1 flex-shrink-0 text-slate-300" />
+            <div className="text-xs font-semibold leading-relaxed whitespace-normal italic">
+               {m.adresse}<br/>
+               <span className="text-slate-400 not-italic uppercase font-bold text-[10px]">{m.commune} {m.code_postal}</span>
+            </div>
           </div>
         </td> 
-        <td style={tableCellStyle}>{m.adresse}</td> 
-        <td className="hidden md:table-cell" style={tableCellStyle}>{m.commune} {m.code_postal ? `(${m.code_postal})` : ''}</td> 
-        <td style={{ ...tableCellStyle, fontStyle: 'italic' }}>{m.jours_de_tenue}</td> 
-        <td className="hidden md:table-cell" style={tableCellStyle}>{m.type}</td> 
+        <td className="p-5 hidden md:table-cell align-top">
+           <div className="flex items-start gap-2 text-slate-600">
+              <Calendar size={14} className="mt-0.5 text-green-600" />
+              <span className="text-xs font-black uppercase italic tracking-tighter">{m.jours_de_tenue}</span>
+           </div>
+        </td> 
+        <td className="p-5 hidden lg:table-cell align-top text-center">
+           <span className="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[9px] font-black uppercase tracking-widest">
+              {m.type}
+           </span>
+        </td> 
       </tr>
       
-      {/* Accordéon Mobile */}
+      {/* Accordéon Détails */}
       {isOpen && (
-        <tr className="md:hidden" style={{ backgroundColor: "#fdfdfd" }}>
-          <td colSpan={4} style={{ ...tableCellStyle, padding: "15px" }}>
-            <div className="space-y-2">
-              <p><strong>Commune :</strong> {m.commune} {m.code_postal ? `(${m.code_postal})` : ''}</p>
-              <p><strong>Type :</strong> {m.type}</p>
+        <tr className="bg-green-50/30 animate-in slide-in-from-top-1 duration-200">
+          <td colSpan={5} className="p-6 border-t border-green-100">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                    <p className="text-[10px] font-black text-green-700 uppercase tracking-widest">Horaires & Infos</p>
+                    <div className="flex items-center gap-2 text-slate-700">
+                        <Clock size={16} className="text-green-600" />
+                        <span className="text-sm font-bold italic">Consulter sur place</span>
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <p className="text-[10px] font-black text-green-700 uppercase tracking-widest">Type de Marché</p>
+                    <p className="text-sm font-bold text-slate-700 uppercase">{m.type}</p>
+                </div>
+                <div className="flex items-end justify-end">
+                    <button className="text-[10px] font-black bg-green-600 text-white px-4 py-2 rounded-full uppercase hover:bg-green-700 transition-colors">
+                        Ajouter au calendrier
+                    </button>
+                </div>
             </div>
           </td>
         </tr>
@@ -210,7 +232,3 @@ function MarcheRow({ m, i }: { m: Marche; i: number }) {
     </>
   );
 }
-
-// --- Styles du tableau ---
-const tableHeaderStyle: CSSProperties = { padding: "12px", border: "1px solid #e2e8f0", textAlign: "left", fontSize: "14px", color: "#475569" };
-const tableCellStyle: CSSProperties = { padding: "10px", border: "1px solid #e2e8f0", fontSize: "14px", color: "#1e293b" };
