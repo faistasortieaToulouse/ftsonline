@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, Globe, Landmark, Users, Maximize2, ListFilter, ChevronDown } from "lucide-react";
+import { ArrowLeft, Loader2, Globe, Landmark, Users, Maximize2, ListFilter, ChevronDown, ExternalLink } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 interface PaysEurope {
@@ -28,6 +28,9 @@ export default function EuropePage() {
   const mapInstance = useRef<any>(null);
   const [data, setData] = useState<EuropeData | null>(null);
   const [isReady, setIsReady] = useState(false);
+
+  // Utilitaire pour créer des IDs d'ancres valides
+  const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
 
   // 1. Chargement des données
   useEffect(() => {
@@ -88,12 +91,26 @@ export default function EuropePage() {
           L.marker([p.lat, p.lng], { icon: customIcon })
             .addTo(map)
             .bindPopup(`
-              <div style="font-family: sans-serif; text-align: center; padding: 5px; min-width: 150px;">
+              <div style="font-family: sans-serif; text-align: center; padding: 5px; min-width: 160px;">
                 <div style="text-transform: uppercase; font-size: 9px; font-weight: 900; color: ${markerColor}; letter-spacing: 1px;">PAYS D'EUROPE</div>
                 <strong style="font-size: 16px; color: #1e293b; display: block; margin: 4px 0;">${p.nom}</strong>
-                <div style="font-size: 11px; color: #64748b; font-weight: bold;">Capitale : ${p.capitale}</div>
-                <hr style="margin: 8px 0; border: 0; border-top: 1px solid #e2e8f0;"/>
-                <div style="font-size: 10px; color: #94a3b8 italic;">${p.nom_long}</div>
+                <div style="font-size: 11px; color: #64748b; font-weight: bold; margin-bottom: 8px;">Capitale : ${p.capitale}</div>
+                
+                <a href="#pays-${slugify(p.nom)}" style="
+                  display: block;
+                  background: #f1f5f9;
+                  color: #1e293b;
+                  text-decoration: none;
+                  padding: 8px;
+                  border-radius: 10px;
+                  font-size: 10px;
+                  font-weight: 900;
+                  text-transform: uppercase;
+                  border: 1px solid #e2e8f0;
+                ">Consulter la fiche ↓</a>
+                
+                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #f1f5f9;"/>
+                <div style="font-size: 9px; color: #94a3b8; font-style: italic; line-height: 1.2;">${p.nom_long}</div>
               </div>
             `);
         }
@@ -155,7 +172,6 @@ export default function EuropePage() {
                 <p className="text-slate-400 font-bold text-xs uppercase tracking-widest flex items-center gap-2 italic">
                   <Landmark size={14} className="text-blue-500" /> Inventaire des nations souveraines
                 </p>
-                {/* LIEN ANCRE AJOUTÉ ICI */}
                 <a 
                   href="#liste-pays" 
                   className="bg-blue-50 text-blue-700 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
@@ -185,8 +201,7 @@ export default function EuropePage() {
         )}
       </div>
 
-      {/* SECTION ANCRE : TITRE DE LA GRILLE */}
-      <div id="liste-pays" className="flex items-center gap-3 mb-8 scroll-mt-10">
+      <div id="liste-pays" className="flex items-center gap-3 mb-8 scroll-mt-20">
         <div className="h-10 w-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
            <ChevronDown size={20} />
         </div>
@@ -198,10 +213,10 @@ export default function EuropePage() {
         {data.pays_europe.map((p, index) => (
           <div 
             key={index} 
+            id={`pays-${slugify(p.nom)}`} // ID POUR ANCRE
             onClick={() => focusOnCountry(p)}
-            className="group cursor-pointer bg-white rounded-[2.5rem] p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-500 hover:-translate-y-2 transition-all duration-300 relative overflow-hidden"
+            className="group cursor-pointer bg-white rounded-[2.5rem] p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-500 hover:-translate-y-2 transition-all duration-300 relative overflow-hidden scroll-mt-10"
           >
-            {/* Index en arrière-plan */}
             <span className="absolute -right-2 -bottom-4 text-7xl font-black text-slate-50 group-hover:text-blue-50 transition-colors -z-0">
               {(index + 1).toString().padStart(2, '0')}
             </span>
@@ -240,8 +255,24 @@ export default function EuropePage() {
 
       <style jsx global>{`
         .custom-div-icon { background: none !important; border: none !important; }
-        .leaflet-popup-content-wrapper { border-radius: 2rem; border: 4px solid #1e293b; overflow: hidden; }
-        .leaflet-popup-tip { background: #1e293b; }
+        
+        /* Modifs visibilité croix fermeture (infobulle claire) */
+        .leaflet-popup-content-wrapper { 
+          border-radius: 1.5rem; 
+          border: 1px solid #e2e8f0; 
+          background: white;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+          overflow: hidden; 
+        }
+        .leaflet-popup-tip { background: white; border: 1px solid #e2e8f0; }
+        
+        /* On force la croix de fermeture en noir si elle ne l'est pas */
+        .leaflet-container a.leaflet-popup-close-button {
+          color: #000;
+          font-weight: bold;
+          padding: 8px 12px 0 0;
+        }
+
         html { scroll-behavior: smooth; }
       `}</style>
     </div>
