@@ -15,7 +15,7 @@ interface Establishment {
 
 interface EnrichedEstablishment extends Establishment {
   coords?: [number, number];
-  id: string; // Ajout d'un ID pour la gestion de l'accordéon
+  id: string;
 }
 
 export default function BibliomapPage() {
@@ -104,7 +104,7 @@ export default function BibliomapPage() {
     };
   }, []);
 
-  // 3. Mise à jour des marqueurs + Interaction
+  // 3. Mise à jour des marqueurs (Sans scroll automatique au clic)
   useEffect(() => {
     if (!isMapReady || !mapInstance.current) return;
 
@@ -120,32 +120,27 @@ export default function BibliomapPage() {
       filtered.forEach((est, i) => {
         if (!est.coords) return;
         const type = est.type ?? "library";
-        const id = i + 1;
+        const labelId = i + 1;
         
         const customIcon = L.divIcon({
           className: "custom-div-icon",
-          html: `<div style="background-color: ${typeColors[type]}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">${id}</div>`,
+          html: `<div style="background-color: ${typeColors[type]}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">${labelId}</div>`,
           iconSize: [28, 28],
           iconAnchor: [14, 14],
         });
 
         const marker = L.marker(est.coords, { icon: customIcon })
           .bindPopup(`
-            <div style="text-align: center; font-family: sans-serif;">
-                <strong style="color: ${typeColors[type]}">${id}. ${est.name}</strong><br/>
-                <a href="#est-item-${est.id}" style="display: inline-block; background-color: ${typeColors[type]}; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 10px; font-weight: bold; margin-top: 8px;">Voir infos ↓</a>
+            <div style="text-align: center; font-family: sans-serif; min-width: 120px;">
+                <strong style="color: ${typeColors[type]}">${labelId}. ${est.name}</strong><br/>
+                <a href="#est-item-${est.id}" style="display: inline-block; background-color: ${typeColors[type]}; color: white; padding: 5px 10px; border-radius: 6px; text-decoration: none; font-size: 10px; font-weight: 800; margin-top: 8px; text-transform: uppercase;">Voir infos ↓</a>
             </div>
           `)
           .addTo(mapInstance.current);
 
+        // On ouvre l'accordéon "en silence" sans quitter la carte des yeux
         marker.on('click', () => {
-            toggleDetails(est.id);
-            setTimeout(() => {
-                document.getElementById(`est-item-${est.id}`)?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                });
-            }, 100);
+            setOpenDetailsId(est.id);
         });
       });
     };
@@ -204,7 +199,7 @@ export default function BibliomapPage() {
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/80 backdrop-blur-sm z-10">
             <Loader2 className="animate-spin text-blue-600 mb-2" size={32} />
-            <p className="text-blue-600 font-black text-xs uppercase tracking-widest">Cartographie en cours...</p>
+            <p className="text-blue-600 font-black text-xs uppercase tracking-widest">Cartographie...</p>
           </div>
         )}
       </div>
@@ -254,9 +249,6 @@ export default function BibliomapPage() {
                     <div className="p-4 rounded-2xl text-sm text-slate-600 leading-relaxed italic" style={{ backgroundColor: `${typeColors[type]}10` }}>
                         Cet établissement vous accueille pour vos activités culturelles et citoyennes dans le quartier de {est.address.split(',')[0]}.
                     </div>
-                    <button className="mt-4 w-full py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-white transition-opacity hover:opacity-90" style={{ backgroundColor: typeColors[type] }}>
-                        Itinéraire
-                    </button>
                 </div>
               )}
             </li>
