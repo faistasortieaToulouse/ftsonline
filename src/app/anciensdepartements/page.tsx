@@ -13,6 +13,7 @@ interface Departement {
   description: string;
   date_debut: number;
   date_fin: number;
+  id?: string | number;
 }
 
 export default function AnciensDepartementsPage() {
@@ -36,18 +37,16 @@ export default function AnciensDepartementsPage() {
       .catch(console.error);
   }, []);
 
-  // 2. Initialisation manuelle de Leaflet (Comme pour l'OTAN)
+  // 2. Initialisation manuelle de Leaflet
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current) return;
 
     const initMap = async () => {
-      // Import dynamique de Leaflet
       const L = (await import('leaflet')).default;
       await import('leaflet/dist/leaflet.css');
 
-      if (mapInstance.current) return; // Évite la double initialisation
+      if (mapInstance.current) return;
 
-      // Création de la map sur la div ref
       mapInstance.current = L.map(mapRef.current).setView([42.0, 12.0], 4);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -59,7 +58,6 @@ export default function AnciensDepartementsPage() {
 
     initMap();
 
-    // Nettoyage au démontage
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -68,12 +66,19 @@ export default function AnciensDepartementsPage() {
     };
   }, []);
 
-  // 3. Ajout des marqueurs quand la carte et les données sont prêtes
+  // 3. Ajout des marqueurs avec LIEN ANCRE
   useEffect(() => {
     if (!isReady || !mapInstance.current || departements.length === 0) return;
 
     const addMarkers = async () => {
       const L = (await import('leaflet')).default;
+
+      // Nettoyage préalable au cas où les données changent
+      mapInstance.current.eachLayer((layer: any) => {
+        if (layer instanceof L.Marker) {
+          mapInstance.current.removeLayer(layer);
+        }
+      });
 
       departements.forEach((d, index) => {
         const customIcon = L.divIcon({
@@ -100,14 +105,29 @@ export default function AnciensDepartementsPage() {
           iconAnchor: [12, 12]
         });
 
+        // Génération d'un slug pour le lien
+        const slug = d.nom.toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, '-');
+        
+        const detailUrl = `/anciens-departements/${d.id || slug}`;
+
         const marker = L.marker([d.lat, d.lng], { icon: customIcon });
         
         marker.bindPopup(`
           <div style="color: black; padding: 5px; font-family: sans-serif; max-width: 220px;">
-            <strong style="font-size: 14px;">#${index + 1} - ${d.nom}</strong><br />
-            <span style="color: #002395; font-size: 11px; font-weight: bold;">${d.pays.toUpperCase()}</span><br />
+            <strong style="font-size: 14px; display: block; margin-bottom: 2px;">#${index + 1} - ${d.nom}</strong>
+            <span style="color: #002395; font-size: 11px; font-weight: bold; text-transform: uppercase;">${d.pays}</span><br />
             <span style="color: #b91c1c; font-size: 10px; font-weight: bold;">${d.date_debut} — ${d.date_fin}</span><br />
-            <p style="margin-top: 8px; font-size: 12px; line-height: 1.4; color: #333;">${d.description}</p>
+            <p style="margin-top: 8px; font-size: 12px; line-height: 1.4; color: #333; margin-bottom: 12px;">
+              ${d.description.substring(0, 120)}${d.description.length > 120 ? '...' : ''}
+            </p>
+            <a href="${detailUrl}" 
+               style="display: block; background-color: #002395; color: white; text-align: center; padding: 6px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 11px;"
+            >
+              Voir l'histoire du département →
+            </a>
           </div>
         `);
 
@@ -119,7 +139,7 @@ export default function AnciensDepartementsPage() {
   }, [isReady, departements]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen">
+    <div className="p-4 max-w-7xl mx-auto font-sans bg-slate-50 min-h-screen text-slate-900">
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -134,7 +154,7 @@ export default function AnciensDepartementsPage() {
         <p className="text-gray-600 mt-2 italic">Hors frontières actuelles : Europe Napoléonienne et Algérie Française</p>
       </header>
 
-      {/* ZONE CARTE (DIV REF AU LIEU DE MAPCONTAINER) */}
+      {/* ZONE CARTE */}
       <div className="mb-8 border-4 border-white shadow-2xl rounded-3xl bg-slate-200 overflow-hidden relative" style={{ height: "60vh" }}>
         <div ref={mapRef} className="h-full w-full z-0" />
         {!isReady && (
@@ -147,7 +167,7 @@ export default function AnciensDepartementsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {departements.map((d, index) => (
           <div key={`${d.nom}-${index}`} className="group p-5 bg-white rounded-2xl shadow-sm border border-slate-200 hover:bg-blue-900 transition-all duration-300 flex gap-4">
-            <span className="text-3xl font-black text-slate-200 group-hover:text-blue-400/30 transition-colors">
+            <span className="text-3xl font-black text-slate-200 group-hover:text-blue-400/30 transition-colors shrink-0">
               {(index + 1).toString().padStart(2, '0')}
             </span>
             <div>
@@ -155,7 +175,7 @@ export default function AnciensDepartementsPage() {
                 {d.nom}
               </h3>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700 group-hover:bg-blue-800 group-hover:text-blue-100 transition-colors">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700 group-hover:bg-blue-800 group-hover:text-blue-100 transition-colors uppercase">
                   {d.pays}
                 </span>
                 <span className="text-xs font-bold text-red-600 group-hover:text-red-300">
