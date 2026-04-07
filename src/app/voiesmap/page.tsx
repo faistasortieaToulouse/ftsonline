@@ -1,10 +1,9 @@
-"use client";
+'use client';
 
 import { useEffect, useState, useMemo, useRef } from "react";
-import Script from "next/script";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MapPin, Search, Info } from "lucide-react";
 
 interface Voie {
   id: number;
@@ -16,27 +15,20 @@ interface Voie {
   complement_occitan?: string | null;
   sti: number;
   wikipedia?: string | null;
+  lat?: number; // Assurez-vous que votre API renvoie lat/lng
+  lng?: number;
 }
 
 export default function VoiesPage() {
   const [voies, setVoies] = useState<Voie[]>([]);
   const [search, setSearch] = useState("");
   const [selectedVoie, setSelectedVoie] = useState<Voie | null>(null);
-  const [isMapReady, setIsMapReady] = useState(false);
-
+  
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const markerRef = useRef<google.maps.Marker | null>(null);
+  const mapInstance = useRef<any>(null);
+  const markerRef = useRef<any>(null);
 
-  /* ================= SCROLL TO MAP ================= */
-  const scrollToMap = () => {
-    mapRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-
-  /* ================= DATA ================= */
+  // 1. Fetch Data
   useEffect(() => {
     fetch("/api/voiesmap")
       .then(res => res.json())
@@ -44,177 +36,160 @@ export default function VoiesPage() {
       .catch(console.error);
   }, []);
 
-  /* ================= MAP INIT ================= */
+  // 2. Init Leaflet Map
   useEffect(() => {
-    if (!isMapReady || !mapRef.current) return;
+    if (typeof window === "undefined" || !mapRef.current || mapInstance.current) return;
 
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      center: { lat: 43.6045, lng: 1.444 }, // Toulouse
-      zoom: 13,
-      gestureHandling: "greedy",
-    });
-  }, [isMapReady]);
+    const initMap = async () => {
+      const L = (await import("leaflet")).default;
+      
+      mapInstance.current = L.map(mapRef.current!).setView([43.6045, 1.444], 13);
 
-  /* ================= GEOLOC CLICK ================= */
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(mapInstance.current);
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, []);
+
+  // 3. Focus sur une voie (Geocoding ou Coordonnées directes)
   useEffect(() => {
     if (!selectedVoie || !mapInstance.current) return;
 
-    const geocoder = new google.maps.Geocoder();
-    const address = `${selectedVoie.libelle}, Toulouse, France`;
+    const updateMap = async () => {
+      const L = (await import("leaflet")).default;
+      
+      // Si votre API ne donne pas lat/lng, on utilise un service gratuit de geocoding (Nominatim)
+      const query = `${selectedVoie.libelle}, Toulouse, France`;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
 
-    geocoder.geocode({ address }, (results, status) => {
-      if (status !== "OK" || !results?.[0]) return;
+        if (data && data[0]) {
+          const { lat, lon } = data[0];
+          const coords: [number, number] = [parseFloat(lat), parseFloat(lon)];
 
-      const location = results[0].geometry.location;
+          mapInstance.current.flyTo(coords, 16);
 
-      mapInstance.current!.setCenter(location);
-      mapInstance.current!.setZoom(16);
-
-      if (markerRef.current) {
-        markerRef.current.setMap(null);
+          if (markerRef.current) markerRef.current.remove();
+          
+          markerRef.current = L.marker(coords).addTo(mapInstance.current)
+            .bindPopup(`<b>${selectedVoie.libelle}</b>`)
+            .openPopup();
+          
+          mapRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+      } catch (err) {
+        console.error("Erreur Geocoding:", err);
       }
+    };
 
-      markerRef.current = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: location,
-        title: selectedVoie.libelle,
-      });
-    });
+    updateMap();
   }, [selectedVoie]);
 
-  /* ================= FILTER ================= */
-  const filteredVoies = useMemo(
-    () =>
-      voies.filter(v =>
-        v.libelle.toLowerCase().includes(search.toLowerCase()) ||
-        v.libelle_occitan?.toLowerCase().includes(search.toLowerCase()) ||
-        v.quartier.toLowerCase().includes(search.toLowerCase())
-      ),
-    [search, voies]
-  );
-
-  /* ================= STATS ================= */
-  const totalQuartiers = useMemo(
-    () => new Set(voies.map(v => v.quartier)).size,
-    [voies]
-  );
-
-  const totalTerritoires = useMemo(
-    () => new Set(voies.map(v => v.territoire)).size,
-    [voies]
-  );
-
-  const totalOrigines = useMemo(
-    () => voies.filter(v => v.complement || v.complement_occitan).length,
-    [voies]
-  );
-
-  const totalWikipedia = useMemo(
-    () => voies.filter(v => v.wikipedia).length,
-    [voies]
+  // Filtre et Stats
+  const filteredVoies = useMemo(() =>
+    voies.filter(v =>
+      v.libelle.toLowerCase().includes(search.toLowerCase()) ||
+      v.libelle_occitan?.toLowerCase().includes(search.toLowerCase()) ||
+      v.quartier.toLowerCase().includes(search.toLowerCase())
+    ), [search, voies]
   );
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-
+    <div className="p-4 md:p-8 max-w-7xl mx-auto bg-slate-50 min-h-screen font-sans text-slate-900">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+          Retour Accueil
         </Link>
       </nav>
 
-      {/* ================= MAP SCRIPT ================= */}
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsMapReady(true)}
-      />
+      <header className="mb-8 text-center">
+        <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter italic">
+          Nomenclature des <span className="text-blue-600">Voies</span>
+        </h1>
+        <p className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">Ville de Toulouse — Atlas Numérique</p>
+      </header>
 
-      <h1 className="text-3xl font-extrabold mb-6 text-center text-purple-800">
-        🛣️ Nomenclature des voies de Toulouse
-      </h1>
-
-      {/* ================= SEARCH ================= */}
-      <input
-        type="text"
-        placeholder="Rechercher une voie, un quartier, un nom occitan…"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full p-3 mb-6 border rounded-lg shadow-sm"
-      />
-
-      {/* ================= STATS ================= */}
-      <div className="mb-6 text-sm text-gray-600 space-y-1">
-        <p>Total voies : {voies.length}</p>
-        <p>Voies affichées : {filteredVoies.length}</p>
-        <p>Quartiers uniques : {totalQuartiers}</p>
-        <p>Territoires uniques : {totalTerritoires}</p>
-        <p>Voies avec origine du nom : {totalOrigines}</p>
-        <p>Voies avec résumé Wikipédia : {totalWikipedia}</p>
+      {/* RECHERCHE */}
+      <div className="relative mb-8">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+        <input
+          type="text"
+          placeholder="Rechercher une rue, un quartier, un nom occitan..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-12 pr-4 py-4 rounded-2xl border-none shadow-xl focus:ring-2 focus:ring-blue-500 text-lg"
+        />
       </div>
 
-      {/* ================= MAP ================= */}
-      <div
-        ref={mapRef}
-        id="map"
-        className="mb-10 h-[400px] w-full border rounded-lg bg-gray-100 flex items-center justify-center"
-      >
-        {!isMapReady && <p>Chargement de la carte…</p>}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* LISTE */}
+        <div className="lg:col-span-1 h-[70vh] overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+          {filteredVoies.map((v, i) => (
+            <div
+              key={v.id}
+              onClick={() => setSelectedVoie(v)}
+              className={`p-5 rounded-2xl cursor-pointer transition-all border-2 ${
+                selectedVoie?.id === v.id ? "border-blue-600 bg-white shadow-lg" : "border-transparent bg-white shadow-sm hover:border-slate-200"
+              }`}
+            >
+              <h3 className="font-black text-slate-800 leading-tight">
+                <span className="text-blue-600 mr-2">{(i + 1).toString().padStart(2, '0')}</span>
+                {v.libelle}
+              </h3>
+              {v.libelle_occitan && <p className="text-xs italic text-slate-500 mt-1">{v.libelle_occitan}</p>}
+              <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <MapPin size={12} /> {v.quartier}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CARTE ET DETAILS */}
+        <div className="lg:col-span-2 space-y-6">
+          <div ref={mapRef} className="h-[450px] w-full rounded-[2.5rem] shadow-2xl border-4 border-white bg-slate-200 overflow-hidden z-0" />
+          
+          {selectedVoie && (
+            <div className="bg-blue-900 text-white p-8 rounded-[2.5rem] shadow-xl animate-in fade-in slide-in-from-bottom-4">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-2xl font-black uppercase italic">{selectedVoie.libelle}</h2>
+                <span className="text-blue-300 font-mono text-xs">STI: {selectedVoie.sti}</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-blue-800/50 p-4 rounded-xl">
+                    <p className="text-[10px] uppercase font-bold text-blue-300 mb-1">Quartier</p>
+                    <p className="text-sm font-bold">{selectedVoie.quartier}</p>
+                </div>
+                <div className="bg-blue-800/50 p-4 rounded-xl">
+                    <p className="text-[10px] uppercase font-bold text-blue-300 mb-1">Territoire</p>
+                    <p className="text-sm font-bold">{selectedVoie.territoire}</p>
+                </div>
+              </div>
+
+              {selectedVoie.complement && (
+                <div className="bg-white/10 p-6 rounded-xl">
+                  <div className="flex items-center gap-2 mb-2 text-blue-200">
+                    <Info size={16} />
+                    <span className="text-xs font-bold uppercase tracking-widest">Origine du nom</span>
+                  </div>
+                  <p className="text-sm leading-relaxed">{selectedVoie.complement}</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-
-      {/* ================= LIST ================= */}
-      <ul className="space-y-4">
-        {filteredVoies.map((v, i) => (
-          <li
-            key={v.id}
-            onClick={() => {
-              setSelectedVoie(v);
-              scrollToMap();
-            }}
-            className={`cursor-pointer p-5 border rounded-lg shadow transition
-              ${
-                selectedVoie?.id === v.id
-                  ? "border-purple-500 bg-purple-50"
-                  : "bg-white hover:shadow-lg hover:border-purple-300"
-              }
-            `}
-          >
-            <p className="text-lg font-bold text-purple-900">
-              {i + 1}. {v.libelle}
-            </p>
-
-            {v.libelle_occitan && (
-              <p className="italic text-purple-700">{v.libelle_occitan}</p>
-            )}
-
-            <p className="mt-2 text-sm">
-              <strong>Quartier :</strong> {v.quartier}
-              <br />
-              <strong>Territoire :</strong> {v.territoire}
-            </p>
-
-            {(v.complement || v.complement_occitan) && (
-              <div className="mt-3 pt-2 border-t text-sm">
-                <p className="font-semibold text-purple-700">Origine du nom</p>
-                {v.complement && <p>{v.complement}</p>}
-                {v.complement_occitan && (
-                  <p className="italic">{v.complement_occitan}</p>
-                )}
-              </div>
-            )}
-
-            {v.wikipedia && (
-              <div className="mt-3 pt-2 border-t text-sm">
-                <p className="font-semibold text-purple-700">Wikipédia</p>
-                <p>{v.wikipedia}</p>
-              </div>
-            )}
-
-            <p className="mt-2 text-xs text-gray-400">STI : {v.sti}</p>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
