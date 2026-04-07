@@ -20,11 +20,23 @@ export default function QuartiersToulouseMapPage() {
   const [quartiers, setQuartiers] = useState<Quartier[]>([]);
   const [isReady, setIsReady] = useState(false);
 
+  // Utilitaire pour créer des IDs d'ancres valides
+  const slugify = (text: string) => 
+    text.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '');
+
   // --- 1. Charger les données ---
   useEffect(() => {
     fetch('/api/quartiertoulouse')
       .then(res => res.json())
-      .then(data => setQuartiers(data))
+      .then(data => {
+        if (Array.isArray(data)) {
+          setQuartiers(data);
+        }
+      })
       .catch(console.error);
   }, []);
 
@@ -34,11 +46,10 @@ export default function QuartiersToulouseMapPage() {
 
     const initMap = async () => {
       const L = (await import('leaflet')).default;
-
       if (mapInstance.current) return;
 
       const toulouseCenter: [number, number] = [43.6045, 1.444];
-      const map = L.map(mapRef.current!).setView(toulouseCenter, 12);
+      const map = L.map(mapRef.current!).setView(toulouseCenter, 13);
       mapInstance.current = map;
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -49,30 +60,39 @@ export default function QuartiersToulouseMapPage() {
       quartiers.forEach((q, i) => {
         if (typeof q.lat !== 'number' || typeof q.lng !== 'number') return;
 
+        // DESIGN ANCIEN MARQUEUR (LOSANGE)
         const customIcon = L.divIcon({
           className: 'custom-div-icon',
           html: `<div style="
-            background-color: #1e293b; 
+            background-color: #1e3a8a; 
             color: white; 
             width: 28px; height: 28px; 
-            border-radius: 8px; 
+            border-radius: 6px; 
             display: flex; align-items: center; justify-content: center; 
             font-size: 10px; font-weight: 900; 
             border: 2px solid white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transform: rotate(45deg);
           "><span style="transform: rotate(-45deg)">${i + 1}</span></div>`,
           iconSize: [28, 28],
           iconAnchor: [14, 14]
         });
 
+        const anchorId = `#secteur-${slugify(q.nom)}`;
+
         const marker = L.marker([q.lat, q.lng], { icon: customIcon })
           .addTo(map)
           .bindPopup(`
-            <div style="font-family: sans-serif; padding: 4px;">
-              <div style="color: #3b82f6; font-[900] text-[10px] uppercase tracking-widest mb-1">Quartier Historique</div>
-              <strong style="font-size: 14px; color: #1e293b;">${q.nom}</strong>
-              <div style="margin-top: 5px; font-size: 11px; color: #64748b;">Identifiant technique : #${q.id}</div>
+            <div style="font-family: sans-serif; padding: 5px; min-width: 150px;">
+              <div style="color: #2563eb; font-weight: 900; font-size: 9px; uppercase; tracking-widest; mb-1">
+                SECTEUR RÉPERTORIÉ
+              </div>
+              <strong style="font-size: 14px; color: #1e293b; display: block; margin-bottom: 8px;">${q.nom}</strong>
+              <a href="${anchorId}" 
+                 style="display: block; background-color: #1e3a8a; color: white; text-align: center; padding: 8px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 10px; text-transform: uppercase;"
+              >
+                Fiche Quartier ↓
+              </a>
             </div>
           `);
         
@@ -100,14 +120,19 @@ export default function QuartiersToulouseMapPage() {
     if (mapInstance.current && marker) {
       mapInstance.current.flyTo([q.lat, q.lng], 15, { duration: 1.5 });
       marker.openPopup();
-      window.scrollTo({ top: 100, behavior: 'smooth' });
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans scroll-smooth">
+      <style jsx global>{`
+        html { scroll-behavior: smooth; }
+        .custom-div-icon { background: none !important; border: none !important; }
+        .leaflet-popup-content-wrapper { border-radius: 1rem; padding: 0; overflow: hidden; }
+        .leaflet-popup-content { margin: 12px; }
+      `}</style>
+
       <div className="max-w-7xl mx-auto">
-        
         <nav className="mb-8">
           <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 font-black uppercase text-[10px] tracking-[0.2em] transition-all group">
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
@@ -119,7 +144,7 @@ export default function QuartiersToulouseMapPage() {
           <div>
             <div className="flex items-center gap-3 mb-2 text-blue-600">
               <MapIcon size={24} />
-              <span className="font-black uppercase tracking-[0.3em] text-[10px]">Urbanisme & Territoires</span>
+              <span className="font-black uppercase tracking-[0.3em] text-[10px]">Atlas Urbain</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-black text-slate-900 uppercase tracking-tighter italic leading-none">
               Quartiers <span className="text-blue-600">Toulousains</span>
@@ -132,43 +157,40 @@ export default function QuartiersToulouseMapPage() {
         </header>
 
         {/* ZONE CARTE */}
-        <div className="relative group mb-16 border-4 border-white shadow-2xl rounded-[3rem] bg-slate-200 z-0 overflow-hidden" style={{ height: '60vh' }}>
+        <div className="relative group mb-16 border-4 border-white shadow-2xl rounded-[3rem] bg-slate-200 z-0 overflow-hidden h-[50vh] md:h-[65vh]">
           <div ref={mapRef} className="h-full w-full" />
           {!isReady && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/90 z-10 backdrop-blur-sm">
                <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
-               <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Chargement des données géographiques...</p>
+               <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Synchronisation géodésique...</p>
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-8 border-b border-slate-200 pb-4">
           <Navigation className="text-slate-900" size={24} />
           <h2 className="text-2xl font-black uppercase tracking-tighter italic text-slate-800">Index des secteurs</h2> 
         </div>
 
         {/* GRILLE DES QUARTIERS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {quartiers.map((q, i) => (
             <div 
               key={q.id} 
+              id={`secteur-${slugify(q.nom)}`} // ID POUR L'ANCRE
               onClick={() => focusQuartier(q)}
-              className="group cursor-pointer p-5 bg-white border border-slate-200 rounded-3xl shadow-sm hover:shadow-xl hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+              className="group cursor-pointer p-6 bg-white border border-slate-100 rounded-[2rem] shadow-sm hover:shadow-2xl hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 scroll-mt-10"
             >
-              <div className="absolute -right-2 -top-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                <MapIcon size={80} />
-              </div>
-              
               <div className="flex justify-between items-start mb-4">
-                <span className="bg-slate-900 text-white w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-black tracking-tighter">
-                  {(i + 1).toString().padStart(2, '0')}
+                <span className="bg-blue-900 text-white w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-black transform rotate-45">
+                  <span className="-rotate-45">{(i + 1).toString().padStart(2, '0')}</span>
                 </span>
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest group-hover:text-blue-500 transition-colors">
-                  ID: {q.id}
+                <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
+                  Ref {q.id}
                 </span>
               </div>
 
-              <h3 className="text-lg font-black text-slate-800 uppercase tracking-tighter leading-tight mb-3 group-hover:text-blue-700 transition-colors">
+              <h3 className="text-xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-4 group-hover:text-blue-700 transition-colors">
                 {q.nom}
               </h3>
 
@@ -176,23 +198,18 @@ export default function QuartiersToulouseMapPage() {
                 <code className="text-[9px] font-mono text-slate-400">
                   {q.lat.toFixed(3)}°N / {q.lng.toFixed(3)}°E
                 </code>
-                <ChevronRight size={16} className="text-slate-300 group-hover:translate-x-1 group-hover:text-blue-500 transition-all" />
+                <div className="bg-slate-50 p-2 rounded-full group-hover:bg-blue-50 transition-colors">
+                    <ChevronRight size={14} className="text-slate-300 group-hover:text-blue-600" />
+                </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
 
-      <style jsx global>{`
-        .custom-div-icon { background: none !important; border: none !important; }
-        .leaflet-popup-content-wrapper { 
-          border-radius: 1.5rem; 
-          border: 3px solid #1e293b; 
-          box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-        }
-        .leaflet-popup-tip { background: #1e293b; }
-        .leaflet-container { font-family: inherit; }
-      `}</style>
+        <footer className="mt-20 py-10 border-t border-slate-200 text-center">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em]">Urban Data Toulouse — 2026</p>
+        </footer>
+      </div>
     </div>
   );
 }
