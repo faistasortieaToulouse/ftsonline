@@ -1611,53 +1611,54 @@ return sections.map((sec, idx) => {
       </h2>
     </div>
 
-    <div className="space-y-3">
-      {currentData.sections?.map((section, idx) => {
-        const isOpen = openSection === idx;
-        
-        return (
-          <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-            {/* BOUTON DE TITRE (DÉROULANT) */}
-            <button 
-              onClick={() => toggleSection(idx)}
-              className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-xl">
-                  {section.categorie.includes("Potager") ? "🥗" : 
-                   section.categorie.includes("Verger") ? "🍎" :
-                   section.categorie.includes("Fleurs") ? "🌸" :
-                   section.categorie.includes("Pelouse") ? "🌱" : 
-                   section.categorie.includes("Matériel") ? "🛠️" : "💡"}
-                </span>
-                <span className="font-bold text-slate-800 text-sm">{section.categorie}</span>
-              </div>
-              <span className={`text-emerald-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
-                ▼
-              </span>
-            </button>
-
-            {/* CONTENU DÉROULANT */}
-            <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[1000px] opacity-100 border-t border-slate-100' : 'max-h-0 opacity-0'}`}>
-              <div className="p-4 bg-slate-50/50">
-                <ul className="space-y-3">
-                  {(section.actions || section.conseils || []).map((item, itemIdx) => (
-                    <li key={itemIdx} className="text-xs text-slate-600 flex gap-3">
-                      <span className="text-emerald-500 font-bold mt-0.5">•</span>
-                      <span>
-                        {typeof item === 'string' 
-                          ? item 
-                          : <><strong className="text-slate-800">{item.tache} :</strong> {item.items.join(', ')}</>}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+{/* LE CONTENEUR PRINCIPAL : 1 colonne mobile, 2 colonnes tablette, 3 colonnes desktop */}
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+  {currentData.sections?.map((section, idx) => {
+    const isOpen = openSection === idx;
+    
+    return (
+      <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm h-fit">
+        {/* BOUTON DE TITRE */}
+        <button 
+          onClick={() => toggleSection(idx)}
+          className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-lg">
+              {section.categorie.includes("Potager") ? "🥗" : 
+               section.categorie.includes("Verger") ? "🍎" :
+               section.categorie.includes("Fleurs") ? "🌸" :
+               section.categorie.includes("Pelouse") ? "🌱" : 
+               section.categorie.includes("Matériel") ? "🛠️" : "💡"}
+            </span>
+            <span className="font-bold text-slate-800 text-[13px] leading-tight">{section.categorie}</span>
           </div>
-        );
-      })}
-    </div>
+          <span className={`text-emerald-500 text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+            ▼
+          </span>
+        </button>
+
+        {/* CONTENU DÉROULANT */}
+        <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[500px] opacity-100 border-t border-slate-100' : 'max-h-0 opacity-0'}`}>
+          <div className="p-4 bg-slate-50/50">
+            <ul className="space-y-2">
+              {(section.actions || section.conseils || []).map((item, itemIdx) => (
+                <li key={itemIdx} className="text-[11px] text-slate-600 flex gap-2">
+                  <span className="text-emerald-500 font-bold">•</span>
+                  <span>
+                    {typeof item === 'string' 
+                      ? item 
+                      : <><strong className="text-slate-800">{item.tache} :</strong> {item.items.join(', ')}</>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
 
     {/* CITATION MOBILE */}
     <div className="mt-6 text-center italic text-slate-500 text-xs px-4">
