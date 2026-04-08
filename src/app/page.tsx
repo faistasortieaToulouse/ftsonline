@@ -780,6 +780,13 @@ export default function HomePage() {
     soir: { temp: "--", cond: "--", vent: "--" }
   });
 	
+// Permet de stocker l'index de la section ouverte (null = tout fermé)
+const [openSection, setOpenSection] = useState(null);
+
+const toggleSection = (idx) => {
+  setOpenSection(openSection === idx ? null : idx);
+};
+		
   // --- LOGIQUE SAISONNIÈRE ---
 // --- LOGIQUE SAISONNIÈRE ANTI-CRASH ---
 const now = new Date();
@@ -1592,48 +1599,69 @@ return sections.map((sec, idx) => {
 </div>
 		
 {/* SECTION CONSEILS JARDINAGE DYNAMIQUE */}
-<section className="bg-slate-50 py-12 px-6 border-t border-slate-200">
-  <div className="max-w-6xl mx-auto">
-    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-      <div>
-        <h3 className="text-[10px] uppercase font-black tracking-[0.3em] text-emerald-600 mb-2">
-          Calendrier de Saison
-        </h3>
-        <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
-          Au jardin en <span className="text-emerald-600">{currentData.mois}</span>
-        </h2>
-      </div>
-      <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold italic shadow-sm">
-        "{currentData.citation}"
-      </div>
+<section className="bg-slate-50 py-8 px-4 border-t border-slate-200">
+  <div className="max-w-3xl mx-auto"> {/* On réduit la largeur pour que ce soit plus lisible en liste */}
+    
+    <div className="mb-6">
+      <h3 className="text-[10px] uppercase font-black tracking-[0.3em] text-emerald-600 mb-1">
+        Calendrier de Saison
+      </h3>
+      <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+        Au jardin en <span className="text-emerald-600">{currentData.mois}</span>
+      </h2>
     </div>
 
-    {/* Grille des catégories */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {currentData.sections.map((section, idx) => (
-        <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
-              {/* Petit switch pour l'icône selon la catégorie */}
-              {section.categorie.includes("Potager") ? "🥗" : 
-               section.categorie.includes("Verger") ? "🍎" :
-               section.categorie.includes("Fleurs") ? "🌸" :
-               section.categorie.includes("Pelouse") ? "🌱" : 
-               section.categorie.includes("Matériel") ? "🛠️" : "💡"}
+    <div className="space-y-3">
+      {currentData.sections?.map((section, idx) => {
+        const isOpen = openSection === idx;
+        
+        return (
+          <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            {/* BOUTON DE TITRE (DÉROULANT) */}
+            <button 
+              onClick={() => toggleSection(idx)}
+              className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-xl">
+                  {section.categorie.includes("Potager") ? "🥗" : 
+                   section.categorie.includes("Verger") ? "🍎" :
+                   section.categorie.includes("Fleurs") ? "🌸" :
+                   section.categorie.includes("Pelouse") ? "🌱" : 
+                   section.categorie.includes("Matériel") ? "🛠️" : "💡"}
+                </span>
+                <span className="font-bold text-slate-800 text-sm">{section.categorie}</span>
+              </div>
+              <span className={`text-emerald-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                ▼
+              </span>
+            </button>
+
+            {/* CONTENU DÉROULANT */}
+            <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[1000px] opacity-100 border-t border-slate-100' : 'max-h-0 opacity-0'}`}>
+              <div className="p-4 bg-slate-50/50">
+                <ul className="space-y-3">
+                  {(section.actions || section.conseils || []).map((item, itemIdx) => (
+                    <li key={itemIdx} className="text-xs text-slate-600 flex gap-3">
+                      <span className="text-emerald-500 font-bold mt-0.5">•</span>
+                      <span>
+                        {typeof item === 'string' 
+                          ? item 
+                          : <><strong className="text-slate-800">{item.tache} :</strong> {item.items.join(', ')}</>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <h4 className="font-bold text-slate-800 text-sm">{section.categorie}</h4>
           </div>
-          
-          <ul className="space-y-2">
-            {(section.actions || section.conseils).map((item, itemIdx) => (
-              <li key={itemIdx} className="text-xs text-slate-600 flex gap-2">
-                <span className="text-emerald-500">•</span>
-                {typeof item === 'string' ? item : `${item.tache} : ${item.items.join(', ')}`}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+        );
+      })}
+    </div>
+
+    {/* CITATION MOBILE */}
+    <div className="mt-6 text-center italic text-slate-500 text-xs px-4">
+      "{currentData.citation}"
     </div>
   </div>
 </section>
