@@ -39,6 +39,9 @@ import saintsData from "../../data/celebration/celebrations_saints.json";
 import bienheureuxData from "../../data/celebration/celebrations_bienheureux.json";
 import orthodoxesData from "../../data/celebration/celebrations_orthodoxes.json";
 import prenomsData from "../../data/celebration/prenoms_du_jour.json";
+import jardinierData from '../../data/saison/jardinier.json';
+import fruitsData from '../../data/saison/fruits.json';
+import legumesData from '../../data/saison/legumes.json';
 
 import SunCalc from 'suncalc';
 import * as Astronomy from 'astronomy-engine';
@@ -776,7 +779,17 @@ export default function HomePage() {
     midi: { temp: "--", cond: "--", vent: "--" },
     soir: { temp: "--", cond: "--", vent: "--" }
   });
-
+	
+  // --- LOGIQUE SAISONNIÈRE ---
+  const currentMonthIndex = new Date().getMonth(); 
+  
+  // On récupère les données du mois en cours dans le fichier jardinier.json
+  const currentData = jardinierData.conseils_mensuels[currentMonthIndex];
+  
+  // Tu peux aussi récupérer les fruits et légumes de saison si besoin :
+  const fruitsDuMois = fruitsData.conseils_mensuels[currentMonthIndex];
+  const legumesDuMois = legumesData.conseils_mensuels[currentMonthIndex];
+	
 // --- PLIER DEPLIER MENU DEROULANT ---
 const [openMenu, setOpenMenu] = useState(null);
 	
@@ -1566,6 +1579,53 @@ return sections.map((sec, idx) => {
   </section>
 </div>
 		
+{/* SECTION CONSEILS JARDINAGE DYNAMIQUE */}
+<section className="bg-slate-50 py-12 px-6 border-t border-slate-200">
+  <div className="max-w-6xl mx-auto">
+    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <h3 className="text-[10px] uppercase font-black tracking-[0.3em] text-emerald-600 mb-2">
+          Calendrier de Saison
+        </h3>
+        <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+          Au jardin en <span className="text-emerald-600">{currentData.mois}</span>
+        </h2>
+      </div>
+      <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold italic shadow-sm">
+        "{currentData.citation}"
+      </div>
+    </div>
+
+    {/* Grille des catégories */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {currentData.sections.map((section, idx) => (
+        <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
+              {/* Petit switch pour l'icône selon la catégorie */}
+              {section.categorie.includes("Potager") ? "🥗" : 
+               section.categorie.includes("Verger") ? "🍎" :
+               section.categorie.includes("Fleurs") ? "🌸" :
+               section.categorie.includes("Pelouse") ? "🌱" : 
+               section.categorie.includes("Matériel") ? "🛠️" : "💡"}
+            </div>
+            <h4 className="font-bold text-slate-800 text-sm">{section.categorie}</h4>
+          </div>
+          
+          <ul className="space-y-2">
+            {(section.actions || section.conseils).map((item, itemIdx) => (
+              <li key={itemIdx} className="text-xs text-slate-600 flex gap-2">
+                <span className="text-emerald-500">•</span>
+                {typeof item === 'string' ? item : `${item.tache} : ${item.items.join(', ')}`}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+				
 {/* SECTION ÉTAT DES APPLICATIONS (COMPACTE & HORIZONTALE) */}
 <section className="py-10 px-4 bg-white border-b border-slate-100">
   <div className="container mx-auto max-w-6xl text-center">
