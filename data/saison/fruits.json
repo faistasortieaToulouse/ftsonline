@@ -25,6 +25,7 @@
     {
       "categorie": "Baies & Fruits rouges",
       "elements": [
+        { "items": ["Rhubarbe"], "mois": ["Avril", "Mai", "Juin"] },
         { "items": ["Fraise", "Fraise des bois"], "mois": ["Mai", "Juin", "Juillet", "Septembre"] },
         { "items": ["Framboise", "Groseille", "Cassis", "Airelle"], "mois": ["Juin", "Juillet"] },
         { "items": ["Mûre", "Myrtille", "Sureau", "Argouse", "Sorbier des oiseleurs"], "mois": ["Août", "Septembre"] },
