@@ -1,0 +1,65 @@
+{
+  "fruits_toulouse": [
+    {
+      "categorie": "Agrumes",
+      "items": ["Citron", "Orange", "Clémentine", "Lime", "Mandarine", "Pamplemousse", "Pomélos"],
+      "mois": ["Janvier", "Février", "Mars", "Novembre", "Décembre"],
+      "note": "Culture en pot ou véranda obligatoire (gélifs)"
+    },
+    {
+      "categorie": "Fruits à pépins",
+      "elements": [
+        { "items": ["Pomme", "Poire"], "mois": ["Août", "Septembre", "Octobre"] },
+        { "items": ["Coing", "Nèfle"], "mois": ["Octobre", "Novembre"] }
+      ]
+    },
+    {
+      "categorie": "Fruits à noyau",
+      "elements": [
+        { "items": ["Cerise", "Griotte", "Merise", "Guine"], "mois": ["Mai", "Juin"] },
+        { "items": ["Abricot", "Pêche", "Nectarine", "Brugnon"], "mois": ["Juillet", "Août"] },
+        { "items": ["Prune", "Mirabelle", "Reine-Claude", "Pruneau"], "mois": ["Août", "Septembre"] },
+        { "items": ["Jujube"], "mois": ["Septembre", "Octobre"] }
+      ]
+    },
+    {
+      "categorie": "Baies & Fruits rouges",
+      "elements": [
+        { "items": ["Fraise", "Fraise des bois"], "mois": ["Mai", "Juin", "Juillet", "Septembre"] },
+        { "items": ["Framboise", "Groseille", "Cassis", "Airelle"], "mois": ["Juin", "Juillet"] },
+        { "items": ["Mûre", "Myrtille", "Sureau", "Argouse", "Sorbier des oiseleurs"], "mois": ["Août", "Septembre"] },
+        { "items": ["Raisin"], "mois": ["Septembre", "Octobre"] },
+        { "items": ["Arbouse", "Cynorhodon", "Épine-vinette"], "mois": ["Octobre", "Novembre", "Décembre"] }
+      ]
+    },
+    {
+      "categorie": "Exotiques locaux",
+      "elements": [
+        { "items": ["Figue verte / blanche"], "mois": ["Juin", "Août", "Septembre"] },
+        { "items": ["Figue noire / violette"], "mois": ["Juillet", "Septembre", "Octobre"] },
+        { "items": ["Kaki", "Kiwi", "Feijoa"], "mois": ["Octobre", "Novembre"] },
+        { "items": ["Grenade", "Figue de Barbarie"], "mois": ["Septembre", "Octobre"] },
+        { "items": ["Physalis"], "mois": ["Août", "Septembre", "Octobre"] }
+      ]
+    },
+    {
+      "categorie": "Cucurbitacées",
+      "items": ["Melon", "Pastèque"],
+      "mois": ["Juillet", "Août", "Septembre"]
+    },
+    {
+      "categorie": "Fruits à coque & Oléagineux",
+      "elements": [
+        { "items": ["Amande"], "mois": ["Juillet", "Septembre"] },
+        { "items": ["Noisette", "Noix", "Pistache"], "mois": ["Septembre", "Octobre"] },
+        { "items": ["Châtaigne", "Marron"], "mois": ["Octobre", "Novembre"] },
+        { "items": ["Olive"], "mois": ["Octobre", "Novembre", "Décembre"] }
+      ]
+    },
+    {
+      "categorie": "Autres",
+      "items": ["Cornouille", "Myrte", "Amélanche"],
+      "mois": ["Août", "Septembre"]
+    }
+  ]
+}
