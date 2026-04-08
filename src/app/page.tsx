@@ -781,22 +781,26 @@ export default function HomePage() {
   });
 	
   // --- LOGIQUE SAISONNIÈRE ---
-// 1. On récupère l'index du mois (0-11)
-const currentMonthIndex = new Date().getMonth();
+// --- LOGIQUE SAISONNIÈRE ANTI-CRASH ---
+const now = new Date();
+const currentMonthIndex = now.getMonth(); 
 
-// 2. On récupère la liste en s'assurant qu'elle existe
-const conseilsMensuels = jardinierData?.conseils_mensuels || [];
-
-// 3. On récupère les données du mois, avec un objet vide par défaut si l'index est introuvable
-const currentData = conseilsMensuels[currentMonthIndex] || {
-  mois: "Chargement...",
-  citation: "",
-  sections: []
+// Sécurisation totale des accès aux données
+const getMonthlyData = (dataSource: any) => {
+  if (dataSource && dataSource.conseils_mensuels && Array.isArray(dataSource.conseils_mensuels)) {
+    return dataSource.conseils_mensuels[currentMonthIndex] || null;
+  }
+  return null;
 };
-  
-  // Tu peux aussi récupérer les fruits et légumes de saison si besoin :
-  const fruitsDuMois = fruitsData.conseils_mensuels[currentMonthIndex];
-  const legumesDuMois = legumesData.conseils_mensuels[currentMonthIndex];
+
+const currentData = getMonthlyData(jardinierData) || { 
+  mois: "En cours", 
+  citation: "La patience est la vertu du jardinier.", 
+  sections: [] 
+};
+
+const fruitsDuMois = getMonthlyData(fruitsData);
+const legumesDuMois = getMonthlyData(legumesData);
 	
 // --- PLIER DEPLIER MENU DEROULANT ---
 const [openMenu, setOpenMenu] = useState(null);
