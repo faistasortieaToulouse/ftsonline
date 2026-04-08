@@ -781,10 +781,18 @@ export default function HomePage() {
   });
 	
   // --- LOGIQUE SAISONNIÈRE ---
-  const currentMonthIndex = new Date().getMonth(); 
-  
-  // On récupère les données du mois en cours dans le fichier jardinier.json
-  const currentData = jardinierData.conseils_mensuels[currentMonthIndex];
+// 1. On récupère l'index du mois (0-11)
+const currentMonthIndex = new Date().getMonth();
+
+// 2. On récupère la liste en s'assurant qu'elle existe
+const conseilsMensuels = jardinierData?.conseils_mensuels || [];
+
+// 3. On récupère les données du mois, avec un objet vide par défaut si l'index est introuvable
+const currentData = conseilsMensuels[currentMonthIndex] || {
+  mois: "Chargement...",
+  citation: "",
+  sections: []
+};
   
   // Tu peux aussi récupérer les fruits et légumes de saison si besoin :
   const fruitsDuMois = fruitsData.conseils_mensuels[currentMonthIndex];
