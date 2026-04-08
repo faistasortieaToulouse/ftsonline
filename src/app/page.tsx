@@ -780,34 +780,59 @@ export default function HomePage() {
     soir: { temp: "--", cond: "--", vent: "--" }
   });
 	
+// 1. Les états en premier
 // Permet de stocker l'index de la section ouverte (null = tout fermé)
 const [openSection, setOpenSection] = useState(null);
 
 const toggleSection = (idx) => {
   setOpenSection(openSection === idx ? null : idx);
 };
-		
+
   // --- LOGIQUE SAISONNIÈRE ---
 // --- LOGIQUE SAISONNIÈRE ANTI-CRASH ---
+// 2. Les variables de date
 const now = new Date();
 const currentMonthIndex = now.getMonth(); 
 
+// 3. La fonction de sécurisation
 // Sécurisation totale des accès aux données
-const getMonthlyData = (dataSource: any) => {
+const getMonthlyData = (dataSource) => {
   if (dataSource && dataSource.conseils_mensuels && Array.isArray(dataSource.conseils_mensuels)) {
     return dataSource.conseils_mensuels[currentMonthIndex] || null;
   }
   return null;
 };
 
+// 4. Définition de currentData (INDISPENSABLE avant le filtrage)
 const currentData = getMonthlyData(jardinierData) || { 
   mois: "En cours", 
   citation: "La patience est la vertu du jardinier.", 
   sections: [] 
 };
 
-const fruitsDuMois = getMonthlyData(fruitsData);
-const legumesDuMois = getMonthlyData(legumesData);
+// 5. --- FILTRAGE DES RÉCOLTES DU MOIS (À ÉCRIRE ICI) ---
+const currentMonthName = currentData.mois;
+
+const filterSaison = (dataArray) => {
+  if (!dataArray) return [];
+  return dataArray.map(cat => {
+    let itemsDuMois = [];
+    if (cat.items && cat.mois?.includes(currentMonthName)) {
+      itemsDuMois = cat.items;
+    } 
+    if (cat.elements) {
+      cat.elements.forEach(el => {
+        if (el.mois?.includes(currentMonthName)) {
+          itemsDuMois = [...itemsDuMois, ...el.items];
+        }
+      });
+    }
+    return itemsDuMois.length > 0 ? { categorie: cat.categorie, items: itemsDuMois } : null;
+  }).filter(Boolean);
+};
+
+const fruitsRecolte = filterSaison(fruitsData?.fruits_toulouse);
+const legumesRecolte = filterSaison(legumesData?.legumes_toulouse);
 	
 // --- PLIER DEPLIER MENU DEROULANT ---
 const [openMenu, setOpenMenu] = useState(null);
@@ -1600,7 +1625,7 @@ return sections.map((sec, idx) => {
 		
 {/* SECTION CONSEILS JARDINAGE DYNAMIQUE */}
 <section className="bg-slate-50 py-8 px-4 border-t border-slate-200">
-  <div className="max-w-3xl mx-auto"> {/* On réduit la largeur pour que ce soit plus lisible en liste */}
+  <div className="max-w-6xl mx-auto"> 
     
     <div className="mb-6">
       <h3 className="text-[10px] uppercase font-black tracking-[0.3em] text-emerald-600 mb-1">
@@ -1611,57 +1636,113 @@ return sections.map((sec, idx) => {
       </h2>
     </div>
 
-{/* LE CONTENEUR PRINCIPAL : 1 colonne mobile, 2 colonnes tablette, 3 colonnes desktop */}
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-  {currentData.sections?.map((section, idx) => {
-    const isOpen = openSection === idx;
-    
-    return (
-      <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm h-fit">
-        {/* BOUTON DE TITRE */}
-        <button 
-          onClick={() => toggleSection(idx)}
-          className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-lg">
-              {section.categorie.includes("Potager") ? "🥗" : 
-               section.categorie.includes("Verger") ? "🍎" :
-               section.categorie.includes("Fleurs") ? "🌸" :
-               section.categorie.includes("Pelouse") ? "🌱" : 
-               section.categorie.includes("Matériel") ? "🛠️" : "💡"}
-            </span>
-            <span className="font-bold text-slate-800 text-[13px] leading-tight">{section.categorie}</span>
-          </div>
-          <span className={`text-emerald-500 text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
-            ▼
-          </span>
-        </button>
+    {/* LE CONTENEUR PRINCIPAL : 1 colonne mobile, 2 colonnes tablette, 3 colonnes desktop */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+      
+      {/* --- BLOCS CONSEILS (JARDINIER.JSON) --- */}
+      {currentData.sections?.map((section, idx) => {
+        const isOpen = openSection === idx;
+        
+        return (
+          <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm h-fit">
+            <button 
+              onClick={() => toggleSection(idx)}
+              className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg">
+                  {section.categorie.includes("Potager") ? "🥗" : 
+                   section.categorie.includes("Verger") ? "🍎" :
+                   section.categorie.includes("Fleurs") ? "🌸" :
+                   section.categorie.includes("Pelouse") ? "🌱" : 
+                   section.categorie.includes("Matériel") ? "🛠️" : "💡"}
+                </span>
+                <span className="font-bold text-slate-800 text-[13px] leading-tight">{section.categorie}</span>
+              </div>
+              <span className={`text-emerald-500 text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                ▼
+              </span>
+            </button>
 
-        {/* CONTENU DÉROULANT */}
-        <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[500px] opacity-100 border-t border-slate-100' : 'max-h-0 opacity-0'}`}>
-          <div className="p-4 bg-slate-50/50">
-            <ul className="space-y-2">
-              {(section.actions || section.conseils || []).map((item, itemIdx) => (
-                <li key={itemIdx} className="text-[11px] text-slate-600 flex gap-2">
-                  <span className="text-emerald-500 font-bold">•</span>
-                  <span>
-                    {typeof item === 'string' 
-                      ? item 
-                      : <><strong className="text-slate-800">{item.tache} :</strong> {item.items.join(', ')}</>}
-                  </span>
-                </li>
+            <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[500px] opacity-100 border-t border-slate-100' : 'max-h-0 opacity-0'}`}>
+              <div className="p-4 bg-slate-50/50">
+                <ul className="space-y-2">
+                  {(section.actions || section.conseils || []).map((item, itemIdx) => (
+                    <li key={itemIdx} className="text-[11px] text-slate-600 flex gap-2">
+                      <span className="text-emerald-500 font-bold">•</span>
+                      <span>
+                        {typeof item === 'string' 
+                          ? item 
+                          : <><strong className="text-slate-800">{item.tache} :</strong> {item.items.join(', ')}</>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* --- BLOC RÉCOLTE FRUITS --- */}
+      {fruitsRecolte.length > 0 && (
+        <div className="bg-white rounded-xl border border-orange-200 overflow-hidden shadow-sm h-fit">
+          <button 
+            onClick={() => toggleSection('fruits')}
+            className="w-full flex items-center justify-between p-4 text-left hover:bg-orange-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-lg">🍓</span>
+              <span className="font-bold text-slate-800 text-[13px] leading-tight">Fruits à récolter</span>
+            </div>
+            <span className={`text-orange-500 text-xs transition-transform duration-300 ${openSection === 'fruits' ? 'rotate-180' : ''}`}>
+              ▼
+            </span>
+          </button>
+          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${openSection === 'fruits' ? 'max-h-[800px] opacity-100 border-t border-orange-100' : 'max-h-0 opacity-0'}`}>
+            <div className="p-4 bg-orange-50/30">
+              {fruitsRecolte.map((f, i) => (
+                <div key={i} className="mb-2 last:mb-0">
+                  <span className="font-bold text-orange-600 uppercase text-[9px] block mb-0.5">{f.categorie}</span>
+                  <span className="text-[11px] text-slate-600 leading-tight">{f.items.join(', ')}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
-      </div>
-    );
-  })}
-</div>
+      )}
+
+      {/* --- BLOC RÉCOLTE LÉGUMES --- */}
+      {legumesRecolte.length > 0 && (
+        <div className="bg-white rounded-xl border border-emerald-200 overflow-hidden shadow-sm h-fit">
+          <button 
+            onClick={() => toggleSection('legumes')}
+            className="w-full flex items-center justify-between p-4 text-left hover:bg-emerald-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-lg">🥕</span>
+              <span className="font-bold text-slate-800 text-[13px] leading-tight">Légumes à récolter</span>
+            </div>
+            <span className={`text-emerald-500 text-xs transition-transform duration-300 ${openSection === 'legumes' ? 'rotate-180' : ''}`}>
+              ▼
+            </span>
+          </button>
+          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${openSection === 'legumes' ? 'max-h-[800px] opacity-100 border-t border-emerald-100' : 'max-h-0 opacity-0'}`}>
+            <div className="p-4 bg-emerald-50/30">
+              {legumesRecolte.map((l, i) => (
+                <div key={i} className="mb-2 last:mb-0">
+                  <span className="font-bold text-emerald-600 uppercase text-[9px] block mb-0.5">{l.categorie}</span>
+                  <span className="text-[11px] text-slate-600 leading-tight">{l.items.join(', ')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
 
     {/* CITATION MOBILE */}
-    <div className="mt-6 text-center italic text-slate-500 text-xs px-4">
+    <div className="mt-8 text-center italic text-slate-500 text-xs px-4">
       "{currentData.citation}"
     </div>
   </div>
