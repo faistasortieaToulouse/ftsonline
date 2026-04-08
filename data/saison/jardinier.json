@@ -1,0 +1,795 @@
+{
+  "conseils_mensuels": [
+{
+  "id": 1,
+  "mois": "Janvier",
+  "citation": "Janvier de givre, année de fruits ! Le repos de la nature n'est qu'apparence.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Démarrer les premiers semis pour le futur potager sous abri chauffé.",
+        "Commencer à semer quelques fleurs en serre ou derrière une vitre ensoleillée.",
+        "Aérer les cultures dès que possible par temps doux pour éviter les moisissures."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Semis à forcer", "items": ["Carottes", "Laitues", "Radis"] },
+        { "tache": "Récoltes", "items": ["Salades", "Poireaux", "Chicorées sauvages", "Endives", "Choux", "Mâche", "Panais (dernière récolte)"] },
+        { "tache": "Entretien", "items": ["Enrichir le sol avec du compost", "Vérifier les protections hivernales (voiles, tunnels)", "Traiter les plantes dès l'apparition de parasites ou maladies"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Traiter les arbres fruitiers à la bouillie bordelaise.",
+        "Continuer les plantations d'arbres à racines nues (hors gel).",
+        "Tailler les arbres à pépins (pommiers, poiriers) ainsi que la vigne.",
+        "Tailler les petits fruits : cassissiers, groseilliers, ronces.",
+        "Biner au pied des arbres pour aérer la terre."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Semer sous serre : aspérules odorantes, cœurs-de-marie, fleurs de la passion.",
+        "Démarrer les semis de fleurs d'été : gazanias, géraniums, pétunias, bégonias.",
+        "Tailler les grimpantes : lierres, vignes vierges, clématites estivales.",
+        "Enrichir le sol dans les massifs et les rocailles."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Épandre de la cendre sèche sur la pelouse pour limiter les effets du gel.",
+        "Éviter de piétiner le gazon s'il est givré.",
+        "Installer ou entretenir les nichoirs pour les oiseaux du jardin."
+      ]
+    },
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Aérer les châssis et soulever les cloches la journée par temps doux.",
+        "Profiter du gel : il détruit naturellement les larves et parasites en hibernation.",
+        "Laisser la neige sur les massifs : elle sert d'isolant thermique et apporte de l'azote."
+      ]
+    },
+{
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Installer ou entretenir les nichoirs pour les oiseaux du jardin.",
+        "Nettoyer et désinfecter les pots et clayettes de semis pour la saison à venir."
+      ]
+    }
+  ]
+},
+{
+  "id": 2,
+  "mois": "Février",
+  "citation": "Si février est chargé d'eau, le printemps n'en sera que plus beau ! C'est le mois des premières boutures et de la préparation du sol.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Démarrer les bulbes d'été : bégonias, cannas, dahlias.",
+        "Bouturer : chrysanthèmes, crotons, dahlias, lantanas.",
+        "Semer au chaud : tomates, aubergines, fuchsias, géraniums, lobélias.",
+        "Chauffer la serre si nécessaire et bien aérer par temps doux et ensoleillé."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Planification", "items": ["Faire l'inventaire des graines", "Préparer les commandes de semences"] },
+        { "tache": "Récoltes d'hiver", "items": ["Mâche", "Épinards", "Chicorées"] },
+        { "tache": "Entretien", "items": ["Débuter les semis sur couche", "Abriter les cultures avec des voiles ou tunnels d'hivernage", "Aérer châssis et cloches la journée par temps doux"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Planter les arbres fruitiers (notamment à racines nues).",
+        "Tailler : abricotiers, kiwis, amandiers, pêchers, figuiers.",
+        "Tailler et palisser les framboisiers.",
+        "Vigne : tailler, traiter et bouturer.",
+        "Tailler les arbres à pépins, cassissiers, groseilliers et ronces."
+      ]
+    },
+{
+  "categorie": "Fleurs & Ornement",
+  "actions": [
+    "Planter des anémones de Caen et des renoncules.",
+    "Inspecter l'état des bulbes d'été stockés à l'abri.",
+    "Nettoyer et enrichir le sol des massifs et des rocailles.",
+    "Arroser les jeunes plantations par temps doux."
+  ]
+},
+{
+  "categorie": "Pelouse",
+  "actions": [
+    "Ne pas marcher sur le gazon s'il est gelé ou enneigé pour ne pas briser les brins d'herbe.",
+    "Apporter éventuellement de la cendre de bois (riche en potasse) sur la pelouse."
+  ]
+},
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Traiter les plantes dès l'apparition de maladies ou de parasites.",
+        "Profiter des gelées : elles détruisent les parasites et moisissures en hibernation.",
+        "Laisser la neige sur les végétaux : elle constitue la meilleure protection contre le froid intense."
+      ]
+    },
+{
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Réparer les tuteurs et les treillages avant le démarrage de la végétation.",
+        "Vérifier le bon état du scarificateur pour le mois prochain."
+      ]
+    }
+  ]
+},
+{
+  "id": 3,
+  "mois": "Mars",
+  "citation": "Mars : l’heure du réveil a sonné ! Fertilisez, nettoyez, bichonnez, le grand show va bientôt démarrer.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Retirer les protections hivernales (garder un voile de forçage à portée de main).",
+        "Installer une jardinière d'aromatiques : ciboulette, persil, thym.",
+        "Planter des bulbes : narcisses, jacinthes.",
+        "Semer des fleurs : pâquerettes, violettes, pensées."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Semis sous abri", "items": ["Navet", "Persil", "Laitue de printemps", "Tétragone", "Radis", "Choux"] },
+        { "tache": "Semis en pleine terre", "items": ["Carottes", "Épinards", "Oignons", "Pois", "Roquette", "Poireaux"] },
+        { "tache": "Plantations (climat doux)", "items": ["Ail rose", "Échalote", "Oignon jaune", "Pommes de terre"] },
+        { "tache": "Entretien", "items": ["Semer les aromatiques en sol enrichi", "Investir dans un bac à compost (bois de préférence)"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Tailler poiriers, pommiers et pêchers (avant la floraison).",
+        "Apporter du compost maison au pied des arbres.",
+        "Planter les kiwis (attention : installer un pied mâle et un pied femelle)."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Semer en place les annuelles rustiques : pavot, souci, muflier.",
+        "Semer sous abri les fleurs fragiles : capucine, cléome, verveine.",
+        "Planter en pleine terre : glaïeuls, lis et plantes vivaces d'été.",
+        "Tailler impérativement les rosiers."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Épandre de l'engrais spécial gazon en fin de mois.",
+        "Traiter la mousse au sulfate de fer puis scarifier.",
+        "Aérer le sol à la fourche bêche.",
+        "Pour une nouvelle pelouse : préparer le terrain (niveler, drainer, ratisser) pour un semis en avril."
+      ]
+    },
+    {
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Révision générale de la tondeuse et du scarificateur.",
+        "Acheter de l'engrais universel pour les plantes fleuries.",
+        "Anticiper le confort d'été : réfléchir à une toiture végétalisée ou un mur végétal intérieur (assainissant)."
+      ]
+    }
+  ]
+},
+{
+  "id": 4,
+  "mois": "Avril",
+  "citation": "Avril : Ne te découvre pas d'un fil ! Le temps est plus clément, mais la vigilance reste de mise au jardin.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Semez des graines de mini-légumes en pot (carottes, choux).",
+        "Installez des plantes condimentaires (ciboulette, persil, thym) dans des contenants déco.",
+        "Plantez les fraisiers.",
+        "Plantez des dahlias nains et des bulbes à floraison estivale de petite taille.",
+        "Grattez la surface de vos pots et faites un apport de compost.",
+        "Retirez les protections d'hiver en fin de mois."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Semis à chaud (intérieur)", "items": ["Concombre", "Melon", "Aubergine", "Basilic", "Tomate"] },
+        { "tache": "Semis en pleine terre", "items": ["Betterave", "Carottes", "Épinards", "Choux (rouge, fleur, rave, Milan)", "Persil", "Radis", "Navet", "Pois", "Salsifis"] },
+        { "tache": "Plantations", "items": ["Oignon", "Topinambour", "Estragon", "Pommes de terre précoces"] },
+        { "tache": "Engrais verts", "items": ["Semer de la phacélie ou de la moutarde pour doper le sol naturellement."] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Planter les petits fruits : groseillier, framboisier, mûrier et cassissier.",
+        "Apporter du compost au pied des arbres fruitiers.",
+        "Attention : aucun traitement chimique durant la période de floraison."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Semer en place les grimpantes annuelles : pois de senteur, cobée.",
+        "Semer sous abri les fleurs fragiles : cosmos, œillet d’Inde, muflier, reine marguerite, zinnia, lin, lavatère.",
+        "Planter en pleine terre les bulbes de dahlia et de glaïeuls.",
+        "Couper les fleurs fanées des narcisses tout en conservant leur feuillage."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Effectuer la première tonte (lame en position haute) si les gelées sont passées.",
+        "Éliminer les mauvaises herbes manuellement.",
+        "Épandre du terreau fin sur les pelouses fatiguées pour leur redonner du peps.",
+        "Protéger les nouveaux semis des oiseaux avec des dispositifs visuels (aluminium, sacs)."
+      ]
+    },
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Procéder au rempotage printanier.",
+        "Renouveler le terreau pour apporter de nouveaux sels minéraux.",
+        "Choisir des pots plus grands si les racines sont à l'étroit."
+        "Nettoyer entièrement le bassin : vider l'eau et retirer les impuretés accumulées.",
+        "Vérifier l'état de santé des poissons dans une eau claire."
+      ]
+    },
+    {
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Procéder au rempotage printanier des plantes d'intérieur (nouveau terreau, pot plus grand).",
+        "Nettoyer entièrement le bassin : vider l'eau et retirer les impuretés.",
+        "Vérifier l'état de santé des poissons dans une eau claire."
+      ]
+    }
+  ]
+},
+{
+  "id": 5,
+  "mois": "Mai",
+  "citation": "En mai, fais ce qu'il te plaît ! Mais gare aux Saints de Glace avant de tout sortir.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Sortir les plantes d'intérieur pour leur faire prendre l'air (à l'ombre au début).",
+        "Installer les jardinières de fleurs d'été : géraniums, pétunias, surfinias.",
+        "Planter les aromatiques frileuses : basilic, verveine citronnelle.",
+        "Arroser plus régulièrement les pots avec la hausse des températures."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Plantations (Après les Saints de Glace)", "items": ["Tomates", "Aubergines", "Poivrons", "Piments", "Courgettes", "Potirons"] },
+        { "tache": "Semis en pleine terre", "items": ["Haricots verts", "Haricots beurre", "Maïs doux", "Laitues d'été", "Chicorées", "Navets d'été"] },
+        { "tache": "Entretien", "items": ["Butter les pommes de terre", "Éclaircir les semis d'avril (carottes, betteraves)", "Pailler le sol pour garder l'humidité"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Éclaircir les fruits trop nombreux sur les arbres (pommiers, poiriers).",
+        "Surveiller l'apparition des pucerons et des fourmis.",
+        "Installer des pièges à phéromones contre la mouche des fruits.",
+        "Arroser les arbres plantés récemment en cas de sécheresse."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Planter les bulbes à floraison estivale : dahlias, cannas, glaïeuls.",
+        "Semer les fleurs annuelles en pleine terre : capucines, cosmos, soleils.",
+        "Supprimer les fleurs fanées des bulbes de printemps (tulipes) sans couper les feuilles.",
+        "Tuteurer les grandes plantes vivaces (pivoines, delphiniums) avant qu'elles ne s'affaissent."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Tondre régulièrement (une fois par semaine) mais pas trop court.",
+        "Éliminer les chardons et pissenlits avant qu'ils ne montent en graine.",
+        "Finir les derniers semis de gazon sur les zones dégarnies."
+      ]
+    },
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Vérifier le bon fonctionnement du système d'arrosage.",
+        "Biner régulièrement pour casser la croûte du sol : 'Un binage vaut deux arrosages'.",
+        "Surveiller l'arrivée des limaces sur les jeunes plants de salades et de tomates."
+      ]
+    },
+    {
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Binage et désherbage régulier : 'Un binage vaut deux arrosages'.",
+        "Mettre en place le système d'arrosage automatique ou vérifier les tuyaux.",
+        "Surveiller les limaces et escargots, très actifs sur les jeunes pousses."
+      ]
+    }
+  ]
+},
+{
+  "id": 6,
+  "mois": "Juin",
+  "citation": "Juin bien fleuri, vrai paradis ! C'est le mois de l'épanouissement où le jardinier devient spectateur... et arroseur.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Arroser quotidiennement (le soir ou tôt le matin) pour compenser l'évaporation.",
+        "Apporter de l'engrais liquide aux fleurs de balcon (géraniums, surfinias) tous les 15 jours.",
+        "Pincer les herbes aromatiques (basilic, menthe) pour favoriser la ramification.",
+        "Installer des ombrages ou des brise-vue pour protéger les plantes les plus fragiles du plein soleil."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Récoltes", "items": ["Radis", "Laitues", "Pois", "Fèves", "Premières courgettes", "Fraises"] },
+        { "tache": "Semis de rattrapage", "items": ["Haricots verts (tous les 15 jours)", "Carottes d'hiver", "Chicorées", "Betteraves"] },
+        { "tache": "Entretien", "items": ["Tuteurer les tomates et supprimer les gourmands", "Pailler généreusement tous les rangs", "Butter les haricots et les pois"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Installer des filets de protection contre les oiseaux (cerisiers, fraisiers).",
+        "Récolter les cerises, les framboises et les groseilles.",
+        "Supprimer les gourmands à la base des arbres fruitiers.",
+        "Vérifier les attaches des jeunes arbres pour éviter les blessures avec la croissance."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Supprimer les fleurs fanées des rosiers pour stimuler une nouvelle floraison.",
+        "Tuteurer les dahlias et les lys qui grandissent vite.",
+        "Diviser les iris une fois la floraison terminée.",
+        "Semer les fleurs bisannuelles pour l'année prochaine : giroflées, monnaie-du-pape, pensées."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Relever la hauteur de coupe de la tondeuse pour garder l'herbe plus haute (protège les racines du soleil).",
+        "Laisser l'herbe coupée sur place (mulching) si possible pour fertiliser naturellement.",
+        "Éviter de tondre en plein après-midi par forte chaleur."
+      ]
+    },
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Gestion de l'eau",
+        "Biner la terre en surface pour casser la croûte terrestre : 'Un binage vaut deux arrosages'.",
+        "Arroser au pied des plantes (pas sur le feuillage) pour éviter le mildiou.",
+        "Vérifier le bon fonctionnement des récupérateurs d'eau de pluie."
+      ]
+    },
+   {
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Installer des filets de protection contre les oiseaux sur les cerisiers et les petits fruits.",
+        "Vérifier l'étanchéité des tuyaux et l'état des pommeaux d'arrosoirs (souvent entartrés).",
+        "Nettoyer régulièrement les lames du sécateur pour éviter la transmission de maladies entre les tailles de rosiers.",
+        "Vérifier la propreté des récupérateurs d'eau de pluie pour éviter le développement de larves de moustiques."
+      ]
+    }
+  ]
+},
+{
+  "id": 7,
+  "mois": "Juillet",
+  "citation": "Petite pluie de juillet fait bonne récolte, mais soleil de plomb demande arrosoir aux poings !",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Arrosage biquotidien (matin et soir) en cas de canicule pour les bacs exposés.",
+        "Bassiner le feuillage des plantes vertes (hors plein soleil) pour augmenter l'humidité.",
+        "Vérifier l'absence d'araignées rouges, fréquentes par temps chaud et sec.",
+        "Récolter les herbes aromatiques pour les faire sécher (thym, romarin, laurier)."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Récoltes quotidiennes", "items": ["Courgettes (ne pas les laisser trop grossir)", "Tomates", "Haricots verts", "Concombres", "Poivrons", "Melons"] },
+        { "tache": "Semis d'hiver", "items": ["Choux d'hiver", "Poireaux (dernières plantations)", "Navets d'automne", "Mâche", "Radis noirs"] },
+        { "tache": "Entretien crucial", "items": ["Pailler généreusement (5-10 cm) pour garder le sol frais", "Supprimer les feuilles de tomates touchées par le mildiou", "Arrosage au pied uniquement"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Récolter les petits fruits : framboises, groseilles, cassis, mûres.",
+        "Tailler en vert les arbres fruitiers (supprimer les pousses verticales inutiles).",
+        "Étayer les branches trop chargées de fruits (pommiers, pruniers) pour éviter la casse.",
+        "Ramasser les fruits tombés au sol pour éviter la propagation des maladies."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Couper les fleurs fanées des vivaces pour provoquer une seconde floraison en automne.",
+        "Bouturer les arbustes : hortensias, rosiers, lavandes.",
+        "Supprimer les gourmands des dahlias.",
+        "Arroser les potées fleuries avec un engrais riche en potasse pour soutenir la floraison."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Arrêter les tontes en cas de forte sécheresse (l'herbe haute protège le sol).",
+        "Si nécessaire, tondre au plus haut (8 cm minimum).",
+        "Ne pas arroser la pelouse si elle jaunit : elle entrera en dormance et repartira aux premières pluies d'automne."
+      ]
+    },
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Gestion de l'eau",
+        "Biner avant d'arroser pour que l'eau pénètre directement aux racines.",
+        "Privilégier l'arrosage au goutte-à-goutte ou par tuyaux poreux.",
+        "Récupérer l'eau de lavage des légumes (sans sel) pour arroser les plantes en pot."
+      ]
+    },
+{
+  "categorie": "Entretien & Matériel",
+  "actions": [
+    "Vérifier et nettoyer les systèmes de goutte-à-goutte (risque d'obstruction par le calcaire).",
+    "Installer des ombrières ou des filets d'ombrage sur les serres et les châssis les plus exposés.",
+    "Aiguiser les couteaux et outils de récolte pour des coupes nettes qui cicatrisent vite.",
+    "Préparer et nettoyer les clayettes, cagettes et bocaux pour les futures récoltes abondantes.",
+    "Vérifier la pression et l'état des tuyaux d'arrosage (les fortes chaleurs peuvent fragiliser le plastique)."
+  ]
+}
+  ]
+},
+{
+  "id": 8,
+  "mois": "Août",
+  "citation": "Août mûrit, septembre vendange ; en août, le jardinier récolte ce qu'il a semé.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Organiser l'arrosage pendant les vacances (systèmes de bouteilles inversées ou pots à réserve d'eau).",
+        "Couper les fleurs fanées pour prolonger la floraison jusqu'en octobre.",
+        "Récolter les graines de fleurs (roses d'Inde, pétunias) pour les semis de l'an prochain.",
+        "Apporter un dernier apport d'engrais liquide pour soutenir les plantes épuisées par la chaleur."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Récoltes au sommet", "items": ["Tomates", "Aubergines", "Poivrons", "Melons", "Pastèques", "Oignons", "Ail (à laisser sécher au soleil)"] },
+        { "tache": "Semis d'automne/hiver", "items": ["Mâche", "Épinards", "Navets", "Radis d'hiver", "Oignons blancs", "Choux de printemps"] },
+        { "tache": "Entretien", "items": ["Supprimer les feuilles de tomates pour favoriser le mûrissement des derniers bouquets", "Pincer les tiges des melons et courges pour concentrer la sève sur les fruits", "Continuer le paillage épais"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Récolter les prunes, mirabelles, pêches et premières poires.",
+        "Tailler les framboisiers non-remontants après la récolte (couper les cannes ayant fructifié).",
+        "Soutenir les branches des pommiers et poiriers très chargés pour éviter qu'elles ne cassent.",
+        "Éliminer les fruits momifiés ou malades restés sur l'arbre."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Bouturer les géraniums, fuchsias et hortensias.",
+        "Semer les bisannuelles : pensées, myosotis, giroflées.",
+        "Tailler les haies (troènes, lauriers) après la fin de la période de nidification.",
+        "Planter les bulbes de lys de la Madone et de colchiques."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Maintenir la tonte haute (8-10 cm) pour protéger le sol.",
+        "Ne pas s'inquiéter du jaunissement (dormance estivale).",
+        "Préparer le terrain pour les nouveaux semis de pelouse prévus en septembre."
+      ]
+    },
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Surveiller le mildiou et l'oïdium (feutrage blanc sur les feuilles de courges).",
+        "Arroser de préférence le soir très tard ou tôt le matin pour limiter l'évaporation.",
+        "Commencer à faire des conserves, coulis de tomates et confitures avec l'excès de récolte."
+      ]
+    },
+    {
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Nettoyer et désinfecter les bocaux et le matériel de stérilisation pour les conserves.",
+        "Vérifier et réparer les systèmes d'arrosage automatique avant un départ en vacances.",
+        "Nettoyer les pulvérisateurs après usage (traitements naturels contre le mildiou ou l'oïdium).",
+        "Ranger et nettoyer les tuteurs inutilisés après les récoltes de haricots ou de pois."
+      ]
+    }
+  ]
+},
+{
+  "id": 9,
+  "mois": "Septembre",
+  "citation": "Septembre se montre souvent comme un second printemps ; c'est l'heure des récoltes généreuses et des semis d'hiver.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Nettoyer les jardinières des fleurs annuelles fatiguées par l'été.",
+        "Installer les fleurs d'automne : bruyères, chrysanthèmes, cyclamens.",
+        "Rentrer les plantes vertes les plus frileuses dès que les nuits fraîchissent.",
+        "Réduire progressivement la fréquence des arrosages et arrêter les apports d'engrais."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Récoltes automnales", "items": ["Tomates tardives", "Courges", "Potirons", "Haricots grains", "Poivrons", "Aubergines"] },
+        { "tache": "Semis & Plantations", "items": ["Mâche", "Épinards d'hiver", "Navets", "Radis d'hiver", "Choux cabus", "Laitues d'hiver"] },
+        { "tache": "Entretien", "items": ["Supprimer les pieds de tomates ayant fini de produire", "Nettoyer les parcelles vides et semer des engrais verts (moutarde, trèfle)", "Butter les poireaux"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Récolter les pommes, les poires et les dernières prunes.",
+        "Cueillir le raisin de table.",
+        "Planter les fraisiers pour une récolte l'année prochaine.",
+        "Ramasser systématiquement les fruits malades tombés au sol pour éviter les parasites l'an prochain."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Planter les bulbes à floraison printanière : tulipes, narcisses, crocus, jacinthes.",
+        "Diviser les plantes vivaces trop volumineuses (pivoines, cœurs-de-marie).",
+        "Tailler les haies une dernière fois avant l'hiver.",
+        "Récolter et faire sécher les fleurs pour les bouquets secs (immortelles, statice)."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "C'est le mois idéal pour semer une nouvelle pelouse ou regarnir les zones sèches.",
+        "Reprendre une tonte régulière avec l'humidité qui revient.",
+        "Scarifier la pelouse pour éliminer la mousse et aérer les racines."
+      ]
+    },
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Commencer à stocker les tuteurs propres et secs pour l'année prochaine.",
+        "Vérifier l'étanchéité des abris de jardin et des serres avant les pluies d'automne.",
+        "Continuer à alimenter le compost avec les résidus de nettoyage du potager."
+      ]
+    },
+    {
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Nettoyer et ranger le matériel d'arrosage automatique si les pluies reviennent.",
+        "Vérifier l'état de la tondeuse après l'été et nettoyer le carter de coupe.",
+        "Nettoyer les tuteurs et les rames de haricots avant de les stocker au sec.",
+        "Vérifier le stock de voiles d'hivernage et de cloches de protection."
+      ]
+    }
+  ]
+},
+{
+  "id": 10,
+  "mois": "Octobre",
+  "citation": "Octobre ensoleillé, hiver retardé ; c'est le moment de mettre le jardin à l'abri tout en préparant le printemps.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Remplacer les fleurs d'été par des compositions d'automne : pensées, cinéraires, choux d'ornement.",
+        "Planter des bulbes en pots (tulipes, narcisses) pour une floraison printanière sur le balcon.",
+        "Vider, nettoyer et ranger les pots et jardinières inutilisés pour éviter qu'ils ne fendent avec le gel.",
+        "Réduire drastiquement l'arrosage et rentrer les plantes vertes méditerranéennes (lauriers-roses, agrumes) à l'abri du vent."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Dernières récoltes", "items": ["Courges", "Potirons", "Carottes", "Betteraves", "Panais", "Dernières tomates vertes (à faire mûrir à l'intérieur)"] },
+        { "tache": "Semis & Plantations", "items": ["Ail blanc et violet", "Échalotes grises", "Oignons de garde", "Laitues d'hiver", "Fèves (en climat doux)"] },
+        { "tache": "Entretien d'automne", "items": ["Nettoyer les restes de cultures malades pour éviter les propagations", "Aérer la terre sans la retourner (grelinette) et apporter du compost", "Protéger les légumes restants (poireaux, choux) avec un paillage épais"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Récolter les pommes et poires de conservation, les coings, les noix et les châtaignes.",
+        "Ramasser les feuilles mortes au pied des arbres pour éviter les maladies cryptogamiques.",
+        "Préparer les trous de plantation pour les nouveaux arbres fruitiers prévus en novembre.",
+        "Éliminer les fruits momifiés restés sur les branches."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Planter les bulbes de printemps (tulipes, jacinthes, narcisses, crocus).",
+        "Arracher les bulbes d'été non rustiques (dahlias, cannas, glaïeuls) pour les stocker au sec et hors gel.",
+        "Diviser les plantes vivaces à floraison printanière.",
+        "Planter les rosiers et les arbustes à fleurs vendus en conteneurs."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Dernières tontes de l'année (régler la lame assez haut).",
+        "Ramasser les feuilles mortes sur le gazon pour éviter qu'il ne s'asphyxie et ne jaunisse.",
+        "Apporter un engrais de fond riche en potasse pour renforcer les racines avant l'hiver."
+      ]
+    },
+    {
+      "categorie": "Astuces de saison",
+      "actions": [
+        "Nettoyer et graisser les outils de jardinage avant le stockage hivernal.",
+        "Installer des abris pour les auxiliaires (hérissons, insectes) avec des tas de bois ou de feuilles.",
+        "Vérifier le voile d'hivernage et les protections pour les plantes les plus fragiles."
+      ]
+    },
+{
+      "categorie": "Entretien & Matériel",
+      "actions": [
+        "Vidanger, nettoyer et ranger définitivement le système d'arrosage.",
+        "Nettoyer, affûter et graisser les outils avant le remisage d'hiver.",
+        "Vider et nettoyer le récupérateur d'eau de pluie pour éviter l'éclatement dû au gel.",
+        "Vérifier le bon état des voiles d'hivernage et des châssis."
+      ]
+    }
+  ]
+},
+{
+  "id": 11,
+  "mois": "Novembre",
+  "citation": "À la Sainte-Catherine, tout bois prend racine ! C'est le mois des plantations durables et de la protection contre les premiers frimas.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Installer les voiles d'hivernage sur les arbustes en pot les plus fragiles (lauriers-roses, oliviers).",
+        "Surélever les pots avec des cales pour éviter le contact direct avec le sol froid et faciliter l'écoulement de l'eau.",
+        "Arrêter tout apport d'engrais et limiter l'arrosage au strict minimum (uniquement si la terre est sèche).",
+        "Vider les soucoupes après chaque pluie pour éviter le gel des racines et l'asphyxie."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Récoltes d'hiver", "items": ["Poireaux", "Choux de Bruxelles", "Choux pommés", "Épinards d'hiver", "Mâche", "Topinambours", "Céleri-rave"] },
+        { "tache": "Plantations & Semis", "items": ["Ail blanc", "Ail violet", "Échalotes grises", "Fèves et pois (en climat doux)"] },
+        { "tache": "Entretien & Protection", "items": ["Nettoyer les dernières parcelles et les couvrir de paillis ou de fumier décomposé", "Protéger les cardons et les chicorées avec un paillage de feuilles sèches", "Bêcher les terres lourdes en laissant de grosses mottes (le gel les affinera)"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "C'est le mois roi pour planter les arbres fruitiers à racines nues (pommiers, poiriers, cerisiers).",
+        "Tailler les petits fruits : cassissiers, groseilliers et framboisiers non-remontants.",
+        "Traiter les troncs à la chaux (blanc de arboricole) pour éliminer les parasites hivernants.",
+        "Ramasser les dernières feuilles mortes et les composter si elles sont saines."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Planter les rosiers à racines nues et les arbustes de haie.",
+        "Terminer la plantation des bulbes de printemps (tulipes tardives).",
+        "Protéger les souches des plantes vivaces fragiles (fuchsias, gunneras) avec un tas de feuilles sèches.",
+        "Élaguez les arbres d'ornement si nécessaire (hors période de gel)."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Passer la tondeuse une dernière fois très haut pour ramasser les dernières feuilles mortes.",
+        "Nettoyer et affûter la lame de la tondeuse avant le remisage définitif.",
+        "Éviter de piétiner la pelouse lorsqu'elle est gorgée d'eau ou givrée."
+      ]
+    },
+{
+  "categorie": "Astuces de saison",
+  "actions": [
+    "Préparer des boules de graisse ou des graines pour aider les oiseaux dès les premiers froids."
+  ]
+},
+{
+  "categorie": "Entretien & Matériel",
+  "actions": [
+    "Purger les tuyaux d'arrosage, vider les pompes et protéger les robinets extérieurs du gel.",
+    "Nettoyer, désinfecter et huiler les outils de coupe (sécateurs, scies)."
+  ]
+}
+  ]
+},
+{
+  "id": 12,
+  "mois": "Décembre",
+  "citation": "Décembre de froid trop chiche, ne rend pas le paysan riche ! C'est le temps du repos pour la terre et de la réflexion pour le jardinier.",
+  "sections": [
+    {
+      "categorie": "En ville (Balcon/Fenêtre)",
+      "conseils": [
+        "Vérifier la solidité des protections hivernales après les coups de vent.",
+        "Arrosage très rare : uniquement pour les persistants en pot s'il ne pleut pas et hors période de gel.",
+        "Récupérer les baies rouges (houx, pyracantha) pour décorer vos jardinières d'hiver.",
+        "Nettoyer les vitres de la serre ou de la véranda pour maximiser la lumière naturelle."
+      ]
+    },
+    {
+      "categorie": "Au Potager",
+      "actions": [
+        { "tache": "Récoltes de saison", "items": ["Mâche", "Poireaux", "Choux de Bruxelles", "Endives (forcées à la cave)", "Salsifis", "Topinambours"] },
+        { "tache": "Planification", "items": ["Dessiner le plan du futur potager", "Réfléchir à la rotation des cultures pour l'année prochaine", "Consulter les catalogues de semences"] },
+        { "tache": "Entretien", "items": ["Vérifier le bon état des légumes stockés en cave (pommes de terre, courges)", "Étaler le compost ou le fumier sur les parcelles nues", "Surveiller les protections contre les rongeurs"] }
+      ]
+    },
+    {
+      "categorie": "Au Verger",
+      "actions": [
+        "Continuer les plantations d'arbres fruitiers (hors période de gel du sol).",
+        "Pratiquer la taille de formation sur les pommiers et poiriers.",
+        "Brosser les troncs pour éliminer les mousses et lichens abritant des parasites.",
+        "Vérifier les tuteurs et les liens des jeunes arbres pour éviter les frottements."
+      ]
+    },
+    {
+      "categorie": "Fleurs & Ornement",
+      "actions": [
+        "Planter les arbustes à floraison hivernale : jasmin d'hiver, mahonia, viorne d'hiver.",
+        "Élaguer les arbres à feuilles caduques.",
+        "Vérifier le stockage des bulbes d'été (dahlias, glaïeuls) : éliminer ceux qui pourrissent.",
+        "Tailler les haies de feuillus si cela n'a pas été fait en novembre."
+      ]
+    },
+    {
+      "categorie": "Pelouse",
+      "actions": [
+        "Éviter absolument de marcher sur la pelouse si elle est gelée ou couverte de givre (cela casse les brins d'herbe).",
+        "Nettoyer les derniers amas de feuilles mortes qui pourraient étouffer le gazon.",
+        "Profiter du temps libre pour faire réviser la tondeuse chez un spécialiste."
+      ]
+    },
+{
+  "categorie": "Astuces de saison",
+  "actions": [
+    "Nourrir régulièrement les oiseaux (graines, boules de graisse) et veiller à ce que leur eau ne gèle pas."
+  ]
+},
+{
+  "categorie": "Entretien & Matériel",
+  "actions": [
+    "Vidanger les robinets extérieurs et isoler les compteurs d'eau si ce n'est pas déjà fait.",
+    "Ranger et trier les tuteurs, étiquettes et petits godets nettoyés.",
+    "Huiler les parties métalliques des outils pour prévenir la rouille."
+  ]
+}
+  ]
+}
+  ]
+}
