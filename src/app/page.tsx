@@ -1636,15 +1636,14 @@ return sections.map((sec, idx) => {
       </h2>
     </div>
 
-    {/* LE CONTENEUR PRINCIPAL : 1 colonne mobile, 2 colonnes tablette, 3 colonnes desktop */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+    {/* LE CONTENEUR EN COLONNES (Évite le décalage de toute la ligne) */}
+    <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
       
-      {/* --- BLOCS CONSEILS (JARDINIER.JSON) --- */}
+      {/* 1. SECTIONS CONSEILS (Boucle Jardinier) */}
       {currentData.sections?.map((section, idx) => {
         const isOpen = openSection === idx;
-        
         return (
-          <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm h-fit">
+          <div key={idx} className="break-inside-avoid bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm mb-4">
             <button 
               onClick={() => toggleSection(idx)}
               className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
@@ -1684,9 +1683,9 @@ return sections.map((sec, idx) => {
         );
       })}
 
-      {/* --- BLOC RÉCOLTE FRUITS --- */}
-      {fruitsRecolte.length > 0 && (
-        <div className="bg-white rounded-xl border border-orange-200 overflow-hidden shadow-sm h-fit">
+      {/* 2. BOUTON FRUITS (S'affiche si des fruits sont dispos) */}
+      {fruitsRecolte && fruitsRecolte.length > 0 && (
+        <div className="break-inside-avoid bg-white rounded-xl border border-orange-200 overflow-hidden shadow-sm mb-4">
           <button 
             onClick={() => toggleSection('fruits')}
             className="w-full flex items-center justify-between p-4 text-left hover:bg-orange-50 transition-colors"
@@ -1712,9 +1711,9 @@ return sections.map((sec, idx) => {
         </div>
       )}
 
-      {/* --- BLOC RÉCOLTE LÉGUMES --- */}
-      {legumesRecolte.length > 0 && (
-        <div className="bg-white rounded-xl border border-emerald-200 overflow-hidden shadow-sm h-fit">
+      {/* 3. BOUTON LÉGUMES (S'affiche si des légumes sont dispos) */}
+      {legumesRecolte && legumesRecolte.length > 0 && (
+        <div className="break-inside-avoid bg-white rounded-xl border border-emerald-200 overflow-hidden shadow-sm mb-4">
           <button 
             onClick={() => toggleSection('legumes')}
             className="w-full flex items-center justify-between p-4 text-left hover:bg-emerald-50 transition-colors"
