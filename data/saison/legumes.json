@@ -1,0 +1,57 @@
+{
+  "legumes_toulouse": [
+    {
+      "categorie": "Légumes-fruits",
+      "elements": [
+        { "items": ["Tomate", "Poivron", "Aubergine", "Piment", "Tomatille"], "mois": ["Juillet", "Août", "Septembre", "Octobre"] },
+        { "items": ["Courgette", "Concombre", "Cornichon", "Cucamelon", "Pâtisson"], "mois": ["Juin", "Juillet", "Août", "Septembre"] },
+        { "items": ["Citrouille", "Potiron", "Courges (Musquée, Éponge)", "Chayote", "Cyclanthère"], "mois": ["Septembre", "Octobre", "Novembre"] },
+        { "items": ["Maïs doux", "Gombo", "Coqueret du Pérou"], "mois": ["Août", "Septembre", "Octobre"] }
+      ]
+    },
+    {
+      "categorie": "Feuilles & Tiges",
+      "elements": [
+        { "items": ["Laitue", "Roquette", "Scarole", "Batavia", "Cresson"], "mois": ["Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre"] },
+        { "items": ["Mâche", "Endive"], "mois": ["Janvier", "Février", "Mars", "Octobre", "Novembre", "Décembre"] },
+        { "items": ["Épinard", "Blette", "Oseille", "Rhubarbe"], "mois": ["Avril", "Mai", "Juin", "Septembre", "Octobre", "Novembre"] },
+        { "items": ["Chou", "Chou de Bruxelles", "Chou Chinois", "Komatsuna"], "mois": ["Janvier", "Février", "Mars", "Septembre", "Octobre", "Novembre", "Décembre"] }
+      ]
+    },
+    {
+      "categorie": "Racines, Tubercules & Bulbes",
+      "elements": [
+        { "items": ["Carotte", "Betterave", "Radis", "Céleri-rave"], "mois": ["Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre"] },
+        { "items": ["Pomme de terre"], "mois": ["Juin", "Juillet", "Août", "Septembre"] },
+        { "items": ["Navet", "Panais", "Rutabaga", "Topinambour", "Hélianthi", "Salsifis"], "mois": ["Janvier", "Février", "Mars", "Octobre", "Novembre", "Décembre"] },
+        { "items": ["Patate douce", "Poire de terre (Yacón)"], "mois": ["Septembre", "Octobre"] },
+        { "items": ["Ail", "Oignon", "Échalote"], "mois": ["Juin", "Juillet", "Août"] },
+        { "items": ["Radis d'hiver", "Raifort"], "mois": ["Janvier", "Octobre", "Novembre", "Décembre"] }
+      ]
+    },
+    {
+      "categorie": "Légumes-fleurs",
+      "elements": [
+        { "items": ["Artichaut"], "mois": ["Mai", "Juin", "Septembre"] },
+        { "items": ["Chou-fleur", "Brocoli"], "mois": ["Janvier", "Février", "Mars", "Avril", "Septembre", "Octobre", "Novembre", "Décembre"] },
+        { "items": ["Fleur de courgette", "Capucine", "Câpre"], "mois": ["Juin", "Juillet", "Août"] }
+      ]
+    },
+    {
+      "categorie": "Légumineuses",
+      "elements": [
+        { "items": ["Fève", "Pois", "Pois mangetout"], "mois": ["Mai", "Juin"] },
+        { "items": ["Haricot vert", "Haricot beurre", "Mogette"], "mois": ["Juillet", "Août", "Septembre"] },
+        { "items": ["Lentille", "Pois chiche", "Soja", "Haricots secs"], "mois": ["Août", "Septembre"] }
+      ]
+    },
+    {
+      "categorie": "Condiments & Autres",
+      "elements": [
+        { "items": ["Basilic"], "mois": ["Juin", "Juillet", "Août", "Septembre"] },
+        { "items": ["Persil", "Ail"], "mois": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"] },
+        { "items": ["Asperge"], "mois": ["Avril", "Mai", "Juin"] }
+      ]
+    }
+  ]
+}
