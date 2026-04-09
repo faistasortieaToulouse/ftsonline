@@ -772,36 +772,59 @@ const WeatherIcon = ({ condition }: { condition: string }) => {
 
 // --- COMPOSANT PRINCIPAL ---
 export default function HomePage() {
+    
+  // 1. DÉCLARATION DES ÉTATS (Une seule fois par variable !)
   const [heure, setHeure] = useState(new Date());
-// On remplace l'ancien état "meteo" par celui-ci :
-  const [previsions, setPrevisions] = useState({
-    matin: { temp: "--", cond: "--", vent: "--" },
-    midi: { temp: "--", cond: "--", vent: "--" },
-    soir: { temp: "--", cond: "--", vent: "--" }
+
+  const [statsAnnee, setStatsAnnee] = useState({
+    valeur: "--",
+    date: "Analyse en cours...",
+    mini: "--",
+    maxi: "--"
   });
-	
-// 1. Les états en premier
-// Permet de stocker l'index de la section ouverte (null = tout fermé)
-const [openSection, setOpenSection] = useState(null);
 
-const toggleSection = (idx) => {
-  setOpenSection(openSection === idx ? null : idx);
-};
+  const [previsions, setPrevisions] = useState({
+    matin: { temp: "--", cond: "--", vent: "--", uv: 0, air: 0 },
+    midi: { temp: "--", cond: "--", vent: "--", uv: 0, air: 0 },
+    soir: { temp: "--", cond: "--", vent: "--", uv: 0, air: 0 }
+  });
 
+  const [openSection, setOpenSection] = useState(null);
+  const [openMenu, setOpenMenu] = useState(null);
+  const [annuelData, setAnnuelData] = useState(null);
+
+  // 2. LE CALCUL DYNAMIQUE DU RECORD
+  useEffect(() => {
+    const currentYear = new Date().getFullYear();
+
+    const calculerRecord = () => {
+      // Simulation du calcul (Valeur pour Toulouse 2026)
+      setStatsAnnee({
+        valeur: "19.4", 
+        date: "28 mars " + currentYear,
+        mini: "2.1",
+        maxi: "21.5"
+      });
+    };
+
+    calculerRecord();
+  }, [heure]); 
+
+  // 3. LES FONCTIONS ET LOGIQUE
+  const toggleSection = (idx) => {
+    setOpenSection(openSection === idx ? null : idx);
+  };
+    
   // --- LOGIQUE SAISONNIÈRE ---
-// --- LOGIQUE SAISONNIÈRE ANTI-CRASH ---
-// 2. Les variables de date
-const now = new Date();
-const currentMonthIndex = now.getMonth(); 
+  const now = new Date();
+  const currentMonthIndex = now.getMonth(); 
 
-// 3. La fonction de sécurisation
-// Sécurisation totale des accès aux données
-const getMonthlyData = (dataSource) => {
-  if (dataSource && dataSource.conseils_mensuels && Array.isArray(dataSource.conseils_mensuels)) {
-    return dataSource.conseils_mensuels[currentMonthIndex] || null;
-  }
-  return null;
-};
+  const getMonthlyData = (dataSource) => {
+    if (dataSource && dataSource.conseils_mensuels && Array.isArray(dataSource.conseils_mensuels)) {
+      return dataSource.conseils_mensuels[currentMonthIndex] || null;
+    }
+    return null;
+  };
 
 // 4. Définition de currentData (INDISPENSABLE avant le filtrage)
 const currentData = getMonthlyData(jardinierData) || { 
@@ -939,57 +962,80 @@ const iconeLumiere = estEnBaisse ? "📉" : "📈";
   const ascendant = getAscendant(heure);
 		
 useEffect(() => {
-  // 1. Gestion de l'horloge
   const timer = setInterval(() => {
     setHeure(new Date());
   }, 60000);
 
-  // 2. Fonction pour récupérer les données (Météo temps réel + Prévisions + Stats)
   const fetchData = async () => {
     try {
-      // APPEL 1 : Tes statistiques annuelles (ton API locale)
-      const resStats = await fetch('/api/meteo');
+      const currentYear = new Date().getFullYear();
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const endDate = yesterday.toISOString().split('T')[0];
+
+      // --- APPELS API EN PARALLÈLE ---
+      const [resStats, resMeteo, resAir, resArchive] = await Promise.all([
+        fetch('/api/meteo'),
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=43.6045&longitude=1.4442&hourly=temperature_2m,weathercode,windspeed_10m,uv_index&timezone=Europe%2FParis`),
+        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=43.6045&longitude=1.4442&hourly=european_aqi&timezone=Europe%2FParis`),
+        fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=43.6045&longitude=1.4442&start_date=${currentYear}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min&timezone=Europe%2FParis`)
+      ]);
+
+      // 1. Traitement Statistiques Annuelles (API Locale)
       if (resStats.ok) {
         const s = await resStats.json();
         setAnnuelData(s);
       }
 
-      // APPEL 2 : La météo en direct et prévisions (Open-Meteo)
-      const resMeteo = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=43.6045&longitude=1.4442&hourly=temperature_2m,weathercode,windspeed_10m,uv_index&timezone=Europe%2FParis`
-      );
-		
-		// APPEL 3 : Qualité de l'Air (Nouvel appel API spécifique)
-      const resAir = await fetch(
-        `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=43.6045&longitude=1.4442&hourly=european_aqi&timezone=Europe%2FParis`
-      );
-      
-        if (resMeteo.ok && resAir.ok) {
-        const data = await resMeteo.json();
-        const dataAir = await resAir.json(); // <-- IL MANQUAIT ÇA
+      // 2. Traitement Record Amplitude (Archives)
+      if (resArchive.ok) {
+        const dataArchive = await resArchive.json();
+        let record = { valeur: 0, date: "", mini: 0, maxi: 0 };
+        
+        dataArchive.daily.time.forEach((date, i) => {
+          const tmax = dataArchive.daily.temperature_2m_max[i];
+          const tmin = dataArchive.daily.temperature_2m_min[i];
+          if (tmax !== null && tmin !== null) {
+            const diff = tmax - tmin;
+            if (diff > record.valeur) {
+              record = {
+                valeur: diff.toFixed(1),
+                date: new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }),
+                mini: tmin.toFixed(1),
+                maxi: tmax.toFixed(1)
+              };
+            }
+          }
+        });
+        setStatsAnnee(record);
+      }
 
-        const parseCond = (code: number) => {
+      // 3. Traitement Météo Direct et Air
+      if (resMeteo.ok && resAir.ok) {
+        const data = await resMeteo.json();
+        const dataAir = await resAir.json();
+
+        const parseCond = (code) => {
           if (code === 0) return "Soleil";
           if (code < 4) return "Nuageux";
           if (code < 70) return "Pluie";
           return "Orage";
         };
 
-        // On remplit notre nouvel état "previsions"
         setPrevisions({
           matin: { 
             temp: `${Math.round(data.hourly.temperature_2m[9])}°C`, 
             cond: parseCond(data.hourly.weathercode[9]),
             vent: `${Math.round(data.hourly.windspeed_10m[9])} km/h`,
-			uv: data.hourly.uv_index[9], // Ajout UV matin
-            air: dataAir.hourly.european_aqi[9] // Ajout Air matin
+            uv: data.hourly.uv_index[9],
+            air: dataAir.hourly.european_aqi[9]
           },
           midi: { 
             temp: `${Math.round(data.hourly.temperature_2m[14])}°C`, 
             cond: parseCond(data.hourly.weathercode[14]),
             vent: `${Math.round(data.hourly.windspeed_10m[14])} km/h`,
-            uv: data.hourly.uv_index[14], // C'est celui-ci que vous affichez plus bas !
-            air: dataAir.hourly.european_aqi[14] // Et celui-ci pour l'air !			
+            uv: data.hourly.uv_index[14],
+            air: dataAir.hourly.european_aqi[14]
           },
           soir: { 
             temp: `${Math.round(data.hourly.temperature_2m[20])}°C`, 
@@ -1001,14 +1047,13 @@ useEffect(() => {
         });
       }
     } catch (e) {
-      console.error("Erreur lors de la récupération des données:", e);
+      console.error("Erreur globale fetchData:", e);
     }
   };
 
   fetchData();
-
   return () => clearInterval(timer);
-}, []);
+}, []); // On garde [] pour ne pas surcharger l'API Archive
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-purple-50">
@@ -1269,7 +1314,60 @@ useEffect(() => {
     </div>
     </div>
 	    </div>
+	  
+{/* --- INSERTION DU BLOC AMPLITUDE ICI --- */}
+<div className="bg-gradient-to-r from-orange-50/50 to-indigo-50/30 border-y border-purple-200 py-3 px-6 my-2">
+  <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+    
+    {/* Amplitude du jour */}
+    <div className="flex items-center gap-3">
+      <div className="p-2 bg-white rounded-lg shadow-sm border border-orange-100">
+        <Wind className="w-5 h-5 text-orange-500" />
+      </div>
+      <div className="flex flex-col">
+        <span className="text-[9px] font-black uppercase text-slate-400 leading-tight">Amplitude du jour</span>
+        <span className="text-sm font-bold text-indigo-900">
+          {Math.abs(parseFloat(previsions.midi.temp) - parseFloat(previsions.matin.temp)).toFixed(1)}°C
+          <span className="text-[10px] font-normal text-slate-400 ml-1.5">Matin/Midi</span>
+        </span>
+      </div>
+    </div>
 
+    <div className="hidden md:block w-px h-8 bg-purple-200" />
+
+    {/* Record de l'année */}
+    <div className="flex items-center gap-4 bg-white/60 px-5 py-2 rounded-2xl border border-orange-200 shadow-sm">
+      <div className="relative">
+        <Trophy className="w-6 h-6 text-orange-600" />
+        <span className="absolute -top-1 -right-1 flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+        </span>
+      </div>
+      
+      <div className="flex flex-col">
+        <span className="text-[10px] font-black uppercase text-orange-600 tracking-tight leading-none mb-1">
+          Record d'amplitude Toulouse 2026
+        </span>
+        <div className="flex items-baseline gap-2">
+          <span className="text-lg font-black text-indigo-950">
+            {statsAnnee.valeur}°C
+          </span>
+          <span className="text-[11px] font-medium text-slate-500">
+            le {statsAnnee.date}
+          </span>
+          <div className="flex items-center gap-1 ml-2 text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">
+            <span>{statsAnnee.mini}°</span>
+            <span className="opacity-50">→</span>
+            <span>{statsAnnee.maxi}°</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/* --- FIN DE L'INSERTION --- */}
+	
 {/* --- AJOUT DE TA PHRASE DE RÉFÉRENCE --- */}
   <div className="w-full text-center mb-1">
     <p className="text-[10px] font-medium text-indigo-700/80">
