@@ -1309,6 +1309,14 @@ useEffect(() => {
     </div>
     </div>
 	    </div>
+
+  {/* --- AJOUT DE TA PHRASE DE RÉFÉRENCE --- */}
+  <div className="w-full text-center mb-1">
+    <p className="text-[10px] font-medium text-indigo-700/80">
+      Moyennes Toulouse : <span className="font-bold">2 112.3 h/an</span> d'ensoleillement • <span className="font-bold">600.1 mm/an</span> de pluie
+    </p>
+  </div>
+  {/* ---------------------------------------- */}
 	  
 {/* --- INSERTION DU BLOC AMPLITUDE ICI --- */}
 <div className="bg-gradient-to-r from-orange-50/50 to-indigo-50/30 border-y border-purple-200 py-3 px-6 my-2">
@@ -1363,14 +1371,6 @@ useEffect(() => {
 </div>
 {/* --- FIN DE L'INSERTION --- */}
 	
-{/* --- AJOUT DE TA PHRASE DE RÉFÉRENCE --- */}
-  <div className="w-full text-center mb-1">
-    <p className="text-[10px] font-medium text-indigo-700/80">
-      Moyennes Toulouse : <span className="font-bold">2 112.3 h/an</span> d'ensoleillement • <span className="font-bold">600.1 mm/an</span> de pluie
-    </p>
-  </div>
-  {/* ---------------------------------------- */}
-
 {/* Ligne 4 : Astro (Zodiaque) */}
 <div className="bg-blue-50/50 border-t border-purple-200 py-3 px-4 md:px-6">
   <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 w-full text-sm">
