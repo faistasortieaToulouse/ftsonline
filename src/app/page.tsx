@@ -857,11 +857,6 @@ const filterSaison = (dataArray) => {
 const fruitsRecolte = filterSaison(fruitsData?.fruits_toulouse);
 const legumesRecolte = filterSaison(legumesData?.legumes_toulouse);
 	
-// --- PLIER DEPLIER MENU DEROULANT ---
-const [openMenu, setOpenMenu] = useState(null);
-	
-// --- AJOUT : État pour les statistiques annuelles ---
-  const [annuelData, setAnnuelData] = useState<any>(null);
 
   // 1. Coordonnées de Toulouse
   const lat = 43.6045;
