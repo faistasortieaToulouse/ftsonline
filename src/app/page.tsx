@@ -922,15 +922,27 @@ const starHorizon = Astronomy.Horizon(
 
   const siriusVisible = starHorizon.altitude > 0;
 
-// Logique automatique pour la tendance de la lumière
+// --- CALCULS DES TENDANCES (LUMIÈRE & AMPLITUDE) ---
 const moisActuel = heure.getMonth() + 1;
 const jourActuel = heure.getDate();
 
-// Du 21 juin au 20 décembre, la lumière baisse
-const estEnBaisse = (moisActuel === 6 && jourActuel >= 21) || (moisActuel > 6 && moisActuel < 12) || (moisActuel === 12 && jourActuel < 21);
+// A. Tendance Lumière
+const estEnBaisseLumiere = (moisActuel === 6 && jourActuel >= 21) || (moisActuel > 6 && moisActuel < 12) || (moisActuel === 12 && jourActuel < 21);
+const tendanceLumiere = estEnBaisseLumiere ? "En diminution" : "En augmentation";
+const iconeLumiere = estEnBaisseLumiere ? "📉" : "📈";
 
-const tendanceLumiere = estEnBaisse ? "En diminution" : "En augmentation";
-const iconeLumiere = estEnBaisse ? "📉" : "📈";
+// B. Tendance Amplitude Saisonnière (Climat)
+// À Toulouse, l'amplitude augmente de février à juillet
+const estEnHausseSaisonniere = (moisActuel >= 2 && moisActuel <= 7);
+const tendanceSaison = estEnHausseSaisonniere ? "Augmentation saisonnière" : "Diminution saisonnière";
+
+// C. Tendance Amplitude Réelle (Comparaison J vs Record/Hier)
+// On parse les valeurs pour être sûr d'avoir des nombres
+const ampAujourdhui = Math.abs(parseFloat(previsions.midi.temp) - parseFloat(previsions.matin.temp)) || 0;
+const ampReference = parseFloat(statsAnnee.valeur) || 0;
+
+const tendanceReelle = ampAujourdhui >= ampReference ? "Plus d'écart qu'hier" : "Moins d'écart qu'hier";
+const iconeReelle = ampAujourdhui >= ampReference ? "📈" : "📉";
 
   // 5. Constellations avec sécurité (pour éviter le crash au changement de mois)
   const constellationsData = {
@@ -1143,7 +1155,7 @@ useEffect(() => {
         </div>
       </div>
 			
-{/* BLOC DROIT : Météo Matin / Midi / Soir */}
+      {/* BLOC DROIT : Météo Matin / Midi / Soir */}
       <div className="flex items-center gap-6 bg-purple-50 p-3 rounded-2xl border border-purple-100 shadow-sm">
         {/* Matin */}
         <div className="flex flex-col items-center min-w-[60px]">
@@ -1318,27 +1330,46 @@ useEffect(() => {
   </div>
   {/* ---------------------------------------- */}
 	  
-{/* --- INSERTION DU BLOC AMPLITUDE ICI --- */}
-<div className="bg-gradient-to-r from-orange-50/50 to-indigo-50/30 border-y border-purple-200 py-3 px-6 my-2">
-  <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+{/* --- BLOC AMPLITUDE & RECORDS --- */}
+<div className="bg-gradient-to-r from-orange-50/50 to-indigo-50/30 border-y border-purple-200 py-4 px-6 my-2">
+  <div className="flex flex-col md:flex-row items-center justify-center gap-8">
     
-    {/* Amplitude du jour */}
-    <div className="flex items-center gap-3">
-      <div className="p-2 bg-white rounded-lg shadow-sm border border-orange-100">
+    {/* 1. Amplitude du jour avec double tendance */}
+    <div className="flex items-center gap-3 group">
+      <div className="p-2 bg-white rounded-lg shadow-sm border border-orange-100 group-hover:border-orange-300 transition-colors">
         <Wind className="w-5 h-5 text-orange-500" />
       </div>
       <div className="flex flex-col">
-        <span className="text-[9px] font-black uppercase text-slate-400 leading-tight">Amplitude du jour</span>
-        <span className="text-sm font-bold text-indigo-900">
-          {Math.abs(parseFloat(previsions.midi.temp) - parseFloat(previsions.matin.temp)).toFixed(1)}°C
-          <span className="text-[10px] font-normal text-slate-400 ml-1.5">Matin/Midi</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] font-black uppercase text-slate-400 leading-tight">Amplitude du jour</span>
+          
+          {/* Badge saisonnier dynamique */}
+          <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase ${estEnHausseSaisonniere ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
+            Saison : {estEnHausseSaisonniere ? '↑' : '↓'}
+          </span>
+        </div>
+        
+        <div className="flex items-baseline gap-2">
+          <span className="text-sm font-bold text-indigo-900">
+            {ampAujourdhui.toFixed(1)}°C
+          </span>
+          {/* Tendance météo réelle (comparé à hier/record) */}
+          <span className="text-[10px] font-medium text-slate-500 flex items-center gap-0.5">
+            {iconeReelle} <span className="hidden lg:inline">{tendanceReelle}</span>
+          </span>
+        </div>
+        
+        {/* Texte de tendance saisonnière */}
+        <span className="text-[8px] text-slate-400 italic leading-none mt-0.5">
+          {tendanceSaison}
         </span>
       </div>
     </div>
 
-    <div className="hidden md:block w-px h-8 bg-purple-200" />
+    {/* Séparateur vertical (visible uniquement sur écran large) */}
+    <div className="hidden md:block w-px h-10 bg-purple-200" />
 
-    {/* Record de l'année */}
+    {/* 2. Record de l'année */}
     <div className="flex items-center gap-4 bg-white/60 px-5 py-2 rounded-2xl border border-orange-200 shadow-sm">
       <div className="relative">
         <Trophy className="w-6 h-6 text-orange-600" />
@@ -1367,10 +1398,11 @@ useEffect(() => {
         </div>
       </div>
     </div>
+
   </div>
 </div>
-{/* --- FIN DE L'INSERTION --- */}
-	
+{/* --- FIN DU BLOC AMPLITUDE --- */}
+	  
 {/* Ligne 4 : Astro (Zodiaque) */}
 <div className="bg-blue-50/50 border-t border-purple-200 py-3 px-4 md:px-6">
   <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 w-full text-sm">
