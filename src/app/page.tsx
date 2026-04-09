@@ -772,10 +772,11 @@ const WeatherIcon = ({ condition }: { condition: string }) => {
 
 // --- COMPOSANT PRINCIPAL ---
 export default function HomePage() {
-    
-  // 1. DÉCLARATION DES ÉTATS (Une seule fois par variable !)
-  const [heure, setHeure] = useState(new Date());
 
+  // 1. DÉCLARATION DES ÉTATS (Hooks de base)
+  const [isMobile, setIsMobile] = useState(false);
+  const [heure, setHeure] = useState(new Date());
+  
   const [statsAnnee, setStatsAnnee] = useState({
     valeur: "--",
     date: "Analyse en cours...",
@@ -793,10 +794,19 @@ export default function HomePage() {
   const [openMenu, setOpenMenu] = useState(null);
   const [annuelData, setAnnuelData] = useState(null);
 
-  // 2. LE CALCUL DYNAMIQUE DU RECORD
+  // 2. LES EFFETS (Logique de mise à jour)
+  
+  // Détection du mode mobile (breakpoint sm: 640px)
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile(); // Vérification initiale
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Calcul dynamique du record (basé sur l'heure)
   useEffect(() => {
     const currentYear = new Date().getFullYear();
-
     const calculerRecord = () => {
       // Simulation du calcul (Valeur pour Toulouse 2026)
       setStatsAnnee({
@@ -806,7 +816,6 @@ export default function HomePage() {
         maxi: "21.5"
       });
     };
-
     calculerRecord();
   }, [heure]); 
 
@@ -825,6 +834,8 @@ export default function HomePage() {
     }
     return null;
   };
+
+  // --- Suite du composant (Fetch, Return JSX, etc.) ---
 
 // 4. Définition de currentData (INDISPENSABLE avant le filtrage)
 const currentData = getMonthlyData(jardinierData) || { 
@@ -1933,27 +1944,26 @@ return sections.map((sec, idx) => {
   {/* Conteneur Columns */}
 <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
   {Array.from({ length: categories.length }).map((_, i) => {
-    const numCols = 3;
-    const total = categories.length;
-    const numRows = Math.ceil(total / numCols);
-
-    /**
-     * LOGIQUE DE LA GRILLE :
-     * Si i = 0 (Haut Col 1) -> index = 0 * numRows + 0 = 0
-     * Si i = 1 (Haut Col 2) -> index = 1 * numRows + 0 = numRows
-     * Si i = 2 (Haut Col 3) -> index = 2 * numRows + 0 = 2 * numRows
-     * * Pour que ça marche, ton tableau 'categories' doit être trié ainsi :
-     * index 0 : Agenda
-     * index 1 : Actualités
-     * index 2 : Meetup
-     */
-    const col = Math.floor(i / numRows);
-    const row = i % numRows;
-    const index = row * numCols + col; 
+    // --- NOUVELLE LOGIQUE DYNAMIQUE ---
+    let index;
+    
+    if (isMobile) {
+      // Sur mobile : Ordre naturel 0, 1, 2, 3...
+      index = i;
+    } else {
+      // Sur ordinateur : Ta logique de répartition par colonnes
+      const numCols = 3;
+      const total = categories.length;
+      const numRows = Math.ceil(total / numCols);
+      
+      const col = Math.floor(i / numRows);
+      const row = i % numRows;
+      index = row * numCols + col;
+    }
 
     const cat = categories[index];
 
-    // Sécurité si la cellule est vide (fin de tableau)
+    // Sécurité si la cellule est vide
     if (!cat) return null;
 
 	const Icon = cat.icon;
