@@ -1,0 +1,44 @@
+{
+  "defense_et_militaire": [
+    {
+      "titre": "Liste des pays qui ne possèdent pas d'armée",
+      "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_qui_ne_poss%C3%A8dent_pas_d%27arm%C3%A9e"
+    },
+    {
+      "titre": "Liste des pays par taux d'armement",
+      "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_par_taux_d%27armement"
+    },
+    {
+      "titre": "Liste des pays par dépenses militaires",
+      "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_par_d%C3%A9penses_militaires"
+    }
+  ],
+  "finance": [
+    {
+      "titre": "Liste de pays par dette extérieure",
+      "url": "https://fr.wikipedia.org/wiki/Liste_de_pays_par_dette_ext%C3%A9rieure"
+    },
+    {
+      "titre": "Liste de pays par d'ette publique",
+      "url": "https://fr.wikipedia.org/wiki/Liste_de_pays_par_dette_publique"
+    }
+  ],
+  "societe_et_environnement": [
+    {
+      "titre": "Durée annuelle de travail",
+      "url": "https://fr.wikipedia.org/wiki/Dur%C3%A9e_annuelle_de_travail"
+    },
+    {
+      "titre": "Liste des pays par dépenses d'éducation",
+      "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_par_d%C3%A9penses_d%27%C3%A9ducation"
+    },
+    {
+      "titre": "Liste de pays par consommation d'électricité",
+      "url": "https://fr.wikipedia.org/wiki/Liste_de_pays_par_consommation_d%27%C3%A9lectricit%C3%A9"
+    },
+    {
+      "titre": "Zone économique exclusive",
+      "url": "https://fr.wikipedia.org/wiki/Zone_%C3%A9conomique_exclusive"
+    }
+  ]
+}
