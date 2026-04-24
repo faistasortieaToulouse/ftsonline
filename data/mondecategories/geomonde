@@ -1,0 +1,206 @@
+{
+  "geographie_physique_et_points_extremes": {
+    "points_extremes": [
+      { "titre": "Liste de points extrêmes de l'Antarctique", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Antarctique" },
+      { "titre": "Liste de points extrêmes de l'Océanie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Oc%C3%A9anie" },
+      { "titre": "Liste de points extrêmes de la Nouvelle-Zélande", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_Nouvelle-Z%C3%A9lande" },
+      { "titre": "Liste de points extrêmes de l'Australie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Australie" },
+      { "titre": "Liste de points extrêmes de l'Indonésie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Indon%C3%A9sie" },
+      { "titre": "Liste de points extrêmes de l'Asie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Asie" },
+      { "titre": "Liste de points extrêmes de l'Afghanistan", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Afghanistan" },
+      { "titre": "Liste de points extrêmes de l'Arabie saoudite", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Arabie_saoudite" },
+      { "titre": "Liste de points extrêmes de la Chine", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_Chine" },
+      { "titre": "Liste de points extrêmes de l'Inde", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Inde" },
+      { "titre": "Liste de points extrêmes du Japon", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Japon" },
+      { "titre": "Liste de points extrêmes du Kazakhstan", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Kazakhstan" },
+      { "titre": "Liste de points extrêmes du Bhoutan", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Bhoutan" },
+      { "titre": "Liste de points extrêmes du Népal", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_N%C3%A9pal" },
+      { "titre": "Liste de points extrêmes du Pakistan", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Pakistan" },
+      { "titre": "Liste de points extrêmes de la Russie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_Russie" },
+      { "titre": "Liste de points extrêmes de la Turquie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_Turquie" },
+      { "titre": "Liste de points extrêmes de l'Amérique", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Am%C3%A9rique" },
+      { "titre": "Liste de points extrêmes de l'Argentine", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Argentine" },
+      { "titre": "Liste de points extrêmes du Brésil", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Br%C3%A9sil" },
+      { "titre": "Liste de points extrêmes du Chili", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Chili" },
+      { "titre": "Liste de points extrêmes de la Colombie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_Colombie" },
+      { "titre": "Liste de points extrêmes du Pérou", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_P%C3%A9rou" },
+      { "titre": "Liste de points extrêmes du Groenland", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Groenland" },
+      { "titre": "Liste de points extrêmes du Canada", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Canada" },
+      { "titre": "Liste de points extrêmes des États-Unis", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_des_%C3%89tats-Unis" },
+      { "titre": "Liste de points extrêmes du Mexique", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Mexique" },
+      { "titre": "Liste de points extrêmes de Cuba", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_Cuba" },
+      { "titre": "Liste de points extrêmes de l'Afrique", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Afrique" },
+      { "titre": "Liste de points extrêmes de la république démocratique du Congo", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_r%C3%A9publique_d%C3%A9mocratique_du_Congo" },
+      { "titre": "Liste de points extrêmes de l'Algérie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Alg%C3%A9rie" },
+      { "titre": "Liste de points extrêmes de l'Afrique du Sud", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Afrique_du_Sud" },
+      { "titre": "Liste de points extrêmes du Maroc", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Maroc" },
+      { "titre": "Liste de points extrêmes de l'Europe", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Europe" },
+      { "titre": "Liste de points extrêmes de l'Union européenne", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Union_europ%C3%A9enne" },
+      { "titre": "Liste de points extrêmes d'Andorre", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_d%27Andorre" },
+      { "titre": "Liste de points extrêmes de l'Islande", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Islande" },
+      { "titre": "Liste de points extrêmes du Royaume-Uni", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_du_Royaume-Uni" },
+      { "titre": "Liste de points extrêmes de la Suisse", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_Suisse" },
+      { "titre": "Liste de points extrêmes de l'Ukraine", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Ukraine" },
+      { "titre": "Liste de points extrêmes de l'Allemagne", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Allemagne" },
+      { "titre": "Liste de points extrêmes de l'Espagne", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Espagne" },
+      { "titre": "Liste de points extrêmes de l'Italie", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_l%27Italie" },
+      { "titre": "Liste de points extrêmes de la Finlande", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_Finlande" },
+      { "titre": "Liste de points extrêmes de la France", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_France" },
+      { "titre": "Liste de points extrêmes des Pays-Bas", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_des_Pays-Bas" },
+      { "titre": "Liste de points extrêmes de la Pologne", "url": "https://fr.wikipedia.org/wiki/Liste_de_points_extr%C3%AAmes_de_la_Pologne" }
+    ],
+    "sommets": [
+      { "titre": "Liste des plus hauts sommets sur Terre", "url": "https://fr.wikipedia.org/wiki/Liste_des_plus_hauts_sommets_sur_Terre" },
+      { "titre": "Liste des plus hauts sommets du Système solaire", "url": "https://fr.wikipedia.org/wiki/Liste_des_plus_hauts_sommets_du_Syst%C3%A8me_solaire" },
+      { "titre": "Sommets de plus de 8 000 mètres d'altitude", "url": "https://fr.wikipedia.org/wiki/Sommets_de_plus_de_8_000_m%C3%A8tres_d%27altitude" },
+      { "titre": "Liste des sommets ultra-proéminents d'Europe", "url": "https://fr.wikipedia.org/wiki/Liste_des_sommets_ultra-pro%C3%A9minents_d%27Europe" },
+      { "titre": "Liste des sommets de France les plus proéminents", "url": "https://fr.wikipedia.org/wiki/Liste_des_sommets_de_France_les_plus_pro%C3%A9minents" }
+    ],
+    "iles_et_archipels": [
+      { "titre": "Liste d'archipels", "url": "https://fr.wikipedia.org/wiki/Liste_d%27archipels" },
+      { "titre": "Liste d'îles par superficie", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%AEles_par_superficie" },
+      { "titre": "Liste des îles d'Europe par population", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_d%27Europe_par_population" },
+      { "titre": "Liste des îles par population", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_par_population" },
+      { "titre": "Liste d'îles artificielles", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%AEles_artificielles" },
+      { "titre": "Liste des États insulaires", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%89tats_insulaires" },
+      { "titre": "Liste des îles divisées par une frontière internationale", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_divis%C3%A9es_par_une_fronti%C3%A8re_internationale" },
+      { "titre": "Liste d'îles par point culminant", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%AEles_par_point_culminant" },
+      { "titre": "Liste d'îles nommées d'après le calendrier", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%AEles_nomm%C3%A9es_d%27apr%C3%A8s_le_calendrier" },
+      { "titre": "Liste des îles englouties", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_englouties" },
+      { "titre": "Liste des plus grandes îles par pays", "url": "https://fr.wikipedia.org/wiki/Liste_des_plus_grandes_%C3%AEles_par_pays" },
+      { "titre": "Liste des îles nouvelles", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_nouvelles" },
+      { "titre": "Liste des îles de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_de_France" },
+      { "titre": "Liste des îles des mers arctiques", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_des_mers_arctiques" },
+      { "titre": "Liste des îles de l'océan Atlantique", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_de_l%27oc%C3%A9an_Atlantique" },
+      { "titre": "Îles du Pacifique", "url": "https://fr.wikipedia.org/wiki/%C3%8Eles_du_Pacifique" },
+      { "titre": "Liste des îles de l'océan Indien", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_de_l%27oc%C3%A9an_Indien" },
+      { "titre": "Liste des îles subantarctiques", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_subantarctiques" },
+      { "titre": "Liste des îles de l'Antarctique", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_de_l%27Antarctique" },
+      { "titre": "Liste des îles d'Afrique", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%AEles_d%27Afrique" }
+    ],
+    "lacs": [
+      { "titre": "Liste de lacs du monde", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_du_monde" },
+      { "titre": "Liste de lacs d'Europe", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_d%27Europe" },
+      { "titre": "Liste des plus grands lacs et étangs de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_plus_grands_lacs_et_%C3%A9tangs_de_France" },
+      { "titre": "Liste des lacs des Alpes", "url": "https://fr.wikipedia.org/wiki/Liste_des_lacs_des_Alpes" },
+      { "titre": "Liste des lacs de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_lacs_de_France" },
+      { "titre": "Liste des lacs et mers intérieures", "url": "https://fr.wikipedia.org/wiki/Liste_des_lacs_et_mers_int%C3%A9rieures" },
+      { "titre": "Liste des plus grands lacs artificiels", "url": "https://fr.wikipedia.org/wiki/Liste_des_plus_grands_lacs_artificiels" },
+      { "titre": "Liste de lacs par profondeur", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_par_profondeur" },
+      { "titre": "Liste de lacs par superficie", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_par_superficie" },
+      { "titre": "Liste de lacs par volume", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_par_volume" },
+      { "titre": "Liste de lacs d'Afrique", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_d%27Afrique" },
+      { "titre": "Liste de lacs d'Amérique", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_d%27Am%C3%A9rique" },
+      { "titre": "Liste de lacs de l'Antarctique", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_de_l%27Antarctique" },
+      { "titre": "Liste de lacs d'Asie", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_d%27Asie" },
+      { "titre": "Liste de lacs d'Océanie", "url": "https://fr.wikipedia.org/wiki/Liste_de_lacs_d%27Oc%C3%A9anie" },
+      { "titre": "Liste des lacs des Pyrénées", "url": "https://fr.wikipedia.org/wiki/Liste_des_lacs_des_Pyr%C3%A9n%C3%A9es" }
+    ],
+    "volcans": [
+      { "titre": "Listes de volcans sur Terre", "url": "https://fr.wikipedia.org/wiki/Listes_de_volcans_sur_Terre" },
+      { "titre": "Liste de volcans extraterrestres", "url": "https://fr.wikipedia.org/wiki/Liste_de_volcans_extraterrestres" },
+      { "titre": "Liste de volcans sous-marins", "url": "https://fr.wikipedia.org/wiki/Liste_de_volcans_sous-marins" },
+      { "titre": "Liste des volcans de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_volcans_de_France" },
+      { "titre": "Liste d'éruptions volcaniques au XXe siècle", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%A9ruptions_volcaniques_au_XXe_si%C3%A8cle" },
+      { "titre": "Liste d'éruptions volcaniques au XXIe siècle", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%A9ruptions_volcaniques_au_XXIe_si%C3%A8cle" },
+      { "titre": "Liste de stratovolcans", "url": "https://fr.wikipedia.org/wiki/Liste_de_stratovolcans" },
+      { "titre": "Liste des plus grandes éruptions volcaniques", "url": "https://fr.wikipedia.org/wiki/Liste_des_plus_grandes_%C3%A9ruptions_volcaniques" },
+      { "titre": "Liste des volcans d'Afrique", "url": "https://fr.wikipedia.org/wiki/Liste_des_volcans_d%27Afrique" },
+      { "titre": "Liste des volcans d'Amérique", "url": "https://fr.wikipedia.org/wiki/Liste_des_volcans_d%27Am%C3%A9rique" },
+      { "titre": "Liste des volcans d'Antarctique", "url": "https://fr.wikipedia.org/wiki/Liste_des_volcans_d%27Antarctique" },
+      { "titre": "Liste des volcans d'Asie", "url": "https://fr.wikipedia.org/wiki/Liste_des_volcans_d%27Asie" },
+      { "titre": "Liste des volcans d'Europe", "url": "https://fr.wikipedia.org/wiki/Liste_des_volcans_d%27Europe" },
+      { "titre": "Liste des volcans d'Océanie", "url": "https://fr.wikipedia.org/wiki/Liste_des_volcans_d%27Oc%C3%A9anie" }
+    ],
+    "forets": [
+      { "titre": "Liste des forêts les plus étendues dans le monde", "url": "https://fr.wikipedia.org/wiki/Liste_des_for%C3%AAts_les_plus_%C3%A9tendues_dans_le_monde" },
+      { "titre": "Liste des principales forêts de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_principales_for%C3%AAts_de_France" }
+    ],
+    "littoraux_et_frontieres": [
+      { "titre": "Liste des pays par longueur de côtes", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_par_longueur_de_c%C3%B4tes" }
+    ]
+  },
+  "infrastructures_et_transports": {
+    "ponts": [
+      { "titre": "Liste de ponts sur la Garonne", "url": "https://fr.wikipedia.org/wiki/Liste_de_ponts_sur_la_Garonne" },
+      { "titre": "Liste de ponts de France", "url": "https://fr.wikipedia.org/wiki/Liste_de_ponts_de_France" },
+      { "titre": "Ponts de France", "url": "https://fr.wikipedia.org/wiki/Ponts_de_France" },
+      { "titre": "Liste de ponts suspendus de France", "url": "https://fr.wikipedia.org/wiki/Liste_de_ponts_suspendus_de_France" },
+      { "titre": "Liste des ponts les plus longs de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_les_plus_longs_de_France" },
+      { "titre": "Liste des ponts médiévaux de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_m%C3%A9di%C3%A9vaux_de_France" },
+      { "titre": "Liste de ponts aux États-Unis", "url": "https://fr.wikipedia.org/wiki/Liste_de_ponts_aux_%C3%89tats-Unis" },
+      { "titre": "Liste des ponts de Toulouse", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_de_Toulouse" },
+      { "titre": "Liste de ponts remarquables", "url": "https://fr.wikipedia.org/wiki/Liste_de_ponts_remarquables" },
+      { "titre": "Liste de ponts à haubans remarquables", "url": "https://fr.wikipedia.org/wiki/Liste_de_ponts_%C3%A0_haubans_remarquables" },
+      { "titre": "Liste des ponts en porte-à-faux les plus longs du monde", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_en_porte-%C3%A0-faux_les_plus_longs_du_monde" },
+      { "titre": "Liste des ponts en arc les plus longs", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_en_arc_les_plus_longs" },
+      { "titre": "Liste des ponts les plus longs du monde", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_les_plus_longs_du_monde" },
+      { "titre": "Liste des ponts les plus hauts", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_les_plus_hauts" },
+      { "titre": "Liste des ponts suspendus les plus longs", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_suspendus_les_plus_longs" },
+      { "titre": "Liste des ponts bâtis d'Europe", "url": "https://fr.wikipedia.org/wiki/Liste_des_ponts_b%C3%A2tis_d%27Europe" },
+      { "titre": "Liste de ponts transfrontaliers", "url": "https://fr.wikipedia.org/wiki/Liste_de_ponts_transfrontaliers" },
+      { "titre": "Liste de ponts romains", "url": "https://fr.wikipedia.org/wiki/Liste_de_ponts_romains" }
+    ],
+    "ports": [
+      { "titre": "Liste des ports en France", "url": "https://fr.wikipedia.org/wiki/Liste_des_ports_en_France" },
+      { "titre": "Grands ports mondiaux", "url": "https://fr.wikipedia.org/wiki/Grands_ports_mondiaux" },
+      { "titre": "Liste des plus grands ports", "url": "https://fr.wikipedia.org/wiki/Liste_des_plus_grands_ports" },
+      { "titre": "Liste des plus grands ports à conteneurs", "url": "https://fr.wikipedia.org/wiki/Liste_des_plus_grands_ports_%C3%A0_conteneurs" },
+      { "titre": "Liste des ports antiques", "url": "https://fr.wikipedia.org/wiki/Liste_des_ports_antiques" },
+      { "titre": "Liste des ports les plus fréquentés d'Europe", "url": "https://fr.wikipedia.org/wiki/Liste_des_ports_les_plus_fr%C3%A9quent%C3%A9s_d%27Europe" },
+      { "titre": "Liste des ports de la Méditerranée", "url": "https://fr.wikipedia.org/wiki/Liste_des_ports_de_la_M%C3%A9diterran%C3%A9e" },
+      { "titre": "Liste de terminaux méthaniers", "url": "https://fr.wikipedia.org/wiki/Liste_de_terminaux_m%C3%A9thaniers" }
+    ],
+    "tunnels": [
+      { "titre": "Liste des tunnels les plus longs du monde", "url": "https://fr.wikipedia.org/wiki/Liste_des_tunnels_les_plus_longs_du_monde" },
+      { "titre": "Liste des tunnels les plus longs de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_tunnels_les_plus_longs_de_France" },
+      { "titre": "Liste des tunnels en Espagne", "url": "https://fr.wikipedia.org/wiki/Liste_des_tunnels_en_Espagne" },
+      { "titre": "Liste des tunnels routiers les plus longs de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_tunnels_routiers_les_plus_longs_de_France" },
+      { "titre": "Tunnels routiers romains", "url": "https://fr.wikipedia.org/wiki/Tunnels_routiers_romains" },
+      { "titre": "Liste des tunnels les plus longs par pays", "url": "https://fr.wikipedia.org/wiki/Liste_des_tunnels_les_plus_longs_par_pays" }
+    ]
+  },
+  "urbanisme_et_population": {
+    "aires_urbaines": [
+      { "titre": "Liste des aires urbaines d'Europe", "url": "https://fr.wikipedia.org/wiki/Liste_des_aires_urbaines_d%27Europe" },
+      { "titre": "Liste des aires urbaines de France", "url": "https://fr.wikipedia.org/wiki/Liste_des_aires_urbaines_de_France" },
+      { "titre": "Liste des aires urbaines d'Amérique", "url": "https://fr.wikipedia.org/wiki/Liste_des_aires_urbaines_d%27Am%C3%A9rique" }
+    ],
+    "villes": [
+      { "titre": "Liste des villes d'Océanie par population", "url": "https://fr.wikipedia.org/wiki/Liste_des_villes_d%27Oc%C3%A9anie_par_population" }
+    ],
+    "demographie": [
+      { "titre": "Liste des pays par âge médian", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_par_%C3%A2ge_m%C3%A9dian" },
+      { "titre": "Liste des pays et territoires par taux de croissance démographique", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_et_territoires_par_taux_de_croissance_d%C3%A9mographique" },
+      { "titre": "Liste des pays par densité de population", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_par_densit%C3%A9_de_population" },
+      { "titre": "Liste des pays par espérance de vie", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_par_esp%C3%A9rance_de_vie" }
+    ]
+  },
+  "politique_etats_et_institutions": {
+    "gouvernance_et_territoires": [
+      { "titre": "Liste des territoires gouvernés par les Nations unies", "url": "https://fr.wikipedia.org/wiki/Liste_des_territoires_gouvern%C3%A9s_par_les_Nations_unies" },
+      { "titre": "Liste des pays ayant le français pour langue officielle", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_ayant_le_fran%C3%A7ais_pour_langue_officielle" },
+      { "titre": "Liste des pays du monde", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_du_monde" },
+      { "titre": "Liste des pays ayant plusieurs capitales", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_ayant_plusieurs_capitales" },
+      { "titre": "Liste des capitales du monde", "url": "https://fr.wikipedia.org/wiki/Liste_des_capitales_du_monde" },
+      { "titre": "Liste des États du monde par continent", "url": "https://fr.wikipedia.org/wiki/Liste_des_%C3%89tats_du_monde_par_continent" }
+    ],
+    "histoire_et_types_etats": [
+      { "titre": "Liste d'États disparus", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%89tats_disparus" },
+      { "titre": "Liste d'États et régimes éphémères", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%89tats_et_r%C3%A9gimes_%C3%A9ph%C3%A9m%C3%A8res" },
+      { "titre": "Liste d'États croupions", "url": "https://fr.wikipedia.org/wiki/Liste_d%27%C3%89tats_croupions" },
+      { "titre": "Géographie du Vatican", "url": "https://fr.wikipedia.org/wiki/G%C3%A9ographie_du_Vatican" }
+    ]
+  },
+  "ecologie": {
+    "ecologie": [
+      { "titre": "Liste des pays par empreinte écologique", "url": "https://fr.wikipedia.org/wiki/Liste_des_pays_par_empreinte_%C3%A9cologique" }
+    ]
+  },
+  "patrimoine_funeraire": [
+    { "titre": "Liste de cimetières du monde", "url": "https://fr.wikipedia.org/wiki/Liste_de_cimeti%C3%A8res_du_monde" },
+    { "titre": "Liste des nécropoles royales", "url": "https://fr.wikipedia.org/wiki/Liste_des_n%C3%A9cropoles_royales" },
+    { "titre": "Liste de catacombes", "url": "https://fr.wikipedia.org/wiki/Liste_de_catacombes" },
+    { "titre": "Liste de nécropoles nationales en France", "url": "https://fr.wikipedia.org/wiki/Liste_de_n%C3%A9cropoles_nationales_en_France" }
+  ]
+}
