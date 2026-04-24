@@ -72,7 +72,7 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/toulouse-viajes-aventura-meetup-group/events/ical/",
     "https://www.meetup.com/fr-FR/meetup-group-ogveclmn/events/ical/",
     "https://www.meetup.com/fr-FR/Gnosis-Toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/The-Freedom-Trail-Trek-Meetup/events/ical/"
+    "https://www.meetup.com/fr-FR/The-Freedom-Trail-Trek-Meetup/events/ical/",
     "https://www.meetup.com/fr-FR/femmes-sensibles-solidaires-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/myapero-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/conscience-spiritualite-toulouse/events/ical/",
