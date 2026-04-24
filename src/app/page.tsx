@@ -84,14 +84,14 @@ const nbFrancais = 3;
 const nbHierarchie = 23;
 const nbSaHistoire = 13;
 const nbLangue = 2;
-const nbMondeEconomie = 4;
-const nbMondeGeo = 2;
+const nbMondeEconomie = 5;
+const nbMondeGeo = 3;
 const nbMondeSocio = 6;
 const nbMondeHistoire = 7;
 const nbMondeNiveauVie = 16;
 const nbMondeVilles = 19;
 const nbReligion = 3;
-const nbTerritoire = 8;
+const nbTerritoire = 9;
 const totalArticles = 
   nbAgenda + nbActualites + nbMeetup + nbToulouseEvents + 
   nbSpectacles + nbCulture + nbLibrairie + nbCinema + 
@@ -602,10 +602,11 @@ const categories = [
     { title: "PIB (PPA/Nominal)", href: "/pib" },
     { title: "Espionnage", href: "/espionnage" },
     { title: "Bombe atomique", href: "/bombeatomique" },
+	{ title: "Défense et Economie", href: "/defenseeco" },
     { title: "Zones économiques", href: "/zoneeconomique" }
   ]
 },
-// const nbMondeEconomie = 4;
+// const nbMondeEconomie = 5;
 
 {  
   title: "Savoirs : Monde, géographie", 
@@ -614,10 +615,11 @@ const categories = [
   isSavoirsMondeGeo: true, 
   savoirsMondeSources: [
     { title: "Mapmonde", href: "/mapmonde" },
+	{ title: "Géographie du Monde", href: "/geomonde" },
     { title: "Empires coloniaux", href: "/colonies" }
   ]
 },
-// const nbMondeGeo = 2;
+// const nbMondeGeo = 3;
 	
 {  
   title: "Savoirs : Monde, histoire", 
@@ -720,6 +722,7 @@ const categories = [
     savoirsTerritoiresSources: [
 	{ title: "France", href: "/France" },
 	{ title: "Frontières de la France", href: "/frontieres" },
+	{ title: "Zone Exclusive de la France", href: "/zeefrance" },
 	{ title: "Enclaves et Exclaves", href: "/enclave" },
 	{ title: "Villes en France", href: "/population" },
 	{ title: "PIB des villes en France", href: "/villespib" },
@@ -727,7 +730,7 @@ const categories = [
 	{ title: "Colonies en Europe", href: "/colonieeurope" },
 	{ title: "Colonies dans le Monde", href: "/coloniefrance" }
   ]},
-//  const nbTerritoire = 8;
+//  const nbTerritoire = 9;
 
 
   /* ---------------- FTS ---------------- */
