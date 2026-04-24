@@ -60,12 +60,12 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/danse-flamenco/events/ical/",
     "https://www.meetup.com/fr-FR/danses-traditionnelles-indiennes-a-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/pages-n-pies/events/ical/",
-    "https://www.meetup.com/fr-FR/se-faire-des-amis-en-randonnant-%EF%B8%8F/events/ical/"
+    "https://www.meetup.com/fr-FR/se-faire-des-amis-en-randonnant-%EF%B8%8F/events/ical/",
+    "https://www.meetup.com/fr-FR/studio-video-photo-podcast-toulouse/events/ical/",
+    "https://www.meetup.com/fr-FR/le-club-des-curieux/events/ical/"
   ],
   // Lot 5
   [
-    "https://www.meetup.com/fr-FR/studio-video-photo-podcast-toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/le-club-des-curieux/events/ical/",
     "https://www.meetup.com/fr-FR/occitania-hikes/events/ical/",
     "https://www.meetup.com/fr-FR/Toulouse-travel-photography/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-petanque/events/ical/",
@@ -73,31 +73,37 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/fr-FR/meetup-group-ogveclmn/events/ical/",
     "https://www.meetup.com/fr-FR/Gnosis-Toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/The-Freedom-Trail-Trek-Meetup/events/ical/"
-  ],
-  // Lot 6
-  [
     "https://www.meetup.com/fr-FR/femmes-sensibles-solidaires-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/myapero-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/conscience-spiritualite-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/happy-nouvelle-vie/events/ical/",
-    "https://www.meetup.com/fr-FR/malaia-collective-yoga-movement-intentional-living/events/ical/",
+    "https://www.meetup.com/fr-FR/malaia-collective-yoga-movement-intentional-living/events/ical/"    
+  ],
+  // Lot 6
+  [
     "https://www.meetup.com/fr-FR/pages-n-pals/events/ical/",
     "https://www.meetup.com/fr-FR/cercle-de-femme-et-art-therapie-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/hygienisme-hormese-et-vitalite-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/le-flow-lab-toulouse/events/ical/",
-    "https://www.meetup.com/fr-FR/meetup-des-organisateurs-de-toulouse/events/ical/"
-  ],
-  // Lot 7
-  [
+    "https://www.meetup.com/fr-FR/meetup-des-organisateurs-de-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/star-wars-imperial-assault-in-toulouse/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-women-personal-development-meetup-group/events/ical/",
     "https://www.meetup.com/fr-FR/bring-me-the-horizon-occitanie/events/ical/",
     "https://www.meetup.com/fr-FR/les-grognards-de-la-marne/events/ical/",
     "https://www.meetup.com/fr-FR/toulouse-speakers-toastmasters-club/events/ical/",
     "https://www.meetup.com/fr-FR/scene-ouverte-chant-piano-guitare/events/ical/",
-    "https://www.meetup.com/fr-FR/artilect-fablab/events/ical/",
+    "https://www.meetup.com/fr-FR/artilect-fablab/events/ical/"    
+  ],
+  // Lot 7
+  [
     "https://www.meetup.com/fr-FR/the-purpose-circle/events/ical/",
-    "https://www.meetup.com/fr-FR/partage-autour-de-lagilite/events/ical/"
+    "https://www.meetup.com/fr-FR/partage-autour-de-lagilite/events/ical/",
+    "https://www.meetup.com/cancer-support-france-gascony/events/ical/",
+    "https://www.meetup.com/toulouse-web-development-meetup-group/events/ical/",
+    "https://www.meetup.com/voyageurs-toulouse-%ef%b8%8f/events/ical/",
+    "https://www.meetup.com/bring-me-the-horizon-occitanie/events/ical/",
+    "https://www.meetup.com/se-reconnecter-a-soi-ateliers-en-ligne/events/ical/",
+    "https://www.meetup.com/mtg-toulouse/events/ical/"   
   ]
 ];
 
