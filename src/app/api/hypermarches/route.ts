@@ -13,6 +13,8 @@ interface Hypermarche {
   type: string;
   area_m2: number | null;
   status: string;
+  sector: string; // Ajouté
+  group: string;  // Ajouté
 }
 
 export async function GET() {
