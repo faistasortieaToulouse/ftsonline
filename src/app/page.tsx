@@ -66,7 +66,7 @@ const nbVisite = 12;
 const nbOccitanie = 19;
 const nbTransport = 19;
 const nbCafeLangue = 3;
-const nbConsomamtion = 3;
+const nbConsomamtion = 4;
 const nbEmploi = 4;
 const nbFlore = 2;
 const nbEquipement = 4;
@@ -339,8 +339,9 @@ const categories = [
     { title: "Marchés", href: "/marches" },
 	{ title: "Cuisine de Toulouse", href: "/cuisinetoulouse" },
     { title: "Pubs anglo-saxons", href: "/pubtoulouse" },
+	{ title: "Hypermarchés", href: "/hypermarches" },
   ]},
-//  const nbConsomamtion = 3;
+//  const nbConsomamtion = 4;
 
 /* 3. Toulouse : Emploi */
   { 
@@ -1226,7 +1227,7 @@ useEffect(() => {
     </span>
     
     {/* Conteneur défilant ou flex-wrap selon ta préférence */}
-    <div className="flex flex-nowrap overflow-x-auto gap-6 px-4 no-scrollbar">
+    <div className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-4 no-scrollbar flex-1">
       {[
         { city: "Londres", timezone: "Europe/London" },
         { city: "Paris", timezone: "Europe/Paris" },
