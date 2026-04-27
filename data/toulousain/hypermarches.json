@@ -1,0 +1,30 @@
+[
+  { "id": 1, "name": "Lidl Montaudran", "city": "Toulouse", "type": "supermarché XL", "area_m2": 2043, "status": "extension validée" },
+  { "id": 2, "name": "Lidl Empalot", "city": "Toulouse", "type": "supermarché XL", "area_m2": 1300, "status": "extension" },
+  { "id": 3, "name": "Lidl Fonbeauzard", "city": "Fonbeauzard", "type": "supermarché XL", "area_m2": 1516, "status": "extension" },
+  { "id": 4, "name": "Lidl Castanet-Tolosan", "city": "Castanet-Tolosan", "type": "supermarché XL", "status": "projet" },
+
+  { "id": 5, "name": "Intermarché Fronton", "city": "Fronton", "type": "hypermarché", "area_m2": 3000, "status": "extension validée" },
+  { "id": 6, "name": "Netto L'Union", "city": "L'Union", "type": "supermarché", "area_m2": 1000, "status": "extension projet" },
+  { "id": 7, "name": "Intermarché Bruguières", "city": "Bruguières", "type": "supermarché XL", "status": "projet" },
+  { "id": 8, "name": "Intermarché Pins-Justaret", "city": "Pins-Justaret", "type": "supermarché XL", "status": "extension" },
+
+  { "id": 9, "name": "Auchan Gramont", "city": "Toulouse", "type": "hypermarché", "status": "existant" },
+  { "id": 10, "name": "E.Leclerc Saint-Orens", "city": "Saint-Orens", "type": "hypermarché", "status": "existant" },
+  { "id": 11, "name": "E.Leclerc Rouffiac-Tolosan", "city": "Rouffiac", "type": "hypermarché", "status": "existant" },
+
+  { "id": 12, "name": "Carrefour Purpan", "city": "Toulouse", "type": "hypermarché", "status": "existant" },
+  { "id": 13, "name": "E.Leclerc Blagnac", "city": "Blagnac", "type": "hypermarché", "status": "existant" },
+  { "id": 14, "name": "Carrefour Colomiers", "city": "Colomiers", "type": "hypermarché", "status": "existant" },
+
+  { "id": 15, "name": "E.Leclerc Roques-sur-Garonne", "city": "Roques-sur-Garonne", "type": "hypermarché", "status": "existant" },
+  { "id": 16, "name": "Carrefour Labège", "city": "Labège", "type": "hypermarché", "status": "existant" },
+  { "id": 17, "name": "Hyper Casino Basso Cambo", "city": "Toulouse", "type": "hypermarché", "status": "projet / modernisation" },
+  { "id": 18, "name": "Carrefour Portet-sur-Garonne", "city": "Portet-sur-Garonne", "type": "hypermarché", "status": "existant" },
+
+  { "id": 19, "name": "E.Leclerc Fenouillet", "city": "Fenouillet", "type": "hypermarché", "status": "existant" },
+  { "id": 20, "name": "Auchan Fenouillet (ex Géant Casino)", "city": "Fenouillet", "type": "hypermarché", "status": "existant" },
+
+  { "id": 21, "name": "Lidl Muret", "city": "Muret", "type": "supermarché XL", "area_m2": 1840, "status": "ouvert récent" },
+  { "id": 22, "name": "Super U Belberaud", "city": "Belberaud", "type": "supermarché", "status": "existant" }
+]
