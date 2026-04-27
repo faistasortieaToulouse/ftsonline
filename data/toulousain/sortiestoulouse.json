@@ -596,6 +596,28 @@
   "url": "https://www.planete-sorties.net/",
   "description": "Le réseau social toulousain 100% gratuit pour organiser des sorties réelles : restos, balades et activités culturelles sans algorithme de dating.",
   "tags": ["sorties-gratuites", "communaute", "bienveillance", "local-toulouse", "rencontres"]
+},
+{
+  "id": 55,
+  "name": "Petmeeter (Sorties entre propriétaires d’animaux)",
+  "slug": "petmeeter-toulouse",
+  "type": "platform",
+  "categories": ["animaux", "chiens", "rencontres", "sorties"],
+  "city": "Toulouse",
+  "url": "https://www.petmeeter.fr/",
+  "description": "Plateforme créée à Toulouse permettant aux propriétaires d’animaux de compagnie de se rencontrer et d’organiser des sorties (balades, parcs, activités) avec leurs animaux à Toulouse.",
+  "tags": ["chiens", "communauté", "balades", "social"]
+},
+{
+  "id": 56,
+  "name": "Mobilizon Toulouse (Événements libres et décentralisés)",
+  "slug": "mobilizon-toulouse",
+  "type": "mobilizon",
+  "categories": ["événements", "communautés", "associations", "alternatif"],
+  "city": "Toulouse",
+  "url": "https://mobilizon.fr/search?contentType=EVENTS&lat=43.561491&lon=1.47097&locationName=Sports+Universitaires&eventPage=1",
+  "description": "Plateforme libre et décentralisée permettant de découvrir et organiser des événements à Toulouse, souvent utilisée par des associations, collectifs et communautés locales.",
+  "tags": ["open-source", "associatif", "local", "décentralisé"]
 }
   ]
 }
