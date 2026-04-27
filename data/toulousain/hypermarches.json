@@ -1,30 +1,30 @@
 [
-  { "id": 1, "name": "Lidl Montaudran", "city": "Toulouse", "type": "supermarché XL", "area_m2": 2043, "status": "extension validée" },
-  { "id": 2, "name": "Lidl Empalot", "city": "Toulouse", "type": "supermarché XL", "area_m2": 1300, "status": "extension" },
-  { "id": 3, "name": "Lidl Fonbeauzard", "city": "Fonbeauzard", "type": "supermarché XL", "area_m2": 1516, "status": "extension" },
-  { "id": 4, "name": "Lidl Castanet-Tolosan", "city": "Castanet-Tolosan", "type": "supermarché XL", "status": "projet" },
+  { "id": 1, "name": "Lidl Montaudran", "city": "Toulouse", "address": "Route de Revel, 31400 Toulouse", "lat": 43.5793, "lng": 1.4827, "type": "supermarché XL", "area_m2": 2043, "status": "extension validée" },
+  { "id": 2, "name": "Lidl Empalot", "city": "Toulouse", "address": "Quartier Empalot, 31400 Toulouse", "lat": 43.5762, "lng": 1.4426, "type": "supermarché XL", "area_m2": 1300, "status": "extension" },
+  { "id": 3, "name": "Lidl Fonbeauzard", "city": "Fonbeauzard", "address": "Avenue de Toulouse, 31140 Fonbeauzard", "lat": 43.676, "lng": 1.4312, "type": "supermarché XL", "area_m2": 1516, "status": "extension" },
+  { "id": 4, "name": "Lidl Castanet-Tolosan", "city": "Castanet-Tolosan", "address": "Route de Toulouse, 31320 Castanet-Tolosan", "lat": 43.5153, "lng": 1.4988, "type": "supermarché XL", "area_m2": 1420, "status": "projet" },
 
-  { "id": 5, "name": "Intermarché Fronton", "city": "Fronton", "type": "hypermarché", "area_m2": 3000, "status": "extension validée" },
-  { "id": 6, "name": "Netto L'Union", "city": "L'Union", "type": "supermarché", "area_m2": 1000, "status": "extension projet" },
-  { "id": 7, "name": "Intermarché Bruguières", "city": "Bruguières", "type": "supermarché XL", "status": "projet" },
-  { "id": 8, "name": "Intermarché Pins-Justaret", "city": "Pins-Justaret", "type": "supermarché XL", "status": "extension" },
+  { "id": 5, "name": "Intermarché Fronton", "city": "Fronton", "address": "Route de Toulouse, 31620 Fronton", "lat": 43.8412, "lng": 1.3891, "type": "hypermarché", "area_m2": 3000, "status": "extension validée" },
+  { "id": 6, "name": "Netto L'Union", "city": "L'Union", "address": "Route de Bessières, 31240 L'Union", "lat": 43.6579, "lng": 1.4825, "type": "supermarché", "area_m2": 1000, "status": "extension projet" },
+  { "id": 7, "name": "Intermarché Bruguières", "city": "Bruguières", "address": "Route de Toulouse, 31150 Bruguières", "lat": 43.7274, "lng": 1.4113, "type": "supermarché XL", "area_m2": 1950, "status": "projet" },
+  { "id": 8, "name": "Intermarché Pins-Justaret", "city": "Pins-Justaret", "address": "Route d'Auterive, 31860 Pins-Justaret", "lat": 43.4821, "lng": 1.3998, "type": "supermarché XL", "area_m2": 2450, "status": "extension" },
 
-  { "id": 9, "name": "Auchan Gramont", "city": "Toulouse", "type": "hypermarché", "status": "existant" },
-  { "id": 10, "name": "E.Leclerc Saint-Orens", "city": "Saint-Orens", "type": "hypermarché", "status": "existant" },
-  { "id": 11, "name": "E.Leclerc Rouffiac-Tolosan", "city": "Rouffiac", "type": "hypermarché", "status": "existant" },
+  { "id": 9, "name": "Auchan Gramont", "city": "Toulouse", "address": "Espace Gramont, 31200 Toulouse", "lat": 43.6309, "lng": 1.5004, "type": "hypermarché", "area_m2": 13200, "status": "existant" },
+  { "id": 10, "name": "E.Leclerc Saint-Orens", "city": "Saint-Orens", "address": "Rue des Oliviers, 31650 Saint-Orens", "lat": 43.5553, "lng": 1.5321, "type": "hypermarché", "area_m2": 9500, "status": "existant" },
+  { "id": 11, "name": "E.Leclerc Rouffiac-Tolosan", "city": "Rouffiac", "address": "Route d'Albi, 31180 Rouffiac-Tolosan", "lat": 43.6487, "lng": 1.5234, "type": "hypermarché", "area_m2": 7200, "status": "existant" },
 
-  { "id": 12, "name": "Carrefour Purpan", "city": "Toulouse", "type": "hypermarché", "status": "existant" },
-  { "id": 13, "name": "E.Leclerc Blagnac", "city": "Blagnac", "type": "hypermarché", "status": "existant" },
-  { "id": 14, "name": "Carrefour Colomiers", "city": "Colomiers", "type": "hypermarché", "status": "existant" },
+  { "id": 12, "name": "Carrefour Purpan", "city": "Toulouse", "address": "Avenue de Grande-Bretagne, 31300 Toulouse", "lat": 43.6052, "lng": 1.3941, "type": "hypermarché", "area_m2": 9600, "status": "existant" },
+  { "id": 13, "name": "E.Leclerc Blagnac", "city": "Blagnac", "address": "Centre commercial Grand Noble, 31700 Blagnac", "lat": 43.6426, "lng": 1.3751, "type": "hypermarché", "area_m2": 13500, "status": "existant" },
+  { "id": 14, "name": "Carrefour Colomiers", "city": "Colomiers", "address": "Route d'Auch, 31770 Colomiers", "lat": 43.6132, "lng": 1.3365, "type": "hypermarché", "area_m2": 11500, "status": "existant" },
 
-  { "id": 15, "name": "E.Leclerc Roques-sur-Garonne", "city": "Roques-sur-Garonne", "type": "hypermarché", "status": "existant" },
-  { "id": 16, "name": "Carrefour Labège", "city": "Labège", "type": "hypermarché", "status": "existant" },
-  { "id": 17, "name": "Hyper Casino Basso Cambo", "city": "Toulouse", "type": "hypermarché", "status": "projet / modernisation" },
-  { "id": 18, "name": "Carrefour Portet-sur-Garonne", "city": "Portet-sur-Garonne", "type": "hypermarché", "status": "existant" },
+  { "id": 15, "name": "E.Leclerc Roques-sur-Garonne", "city": "Roques-sur-Garonne", "address": "Centre commercial Roques, 31120 Roques", "lat": 43.5132, "lng": 1.3478, "type": "hypermarché", "area_m2": 15000, "status": "existant" },
+  { "id": 16, "name": "Carrefour Labège", "city": "Labège", "address": "Enova Labège, 31670 Labège", "lat": 43.5304, "lng": 1.5061, "type": "hypermarché", "area_m2": 12800, "status": "existant" },
+  { "id": 17, "name": "Hyper Casino Basso Cambo", "city": "Toulouse", "address": "Basso Cambo, 31100 Toulouse", "lat": 43.5689, "lng": 1.3872, "type": "hypermarché", "area_m2": 6400, "status": "projet / modernisation" },
+  { "id": 18, "name": "Carrefour Portet-sur-Garonne", "city": "Portet-sur-Garonne", "address": "Zone Grand Portet, 31120 Portet", "lat": 43.5223, "lng": 1.4068, "type": "hypermarché", "area_m2": 17300, "status": "existant" },
 
-  { "id": 19, "name": "E.Leclerc Fenouillet", "city": "Fenouillet", "type": "hypermarché", "status": "existant" },
-  { "id": 20, "name": "Auchan Fenouillet (ex Géant Casino)", "city": "Fenouillet", "type": "hypermarché", "status": "existant" },
+  { "id": 19, "name": "E.Leclerc Fenouillet", "city": "Fenouillet", "address": "Espace Fenouillet, 31150 Fenouillet", "lat": 43.6782, "lng": 1.392, "type": "hypermarché", "area_m2": 11000, "status": "existant" },
+  { "id": 20, "name": "Auchan Fenouillet (ex Géant)", "city": "Fenouillet", "address": "Espace Fenouillet, 31150 Fenouillet", "lat": 43.6769, "lng": 1.3902, "type": "hypermarché", "area_m2": 9000, "status": "existant" },
 
-  { "id": 21, "name": "Lidl Muret", "city": "Muret", "type": "supermarché XL", "area_m2": 1840, "status": "ouvert récent" },
-  { "id": 22, "name": "Super U Belberaud", "city": "Belberaud", "type": "supermarché", "status": "existant" }
+  { "id": 21, "name": "Lidl Muret", "city": "Muret", "address": "Route d'Eaunes, 31600 Muret", "lat": 43.4558, "lng": 1.3256, "type": "supermarché XL", "area_m2": 1840, "status": "ouvert récent" },
+  { "id": 22, "name": "Super U Belberaud", "city": "Belberaud", "address": "Route de Labège, 31450 Belberaud", "lat": 43.4958, "lng": 1.5582, "type": "supermarché", "area_m2": 2400, "status": "existant" }
 ]
