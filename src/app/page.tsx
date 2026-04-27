@@ -1216,7 +1216,48 @@ useEffect(() => {
         </div>
       </div>
 	</div>
-
+	  
+{/* --- NOUVELLE LIGNE : FUSEAUX HORAIRES MONDIAUX --- */}
+<div className="bg-purple-900/5 border-t border-purple-200 py-2 overflow-hidden">
+  <div className="flex items-center gap-4">
+    {/* Label fixe à gauche */}
+    <span className="pl-6 text-[9px] font-black uppercase text-purple-400 tracking-tighter border-r border-purple-200 pr-4 whitespace-nowrap">
+      Temps Mondial
+    </span>
+    
+    {/* Conteneur défilant ou flex-wrap selon ta préférence */}
+    <div className="flex flex-nowrap overflow-x-auto gap-6 px-4 no-scrollbar">
+      {[
+        { city: "Londres", timezone: "Europe/London" },
+        { city: "Paris", timezone: "Europe/Paris" },
+        { city: "Moscou", timezone: "Europe/Moscow" },
+        { city: "New Delhi", timezone: "Asia/Kolkata" },
+        { city: "Pékin", timezone: "Asia/Shanghai" },
+        { city: "Tokyo", timezone: "Asia/Tokyo" },
+        { city: "Sydney", timezone: "Australia/Sydney" },
+        { city: "Los Angeles", timezone: "America/Los_Angeles" },
+        { city: "Mexico", timezone: "America/Mexico_City" },
+        { city: "New York", timezone: "America/New_York" },
+        { city: "Montréal", timezone: "America/Toronto" },
+        { city: "Brasilia", timezone: "America/Sao_Paulo" }
+      ].map((zone, idx) => (
+        <div key={idx} className="flex flex-col items-start min-w-fit">
+          <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
+            {zone.city}
+          </span>
+          <span className="text-[11px] font-mono font-medium text-indigo-600 leading-none">
+            {heure.toLocaleTimeString("fr-FR", {
+              timeZone: zone.timezone,
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+	  
 {/* --- Bloc unique : Éphéméride & Environnement --- */}
 <div className="bg-indigo-900/10 border-t border-purple-200 py-6 px-4 md:py-4 md:px-6">
   {/* 1. flex-wrap : permet aux deux grandes sections de passer l'une sous l'autre.
