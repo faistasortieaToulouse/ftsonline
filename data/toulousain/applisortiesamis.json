@@ -3,6 +3,7 @@
   "updated": "2026-04-02",
   "applications": [
     {"Portée / Pays": "Allemagne / International", "Ville": "Francfort", "Application": "Meet5", "Particularité": "Origine allemande, cartonne en Alsace et dans l'Est avec ses tablées de 6 à 12 au restaurant.", "Web": "https://www.meet5.fr/"},
+    {"Portée / Pays": "Europe", "Ville": "Suède", "Application": "W Social", "Particularité": "Réseau social européen lancé en 2026, orienté discussions publiques avec comptes vérifiés et objectif de réduire la désinformation.", "Web": "https://wsocial.eu/"},
     {"Portée / Pays": "France (Réunion)", "Ville": "Saint-Denis (La Réunion)", "Application": "SortiPéi", "Particularité": "Application 100% réunionnaise pour les festivals, concerts et la vie locale.", "Web": "https://play.google.com/store/apps/details?id=re.sortipei&hl=fr"},
     {"Portée / Pays": "France (Réunion)", "Ville": "Saint-Denis (La Réunion)", "Application": "Urbeez La-Réunion", "Particularité": "Très utilisé pour les pique-niques dans les hauts et les sorties familiales (marmailles).", "Web": "https://la-reunion.urbeez.com/"},
     {"Portée / Pays": "France / Belgique / Suisse", "Ville": "Francophonie", "Application": "Ami ou Plus", "Particularité": "Concept hybride permettant de choisir entre une démarche purement amicale ou sentimentale.", "Web": "https://www.amiouplus.com"},
@@ -12,6 +13,7 @@
     {"Portée / Pays": "France / International", "Ville": "Paris", "Application": "The Sorority", "Particularité": "Application de sécurité pour femmes, utilisée pour organiser des sorties 'safe' partout en France.", "Web": "https://www.jointhesorority.com/"},
     {"Portée / Pays": "France / International", "Ville": "Toulouse", "Application": "Fever", "Particularité": "Plateforme de découverte d'événements exclusifs, concerts et expériences immersives.", "Web": "https://feverup.com/en/toulouse"},
     {"Portée / Pays": "France", "Ville": "Argenteuil", "Application": "Ensembl'", "Particularité": "Application de voisinage utilisée pour les échanges de services et les apéros entre voisins.", "Web": "https://play.google.com/store/apps/details?id=sbs.ensembl.app&hl=fr"},
+    {"Portée / Pays": "France", "Ville": "Béziers", "Application": "SpotTogether", "Particularité": "Application mobile pour organiser des activités sportives et rencontrer du monde via le sport (running, fitness, etc.).", "Web": "https://spottogether.fr/"},
     {"Portée / Pays": "France", "Ville": "Bordeaux / Toulouse", "Application": "Atélatoi", "Particularité": "Association spécialisée dans la création de liens authentiques et la lutte contre l'isolement via des jeux de questions et des ateliers participatifs.", "Web": "https://atelatoi.fr/"},
     {"Portée / Pays": "France", "Ville": "Bordeaux", "Application": "Lokaly", "Particularité": "Application bordelaise de 2025 centralisant les événements et sorties locales spécifiques.", "Web": "https://site.lokaly.fr/"},
     {"Portée / Pays": "France", "Ville": "Brest", "Application": "Sortirbouger", "Particularité": "Alternative gratuite historique, très populaire en Bretagne (Brest) pour les sorties amicales.", "Web": "https://www.sortirbouger.com/"},
