@@ -26,6 +26,8 @@ interface Hypermarche {
   type: string;
   area_m2: number | null;
   status: string;
+  sector: string; // Ajouté
+  group: string;  // Ajouté
 }
 
 // CENTRE DE TOULOUSE
@@ -62,10 +64,12 @@ export default function HypermarchesPage() {
     fetchHypermarches();
   }, []);
 
-  const filteredData = data.filter(item => 
-    item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.city?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+const filteredData = data.filter(item => 
+  item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  item.city?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  item.sector?.toLowerCase().includes(searchQuery.toLowerCase()) || // Ajouté
+  item.group?.toLowerCase().includes(searchQuery.toLowerCase())    // Ajouté
+);
 
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current || isLoadingData) return;
@@ -127,7 +131,7 @@ export default function HypermarchesPage() {
       <nav className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-bold hover:underline group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Dashboard
+          Retour à l'Accueil
         </Link>
       </nav>
 
@@ -178,6 +182,7 @@ export default function HypermarchesPage() {
                 <th className="p-5 w-12 text-center">#</th>
                 <th className="p-5">Enseigne</th>
                 <th className="p-5 hidden md:table-cell">Ville</th>
+                <th className="p-5 hidden lg:table-cell">Secteur</th> {/* Nouvelle colonne */}
                 <th className="p-5 hidden md:table-cell text-center">Surface</th>
                 <th className="p-5 hidden lg:table-cell">Statut</th>
                 <th className="p-5 text-center">Détails</th>
@@ -197,6 +202,12 @@ export default function HypermarchesPage() {
                       <div className="text-[10px] text-slate-500 font-bold md:hidden mt-1 uppercase italic">{item.city}</div>
                     </td>
                     <td className="p-5 hidden md:table-cell font-bold text-slate-700 align-top">{item.city}</td>
+                    {/* Nouvelle cellule Secteur */}
+<td className="p-5 hidden lg:table-cell align-top">
+          <span className="text-[10px] font-black uppercase px-2 py-1 bg-slate-100 text-slate-500 rounded border border-slate-200">
+            {item.sector || 'Secteur NC'}
+          </span>
+        </td>
                     <td className="p-5 hidden md:table-cell align-top text-center font-mono font-bold text-blue-700">
                       {item.area_m2 ? `${item.area_m2} m²` : 'NC'}
                     </td>
@@ -226,6 +237,11 @@ export default function HypermarchesPage() {
                             <div className="flex items-start gap-3 text-slate-600">
                               <Store size={18} className="text-blue-500 flex-shrink-0" />
                               <span className="text-sm"><strong>Concept :</strong> {item.type}</span>
+                            </div>
+                            {/* Ajout du groupe ici */}
+                            <div className="flex items-start gap-3 text-slate-600">
+                              <div className="w-[18px] h-[18px] flex items-center justify-center text-blue-500 font-bold text-xs italic">G</div>
+                              <span className="text-sm"><strong>Stratégie :</strong> {item.group}</span>
                             </div>
                           </div>
                           <div className="space-y-3">
