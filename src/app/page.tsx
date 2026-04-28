@@ -1230,7 +1230,10 @@ useEffect(() => {
 <div className="flex items-center gap-4 relative"> {/* Ajout de 'relative' ici */}
   
   {/* Conteneur défilant */}
-  <div className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-4 no-scrollbar flex-1">
+<div className="relative w-full flex justify-center items-center"> {/* Parent centré */}
+  
+  {/* Conteneur des horloges */}
+  <div className="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible justify-start md:justify-center items-center gap-6 px-8 no-scrollbar w-full">
     {[
       { city: "Londres", timezone: "Europe/London" },
       { city: "Paris", timezone: "Europe/Paris" },
@@ -1245,7 +1248,7 @@ useEffect(() => {
       { city: "Montréal", timezone: "America/Toronto" },
       { city: "Brasilia", timezone: "America/Sao_Paulo" }
     ].map((zone, idx) => (
-      <div key={idx} className="flex flex-col items-start min-w-fit">
+      <div key={idx} className="flex flex-col items-center md:items-start min-w-fit">
         <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
           {zone.city}
         </span>
@@ -1261,7 +1264,7 @@ useEffect(() => {
   </div>
 
   {/* 🟢 Indicateur de défilement Mobile (Chevron) */}
-  <div className="md:hidden absolute right-2 pointer-events-none animate-pulse bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pl-8 pr-1 py-2">
+  <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none animate-pulse bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent pl-10 pr-2 py-2">
     <div className="bg-purple-600 rounded-full p-0.5 shadow-sm">
       <ChevronDown size={14} className="text-white -rotate-90" />
     </div>
