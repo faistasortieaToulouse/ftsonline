@@ -1232,6 +1232,7 @@ useEffect(() => {
   {/* Conteneur défilant */}
 <div className="relative w-full flex justify-center items-center"> {/* Parent centré */}
   
+<div className="relative w-full flex justify-center items-center"> 
   {/* Conteneur des horloges */}
   <div className="flex flex-nowrap md:flex-wrap overflow-x-auto md:overflow-x-visible justify-start md:justify-center items-center gap-6 px-8 no-scrollbar w-full">
     {[
