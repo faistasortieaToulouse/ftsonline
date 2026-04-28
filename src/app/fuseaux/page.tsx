@@ -11,7 +11,6 @@ const MapWorld = dynamic(() => import('./MapWorld'), {
 });
 
 const PAYS_DATA = [
-const PAYS_DATA = [
   { offset: "UTC -12", pays: "États-Unis", ville: "Baker Island", zone: "Etc/GMT+12", coords: [0.1931, -176.4748], autres: "" },
   { offset: "UTC -11", pays: "États-Unis", ville: "Pago Pago", zone: "Pacific/Pago_Pago", coords: [-14.271, -170.702], autres: "Samoa américaines" },
   { offset: "UTC -10", pays: "États-Unis", ville: "Honolulu", zone: "Pacific/Honolulu", coords: [21.3069, -157.8583], autres: "Hawaï" },
