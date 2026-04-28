@@ -10,7 +10,6 @@ const MapWorld = dynamic(() => import('./MapWorld'), {
   loading: () => <div className="h-[500px] w-full bg-slate-100 animate-pulse rounded-2xl flex items-center justify-center font-mono text-slate-400">Chargement de la cartographie mondiale...</div>
 });
 
-// Liste de référence pour le tableau
 const PAYS_DATA = [
   { pays: "France", ville: "Paris", zone: "Europe/Paris" },
   { pays: "États-Unis", ville: "New York", zone: "America/New_York" },
@@ -25,12 +24,13 @@ const PAYS_DATA = [
 ];
 
 export default function MondePage() {
+  const [mounted, setMounted] = useState(false); // Correction Hydratation
   const [now, setNow] = useState(new Date());
   const [search, setSearch] = useState("");
 
-  // Mise à jour de l'heure chaque minute
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 60000);
+    setMounted(true); // Indique que le client a pris le relais
+    const timer = setInterval(() => setNow(new Date()), 1000); // Update chaque seconde
     return () => clearInterval(timer);
   }, []);
 
@@ -38,6 +38,10 @@ export default function MondePage() {
     p.pays.toLowerCase().includes(search.toLowerCase()) || 
     p.ville.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Si le composant n'est pas encore monté côté client, on affiche un squelette vide
+  // pour éviter l'erreur de différence d'heure entre serveur et client.
+  if (!mounted) return null;
 
   return (
     <main className="max-w-6xl mx-auto p-6 bg-white min-h-screen relative">
