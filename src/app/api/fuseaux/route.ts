@@ -4,12 +4,15 @@ import path from 'path';
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), 'public/mapmonde/countries_simplified.topo');
+    // On remonte d'un niveau si nécessaire pour trouver le dossier 'data' à la racine
+    const filePath = path.join(process.cwd(), 'data/mapmonde/ne_10m_time_zones.geojson');
+    
     const fileContent = await fs.readFile(filePath, 'utf8');
-    // On parse pour vérifier la validité avant de renvoyer
-    return NextResponse.json(JSON.parse(fileContent));
+    const data = JSON.parse(fileContent);
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Erreur API Fuseaux:", error);
-    return NextResponse.json({ error: "Fichier de cartographie introuvable" }, { status: 500 });
+    return NextResponse.json({ error: "Fichier introuvable dans data/mapmonde/" }, { status: 500 });
   }
 }
