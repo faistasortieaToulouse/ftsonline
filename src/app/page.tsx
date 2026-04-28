@@ -1218,19 +1218,23 @@ useEffect(() => {
       </div>
 	</div>
 	  
+	  
 {/* --- NOUVELLE LIGNE : FUSEAUX HORAIRES MONDIAUX --- */}
-<div className="bg-purple-900/5 border-t border-purple-200 py-2 overflow-hidden">
-  <div className="flex items-center">
-    {/* Label fixe à gauche */}
-    <span className="pl-6 text-[9px] font-black uppercase text-purple-400 tracking-tighter border-r border-purple-200 pr-4 whitespace-nowrap">
-      Temps Mondial
-    </span>
+<div className="bg-purple-900/5 border-t border-purple-200 py-2 overflow-hidden relative">
+  <div className="flex items-center min-h-[32px]">
     
-    {/* Conteneur principal avec flèche mobile */}
-    <div className="relative flex-1 flex items-center">
+    <div className="flex-1 flex items-center">
       
-      {/* Liste des horloges - Centrée sur PC, défilante sur Mobile */}
+      {/* Liste des horloges - Le label est maintenant dedans pour suivre le centrage */}
       <div className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-6 no-scrollbar w-full">
+        
+        {/* Label intégré au flux pour suivre le centrage sur PC */}
+        <div className="flex items-center border-r border-purple-200 pr-6 mr-2 hidden md:flex">
+           <span className="text-[9px] font-black uppercase text-purple-400 tracking-tighter whitespace-nowrap">
+             Temps Mondial
+           </span>
+        </div>
+
         {[
           { city: "Londres", timezone: "Europe/London" },
           { city: "Paris", timezone: "Europe/Paris" },
@@ -1245,7 +1249,7 @@ useEffect(() => {
           { city: "Montréal", timezone: "America/Toronto" },
           { city: "Brasilia", timezone: "America/Sao_Paulo" }
         ].map((zone, idx) => (
-          <div key={idx} className="flex flex-col items-start min-w-fit">
+          <div key={idx} className="flex flex-col items-center min-w-fit">
             <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
               {zone.city}
             </span>
@@ -1270,6 +1274,7 @@ useEffect(() => {
     </div> {/* Fin du conteneur principal */}
   </div> {/* Fin du flex-row */}
 </div> {/* Fin de la ligne globale */}
+
 	  
 {/* --- Bloc unique : Éphéméride & Environnement --- */}
 <div className="bg-indigo-900/10 border-t border-purple-200 py-6 px-4 md:py-4 md:px-6">
