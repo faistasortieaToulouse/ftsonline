@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, GeoJSON, ZoomControl, CircleMarker, Tooltip } 
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 
+// Interface pour typer les données reçues de PAYS_DATA
 interface CityMarker {
   offset: string;
   pays: string;
@@ -26,10 +27,10 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
       .catch(err => console.error("Erreur front-end:", err));
   }, []);
 
+  // Style des bandes de couleurs
   const timezoneStyle = (feature: any) => {
-    // On s'assure d'avoir un nombre pour le calcul de la couleur
-    const raw = feature.properties?.time_zone ?? feature.properties?.zone ?? 0;
-    const offset = typeof raw === 'string' ? parseFloat(raw) : raw;
+    const offset = feature.properties?.zone || feature.properties?.time_zone || 0;
+    // Génère une couleur unique par fuseau
     const hue = ((offset + 12) * 15); 
     
     return {
@@ -42,38 +43,36 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
   };
 
   const onEachTimezone = (feature: any, layer: any) => {
-    // 1. Récupération propre de l'offset (string ou number)
+    // 1. Récupérer l'offset du polygone cliqué (ex: 1 ou -5)
     const rawOffset = feature.properties?.time_zone ?? feature.properties?.zone ?? 0;
-    const numericOffset = typeof rawOffset === 'string' ? parseFloat(rawOffset) : rawOffset;
     
-    // 2. Recherche robuste de la ville
+    // 2. Chercher la ville correspondante dans tes markers (PAYS_DATA)
+    // On compare l'offset numérique du GeoJSON avec celui du tableau (ex: "UTC +1" -> 1)
     const matchingCity = markers?.find(m => {
-      // On extrait juste le nombre de "UTC +1" ou "UTC -5:30"
-      const markerVal = parseFloat(m.offset.replace(/[^\d.-]/g, ''));
-      return markerVal === numericOffset;
+      const markerVal = parseFloat(m.offset.replace('UTC', '').replace('+', '').trim());
+      return markerVal === parseFloat(rawOffset);
     });
 
-    // 3. Construction du contenu avec sécurité si matchingCity est indéfini
+    // 3. Préparer le contenu de la Popup
     const cityName = matchingCity ? matchingCity.ville : "Zone Horaire";
     const paysName = matchingCity ? matchingCity.pays : "Région";
-    
-    // Formatage de l'affichage de l'offset (ex: +1 au lieu de 1)
-    const displayOffset = numericOffset >= 0 ? `+${numericOffset}` : numericOffset;
+    const displayOffset = rawOffset >= 0 ? `+${rawOffset}` : rawOffset;
 
     layer.bindPopup(`
-      <div style="font-family: sans-serif; padding: 5px; text-align: center; min-width: 150px;">
-        <div style="text-transform: uppercase; font-size: 10px; color: #64748b; font-weight: bold; letter-spacing: 0.5px;">Ville de référence</div>
-        <strong style="font-size: 16px; color: #1e293b; display: block; margin: 4px 0;">${cityName}</strong>
-        <div style="font-size: 12px; color: #4f46e5; font-weight: bold; background: #f0f1ff; padding: 2px 8px; rounded: 4px; display: inline-block;">
+      <div style="font-family: sans-serif; padding: 5px; text-align: center;">
+        <div style="text-transform: uppercase; font-size: 10px; color: #64748b; font-weight: bold;">Ville de référence</div>
+        <strong style="font-size: 16px; color: #1e293b; display: block; margin-bottom: 2px;">${cityName}</strong>
+        <div style="font-size: 12px; color: #4f46e5; font-weight: bold;">
           ${paysName} (UTC ${displayOffset})
         </div>
       </div>
-    `, { className: 'custom-timezone-popup' });
+    `);
 
+    // Effets visuels au survol
     layer.on({
       mouseover: (e: any) => {
         const l = e.target;
-        l.setStyle({ fillOpacity: 0.6, weight: 2 });
+        l.setStyle({ fillOpacity: 0.7, weight: 2 });
       },
       mouseout: (e: any) => {
         const l = e.target;
@@ -98,6 +97,7 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
+        {/* Affichage des polygones de fuseaux avec infobulles villes */}
         {timezoneData && (
           <GeoJSON 
             data={timezoneData} 
@@ -106,9 +106,10 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
           />
         )}
 
+        {/* Affichage des points physiques (cercles) pour chaque ville */}
         {markers && markers.map((city, idx) => (
           <CircleMarker 
-            key={`${city.ville}-${idx}`} 
+            key={idx} 
             center={city.coords} 
             radius={5} 
             pathOptions={{ 
@@ -120,7 +121,7 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
           >
             <Tooltip direction="top" offset={[0, -5]} opacity={1}>
               <div className="text-xs font-bold px-1">
-                {city.ville} <span className="text-indigo-600">({city.offset})</span>
+                {city.ville} <span className="text-blue-600">({city.offset})</span>
               </div>
             </Tooltip>
           </CircleMarker>
@@ -129,7 +130,8 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
         <ZoomControl position="bottomright" />
       </MapContainer>
       
-      <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl text-[11px] font-bold text-slate-700 z-[1000] shadow-lg border border-slate-200 pointer-events-none">
+      {/* Légende flottante */}
+      <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-[11px] font-bold text-slate-700 z-[1000] shadow-lg border border-slate-200">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-indigo-500 animate-pulse"></span>
           Cliquez sur une zone pour voir la ville repère
