@@ -1220,61 +1220,56 @@ useEffect(() => {
 	  
 {/* --- NOUVELLE LIGNE : FUSEAUX HORAIRES MONDIAUX --- */}
 <div className="bg-purple-900/5 border-t border-purple-200 py-2 overflow-hidden">
-  <div className="flex items-center gap-4">
+  <div className="flex items-center">
     {/* Label fixe à gauche */}
     <span className="pl-6 text-[9px] font-black uppercase text-purple-400 tracking-tighter border-r border-purple-200 pr-4 whitespace-nowrap">
       Temps Mondial
     </span>
     
-    {/* Conteneur défilant ou flex-wrap selon ta préférence */}
-<div className="flex items-center gap-4 relative"> {/* Ajout de 'relative' ici */}
-  
-  {/* Conteneur défilant */}
-<div className="relative w-full flex justify-center items-center"> {/* Parent centré */}
-  
-<div className="relative w-full flex items-center"> 
-  {/* Conteneur défilant - justify-center ajouté pour l'ordinateur */}
-  <div className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-4 no-scrollbar flex-1">
-    {[
-      { city: "Londres", timezone: "Europe/London" },
-      { city: "Paris", timezone: "Europe/Paris" },
-      { city: "Moscou", timezone: "Europe/Moscow" },
-      { city: "New Delhi", timezone: "Asia/Kolkata" },
-      { city: "Pékin", timezone: "Asia/Shanghai" },
-      { city: "Tokyo", timezone: "Asia/Tokyo" },
-      { city: "Sydney", timezone: "Australia/Sydney" },
-      { city: "Los Angeles", timezone: "America/Los_Angeles" },
-      { city: "Mexico", timezone: "America/Mexico_City" },
-      { city: "New York", timezone: "America/New_York" },
-      { city: "Montréal", timezone: "America/Toronto" },
-      { city: "Brasilia", timezone: "America/Sao_Paulo" }
-    ].map((zone, idx) => (
-      <div key={idx} className="flex flex-col items-start min-w-fit">
-        <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
-          {zone.city}
-        </span>
-        <span className="text-[11px] font-mono font-medium text-indigo-600 leading-none">
-          {heure.toLocaleTimeString("fr-FR", {
-            timeZone: zone.timezone,
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span>
+    {/* Conteneur principal avec flèche mobile */}
+    <div className="relative flex-1 flex items-center">
+      
+      {/* Liste des horloges - Centrée sur PC, défilante sur Mobile */}
+      <div className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-6 no-scrollbar w-full">
+        {[
+          { city: "Londres", timezone: "Europe/London" },
+          { city: "Paris", timezone: "Europe/Paris" },
+          { city: "Moscou", timezone: "Europe/Moscow" },
+          { city: "New Delhi", timezone: "Asia/Kolkata" },
+          { city: "Pékin", timezone: "Asia/Shanghai" },
+          { city: "Tokyo", timezone: "Asia/Tokyo" },
+          { city: "Sydney", timezone: "Australia/Sydney" },
+          { city: "Los Angeles", timezone: "America/Los_Angeles" },
+          { city: "Mexico", timezone: "America/Mexico_City" },
+          { city: "New York", timezone: "America/New_York" },
+          { city: "Montréal", timezone: "America/Toronto" },
+          { city: "Brasilia", timezone: "America/Sao_Paulo" }
+        ].map((zone, idx) => (
+          <div key={idx} className="flex flex-col items-start min-w-fit">
+            <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
+              {zone.city}
+            </span>
+            <span className="text-[11px] font-mono font-medium text-indigo-600 leading-none">
+              {heure.toLocaleTimeString("fr-FR", {
+                timeZone: zone.timezone,
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
 
-  {/* 🟢 Indicateur de défilement Mobile (Chevron) */}
-  <div className="md:hidden absolute right-2 pointer-events-none animate-pulse bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pl-8 pr-1 py-2">
-    <div className="bg-purple-600 rounded-full p-0.5 shadow-sm">
-      <ChevronDown size={14} className="text-white -rotate-90" />
-    </div>
-  </div>
-</div>
+      {/* 🟢 Indicateur de défilement Mobile (Chevron) */}
+      <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none animate-pulse bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pl-8 pr-2 py-2">
+        <div className="bg-purple-600 rounded-full p-0.5 shadow-sm">
+          <ChevronDown size={14} className="text-white -rotate-90" />
+        </div>
+      </div>
 
-	
-  </div>
-</div>
+    </div> {/* Fin du conteneur principal */}
+  </div> {/* Fin du flex-row */}
+</div> {/* Fin de la ligne globale */}
 	  
 {/* --- Bloc unique : Éphéméride & Environnement --- */}
 <div className="bg-indigo-900/10 border-t border-purple-200 py-6 px-4 md:py-4 md:px-6">
