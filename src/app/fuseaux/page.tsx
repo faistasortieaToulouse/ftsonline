@@ -80,7 +80,7 @@ export default function MondePage() {
 
       {/* CARTE */}
       <section className="mb-12 relative shadow-2xl rounded-3xl overflow-hidden border-8 border-slate-50" style={{ zIndex: 1 }}>
-        <MapWorld />
+        <MapWorld markers={PAYS_DATA} />
       </section>
 
       {/* TABLEAU DES HEURES */}
