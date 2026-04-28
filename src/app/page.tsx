@@ -1227,35 +1227,46 @@ useEffect(() => {
     </span>
     
     {/* Conteneur défilant ou flex-wrap selon ta préférence */}
-    <div className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-4 no-scrollbar flex-1">
-      {[
-        { city: "Londres", timezone: "Europe/London" },
-        { city: "Paris", timezone: "Europe/Paris" },
-        { city: "Moscou", timezone: "Europe/Moscow" },
-        { city: "New Delhi", timezone: "Asia/Kolkata" },
-        { city: "Pékin", timezone: "Asia/Shanghai" },
-        { city: "Tokyo", timezone: "Asia/Tokyo" },
-        { city: "Sydney", timezone: "Australia/Sydney" },
-        { city: "Los Angeles", timezone: "America/Los_Angeles" },
-        { city: "Mexico", timezone: "America/Mexico_City" },
-        { city: "New York", timezone: "America/New_York" },
-        { city: "Montréal", timezone: "America/Toronto" },
-        { city: "Brasilia", timezone: "America/Sao_Paulo" }
-      ].map((zone, idx) => (
-        <div key={idx} className="flex flex-col items-start min-w-fit">
-          <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
-            {zone.city}
-          </span>
-          <span className="text-[11px] font-mono font-medium text-indigo-600 leading-none">
-            {heure.toLocaleTimeString("fr-FR", {
-              timeZone: zone.timezone,
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </span>
-        </div>
-      ))}
+<div className="flex items-center gap-4 relative"> {/* Ajout de 'relative' ici */}
+  
+  {/* Conteneur défilant */}
+  <div className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-4 no-scrollbar flex-1">
+    {[
+      { city: "Londres", timezone: "Europe/London" },
+      { city: "Paris", timezone: "Europe/Paris" },
+      { city: "Moscou", timezone: "Europe/Moscow" },
+      { city: "New Delhi", timezone: "Asia/Kolkata" },
+      { city: "Pékin", timezone: "Asia/Shanghai" },
+      { city: "Tokyo", timezone: "Asia/Tokyo" },
+      { city: "Sydney", timezone: "Australia/Sydney" },
+      { city: "Los Angeles", timezone: "America/Los_Angeles" },
+      { city: "Mexico", timezone: "America/Mexico_City" },
+      { city: "New York", timezone: "America/New_York" },
+      { city: "Montréal", timezone: "America/Toronto" },
+      { city: "Brasilia", timezone: "America/Sao_Paulo" }
+    ].map((zone, idx) => (
+      <div key={idx} className="flex flex-col items-start min-w-fit">
+        <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
+          {zone.city}
+        </span>
+        <span className="text-[11px] font-mono font-medium text-indigo-600 leading-none">
+          {heure.toLocaleTimeString("fr-FR", {
+            timeZone: zone.timezone,
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
+      </div>
+    ))}
+  </div>
+
+  {/* 🟢 Indicateur de défilement Mobile (Chevron) */}
+  <div className="md:hidden absolute right-2 pointer-events-none animate-pulse bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pl-8 pr-1 py-2">
+    <div className="bg-purple-600 rounded-full p-0.5 shadow-sm">
+      <ChevronDown size={14} className="text-white -rotate-90" />
     </div>
+  </div>
+</div>
   </div>
 </div>
 	  
