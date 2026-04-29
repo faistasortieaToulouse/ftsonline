@@ -37,7 +37,7 @@ export const PAYS_DATA = [
   { offset: "UTC +7", pays: "Thaïlande", ville: "Bangkok", zone: "Asia/Bangkok", coords: [13.7563, 100.5018], autres: "Jakarta" },
   { offset: "UTC +8", pays: "Chine", ville: "Shanghai", zone: "Asia/Shanghai", coords: [31.2304, 121.4737], autres: "Singapour, Hong Kong" },
   { offset: "UTC +9", pays: "Japon", ville: "Tokyo", zone: "Asia/Tokyo", coords: [35.6762, 139.6503], autres: "Séoul" },
-  { offset: "UTC +9:30", pays: "Australie", ville: "Adélaïde", zone: "Australia/Adelaide", coords: [-34.9285, 138.6007], autres: "" },
+  { offset: "UTC +9:30", pays: "Australie", ville: "Adélaïde", zone: "Australia/Adelaide", coords: [-34.9285, 138.6007], avec: "Séoul" },
   { offset: "UTC +10", pays: "Australie", ville: "Sydney", zone: "Australia/Sydney", coords: [-33.8688, 151.2093], autres: "Port Moresby" },
   { offset: "UTC +11", pays: "Australie", ville: "Nouméa", zone: "Pacific/Noumea", coords: [-22.2735, 166.4463], autres: "" },
   { offset: "UTC +12", pays: "Nouvelle-Zélande", ville: "Auckland", zone: "Pacific/Auckland", coords: [-36.8485, 174.7633], autres: "Fidji" },
@@ -80,7 +80,6 @@ export default function MondePage() {
         <MapWorld markers={PAYS_DATA} />
       </section>
 
-      {/* TABLEAU DES HEURES REPRIS TEL QUEL */}
       <section className="mt-16">
         <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
           <div>
