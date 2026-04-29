@@ -99,7 +99,7 @@ export default function MerOceanPage() {
     <div className="max-w-6xl mx-auto p-4 md:p-8 bg-slate-50 min-h-screen">
       <nav className="mb-8">
         <Link href="/" className="inline-flex items-center gap-2 text-teal-600 font-bold hover:underline">
-          <ArrowLeft size={18} /> Retour
+          <ArrowLeft size={18} /> Retour à l'Accueil
         </Link>
       </nav>
 
