@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { 
@@ -982,6 +982,8 @@ const iconeReelle = ampAujourdhui >= ampReference ? "📈" : "📉";
   const conseilJardin = getConseilsJardin(heure);
   const signeZodiaque = getSigneZodiaque(heure);
   const ascendant = getAscendant(heure);
+
+	const scrollRef = useRef(null);
 		
 useEffect(() => {
   const timer = setInterval(() => {
@@ -1217,7 +1219,7 @@ useEffect(() => {
         </div>
       </div>
 	</div>
-	  
+
 	  
 {/* --- NOUVELLE LIGNE : FUSEAUX HORAIRES MONDIAUX --- */}
 <div className="bg-purple-900/5 border-t border-purple-200 py-2 overflow-hidden relative">
@@ -1225,14 +1227,17 @@ useEffect(() => {
     
     <div className="flex-1 flex items-center">
       
-      {/* Liste des horloges - Le label est maintenant dedans pour suivre le centrage */}
-      <div className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-6 no-scrollbar w-full">
+      {/* Liste scrollable */}
+      <div
+        ref={scrollRef}
+        className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-6 no-scrollbar w-full scroll-smooth"
+      >
         
-        {/* Label intégré au flux pour suivre le centrage sur PC */}
+        {/* Label desktop */}
         <div className="flex items-center border-r border-purple-200 pr-6 mr-2 hidden md:flex">
-           <span className="text-[9px] font-black uppercase text-purple-400 tracking-tighter whitespace-nowrap">
-             Temps Mondial
-           </span>
+          <span className="text-[9px] font-black uppercase text-purple-400 tracking-tighter whitespace-nowrap">
+            Temps Mondial
+          </span>
         </div>
 
         {[
@@ -1249,7 +1254,7 @@ useEffect(() => {
           { city: "Montréal", timezone: "America/Toronto" },
           { city: "Brasilia", timezone: "America/Sao_Paulo" }
         ].map((zone, idx) => (
-          <div key={idx} className="flex flex-col items-center min-w-fit">
+          <div key={idx} className="flex flex-col items-center min-w-fit snap-start">
             <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
               {zone.city}
             </span>
@@ -1264,8 +1269,16 @@ useEffect(() => {
         ))}
       </div>
 
-      {/* 🟢 Indicateur de défilement Mobile (Chevron) */}
-      <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none animate-pulse bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pl-8 pr-2 py-2">
+      {/* 🔵 Flèche droite (scroll) */}
+      <div
+        onClick={() => {
+          scrollRef.current?.scrollBy({
+            left: 200,
+            behavior: "smooth",
+          });
+        }}
+        className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pl-8 pr-2 py-2"
+      >
         <div className="bg-purple-600 rounded-full p-0.5 shadow-sm">
           <ChevronDown size={14} className="text-white -rotate-90" />
         </div>
