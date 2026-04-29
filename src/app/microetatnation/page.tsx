@@ -109,7 +109,7 @@ export default function MicroEtatPage() {
     <div className="max-w-6xl mx-auto p-4 md:p-8 bg-white min-h-screen">
       <nav className="mb-8">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:underline">
-          <ArrowLeft size={18} /> Retour
+          <ArrowLeft size={18} /> Retour à l'Accueil
         </Link>
       </nav>
 
