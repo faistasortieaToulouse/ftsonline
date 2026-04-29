@@ -1269,22 +1269,21 @@ useEffect(() => {
         ))}
       </div>
 
-      {/* 🔵 Flèche droite (scroll) */}
+      {/* 🔵 Flèche droite (TOUJOURS visible si besoin) */}
       <div
         onClick={() => {
-          console.log("CLICK OK"); // 👉 debug
           scrollRef.current?.scrollBy({
             left: 200,
             behavior: "smooth",
           });
         }}
-        className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer z-50 pointer-events-auto"
+        className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer z-50 flex items-center"
       >
-        {/* Dégradé (non cliquable) */}
-        <div className="absolute inset-0 bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pointer-events-none"></div>
+        {/* Dégradé visuel */}
+        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pointer-events-none"></div>
 
-        {/* Bouton réel */}
-        <div className="relative bg-purple-600 rounded-full p-1 shadow-md">
+        {/* Bouton */}
+        <div className="relative bg-purple-600 hover:bg-purple-700 transition rounded-full p-1.5 shadow-md">
           <ChevronDown size={16} className="text-white -rotate-90" />
         </div>
       </div>
