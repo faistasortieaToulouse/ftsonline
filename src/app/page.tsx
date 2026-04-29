@@ -85,7 +85,7 @@ const nbHierarchie = 23;
 const nbSaHistoire = 13;
 const nbLangue = 2;
 const nbMondeEconomie = 5;
-const nbMondeGeo = 5;
+const nbMondeGeo = 6;
 const nbMondeSocio = 6;
 const nbMondeHistoire = 7;
 const nbMondeNiveauVie = 16;
@@ -618,11 +618,12 @@ const categories = [
     { title: "Mapmonde", href: "/mapmonde" },
 	{ title: "Fuseaux horaires", href: "/fuseaux" },
 	{ title: "Géographie du Monde", href: "/geomonde" },
-	{ title: "Micro-Etats et Nations", href: "/microetatnation" },
-    { title: "Empires coloniaux", href: "/colonies" }
+	{ title: "Mers, océans et grands lacs", href: "/merocean" },
+	{ title: "Micro Etats et Nations", href: "/microetatnation" },
+	{ title: "Empires coloniaux", href: "/colonies" }
   ]
 },
-// const nbMondeGeo = 5;
+// const nbMondeGeo = 6;
 	
 {  
   title: "Savoirs : Monde, histoire", 
