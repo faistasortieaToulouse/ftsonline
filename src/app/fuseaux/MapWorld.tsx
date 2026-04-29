@@ -23,22 +23,28 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
       .catch(err => console.error("Erreur chargement GeoJSON:", err));
   }, []);
 
-  // Fonction pour extraire l'offset proprement (évite le NaN)
+  // 1. EXTRACTION ROBUSTE : Récupère l'offset du GeoJSON (ex: "5.5" ou 5.5)
   const getOffsetFromFeature = (feature: any): number => {
-    // On cherche partout où l'offset pourrait être caché dans le JSON
     const props = feature.properties;
     const val = props?.zone ?? props?.time_zone ?? props?.utc_offset ?? props?.OFFSET ?? 0;
-    return parseFloat(val);
+    return typeof val === "string" ? parseFloat(val.replace(',', '.')) : val;
   };
 
+  // 2. NORMALISATION : Transforme "UTC +5:30" en 5.5 ou "UTC -4" en -4
   const normalizeMarkerOffset = (offsetStr: string): number => {
-    const match = offsetStr.match(/UTC\s*([+-]?\d+)/);
-    return match ? parseFloat(match[1]) : 0;
+    // Regex pour capturer le signe, l'heure et les minutes optionnelles
+    const match = offsetStr.match(/UTC\s*([+-]?\d+)(?::(\d+))?/);
+    if (!match) return 0;
+
+    const hours = parseInt(match[1], 10);
+    const minutes = match[2] ? parseInt(match[2], 10) / 60 : 0;
+
+    // Si l'heure est négative, on soustrait les minutes (ex: -3:30 -> -3.5)
+    return hours >= 0 ? hours + minutes : hours - minutes;
   };
 
   const timezoneStyle = (feature: any) => {
     const offset = getOffsetFromFeature(feature);
-    // On génère une couleur basée sur l'offset pour éviter le gris
     const hue = ((offset + 12) * 15) % 360; 
     
     return {
@@ -46,22 +52,25 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
       weight: 1,
       opacity: 1,
       color: 'white',
-      fillOpacity: 0.5, // Couleur visible
+      fillOpacity: 0.5,
     };
   };
 
   const onEachTimezone = (feature: any, layer: any) => {
     const numericOffset = getOffsetFromFeature(feature);
 
-    // LIAISON : On cherche la ville dans ton tableau markers
+    // 3. LIAISON : Comparaison des nombres décimaux
     const matchingCity = markers?.find(m => {
-      return normalizeMarkerOffset(m.offset) === numericOffset;
+      const markerNumeric = normalizeMarkerOffset(m.offset);
+      // Utilisation d'une petite marge d'erreur pour les flottants (0.01)
+      return Math.abs(markerNumeric - numericOffset) < 0.01;
     });
 
     const cityName = matchingCity ? matchingCity.ville : "Zone Horaire";
     const paysName = matchingCity ? matchingCity.pays : "Région";
-    // Correction du NaN dans l'affichage
-    const displayOffset = isNaN(numericOffset) ? "0" : (numericOffset >= 0 ? `+${numericOffset}` : numericOffset);
+    
+    // Formatage propre pour l'affichage (ex: 5.5 -> +5.5)
+    const displayOffset = numericOffset >= 0 ? `+${numericOffset}` : numericOffset;
 
     layer.bindPopup(`
       <div style="font-family: sans-serif; padding: 5px; text-align: center; min-width: 140px;">
@@ -100,10 +109,9 @@ export default function MapWorld({ markers }: { markers: CityMarker[] }) {
           />
         )}
 
-        {/* On remet les points pour garantir la visibilité des villes du tableau */}
         {markers?.map((city, idx) => (
           <CircleMarker 
-            key={idx} 
+            key={`${city.ville}-${idx}`} 
             center={city.coords} 
             radius={5} 
             pathOptions={{ color: 'white', fillColor: '#0f172a', fillOpacity: 1, weight: 2 }}
