@@ -8,6 +8,11 @@ type Meteo = {
   tempMin: number;
   pluie: number;
   vent: number;
+
+  // ➕ nouveaux champs
+  ciel: string;
+  nuages: number;
+  uvIndex: number;
 };
 
 export default function Meteo2025Page() {
@@ -31,8 +36,14 @@ export default function Meteo2025Page() {
             <th>Temp Min</th>
             <th>Pluie</th>
             <th>Vent</th>
+
+            {/* ➕ nouveaux colonnes */}
+            <th>Ciel</th>
+            <th>Nuages</th>
+            <th>UV</th>
           </tr>
         </thead>
+
         <tbody>
           {data.map((d) => (
             <tr key={d.date}>
@@ -41,6 +52,11 @@ export default function Meteo2025Page() {
               <td>{d.tempMin}</td>
               <td>{d.pluie}</td>
               <td>{d.vent}</td>
+
+              {/* ➕ affichage nouveaux champs */}
+              <td>{d.ciel}</td>
+              <td>{d.nuages}</td>
+              <td>{d.uvIndex}</td>
             </tr>
           ))}
         </tbody>
