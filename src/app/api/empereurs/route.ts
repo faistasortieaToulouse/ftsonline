@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const data = {
     europe: [
+      { pays: "Saint-Empire romain germanique", dates: "962–1806", precision: "Empire électif – Kaiser" },
       { pays: "France", dates: "1804–1814/1815 ; 1852–1870", precision: "Napoléon Ier & Napoléon III" },
       { pays: "Allemagne", dates: "1871–1918", precision: "Empire allemand – Kaiser" },
       { pays: "Autriche", dates: "1804–1918", precision: "Empire d’Autriche puis austro-hongrois" },
@@ -10,7 +11,7 @@ export async function GET() {
       { pays: "Royaume-Uni", dates: "1876–1947", precision: "Empereur/Impératrice des Indes" },
       { pays: "Italie (Rome)", dates: "27 av. J.-C. – 476", precision: "Empire romain d'Occident" },
       { pays: "Byzance", dates: "Jusqu'en 1453", precision: "Empire romain d’Orient" },
-      { pays: "Espagne", dates: "1519–1556", precision: "Charles Quint (Saint-Empire)" }
+      { pays: "Espagne", dates: "1519–1556", precision: "Charles Quint (roi d’Espagne et empereur du Saint-Empire)" }
     ],
     asie: [
       { pays: "Chine", dates: "221 av. J.-C. – 1912", precision: "Du premier empereur Qin aux Qing" },
