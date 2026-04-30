@@ -45,7 +45,7 @@ export default function VillesOccitaniePage() {
           className="inline-flex items-center gap-2 text-orange-700 hover:text-orange-900 transition-colors mb-4 font-medium"
         >
           <ArrowLeft size={20} />
-          Retour au menu
+          Retour à l'Accueil
         </Link>
         
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-orange-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
