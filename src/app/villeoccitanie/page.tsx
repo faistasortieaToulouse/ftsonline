@@ -52,7 +52,7 @@ export default function VillesOccitaniePage() {
           <div>
             <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
               <MapPin className="text-orange-600" />
-              Principales Villes d'Occitanie
+              Principales Villes d'Occitanie (2026)
             </h1>
             <p className="text-slate-500 text-sm mt-1">Démographie et points d'intérêt des communes de la région</p>
           </div>
