@@ -63,7 +63,7 @@ const nbCommunaute = 2;
 const nbSport = 6;
 const nbMusee = 13;
 const nbVisite = 12;
-const nbOccitanie = 19;
+const nbOccitanie = 20;
 const nbTransport = 19;
 const nbCafeLangue = 3;
 const nbConsomamtion = 4;
@@ -81,10 +81,10 @@ const nbArchitecture = 2;
 const nbEurope = 6;
 const nbFete = 2;
 const nbFrancais = 3;
-const nbHierarchie = 23;
+const nbHierarchie = 24;
 const nbSaHistoire = 13;
 const nbLangue = 2;
-const nbMondeEconomie = 5;
+const nbMondeEconomie = 7;
 const nbMondeGeo = 6;
 const nbMondeSocio = 6;
 const nbMondeHistoire = 7;
@@ -292,8 +292,9 @@ const categories = [
     { title: "Tarn", href: "/tarn" },
     { title: "Tarn-Garonne", href: "/tarngaronne" },
     { title: "Cirque et sommet", href: "/montcirque" },
+	{ title: "Villes d'Occitanie", href: "/villeoccitanie" },
   ]},
-//  const nbOccitanie = 19;
+//  const nbOccitanie = 20;
 
   { title: "Transports & Trafic", href: "/transports-tisseo", icon: Bus, isTransport: true, transportSources: [
     { title: "Tisséo Arrêts par itinéraire", href: "/tisseoarretitineraire" },
@@ -559,8 +560,9 @@ const categories = [
     { title: "Sunnite Ottoman", href: "/hierarchieSunniteOttoman" },
     { title: "Pape et Pops", href: "/ordreReligieuxPopPape" },
     { title: "type de Noblesse", href: "/typeNoblesse" },
+	{ title: "Empereurs dans le Monde", href: "/empereurs" },
   ]},
-//  const nbHierarchie = 23;
+//  const nbHierarchie = 24;
 
   { title: "Savoirs : Histoire", href: "/histoire", icon: Car, isOccitanie: true, occitanieSources: [
     { title: "Dynastie Islam", href: "/dynastieislam" },
@@ -604,10 +606,12 @@ const categories = [
     { title: "Espionnage", href: "/espionnage" },
     { title: "Bombe atomique", href: "/bombeatomique" },
 	{ title: "Défense et Economie", href: "/defenseeco" },
-    { title: "Zones économiques", href: "/zoneeconomique" }
+    { title: "Zones économiques", href: "/zoneeconomique" },
+	{ title: "Pays créanciers", href: "/creanciers" },
+	{ title: "Pays prêteurs", href: "/preteurs" }
   ]
 },
-// const nbMondeEconomie = 5;
+// const nbMondeEconomie = 7;
 
 {  
   title: "Savoirs : Monde, géographie", 
