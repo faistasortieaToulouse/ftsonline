@@ -33,7 +33,7 @@ export default function EmpereursPage() {
       <div className="max-w-5xl mx-auto">
         <Link href="/" className="inline-flex items-center gap-2 text-amber-800 hover:text-amber-600 mb-8 transition-colors">
           <ArrowLeft size={20} />
-          Retour au portail
+          Retour à la page d'Accueil
         </Link>
 
         <header className="text-center mb-12">
