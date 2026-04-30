@@ -1225,24 +1225,23 @@ useEffect(() => {
 
 	  
 {/* --- NOUVELLE LIGNE : FUSEAUX HORAIRES MONDIAUX --- */}
-<div className="bg-purple-900/5 border-t border-purple-200 py-2 overflow-hidden relative">
-  <div className="flex items-center min-h-[32px]">
+<div className="bg-purple-900/5 border-t border-purple-200 py-3 relative">
+  <div className="flex flex-col md:flex-row items-center gap-2">
     
-    <div className="flex-1 flex items-center relative">
-      
-      {/* Liste scrollable */}
+    {/* Label desktop */}
+    <div className="hidden md:flex items-center border-r border-purple-200 pr-6 ml-6">
+      <span className="text-[9px] font-black uppercase text-purple-400 tracking-tighter whitespace-nowrap">
+        Temps Mondial
+      </span>
+    </div>
+
+    {/* Liste scrollable */}
+    <div className="w-full overflow-hidden">
       <div
         ref={scrollRef}
-        className="relative z-10 flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-6 px-6 no-scrollbar w-full scroll-smooth snap-x snap-mandatory"
+        className="flex flex-nowrap md:flex-wrap overflow-x-auto justify-start md:justify-center items-center gap-8 px-6 pb-4 md:pb-0 scroll-smooth snap-x snap-mandatory scrollbar-permanent"
+        style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        
-        {/* Label desktop */}
-        <div className="flex items-center border-r border-purple-200 pr-6 mr-2 hidden md:flex">
-          <span className="text-[9px] font-black uppercase text-purple-400 tracking-tighter whitespace-nowrap">
-            Temps Mondial
-          </span>
-        </div>
-
         {[
           { city: "Londres", timezone: "Europe/London" },
           { city: "Paris", timezone: "Europe/Paris" },
@@ -1257,11 +1256,11 @@ useEffect(() => {
           { city: "Montréal", timezone: "America/Toronto" },
           { city: "Brasilia", timezone: "America/Sao_Paulo" }
         ].map((zone, idx) => (
-          <div key={idx} className="flex flex-col items-center min-w-fit snap-start">
-            <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap">
+          <div key={idx} className="flex flex-col items-center min-w-fit snap-center">
+            <span className="text-[10px] font-bold text-purple-900 whitespace-nowrap uppercase tracking-tighter">
               {zone.city}
             </span>
-            <span className="text-[11px] font-mono font-medium text-indigo-600 leading-none">
+            <span className="text-[12px] font-mono font-black text-indigo-600 leading-none">
               {heure.toLocaleTimeString("fr-FR", {
                 timeZone: zone.timezone,
                 hour: "2-digit",
@@ -1271,29 +1270,30 @@ useEffect(() => {
           </div>
         ))}
       </div>
+    </div>
+  </div>
 
-      {/* 🔵 Flèche droite (TOUJOURS visible si besoin) */}
-      <div
-        onClick={() => {
-          scrollRef.current?.scrollBy({
-            left: 200,
-            behavior: "smooth",
-          });
-        }}
-        className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer z-50 flex items-center"
-      >
-        {/* Dégradé visuel */}
-        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-purple-50 via-purple-50/80 to-transparent pointer-events-none"></div>
-
-        {/* Bouton */}
-        <div className="relative bg-purple-600 hover:bg-purple-700 transition rounded-full p-1.5 shadow-md">
-          <ChevronDown size={16} className="text-white -rotate-90" />
-        </div>
-      </div>
-
-    </div> {/* Fin du conteneur principal */}
-  </div> {/* Fin du flex-row */}
-</div> {/* Fin de la ligne globale */}
+  <style jsx>{`
+    .scrollbar-permanent::-webkit-scrollbar {
+      height: 5px;
+      display: block;
+    }
+    .scrollbar-permanent::-webkit-scrollbar-track {
+      background: rgba(168, 85, 247, 0.1); 
+      border-radius: 10px;
+      margin: 0 30px;
+    }
+    .scrollbar-permanent::-webkit-scrollbar-thumb {
+      background-color: #a855f7; 
+      border-radius: 10px;
+    }
+    @media (min-width: 768px) {
+      .scrollbar-permanent::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  `}</style>
+</div>
 
 	  
 {/* --- Bloc unique : Éphéméride & Environnement --- */}
