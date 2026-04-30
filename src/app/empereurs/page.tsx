@@ -74,7 +74,7 @@ export default function EmpereursPage() {
 
         <footer className="mt-16 p-6 bg-amber-900 text-amber-100 rounded-xl text-sm leading-relaxed">
           <h4 className="font-bold mb-2 flex items-center gap-2 underline">Note Historique :</h4>
-          <p>Le titre d'Empereur (Tsar, Kaiser, Shah, etc.) varie selon les cultures mais désigne souvent le dirigeant suprême d'un ensemble de territoires vastes. Plusieurs de ces empires couvraient des régions bien plus larges que les frontières nationales actuelles.</p>
+          <p>Le titre d'Empereur (César, Tsar, Czar, Kaiser, Qaysar, Kayser, Kejsar, Keizer, Shah, etc.) varie selon les cultures mais désigne souvent le dirigeant suprême d'un ensemble de territoires vastes. Plusieurs de ces empires couvraient des régions bien plus larges que les frontières nationales actuelles.</p>
         </footer>
       </div>
     </div>
