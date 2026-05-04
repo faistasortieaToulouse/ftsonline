@@ -1,45 +1,58 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  // 💡 J'ai ajouté "&models=best_match" à la fin de l'URL. 
-  // C'est ce qui permet de récupérer des estimations UV quand les relevés réels manquent.
-  const url = "https://archive-api.open-meteo.com/v1/archive?latitude=43.6045&longitude=1.444&start_date=2025-01-01&end_date=2025-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,cloudcover_mean,uv_index_max&timezone=Europe/Paris&models=best_match";
+  // On utilise historical-forecast pour garantir d'avoir des données sur toutes les variables en 2025
+  const url = "https://api.open-meteo.com/v1/historical-forecast?latitude=43.6045&longitude=1.444&start_date=2025-01-01&end_date=2025-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,uv_index_max&timezone=Europe/Paris";
 
   try {
     const res = await fetch(url);
     const data = await res.json();
 
-    // Vérification de la structure (l'API renvoie parfois data.daily_best_match selon le modèle)
-    const daily = data.daily || data.daily_best_match;
+    const daily = data.daily;
 
     if (!daily) {
       return NextResponse.json({ error: "Données non disponibles" }, { status: 404 });
     }
 
     const result = daily.time.map((date: string, i: number) => {
+      const tempMax = daily.temperature_2m_max[i] ?? 0;
       const pluie = daily.precipitation_sum[i] ?? 0;
-      const cloud = daily.cloudcover_mean[i] ?? 0;
-      
-      // On récupère l'UV. Si c'est encore null, on met 0, mais avec best_match, tu auras enfin des chiffres !
-      const uv = daily.uv_index_max ? (daily.uv_index_max[i] ?? 0) : 0;
+      const vent = daily.windspeed_10m_max[i] ?? 0;
+      const uv = daily.uv_index_max?.[i] ?? 0;
 
-      // Logique ciel
-      let ciel = "Soleil";
-      if (pluie > 1) {
-        ciel = "Pluie";
-      } else if (cloud > 60) {
-        ciel = "Nuage";
+      // --- LOGIQUE DE DÉDUCTION DES ALERTES ---
+      let alerte = { niveau: "Vert", libelle: "Calme" };
+
+      // Seuil Rouge (Danger extrême)
+      if (tempMax >= 40 || vent >= 100 || pluie >= 70) {
+        alerte = { 
+          niveau: "Rouge", 
+          libelle: tempMax >= 40 ? "Canicule Extrême" : (vent >= 100 ? "Tempête" : "Inondation") 
+        };
+      } 
+      // Seuil Orange (Danger important)
+      else if (tempMax >= 35 || vent >= 75 || pluie >= 40) {
+        alerte = { 
+          niveau: "Orange", 
+          libelle: tempMax >= 35 ? "Forte Chaleur" : (vent >= 75 ? "Coup de Vent" : "Fortes Pluies") 
+        };
+      } 
+      // Seuil Jaune (Soyez vigilant)
+      else if (tempMax >= 30 || vent >= 50 || pluie >= 15) {
+        alerte = { 
+          niveau: "Jaune", 
+          libelle: "Vigilance" 
+        };
       }
 
       return {
         date,
-        tempMax: daily.temperature_2m_max[i],
+        tempMax,
         tempMin: daily.temperature_2m_min[i],
         pluie,
-        vent: daily.windspeed_10m_max[i],
-        ciel,
-        nuages: cloud,
-        uvIndex: uv, 
+        vent,
+        uvIndex: uv,
+        alerte // On renvoie l'objet alerte calculé
       };
     });
 
