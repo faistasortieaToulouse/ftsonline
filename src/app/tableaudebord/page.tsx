@@ -10,7 +10,9 @@ import {
   BarChart2, 
   FlaskConical, 
   ExternalLink,
-  MessageCircle
+  MessageCircle,
+  CloudSun,
+  Umbrella // Nouvelle icône pour la section météo
 } from 'lucide-react';
 
 export default function TableauDeBord() {
@@ -26,6 +28,14 @@ export default function TableauDeBord() {
       ]
     },
     {
+      title: "Météo & Environnement",
+      icon: <Umbrella className="w-5 h-5 text-sky-500" />,
+      links: [
+        { name: "Météo Toulouse en 2025", path: "/meteo2025", icon: <CloudSun size={14} className="text-orange-400"/> },
+        // Emplacement prêt pour tes nouveaux liens météo ici
+      ]
+    },
+    {
       title: "Rendez-vous",
       icon: <MapPin className="w-5 h-5 text-red-600" />,
       links: [
@@ -38,6 +48,7 @@ export default function TableauDeBord() {
       title: "Sous-domaines & Analyse",
       icon: <Globe className="w-5 h-5 text-purple-600" />,
       links: [
+        { name: "Discord", path: "/discord", icon: <MessageCircle size={14} className="text-indigo-500"/> },
         { name: "WhatsApp Discord", path: "https://whatsapdiscord.ftstoulouse.online", isExternal: true },
         { name: "Meetup Toulouse Dev", path: "https://dev.ftstoulouse.online", isExternal: true },
         { name: "Accès Statistiques", path: "/analyse", icon: <BarChart2 size={14}/> },
@@ -53,7 +64,7 @@ export default function TableauDeBord() {
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto"> {/* Augmentation légère de la largeur max pour accommoder 4 colonnes */}
         
         {/* Header */}
         <header className="flex items-center gap-3 mb-10">
@@ -61,10 +72,10 @@ export default function TableauDeBord() {
           <h1 className="text-3xl font-extrabold text-slate-800">Tableau de Bord</h1>
         </header>
 
-        {/* Grille des sections principales */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {/* Grille des sections - S'adapte automatiquement sur 2 ou 4 colonnes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
           {sections.map((section, idx) => (
-            <div key={idx} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div key={idx} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
               <div className="bg-slate-50 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
                 {section.icon}
                 <h2 className="font-bold text-slate-700">{section.title}</h2>
@@ -83,7 +94,11 @@ export default function TableauDeBord() {
                         </span>
                         {link.desc && <p className="text-xs text-slate-400 mt-0.5">{link.desc}</p>}
                       </div>
-                      {link.isExternal ? <ExternalLink size={14} className="text-slate-300" /> : <span className="text-slate-300 opacity-0 group-hover:opacity-100">→</span>}
+                      {link.isExternal ? (
+                        <ExternalLink size={14} className="text-slate-300 group-hover:text-indigo-400" />
+                      ) : (
+                        <span className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                      )}
                     </Link>
                   </li>
                 ))}
@@ -97,12 +112,12 @@ export default function TableauDeBord() {
           <h2 className="flex items-center gap-2 text-lg font-bold text-slate-700 mb-4">
             <FlaskConical className="w-5 h-5 text-amber-500" /> Environnement de Test
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <div className="flex flex-wrap gap-3">
             {testPages.map((path) => (
               <Link 
                 key={path} 
                 href={path}
-                className="text-center py-2 px-3 bg-slate-100 hover:bg-amber-100 hover:text-amber-800 rounded-md text-xs font-semibold text-slate-500 transition-colors border border-slate-200"
+                className="py-2 px-4 bg-slate-100 hover:bg-amber-100 hover:text-amber-800 rounded-lg text-xs font-semibold text-slate-500 transition-colors border border-slate-200"
               >
                 {path.replace('/', '')}
               </Link>
