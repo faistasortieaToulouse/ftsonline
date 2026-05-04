@@ -9,35 +9,43 @@ export default function Meteo2025Page() {
   useEffect(() => {
     fetch("/api/meteo2025")
       .then((res) => {
-        if (!res.ok) throw new Error("Erreur 404 ou 500");
+        if (!res.ok) throw new Error("Erreur API");
         return res.json();
       })
       .then((json) => {
         if (Array.isArray(json)) setData(json);
       })
-      .catch((err) => {
-        console.error(err);
-        setError(true);
-      });
+      .catch(() => setError(true));
   }, []);
 
-  if (error) {
+  // Fonction pour afficher le symbole de vigilance
+  const renderVigilance = (alerte: string) => {
+    const config: any = {
+      "Vert": { color: "bg-green-500", text: "V", textCol: "text-white" },
+      "Jaune": { color: "bg-yellow-400", text: "J", textCol: "text-yellow-900" },
+      "Orange": { color: "bg-orange-500", text: "O", textCol: "text-white" },
+      "Rouge": { color: "bg-red-600", text: "R", textCol: "text-white" }
+    };
+    const s = config[alerte] || config["Vert"];
     return (
-      <div className="p-10 text-center text-red-500 font-bold">
-        Erreur : La route /api/meteo2025 est introuvable (404). <br />
-        Vérifiez le nom du dossier dans src/app/api/
+      <div className={`w-6 h-6 mx-auto rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${s.color} ${s.textCol}`}>
+        {s.text}
       </div>
     );
-  }
+  };
+
+  if (error) return <div className="p-10 text-center text-red-500">Erreur de chargement de l'API.</div>;
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-900">
       <div className="max-w-6xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">
+        <header className="mb-8 text-center md:text-left">
+          <h1 className="text-3xl font-extrabold text-slate-800">
             Météo Toulouse <span className="text-indigo-600">2025</span>
           </h1>
-          <p className="text-slate-500 mt-2 italic text-sm">Basé sur archive-api & models=best_match</p>
+          <p className="text-slate-500 mt-2 text-sm italic underline underline-offset-4 decoration-indigo-200">
+             meteo vigilance.jpg : Données consolidées avec niveau de pluie
+          </p>
         </header>
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -45,12 +53,13 @@ export default function Meteo2025Page() {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-500">
-                  <th className="p-4 text-left text-xs font-bold uppercase tracking-wider">Date</th>
-                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider">Ciel</th>
-                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider text-red-500">Max</th>
-                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider text-blue-500">Min</th>
-                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider">Vent</th>
-                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider">Vigilance</th>
+                  <th className="p-4 text-left text-xs font-bold uppercase">Date</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase">Ciel</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase text-red-500">Max</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase text-blue-500">Min</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase">Vent</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase">Pluie</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase">Vigilance</th>
                 </tr>
               </thead>
 
@@ -68,12 +77,16 @@ export default function Meteo2025Page() {
                     </td>
                     <td className="p-4 text-center font-bold text-red-600">{d.tempMax}°C</td>
                     <td className="p-4 text-center font-bold text-blue-600">{d.tempMin}°C</td>
-                    <td className="p-4 text-center text-sm">{d.vent} km/h</td>
+                    <td className="p-4 text-center text-sm">{d.vent} <span className="text-[10px] text-slate-400">km/h</span></td>
+                    <td className="p-4 text-center text-sm font-medium">
+                        {d.pluie > 0 ? (
+                            <span className="text-blue-600 font-bold">{d.pluie} mm</span>
+                        ) : (
+                            <span className="text-slate-300">-</span>
+                        )}
+                    </td>
                     <td className="p-4 text-center">
-                      <div className={`w-3 h-3 mx-auto rounded-full border border-black/10 ${
-                        d.alerte === "Orange" ? "bg-orange-500" : 
-                        d.alerte === "Jaune" ? "bg-yellow-400" : "bg-green-400"
-                      }`}></div>
+                      {renderVigilance(d.alerte)}
                     </td>
                   </tr>
                 ))}
@@ -83,9 +96,8 @@ export default function Meteo2025Page() {
         </div>
 
         {data.length === 0 && (
-          <div className="mt-20 text-center flex flex-col items-center">
-            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-slate-500 font-medium italic">Analyse des données météo 2025...</p>
+          <div className="mt-20 text-center animate-pulse text-slate-400 font-bold tracking-widest">
+            CHARGEMENT DES DONNÉES...
           </div>
         )}
       </div>
