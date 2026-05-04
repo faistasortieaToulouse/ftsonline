@@ -16,9 +16,8 @@ type Meteo = {
 export default function Meteo2025Page() {
   const [data, setData] = useState<Meteo[]>([]);
 
-  // Logique UV avec protection contre le NaN
   const getUvLabel = (val: number | null | undefined) => {
-    // Si la valeur est null, undefined ou n'est pas un nombre, on retourne N/A
+    // Sécurité supplémentaire : on s'assure que val est bien un nombre exploitable
     if (val === null || val === undefined || isNaN(Number(val))) return "N/A";
     
     const v = Number(val);
@@ -32,7 +31,12 @@ export default function Meteo2025Page() {
     fetch("/api/meteo2025")
       .then((res) => res.json())
       .then((json) => {
-        if (Array.isArray(json)) setData(json);
+        // On s'assure de recevoir un tableau pour ne pas faire planter .map()
+        if (Array.isArray(json)) {
+          setData(json);
+        } else {
+          console.error("Format de données invalide", json);
+        }
       })
       .catch((err) => console.error("Erreur fetch meteo:", err));
   }, []);
@@ -51,25 +55,27 @@ export default function Meteo2025Page() {
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="p-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
-                  <th className="p-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Ciel</th>
-                  <th className="p-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider text-red-500">Max</th>
-                  <th className="p-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider text-blue-500">Min</th>
-                  <th className="p-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Indice UV</th>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500">
+                  <th className="p-4 text-left text-xs font-bold uppercase tracking-wider">Date</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider">Ciel</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider text-red-500">Max</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider text-blue-500">Min</th>
+                  <th className="p-4 text-center text-xs font-bold uppercase tracking-wider">Indice UV</th>
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-slate-100">
                 {data.map((d, index) => {
-                  // FORCE la valeur à 0 si c'est null pour éviter le vide
-                  const uvValeurBrute = d.uvIndex ?? 0; 
+                  // On garantit une valeur par défaut de 0 pour les calculs d'affichage
+                  const uvVal = d.uvIndex ?? 0;
                   
                   return (
                     <tr key={d.date || index} className="hover:bg-indigo-50/40 transition-colors">
-                      <td className="p-4 text-sm font-semibold text-slate-700 whitespace-nowrap">{d.date}</td>
+                      <td className="p-4 text-sm font-semibold text-slate-700 whitespace-nowrap">
+                        {d.date}
+                      </td>
                       <td className="p-4 text-center">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                           d.ciel === "Soleil" ? "bg-amber-100 text-amber-700" : 
                           d.ciel === "Nuage" ? "bg-slate-100 text-slate-600" : 
                           "bg-blue-100 text-blue-700"
@@ -84,12 +90,12 @@ export default function Meteo2025Page() {
                         {d.tempMin !== null ? `${d.tempMin}°C` : '--'}
                       </td>
                       <td className="p-4 text-center">
-                        <div className="inline-flex flex-col items-center leading-tight">
+                        <div className="flex flex-col items-center leading-tight">
                           <span className="text-sm font-bold text-indigo-700">
-                            {getUvLabel(uvValeurBrute)}
+                            {getUvLabel(uvVal)}
                           </span>
                           <span className="text-slate-400 text-[10px]">
-                            ({Number(uvValeurBrute).toFixed(1)})
+                            ({Number(uvVal).toFixed(1)})
                           </span>
                         </div>
                       </td>
