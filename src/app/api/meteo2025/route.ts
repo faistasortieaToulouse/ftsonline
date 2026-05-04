@@ -13,15 +13,29 @@ export async function GET() {
     }
 
     const result = daily.time.map((date: string, i: number) => {
+      // On sécurise les données : si c'est null, on met 0 pour éviter les cases vides
       const tMax = daily.temperature_2m_max[i] ?? 0;
+      const tMin = daily.temperature_2m_min[i] ?? 0;
       const vent = daily.windspeed_10m_max[i] ?? 0;
       const pluie = daily.precipitation_sum[i] ?? 0;
       const cloud = daily.cloudcover_mean[i] ?? 0;
 
+      // --- LOGIQUE DE VIGILANCE MULTI-RISQUES ---
       let alerte = "Vert";
-      if (tMax >= 35 || vent >= 85) alerte = "Orange";
-      else if (tMax >= 30 || vent >= 60 || pluie >= 20) alerte = "Jaune";
+      let risque = ""; 
 
+      // Priorité Orange (Seuils critiques)
+      if (tMax >= 35 || vent >= 85 || pluie >= 50) {
+        alerte = "Orange";
+        risque = tMax >= 35 ? "Canicule" : (vent >= 85 ? "Tempête" : "Inondation");
+      } 
+      // Priorité Jaune (Seuils de vigilance)
+      else if (tMax >= 30 || vent >= 60 || pluie >= 20) {
+        alerte = "Jaune";
+        risque = tMax >= 30 ? "Chaleur" : (vent >= 60 ? "Vent" : "Pluie");
+      }
+
+      // Logique Ciel simplifiée
       let ciel = "Soleil";
       if (pluie > 1) ciel = "Pluie";
       else if (cloud > 50) ciel = "Nuage";
@@ -30,10 +44,11 @@ export async function GET() {
         date,
         ciel,
         tempMax: tMax,
-        tempMin: daily.temperature_2m_min[i] ?? 0,
+        tempMin: tMin,
         vent: vent,
-        pluie: pluie, // <-- On ajoute la pluie ici
-        alerte
+        pluie: pluie, 
+        alerte,
+        risque // On renvoie la cause pour l'afficher sous le symbole
       };
     });
 
