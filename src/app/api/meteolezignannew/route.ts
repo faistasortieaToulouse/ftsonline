@@ -27,10 +27,10 @@ export async function GET() {
       let risque = ""; 
 
       // On augmente légèrement les seuils de vent car le Cers souffle fort à Lézignan
-      if (tMax >= 36 || vent >= 90 || uv >= 9) {
+      if (tMax >= 36 || vent >= 85 || uv >= 9) {
         alerte = "Orange";
         if (tMax >= 36) risque = "Canicule";
-        else if (vent >= 90) risque = "Tempête";
+        else if (vent >= 85) risque = "Tempête";
         else risque = "UV Critique";
       } else if (tMax >= 31 || vent >= 65 || uv >= 7) {
         alerte = "Jaune";
