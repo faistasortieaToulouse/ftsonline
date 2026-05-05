@@ -87,7 +87,7 @@ const nbLangue = 2;
 const nbMondeEconomie = 7;
 const nbMondeGeo = 6;
 const nbMondeSocio = 6;
-const nbMondeHistoire = 7;
+const nbMondeHistoire = 8;
 const nbMondeNiveauVie = 16;
 const nbMondeVilles = 19;
 const nbReligion = 3;
@@ -635,16 +635,17 @@ const categories = [
   icon: Globe, 
   isSavoirsMondeHist: true, 
   savoirsMondeSources: [
-    { title: "Internet", href: "/histoireinternet" },
     { title: "Révolutions", href: "/revolution" },
     { title: "Démocratie", href: "/democratie" },
     { title: "Guerres", href: "/guerres" },
 	{ title: "Crises", href: "/crise" },
 	{ title: "Epidemies", href: "/epidemie" },
-	{ title: "Migrations forcées", href: "/expulsions" }
+	{ title: "Migrations forcées", href: "/expulsions" },
+	{ title: "Internet", href: "/histoireinternet" },
+	{ title: "Système d'Exploitation", href: "/systeme" }
   ]
 },
-// const nbMondeHistoire = 7;
+// const nbMondeHistoire = 8;
 
 {  
   title: "Savoirs : Monde, niveau de vie", 
