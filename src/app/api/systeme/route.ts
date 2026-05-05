@@ -3,80 +3,111 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const data = {
     metadata: {
-      title: "API Chronologique et Technique des Systèmes d'Exploitation",
+      title: "API Chronologique et Technique des Systèmes d'Exploitation (Édition Complète)",
+      version: "2.0",
       sources: [
         "https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27exploitation",
         "https://fr.wikipedia.org/wiki/Chronologie_des_syst%C3%A8mes_d%27exploitation",
         "https://fr.wikipedia.org/wiki/Unix",
-        "https://fr.wikipedia.org/wiki/Linux#Histoire"
+        "https://fr.wikipedia.org/wiki/Linux#Histoire",
+        "https://fr.wikipedia.org/wiki/GNU#Le_projet_GNU"
       ]
     },
     chronologie_detaillee: [
       {
         date: "1969",
-        evenement: "Naissance d'Unix",
-        lieu: "Laboratoires Bell (AT&T)",
+        evenement: "Genèse d'Unix aux Laboratoires Bell",
         acteurs: ["Ken Thompson", "Dennis Ritchie"],
-        description: "Initialement écrit en assembleur pour un PDP-7, Unix pose les bases du multitâche et de la gestion de fichiers moderne.",
+        description: "Développement initial sur PDP-7. Invention des concepts de 'pipes' (tubes) et de hiérarchie de fichiers.",
+        detail: "Le système est alors écrit en assembleur.",
         wiki: "https://fr.wikipedia.org/wiki/Unix"
       },
       {
-        date: "Années 1970",
-        evenement: "Réécriture d'Unix en Langage C",
-        impact: "Rend le système portable sur différentes machines, une révolution pour l'époque.",
-        branches: ["BSD (Berkeley)", "System V (AT&T)"]
+        date: "1973",
+        evenement: "La révolution de la portabilité (Langage C)",
+        impact: "Réécriture d'Unix en C par Dennis Ritchie.",
+        innovation: "C'est la première fois qu'un OS devient indépendant du matériel (portable).",
+        branches: ["System V (Commercial/AT&T)", "BSD (Académique/Berkeley)"]
       },
       {
         date: "1983",
-        evenement: "Lancement du Projet GNU",
+        evenement: "Manifeste GNU & Logiciel Libre",
         auteur: "Richard Stallman",
-        objectif: "Créer un système compatible Unix mais totalement libre.",
-        outils: ["GCC", "Bash", "Emacs"],
+        philosophie: "Liberté d'utiliser, étudier, modifier et redistribuer.",
+        outils_clefs: ["GCC (Compilateur)", "Bash (Shell)", "Emacs (Éditeur)"],
+        probleme: "Le noyau GNU Hurd prend du retard à cause de sa complexité (micro-noyau).",
         wiki: "https://fr.wikipedia.org/wiki/Projet_GNU"
       },
       {
         date: "1987",
-        evenement: "Sortie de Minix",
+        evenement: "Minix et l'éducation",
         auteur: "Andrew Tanenbaum",
-        usage: "Système éducatif basé sur un micro-noyau, utilisé par Linus Torvalds pour apprendre le fonctionnement des OS.",
-        wiki: "https://fr.wikipedia.org/wiki/Minix"
+        description: "Créé pour enseigner la conception d'OS sans les restrictions de licence AT&T.",
+        lien_linux: "C'est sur ce système que Linus Torvalds fera ses premières armes."
       },
       {
         date: "1991",
-        evenement: "Premier noyau Linux",
+        evenement: "L'étincelle Linux",
         auteur: "Linus Torvalds",
-        annonce: "25 août 1991 sur le groupe Usenet comp.os.minix.",
-        licence: "GPL (General Public License)",
-        wiki: "https://fr.wikipedia.org/wiki/Noyau_Linux"
+        annonce: "25 août 1991 : 'Just a hobby, won't be big and professional like gnu'.",
+        tournant_1992: "Passage sous licence GPL, permettant la fusion avec les outils GNU.",
+        wiki: "https://fr.wikipedia.org/wiki/Linux#Histoire"
       }
     ],
-    distributions_historiques: {
-      "1992": ["MCC Interim Linux (1ère distro)", "TAMU Linux", "SLS", "Yggdrasil (1er Live CD)"],
-      "1993": ["Slackware (Patrick Volkerding)", "Debian (Ian Murdock)"],
-      "1994": ["Red Hat Linux", "SUSE Linux"]
-    },
-    familles_actuelles: [
+    distributions_historiques: [
+      {
+        annee: "1992",
+        noms: ["MCC Interim Linux", "TAMU Linux", "SLS"],
+        info: "Les premières tentatives de rendre Linux installable par le grand public."
+      },
+      {
+        annee: "1993",
+        noms: ["Slackware", "Debian"],
+        innovation: "Debian introduit la gestion de paquets (APT), révolutionnant les mises à jour."
+      },
+      {
+        annee: "1994",
+        noms: ["Red Hat", "SUSE"],
+        impact: "Début de la professionnalisation et du support commercial."
+      }
+    ],
+    familles_et_philosophie: [
       {
         nom: "Famille Debian",
-        caracteristique: "Stabilité et gestion de paquets .deb",
-        principales: ["Ubuntu", "Linux Mint", "Kali Linux"]
+        descendance: ["Ubuntu", "Mint", "Kali"],
+        philosophie: "Stabilité et engagement communautaire."
       },
       {
         nom: "Famille Red Hat",
-        caracteristique: "Orienté Entreprise et paquets .rpm",
-        principales: ["RHEL", "Fedora", "CentOS"]
+        descendance: ["Fedora", "RHEL", "CentOS"],
+        philosophie: "Standard industriel et robustesse entreprise."
       },
       {
         nom: "Famille Arch",
-        caracteristique: "Simplicité technique et Rolling Release",
-        principales: ["Arch Linux", "Manjaro"]
+        descendance: ["Manjaro", "EndeavourOS"],
+        philosophie: "Simplicité technique (KISS) et Rolling Release."
+      },
+      {
+        nom: "Famille Slackware",
+        descendance: ["openSUSE (racines)"],
+        philosophie: "Tradition, proche de la configuration Unix pure."
       }
     ],
-    infrastructure_moderne: {
-      serveurs_web: "Dominance de la stack LAMP (Linux Apache MySQL PHP)",
-      cloud: "Moteur de AWS, Azure et Google Cloud",
-      mobilité: "Android (basé sur le noyau Linux)",
-      performance: "100% des 500 plus puissants supercalculateurs mondiaux"
+    impact_moderne: {
+      serveurs: {
+        titre: "Domination du Web",
+        stack: "LAMP (Linux, Apache, MySQL, PHP/Python/Perl)",
+        stat: "Fait tourner la majorité des serveurs mondiaux."
+      },
+      business: {
+        evenement_clef: "Annonce d'IBM (2000) d'investir 1 milliard de dollars dans Linux.",
+        entreprises_majeures: ["Oracle", "Google", "Red Hat", "IBM"]
+      },
+      infrastructure: {
+        supercalculateurs: "100% du TOP500 sous Linux.",
+        cloud: "Base de Docker, Kubernetes et des instances AWS/Azure.",
+        mobile: "Android (Noyau Linux)."
+      }
     }
   };
 
