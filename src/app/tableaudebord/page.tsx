@@ -32,6 +32,8 @@ export default function TableauDeBord() {
       icon: <Umbrella className="w-5 h-5 text-sky-500" />,
       links: [
         { name: "Météo Toulouse en 2025", path: "/meteo2025", icon: <CloudSun size={14} className="text-orange-400"/> },
+        { name: "Météo Toulouse en 2026", path: "/meteo2026", icon: <CloudSun size={14} className="text-orange-400"/> },
+        { name: "Prévisions Météo Toulouse", path: "/meteonew", icon: <CloudSun size={14} className="text-orange-400"/> },
         // Emplacement prêt pour tes nouveaux liens météo ici
       ]
     },
