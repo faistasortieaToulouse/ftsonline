@@ -34,6 +34,9 @@ export default function TableauDeBord() {
         { name: "Météo Toulouse en 2025", path: "/meteo2025", icon: <CloudSun size={14} className="text-orange-400"/> },
         { name: "Météo Toulouse en 2026", path: "/meteo2026", icon: <CloudSun size={14} className="text-orange-400"/> },
         { name: "Prévisions Météo Toulouse", path: "/meteonew", icon: <CloudSun size={14} className="text-orange-400"/> },
+        { name: "Météo Lézignan en 2025", path: "/meteolezignan2025", icon: <CloudSun size={14} className="text-orange-400"/> },
+        { name: "Météo Lézignan en 2026", path: "/meteolezignan2026", icon: <CloudSun size={14} className="text-orange-400"/> },
+        { name: "Prévisions Météo Lézignan", path: "/meteolezignannew", icon: <CloudSun size={14} className="text-orange-400"/> },
         // Emplacement prêt pour tes nouveaux liens météo ici
       ]
     },
