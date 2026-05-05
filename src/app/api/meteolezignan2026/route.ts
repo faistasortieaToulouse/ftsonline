@@ -32,10 +32,10 @@ export async function GET() {
       let risque = ""; 
 
       // Priorité Orange (Seuils adaptés pour le vent de l'Aude)
-      if (tMax >= 36 || vent >= 90 || pluie >= 55 || uv >= 10) {
+      if (tMax >= 36 || vent >= 85 || pluie >= 55 || uv >= 10) {
         alerte = "Orange";
         if (tMax >= 36) risque = "Canicule";
-        else if (vent >= 90) risque = "Tempête";
+        else if (vent >= 85) risque = "Tempête";
         else if (uv >= 10) risque = "UV Critique";
         else risque = "Inondation";
       } 
