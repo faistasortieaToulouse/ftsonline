@@ -32,9 +32,9 @@ export async function GET() {
         risque = tMax >= 36 ? "Canicule" : (vent >= 90 ? "Tempête" : "Inondation");
       } 
       // Priorité Jaune
-      else if (tMax >= 31 || vent >= 65 || pluie >= 25) {
+      else if (tMax >= 31 || vent >= 60 || pluie >= 25) {
         alerte = "Jaune";
-        risque = tMax >= 31 ? "Chaleur" : (vent >= 65 ? "Vent" : "Pluie");
+        risque = tMax >= 31 ? "Chaleur" : (vent >= 60 ? "Vent" : "Pluie");
       }
 
       // Logique Ciel
