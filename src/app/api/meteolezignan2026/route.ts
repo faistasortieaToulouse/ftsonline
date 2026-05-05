@@ -32,18 +32,18 @@ export async function GET() {
       let risque = ""; 
 
       // Priorité Orange (Seuils adaptés pour le vent de l'Aude)
-      if (tMax >= 36 || vent >= 95 || pluie >= 55 || uv >= 10) {
+      if (tMax >= 36 || vent >= 90 || pluie >= 55 || uv >= 10) {
         alerte = "Orange";
         if (tMax >= 36) risque = "Canicule";
-        else if (vent >= 95) risque = "Tempête";
+        else if (vent >= 90) risque = "Tempête";
         else if (uv >= 10) risque = "UV Critique";
         else risque = "Inondation";
       } 
       // Priorité Jaune
-      else if (tMax >= 31 || vent >= 70 || pluie >= 25 || uv >= 7) {
+      else if (tMax >= 31 || vent >= 60 || pluie >= 25 || uv >= 7) {
         alerte = "Jaune";
         if (tMax >= 31) risque = "Chaleur";
-        else if (vent >= 70) risque = "Vent";
+        else if (vent >= 60) risque = "Vent";
         else if (uv >= 7) risque = "UV Élevé";
         else risque = "Pluie";
       }
