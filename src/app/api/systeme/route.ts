@@ -2,44 +2,81 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const data = {
-    definitions: {
-      os: "Logiciel assurant l'interface entre l'utilisateur et le matériel.",
-      kernel: "Cœur du système gérant les ressources (mémoire, processeur).",
-      distro: "Assemblage du noyau Linux avec des outils GNU et des logiciels tiers."
+    metadata: {
+      title: "API Chronologique et Technique des Systèmes d'Exploitation",
+      sources: [
+        "https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27exploitation",
+        "https://fr.wikipedia.org/wiki/Chronologie_des_syst%C3%A8mes_d%27exploitation",
+        "https://fr.wikipedia.org/wiki/Unix",
+        "https://fr.wikipedia.org/wiki/Linux#Histoire"
+      ]
     },
-    chronologie: [
-      { id: 1, date: "1969", nom: "Unix", auteur: "Ken Thompson & Dennis Ritchie", impact: "Pionnier du multitâche." },
-      { id: 2, date: "1983", nom: "GNU", auteur: "Richard Stallman", impact: "Naissance du logiciel libre." },
-      { id: 3, date: "1987", nom: "Minix", auteur: "Andrew Tanenbaum", impact: "Modèle pédagogique pour Linux." },
-      { id: 4, date: "1991", nom: "Linux", auteur: "Linus Torvalds", impact: "Premier noyau libre largement adopté." }
-    ],
-    distributions_majeures: [
-      { 
-        nom: "Debian", 
-        date: "1993", 
-        base: "Indépendante", 
-        usage: "Serveurs, Postes de travail",
-        descendance: ["Ubuntu", "Mint", "Kali"]
+    chronologie_detaillee: [
+      {
+        date: "1969",
+        evenement: "Naissance d'Unix",
+        lieu: "Laboratoires Bell (AT&T)",
+        acteurs: ["Ken Thompson", "Dennis Ritchie"],
+        description: "Initialement écrit en assembleur pour un PDP-7, Unix pose les bases du multitâche et de la gestion de fichiers moderne.",
+        wiki: "https://fr.wikipedia.org/wiki/Unix"
       },
-      { 
-        nom: "Red Hat", 
-        date: "1994", 
-        base: "Indépendante", 
-        usage: "Entreprise",
-        descendance: ["Fedora", "CentOS", "RHEL"]
+      {
+        date: "Années 1970",
+        evenement: "Réécriture d'Unix en Langage C",
+        impact: "Rend le système portable sur différentes machines, une révolution pour l'époque.",
+        branches: ["BSD (Berkeley)", "System V (AT&T)"]
       },
-      { 
-        nom: "Slackware", 
-        date: "1993", 
-        base: "SLS", 
-        usage: "Avancé",
-        descendance: ["SUSE (initialement)"]
+      {
+        date: "1983",
+        evenement: "Lancement du Projet GNU",
+        auteur: "Richard Stallman",
+        objectif: "Créer un système compatible Unix mais totalement libre.",
+        outils: ["GCC", "Bash", "Emacs"],
+        wiki: "https://fr.wikipedia.org/wiki/Projet_GNU"
+      },
+      {
+        date: "1987",
+        evenement: "Sortie de Minix",
+        auteur: "Andrew Tanenbaum",
+        usage: "Système éducatif basé sur un micro-noyau, utilisé par Linus Torvalds pour apprendre le fonctionnement des OS.",
+        wiki: "https://fr.wikipedia.org/wiki/Minix"
+      },
+      {
+        date: "1991",
+        evenement: "Premier noyau Linux",
+        auteur: "Linus Torvalds",
+        annonce: "25 août 1991 sur le groupe Usenet comp.os.minix.",
+        licence: "GPL (General Public License)",
+        wiki: "https://fr.wikipedia.org/wiki/Noyau_Linux"
       }
     ],
-    statistiques_actuelles: {
-      serveurs: "90%+",
-      supercalculateurs: "100%",
-      smartphones: "Android (basé sur Linux) est leader mondial."
+    distributions_historiques: {
+      "1992": ["MCC Interim Linux (1ère distro)", "TAMU Linux", "SLS", "Yggdrasil (1er Live CD)"],
+      "1993": ["Slackware (Patrick Volkerding)", "Debian (Ian Murdock)"],
+      "1994": ["Red Hat Linux", "SUSE Linux"]
+    },
+    familles_actuelles: [
+      {
+        nom: "Famille Debian",
+        caracteristique: "Stabilité et gestion de paquets .deb",
+        principales: ["Ubuntu", "Linux Mint", "Kali Linux"]
+      },
+      {
+        nom: "Famille Red Hat",
+        caracteristique: "Orienté Entreprise et paquets .rpm",
+        principales: ["RHEL", "Fedora", "CentOS"]
+      },
+      {
+        nom: "Famille Arch",
+        caracteristique: "Simplicité technique et Rolling Release",
+        principales: ["Arch Linux", "Manjaro"]
+      }
+    ],
+    infrastructure_moderne: {
+      serveurs_web: "Dominance de la stack LAMP (Linux Apache MySQL PHP)",
+      cloud: "Moteur de AWS, Azure et Google Cloud",
+      mobilité: "Android (basé sur le noyau Linux)",
+      performance: "100% des 500 plus puissants supercalculateurs mondiaux"
     }
   };
 
