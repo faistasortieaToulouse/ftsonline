@@ -1,156 +1,115 @@
-"use client";
+import { NextResponse } from 'next/server';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { ArrowLeft, Monitor, History, Layers, Info, ExternalLink, Server, Globe, Cpu } from 'lucide-react';
+export async function GET() {
+  const data = {
+    metadata: {
+      title: "API Chronologique et Technique des Systèmes d'Exploitation (Édition Complète)",
+      version: "2.0",
+      sources: [
+        "https://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27exploitation",
+        "https://fr.wikipedia.org/wiki/Chronologie_des_syst%C3%A8mes_d%27exploitation",
+        "https://fr.wikipedia.org/wiki/Unix",
+        "https://fr.wikipedia.org/wiki/Linux#Histoire",
+        "https://fr.wikipedia.org/wiki/GNU#Le_projet_GNU"
+      ]
+    },
+    chronologie_detaillee: [
+      {
+        date: "1969",
+        evenement: "Genèse d'Unix aux Laboratoires Bell",
+        acteurs: ["Ken Thompson", "Dennis Ritchie"],
+        description: "Développement initial sur PDP-7. Invention des concepts de 'pipes' (tubes) et de hiérarchie de fichiers.",
+        detail: "Le système est alors écrit en assembleur.",
+        wiki: "https://fr.wikipedia.org/wiki/Unix"
+      },
+      {
+        date: "1973",
+        evenement: "La révolution de la portabilité (Langage C)",
+        impact: "Réécriture d'Unix en C par Dennis Ritchie.",
+        innovation: "C'est la première fois qu'un OS devient indépendant du matériel (portable).",
+        branches: ["System V (Commercial/AT&T)", "BSD (Académique/Berkeley)"]
+      },
+      {
+        date: "1983",
+        evenement: "Manifeste GNU & Logiciel Libre",
+        auteur: "Richard Stallman",
+        philosophie: "Liberté d'utiliser, étudier, modifier et redistribuer.",
+        outils_clefs: ["GCC (Compilateur)", "Bash (Shell)", "Emacs (Éditeur)"],
+        probleme: "Le noyau GNU Hurd prend du retard à cause de sa complexité (micro-noyau).",
+        wiki: "https://fr.wikipedia.org/wiki/Projet_GNU"
+      },
+      {
+        date: "1987",
+        evenement: "Minix et l'éducation",
+        auteur: "Andrew Tanenbaum",
+        description: "Créé pour enseigner la conception d'OS sans les restrictions de licence AT&T.",
+        lien_linux: "C'est sur ce système que Linus Torvalds fera ses premières armes."
+      },
+      {
+        date: "1991",
+        evenement: "L'étincelle Linux",
+        auteur: "Linus Torvalds",
+        annonce: "25 août 1991 : 'Just a hobby, won't be big and professional like gnu'.",
+        tournant_1992: "Passage sous licence GPL, permettant la fusion avec les outils GNU.",
+        wiki: "https://fr.wikipedia.org/wiki/Linux#Histoire"
+      }
+    ],
+    distributions_historiques: [
+      {
+        annee: "1992",
+        noms: ["MCC Interim Linux", "TAMU Linux", "SLS"],
+        info: "Les premières tentatives de rendre Linux installable par le grand public."
+      },
+      {
+        annee: "1993",
+        noms: ["Slackware", "Debian"],
+        innovation: "Debian introduit la gestion de paquets (APT), révolutionnant les mises à jour."
+      },
+      {
+        annee: "1994",
+        noms: ["Red Hat", "SUSE"],
+        impact: "Début de la professionnalisation et du support commercial."
+      }
+    ],
+    familles_et_philosophie: [
+      {
+        nom: "Famille Debian",
+        descendance: ["Ubuntu", "Mint", "Kali"],
+        philosophie: "Stabilité et engagement communautaire."
+      },
+      {
+        nom: "Famille Red Hat",
+        descendance: ["Fedora", "RHEL", "CentOS"],
+        philosophie: "Standard industriel et robustesse entreprise."
+      },
+      {
+        nom: "Famille Arch",
+        descendance: ["Manjaro", "EndeavourOS"],
+        philosophie: "Simplicité technique (KISS) et Rolling Release."
+      },
+      {
+        nom: "Famille Slackware",
+        descendance: ["openSUSE (racines)"],
+        philosophie: "Tradition, proche de la configuration Unix pure."
+      }
+    ],
+    impact_moderne: {
+      serveurs: {
+        titre: "Domination du Web",
+        stack: "LAMP (Linux, Apache, MySQL, PHP/Python/Perl)",
+        stat: "Fait tourner la majorité des serveurs mondiaux."
+      },
+      business: {
+        evenement_clef: "Annonce d'IBM (2000) d'investir 1 milliard de dollars dans Linux.",
+        entreprises_majeures: ["Oracle", "Google", "Red Hat", "IBM"]
+      },
+      infrastructure: {
+        supercalculateurs: "100% du TOP500 sous Linux.",
+        cloud: "Base de Docker, Kubernetes et des instances AWS/Azure.",
+        mobile: "Android (Noyau Linux)."
+      }
+    }
+  };
 
-const SystemesExploitation = () => {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/systeme')
-      .then(res => res.json())
-      .then(json => {
-        setData(json);
-        setLoading(false);
-      })
-      .catch(err => console.error("Erreur chargement API:", err));
-  }, []);
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-slate-500">Chargement de l'histoire...</div>;
-
-  return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-4xl mx-auto">
-        
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-all mb-8 group bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100"
-        >
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium text-sm">Retour à l'accueil</span>
-        </Link>
-
-        <main className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-800 to-indigo-900 p-8 text-white">
-            <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-              <Monitor size={32} className="text-blue-300" />
-              {data.metadata.title}
-            </h1>
-            <p className="text-blue-100 opacity-90">Version {data.metadata.version} — Les fondations de l'informatique.</p>
-          </div>
-
-          <div className="p-8">
-            {/* 1. Définition */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4 text-slate-800 flex items-center gap-2">
-                <Info size={24} className="text-blue-500" />
-                1. Qu'est-ce qu'un OS ?
-              </h2>
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-                <p className="text-slate-700 leading-relaxed italic">
-                  "Un système d'exploitation est le chef d'orchestre de l'ordinateur. Il fait le pont entre le matériel et les logiciels."
-                </p>
-              </div>
-            </section>
-
-            {/* 2. Chronologie Dynamique */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6 text-slate-800 flex items-center gap-2">
-                <History size={24} className="text-blue-500" />
-                2. Chronologie & Racines
-              </h2>
-              
-              <div className="relative border-l-2 border-slate-100 ml-3 pl-8 space-y-8">
-                {data.chronologie_detaillee.map((item: any, index: number) => (
-                  <div key={index} className="relative group">
-                    <div className="absolute -left-[41px] top-1 w-4 h-4 rounded-full bg-blue-600 border-4 border-white shadow-sm group-hover:scale-110 transition-transform"></div>
-                    <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">{item.date}</span>
-                    <h3 className="font-bold text-slate-900 text-lg">{item.evenement}</h3>
-                    <p className="text-slate-600 text-sm mb-1">{item.description || item.impact}</p>
-                    {item.acteurs && <p className="text-xs text-slate-400">Acteurs : {item.acteurs.join(', ')}</p>}
-                    {item.wiki && (
-                      <a href={item.wiki} target="_blank" className="text-xs text-blue-500 hover:underline flex items-center gap-1 mt-1">
-                        En savoir plus <ExternalLink size={10} />
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* 3. Familles Dynamiques */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6 text-slate-800 flex items-center gap-2">
-                <Layers size={24} className="text-blue-500" />
-                3. Les Familles et Philosophies
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {data.familles_et_philosophie.map((famille: any, i: number) => (
-                  <div key={i} className="p-4 border border-slate-100 bg-slate-50 rounded-xl shadow-sm hover:shadow-md transition-all">
-                    <h4 className="font-bold text-blue-800 mb-1">{famille.nom}</h4>
-                    <p className="text-xs text-slate-500 font-medium mb-2 uppercase tracking-tighter italic">{famille.philosophie}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {famille.descendance.map((child: string) => (
-                        <span key={child} className="text-[10px] bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600">
-                          {child}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* 4. Impact Moderne (Nouveauté) */}
-            <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6 text-slate-800 flex items-center gap-2">
-                <Globe size={24} className="text-blue-500" />
-                4. Impact Global
-              </h2>
-              <div className="bg-slate-900 rounded-2xl p-6 text-white grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <div className="flex items-center gap-2 text-blue-400 mb-2 font-bold text-sm">
-                    <Server size={16} /> Serveurs & Cloud
-                  </div>
-                  <p className="text-slate-300 text-sm">{data.impact_modern.infrastructure.cloud}</p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 text-green-400 mb-2 font-bold text-sm">
-                    <Cpu size={16} /> Performance
-                  </div>
-                  <p className="text-slate-300 text-sm">{data.impact_modern.infrastructure.supercalculateurs}</p>
-                </div>
-              </div>
-            </section>
-
-            {/* Footer Sources Dynamiques */}
-            <footer className="pt-8 border-t border-slate-100">
-              <p className="text-xs text-slate-400 mb-4 uppercase tracking-widest font-semibold text-center">Sources Officielles</p>
-              <div className="flex flex-wrap justify-center gap-4">
-                {data.metadata.sources.map((source: string, i: number) => (
-                  <WikiLink key={i} href={source} label={source.split('/').pop()?.replace(/%20/g, ' ') || "Source"} />
-                ))}
-              </div>
-            </footer>
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-};
-
-const WikiLink = ({ href, label }: { href: string, label: string }) => (
-  <a 
-    href={href} 
-    target="_blank" 
-    rel="noopener noreferrer" 
-    className="text-blue-500 hover:text-white hover:bg-blue-500 text-[10px] font-bold px-3 py-1 bg-blue-50 rounded-full transition-all border border-blue-100"
-  >
-    {label.toUpperCase()} ↗
-  </a>
-);
-
-export default SystemesExploitation;
+  return NextResponse.json(data);
+}
