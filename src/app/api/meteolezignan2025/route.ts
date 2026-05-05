@@ -27,9 +27,9 @@ export async function GET() {
 
       // Priorité Orange
       // À Lézignan, on monte le seuil de vent à 90km/h car c'est plus fréquent qu'à Toulouse
-      if (tMax >= 36 || vent >= 90 || pluie >= 55) {
+      if (tMax >= 36 || vent >= 85 || pluie >= 55) {
         alerte = "Orange";
-        risque = tMax >= 36 ? "Canicule" : (vent >= 90 ? "Tempête" : "Inondation");
+        risque = tMax >= 36 ? "Canicule" : (vent >= 85 ? "Tempête" : "Inondation");
       } 
       // Priorité Jaune
       else if (tMax >= 31 || vent >= 60 || pluie >= 25) {
