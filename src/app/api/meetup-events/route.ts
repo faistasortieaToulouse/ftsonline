@@ -103,6 +103,9 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/voyageurs-toulouse-%ef%b8%8f/events/ical/",
     "https://www.meetup.com/bring-me-the-horizon-occitanie/events/ical/",
     "https://www.meetup.com/se-reconnecter-a-soi-ateliers-en-ligne/events/ical/",
+    "https://www.meetup.com/toulouse-visual-performing-literary-artists-meetup-group/events/ical/",
+    "https://www.meetup.com/meetup-group-fazhited/events/ical/",
+    "https://www.meetup.com/pages-social-readers/events/ical/",
     "https://www.meetup.com/mtg-toulouse/events/ical/"   
   ]
 ];
