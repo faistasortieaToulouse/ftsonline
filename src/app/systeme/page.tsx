@@ -46,7 +46,7 @@ export default function SystemePage() {
   return (
     <main className="min-h-screen bg-[#f8fafc]">
       {/* Barre de navigation */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+      <nav className="bg-white border-b border-slate-200 relative shadow-sm">
         <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-blue-600 hover:text-blue-800 font-semibold flex items-center transition-all">
             <span className="mr-2">🏠</span> Retour à l'Accueil
