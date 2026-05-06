@@ -100,6 +100,10 @@ const ICAL_GROUPS: string[][] = [
   "https://www.meetup.com/fr-FR/neptune-business-club/events/ical/",
   "https://www.meetup.com/fr-FR/investisseurs-en-bourse-toulousains/events/ical/",
   "https://www.meetup.com/fr-FR/cryptomonnaie-fun-decouvrez-ionet/events/ical/",
+  "https://www.meetup.com/toulouse-audio-engineering-meetup-group/events/ical/",
+  "https://www.meetup.com/toulouse-web-development-meetup-group/events/ical/",
+  "https://www.meetup.com/web-atrio-toulouse/events/ical/",
+  "https://www.meetup.com/sfeir-toulouse/events/ical/",
   "https://www.meetup.com/fr-FR/mach-africa-insights-marketing-strategie-finance/events/ical/"
 ]
 ];
