@@ -63,7 +63,7 @@ const nbCommunaute = 2;
 const nbSport = 6;
 const nbMusee = 13;
 const nbVisite = 12;
-const nbOccitanie = 20;
+const nbOccitanie = 21;
 const nbTransport = 19;
 const nbCafeLangue = 3;
 const nbConsomamtion = 4;
@@ -77,14 +77,14 @@ const nbSociologie = 3;
 const nbLittératureEt = 7;
 const nbLittératureFr = 23;
 const nbPrix = 21;
-const nbArchitecture = 2;
+const nbArchitecture = 4;
 const nbEurope = 6;
 const nbFete = 2;
 const nbFrancais = 3;
 const nbHierarchie = 24;
 const nbSaHistoire = 13;
 const nbLangue = 2;
-const nbMondeEconomie = 7;
+const nbMondeEconomie = 8;
 const nbMondeGeo = 6;
 const nbMondeSocio = 6;
 const nbMondeHistoire = 8;
@@ -293,8 +293,9 @@ const categories = [
     { title: "Tarn-Garonne", href: "/tarngaronne" },
     { title: "Cirque et sommet", href: "/montcirque" },
 	{ title: "Villes d'Occitanie", href: "/villeoccitanie" },
+	{ title: "Villes fortifiées d'Occitanie", href: "/rempartoccitanie" },
   ]},
-//  const nbOccitanie = 20;
+//  const nbOccitanie = 21;
 
   { title: "Transports & Trafic", href: "/transports-tisseo", icon: Bus, isTransport: true, transportSources: [
     { title: "Tisséo Arrêts par itinéraire", href: "/tisseoarretitineraire" },
@@ -503,8 +504,10 @@ const categories = [
   { title: "Savoirs : Architecture", href: "/architecture", icon: DraftingCompass, isOccitanie: true, occitanieSources: [
     { title: "Architecture", href: "/architecture" },
     { title: "Styles", href: "/style" },
+	{ title: "Remparts en bon état en France", href: "/rempartfrance" },
+	{ title: "Remparts en France", href: "/remparttous" },
   ]},
-//  const nbArchitecture = 2;
+//  const nbArchitecture = 4;
 
 /* 4. Savoirs : Europe */
   { 
@@ -605,13 +608,14 @@ const categories = [
     { title: "PIB (PPA/Nominal)", href: "/pib" },
     { title: "Espionnage", href: "/espionnage" },
     { title: "Bombe atomique", href: "/bombeatomique" },
+    { title: "Navires", href: "/navire" },
 	{ title: "Défense et Economie", href: "/defenseeco" },
     { title: "Zones économiques", href: "/zoneeconomique" },
 	{ title: "Pays créanciers", href: "/creanciers" },
 	{ title: "Pays prêteurs", href: "/preteurs" }
   ]
 },
-// const nbMondeEconomie = 7;
+// const nbMondeEconomie = 8;
 
 {  
   title: "Savoirs : Monde, géographie", 
