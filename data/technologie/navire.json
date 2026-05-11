@@ -1,0 +1,14 @@
+{
+  "titre": "Navires et Porte-aéronefs",
+  "categorie_principale": "Marine Militaire",
+  "categorie_secondaire": "Porte-avions",
+  "liens_wikipedia": [
+    { "title": "Liste des porte-avions", "link": "https://fr.wikipedia.org/wiki/Liste_des_porte-avions_et_porte-a%C3%A9ronefs", "description": "Panorama mondial des porte-avions et porte-aéronefs." },
+    { "title": "Porte-aéronefs français", "link": "https://fr.wikipedia.org/wiki/Liste_des_porte-a%C3%A9ronefs_fran%C3%A7ais", "description": "L'histoire des bâtiments de projection français." },
+    { "title": "Histoire des porte-avions", "link": "https://fr.wikipedia.org/wiki/Histoire_des_porte-avions_et_porte-a%C3%A9ronefs", "description": "Évolution stratégique depuis l'origine." },
+    { "title": "Avions embarqués", "link": "https://fr.wikipedia.org/wiki/Liste_d%27avions_embarqu%C3%A9s", "description": "Types d'appareils conçus pour opérer en mer." },
+    { "title": "Types de navires", "link": "https://fr.wikipedia.org/wiki/Liste_des_types_de_navires", "description": "Classification générale des bâtiments de mer." },
+    { "title": "Désignation US Navy", "link": "https://fr.wikipedia.org/wiki/Syst%C3%A8me_de_d%C3%A9signation_des_b%C3%A2timents_de_l%27US_Navy", "description": "Comprendre les codes (CVN, LHD, etc.)." },
+    { "title": "Marine Nationale", "link": "https://fr.wikipedia.org/wiki/Liste_des_navires_de_la_Marine_nationale_(France)", "description": "Inventaire actuel des navires français." }
+  ]
+}
