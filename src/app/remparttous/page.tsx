@@ -57,7 +57,7 @@ export default function RempartTousPage() {
         
         <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 mb-10 transition-colors group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium uppercase tracking-tighter">Retour</span>
+          <span className="font-medium uppercase tracking-tighter">Retour à l'Acceuil</span>
         </Link>
 
         <header className="mb-20 text-center">
