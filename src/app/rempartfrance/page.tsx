@@ -44,12 +44,18 @@ export default function RempartFrancePage() {
 
         {/* Header */}
         <header className="mb-12">
-          <span className="text-sm font-bold uppercase tracking-widest text-amber-600">
-            {data.categorie_principale}
-          </span>
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 mt-2">
-            {data.titre}
-          </h1>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-bold uppercase tracking-widest text-amber-600">
+              {data.categorie_principale}
+            </span>
+            <h1 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 mt-2">
+              {data.titre}
+            </h1>
+            {/* Ajout de la mention ici */}
+            <p className="text-lg text-slate-500 font-medium italic mt-2">
+              Remparts les mieux conservés
+            </p>
+          </div>
         </header>
 
         {/* Grille des villes */}
