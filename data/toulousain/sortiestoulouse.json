@@ -618,7 +618,40 @@
   "url": "https://mobilizon.fr/search?contentType=EVENTS&lat=43.561491&lon=1.47097&locationName=Sports+Universitaires&eventPage=1",
   "description": "Plateforme libre et décentralisée permettant de découvrir et organiser des événements à Toulouse, souvent utilisée par des associations, collectifs et communautés locales.",
   "tags": ["open-source", "associatif", "local", "décentralisé"]
-}
+},
+  {
+    "id": 57,
+    "name": "Fever Toulouse (Expériences et Loisirs)",
+    "slug": "fever-toulouse",
+    "type": "plateforme",
+    "categories": ["événements", "culture", "loisirs", "spectacles"],
+    "city": "Toulouse, Paris",
+    "url": "https://feverup.com/fr/toulouse",
+    "description": "Plateforme de découverte d'expériences immersives, de concerts Candlelight et d'événements culturels exclusifs dans la ville rose.",
+    "tags": ["sorties", "culture", "immersif", "billetterie"]
+  },
+  {
+    "id": 58,
+    "name": "Gare aux Amis (Rencontres amicales Toulouse)",
+    "slug": "gare-aux-amis-toulouse",
+    "type": "communauté",
+    "categories": ["social", "rencontres", "communautés", "loisirs"],
+    "city": "Toulouse",
+    "url": "https://www.gareauxamis.com/rencontre-amicale/toulouse-31-a.html",
+    "description": "Réseau social de proximité permettant aux Toulousains de participer à des sorties de groupe et de se faire de nouveaux amis localement.",
+    "tags": ["amitié", "social", "sorties-groupe", "local"]
+  },
+  {
+    "id": 59,
+    "name": "Rewind Stories (Visites audioguidées)",
+    "slug": "rewind-stories-toulouse",
+    "type": "application",
+    "categories": ["tourisme", "culture", "histoire", "balades"],
+    "city": "Toulouse, Paris",
+    "url": "https://www.rewindstories.com/fr",
+    "description": "Application proposant des visites de ville audioguidées sur smartphone pour découvrir le patrimoine toulousain en toute autonomie.",
+    "tags": ["tourisme-digital", "insolite", "histoire", "autonomie"]
+  }
   ]
 }
 
