@@ -2008,7 +2008,8 @@ return sections.map((sec, idx) => {
           { name: "Toulouse Randonnée", url: "https://toulouserandonee.vercel.app/" },
           { name: "Toulouse Play Games & Sport", url: "https://toulouseplaygames31.vercel.app/" },
           { name: "Toulouse Books Club", url: "https://toulousebooksclub.vercel.app/" },
-          { name: "Wikidoc", url: "https://wikidoc31-six.vercel.app/" }
+          { name: "Wikidoc", url: "https://wikidoc31-six.vercel.app/" },
+	      { name: "Toulouse Friendly Clubs", url: "https://toulousefriendlyclubs.vercel.app/" }
         ].map((app, i) => (
           <a key={i} href={app.url} target="_blank" rel="noopener noreferrer" 
              className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg shadow-sm transition-transform hover:scale-105">
