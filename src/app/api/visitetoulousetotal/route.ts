@@ -5,30 +5,38 @@ import path from 'path';
 export async function GET() {
   try {
     const filePath = path.join(process.cwd(), 'data', 'toulouse', 'visite_toulouse_geocode.json');
-    
-    if (!fs.existsSync(filePath)) {
-      console.error("Fichier non trouvé:", filePath);
-      return NextResponse.json([]); // Retourne un tableau vide au lieu d'une erreur
-    }
-
     const fileContents = fs.readFileSync(filePath, 'utf-8');
     const json = JSON.parse(fileContents);
 
-    // Vérifiez si json.lieux existe, sinon utilisez json directement
-    const source = json.lieux || json; 
+    const source = json.lieux || json;
 
-    const lieux = source.map((lieu: any, index: number) => ({
-      id: index + 1,
-      name: lieu.name || `${lieu.numero || ''} ${lieu.type_voie || ''} ${lieu.nom_voie || ''}`.trim(),
-      address: lieu.address || `${lieu.numero || ''} ${lieu.type_voie || ''} ${lieu.nom_voie || ''}, Toulouse`,
-      description: lieu.description || "Aucune description.",
-      lat: parseFloat(lieu.lat), // Force la conversion en nombre
-      lng: parseFloat(lieu.lng),
-    }));
+    const lieux = source
+      .map((lieu: any, index: number) => {
+        const lat = parseFloat(lieu.lat);
+        const lng = parseFloat(lieu.lng);
+
+        // --- LE FILTRE ICI ---
+        // On vérifie si les coordonnées sont cohérentes avec Toulouse
+        // Toulouse est entre Lat 43.5 et 43.7 / Lng 1.3 et 1.6
+        const isToulouse = lat > 43.5 && lat < 43.7 && lng > 1.3 && lng < 1.6;
+
+        if (isToulouse) {
+          return {
+            id: index + 1,
+            name: lieu.name || `${lieu.numero || ''} ${lieu.type_voie || ''} ${lieu.nom_voie || ''}`.trim(),
+            address: lieu.address || `${lieu.numero || ''} ${lieu.type_voie || ''} ${lieu.nom_voie || ''}, Toulouse`,
+            description: lieu.description || "Aucune description.",
+            lat: lat,
+            lng: lng,
+          };
+        }
+        return null; // On rejette le monument s'il est hors zone
+      })
+      .filter((l: any) => l !== null); // On retire les "null" de la liste finale
 
     return NextResponse.json(lieux);
   } catch (error) {
-    console.error("Erreur API:", error);
-    return NextResponse.json([]); 
+    console.error(error);
+    return NextResponse.json({ error: 'Erreur' }, { status: 500 });
   }
 }
