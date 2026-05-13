@@ -1,117 +1,124 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import Script from 'next/script';
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MapPin } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
 interface Lieu {
   id: number;
-  numero: string;
-  type_voie: string;
-  nom_voie: string;
+  name: string;
+  address: string;
   description: string;
   lat: number;
   lng: number;
 }
 
+const TOULOUSE_CENTER: [number, number] = [43.6045, 1.444];
+
 export default function VisiteToulouseTotalPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-
+  const mapInstance = useRef<any>(null);
   const [lieux, setLieux] = useState<Lieu[]>([]);
-  const [isReady, setIsReady] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [L, setL] = useState<any>(null);
+  const [openDetailsId, setOpenDetailsId] = useState<number | null>(null);
 
-  // --- Charger les données ---
+  const toggleDetails = (id: number) => {
+    setOpenDetailsId((prevId) => (prevId === id ? null : id));
+    const target = lieux.find(l => l.id === id);
+    if (target && mapInstance.current) {
+      mapInstance.current.setView([target.lat, target.lng], 17, { animate: true });
+    }
+  };
+
+  // 1. Fetch Data
   useEffect(() => {
-    fetch('/api/visitetoulousetotal')
-      .then(res => res.json())
-      .then(data => setLieux(data))
-      .catch(console.error);
+    fetch("/api/visitetoulousetotal")
+      .then((res) => res.json())
+      .then((data) => {
+        setLieux(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
-  // --- Initialisation de la carte ---
+  // 2. Init Leaflet
   useEffect(() => {
-    if (!isReady || !mapRef.current || lieux.length === 0) return;
+    if (typeof window === "undefined" || !mapRef.current || loading) return;
 
-    const center = {
-      lat: lieux[0].lat || 43.6045,
-      lng: lieux[0].lng || 1.444,
+    const initMap = async () => {
+      const Leaflet = (await import("leaflet")).default;
+      setL(Leaflet);
+      if (mapInstance.current) return;
+
+      mapInstance.current = Leaflet.map(mapRef.current!).setView(TOULOUSE_CENTER, 14);
+      Leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap',
+      }).addTo(mapInstance.current);
     };
+    initMap();
 
-    mapInstance.current = new google.maps.Map(mapRef.current, {
-      zoom: 15,
-      center,
-      scrollwheel: true,
-      gestureHandling: 'greedy',
-    });
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [loading]);
 
-    lieux.forEach((lieu, i) => {
-      if (typeof lieu.lat !== 'number' || typeof lieu.lng !== 'number') return;
+  // 3. Markers
+  useEffect(() => {
+    if (!L || !mapInstance.current || lieux.length === 0) return;
 
-      const marker = new google.maps.Marker({
-        map: mapInstance.current!,
-        position: { lat: lieu.lat, lng: lieu.lng },
-        label: `${i + 1}`,
-        title: `${lieu.numero} ${lieu.type_voie} ${lieu.nom_voie}`,
+    lieux.forEach((lieu) => {
+      const customIcon = L.divIcon({
+        className: "custom-marker",
+        html: `<div style="background:#2563eb;width:24px;height:24px;border-radius:50%;border:2px solid white;display:flex;align-items:center;justify:center;color:white;font-weight:bold;font-size:10px;box-shadow:0 2px 4px rgba(0,0,0,0.3);justify-content:center;">${lieu.id}</div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
       });
 
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <strong>${i + 1}. ${lieu.numero} ${lieu.type_voie} ${lieu.nom_voie}</strong><br>
-          ${lieu.description}
-        `,
-      });
+      const marker = L.marker([lieu.lat, lieu.lng], { icon: customIcon })
+        .addTo(mapInstance.current)
+        .bindPopup(`<strong>${lieu.name}</strong>`);
 
-      marker.addListener('click', () =>
-        infowindow.open(mapInstance.current!, marker)
-      );
+      marker.on("click", () => toggleDetails(lieu.id));
     });
-  }, [isReady, lieux]);
+  }, [L, lieux]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-
+    <div className="p-4 max-w-7xl mx-auto bg-slate-50 min-h-screen">
       <nav className="mb-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-blue-700 hover:text-blue-900 font-bold transition-all group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-          Retour à l'accueil
+        <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-bold transition-all">
+          <ArrowLeft size={20} /> Retour
         </Link>
       </nav>
 
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setIsReady(true)}
-      />
+      <header className="mb-8">
+        <h1 className="text-3xl font-black text-slate-900 uppercase">🗺️ Visite Toulouse Total</h1>
+        <p className="text-slate-500 italic">Exploration historique — {lieux.length} sites</p>
+      </header>
 
-      <h1 className="text-3xl font-extrabold mb-6">
-        🗺️ Visite de Toulouse – Parcours sur les traces du passé : monuments actuels et disparus
-      </h1>
-
-      <div
-        ref={mapRef}
-        style={{ height: '70vh', width: '100%' }}
-        className="mb-8 border rounded-lg bg-gray-100 flex items-center justify-center"
-      >
-        {!isReady && <p>Chargement de la carte…</p>}
+      <div ref={mapRef} className="mb-10 h-[50vh] border-4 border-white rounded-[2rem] shadow-xl overflow-hidden relative z-0 bg-slate-200">
+        {loading && <div className="absolute inset-0 flex items-center justify-center bg-white/50 animate-pulse">Chargement...</div>}
       </div>
 
-      <h2 className="text-2xl font-semibold mb-4">
-        Lieux visités ({lieux.length})
-      </h2>
-
-      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {lieux.map((l, i) => (
-          <li key={l.id} className="p-4 border rounded bg-white shadow">
-            <p className="text-lg font-bold">
-              {i + 1}. {l.numero} {l.type_voie} {l.nom_voie}
-            </p>
-            <p className="italic">{l.description}</p>
-          </li>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {lieux.map((l) => (
+          <div 
+            key={l.id} 
+            onClick={() => toggleDetails(l.id)}
+            className={`p-5 rounded-xl border-2 cursor-pointer transition-all ${openDetailsId === l.id ? "bg-white border-blue-500 shadow-lg" : "bg-white border-transparent shadow-sm hover:border-blue-100"}`}
+          >
+            <h3 className="font-bold text-slate-800 text-lg"><span className="text-blue-500 mr-2">{l.id}.</span>{l.name}</h3>
+            <p className="text-xs text-slate-400 font-bold uppercase mt-1 flex items-center gap-1"><MapPin size={12}/> {l.address}</p>
+            {openDetailsId === l.id && (
+              <p className="mt-3 pt-3 border-t text-sm text-slate-600 italic animate-in fade-in slide-in-from-top-1">{l.description}</p>
+            )}
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
