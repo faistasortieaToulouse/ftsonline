@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-// Ajout de ChevronDown ici
-import { ArrowLeft, MapPin, ChevronDown } from "lucide-react";
+import { ArrowLeft, MapPin } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 interface Lieu {
@@ -20,12 +19,11 @@ const TOULOUSE_CENTER: [number, number] = [43.6045, 1.444];
 export default function VisiteToulouseTotalPage() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<any>(null);
-  const markersLayerRef = useRef<any>(null); // Pour gérer les marqueurs proprement
+  const markersLayerRef = useRef<any>(null);
 
   const [lieux, setLieux] = useState<Lieu[]>([]);
   const [loading, setLoading] = useState(true);
   const [L, setL] = useState<any>(null);
-  const [openDetailsId, setOpenDetailsId] = useState<number | null>(null);
 
   // 1. Charger les données
   useEffect(() => {
@@ -43,13 +41,13 @@ export default function VisiteToulouseTotalPage() {
       });
   }, []);
 
-  // 2. Initialiser la carte (une seule fois, au centre de Toulouse par défaut)
+  // 2. Initialiser la carte
   useEffect(() => {
     if (typeof window === "undefined" || !mapRef.current) return;
 
     const initMap = async () => {
       const Leaflet = (await import("leaflet")).default;
-      setL(Leaflet);
+      setLsafe(Leaflet);
 
       if (!mapInstance.current) {
         mapInstance.current = Leaflet.map(mapRef.current!).setView(TOULOUSE_CENTER, 13);
@@ -58,7 +56,6 @@ export default function VisiteToulouseTotalPage() {
           attribution: '&copy; OpenStreetMap contributors',
         }).addTo(mapInstance.current);
 
-        // Créer un groupe de calques pour les marqueurs
         markersLayerRef.current = Leaflet.layerGroup().addTo(mapInstance.current);
       }
     };
@@ -73,15 +70,18 @@ export default function VisiteToulouseTotalPage() {
     };
   }, []);
 
-  // 3. Ajouter les marqueurs quand les lieux ET Leaflet sont prêts
+  // Fonction helper pour éviter le conflit de nom avec le state
+  const setLsafe = (leafletInstance: any) => {
+    setL(leafletInstance);
+  };
+
+  // 3. Ajouter les marqueurs
   useEffect(() => {
     if (!L || !mapInstance.current || !markersLayerRef.current || lieux.length === 0) return;
 
-    // Nettoyer les anciens marqueurs si besoin
     markersLayerRef.current.clearLayers();
 
     lieux.forEach((lieu) => {
-      // Vérification ultra-stricte des coordonnées
       if (lieu.lat === undefined || lieu.lat === null || lieu.lng === undefined || lieu.lng === null) return;
 
       const customIcon = L.divIcon({
@@ -95,14 +95,12 @@ export default function VisiteToulouseTotalPage() {
         .bindPopup(`<strong>${lieu.id}. ${lieu.name}</strong>`);
 
       marker.on("click", () => {
-        setOpenDetailsId(lieu.id);
         mapInstance.current.setView([lieu.lat, lieu.lng], 16, { animate: true });
       });
 
       markersLayerRef.current.addLayer(marker);
     });
 
-    // Ajuster la vue pour englober tous les marqueurs
     const bounds = L.latLngBounds(lieux.map(l => [l.lat, l.lng]));
     mapInstance.current.fitBounds(bounds, { padding: [50, 50] });
 
@@ -134,45 +132,34 @@ export default function VisiteToulouseTotalPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {lieux.map((l) => {
-          const isOpen = openDetailsId === l.id;
-          return (
-            <div
-              key={l.id}
-              id={`item-${l.id}`}
-              onClick={() => {
-                setOpenDetailsId(isOpen ? null : l.id);
-                if (mapInstance.current) mapInstance.current.setView([l.lat, l.lng], 17, { animate: true });
-              }}
-              className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-                isOpen ? "bg-white border-red-400 shadow-lg scale-[1.01]" : "bg-white border-transparent shadow-sm hover:border-red-100"
-              }`}
-            >
-              {/* flex-nowrap et items-center pour aligner proprement le titre et le chevron */}
-              <div className="flex justify-between items-center gap-4">
-                <h3 className="font-bold text-slate-800">
-                  <span className="text-red-500 mr-2">{l.id}.</span>
-                  {l.name}
-                </h3>
-                {/* Ajout du chevron avec rotation animée si ouvert */}
-                <ChevronDown 
-                  size={18} 
-                  className={`text-slate-400 transition-transform duration-300 shrink-0 ${
-                    isOpen ? "rotate-180 text-red-500" : ""
-                  }`} 
-                />
-              </div>
-              <p className="text-xs font-bold text-slate-400 mt-1 flex items-center gap-1">
-                <MapPin size={12}/> {l.address}
-              </p>
-              {isOpen && (
-                <div className="mt-3 pt-3 border-t border-slate-100 text-sm text-slate-600 italic leading-relaxed animate-in fade-in slide-in-from-top-1">
-                  {l.description}
-                </div>
-              )}
+        {lieux.map((l) => (
+          <div
+            key={l.id}
+            id={`item-${l.id}`}
+            onClick={() => {
+              if (mapInstance.current) mapInstance.current.setView([l.lat, l.lng], 17, { animate: true });
+            }}
+            className="p-5 rounded-2xl border-2 border-transparent bg-white shadow-sm hover:border-red-100 transition-all cursor-pointer"
+          >
+            <div className="flex justify-between items-center text-balance">
+              <h3 className="font-bold text-slate-800">
+                <span className="text-red-500 mr-2">{l.id}.</span>
+                {l.name}
+              </h3>
             </div>
-          );
-        })}
+            
+            <p className="text-xs font-bold text-slate-400 mt-1 flex items-center gap-1">
+              <MapPin size={12}/> {l.address}
+            </p>
+
+            {/* La description s'affiche désormais directement sans condition */}
+            {l.description && (
+              <div className="mt-3 pt-3 border-t border-slate-100 text-sm text-slate-600 italic leading-relaxed">
+                {l.description}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
