@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, MapPin } from "lucide-react";
+// Ajout de ChevronDown ici
+import { ArrowLeft, MapPin, ChevronDown } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 interface Lieu {
@@ -133,29 +134,45 @@ export default function VisiteToulouseTotalPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {lieux.map((l) => (
-          <div
-            key={l.id}
-            id={`item-${l.id}`}
-            onClick={() => {
-              setOpenDetailsId(l.id === openDetailsId ? null : l.id);
-              if (mapInstance.current) mapInstance.current.setView([l.lat, l.lng], 17, { animate: true });
-            }}
-            className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-              openDetailsId === l.id ? "bg-white border-red-400 shadow-lg scale-[1.01]" : "bg-white border-transparent shadow-sm hover:border-red-100"
-            }`}
-          >
-            <div className="flex justify-between items-start">
-              <h3 className="font-bold text-slate-800"><span className="text-red-500 mr-2">{l.id}.</span>{l.name}</h3>
-            </div>
-            <p className="text-xs font-bold text-slate-400 mt-1 flex items-center gap-1"><MapPin size={12}/> {l.address}</p>
-            {openDetailsId === l.id && (
-              <div className="mt-3 pt-3 border-t border-slate-100 text-sm text-slate-600 italic leading-relaxed animate-in fade-in slide-in-from-top-1">
-                {l.description}
+        {lieux.map((l) => {
+          const isOpen = openDetailsId === l.id;
+          return (
+            <div
+              key={l.id}
+              id={`item-${l.id}`}
+              onClick={() => {
+                setOpenDetailsId(isOpen ? null : l.id);
+                if (mapInstance.current) mapInstance.current.setView([l.lat, l.lng], 17, { animate: true });
+              }}
+              className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                isOpen ? "bg-white border-red-400 shadow-lg scale-[1.01]" : "bg-white border-transparent shadow-sm hover:border-red-100"
+              }`}
+            >
+              {/* flex-nowrap et items-center pour aligner proprement le titre et le chevron */}
+              <div className="flex justify-between items-center gap-4">
+                <h3 className="font-bold text-slate-800">
+                  <span className="text-red-500 mr-2">{l.id}.</span>
+                  {l.name}
+                </h3>
+                {/* Ajout du chevron avec rotation animée si ouvert */}
+                <ChevronDown 
+                  size={18} 
+                  className={`text-slate-400 transition-transform duration-300 shrink-0 ${
+                    isOpen ? "rotate-180 text-red-500" : ""
+                  }`} 
+                />
               </div>
-            )}
-          </div>
-        ))}
+              <p className="text-xs font-bold text-slate-400 mt-1 flex items-center gap-1">
+                <MapPin size={12}/> {l.address}
+              </p>
+              {isOpen && (
+                <div className="mt-3 pt-3 border-t border-slate-100 text-sm text-slate-600 italic leading-relaxed animate-in fade-in slide-in-from-top-1">
+                  {l.description}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
