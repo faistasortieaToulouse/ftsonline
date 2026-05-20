@@ -1,84 +1,60 @@
 import { NextResponse } from 'next/server';
 
-// URL stable alternative de secours directement reliée au flux open data rafraîchi
-const URL_VIGILANCE = "https://files.data.gouv.fr/meteofrance/data/Vigilance/vignette_j.json";
+// URL stable, publique et sans Token fournie par la plateforme OpenData (OpenDataSoft)
+const URL_OPEN_DATA = "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/weatherref-france-vigilance-meteo-departement/records?where=code_departement%20in%20(%2211%22%2C%2231%22)&limit=2";
 
-const COULEURS: Record<number, { label: string; couleur: string }> = {
-  1: { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
-  2: { label: "Jaune - Soyez attentif", couleur: "bg-yellow-400 text-black" },
-  3: { label: "Orange - Soyez très vigilant", couleur: "bg-orange-500 text-white animate-pulse" },
-  4: { label: "Rouge - Vigilance absolue", couleur: "bg-red-600 text-white font-bold animate-bounce" },
-};
-
-const PHENOMENES: Record<number, string> = {
-  1: "Vent violent",
-  2: "Pluie-Inondation",
-  3: "Orages",
-  4: "Crues",
-  5: "Grand froid",
-  6: "Canicule",
-  7: "Neige-Verglas",
-  8: "Vagues-Submersion",
-  9: "Avalanches",
+// Correspondance des couleurs de vigilance
+const COULEURS: Record<string, { label: string; couleur: string }> = {
+  "Vert": { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
+  "Jaune": { label: "Jaune - Soyez attentif", couleur: "bg-yellow-400 text-black" },
+  "Orange": { label: "Orange - Soyez très vigilant", couleur: "bg-orange-500 text-white animate-pulse" },
+  "Rouge": { label: "Rouge - Vigilance absolue", couleur: "bg-red-600 text-white font-bold animate-bounce" },
 };
 
 export async function GET() {
   try {
-    // Ajout d'un User-Agent pour éviter que data.gouv.fr ne bloque la fonction Vercel (Erreur 403/500)
-    const response = await fetch(URL_VIGILANCE, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json'
-      },
-      next: { revalidate: 900 } // Réduit à 15 minutes d'antémémoire
+    // Requête simple sans aucun Header d'autorisation ou de Token !
+    const response = await fetch(URL_OPEN_DATA, {
+      next: { revalidate: 900 } // Cache de 15 minutes sur Vercel
     });
 
     if (!response.ok) {
-      console.error(`Erreur HTTP Météo-France: ${response.status}`);
-      return NextResponse.json({ error: `Le serveur distant a répondu avec un statut ${response.status}` }, { status: 502 });
+      return NextResponse.json({ error: `Erreur serveur open data (${response.status})` }, { status: 502 });
     }
 
-    const data = await response.json();
+    const json = await response.json();
+    const records = json.results || [];
 
-    // Vérification de sécurité pour s'assurer que la structure attendue existe bien
-    if (!data || !data.depts) {
-      console.error("Structure JSON invalide reçue de Météo-France", data);
-      return NextResponse.json({ error: "Données météo malformées" }, { status: 502 });
-    }
-
-    const raw31 = data.depts["31"] || { max_color: 1, phenoms: [] };
-    const raw11 = data.depts["11"] || { max_color: 1, phenoms: [] };
+    // Recherche des lignes pour le 31 et le 11
+    const data31 = records.find((r: any) => r.code_departement === "31");
+    const data11 = records.find((r: any) => r.code_departement === "11");
 
     const resultats = {
-      misAJour: data.update_time || new Date().toISOString(),
+      misAJour: data31?.date || new Date().toISOString(),
       stations: [
         {
           nom: "Toulouse (Haute-Garonne)",
           codeDep: "31",
-          couleurMax: COULEURS[raw31.max_color] || { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
-          risques: (raw31.phenoms || []).map((p: any) => ({
-            nom: PHENOMENES[p.phenom] || "Autre risque",
-            couleur: COULEURS[p.color] || { label: "Vert", couleur: "bg-green-500" }
-          }))
+          // Récupération de la couleur du jour (ex: "Vert", "Jaune", "Orange")
+          couleurMax: COULEURS[data31?.couleur_couleur || "Vert"] || { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
+          // Liste des risques actifs extraits du texte de l'API
+          risques: data31?.risque_valeur && data31.risque_valeur !== "Pas de vigilance particulière" 
+            ? [{ nom: data31.risque_valeur, couleur: COULEURS[data31.couleur_couleur] }] 
+            : []
         },
         {
           nom: "Lézignan-Corbières (Aude)",
           codeDep: "11",
-          couleurMax: COULEURS[raw11.max_color] || { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
-          risques: (raw11.phenoms || []).map((p: any) => ({
-            nom: PHENOMENES[p.phenom] || "Autre risque",
-            couleur: COULEURS[p.color] || { label: "Vert", couleur: "bg-green-500" }
-          }))
+          couleurMax: COULEURS[data11?.couleur_couleur || "Vert"] || { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
+          risques: data11?.risque_valeur && data11.risque_valeur !== "Pas de vigilance particulière" 
+            ? [{ nom: data11.risque_valeur, couleur: COULEURS[data11.couleur_couleur] }] 
+            : []
         }
       ]
     };
 
     return NextResponse.json(resultats);
   } catch (error: any) {
-    console.error("Erreur crash API Vigilance:", error);
-    return NextResponse.json(
-      { error: "Erreur interne lors du traitement du bulletin", details: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erreur lors du traitement", details: error.message }, { status: 500 });
   }
 }
