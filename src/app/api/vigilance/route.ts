@@ -1,60 +1,81 @@
 import { NextResponse } from 'next/server';
 
-// URL stable, publique et sans Token fournie par la plateforme OpenData (OpenDataSoft)
-const URL_OPEN_DATA = "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/weatherref-france-vigilance-meteo-departement/records?where=code_departement%20in%20(%2211%22%2C%2231%22)&limit=2";
+// La bonne URL OpenDataSoft avec les vrais paramètres de filtrage : domain_id in ("31", "11") et échéance J (aujourd'hui)
+const URL_OPEN_DATA = "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/weatherref-france-vigilance-meteo-departement/records?where=domain_id%20in%20(%2211%22%2C%2231%22)%20AND%20echeance%3D%22J%22&limit=50";
 
-// Correspondance des couleurs de vigilance
+// Dictionnaire de traduction et de style pour correspondre au Frontend
 const COULEURS: Record<string, { label: string; couleur: string }> = {
-  "Vert": { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
-  "Jaune": { label: "Jaune - Soyez attentif", couleur: "bg-yellow-400 text-black" },
-  "Orange": { label: "Orange - Soyez très vigilant", couleur: "bg-orange-500 text-white animate-pulse" },
-  "Rouge": { label: "Rouge - Vigilance absolue", couleur: "bg-red-600 text-white font-bold animate-bounce" },
+  "vert": { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
+  "jaune": { label: "Jaune - Soyez attentif", couleur: "bg-yellow-400 text-black" },
+  "orange": { label: "Orange - Soyez très vigilant", couleur: "bg-orange-500 text-white animate-pulse" },
+  "rouge": { label: "Rouge - Vigilance absolue", couleur: "bg-red-600 text-white font-bold animate-bounce" },
 };
 
 export async function GET() {
   try {
-    // Requête simple sans aucun Header d'autorisation ou de Token !
     const response = await fetch(URL_OPEN_DATA, {
       next: { revalidate: 900 } // Cache de 15 minutes sur Vercel
     });
 
     if (!response.ok) {
-      return NextResponse.json({ error: `Erreur serveur open data (${response.status})` }, { status: 502 });
+      console.error(`Erreur HTTP OpenDataSoft: ${response.status}`);
+      return NextResponse.json({ error: "Le serveur de données public ne répond pas." }, { status: 502 });
     }
 
     const json = await response.json();
     const records = json.results || [];
 
-    // Recherche des lignes pour le 31 et le 11
-    const data31 = records.find((r: any) => r.code_departement === "31");
-    const data11 = records.find((r: any) => r.code_departement === "11");
+    // Séparation des lignes reçues par département
+    const lignes31 = records.filter((r: any) => r.domain_id === "31");
+    const lignes11 = records.filter((r: any) => r.domain_id === "11");
 
+    // Détermination de la couleur maximale (Météo-France met le niveau max du département en priorité)
+    const obtenirCouleurMax = (lignes: any[]) => {
+      if (lignes.some(r => r.color === "rouge")) return "rouge";
+      if (lignes.some(r => r.color === "orange")) return "orange";
+      if (lignes.some(r => r.color === "jaune")) return "jaune";
+      return "vert";
+    };
+
+    const couleurMax31 = obtenirCouleurMax(lignes31);
+    const couleurMax11 = obtenirCouleurMax(lignes11);
+
+    // Extraction des risques actifs (on ne garde pas le vert qui signifie qu'il n'y a rien)
+    const extraireRisquesActifs = (lignes: any[]) => {
+      return lignes
+        .filter((r: any) => r.color !== "vert" && r.phenomenon)
+        .map((r: any) => ({
+          nom: r.phenomenon.charAt(0).toUpperCase() + r.phenomenon.slice(1), // Capitalize
+          couleur: COULEURS[r.color] || { label: "Inconnu", couleur: "bg-gray-500" }
+        }));
+    };
+
+    // Formatage final attendu par votre page.tsx
     const resultats = {
-      misAJour: data31?.date || new Date().toISOString(),
+      misAJour: records[0]?.product_datetime || new Date().toISOString(),
       stations: [
         {
           nom: "Toulouse (Haute-Garonne)",
           codeDep: "31",
-          // Récupération de la couleur du jour (ex: "Vert", "Jaune", "Orange")
-          couleurMax: COULEURS[data31?.couleur_couleur || "Vert"] || { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
-          // Liste des risques actifs extraits du texte de l'API
-          risques: data31?.risque_valeur && data31.risque_valeur !== "Pas de vigilance particulière" 
-            ? [{ nom: data31.risque_valeur, couleur: COULEURS[data31.couleur_couleur] }] 
-            : []
+          couleurMax: COULEURS[couleurMax31],
+          risques: extraireRisquesActifs(lignes31)
         },
         {
           nom: "Lézignan-Corbières (Aude)",
           codeDep: "11",
-          couleurMax: COULEURS[data11?.couleur_couleur || "Vert"] || { label: "Vert - RAS", couleur: "bg-green-500 text-white" },
-          risques: data11?.risque_valeur && data11.risque_valeur !== "Pas de vigilance particulière" 
-            ? [{ nom: data11.risque_valeur, couleur: COULEURS[data11.couleur_couleur] }] 
-            : []
+          couleurMax: COULEURS[couleurMax11],
+          risques: extraireRisquesActifs(lignes11)
         }
       ]
     };
 
     return NextResponse.json(resultats);
+
   } catch (error: any) {
-    return NextResponse.json({ error: "Erreur lors du traitement", details: error.message }, { status: 500 });
+    console.error("Erreur dans la route API Vigilance:", error);
+    return NextResponse.json(
+      { error: "Erreur lors du traitement des données", details: error.message },
+      { status: 500 }
+    );
   }
 }
