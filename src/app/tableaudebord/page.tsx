@@ -12,7 +12,8 @@ import {
   ExternalLink,
   MessageCircle,
   CloudSun,
-  Umbrella // Nouvelle icône pour la section météo
+  Umbrella,
+  Monitor // Nouvelle icône pour la section Autres applications
 } from 'lucide-react';
 
 export default function TableauDeBord() {
@@ -37,7 +38,8 @@ export default function TableauDeBord() {
         { name: "Météo Lézignan en 2025", path: "/meteolezignan2025", icon: <CloudSun size={14} className="text-orange-400"/> },
         { name: "Météo Lézignan en 2026", path: "/meteolezignan2026", icon: <CloudSun size={14} className="text-orange-400"/> },
         { name: "Prévisions Météo Lézignan", path: "/meteolezignannew", icon: <CloudSun size={14} className="text-orange-400"/> },
-        // Emplacement prêt pour tes nouveaux liens météo ici
+        { name: "Vigilance Toulouse et Lézignan", path: "/vigilance", icon: <CloudSun size={14} className="text-orange-400"/> },
+        { name: "Historique Vigilance Toulouse et Lézignan", path: "/vigilances", icon: <CloudSun size={14} className="text-orange-400"/> },
       ]
     },
     {
@@ -58,6 +60,18 @@ export default function TableauDeBord() {
         { name: "Meetup Toulouse Dev", path: "https://dev.ftstoulouse.online", isExternal: true },
         { name: "Accès Statistiques", path: "/analyse", icon: <BarChart2 size={14}/> },
       ]
+    },
+    {
+      title: "Autres applications",
+      icon: <Monitor className="w-5 h-5 text-emerald-600" />,
+      links: [
+        { 
+          name: "Alejandra CV", 
+          path: "https://alejandra-cv.vercel.app/", 
+          desc: "Hébergé sur Vercel", 
+          isExternal: true 
+        }
+      ]
     }
   ];
 
@@ -69,7 +83,7 @@ export default function TableauDeBord() {
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-      <div className="max-w-7xl mx-auto"> {/* Augmentation légère de la largeur max pour accommoder 4 colonnes */}
+      <div className="max-w-[1600px] mx-auto"> {/* Ajustement de la largeur pour soutenir 5 colonnes */}
         
         {/* Header */}
         <header className="flex items-center gap-3 mb-10">
@@ -77,8 +91,8 @@ export default function TableauDeBord() {
           <h1 className="text-3xl font-extrabold text-slate-800">Tableau de Bord</h1>
         </header>
 
-        {/* Grille des sections - S'adapte automatiquement sur 2 ou 4 colonnes */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
+        {/* Grille des sections - S'adapte de 1 à 5 colonnes selon la taille de l'écran */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
           {sections.map((section, idx) => (
             <div key={idx} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
               <div className="bg-slate-50 px-5 py-3 border-b border-slate-200 flex items-center gap-2">
