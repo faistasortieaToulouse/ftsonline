@@ -1166,15 +1166,45 @@ useEffect(() => {
 
     {/* Ligne 1 : Date, Heure, Saint, Dicton et Météo */}
     <div className="py-4 px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-      <div className="flex flex-col items-center text-center min-w-[200px]">
-        <span className="font-bold capitalize text-purple-800">
-          {heure.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-        </span>
-        <span className="font-medium text-3xl text-purple-900">
-          {heure.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-        </span>
+
+{/* BLOC GAUCHE : Date, Heure et Vigilance Lézignan */}
+      <div className="flex flex-col items-center text-center min-w-[200px] gap-2">
+        <div className="flex flex-col">
+          <span className="font-bold capitalize text-purple-800">
+            {heure.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+          </span>
+          <span className="font-medium text-3xl text-purple-900">
+            {heure.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+          </span>
+        </div>
+
+        {/* BADGE DE VIGILANCE DYNAMIQUE */}
+        {data && data.length > 0 && (() => {
+          // On récupère le dernier élément (la journée d'hier récupérée par l'API archive)
+          const aujourdhuiData = data[data.length - 1];
+          const alerte = aujourdhuiData?.alerte || "Vert";
+          const risque = aujourdhuiData?.risque || "";
+
+          // Configuration graphique des alertes
+          const configAlertes: Record<string, { color: string; text: string; icon: string }> = {
+            "Vert": { color: "bg-green-500 text-white", text: "Vigilance Verte : RAS", icon: "✅" },
+            "Jaune": { color: "bg-yellow-400 text-yellow-950", text: `Vigilance Jaune : ${risque}`, icon: "⚠️" },
+            "Orange": { color: "bg-orange-500 text-white", text: `Alerte Orange : ${risque}`, icon: "🌀" },
+            "Rouge": { color: "bg-red-600 text-white", text: `Alerte Rouge : ${risque}`, icon: "🚨" }
+          };
+
+          const s = configAlertes[alerte] || configAlertes["Vert"];
+
+          return (
+            <div className={`mt-1 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-sm border border-black/5 ${s.color}`}>
+              <span>{s.icon}</span>
+              <span>{s.text}</span>
+            </div>
+          );
+        })()}
       </div>
 
+	  {/* BLOC CENTRAL : Saint et Dicton */}
       <div className="flex-1 text-center border-purple-200 md:border-x px-4 flex flex-col justify-center gap-2">
         <div className="font-medium">
           Saint du jour : <span className="font-bold text-purple-900">{getSaintDuJour(heure)}</span>
