@@ -1,9 +1,13 @@
-name: Fetch Events
+name: Fetch Events and Weather
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 * * * *" # Tourne toutes les heures
   workflow_dispatch:
+
+# Autorise l'action à faire des commits et pousser les changements sur ton dépôt
+permissions:
+  contents: write
 
 jobs:
   fetch-events:
@@ -13,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: false
+          persist-credentials: true # Activé pour permettre le push avec les permissions ci-dessus
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -26,13 +30,18 @@ jobs:
       - name: Run fetch events script
         run: node scripts/fetch-events.js
 
-      - name: Commit updated events.json
+      - name: Run fetch vigilance script
+        run: node scripts/fetch-vigilance.js
+
+      - name: Commit updated events and weather history
         run: |
           git config --local user.email "github-actions@github.com"
           git config --local user.name "GitHub Actions"
 
+          # Ajout des deux fichiers/dossiers de données
           git add public/data/events.json
-          git diff --staged --quiet || git commit -m "Update events.json [skip ci]"
+          git add data/meteo/
+
+          # Commit uniquement s'il y a des changements détectés
+          git diff --staged --quiet || git commit -m "Update events.json and weather history [skip ci]"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
