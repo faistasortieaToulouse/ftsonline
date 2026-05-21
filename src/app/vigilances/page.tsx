@@ -57,9 +57,9 @@ export default function HistoriqueVigilancePage() {
       default: return 'bg-green-500 text-white';
     }
   };
-
-  // Trier les dates de l'historique du plus récent au plus ancien
-  const dates Triees = Object.keys(historique).sort((a, b) => new Date(b).getTime() - new Date(a.getTime()));
+  
+// Trier les dates de l'historique du plus récent au plus ancien
+const datesTriees = Object.keys(historique).sort((a, b) => new Date(b).getTime() - new Date(a.getTime()));
 
   return (
     <main className="min-h-screen bg-gray-50 p-6 md:p-12">
