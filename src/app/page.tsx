@@ -1210,11 +1210,16 @@ useEffect(() => {
 <div className="px-4 max-w-6xl mx-auto mb-12">
   <section className="bg-purple-100 text-purple-700 rounded-2xl shadow-md border border-purple-200 overflow-hidden flex flex-col">
 	  
-{/* --- VERSION ULTRA DISCRÈTE : SECTION VIGILANCE METEO --- */}
-<div className="pt-3 px-6 flex flex-wrap justify-center md:justify-start gap-3 w-full mx-auto">
+{/* --- VERSION ULTRA DISCRÈTE ET CENTRÉE : SECTION VIGILANCE METEO --- */}
+<div className="pt-4 px-6 flex flex-wrap justify-center items-center gap-3 w-full mx-auto text-[11px]">
   
+  {/* Label d'introduction */}
+  <span className="font-black uppercase text-purple-500 tracking-wider">
+    Point Vigilance :
+  </span>
+
   {/* Badge Toulouse */}
-  <div className={`px-2.5 py-1 rounded-full border flex items-center space-x-1.5 shadow-sm text-[11px] font-bold transition ${getVigilanceStyle(vigilanceToulouse.couleur).bg}`}>
+  <div className={`px-2.5 py-1 rounded-full border flex items-center space-x-1.5 shadow-sm font-bold transition ${getVigilanceStyle(vigilanceToulouse.couleur).bg}`}>
     <span className={`h-2 w-2 rounded-full ${getVigilanceStyle(vigilanceToulouse.couleur).dot}`} />
     <span>Toulouse (31) : <span className="capitalize font-black">{vigilanceToulouse.couleur}</span></span>
     {vigilanceToulouse.risque && vigilanceToulouse.risque !== "Pas de vigilance particulière" && (
@@ -1223,7 +1228,7 @@ useEffect(() => {
   </div>
 
   {/* Badge Lézignan-Corbières */}
-  <div className={`px-2.5 py-1 rounded-full border flex items-center space-x-1.5 shadow-sm text-[11px] font-bold transition ${getVigilanceStyle(vigilanceLezignan.couleur).bg}`}>
+  <div className={`px-2.5 py-1 rounded-full border flex items-center space-x-1.5 shadow-sm font-bold transition ${getVigilanceStyle(vigilanceLezignan.couleur).bg}`}>
     <span className={`h-2 w-2 rounded-full ${getVigilanceStyle(vigilanceLezignan.couleur).dot}`} />
     <span>Lézignan (11) : <span className="capitalize font-black">{vigilanceLezignan.couleur}</span></span>
     {vigilanceLezignan.risque && vigilanceLezignan.risque !== "Pas de vigilance particulière" && (
@@ -1232,7 +1237,7 @@ useEffect(() => {
   </div>
 
 </div>
-{/* -------------------------------------------------------- */}
+{/* -------------------------------------------------------------------- */}
 	  
     {/* Ligne 1 : Date, Heure, Saint, Dicton et Météo */}
     <div className="py-4 px-6 flex flex-col md:flex-row items-center justify-between gap-6">
