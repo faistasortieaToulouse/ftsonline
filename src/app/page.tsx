@@ -1210,35 +1210,29 @@ useEffect(() => {
 <div className="px-4 max-w-6xl mx-auto mb-12">
   <section className="bg-purple-100 text-purple-700 rounded-2xl shadow-md border border-purple-200 overflow-hidden flex flex-col">
 	  
-{/* --- AJOUT REUSSI : SECTION VIGILANCE METEO --- */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 px-6 w-full mx-auto">
-      
-      {/* Vigilance Toulouse */}
-      <div className={`p-3 rounded-xl border flex flex-col justify-between shadow-sm transition ${getVigilanceStyle(vigilanceToulouse.couleur).bg}`}>
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className={`h-2.5 w-2.5 rounded-full ${getVigilanceStyle(vigilanceToulouse.couleur).dot}`} />
-            <h4 className="font-bold text-[11px] uppercase tracking-wide">Vigilance Toulouse (31)</h4>
-          </div>
-          <p className="text-xl font-extrabold mt-0.5 capitalize">{vigilanceToulouse.couleur}</p>
-        </div>
-        <p className="text-[10px] mt-1 opacity-90 italic line-clamp-1">{vigilanceToulouse.risque}</p>
-      </div>
+{/* --- VERSION ULTRA DISCRÈTE : SECTION VIGILANCE METEO --- */}
+<div className="pt-3 px-6 flex flex-wrap justify-center md:justify-start gap-3 w-full mx-auto">
+  
+  {/* Badge Toulouse */}
+  <div className={`px-2.5 py-1 rounded-full border flex items-center space-x-1.5 shadow-sm text-[11px] font-bold transition ${getVigilanceStyle(vigilanceToulouse.couleur).bg}`}>
+    <span className={`h-2 w-2 rounded-full ${getVigilanceStyle(vigilanceToulouse.couleur).dot}`} />
+    <span>Toulouse (31) : <span className="capitalize font-black">{vigilanceToulouse.couleur}</span></span>
+    {vigilanceToulouse.risque && vigilanceToulouse.risque !== "Pas de vigilance particulière" && (
+      <span className="opacity-70 font-normal hidden lg:inline">({vigilanceToulouse.risque})</span>
+    )}
+  </div>
 
-      {/* Vigilance Lézignan-Corbières */}
-      <div className={`p-3 rounded-xl border flex flex-col justify-between shadow-sm transition ${getVigilanceStyle(vigilanceLezignan.couleur).bg}`}>
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className={`h-2.5 w-2.5 rounded-full ${getVigilanceStyle(vigilanceLezignan.couleur).dot}`} />
-            <h4 className="font-bold text-[11px] uppercase tracking-wide">Vigilance Lézignan (11)</h4>
-          </div>
-          <p className="text-xl font-extrabold mt-0.5 capitalize">{vigilanceLezignan.couleur}</p>
-        </div>
-        <p className="text-[10px] mt-1 opacity-90 italic line-clamp-1">{vigilanceLezignan.risque}</p>
-      </div>
+  {/* Badge Lézignan-Corbières */}
+  <div className={`px-2.5 py-1 rounded-full border flex items-center space-x-1.5 shadow-sm text-[11px] font-bold transition ${getVigilanceStyle(vigilanceLezignan.couleur).bg}`}>
+    <span className={`h-2 w-2 rounded-full ${getVigilanceStyle(vigilanceLezignan.couleur).dot}`} />
+    <span>Lézignan (11) : <span className="capitalize font-black">{vigilanceLezignan.couleur}</span></span>
+    {vigilanceLezignan.risque && vigilanceLezignan.risque !== "Pas de vigilance particulière" && (
+      <span className="opacity-70 font-normal hidden lg:inline">({vigilanceLezignan.risque})</span>
+    )}
+  </div>
 
-    </div>
-    {/* ---------------------------------------------- */}
+</div>
+{/* -------------------------------------------------------- */}
 	  
     {/* Ligne 1 : Date, Heure, Saint, Dicton et Météo */}
     <div className="py-4 px-6 flex flex-col md:flex-row items-center justify-between gap-6">
