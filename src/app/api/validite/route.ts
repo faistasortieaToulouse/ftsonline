@@ -12,7 +12,10 @@ export async function GET() {
     { nom: "Meetup Standard (12 mois)", categorie: "Applications", fournisseur: "Meetup", dernierPaiement: "14/06/2025", prochaineEcheance: "2026-06-14", prix: "$174.99 / an (HT)", mode: "Automatique" },
 
     // --- TÉLÉPHONIE & CARTES PRÉPAYÉES ---
-    { nom: "Carte Prépayée / Ligne Mobile", categorie: "Téléphonie", fournisseur: "À définir", dernierPaiement: "N/A", prochaineEcheance: "2026-07-01", prix: "A compléter", mode: "Manuel" },
+    { nom: "Ligne SFR - 06-...-41", categorie: "Téléphonie", fournisseur: "SFR", dernierPaiement: "05/2026", prochaineEcheance: "2026-11-01", prix: "À recharger (6 mois)", mode: "Manuel" },
+    { nom: "Ligne SYMA - 07-...-22", categorie: "Téléphonie", fournisseur: "SYMA", dernierPaiement: "06/10/2025", prochaineEcheance: "2026-10-06", prix: "À recharger (1 an)", mode: "Manuel" },
+    { nom: "Ligne SYMA 2 - 07-...-16", categorie: "Téléphonie", fournisseur: "SYMA", dernierPaiement: "06/10/2025", prochaineEcheance: "2026-10-06", prix: "À recharger (1 an)", mode: "Manuel" },
+    { nom: "Ligne SYMA 3 - 06-...5", categorie: "Téléphonie", fournisseur: "SYMA", dernierPaiement: "11/11/2025 (Réactivée)", prochaineEcheance: "2026-11-11", prix: "À recharger (1 an)", mode: "Manuel" },
 
     // --- ADMINISTRATION & IMPÔTS ---
     { nom: "Déclaration Impôts Revenus 2026", categorie: "Administration", fournisseur: "Impots.gouv", dernierPaiement: "Printemps 2025", prochaineEcheance: "2026-06-04", prix: "Gratuit", mode: "Manuel" },
