@@ -2,12 +2,22 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const dataValidite = [
-    { nom: "cafedeslanguestoulouse.com", dateExpiration: "2025-10-12", fournisseur: "Infomaniak", type: "Nom de domaine", prix: "12,00 € / an" },
-    { nom: "lei-web.click", dateExpiration: "2025-08-08", fournisseur: "IONOS", type: "Nom de domaine", prix: "45,00 € / an" },
-    { nom: "faistasortieatoulouse.online", dateExpiration: "2026-11-06", fournisseur: "Namecheap", type: "Nom de domaine", prix: "~$34.98 / an" },
-    { nom: "ftstoulouse.online", dateExpiration: "2027-02-05", fournisseur: "Namecheap", type: "Nom de domaine", prix: "~$34.98 / an" },
-    { nom: "Meetup Standard (12 mois)", dateExpiration: "2026-06-14", fournisseur: "Meetup", type: "Abonnement Plateforme", prix: "$174.99 / an (HT)" },
-    { nom: "Déclaration Impôts Revenus 2026", dateExpiration: "2026-06-04", fournisseur: "Impots.gouv", type: "Obligation Légale", prix: "Gratuit" }
+    // --- NOMS DE DOMAINE ---
+    { nom: "cafedeslanguestoulouse.com", categorie: "Domaines", fournisseur: "Infomaniak", dernierPaiement: "12/10/2024", prochaineEcheance: "2025-10-12", prix: "12,00 € / an", mode: "Automatique" },
+    { nom: "lei-web.click", categorie: "Domaines", fournisseur: "IONOS", dernierPaiement: "08/08/2024", prochaineEcheance: "2025-08-08", prix: "45,00 € / an", mode: "Automatique" },
+    { nom: "faistasortieatoulouse.online", categorie: "Domaines", fournisseur: "Namecheap", dernierPaiement: "05/11/2025", prochaineEcheance: "2026-11-06", prix: "~$34.98 / an", mode: "Automatique" },
+    { nom: "ftstoulouse.online", categorie: "Domaines", fournisseur: "Namecheap", dernierPaiement: "05/02/2026", prochaineEcheance: "2027-02-05", prix: "~$34.98 / an", mode: "Automatique" },
+
+    // --- ABONNEMENTS APPLICATIONS ---
+    { nom: "Meetup Standard (12 mois)", categorie: "Applications", fournisseur: "Meetup", dernierPaiement: "14/06/2025", prochaineEcheance: "2026-06-14", prix: "$174.99 / an (HT)", mode: "Automatique" },
+
+    // --- TÉLÉPHONIE & CARTES PRÉPAYÉES ---
+    { nom: "Carte Prépayée / Ligne Mobile", categorie: "Téléphonie", fournisseur: "À définir", dernierPaiement: "N/A", prochaineEcheance: "2026-07-01", prix: "A compléter", mode: "Manuel" },
+
+    // --- ADMINISTRATION & IMPÔTS ---
+    { nom: "Déclaration Impôts Revenus 2026", categorie: "Administration", fournisseur: "Impots.gouv", dernierPaiement: "Printemps 2025", prochaineEcheance: "2026-06-04", prix: "Gratuit", mode: "Manuel" },
+    { nom: "Taxe Foncière - 26 av. de la Colonne", categorie: "Administration", fournisseur: "Impots.gouv", dernierPaiement: "Automne 2025", prochaineEcheance: "2026-10-20", prix: "Selon avis", mode: "Automatique" },
+    { nom: "Taxe Foncière - L'Horte", categorie: "Administration", fournisseur: "Impots.gouv", dernierPaiement: "Automne 2025", prochaineEcheance: "2026-10-15", prix: "Selon avis", mode: "Manuel" }
   ];
 
   return NextResponse.json(dataValidite);
