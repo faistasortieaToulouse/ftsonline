@@ -59,9 +59,9 @@ export default function TableauDeBord() {
         { name: "Discord", path: "/discord", icon: <MessageCircle size={14} className="text-indigo-500"/> },
         { name: "WhatsApp Discord", path: "https://whatsapdiscord.ftstoulouse.online", isExternal: true },
         { name: "Meetup Toulouse Dev", path: "https://dev.ftstoulouse.online", isExternal: true },
-        { name: "Suivi des Validités", path: "/validite", icon: <ShieldCheck size={14} className="text-emerald-500"/>, desc: "Abonnements & Domaines" },
         { name: "Accès Statistiques", path: "/analyse", icon: <BarChart2 size={14}/> },
-      ]
+        {name: "Suivi des Validités", path: "/validite", icon: <ShieldCheck size={14} className="text-emerald-500"/>, desc: "Abonnements & Domaines" },
+             ]
     },
     {
       title: "Autres applications",
