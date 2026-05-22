@@ -810,6 +810,7 @@ export default function HomePage() {
 // --- AJOUT : États pour la vigilance Toulouse et Lézignan-Corbières ---
 const [vigilanceToulouse, setVigilanceToulouse] = useState({ couleur: "Vert", risque: "Pas de vigilance particulière" });
 const [vigilanceLezignan, setVigilanceLezignan] = useState({ couleur: "Vert", risque: "Pas de vigilance particulière" });	
+const [vigilanceLuchon, setVigilanceLuchon] = useState({  couleur: "Vert",  risque: "Pas de vigilance particulière"});
   
   const [statsAnnee, setStatsAnnee] = useState({
     valeur: "--",
@@ -881,10 +882,21 @@ useEffect(() => {
     } catch (e) {
       console.error("Erreur vigilance Lézignan", e);
     }
+
+    try {
+      // Chargement vigilance Bagnères-de-Luchon (31)
+      const resLuchon = await fetch('/api/vigilance/luchon');
+      if (resLuchon.ok) {
+        const data = await resLuchon.json();
+        setVigilanceLuchon({ couleur: data.couleur, risque: data.risque });
+      }
+    } catch (e) {
+      console.error("Erreur vigilance Luchon", e);
+    }
   };
 
   fetchVigilance();
-}, []);	
+}, []);
     
   // --- LOGIQUE SAISONNIÈRE ---
   const now = new Date();
@@ -1235,7 +1247,20 @@ useEffect(() => {
       <span className="opacity-70 font-normal hidden lg:inline">({vigilanceLezignan.risque})</span>
     )}
   </div>
+	
+{/* Badge Bagnères-de-Luchon */}
+<div className={`px-2.5 py-1 rounded-full border flex items-center space-x-1.5 shadow-sm font-bold transition ${getVigilanceStyle(vigilanceLuchon.couleur).bg}`}>
+  <span className={`h-2 w-2 rounded-full ${getVigilanceStyle(vigilanceLuchon.couleur).dot}`} />
+  <span>Luchon (31) : <span className="capitalize font-black">{vigilanceLuchon.couleur}</span></span>
 
+  {vigilanceLuchon.risque &&
+    vigilanceLuchon.risque !== "Pas de vigilance particulière" && (
+      <span className="opacity-70 font-normal hidden lg:inline">
+        ({vigilanceLuchon.risque})
+      </span>
+  )}
+</div>
+	
 </div>
 {/* -------------------------------------------------------------------- */}
 	  
