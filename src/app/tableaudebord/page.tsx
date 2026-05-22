@@ -13,7 +13,8 @@ import {
   MessageCircle,
   CloudSun,
   Umbrella,
-  Monitor // Nouvelle icône pour la section Autres applications
+  Monitor,
+  ShieldCheck // Nouvelle icône pour la validité
 } from 'lucide-react';
 
 export default function TableauDeBord() {
@@ -58,33 +59,34 @@ export default function TableauDeBord() {
         { name: "Discord", path: "/discord", icon: <MessageCircle size={14} className="text-indigo-500"/> },
         { name: "WhatsApp Discord", path: "https://whatsapdiscord.ftstoulouse.online", isExternal: true },
         { name: "Meetup Toulouse Dev", path: "https://dev.ftstoulouse.online", isExternal: true },
+        { name: "Suivi des Validités", path: "/validite", icon: <ShieldCheck size={14} className="text-emerald-500"/>, desc: "Abonnements & Domaines" },
         { name: "Accès Statistiques", path: "/analyse", icon: <BarChart2 size={14}/> },
       ]
     },
-{
-  title: "Autres applications",
-  icon: <Monitor className="w-5 h-5 text-emerald-600" />,
-  links: [
-    { 
-      name: "Alejandra CV", 
-      path: "https://alejandra-cv.vercel.app/", 
-      desc: "Hébergé sur Vercel", 
-      isExternal: true 
-    },
     {
-      name: "Tableau de Bord Alejandra",
-      path: "https://www.notion.so/366733959c1380ce8820c041889fa06d?v=366733959c1380a382b4000cc538fcde&source=copy_link",
-      desc: "Base Notion - tableau de suivi",
-      isExternal: true
-    },
-    {
-      name: "Articles Alejandra",
-      path: "https://www.notion.so/368733959c138009b3c9c8a942df0e16?v=366733959c1380a382b4000cc538fcde&source=copy_link",
-      desc: "Base Notion - gestion des articles",
-      isExternal: true
+      title: "Autres applications",
+      icon: <Monitor className="w-5 h-5 text-emerald-600" />,
+      links: [
+        { 
+          name: "Alejandra CV", 
+          path: "https://alejandra-cv.vercel.app/", 
+          desc: "Hébergé sur Vercel", 
+          isExternal: true 
+        },
+        {
+          name: "Tableau de Bord Alejandra",
+          path: "https://www.notion.so/366733959c1380ce8820c041889fa06d?v=366733959c1380a382b4000cc538fcde&source=copy_link",
+          desc: "Base Notion - tableau de suivi",
+          isExternal: true
+        },
+        {
+          name: "Articles Alejandra",
+          path: "https://www.notion.so/368733959c138009b3c9c8a942df0e16?v=366733959c1380a382b4000cc538fcde&source=copy_link",
+          desc: "Base Notion - gestion des articles",
+          isExternal: true
+        }
+      ]
     }
-  ]
-}
   ];
 
   const testPages = [
@@ -95,7 +97,7 @@ export default function TableauDeBord() {
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
-      <div className="max-w-[1600px] mx-auto"> {/* Ajustement de la largeur pour soutenir 5 colonnes */}
+      <div className="max-w-[1600px] mx-auto">
         
         {/* Header */}
         <header className="flex items-center gap-3 mb-10">
@@ -103,7 +105,7 @@ export default function TableauDeBord() {
           <h1 className="text-3xl font-extrabold text-slate-800">Tableau de Bord</h1>
         </header>
 
-        {/* Grille des sections - S'adapte de 1 à 5 colonnes selon la taille de l'écran */}
+        {/* Grille des sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
           {sections.map((section, idx) => (
             <div key={idx} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
@@ -119,17 +121,19 @@ export default function TableauDeBord() {
                       target={link.isExternal ? "_blank" : "_self"}
                       className="flex items-center justify-between p-3 rounded-lg hover:bg-indigo-50 transition-all group"
                     >
-                      <div>
-                        <span className="text-sm font-medium text-slate-600 group-hover:text-indigo-600 flex items-center gap-2">
+                      <div className="min-w-0 flex-1">
+                        <span className="text-sm font-medium text-slate-600 group-hover:text-indigo-600 flex items-center gap-2 break-words">
                           {link.icon} {link.name}
                         </span>
-                        {link.desc && <p className="text-xs text-slate-400 mt-0.5">{link.desc}</p>}
+                        {link.desc && <p className="text-xs text-slate-400 mt-0.5 break-words">{link.desc}</p>}
                       </div>
-                      {link.isExternal ? (
-                        <ExternalLink size={14} className="text-slate-300 group-hover:text-indigo-400" />
-                      ) : (
-                        <span className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                      )}
+                      <div className="flex-shrink-0 ml-2">
+                        {link.isExternal ? (
+                          <ExternalLink size={14} className="text-slate-300 group-hover:text-indigo-400" />
+                        ) : (
+                          <span className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        )}
+                      </div>
                     </Link>
                   </li>
                 ))}
