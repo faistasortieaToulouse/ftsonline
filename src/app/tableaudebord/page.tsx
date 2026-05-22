@@ -61,18 +61,30 @@ export default function TableauDeBord() {
         { name: "Accès Statistiques", path: "/analyse", icon: <BarChart2 size={14}/> },
       ]
     },
+{
+  title: "Autres applications",
+  icon: <Monitor className="w-5 h-5 text-emerald-600" />,
+  links: [
+    { 
+      name: "Alejandra CV", 
+      path: "https://alejandra-cv.vercel.app/", 
+      desc: "Hébergé sur Vercel", 
+      isExternal: true 
+    },
     {
-      title: "Autres applications",
-      icon: <Monitor className="w-5 h-5 text-emerald-600" />,
-      links: [
-        { 
-          name: "Alejandra CV", 
-          path: "https://alejandra-cv.vercel.app/", 
-          desc: "Hébergé sur Vercel", 
-          isExternal: true 
-        }
-      ]
+      name: "Tableau de Bord Alejandra",
+      path: "https://www.notion.so/366733959c1380ce8820c041889fa06d?v=366733959c1380a382b4000cc538fcde&source=copy_link",
+      desc: "Base Notion - tableau de suivi",
+      isExternal: true
+    },
+    {
+      name: "Articles Alejandra",
+      path: "https://www.notion.so/368733959c138009b3c9c8a942df0e16?v=366733959c1380a382b4000cc538fcde&source=copy_link",
+      desc: "Base Notion - gestion des articles",
+      isExternal: true
     }
+  ]
+}
   ];
 
   const testPages = [
