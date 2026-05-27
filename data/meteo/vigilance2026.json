@@ -63,12 +63,16 @@
   },
   "2026-05-27": {
     "toulouse": {
-      "couleur": "vert",
-      "risques": []
+      "couleur": "jaune",
+      "risques": [
+        "Canicule"
+      ]
     },
     "lezignan": {
-      "couleur": "vert",
-      "risques": []
+      "couleur": "jaune",
+      "risques": [
+        "Canicule"
+      ]
     }
   }
 }
