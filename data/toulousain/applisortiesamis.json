@@ -1,6 +1,6 @@
 {
   "name": "Applications Sorties et Amis",
-  "updated": "2026-05-12",
+  "updated": "2026-05-27",
   "applications": [
     {"Portée / Pays": "Allemagne / International", "Ville": "Francfort", "Application": "Meet5", "Particularité": "Origine allemande, cartonne en Alsace et dans l'Est avec ses tablées de 6 à 12 au restaurant.", "Web": "https://www.meet5.fr/"},
     {"Portée / Pays": "Europe", "Ville": "Suède", "Application": "W Social", "Particularité": "Réseau social européen lancé en 2026, orienté discussions publiques avec comptes vérifiés et objectif de réduire la désinformation.", "Web": "https://wsocial.eu/"},
@@ -12,6 +12,7 @@
     {"Portée / Pays": "France / International", "Ville": "Paris", "Application": "Shotgun", "Particularité": "Indispensable pour la scène électro/techno parisienne (billetterie et agenda des soirées).", "Web": "https://shotgun.live/fr"},
     {"Portée / Pays": "France / International", "Ville": "Paris", "Application": "The Sorority", "Particularité": "Application de sécurité pour femmes, utilisée pour organiser des sorties 'safe' partout en France.", "Web": "https://www.jointhesorority.com/"},
     {"Portée / Pays": "France / International", "Ville": "Toulouse", "Application": "Fever", "Particularité": "Plateforme de découverte d'événements exclusifs, concerts et expériences immersives.", "Web": "https://feverup.com/en/toulouse"},
+    {"Portée / Pays": "France", "Ville": "Antibes", "Application": "AdiPartage", "Particularité": "Plateforme locale de mise en relation et de partage de services présente sur la Côte d’Azur.", "Web": "https://adipartage.com/"},
     {"Portée / Pays": "France", "Ville": "Argenteuil", "Application": "Ensembl'", "Particularité": "Application de voisinage utilisée pour les échanges de services et les apéros entre voisins.", "Web": "https://play.google.com/store/apps/details?id=sbs.ensembl.app&hl=fr"},
     {"Portée / Pays": "France", "Ville": "Béziers", "Application": "SpotTogether", "Particularité": "Application mobile pour organiser des activités sportives et rencontrer du monde via le sport (running, fitness, etc.).", "Web": "https://spottogether.fr/"},
     {"Portée / Pays": "France", "Ville": "Bordeaux / Toulouse", "Application": "Atélatoi", "Particularité": "Association spécialisée dans la création de liens authentiques et la lutte contre l'isolement via des jeux de questions et des ateliers participatifs.", "Web": "https://atelatoi.fr/"},
@@ -98,6 +99,13 @@
     {"Portée / Pays": "International", "Ville": "San Francisco", "Application": "Clubhouse", "Particularité": "Réseau social audio basé sur des salons de discussion thématiques pour échanger en direct.", "Web": "https://play.google.com/store/apps/details?id=com.clubhouse.app&hl=fr"},
     {"Portée / Pays": "International", "Ville": "San Francisco", "Application": "Hey! VINA", "Particularité": "Le 'Tinder pour les amies' : application exclusivement féminine pour se créer un cercle de copines.", "Web": "https://hey-vina.fr.aptoide.com/app"},
     {"Portée / Pays": "International", "Ville": "San Francisco", "Application": "Houseparty", "Particularité": "Application de chat vidéo groupé pour garder le lien et faire des soirées virtuelles avec ses amis.", "Web": "https://houseparty.fr.softonic.com/android"},
-    {"Portée / Pays": "Pologne / International", "Ville": "Pologne / International", "Application": "Friend", "Particularité": "Application mobile polonaise pour trouver des amis à proximité et organiser des rencontres.", "Web": "https://play.google.com/store/apps/details?id=com.friendaplikacja.app&hl=fr"}
+    {"Portée / Pays": "Pologne / International", "Ville": "Pologne / International", "Application": "Friend", "Particularité": "Application mobile polonaise pour trouver des amis à proximité et organiser des rencontres.", "Web": "https://play.google.com/store/apps/details?id=com.friendaplikacja.app&hl=fr"},
+    {"Portée / Pays": "France", "Ville": "Paris", "Application": "Yumo", "Particularité": "Application française de repas faits maison entre voisins avec livraison ou retrait local.", "Web": "https://yumo.fr/"}
+    {"Portée / Pays": "France", "Ville": "Paris", "Application": "Home Eat", "Particularité": "Marketplace de plats cuisinés maison préparés par des particuliers proches de chez soi.", "Web": "https://www.homeat.fr/"}
+    {"Portée / Pays": "France", "Ville": "Guadeloupe", "Application": "Casa Eats", "Particularité": "Plateforme de vente et commande de portions de repas faits maison entre particuliers.", "Web": "https://casa-eats.com/"}
+    {"Portée / Pays": "France", "Ville": "Duppigheim", "Application": "FoodXSwap", "Particularité": "Application communautaire de partage culinaire et découverte de cuisines du monde entre voisins.", "Web": "https://foodxswap.com/"}
+    {"Portée / Pays": "France", "Ville": "Montauban", "Application": "Toc Toc Toque", "Particularité": "Concept français de repas partagés et rencontres sociales autour de la cuisine.", "Web": "https://www.toctoctoque.com/"}
+    {"Portée / Pays": "France", "Ville": "Paris", "Application": "EatMeet", "Particularité": "Organisation de repas chez des particuliers avec rencontres et système communautaire.", "Web": "https://apps.apple.com/fr/app/eatmeet/id1485129369"}
+    {"Portée / Pays": "France", "Ville": "Antibes", "Application": "AdiPartage", "Particularité": "Plateforme locale de partage de repas et services communautaires sur la Côte d’Azur.", "Web": "https://adipartage.com/"}
   ]
 }
