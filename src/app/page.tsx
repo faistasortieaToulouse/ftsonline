@@ -91,7 +91,7 @@ const nbMondeHistoire = 8;
 const nbMondeNiveauVie = 16;
 const nbMondeVilles = 19;
 const nbReligion = 3;
-const nbTerritoire = 9;
+const nbTerritoire = 10;
 const totalArticles = 
   nbAgenda + nbActualites + nbMeetup + nbToulouseEvents + 
   nbSpectacles + nbCulture + nbLibrairie + nbCinema + 
@@ -752,12 +752,13 @@ const categories = [
 	{ title: "Zone Exclusive de la France", href: "/zeefrance" },
 	{ title: "Enclaves et Exclaves", href: "/enclave" },
 	{ title: "Villes en France", href: "/population" },
+    { title: "Hôtels de ville", href: "/hoteldeville" },
 	{ title: "PIB des villes en France", href: "/villespib" },
 	{ title: "Anciens départements", href: "/anciensdepartements" },
 	{ title: "Colonies en Europe", href: "/colonieeurope" },
 	{ title: "Colonies dans le Monde", href: "/coloniefrance" }
   ]},
-//  const nbTerritoire = 9;
+//  const nbTerritoire = 10;
 
 
   /* ---------------- FTS ---------------- */
