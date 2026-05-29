@@ -1,43 +1,3395 @@
 [
-  {"nom": "Hôtel de ville de Montpellier", "ville": "Montpellier", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Montpellier", "coordonnees": {"latitude": 43.599444, "longitude": 3.896667}},
-  {"nom": "Palais Rohan (Hôtel de ville de Bordeaux)", "ville": "Bordeaux", "url": "https://fr.wikipedia.org/wiki/Palais_Rohan_(Bordeaux)", "coordonnees": {"latitude": 44.8378, "longitude": -0.5797}},
-  {"nom": "Hôtel de ville de Lille", "ville": "Lille", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lille", "coordonnees": {"latitude": 50.630833, "longitude": 3.070556}},
-  {"nom": "Hôtel de Hanau (Hôtel de ville de Strasbourg)", "ville": "Strasbourg", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_Hanau", "coordonnees": {"latitude": 48.5847, "longitude": 7.7511}},
-  {"nom": "Hôtel de ville de Nice", "ville": "Nice", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nice", "coordonnees": {"latitude": 43.696111, "longitude": 7.273611}},
-  {"nom": "Hôtel de ville de Nantes", "ville": "Nantes", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nantes", "coordonnees": {"latitude": 47.218333, "longitude": -1.554167}},
-  {"nom": "Hôtel de ville de Marseille", "ville": "Marseille", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Marseille", "coordonnees": {"latitude": 43.296628, "longitude": 5.369878}},
-  {"nom": "Hôtel de ville de Paris", "ville": "Paris", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Paris", "coordonnees": {"latitude": 48.856389, "longitude": 2.352222}},
-  {"nom": "Liste des statues des façades de l'hôtel de ville de Paris", "ville": "Paris", "url": "https://fr.wikipedia.org/wiki/Liste_des_statues_des_fa%C3%A7ades_de_l%27h%C3%B4tel_de_ville_de_Paris", "coordonnees": {"latitude": 48.856389, "longitude": 2.352222}},
-  {"nom": "Hôtel de ville de Lyon", "ville": "Lyon", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lyon", "coordonnees": {"latitude": 45.7675, "longitude": 4.835556}},
-  {"nom": "Capitole de Toulouse", "ville": "Toulouse", "url": "https://fr.wikipedia.org/wiki/Capitole_de_Toulouse", "coordonnees": {"latitude": 43.604444, "longitude": 1.444167}},
-  {"nom": "Hôtel de ville de Toulon", "ville": "Toulon", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Toulon", "coordonnees": {"latitude": 43.1213, "longitude": 5.9288}},
-  {"nom": "Hôtel de ville de Reims", "ville": "Reims", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Reims", "coordonnees": {"latitude": 49.258333, "longitude": 4.033889}},
-  {"nom": "Hôtel de ville de Dijon", "ville": "Dijon", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Dijon", "coordonnees": {"latitude": 47.321667, "longitude": 5.041667}},
-  {"nom": "Hôtel de ville de Villeurbanne", "ville": "Villeurbanne", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Villeurbanne", "coordonnees": {"latitude": 45.766111, "longitude": 4.880556}},
-  {"nom": "Hôtel de ville du Havre", "ville": "Le Havre", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Havre", "coordonnees": {"latitude": 49.492778, "longitude": 0.107778}},
-  {"nom": "Hôtel de ville de Saint-Étienne", "ville": "Saint-Étienne", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-%C3%89tienne", "coordonnees": {"latitude": 45.439722, "longitude": 4.387222}},
-  {"nom": "Hôtel de ville de Perpignan", "ville": "Perpignan", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Perpignan", "coordonnees": {"latitude": 42.699167, "longitude": 2.894444}},
-  {"nom": "Mairie d'Angers", "ville": "Angers", "url": "https://fr.wikipedia.org/wiki/Mairie_d%27Angers", "coordonnees": {"latitude": 47.469167, "longitude": -0.548333}},
-  {"nom": "Hôtel de Ville, Saint-Antonin-Noble-Val (EN)", "ville": "Saint-Antonin-Noble-Val", "url": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_Ville,_Saint-Antonin-Noble-Val", "coordonnees": {"latitude": 44.152222, "longitude": 1.755833}},
-  {"nom": "Ancien hôtel de ville de Saint-Antonin-Noble-Val", "ville": "Saint-Antonin-Noble-Val", "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Saint-Antonin-Noble-Val", "coordonnees": {"latitude": 44.152222, "longitude": 1.755833}},
-  {"nom": "Hôtel de ville de Grenoble", "ville": "Grenoble", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Grenoble", "coordonnees": {"latitude": 45.186111, "longitude": 5.736111}},
-  {"nom": "Hôtel de ville de Saint-Denis (Seine-Saint-Denis)", "ville": "Saint-Denis", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Denis_(Seine-Saint-Denis)", "coordonnees": {"latitude": 48.935556, "longitude": 2.3575}},
-  {"nom": "Hôtel de ville de Saint-Denis (La Réunion)", "ville": "Saint-Denis", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Denis_(La_R%C3%A9union)", "coordonnees": {"latitude": -20.878611, "longitude": 55.447778}},
-  {"nom": "Hôtel de ville de Chaumont", "ville": "Chaumont", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Chaumont", "coordonnees": {"latitude": 48.111667, "longitude": 5.141667}},
-  {"nom": "Hôtel de ville de Manosque", "ville": "Manosque", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Manosque", "coordonnees": {"latitude": 43.8344, "longitude": 5.7831}},
-  {"nom": "Hôtel de ville de Gap", "ville": "Gap", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Gap", "coordonnees": {"latitude": 44.5594, "longitude": 6.0786}},
-  {"nom": "Hôtel de ville de Fréjus", "ville": "Fréjus", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Fr%C3%A9jus", "coordonnees": {"latitude": 43.4332, "longitude": 6.7366}},
-  {"nom": "Château d'Éguilles (Hôtel de ville d'Éguilles)", "ville": "Éguilles", "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_d%27%C3%89guilles", "coordonnees": {"latitude": 43.5433, "longitude": 5.3544}},
-  {"nom": "Hôtel de ville de Cannes", "ville": "Cannes", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cannes", "coordonnees": {"latitude": 43.551389, "longitude": 7.0125}},
-  {"nom": "Hôtel de ville d'Arles", "ville": "Arles", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Arles", "coordonnees": {"latitude": 43.676667, "longitude": 4.6275}},
-  {"nom": "Hôtel de ville d'Aix-en-Provence", "ville": "Aix-en-Provence", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Aix-en-Provence", "coordonnees": {"latitude": 43.530278, "longitude": 5.4475}},
-  {"nom": "Château de Lavans-lès-Dole (Hôtel de ville)", "ville": "Lavans-lès-Dole", "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Lavans-l%C3%A8s-Dole", "coordonnees": {"latitude": 47.156944, "longitude": 5.623889}},
-  {"nom": "Hôtel de ville de Morez", "ville": "Morez", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Morez", "coordonnees": {"latitude": 46.520278, "longitude": 6.0225}},
-  {"nom": "Hôtel de ville de Nevers", "ville": "Nevers", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nevers", "coordonnees": {"latitude": 46.992222, "longitude": 3.161111}},
-  {"nom": "Hôtel de ville d'Agen", "ville": "Agen", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Agen", "coordonnees": {"latitude": 44.204167, "longitude": 0.617778}},
-  {"nom": "Hôtel de ville de Bayonne - Théâtre Michel-Portal", "ville": "Bayonne", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bayonne_-_Th%C3%A9%C3%A2tre_Michel-Portal", "coordonnees": {"latitude": 43.493056, "longitude": -1.474444}},
-  {"nom": "Château du Bilaà (Hôtel de ville de Lescar)", "ville": "Lescar", "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_du_Bila%C3%A0", "coordonnees": {"latitude": 43.3325, "longitude": -0.428333}},
-  {"nom": "Hôtel de ville de Périgueux", "ville": "Périgueux", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_P%C3%A9rigueux", "coordonnees": {"latitude": 45.184444, "longitude": 0.7225}},
-  {"nom": "Hôtel de ville de Royan", "ville": "Royan", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Royan", "coordonnees": {"latitude": 45.626389, "longitude": -1.036667}},
-  {"nom": "Hôtel de ville de Saintes", "ville": "Saintes", "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saintes", "coordonnees": {"latitude": 45.744444, "longitude": -0.633056}}
+  {
+    "nom": "Hôtel de ville d'Albi",
+    "ville": "Albi",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Albi",
+    "coordonnees": {
+      "latitude": 43.927222,
+      "longitude": 2.146389
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Alès",
+    "ville": "Alès",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Al%C3%A8s",
+    "coordonnees": {
+      "latitude": 44.125,
+      "longitude": 4.077222
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Aramon",
+    "ville": "Aramon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Aramon",
+    "coordonnees": {
+      "latitude": 43.89,
+      "longitude": 4.680556
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Auch",
+    "ville": "Auch",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Auch",
+    "coordonnees": {
+      "latitude": 43.646944,
+      "longitude": 0.583056
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Autoire",
+    "ville": "Autoire",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Autoire",
+    "coordonnees": {
+      "latitude": 44.854444,
+      "longitude": 1.821111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bagnols-sur-Cèze",
+    "ville": "Bagnols-sur-Cèze",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bagnols-sur-C%C3%A8ze",
+    "coordonnees": {
+      "latitude": 44.161944,
+      "longitude": 4.620278
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Beaucaire",
+    "ville": "Beaucaire",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Beaucaire",
+    "coordonnees": {
+      "latitude": 43.807222,
+      "longitude": 4.644167
+    }
+  },
+  {
+    "nom": "Halle-mairie de Boulogne-sur-Gesse",
+    "ville": "Boulogne-sur-Gesse",
+    "url": "https://fr.wikipedia.org/wiki/Halle-mairie_de_Boulogne-sur-Gesse",
+    "coordonnees": {
+      "latitude": 43.29,
+      "longitude": 0.644444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Cahors",
+    "ville": "Cahors",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cahors",
+    "coordonnees": {
+      "latitude": 44.446944,
+      "longitude": 1.441944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Castelnaudary",
+    "ville": "Castelnaudary",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Castelnaudary",
+    "coordonnees": {
+      "latitude": 43.316944,
+      "longitude": 1.953611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Chalabre",
+    "ville": "Chalabre",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Chalabre",
+    "coordonnees": {
+      "latitude": 42.984167,
+      "longitude": 2.006111
+    }
+  },
+  {
+    "nom": "Mairie d'Estaing",
+    "ville": "Estaing",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_d%27Estaing",
+    "coordonnees": {
+      "latitude": 44.554167,
+      "longitude": 2.671389
+    }
+  },
+  {
+    "nom": "Halle-hôtel de ville de Fleurance",
+    "ville": "Fleurance",
+    "url": "https://fr.wikipedia.org/wiki/Halle-h%C3%B4tel_de_ville_de_Fleurance",
+    "coordonnees": {
+      "latitude": 43.849722,
+      "longitude": 0.663333
+    }
+  },
+  {
+    "nom": "Hôtel de la Raymondie",
+    "ville": "Martel",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_la_Raymondie",
+    "coordonnees": {
+      "latitude": 44.936667,
+      "longitude": 1.608333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Lectoure",
+    "ville": "Lectoure",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lectoure",
+    "coordonnees": {
+      "latitude": 43.934167,
+      "longitude": 0.624722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Limoux",
+    "ville": "Limoux",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Limoux",
+    "coordonnees": {
+      "latitude": 43.053611,
+      "longitude": 2.2175
+    }
+  },
+  {
+    "nom": "Palais épiscopal de Lodève",
+    "ville": "Lodève",
+    "url": "https://fr.wikipedia.org/wiki/Palais_%C3%A9piscopal_de_Lod%C3%A8ve",
+    "coordonnees": {
+      "latitude": 43.731667,
+      "longitude": 3.318889
+    }
+  },
+  {
+    "nom": "Halle-mairie de Longages",
+    "ville": "Longages",
+    "url": "https://fr.wikipedia.org/wiki/Halle-mairie_de_Longages",
+    "coordonnees": {
+      "latitude": 43.355,
+      "longitude": 1.240556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Millau",
+    "ville": "Millau",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Millau",
+    "coordonnees": {
+      "latitude": 44.098056,
+      "longitude": 3.078889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Montpellier",
+    "ville": "Montpellier",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Montpellier",
+    "coordonnees": {
+      "latitude": 43.599444,
+      "longitude": 3.896667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Nant",
+    "ville": "Nant",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nant",
+    "coordonnees": {
+      "latitude": 44.021944,
+      "longitude": 3.301389
+    }
+  },
+  {
+    "nom": "Palais des archevêques de Narbonne",
+    "ville": "Narbonne",
+    "url": "https://fr.wikipedia.org/wiki/Palais_des_archev%C3%AAques_de_Narbonne",
+    "coordonnees": {
+      "latitude": 43.183889,
+      "longitude": 3.003333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Nîmes",
+    "ville": "Nîmes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_N%C3%AEmes",
+    "coordonnees": {
+      "latitude": 43.836111,
+      "longitude": 4.360278
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Perpignan",
+    "ville": "Perpignan",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Perpignan",
+    "coordonnees": {
+      "latitude": 42.699167,
+      "longitude": 2.894444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Roquemaure",
+    "ville": "Roquemaure",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Roquemaure",
+    "coordonnees": {
+      "latitude": 44.051389,
+      "longitude": 4.778333
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de Saint-Antonin-Noble-Val",
+    "ville": "Saint-Antonin-Noble-Val",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Saint-Antonin-Noble-Val",
+    "coordonnees": {
+      "latitude": 44.152222,
+      "longitude": 1.755833
+    }
+  },
+  {
+    "nom": "Halle-hôtel de ville de Saint-Clar",
+    "ville": "Saint-Clar",
+    "url": "https://fr.wikipedia.org/wiki/Halle-h%C3%B4tel_de_ville_de_Saint-Clar",
+    "coordonnees": {
+      "latitude": 43.892222,
+      "longitude": 0.771111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Côme-d'Olt",
+    "ville": "Saint-Côme-d'Olt",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-C%C3%B4me-d%27Olt",
+    "coordonnees": {
+      "latitude": 44.515278,
+      "longitude": 2.814722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Sernin-sur-Rance",
+    "ville": "Saint-Sernin-sur-Rance",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Sernin-sur-Rance",
+    "coordonnees": {
+      "latitude": 43.884167,
+      "longitude": 2.603333
+    }
+  },
+  {
+    "nom": "Capitole de Toulouse",
+    "ville": "Toulouse",
+    "url": "https://fr.wikipedia.org/wiki/Capitole_de_Toulouse",
+    "coordonnees": {
+      "latitude": 43.604444,
+      "longitude": 1.444167
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Uzès",
+    "ville": "Uzès",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Uz%C3%A8s",
+    "coordonnees": {
+      "latitude": 44.0125,
+      "longitude": 4.419444
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Albert",
+    "ville": "Albert",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Albert",
+    "coordonnees": {
+      "latitude": 50.003056,
+      "longitude": 2.651389
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Arras",
+    "ville": "Arras",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Arras",
+    "coordonnees": {
+      "latitude": 50.291111,
+      "longitude": 2.776667
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Avesnes-sur-Helpe",
+    "ville": "Avesnes-sur-Helpe",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Avesnes-sur-Helpe",
+    "coordonnees": {
+      "latitude": 50.123889,
+      "longitude": 3.930833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Beauvais",
+    "ville": "Beauvais",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Beauvais",
+    "coordonnees": {
+      "latitude": 49.430278,
+      "longitude": 2.083056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Béthune",
+    "ville": "Béthune",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_B%C3%A9thune",
+    "coordonnees": {
+      "latitude": 50.531389,
+      "longitude": 2.639167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bohain-en-Vermandois",
+    "ville": "Bohain-en-Vermandois",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bohain-en-Vermandois",
+    "coordonnees": {
+      "latitude": 49.984722,
+      "longitude": 3.454722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bruay-la-Buissière",
+    "ville": "Bruay-la-Buissière",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bruay-la-Buissi%C3%A8re",
+    "coordonnees": {
+      "latitude": 50.485,
+      "longitude": 2.548611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Calais",
+    "ville": "Calais",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Calais",
+    "coordonnees": {
+      "latitude": 50.956944,
+      "longitude": 1.858611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Carvin",
+    "ville": "Carvin",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Carvin",
+    "coordonnees": {
+      "latitude": 50.493056,
+      "longitude": 2.958333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Cassel",
+    "ville": "Cassel",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cassel",
+    "coordonnees": {
+      "latitude": 50.800278,
+      "longitude": 2.486111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Château-Thierry",
+    "ville": "Château-Thierry",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Ch%C3%A2teau-Thierry",
+    "coordonnees": {
+      "latitude": 49.043611,
+      "longitude": 3.402778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Clermont (Oise)",
+    "ville": "Clermont",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Clermont_(Oise)",
+    "coordonnees": {
+      "latitude": 49.379167,
+      "longitude": 2.416667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Comines",
+    "ville": "Comines",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Comines",
+    "coordonnees": {
+      "latitude": 50.765833,
+      "longitude": 3.0075
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Compiègne",
+    "ville": "Compiègne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Compi%C3%A8gne",
+    "coordonnees": {
+      "latitude": 49.418056,
+      "longitude": 2.822778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Crécy-sur-Serre",
+    "ville": "Crécy-sur-Serre",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cr%C3%A9cy-sur-Serre",
+    "coordonnees": {
+      "latitude": 49.696111,
+      "longitude": 3.623611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Doullens",
+    "ville": "Doullens",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Doullens",
+    "coordonnees": {
+      "latitude": 50.156667,
+      "longitude": 2.341111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Dunkerque",
+    "ville": "Dunkerque",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Dunkerque",
+    "coordonnees": {
+      "latitude": 51.0375,
+      "longitude": 2.376944
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de Laon",
+    "ville": "Laon",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Laon",
+    "coordonnees": {
+      "latitude": 49.563889,
+      "longitude": 3.621944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Lille",
+    "ville": "Lille",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lille",
+    "coordonnees": {
+      "latitude": 50.630833,
+      "longitude": 3.070556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Montdidier",
+    "ville": "Montdidier",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Montdidier",
+    "coordonnees": {
+      "latitude": 49.647778,
+      "longitude": 2.570278
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Noyon",
+    "ville": "Noyon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Noyon",
+    "coordonnees": {
+      "latitude": 49.580556,
+      "longitude": 2.999444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Roubaix",
+    "ville": "Roubaix",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Roubaix",
+    "coordonnees": {
+      "latitude": 50.691389,
+      "longitude": 3.174167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Quentin",
+    "ville": "Saint-Quentin",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Quentin",
+    "coordonnees": {
+      "latitude": 49.8475,
+      "longitude": 3.2875
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Soissons",
+    "ville": "Soissons",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Soissons",
+    "coordonnees": {
+      "latitude": 49.381389,
+      "longitude": 3.325556
+    }
+  },
+  {
+    "nom": "Hôtel de ville du Touquet-Paris-Plage",
+    "ville": "Le Touquet-Paris-Plage",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Touquet-Paris-Plage",
+    "coordonnees": {
+      "latitude": 50.520833,
+      "longitude": 1.589444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Tourcoing",
+    "ville": "Tourcoing",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Tourcoing",
+    "coordonnees": {
+      "latitude": 50.720833,
+      "longitude": 3.16
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Valenciennes",
+    "ville": "Valenciennes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Valenciennes",
+    "coordonnees": {
+      "latitude": 50.3575,
+      "longitude": 3.523056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Villers-Cotterêts",
+    "ville": "Villers-Cotterêts",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Villers-Cotter%C3%AAts",
+    "coordonnees": {
+      "latitude": 49.253056,
+      "longitude": 3.090556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Boulogne-Billancourt",
+    "ville": "Boulogne-Billancourt",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Boulogne-Billancourt",
+    "coordonnees": {
+      "latitude": 48.835833,
+      "longitude": 2.241111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Cachan",
+    "ville": "Cachan",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cachan",
+    "coordonnees": {
+      "latitude": 48.791389,
+      "longitude": 2.330833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Clamart",
+    "ville": "Clamart",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Clamart",
+    "coordonnees": {
+      "latitude": 48.799722,
+      "longitude": 2.261667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Clichy-sous-Bois",
+    "ville": "Clichy-sous-Bois",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Clichy-sous-Bois",
+    "coordonnees": {
+      "latitude": 48.910278,
+      "longitude": 2.5475
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Courbevoie",
+    "ville": "Courbevoie",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Courbevoie",
+    "coordonnees": {
+      "latitude": 48.897222,
+      "longitude": 2.249722
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Épinay-sur-Seine",
+    "ville": "Épinay-sur-Seine",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27%C3%89pinay-sur-Seine",
+    "coordonnees": {
+      "latitude": 48.955278,
+      "longitude": 2.310556
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Étampes",
+    "ville": "Étampes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27%C3%89tampes",
+    "coordonnees": {
+      "latitude": 48.433889,
+      "longitude": 2.161111
+    }
+  },
+  {
+    "nom": "Château de Gournay-sur-Marne",
+    "ville": "Gournay-sur-Marne",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Gournay-sur-Marne",
+    "coordonnees": {
+      "latitude": 48.864167,
+      "longitude": 2.571944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de La Roche-Guyon",
+    "ville": "La Roche-Guyon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_La_Roche-Guyon",
+    "coordonnees": {
+      "latitude": 49.081389,
+      "longitude": 1.63
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Montreuil",
+    "ville": "Montreuil",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Montreuil",
+    "coordonnees": {
+      "latitude": 48.863333,
+      "longitude": 2.441944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Moret-sur-Loing",
+    "ville": "Moret-Loing-et-Orvanne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Moret-sur-Loing",
+    "coordonnees": {
+      "latitude": 48.3725,
+      "longitude": 2.740278
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Nemours",
+    "ville": "Nemours",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nemours",
+    "coordonnees": {
+      "latitude": 48.266111,
+      "longitude": 2.695833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Pantin",
+    "ville": "Pantin",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Pantin",
+    "coordonnees": {
+      "latitude": 48.895556,
+      "longitude": 2.401944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Paris",
+    "coordonnees": {
+      "latitude": 48.856389,
+      "longitude": 2.352222
+    }
+  },
+  {
+    "nom": "Mairie du 15e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_15e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.841389,
+      "longitude": 2.299722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Poissy",
+    "ville": "Poissy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Poissy",
+    "coordonnees": {
+      "latitude": 48.928889,
+      "longitude": 2.039722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Stains",
+    "ville": "Stains",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Stains",
+    "coordonnees": {
+      "latitude": 48.956389,
+      "longitude": 2.383333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vincennes",
+    "ville": "Vincennes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vincennes",
+    "coordonnees": {
+      "latitude": 48.847222,
+      "longitude": 2.439167
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Aire-sur-l'Adour",
+    "ville": "Aire-sur-l'Adour",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Aire-sur-l%27Adour",
+    "coordonnees": {
+      "latitude": 43.701111,
+      "longitude": -0.2625
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Angoulême",
+    "ville": "Angoulême",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Angoul%C3%Aame",
+    "coordonnees": {
+      "latitude": 45.648333,
+      "longitude": 0.156111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bazas",
+    "ville": "Bazas",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bazas",
+    "coordonnees": {
+      "latitude": 44.431944,
+      "longitude": -0.211111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Beauvais-sur-Matha",
+    "ville": "Beauvais-sur-Matha",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Beauvais-sur-Matha",
+    "coordonnees": {
+      "latitude": 45.882222,
+      "longitude": -0.187222
+    }
+  },
+  {
+    "nom": "Palais Rohan",
+    "ville": "Bordeaux",
+    "url": "https://fr.wikipedia.org/wiki/Palais_Rohan_(Bordeaux)",
+    "coordonnees": {
+      "latitude": 44.8378,
+      "longitude": -0.5797
+    }
+  },
+  {
+    "nom": "Hôtel des Cadets",
+    "ville": "La Réole",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_des_Cadets",
+    "coordonnees": {
+      "latitude": 44.582222,
+      "longitude": -0.040556
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Île-d'Aix",
+    "ville": "Île-d'Aix",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27%C3%8Ele-d%27Aix",
+    "coordonnees": {
+      "latitude": 46.0125,
+      "longitude": -1.173889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de La Rochelle",
+    "ville": "La Rochelle",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_La_Rochelle",
+    "coordonnees": {
+      "latitude": 46.160278,
+      "longitude": -1.151111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Libourne",
+    "ville": "Libourne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Libourne",
+    "coordonnees": {
+      "latitude": 44.914722,
+      "longitude": -0.244444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Limoges",
+    "ville": "Limoges",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Limoges",
+    "coordonnees": {
+      "latitude": 45.826667,
+      "longitude": 1.261667
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de Niort",
+    "ville": "Niort",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Niort",
+    "coordonnees": {
+      "latitude": 46.323889,
+      "longitude": -0.463333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Pau - Théâtre Saint-Louis",
+    "ville": "Pau",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Pau_-_Th%C3%A9%C3%A2tre_Saint-Louis",
+    "coordonnees": {
+      "latitude": 43.294167,
+      "longitude": -0.369444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Poitiers",
+    "ville": "Poitiers",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Poitiers",
+    "coordonnees": {
+      "latitude": 46.580278,
+      "longitude": 0.340833
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de La Réole",
+    "ville": "La Réole",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_La_R%C3%A9ole",
+    "coordonnees": {
+      "latitude": 44.583056,
+      "longitude": -0.041667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Sarlat-la-Canéda",
+    "ville": "Sarlat-la-Canéda",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Sarlat-la-Can%C3%A9da",
+    "coordonnees": {
+      "latitude": 44.889167,
+      "longitude": 1.216667
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Aigueperse",
+    "ville": "Aigueperse",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Aigueperse",
+    "coordonnees": {
+      "latitude": 46.024444,
+      "longitude": 3.2025
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Aix-les-Bains",
+    "ville": "Aix-les-Bains",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Aix-les-Bains",
+    "coordonnees": {
+      "latitude": 45.688889,
+      "longitude": 5.914722
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Annecy",
+    "ville": "Annecy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Annecy",
+    "coordonnees": {
+      "latitude": 45.898333,
+      "longitude": 6.128611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bellegarde-sur-Valserine",
+    "ville": "Valserhône",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bellegarde-sur-Valserine",
+    "coordonnees": {
+      "latitude": 46.108611,
+      "longitude": 5.825833
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de Belley",
+    "ville": "Belley",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Belley",
+    "coordonnees": {
+      "latitude": 45.759167,
+      "longitude": 5.689444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bourg-en-Bresse",
+    "ville": "Bourg-en-Bresse",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bourg-en-Bresse",
+    "coordonnees": {
+      "latitude": 46.205278,
+      "longitude": 5.226389
+    }
+  },
+  {
+    "nom": "Maison des Frères des Écoles chrétiennes",
+    "ville": "Caluire-et-Cuire",
+    "url": "https://fr.wikipedia.org/wiki/Maison_des_Fr%C3%A8res_des_%C3%89coles_chr%C3%A9tiennes",
+    "coordonnees": {
+      "latitude": 45.795278,
+      "longitude": 4.846667
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Évian-les-Bains",
+    "ville": "Évian-les-Bains",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27%C3%89vian-les-Bains",
+    "coordonnees": {
+      "latitude": 46.401111,
+      "longitude": 6.591389
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Grenoble",
+    "ville": "Grenoble",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Grenoble",
+    "coordonnees": {
+      "latitude": 45.186111,
+      "longitude": 5.736111
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Oullins",
+    "ville": "Oullins-Pierre-Bénite",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Oullins",
+    "coordonnees": {
+      "latitude": 45.715278,
+      "longitude": 4.808056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de La Côte-Saint-André",
+    "ville": "La Côte-Saint-André",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_La_C%C3%B4te-Saint-Andr%C3%A9",
+    "coordonnees": {
+      "latitude": 45.394167,
+      "longitude": 5.261389
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Laroquebrou",
+    "ville": "Laroquebrou",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Laroquebrou",
+    "coordonnees": {
+      "latitude": 44.968611,
+      "longitude": 2.249444
+    }
+  },
+  {
+    "nom": "Chapelle de l'Hôtel de Ville de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Chapelle_de_l%27H0tel_de_Ville_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.7675,
+      "longitude": 4.835556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.7675,
+      "longitude": 4.835556
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de Meximieux",
+    "ville": "Meximieux",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Meximieux",
+    "coordonnees": {
+      "latitude": 45.903889,
+      "longitude": 5.195278
+    }
+  },
+  {
+    "nom": "Petit séminaire de Meximieux",
+    "ville": "Meximieux",
+    "url": "https://fr.wikipedia.org/wiki/Petit_s%C3%A9minaire_de_Meximieux",
+    "coordonnees": {
+      "latitude": 45.903889,
+      "longitude": 5.195278
+    }
+  },
+  {
+    "nom": "Hôtel de ville du Puy-en-Velay",
+    "ville": "Le Puy-en-Velay",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Puy-en-Velay",
+    "coordonnees": {
+      "latitude": 45.043056,
+      "longitude": 3.883333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Riom",
+    "ville": "Riom",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Riom",
+    "coordonnees": {
+      "latitude": 45.893889,
+      "longitude": 3.115833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Rive-de-Gier",
+    "ville": "Rive-de-Gier",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Rive-de-Gier",
+    "coordonnees": {
+      "latitude": 45.529444,
+      "longitude": 4.618611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Étienne",
+    "ville": "Saint-Étienne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-%C3%89tienne",
+    "coordonnees": {
+      "latitude": 45.439722,
+      "longitude": 4.387222
+    }
+  },
+  {
+    "nom": "Palais épiscopal de Saint-Flour",
+    "ville": "Saint-Flour",
+    "url": "https://fr.wikipedia.org/wiki/Palais_%C3%A9piscopal_de_Saint-Flour",
+    "coordonnees": {
+      "latitude": 45.033611,
+      "longitude": 3.094444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Thonon-les-Bains",
+    "ville": "Thonon-les-Bains",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Thonon-les-Bains",
+    "coordonnees": {
+      "latitude": 46.3725,
+      "longitude": 6.478889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Valence",
+    "ville": "Valence",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Valence",
+    "coordonnees": {
+      "latitude": 44.930833,
+      "longitude": 4.891944
+    }
+  },
+  {
+    "nom": "Château de Vesancy",
+    "ville": "Vesancy",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Vesancy",
+    "coordonnees": {
+      "latitude": 46.348611,
+      "longitude": 6.088611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vichy",
+    "ville": "Vichy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vichy",
+    "coordonnees": {
+      "latitude": 46.124722,
+      "longitude": 3.425556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vienne",
+    "ville": "Vienne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vienne",
+    "coordonnees": {
+      "latitude": 45.524444,
+      "longitude": 4.873889
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de Villeurbanne",
+    "ville": "Villeurbanne",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Villeurbanne",
+    "coordonnees": {
+      "latitude": 45.766389,
+      "longitude": 4.880556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Villeurbanne",
+    "ville": "Villeurbanne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Villeurbanne",
+    "coordonnees": {
+      "latitude": 45.766111,
+      "longitude": 4.880556
+    }
+  },
+  {
+    "nom": "Château de Lavans-lès-Dole (Hôtel de ville)",
+    "ville": "Lavans-lès-Dole",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Lavans-l%C3%A8s-Dole",
+    "coordonnees": {
+      "latitude": 47.156944,
+      "longitude": 5.623889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Morez",
+    "ville": "Morez",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Morez",
+    "coordonnees": {
+      "latitude": 46.520278,
+      "longitude": 6.0225
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Nevers",
+    "ville": "Nevers",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nevers",
+    "coordonnees": {
+      "latitude": 46.992222,
+      "longitude": 3.161111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Dijon",
+    "ville": "Dijon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Dijon",
+    "coordonnees": {
+      "latitude": 47.321667,
+      "longitude": 5.041667
+    }
+  },
+  {
+    "nom": "École-mairie d'Arc-sous-Cicon",
+    "ville": "Arc-sous-Cicon",
+    "url": "https://fr.wikipedia.org/wiki/%C3%89cole-mairie_d%27Arc-sous-Cicon",
+    "coordonnees": {
+      "latitude": 47.051111,
+      "longitude": 6.379444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Besançon",
+    "ville": "Besançon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Besan%C3%A7on",
+    "coordonnees": {
+      "latitude": 47.2378,
+      "longitude": 6.0244
+    }
+  },
+  {
+    "nom": "Mairie-école de Bouclans",
+    "ville": "Bouclans",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-%C3%A9cole_de_Bouclans",
+    "coordonnees": {
+      "latitude": 47.248056,
+      "longitude": 6.234167
+    }
+  },
+  {
+    "nom": "Mairie-lavoir de Gennes",
+    "ville": "Gennes-au-Mont",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-lavoir_de_Gennes",
+    "coordonnees": {
+      "latitude": 47.244722,
+      "longitude": 6.121389
+    }
+  },
+  {
+    "nom": "Mairie-école de Goux-les-Usiers",
+    "ville": "Goux-les-Usiers",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-%C3%A9cole_de_Goux-les-Usiers",
+    "coordonnees": {
+      "latitude": 46.973333,
+      "longitude": 6.275
+    }
+  },
+  {
+    "nom": "Mairie-lavoir de Marchaux",
+    "ville": "Marchaux-Chaudefontaine",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-lavoir_de_Marchaux",
+    "coordonnees": {
+      "latitude": 47.323333,
+      "longitude": 6.133611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Montbéliard",
+    "ville": "Montbéliard",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Montb%C3%A9liard",
+    "coordonnees": {
+      "latitude": 47.510556,
+      "longitude": 6.798333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Morteau",
+    "ville": "Morteau",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Morteau",
+    "coordonnees": {
+      "latitude": 47.056111,
+      "longitude": 6.604444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Mouthe",
+    "ville": "Mouthe",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Mouthe",
+    "coordonnees": {
+      "latitude": 46.711111,
+      "longitude": 6.193611
+    }
+  },
+  {
+    "nom": "Hôtel de ville du Russey",
+    "ville": "Le Russey",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Russey",
+    "coordonnees": {
+      "latitude": 47.163333,
+      "longitude": 6.728889
+    }
+  },
+  {
+    "nom": "Mairie d'Amance",
+    "ville": "Amance",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_d%27Amance",
+    "coordonnees": {
+      "latitude": 47.801667,
+      "longitude": 6.060278
+    }
+  },
+  {
+    "nom": "Mairie-lavoir de Beaujeu",
+    "ville": "Beaujeu-Saint-Vallier-Pierrejux-et-Quitteur",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-lavoir_de_Beaujeu",
+    "coordonnees": {
+      "latitude": 47.504167,
+      "longitude": 5.6775
+    }
+  },
+  {
+    "nom": "Mairie-lavoir de Belmont",
+    "ville": "Belmont",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-lavoir_de_Belmont",
+    "coordonnees": {
+      "latitude": 47.785278,
+      "longitude": 6.502222
+    }
+  },
+  {
+    "nom": "Mairie-lavoir de Bucey-lès-Gy",
+    "ville": "Bucey-lès-Gy",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-lavoir_de_Bucey-l%C3%A8s-Gy",
+    "coordonnees": {
+      "latitude": 47.4225,
+      "longitude": 5.842778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Champlitte",
+    "ville": "Champlitte",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Champlitte",
+    "coordonnees": {
+      "latitude": 47.616667,
+      "longitude": 5.512222
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Cult",
+    "ville": "Cult",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cult",
+    "coordonnees": {
+      "latitude": 47.3125,
+      "longitude": 5.736944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Gy",
+    "ville": "Gy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Gy",
+    "coordonnees": {
+      "latitude": 47.422778,
+      "longitude": 5.812222
+    }
+  },
+  {
+    "nom": "Mairie-lavoir de Mailleroncourt-Saint-Pancras",
+    "ville": "Mailleroncourt-Saint-Pancras",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-lavoir_de_Mailleroncourt-Saint-Pancras",
+    "coordonnees": {
+      "latitude": 47.917778,
+      "longitude": 6.131389
+    }
+  },
+  {
+    "nom": "Mairie de Noroy-le-Bourg",
+    "ville": "Noroy-le-Bourg",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Noroy-le-Bourg",
+    "coordonnees": {
+      "latitude": 47.614444,
+      "longitude": 6.305556
+    }
+  },
+  {
+    "nom": "Mairie de Scey-sur-Saône-et-Saint-Albin",
+    "ville": "Scey-sur-Saône-et-Saint-Albin",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Scey-sur-Sa%C3%B4ne-et-Saint-Albin",
+    "coordonnees": {
+      "latitude": 47.663056,
+      "longitude": 5.969167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Servance",
+    "ville": "Servance-Miellin",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Servance",
+    "coordonnees": {
+      "latitude": 47.815278,
+      "longitude": 6.683056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vesoul",
+    "ville": "Vesoul",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vesoul",
+    "coordonnees": {
+      "latitude": 47.6225,
+      "longitude": 6.155833
+    }
+  },
+  {
+    "nom": "Mairie de Flacey-en-Bresse",
+    "ville": "Flacey-en-Bresse",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Flacey-en-Bresse",
+    "coordonnees": {
+      "latitude": 46.566389,
+      "longitude": 5.391667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Marcigny",
+    "ville": "Marcigny",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Marcigny",
+    "coordonnees": {
+      "latitude": 46.275,
+      "longitude": 4.041667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Semur-en-Brionnais",
+    "ville": "Semur-en-Brionnais",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Semur-en-Brionnais",
+    "coordonnees": {
+      "latitude": 46.2625,
+      "longitude": 4.088889
+    }
+  },
+  {
+    "nom": "Mairie-lavoir et éolienne d'Arthonnay",
+    "ville": "Arthonnay",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-lavoir_et_%C3%A9olienne_d%27Arthonnay",
+    "coordonnees": {
+      "latitude": 47.933333,
+      "longitude": 4.23
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Sens",
+    "ville": "Sens",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Sens",
+    "coordonnees": {
+      "latitude": 48.197778,
+      "longitude": 3.284444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Noyers",
+    "ville": "Noyers",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Noyers",
+    "coordonnees": {
+      "latitude": 47.696667,
+      "longitude": 3.996111
+    }
+  },
+  {
+    "nom": "Mairie de Poilly-sur-Serein",
+    "ville": "Poilly-sur-Serein",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Poilly-sur-Serein",
+    "coordonnees": {
+      "latitude": 47.765833,
+      "longitude": 3.895
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Auray",
+    "ville": "Auray",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Auray",
+    "coordonnees": {
+      "latitude": 47.666944,
+      "longitude": -2.981667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Fougères",
+    "ville": "Fougères",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Foug%C3%A8res",
+    "coordonnees": {
+      "latitude": 48.351667,
+      "longitude": -1.203889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Redon",
+    "ville": "Redon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Redon",
+    "coordonnees": {
+      "latitude": 47.652778,
+      "longitude": -2.083889
+    }
+  },
+  {
+    "nom": "Prieuré de l'Île-d'Arz",
+    "ville": "Île-d'Arz",
+    "url": "https://fr.wikipedia.org/wiki/Prieur%C3%A9_de_l%27%C3%8Ele-d%27Arz",
+    "coordonnees": {
+      "latitude": 47.590278,
+      "longitude": -2.793333
+    }
+  },
+  {
+    "nom": "Maison du Canon",
+    "ville": "Rochefort-en-Terre",
+    "url": "https://fr.wikipedia.org/wiki/Maison_du_Canon",
+    "coordonnees": {
+      "latitude": 47.699722,
+      "longitude": -2.336111
+    }
+  },
+  {
+    "nom": "Manoir du Verger (Noyal-Pontivy)",
+    "ville": "Noyal-Pontivy",
+    "url": "https://fr.wikipedia.org/wiki/Manoir_du_Verger_(Noyal-Pontivy)",
+    "coordonnees": {
+      "latitude": 48.016389,
+      "longitude": -2.853056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Ploërmel",
+    "ville": "Ploërmel",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Plo%C3%ABrmel",
+    "coordonnees": {
+      "latitude": 47.931944,
+      "longitude": -2.397778
+    }
+  },
+  {
+    "nom": "Mairie de Port-Louis",
+    "ville": "Port-Louis",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Port-Louis",
+    "coordonnees": {
+      "latitude": 47.706667,
+      "longitude": -3.351944
+    }
+  },
+  {
+    "nom": "Maison des Princes de Rohan",
+    "ville": "Rochefort-en-Terre",
+    "url": "https://fr.wikipedia.org/wiki/Maison_des_Princes_de_Rohan",
+    "coordonnees": {
+      "latitude": 47.7,
+      "longitude": -2.336667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Rennes",
+    "ville": "Rennes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Rennes",
+    "coordonnees": {
+      "latitude": 48.111389,
+      "longitude": -1.680278
+    }
+  },
+  {
+    "nom": "Maison d'école de Saint-Gonlay",
+    "ville": "Saint-Gonlay",
+    "url": "https://fr.wikipedia.org/wiki/Maison_d%27%C3%A9cole_de_Saint-Gonlay",
+    "coordonnees": {
+      "latitude": 48.113056,
+      "longitude": -2.066667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vannes",
+    "ville": "Vannes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vannes",
+    "coordonnees": {
+      "latitude": 47.658056,
+      "longitude": -2.759167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Beaugency",
+    "ville": "Beaugency",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Beaugency",
+    "coordonnees": {
+      "latitude": 47.777778,
+      "longitude": 1.631944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Blois",
+    "ville": "Blois",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Blois",
+    "coordonnees": {
+      "latitude": 47.588056,
+      "longitude": 1.339167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bourges",
+    "ville": "Bourges",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bourges",
+    "coordonnees": {
+      "latitude": 47.084167,
+      "longitude": 2.395833
+    }
+  },
+  {
+    "nom": "Château de Châteauneuf-sur-Loire",
+    "ville": "Châteauneuf-sur-Loire",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Ch%C3%A2teauneuf-sur-Loire",
+    "coordonnees": {
+      "latitude": 47.863889,
+      "longitude": 2.2225
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Châteaudun",
+    "ville": "Châteaudun",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Ch%C3%A2teaudun",
+    "coordonnees": {
+      "latitude": 48.070833,
+      "longitude": 1.328333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Jargeau",
+    "ville": "Jargeau",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Jargeau",
+    "coordonnees": {
+      "latitude": 47.866944,
+      "longitude": 2.121389
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Loches",
+    "ville": "Loches",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Loches",
+    "coordonnees": {
+      "latitude": 47.128056,
+      "longitude": 0.997222
+    }
+  },
+  {
+    "nom": "Manoir de La Perraudière",
+    "ville": "Saint-Cyr-sur-Loire",
+    "url": "https://fr.wikipedia.org/wiki/Manoir_de_La_Perraudi%C3%A8re",
+    "coordonnees": {
+      "latitude": 47.404722,
+      "longitude": 0.662778
+    }
+  },
+  {
+    "nom": "Hôtel des Créneaux",
+    "ville": "Orléans",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_des_Cr%C3%A9neaux",
+    "coordonnees": {
+      "latitude": 47.902222,
+      "longitude": 1.910278
+    }
+  },
+  {
+    "nom": "Hôtel Groslot",
+    "ville": "Orléans",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Groslot",
+    "coordonnees": {
+      "latitude": 47.9025,
+      "longitude": 1.910556
+    }
+  },
+  {
+    "nom": "Palais archiépiscopal de Bourges",
+    "ville": "Bourges",
+    "url": "https://fr.wikipedia.org/wiki/Palais_archi%C3%A9piscopal_de_Bourges",
+    "coordonnees": {
+      "latitude": 47.081944,
+      "longitude": 2.399167
+    }
+  },
+  {
+    "nom": "Petit-Château (La Chapelle-Saint-Mesmin)",
+    "ville": "La Chapelle-Saint-Mesmin",
+    "url": "https://fr.wikipedia.org/wiki/Petit-Ch%C3%A2teau_(La_Chapelle-Saint-Mesmin)",
+    "coordonnees": {
+      "latitude": 47.886944,
+      "longitude": 1.838611
+    }
+  },
+  {
+    "nom": "Tour du Pilori de Lormaye",
+    "ville": "Lormaye",
+    "url": "https://fr.wikipedia.org/wiki/Tour_du_Pilori_de_Lormaye",
+    "coordonnees": {
+      "latitude": 48.6475,
+      "longitude": 1.536944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Tours",
+    "ville": "Tours",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Tours",
+    "coordonnees": {
+      "latitude": 47.390833,
+      "longitude": 0.689444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Sainte-Rose",
+    "ville": "Sainte-Rose",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Sainte-Rose",
+    "coordonnees": {
+      "latitude": 16.332778,
+      "longitude": -61.698333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Lamentin",
+    "ville": "Lamentin",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lamentin",
+    "coordonnees": {
+      "latitude": 16.271667,
+      "longitude": -61.632222
+    }
+  },
+  {
+    "nom": "Mairie de Petit-Canal",
+    "ville": "Petit-Canal",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Petit-Canal",
+    "coordonnees": {
+      "latitude": 16.378889,
+      "longitude": -61.488611
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de Pointe-à-Pitre",
+    "ville": "Pointe-à-Pitre",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Pointe-%C3%A0-Pitre",
+    "coordonnees": {
+      "latitude": 16.236111,
+      "longitude": -61.534167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Pointe-à-Pitre",
+    "ville": "Pointe-à-Pitre",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Pointe-%C3%A0-Pitre",
+    "coordonnees": {
+      "latitude": 16.241111,
+      "longitude": -61.533889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Pointe-Noire",
+    "ville": "Pointe-Noire",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Pointe-Noire",
+    "coordonnees": {
+      "latitude": 16.233333,
+      "longitude": -61.789444
+    }
+  },
+  {
+    "nom": "Ancien Hôtel de ville de Fort-de-France",
+    "ville": "Fort-de-France",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_H%C3%B4tel_de_ville_de_Fort-de-France",
+    "coordonnees": {
+      "latitude": 14.604722,
+      "longitude": -61.070556
+    }
+  },
+  {
+    "nom": "Hôtel de ville du François",
+    "ville": "Le François",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Fran%C3%A7ois",
+    "coordonnees": {
+      "latitude": 14.615278,
+      "longitude": -60.902778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Esprit",
+    "ville": "Saint-Esprit",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Esprit",
+    "coordonnees": {
+      "latitude": 14.562222,
+      "longitude": -60.936667
+    }
+  },
+  {
+    "nom": "Abbaye aux Hommes",
+    "ville": "Caen",
+    "url": "https://fr.wikipedia.org/wiki/Abbaye_aux_Hommes",
+    "coordonnees": {
+      "latitude": 49.181389,
+      "longitude": -0.372778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Caen",
+    "ville": "Caen",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Caen",
+    "coordonnees": {
+      "latitude": 49.181389,
+      "longitude": -0.372778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Caudebec-en-Caux",
+    "ville": "Rives-en-Seine",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Caudebec-en-Caux",
+    "coordonnees": {
+      "latitude": 49.525278,
+      "longitude": 0.725833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Cherbourg",
+    "ville": "Cherbourg-en-Cotentin",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cherbourg",
+    "coordonnees": {
+      "latitude": 49.639444,
+      "longitude": -1.624722
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Évreux",
+    "ville": "Évreux",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27%C3%89vreux",
+    "coordonnees": {
+      "latitude": 49.026111,
+      "longitude": 1.150556
+    }
+  },
+  {
+    "nom": "Hôtel de ville du Havre",
+    "ville": "Le Havre",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Havre",
+    "coordonnees": {
+      "latitude": 49.492778,
+      "longitude": 0.107778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Lisieux",
+    "ville": "Lisieux",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lisieux",
+    "coordonnees": {
+      "latitude": 49.145,
+      "longitude": 0.226944
+    }
+  },
+  {
+    "nom": "Hôtels de ville de Rouen",
+    "ville": "Rouen",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tels_de_ville_de_Rouen",
+    "coordonnees": {
+      "latitude": 49.442778,
+      "longitude": 1.099444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Lô",
+    "ville": "Saint-Lô",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-L%C3%B4",
+    "coordonnees": {
+      "latitude": 49.115278,
+      "longitude": -1.091111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vernon",
+    "ville": "Vernon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vernon",
+    "coordonnees": {
+      "latitude": 49.093056,
+      "longitude": 1.485556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vire",
+    "ville": "Vire Normandie",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vire",
+    "coordonnees": {
+      "latitude": 48.838611,
+      "longitude": -0.888889
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Agen",
+    "ville": "Agen",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Agen",
+    "coordonnees": {
+      "latitude": 44.203333,
+      "longitude": 0.616667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bayonne - Théâtre Michel-Portal",
+    "ville": "Bayonne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bayonne_-_Th%C3%A9%C3%A2tre_Michel-Portal",
+    "coordonnees": {
+      "latitude": 43.4925,
+      "longitude": -1.474167
+    }
+  },
+  {
+    "nom": "Château du Bilaà",
+    "ville": "Lescar",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_du_Bila%C3%A0",
+    "coordonnees": {
+      "latitude": 43.332778,
+      "longitude": -0.428333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Périgueux",
+    "ville": "Périgueux",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_P%C3%A9rigueux",
+    "coordonnees": {
+      "latitude": 45.184444,
+      "longitude": 0.7225
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Royan",
+    "ville": "Royan",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Royan",
+    "coordonnees": {
+      "latitude": 45.625833,
+      "longitude": -1.026667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saintes",
+    "ville": "Saintes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saintes",
+    "coordonnees": {
+      "latitude": 45.744444,
+      "longitude": -0.632222
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Mont-de-Marsan",
+    "ville": "Mont-de-Marsan",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Mont-de-Marsan",
+    "coordonnees": {
+      "latitude": 43.8925,
+      "longitude": -0.501944
+    }
+  },
+  {
+    "nom": "Hôtel d'Amblimont",
+    "ville": "Rochefort",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_d%27Amblimont",
+    "coordonnees": {
+      "latitude": 45.936667,
+      "longitude": -0.961389
+    }
+  },
+  {
+    "nom": "Château de Chassay",
+    "ville": "Saint-Herblain",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Chassay",
+    "coordonnees": {
+      "latitude": 47.210556,
+      "longitude": -1.650278
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Laval",
+    "ville": "Laval",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Laval",
+    "coordonnees": {
+      "latitude": 48.069167,
+      "longitude": -0.768611
+    }
+  },
+  {
+    "nom": "Palais des comtes du Maine",
+    "ville": "Le Mans",
+    "url": "https://fr.wikipedia.org/wiki/Palais_des_comtes_du_Maine",
+    "coordonnees": {
+      "latitude": 48.008333,
+      "longitude": 0.198333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Nantes",
+    "ville": "Nantes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nantes",
+    "coordonnees": {
+      "latitude": 47.218333,
+      "longitude": -1.554167
+    }
+  },
+  {
+    "nom": "Abbaye de Saint-Georges-sur-Loire",
+    "ville": "Saint-Georges-sur-Loire",
+    "url": "https://fr.wikipedia.org/wiki/Abbaye_de_Saint-Georges-sur-Loire",
+    "coordonnees": {
+      "latitude": 47.408056,
+      "longitude": -0.761667
+    }
+  },
+  {
+    "nom": "Tour des remparts de Juillé",
+    "ville": "Juillé",
+    "url": "https://fr.wikipedia.org/wiki/Tour_des_remparts_de_Juill%C3%A9",
+    "coordonnees": {
+      "latitude": 48.243611,
+      "longitude": 0.124722
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Aix-en-Provence",
+    "ville": "Aix-en-Provence",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Aix-en-Provence",
+    "coordonnees": {
+      "latitude": 43.530278,
+      "longitude": 5.447778
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Arles",
+    "ville": "Arles",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Arles",
+    "coordonnees": {
+      "latitude": 43.676667,
+      "longitude": 4.627778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Cannes",
+    "ville": "Cannes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cannes",
+    "coordonnees": {
+      "latitude": 43.551389,
+      "longitude": 7.0125
+    }
+  },
+  {
+    "nom": "Château d'Éguilles",
+    "ville": "Éguilles",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_d%27%C3%89guilles",
+    "coordonnees": {
+      "latitude": 43.543611,
+      "longitude": 5.354722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Fréjus",
+    "ville": "Fréjus",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Fr%C3%A9jus",
+    "coordonnees": {
+      "latitude": 43.4325,
+      "longitude": 6.736389
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Gap",
+    "ville": "Gap",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Gap",
+    "coordonnees": {
+      "latitude": 44.558333,
+      "longitude": 6.078889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Manosque",
+    "ville": "Manosque",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Manosque",
+    "coordonnees": {
+      "latitude": 43.833889,
+      "longitude": 5.783056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Marseille",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.296667,
+      "longitude": 5.369722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Nice",
+    "ville": "Nice",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nice",
+    "coordonnees": {
+      "latitude": 43.696111,
+      "longitude": 7.272778
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Orange",
+    "ville": "Orange",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Orange",
+    "coordonnees": {
+      "latitude": 44.135556,
+      "longitude": 4.808056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Denis",
+    "ville": "Saint-Denis",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Denis_(La_R%C3%A9union)",
+    "coordonnees": {
+      "latitude": -20.878889,
+      "longitude": 55.448056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Pierre",
+    "ville": "Saint-Pierre",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Pierre",
+    "coordonnees": {
+      "latitude": -21.341111,
+      "longitude": 55.477778
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Antony",
+    "ville": "Antony",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Antony",
+    "coordonnees": {
+      "latitude": 48.753889,
+      "longitude": 2.296389
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Asnières-sur-Seine",
+    "ville": "Asnières-sur-Seine",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Asni%C3%A8res-sur-Seine",
+    "coordonnees": {
+      "latitude": 48.910556,
+      "longitude": 2.289167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bagneux",
+    "ville": "Bagneux",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bagneux",
+    "coordonnees": {
+      "latitude": 48.796389,
+      "longitude": 2.301667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bois-Colombes",
+    "ville": "Bois-Colombes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bois-Colombes",
+    "coordonnees": {
+      "latitude": 48.914444,
+      "longitude": 2.2675
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bourg-la-Reine",
+    "ville": "Bourg-la-Reine",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bourg-la-Reine",
+    "coordonnees": {
+      "latitude": 48.779444,
+      "longitude": 2.313889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Châtillon",
+    "ville": "Châtillon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Ch%C3%A2tillon",
+    "coordonnees": {
+      "latitude": 48.803889,
+      "longitude": 2.290556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Clichy",
+    "ville": "Clichy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Clichy",
+    "coordonnees": {
+      "latitude": 48.903611,
+      "longitude": 2.306111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Colombes",
+    "ville": "Colombes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Colombes",
+    "coordonnees": {
+      "latitude": 48.9225,
+      "longitude": 2.253056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Gennevilliers",
+    "ville": "Gennevilliers",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Gennevilliers",
+    "coordonnees": {
+      "latitude": 48.925833,
+      "longitude": 2.294167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Levallois-Perret",
+    "ville": "Levallois-Perret",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Levallois-Perret",
+    "coordonnees": {
+      "latitude": 48.893056,
+      "longitude": 2.288333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Montrouge",
+    "ville": "Montrouge",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Montrouge",
+    "coordonnees": {
+      "latitude": 48.818889,
+      "longitude": 2.318333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Neuilly-sur-Seine",
+    "ville": "Neuilly-sur-Seine",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Neuilly-sur-Seine",
+    "coordonnees": {
+      "latitude": 48.884722,
+      "longitude": 2.269444
+    }
+  },
+  {
+    "nom": "Château du Plessis-Robinson (Hôtel de ville)",
+    "ville": "Le Plessis-Robinson",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_du_Plessis-Robinson",
+    "coordonnees": {
+      "latitude": 48.781667,
+      "longitude": 2.2625
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Puteaux",
+    "ville": "Puteaux",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Puteaux",
+    "coordonnees": {
+      "latitude": 48.880833,
+      "longitude": 2.238333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Suresnes",
+    "ville": "Suresnes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Suresnes",
+    "coordonnees": {
+      "latitude": 48.870278,
+      "longitude": 2.223611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vanves",
+    "ville": "Vanves",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vanves",
+    "coordonnees": {
+      "latitude": 48.821389,
+      "longitude": 2.289167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Chartrettes",
+    "ville": "Chartrettes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Chartrettes",
+    "coordonnees": {
+      "latitude": 48.4875,
+      "longitude": 2.702778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Chaumes-en-Brie",
+    "ville": "Chaumes-en-Brie",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Chaumes-en-Brie",
+    "coordonnees": {
+      "latitude": 48.666667,
+      "longitude": 2.843611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Coulommiers",
+    "ville": "Coulommiers",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Coulommiers",
+    "coordonnees": {
+      "latitude": 48.814167,
+      "longitude": 3.084167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de La Ferté-sous-Jouarre",
+    "ville": "La Ferté-sous-Jouarre",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_La_Fert%C3%A9-sous-Jouarre",
+    "coordonnees": {
+      "latitude": 48.948333,
+      "longitude": 3.125
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Fontainebleau",
+    "ville": "Fontainebleau",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Fontainebleau",
+    "coordonnees": {
+      "latitude": 48.406389,
+      "longitude": 2.701111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Lagny-sur-Marne",
+    "ville": "Lagny-sur-Marne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lagny-sur-Marne",
+    "coordonnees": {
+      "latitude": 48.877778,
+      "longitude": 2.706111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Melun",
+    "ville": "Melun",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Melun",
+    "coordonnees": {
+      "latitude": 48.539167,
+      "longitude": 2.658611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Provins",
+    "ville": "Provins",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Provins",
+    "coordonnees": {
+      "latitude": 48.562222,
+      "longitude": 3.298333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Seine-Port",
+    "ville": "Seine-Port",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Seine-Port",
+    "coordonnees": {
+      "latitude": 48.556111,
+      "longitude": 2.553333
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Aubervilliers",
+    "ville": "Aubervilliers",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Aubervilliers",
+    "coordonnees": {
+      "latitude": 48.913333,
+      "longitude": 2.382778
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Aulnay-sous-Bois",
+    "ville": "Aulnay-sous-Bois",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Aulnay-sous-Bois",
+    "coordonnees": {
+      "latitude": 48.933333,
+      "longitude": 2.4925
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bagnolet",
+    "ville": "Bagnolet",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bagnolet",
+    "coordonnees": {
+      "latitude": 48.869167,
+      "longitude": 2.416667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bobigny",
+    "ville": "Bobigny",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bobigny",
+    "coordonnees": {
+      "latitude": 48.905278,
+      "longitude": 2.439444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bondy",
+    "ville": "Bondy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bondy",
+    "coordonnees": {
+      "latitude": 48.901944,
+      "longitude": 2.483056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Drancy",
+    "ville": "Drancy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Drancy",
+    "coordonnees": {
+      "latitude": 48.924444,
+      "longitude": 2.445556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Dugny",
+    "ville": "Dugny",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Dugny",
+    "coordonnees": {
+      "latitude": 48.953611,
+      "longitude": 2.416944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Gagny",
+    "ville": "Gagny",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Gagny",
+    "coordonnees": {
+      "latitude": 48.882222,
+      "longitude": 2.533889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de L'Île-Saint-Denis",
+    "ville": "L'Île-Saint-Denis",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_L%E2%80%99%C3%8Ele-Saint-Denis",
+    "coordonnees": {
+      "latitude": 48.935556,
+      "longitude": 2.338611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de La Courneuve",
+    "ville": "La Courneuve",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_La_Courneuve",
+    "coordonnees": {
+      "latitude": 48.925278,
+      "longitude": 2.395556
+    }
+  },
+  {
+    "nom": "Hôtel de ville du Bourget",
+    "ville": "Le Bourget",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Bourget",
+    "coordonnees": {
+      "latitude": 48.935,
+      "longitude": 2.425833
+    }
+  },
+  {
+    "nom": "Hôtel de ville du Pré-Saint-Gervais",
+    "ville": "Le Pré-Saint-Gervais",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Pr%C3%A9-Saint-Gervais",
+    "coordonnees": {
+      "latitude": 48.884167,
+      "longitude": 2.403056
+    }
+  },
+  {
+    "nom": "Hôtel de ville du Raincy",
+    "ville": "Le Raincy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Raincy",
+    "coordonnees": {
+      "latitude": 48.899722,
+      "longitude": 2.518611
+    }
+  },
+  {
+    "nom": "Hôtel de ville des Lilas",
+    "ville": "Les Lilas",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_des_Lilas",
+    "coordonnees": {
+      "latitude": 48.880556,
+      "longitude": 2.416667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Livry-Gargan",
+    "ville": "Livry-Gargan",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Livry-Gargan",
+    "coordonnees": {
+      "latitude": 48.919167,
+      "longitude": 2.536111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Montfermeil",
+    "ville": "Montfermeil",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Montfermeil",
+    "coordonnees": {
+      "latitude": 48.899722,
+      "longitude": 2.565833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Pierrefitte-sur-Seine",
+    "ville": "Pierrefitte-sur-Seine",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Pierrefitte-sur-Seine",
+    "coordonnees": {
+      "latitude": 48.965833,
+      "longitude": 2.361111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Romainville",
+    "ville": "Romainville",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Romainville",
+    "coordonnees": {
+      "latitude": 48.885,
+      "longitude": 2.436389
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Denis",
+    "ville": "Saint-Denis",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Denis_(Seine-Saint-Denis)",
+    "coordonnees": {
+      "latitude": 48.935556,
+      "longitude": 2.3575
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Ouen-sur-Seine",
+    "ville": "Saint-Ouen-sur-Seine",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Ouen-sur-Seine",
+    "coordonnees": {
+      "latitude": 48.911667,
+      "longitude": 2.332778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Sevran",
+    "ville": "Sevran",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Sevran",
+    "coordonnees": {
+      "latitude": 48.932222,
+      "longitude": 2.528611
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Versailles",
+    "ville": "Versailles",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Versailles",
+    "coordonnees": {
+      "latitude": 48.802778,
+      "longitude": 2.130556
+    }
+  },
+  {
+    "nom": "Pavillon d'Antoine de Navarre (Hôtel de ville)",
+    "ville": "Charenton-le-Pont",
+    "url": "https://fr.wikipedia.org/wiki/Pavillon_d%27Antoine_de_Navarre",
+    "coordonnees": {
+      "latitude": 48.821389,
+      "longitude": 2.414722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Créteil",
+    "ville": "Créteil",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Cr%C3%A9teil",
+    "coordonnees": {
+      "latitude": 48.777222,
+      "longitude": 2.453056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Gentilly",
+    "ville": "Gentilly",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Gentilly",
+    "coordonnees": {
+      "latitude": 48.815,
+      "longitude": 2.344444
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Ivry-sur-Seine",
+    "ville": "Ivry-sur-Seine",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Ivry-sur-Seine",
+    "coordonnees": {
+      "latitude": 48.811111,
+      "longitude": 2.387778
+    }
+  },
+  {
+    "nom": "Hôtel de ville du Kremlin-Bicêtre",
+    "ville": "Le Kremlin-Bicêtre",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_du_Kremlin-Bic%C3%AAtre",
+    "coordonnees": {
+      "latitude": 48.81,
+      "longitude": 2.358333
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Saint-Maur-des-Fossés",
+    "ville": "Saint-Maur-des-Fossés",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Saint-Maur-des-Foss%C3%A9s",
+    "coordonnees": {
+      "latitude": 48.802778,
+      "longitude": 2.484444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Laon",
+    "ville": "Laon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Laon",
+    "coordonnees": {
+      "latitude": 49.563889,
+      "longitude": 3.625278
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Ascq",
+    "ville": "Villeneuve-d'Ascq",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Ascq",
+    "coordonnees": {
+      "latitude": 50.617778,
+      "longitude": 3.161111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Brouckerque",
+    "ville": "Brouckerque",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Brouckerque",
+    "coordonnees": {
+      "latitude": 50.953611,
+      "longitude": 2.293611
+    }
+  },
+  {
+    "nom": "Château Gossuin (Mairie)",
+    "ville": "Arleux",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_Gossuin",
+    "coordonnees": {
+      "latitude": 50.279444,
+      "longitude": 3.106667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Malo-les-Bains",
+    "ville": "Dunkerque",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Malo-les-Bains",
+    "coordonnees": {
+      "latitude": 51.049444,
+      "longitude": 2.401111
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Rosendaël",
+    "ville": "Dunkerque",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Rosenda%C3%ABl",
+    "coordonnees": {
+      "latitude": 51.041667,
+      "longitude": 2.409167
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Abbeville",
+    "ville": "Abbeville",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Abbeville",
+    "coordonnees": {
+      "latitude": 50.105556,
+      "longitude": 1.832778
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Amiens",
+    "ville": "Amiens",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Amiens",
+    "coordonnees": {
+      "latitude": 49.894444,
+      "longitude": 2.295833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Corbie",
+    "ville": "Corbie",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Corbie",
+    "coordonnees": {
+      "latitude": 49.907778,
+      "longitude": 2.510556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Ham",
+    "ville": "Ham",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Ham",
+    "coordonnees": {
+      "latitude": 49.7475,
+      "longitude": 3.072778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Péronne",
+    "ville": "Péronne",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_P%C3%A9ronne",
+    "coordonnees": {
+      "latitude": 49.928889,
+      "longitude": 2.934444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Roye",
+    "ville": "Roye",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Roye",
+    "coordonnees": {
+      "latitude": 49.6975,
+      "longitude": 2.791111
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Épinal",
+    "ville": "Épinal",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27%C3%89pinal",
+    "coordonnees": {
+      "latitude": 48.173889,
+      "longitude": 6.450278
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Rambervillers",
+    "ville": "Rambervillers",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Rambervillers",
+    "coordonnees": {
+      "latitude": 48.345556,
+      "longitude": 6.634722
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Raon-l'Étape",
+    "ville": "Raon-l'Étape",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Raon-l%27%C3%89tape",
+    "coordonnees": {
+      "latitude": 48.406944,
+      "longitude": 6.842778
+    }
+  },
+  {
+    "nom": "Château de Tollaincourt (Mairie)",
+    "ville": "Tollaincourt",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_de_Tollaincourt",
+    "coordonnees": {
+      "latitude": 48.098056,
+      "longitude": 5.741667
+    }
+  },
+  {
+    "nom": "Mairie-halle de Vicherey",
+    "ville": "Vicherey",
+    "url": "https://fr.wikipedia.org/wiki/Mairie-halle_de_Vicherey",
+    "coordonnees": {
+      "latitude": 48.384444,
+      "longitude": 5.938056
+    }
+  },
+  {
+    "nom": "Château des Brasseurs (Hôtel de ville)",
+    "ville": "Xertigny",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_des_Brasseurs",
+    "coordonnees": {
+      "latitude": 48.041389,
+      "longitude": 6.395556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bitche",
+    "ville": "Bitche",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bitche",
+    "coordonnees": {
+      "latitude": 49.051944,
+      "longitude": 7.426389
+    }
+  },
+  {
+    "nom": "Château d'Hausen (Hôtel de ville)",
+    "ville": "Hombourg-Haut",
+    "url": "https://fr.wikipedia.org/wiki/Ch%C3%A2teau_d%27Hausen",
+    "coordonnees": {
+      "latitude": 49.125278,
+      "longitude": 6.776667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Metz",
+    "ville": "Metz",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Metz",
+    "coordonnees": {
+      "latitude": 49.120278,
+      "longitude": 6.175556
+    }
+  },
+  {
+    "nom": "Ancien hôtel de ville de Commercy",
+    "ville": "Commercy",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_h%C3%B4tel_de_ville_de_Commercy",
+    "coordonnees": {
+      "latitude": 48.762778,
+      "longitude": 5.591111
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Euville",
+    "ville": "Euville",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Euville",
+    "coordonnees": {
+      "latitude": 48.749167,
+      "longitude": 5.626389
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Verdun",
+    "ville": "Verdun",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Verdun",
+    "coordonnees": {
+      "latitude": 49.16,
+      "longitude": 5.383889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Longwy",
+    "ville": "Longwy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Longwy",
+    "coordonnees": {
+      "latitude": 49.522222,
+      "longitude": 5.760278
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Nancy",
+    "ville": "Nancy",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Nancy",
+    "coordonnees": {
+      "latitude": 48.693611,
+      "longitude": 6.183056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Pont-à-Mousson",
+    "ville": "Pont-à-Mousson",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Pont-%C3%A0-Mousson",
+    "coordonnees": {
+      "latitude": 48.904444,
+      "longitude": 6.053889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Toul",
+    "ville": "Toul",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Toul",
+    "coordonnees": {
+      "latitude": 48.675556,
+      "longitude": 5.890556
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Épernay",
+    "ville": "Épernay",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27%C3%89pernay",
+    "coordonnees": {
+      "latitude": 49.043611,
+      "longitude": 3.956667
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Fismes",
+    "ville": "Fismes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Fismes",
+    "coordonnees": {
+      "latitude": 49.306944,
+      "longitude": 3.681944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Reims",
+    "ville": "Reims",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Reims",
+    "coordonnees": {
+      "latitude": 49.258333,
+      "longitude": 4.031944
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Vitry-le-François",
+    "ville": "Vitry-le-François",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Vitry-le-Fran%C3%A7ois",
+    "coordonnees": {
+      "latitude": 48.725556,
+      "longitude": 4.585833
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Altkirch",
+    "ville": "Altkirch",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Altkirch",
+    "coordonnees": {
+      "latitude": 47.623889,
+      "longitude": 7.239167
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Blotzheim",
+    "ville": "Blotzheim",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Blotzheim",
+    "coordonnees": {
+      "latitude": 47.601944,
+      "longitude": 7.495278
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Colmar",
+    "ville": "Colmar",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Colmar",
+    "coordonnees": {
+      "latitude": 48.078889,
+      "longitude": 7.359722
+    }
+  },
+  {
+    "nom": "Ancien Palais de la Régence d'Ensisheim",
+    "ville": "Ensisheim",
+    "url": "https://fr.wikipedia.org/wiki/Ancien_Palais_de_la_R%C3%A9gence_d%27Ensisheim",
+    "coordonnees": {
+      "latitude": 47.865556,
+      "longitude": 7.352222
+    }
+  },
+  {
+    "nom": "Ancienne mairie d'Ingersheim",
+    "ville": "Ingersheim",
+    "url": "https://fr.wikipedia.org/wiki/Ancienne_mairie_d%27Ingersheim",
+    "coordonnees": {
+      "latitude": 48.096389,
+      "longitude": 7.313056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Mulhouse",
+    "ville": "Mulhouse",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Mulhouse",
+    "coordonnees": {
+      "latitude": 47.746389,
+      "longitude": 7.338889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Ribeauvillé",
+    "ville": "Ribeauvillé",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Ribeauviller",
+    "coordonnees": {
+      "latitude": 48.195278,
+      "longitude": 7.318889
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Riquewihr",
+    "ville": "Riquewihr",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Riquewihr",
+    "coordonnees": {
+      "latitude": 48.166944,
+      "longitude": 7.297778
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bœrsch",
+    "ville": "Bœrsch",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_B%C5%93rsch",
+    "coordonnees": {
+      "latitude": 48.477778,
+      "longitude": 7.441111
+    }
+  },
+  {
+    "nom": "Hôtel de ville d'Oermingen",
+    "ville": "Oermingen",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_d%27Oermingen",
+    "coordonnees": {
+      "latitude": 48.991944,
+      "longitude": 7.132222
+    }
+  },
+  {
+    "nom": "Mairie Laube",
+    "ville": "Seebach",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_Laube",
+    "coordonnees": {
+      "latitude": 48.971111,
+      "longitude": 7.989167
+    }
+  },
+  {
+    "nom": "Hôtel de Hanau (Hôtel de ville)",
+    "ville": "Strasbourg",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_Hanau",
+    "coordonnees": {
+      "latitude": 48.585,
+      "longitude": 7.750833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Bar-sur-Aube",
+    "ville": "Bar-sur-Aube",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Bar-sur-Aube",
+    "coordonnees": {
+      "latitude": 48.2325,
+      "longitude": 4.706389
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Brienne-le-Château",
+    "ville": "Brienne-le-Château",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Brienne-le-Ch%C3%A2teau",
+    "coordonnees": {
+      "latitude": 48.391667,
+      "longitude": 4.526389
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Soulaines-Dhuys",
+    "ville": "Soulaines-Dhuys",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Soulaines-Dhuys",
+    "coordonnees": {
+      "latitude": 48.375556,
+      "longitude": 4.734444
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Charleville",
+    "ville": "Charleville-Mézières",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Charleville_(Ardennes)",
+    "coordonnees": {
+      "latitude": 49.773333,
+      "longitude": 4.720833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Charleville-Mézières",
+    "ville": "Charleville-Mézières",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Charleville-M%C3%A9zi%C3%A8res",
+    "coordonnees": {
+      "latitude": 49.759444,
+      "longitude": 4.715556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Rethel",
+    "ville": "Rethel",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Rethel",
+    "coordonnees": {
+      "latitude": 49.510278,
+      "longitude": 4.365556
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Sedan",
+    "ville": "Sedan",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Sedan",
+    "coordonnees": {
+      "latitude": 49.702778,
+      "longitude": 4.940556
+    }
+  },
+  {
+    "nom": "Mairie d'Ancizan",
+    "ville": "Ancizan",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_d%27Ancizan",
+    "coordonnees": {
+      "latitude": 42.873333,
+      "longitude": 0.337778
+    }
+  },
+  {
+    "nom": "Mairie d'Arreau",
+    "ville": "Arreau",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_d%27Arreau",
+    "coordonnees": {
+      "latitude": 42.905278,
+      "longitude": 0.358889
+    }
+  },
+  {
+    "nom": "Mairie de Galan",
+    "ville": "Galan",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Galan",
+    "coordonnees": {
+      "latitude": 43.220556,
+      "longitude": 0.413056
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Lourdes",
+    "ville": "Lourdes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Lourdes",
+    "coordonnees": {
+      "latitude": 43.095556,
+      "longitude": -0.048333
+    }
+  },
+  {
+    "nom": "Mairie de Gouaux",
+    "ville": "Gouaux",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Gouaux",
+    "coordonnees": {
+      "latitude": 42.864722,
+      "longitude": 0.359167
+    }
+  },
+  {
+    "nom": "Mairie de Sarrancolin",
+    "ville": "Sarrancolin",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_de_Sarrancolin",
+    "coordonnees": {
+      "latitude": 42.966111,
+      "longitude": 0.3775
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Tarbes",
+    "ville": "Tarbes",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Tarbes",
+    "coordonnees": {
+      "latitude": 43.232778,
+      "longitude": 0.075556
+    }
+  },
+  {
+    "nom": "Mairie du 1er arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_1er_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.859444,
+      "longitude": 2.3425
+    }
+  },
+  {
+    "nom": "Mairie du 2e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_2e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.8675,
+      "longitude": 2.340278
+    }
+  },
+  {
+    "nom": "Mairie du 3e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_3e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.863333,
+      "longitude": 2.360556
+    }
+  },
+  {
+    "nom": "Mairie du 4e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_4e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.855,
+      "longitude": 2.355556
+    }
+  },
+  {
+    "nom": "Mairie du 5e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_5e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.845833,
+      "longitude": 2.344444
+    }
+  },
+  {
+    "nom": "Mairie du 6e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_6e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.851111,
+      "longitude": 2.333056
+    }
+  },
+  {
+    "nom": "Mairie du 7e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_7e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.856667,
+      "longitude": 2.316389
+    }
+  },
+  {
+    "nom": "Hôtel Cail (Mairie du 8e arrondissement)",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_Cail",
+    "coordonnees": {
+      "latitude": 48.876667,
+      "longitude": 2.316389
+    }
+  },
+  {
+    "nom": "Mairie du 9e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_9e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.873333,
+      "longitude": 2.340833
+    }
+  },
+  {
+    "nom": "Mairie du 10e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_10e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.871944,
+      "longitude": 2.3575
+    }
+  },
+  {
+    "nom": "Mairie du 11e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_11e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.859444,
+      "longitude": 2.380278
+    }
+  },
+  {
+    "nom": "Mairie du 12e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_12e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.841389,
+      "longitude": 2.387778
+    }
+  },
+  {
+    "nom": "Mairie du 13e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_13e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.831667,
+      "longitude": 2.355556
+    }
+  },
+  {
+    "nom": "Mairie du 14e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_14e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.833056,
+      "longitude": 2.326111
+    }
+  },
+  {
+    "nom": "Mairie du 16e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_16e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.862778,
+      "longitude": 2.276667
+    }
+  },
+  {
+    "nom": "Mairie du 17e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_17e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.885,
+      "longitude": 2.321111
+    }
+  },
+  {
+    "nom": "Mairie du 18e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_18e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.8925,
+      "longitude": 2.344444
+    }
+  },
+  {
+    "nom": "Mairie du 19e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_19e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.8825,
+      "longitude": 2.383056
+    }
+  },
+  {
+    "nom": "Mairie du 20e arrondissement de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_20e_arrondissement_de_Paris",
+    "coordonnees": {
+      "latitude": 48.865,
+      "longitude": 2.399444
+    }
+  },
+  {
+    "nom": "Mairie du 1er secteur (1er et 7e arrondissements)",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_1er_secteur_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.291389,
+      "longitude": 5.359722
+    }
+  },
+  {
+    "nom": "Mairie du 2e secteur (2e et 3e arrondissements)",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_2e_secteur_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.303889,
+      "longitude": 5.370278
+    }
+  },
+  {
+    "nom": "Mairie du 3e secteur (4e et 5e arrondissements)",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_3e_secteur_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.301389,
+      "longitude": 5.399444
+    }
+  },
+  {
+    "nom": "Mairie du 4e secteur (6e et 8e arrondissements)",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_4e_secteur_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.271389,
+      "longitude": 5.385556
+    }
+  },
+  {
+    "nom": "Mairie du 5e secteur (9e et 10e arrondissements)",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_5e_secteur_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.271667,
+      "longitude": 5.412778
+    }
+  },
+  {
+    "nom": "Mairie du 6e secteur (11e et 12e arrondissements)",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_6e_secteur_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.2975,
+      "longitude": 5.433611
+    }
+  },
+  {
+    "nom": "Mairie du 7e secteur (13e et 14e arrondissements)",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_7e_secteur_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.3325,
+      "longitude": 5.394167
+    }
+  },
+  {
+    "nom": "Mairie du 8e secteur (15e et 16e arrondissements)",
+    "ville": "Marseille",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_8e_secteur_de_Marseille",
+    "coordonnees": {
+      "latitude": 43.354444,
+      "longitude": 5.358889
+    }
+  },
+  {
+    "nom": "Mairie du 1er arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_1er_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.768611,
+      "longitude": 4.833611
+    }
+  },
+  {
+    "nom": "Mairie du 2e arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_2e_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.753889,
+      "longitude": 4.829167
+    }
+  },
+  {
+    "nom": "Mairie du 3e arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_3e_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.760278,
+      "longitude": 4.8525
+    }
+  },
+  {
+    "nom": "Mairie du 4e arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_4e_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.776944,
+      "longitude": 4.832222
+    }
+  },
+  {
+    "nom": "Mairie du 5e arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_5e_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.758056,
+      "longitude": 4.826111
+    }
+  },
+  {
+    "nom": "Mairie du 6e arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_6e_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.768056,
+      "longitude": 4.848333
+    }
+  },
+  {
+    "nom": "Mairie du 7e arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_7e_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.748056,
+      "longitude": 4.842778
+    }
+  },
+  {
+    "nom": "Mairie du 8e arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_8e_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.736667,
+      "longitude": 4.871667
+    }
+  },
+  {
+    "nom": "Mairie du 9e arrondissement de Lyon",
+    "ville": "Lyon",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_du_9e_arrondissement_de_Lyon",
+    "coordonnees": {
+      "latitude": 45.774444,
+      "longitude": 4.806667
+    }
+  },
+  {
+    "nom": "Liste des statues des façades de l'hôtel de ville de Paris",
+    "ville": "Paris",
+    "url": "https://fr.wikipedia.org/wiki/Liste_des_statues_des_fa%C3%A7ades_de_l%27h%C3%B4tel_de_ville_de_Paris",
+    "coordonnees": {
+      "latitude": 48.856389,
+      "longitude": 2.352222
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Toulon",
+    "ville": "Toulon",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Toulon",
+    "coordonnees": {
+      "latitude": 43.1213,
+      "longitude": 5.9288
+    }
+  },
+  {
+    "nom": "Mairie d'Angers",
+    "ville": "Angers",
+    "url": "https://fr.wikipedia.org/wiki/Mairie_d%27Angers",
+    "coordonnees": {
+      "latitude": 47.469167,
+      "longitude": -0.548333
+    }
+  },
+  {
+    "nom": "Hôtel de Ville, Saint-Antonin-Noble-Val (EN)",
+    "ville": "Saint-Antonin-Noble-Val",
+    "url": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_Ville,_Saint-Antonin-Noble-Val",
+    "coordonnees": {
+      "latitude": 44.152222,
+      "longitude": 1.755833
+    }
+  },
+  {
+    "nom": "Hôtel de ville de Chaumont",
+    "ville": "Chaumont",
+    "url": "https://fr.wikipedia.org/wiki/H%C3%B4tel_de_ville_de_Chaumont",
+    "coordonnees": {
+      "latitude": 48.111667,
+      "longitude": 5.141667
+    }
+  }
 ]
