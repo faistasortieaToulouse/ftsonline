@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  // 🔥 FORCE VERCEL À EMBARKER TOUT LE DOSSIER DATA SUR SES SERVEURS
+  outputFileTracingIncludes: {
+    '/api/**/*': ['./data/**/*'],
+  },
+
   // ❗ i18n App Router → doit être retiré, mais on garde les locales
   // via un système différent (middleware ou route groups)
   // i18n: {
