@@ -23,10 +23,9 @@ export default function HotelDeVillePage() {
   const [mairies, setMairies] = useState<Mairie[] | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // Utilitaire pour créer des IDs d'ancres valides
   const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
 
-  // 1. Chargement des données depuis l'API
+  // 1. Chargement des données + Tri par ordre alphabétique de la VILLE
   useEffect(() => {
     fetch("/api/hoteldeville")
       .then((res) => {
@@ -34,7 +33,15 @@ export default function HotelDeVillePage() {
         return res.json();
       })
       .then((json) => {
-        if (Array.isArray(json)) setMairies(json);
+        if (Array.isArray(json)) {
+          // 🔥 ON TRIE ICI PAR VILLE (A -> Z)
+          const trie = [...json].sort((a, b) => {
+            const villeA = a?.ville || '';
+            const villeB = b?.ville || '';
+            return villeA.localeCompare(villeB, 'fr', { sensitivity: 'base' });
+          });
+          setMairies(trie);
+        }
       })
       .catch((err) => console.error("Erreur fetch mairies:", err));
   }, []);
@@ -48,7 +55,6 @@ export default function HotelDeVillePage() {
 
       if (mapInstance.current) return;
 
-      // Centrage initial de la carte sur le sud de la France (proche de tes données)
       const map = L.map(mapRef.current, {
         center: [44.0, 2.5],
         zoom: 7,
@@ -61,12 +67,11 @@ export default function HotelDeVillePage() {
         attribution: '&copy; OpenStreetMap'
       }).addTo(map);
 
-      // Ajout des marqueurs numérotés avec popups au survol/clic
       mairies.forEach((m, index) => {
         if (m.coordonnees?.latitude && m.coordonnees?.longitude) {
-          const markerColor = "#1d4ed8"; // Bleu uniforme
+          const markerColor = "#1d4ed8";
 
-          // Création du rond bleu avec le numéro
+          // Le numéro affiché (index + 1) suivra l'ordre alphabétique des villes
           const customIcon = L.divIcon({
             className: 'custom-div-icon',
             html: `<div style="
@@ -89,11 +94,10 @@ export default function HotelDeVillePage() {
 
           const marker = L.marker([m.coordonnees.latitude, m.coordonnees.longitude], { icon: customIcon }).addTo(map);
 
-          // Contenu du Popup : Nom, Ville + Lien Ancre vers le tableau
           const popupContent = `
             <div style="font-family: sans-serif; text-align: center; padding: 4px; min-width: 170px;">
               <strong style="font-size: 14px; color: #1e293b; display: block; margin-bottom: 2px;">${m.nom}</strong>
-              <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 8px;">Ville : ${m.ville}</div>
+              <div style="font-size: 12px; color: #1d4ed8; font-weight: 800; margin-bottom: 8px;">Ville : ${m.ville} (N°${index + 1})</div>
               <a href="#mairie-${slugify(m.nom)}" style="
                 display: inline-block;
                 background: #1d4ed8;
@@ -111,7 +115,7 @@ export default function HotelDeVillePage() {
 
           marker.bindPopup(popupContent);
 
-          // Gestion du survol à la souris (ordinateur)
+          // Gestion du survol / clic
           marker.on('mouseover', function () {
             marker.openPopup();
           });
@@ -164,7 +168,7 @@ export default function HotelDeVillePage() {
               Hôtels <span className="text-blue-600">de Ville</span>
             </h1>
             <p className="text-slate-400 font-bold text-xs uppercase tracking-widest flex items-center gap-2 italic mt-4">
-              <Landmark size={14} className="text-blue-500" /> Répertoire et cartographie des édifices
+              <Landmark size={14} className="text-blue-500" /> Répertoire trié par ordre alphabétique des communes
             </p>
           </div>
           <div>
@@ -193,7 +197,7 @@ export default function HotelDeVillePage() {
         <div className="h-10 w-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
            <ChevronDown size={20} />
         </div>
-        <h2 className="text-2xl font-black uppercase tracking-tighter italic text-slate-800">Catalogue Alphabétique</h2>
+        <h2 className="text-2xl font-black uppercase tracking-tighter italic text-slate-800">Villes de A à Z</h2>
       </div>
 
       {/* GRILLE DES ÉDIFICES COMPORTANT LES LIENS */}
@@ -204,8 +208,8 @@ export default function HotelDeVillePage() {
             id={`mairie-${slugify(m.nom)}`}
             className="bg-white rounded-[2.5rem] p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-500 transition-all duration-300 relative overflow-hidden flex flex-col justify-between min-h-[160px] scroll-mt-24"
           >
-            {/* Numéro officiel correspondant à la carte */}
-            <span className="absolute -right-2 -bottom-4 text-7xl font-black text-slate-100 group-hover:text-slate-200 pointer-events-none -z-0">
+            {/* Numéro officiel synchronisé avec la carte */}
+            <span className="absolute -right-2 -bottom-4 text-7xl font-black text-slate-100 pointer-events-none -z-0">
               {(index + 1).toString().padStart(2, '0')}
             </span>
 
@@ -216,7 +220,6 @@ export default function HotelDeVillePage() {
                 </div>
               </div>
 
-              {/* LE NOM EST LE LIEN WIKIPÉDIA CLIQUABLE */}
               <h3 className="font-black text-slate-900 text-xl uppercase tracking-tighter mb-1 leading-tight group">
                 <a 
                   href={m.url} 
@@ -233,7 +236,6 @@ export default function HotelDeVillePage() {
               </p>
             </div>
 
-            {/* Pied de carte avec bouton d'action externe */}
             <div className="relative z-10 pt-4 border-t border-slate-100 mt-4 flex items-center justify-between">
               <a 
                 href={m.url}
@@ -248,10 +250,8 @@ export default function HotelDeVillePage() {
         ))}
       </div>
 
-      {/* STYLES PERSONNALISÉS POUR LES POPUPS LEAFLET */}
       <style jsx global>{`
         .custom-div-icon { background: none !important; border: none !important; }
-        
         .leaflet-popup-content-wrapper { 
           border-radius: 1.2rem; 
           border: 1px solid #e2e8f0; 
