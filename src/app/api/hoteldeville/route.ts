@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-// Astuce absolue pour forcer Vercel à inclure le dossier 'territoire' au build
-// Vercel voit cet import statique et est obligé d'embarquer le fichier dans le bundle !
-import '../../../../../data/territoire/hoteldeville.json';
+// 4 niveaux de remontée exactement pour atteindre la racine
+import mairiesData from '../../../../data/territoire/hoteldeville.json';
 
 interface Mairie {
   nom: string;
@@ -18,30 +14,9 @@ interface Mairie {
 
 export async function GET() {
   try {
-    // Exactement la même structure de chemin que pour les hypermarchés
-    const filePath = path.join(
-      process.cwd(),
-      'data',
-      'territoire',
-      'hoteldeville.json'
-    );
+    // Copie du tableau pour le tri sécurisé
+    const data: Mairie[] = [...mairiesData];
 
-    // Vérification de l'existence du fichier
-    if (!fs.existsSync(filePath)) {
-      console.error(`[API HotelDeVille] Fichier non trouvé à l'emplacement : ${filePath}`);
-      return NextResponse.json(
-        { error: 'Fichier hoteldeville.json non trouvé' },
-        { status: 404 }
-      );
-    }
-
-    // Lecture synchrone du fichier
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    
-    // Parsing et typage de la donnée
-    const data: Mairie[] = JSON.parse(fileContents);
-
-    // Tri par ordre alphabétique sécurisé
     data.sort((a, b) => {
       const nomA = a?.nom || "";
       const nomB = b?.nom || "";
@@ -50,7 +25,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Erreur API HotelDeVille:', error);
+    console.error('Erreur critique API HotelDeVille:', error);
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des données' },
       { status: 500 }
