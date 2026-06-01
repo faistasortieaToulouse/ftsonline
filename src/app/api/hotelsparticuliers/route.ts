@@ -4,28 +4,38 @@ import path from "path";
 
 export async function GET() {
   try {
+    // Ciblage du bon dossier et du bon fichier JSON
     const filePath = path.join(
       process.cwd(),
       "data",
-      "toulouse",
-      "hotels_geocode.json" // ✅ bon fichier
+      "territoire",
+      "hoteldeville.json"
     );
 
+    // Lecture synchrone du fichier
     const jsonData = fs.readFileSync(filePath, "utf-8");
-    const hotels = JSON.parse(jsonData);
+    const mairies = JSON.parse(jsonData);
 
-    // sécurité : ne garder que ceux avec lat/lng valides
-    const filtered = hotels.filter(
-      (h: any) =>
-        typeof h.lat === "number" &&
-        typeof h.lng === "number"
+    // Sécurité : filtrer pour s'assurer que les coordonnées ou les champs essentiels existent
+    const filtered = mairies.filter(
+      (m: any) =>
+        m?.nom &&
+        m?.url &&
+        m?.coordonnees &&
+        typeof m.coordonnees.latitude === "number" &&
+        typeof m.coordonnees.longitude === "number"
+    );
+
+    // Optionnel mais recommandé : trier par ordre alphabétique pour l'affichage de ta grille
+    filtered.sort((a: any, b: any) => 
+      a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" })
     );
 
     return NextResponse.json(filtered);
   } catch (err) {
-    console.error("❌ Erreur lecture hotels_geocode.json :", err);
+    console.error("❌ Erreur lecture hoteldeville.json :", err);
     return NextResponse.json(
-      { error: "Impossible de charger les hôtels géocodés." },
+      { error: "Impossible de charger les hôtels de ville." },
       { status: 500 }
     );
   }
