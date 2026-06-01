@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 
 interface Mairie {
   nom: string;
@@ -14,28 +12,24 @@ interface Mairie {
 
 export async function GET() {
   try {
-    // Utilisation stricte de process.cwd() et de la structure qui fonctionne
-    const filePath = path.join(
-      process.cwd(),
-      "data",
-      "territoire",
-      "hoteldeville.json"
-    );
+    // Importation dynamique : Webpack inclut le fichier JSON directement dans le bundle de l'API.
+    // Plus besoin de fs, de path ou de process.cwd(). Fiabilité 100% sur Vercel.
+    const mairiesModule = await import("@/../data/territoire/hoteldeville.json");
+    
+    // Suivant la configuration, les données sont dans .default ou directement à la racine du module
+    const mairies = mairiesModule.default ? mairiesModule.default : mairiesModule;
 
-    // Lecture sécurisée
-    const jsonData = fs.readFileSync(filePath, "utf-8");
-    const mairies = JSON.parse(jsonData);
+    // Sécurité & Filtrage : On extrait et on valide les données sous forme de tableau
+    const dataList = Array.isArray(mairies) ? mairies : Object.values(mairies);
 
-    // 1. Sécurité absolue : On filtre pour ne garder QUE les mairies qui ont des coordonnées valides
-    // Cela évite que Leaflet ou l'API ne plantent si un élément est incomplet
-    const filteredMairies = mairies.filter(
+    const filteredMairies = dataList.filter(
       (m: any) =>
         m?.coordonnees &&
         typeof m.coordonnees.latitude === "number" &&
         typeof m.coordonnees.longitude === "number"
     );
 
-    // 2. Tri par ordre alphabétique sur les données filtrées
+    // Tri par ordre alphabétique
     filteredMairies.sort((a: Mairie, b: Mairie) => {
       const nomA = a?.nom || "";
       const nomB = b?.nom || "";
@@ -44,9 +38,9 @@ export async function GET() {
 
     return NextResponse.json(filteredMairies);
   } catch (err) {
-    console.error("❌ Erreur lecture hoteldeville.json :", err);
+    console.error("❌ Erreur de bundle/lecture hoteldeville.json :", err);
     return NextResponse.json(
-      { error: "Impossible de charger les hôtels de ville." },
+      { error: "Impossible de charger les hôtels de ville via le bundle." },
       { status: 500 }
     );
   }
