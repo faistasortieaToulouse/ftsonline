@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-// Définition de l'interface
+// Définition de l'interface pour un typage TypeScript rigoureux
 interface Mairie {
   nom: string;
   ville: string;
@@ -15,7 +15,7 @@ interface Mairie {
 
 export async function GET() {
   try {
-    // Découpage strict comme pour les hypermarchés pour forcer le traçage Vercel
+    // Découpage strict pour forcer le traçage statique de Vercel (NFT)
     const filePath = path.join(
       process.cwd(),
       'data',
@@ -25,24 +25,30 @@ export async function GET() {
 
     // Vérification de l'existence du fichier
     if (!fs.existsSync(filePath)) {
+      console.error(`[API HotelDeVille] Fichier non trouvé à l'emplacement : ${filePath}`);
       return NextResponse.json(
         { error: 'Fichier hoteldeville.json non trouvé' },
         { status: 404 }
       );
     }
 
-    // Lecture synchrone
+    // Lecture synchrone du fichier
     const fileContents = fs.readFileSync(filePath, 'utf8');
     
-    // Parsing des données
+    // Parsing et typage de la donnée
     const data: Mairie[] = JSON.parse(fileContents);
 
-    // Tri par ordre alphabétique demandé du nom de l'hôtel de ville
-    data.sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }));
+    // Sécurisation du tri par ordre alphabétique (évite le crash si un champ 'nom' est indéfini)
+    data.sort((a, b) => {
+      const nomA = a?.nom || "";
+      const nomB = b?.nom || "";
+      return nomA.localeCompare(nomB, 'fr', { sensitivity: 'base' });
+    });
 
+    // Retour des données sous forme de réponse JSON
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Erreur API HotelDeVille:', error);
+    console.error('Erreur critique API HotelDeVille:', error);
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des données' },
       { status: 500 }
