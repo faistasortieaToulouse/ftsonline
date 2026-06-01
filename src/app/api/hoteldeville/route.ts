@@ -1,5 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
+// Définition de l'interface pour un typage TypeScript rigoureux
 interface Mairie {
   nom: string;
   ville: string;
@@ -12,35 +15,48 @@ interface Mairie {
 
 export async function GET() {
   try {
-    // Importation dynamique : Webpack inclut le fichier JSON directement dans le bundle de l'API.
-    // Plus besoin de fs, de path ou de process.cwd(). Fiabilité 100% sur Vercel.
-    const mairiesModule = await import("@/../data/territoire/hoteldeville.json");
-    
-    // Suivant la configuration, les données sont dans .default ou directement à la racine du module
-    const mairies = mairiesModule.default ? mairiesModule.default : mairiesModule;
-
-    // Sécurité & Filtrage : On extrait et on valide les données sous forme de tableau
-    const dataList = Array.isArray(mairies) ? mairies : Object.values(mairies);
-
-    const filteredMairies = dataList.filter(
-      (m: any) =>
-        m?.coordonnees &&
-        typeof m.coordonnees.latitude === "number" &&
-        typeof m.coordonnees.longitude === "number"
+    const filePath = path.join(
+      process.cwd(),
+      'data',
+      'territoire',
+      'hoteldeville.json'
     );
 
-    // Tri par ordre alphabétique
-    filteredMairies.sort((a: Mairie, b: Mairie) => {
-      const nomA = a?.nom || "";
-      const nomB = b?.nom || "";
-      return nomA.localeCompare(nomB, "fr", { sensitivity: "base" });
+    // Vérification de l'existence du fichier (comme ton modèle hypermarches)
+    if (!fs.existsSync(filePath)) {
+      return NextResponse.json(
+        { error: 'Fichier hoteldeville.json non trouvé' },
+        { status: 404 }
+      );
+    }
+
+    // Lecture synchrone du fichier
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    
+    // Parsing et typage de la donnée
+    const data: Mairie[] = JSON.parse(fileContents);
+
+    // Filtrage de sécurité optionnel pour nettoyer les données corrompues au cas où
+    const filteredData = data.filter(
+      (m) =>
+        m?.nom &&
+        m?.coordonnees &&
+        typeof m.coordonnees.latitude === 'number' &&
+        typeof m.coordonnees.longitude === 'number'
+    );
+
+    // Tri par ordre alphabétique du nom de l'hôtel de ville
+    filteredData.sort((a, b) => {
+      const nomA = a.nom || '';
+      const nomB = b.nom || '';
+      return nomA.localeCompare(nomB, 'fr', { sensitivity: 'base' });
     });
 
-    return NextResponse.json(filteredMairies);
-  } catch (err) {
-    console.error("❌ Erreur de bundle/lecture hoteldeville.json :", err);
+    return NextResponse.json(filteredData);
+  } catch (error) {
+    console.error('Erreur API HotelDeVille:', error);
     return NextResponse.json(
-      { error: "Impossible de charger les hôtels de ville via le bundle." },
+      { error: 'Erreur lors de la récupération des données' },
       { status: 500 }
     );
   }
