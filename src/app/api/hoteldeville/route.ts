@@ -15,14 +15,10 @@ interface Mairie {
 
 export async function GET() {
   try {
-    const filePath = path.join(
-      process.cwd(),
-      'data',
-      'territoire',
-      'hoteldeville.json'
-    );
+    // Écriture du chemin en clair (comme pour villePIB.json) pour forcer la détection par Vercel
+    const filePath = path.join(process.cwd(), 'data/territoire/hoteldeville.json');
 
-    // Vérification de l'existence du fichier (comme ton modèle hypermarches)
+    // Vérification de l'existence du fichier
     if (!fs.existsSync(filePath)) {
       return NextResponse.json(
         { error: 'Fichier hoteldeville.json non trouvé' },
@@ -36,7 +32,7 @@ export async function GET() {
     // Parsing et typage de la donnée
     const data: Mairie[] = JSON.parse(fileContents);
 
-    // Filtrage de sécurité optionnel pour nettoyer les données corrompues au cas où
+    // Filtrage de sécurité
     const filteredData = data.filter(
       (m) =>
         m?.nom &&
@@ -45,7 +41,7 @@ export async function GET() {
         typeof m.coordonnees.longitude === 'number'
     );
 
-    // Tri par ordre alphabétique du nom de l'hôtel de ville
+    // Tri par ordre alphabétique
     filteredData.sort((a, b) => {
       const nomA = a.nom || '';
       const nomB = b.nom || '';
