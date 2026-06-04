@@ -35,131 +35,139 @@ const MATRICE_CALENDRIER_2025: Record<number, Record<number, string>> = {
   31: { 0: "V1", 3: "🌞 / Q", 4: "🌞", 5: "🌞", 6: "🌞 / Q", 7: "🌞 / Q D1", 9: "Q", 10: "D3" }
 };
 
-// Jours fériés France 2025
 const FERIES_2025 = [
   "2025-01-01", "2025-04-21", "2025-05-01", "2025-05-08", "2025-05-29",
   "2025-06-09", "2025-07-14", "2025-08-15", "2025-11-01", "2025-11-11", "2025-12-25"
 ];
 
-// Fonction utilitaire pour vérifier les vacances 2025 selon vos notes
-function obtenirVacances2025(date: Date, dateStr: string): string {
-  // Toussaint : 18 Octobre au 3 Novembre 2025
-  if (dateStr >= "2025-10-18" && dateStr <= "2025-11-03") return "🍂 Vacances de la Toussaint";
-  // Noël : 20 Décembre 2025 au 5 Janvier 2026
-  if (dateStr >= "2025-12-20" || dateStr <= "2025-01-05") return "🎄 Vacances de Noël";
-  // Été : 5 Juillet au 31 Août 2025
-  if (dateStr >= "2025-07-05" && dateStr <= "2025-08-31") return "🏖️ Vacances d'Été";
-  return "";
-}
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const dateString = searchParams.get('date') || "2025-05-01";
-    
     const targetDate = new Date(dateString);
     const jour = targetDate.getDate();
-    const mois = targetDate.getMonth(); // 0 = Janvier, 11 = Décembre
+    const mois = targetDate.getMonth(); 
     
-    let score = 2; // Par défaut moyen
+    let score = 2;
     let contextes: string[] = [];
     let alertesMeteo: string[] = [];
+    let meteoTypes: string[] = [];
+    let estFerie = false;
+    let estVacances = false;
+    let nomVacances = "";
 
-    // --- 1. GESTION DES TIMINGS & DURÉE DU JOUR ---
-    // Vos critères : "mai à août -> durée du jour > 19h30 -> forte animation"
-    const aJourLong = mois >= 4 && mois <= 7; 
-    if (aJourLong) {
-      contextes.push("☀️ Durée du jour supérieure à 19h30 (Ensoleillement max)");
+    // 1. Durée du jour > 19h30 (Mai à Août)
+    if (mois >= 4 && mois <= 7) {
+      meteoTypes.push('jour-long');
+      contextes.push("⌛ Journée longue (Durée du jour > 19h30)");
     }
 
-    // --- 2. TENDANCES MENSUELLES (FROID / CHAUD DE BASE) ---
-    if (mois === 0) { score = 1; contextes.push("❄️ Janvier : Froid hivernal (~15°C), contrecoup post-fêtes, ville très calme."); }
-    else if (mois === 1) { score = 1; contextes.push("🌧️ Février : Froid persistant (15°C-18°C), fatigue générale."); }
-    else if (mois === 2) { score = 2; contextes.push("🌱 Mars : Météo de transition instable."); }
-    else if (mois === 3) { score = 2; contextes.push("🌸 Avril : Redoux, retour progressif des sorties."); }
-    else if (mois === 4) { score = 3; contextes.push("🔥 Mai : Très forte animation (jours longs, nombreux ponts)."); }
-    else if (mois === 5) { score = 2; contextes.push("🎓 Juin : Mixte (Chaleur vs examens/partiels universitaires)."); }
-    else if (mois === 6) { score = 2; contextes.push("🏖️ Juillet : Période estivale (départs en vacances)."); }
-    else if (mois === 7) { score = 1; contextes.push("❌ Août : Ville désertée (fermetures annuelles, grosse baisse d'activité)."); }
-    else if (mois === 8) { score = 3; contextes.push("🎓 Septembre : Rentrée universitaire et scolaire, pic d'animation."); }
-    else if (mois === 9) { score = 3; contextes.push("🍂 Octobre : Automne doux, bonne dynamique de sorties."); }
-    else if (mois === 10) { score = 1; contextes.push("🌫️ Novembre : Très calme (chute des températures, grisaille)."); }
-    else if (mois === 11) { score = 2; contextes.push("🎄 Décembre : Préparation des fêtes, animation ciblée le week-end (Partiels début de mois)."); }
-
-    // --- 3. FIXATION DU SCORE SELON LES CODES DU TABLEAU EXCEL ---
-    const codeCellule = MATRICE_CALENDRIER_2025[jour]?.[mois] || "";
-    if (codeCellule) contextes.push(`Code Excel : "${codeCellule}"`);
-
-    if (codeCellule.includes("mardi 3") || codeCellule.includes("V3") || codeCellule.includes("D3")) {
-      score = 3;
-    } else if (codeCellule.includes("mardi 2") || codeCellule.includes("V2") || codeCellule.includes("D2")) {
-      score = 2;
-    } else if (codeCellule.includes("mardi 1") || codeCellule.includes("V1") || codeCellule.includes("D1")) {
+    // 2. Températures mensuelles par défaut
+    if (mois === 0) {
       score = 1;
-    } else if (codeCellule.includes("🌞") && aJourLong) {
-      score = 3; // Un jour ensoleillé quand les journées font plus de 19h30 = Carton plein
+      meteoTypes.push('grand-froid');
+      contextes.push("🥶 Grand froid : < 5°C en moyenne");
+    } else if (mois === 1 || mois === 10) {
+      score = 1;
+      meteoTypes.push('frais');
+      contextes.push("🧥 Fraîcheur : Entre 5°C et 10°C");
+    } else if (mois === 4) {
+      score = 3; contextes.push("🌸 Mai : Jours longs, forte animation urbaine");
+    } else if (mois === 7) {
+      score = 1; contextes.push("❌ Août : Ville déserte");
+    } else if (mois === 8 || mois === 9) {
+      score = 3; contextes.push("🎓 Période de rentrée : Très forte dynamique");
     }
 
-    // --- 4. CALENDRIER CIVIL : FERIÉS & VACANCES SCOLAIRES ---
+    // 3. Jours Fériés Civils
     if (FERIES_2025.includes(dateString)) {
-      score = 1; // Un jour férié casse l'affluence en ville dans vos critères
-      contextes.push("🛑 Jour Férié Officiel 2025 (Ville au repos)");
+      score = 1; 
+      estFerie = true;
+      contextes.push("🛑 Jour Férié Officiel");
     }
 
-    const typeVacances = obtenirVacances2025(targetDate, dateString);
-    if (typeVacances) {
-      contextes.push(typeVacances);
+    // 4. Vacances Scolaires Officielles 2025 - Zone C (Toulouse)
+    if (dateString >= "2025-02-15" && dateString <= "2025-03-03") {
+      estVacances = true;
+      nomVacances = "🎒 Vacances d'Hiver (Zone C - Toulouse)";
+      contextes.push(nomVacances);
+    } else if (dateString >= "2025-04-12" && dateString <= "2025-04-28") {
+      estVacances = true;
+      nomVacances = "🌱 Vacances de Printemps (Zone C - Toulouse)";
+      contextes.push(nomVacances);
+    } else if (dateString >= "2025-07-05" && dateString <= "2025-09-01") {
+      estVacances = true;
+      nomVacances = "🏖️ Vacances d'Été (Zone C - Toulouse)";
+      contextes.push(nomVacances);
+    } else if (dateString >= "2025-10-18" && dateString <= "2025-11-03") {
+      estVacances = true;
+      nomVacances = "🍂 Vacances de la Toussaint (Zone C - Toulouse)";
+      contextes.push(nomVacances);
+    } else if (dateString >= "2025-12-20" || dateString <= "2025-01-05") {
+      estVacances = true;
+      nomVacances = "🎄 Vacances de Noël (Zone C - Toulouse)";
+      contextes.push(nomVacances);
     }
 
-    // --- 5. MICRO-CLIMATOLOGIE SPECIFIQUE DE VOTRE TABLEAU ---
-    // Épisodes de Pluie intense & Orages violents
-    if ((mois === 4 && jour === 31) || (mois === 5 && jour === 1) || (mois === 5 && jour === 3)) {
-      alertesMeteo.push("⛈️ Alerte Orages Violents en soirée (Annulation des terrasses)");
+    // 5. Lecture Matrice
+    const codeCellule = MATRICE_CALENDRIER_2025[jour]?.[mois] || "";
+    if (codeCellule) {
+      contextes.push(`Cellule Excel : "${codeCellule}"`);
+      if (codeCellule.includes("mardi 3") || codeCellule.includes("V3") || codeCellule.includes("D3")) score = 3;
+      else if (codeCellule.includes("mardi 1") || codeCellule.includes("V1") || codeCellule.includes("D1")) score = 1;
+      else if (codeCellule.includes("🌞") && (mois >= 4 && mois <= 7)) score = 3;
+    }
+
+    // 6. Alertes Météo Critiques
+    if ((mois === 4 && jour === 31) || (mois === 5 && [1, 3].includes(jour))) {
+      meteoTypes.push('orage');
+      alertesMeteo.push("⛈️ Orages violents en soirée");
       score = 1;
     }
-    if (mois === 5 && ((jour >= 13 && jour <= 15) || jour === 25)) {
-      alertesMeteo.push("🌧️ Fortes Précipitations cumulées (Pluie continue)");
+    if (mois === 5 && [13, 14, 15, 25].includes(jour)) {
+      meteoTypes.push('pluie');
+      alertesMeteo.push("🌧️ Fortes pluies continues");
       score = Math.max(1, score - 1);
     }
-
-    // Épisodes de Vents Violents (Mars)
     if (mois === 2 && jour >= 3 && jour <= 9) {
-      alertesMeteo.push("⚠️ Vents Forts continus (≥ 60 km/h)");
+      meteoTypes.push('vent');
+      alertesMeteo.push("💨 Vents forts (≥ 60 km/h)");
       score = Math.max(1, score - 1);
     }
     if (mois === 2 && jour >= 19 && jour <= 21) {
-      alertesMeteo.push(jour === 20 ? "🌪️ Tempête Historique (Rafales à 107 km/h)" : "⚠️ Rafales violentes (≥ 100 km/h)");
+      meteoTypes.push('vent');
+      alertesMeteo.push(jour === 20 ? "🌪️ Tempête Historique (107 km/h)" : "💨 Rafales violentes (≥ 100 km/h)");
+      score = 1;
+    }
+    if (mois === 4 && [30, 31].includes(jour)) {
+      meteoTypes.push('canicule');
+      alertesMeteo.push(`🔥 Pic de chaleur précoce (${jour === 30 ? '34.5°C' : '32°C'})`);
+    }
+    if (mois === 5 && jour >= 17 && jour <= 25) {
+      meteoTypes.push('canicule');
+      alertesMeteo.push("🥵 Canicule : Blocage de chaleur ≥ 30°C sur 9 jours consécutifs");
+      score = 1;
+    }
+    if (mois === 7 && jour >= 7 && jour <= 17) {
+      meteoTypes.push('canicule');
+      alertesMeteo.push(jour === 11 ? "🚨 Canicule Extrême : Pic Annuel à 41.5°C !" : "🥵 Alerte Canicule (11 jours ≥ 30°C)");
       score = 1;
     }
 
-    // Pics de Chaleur et Canicule de votre étude
-    if (mois === 4 && (jour === 30 || jour === 31)) {
-      alertesMeteo.push(`🔥 Pic de chaleur anormal (${jour === 30 ? '34.5°C' : '32°C'})`);
-    }
-    if (mois === 5 && jour >= 17 && jour <= 25) {
-      alertesMeteo.push("🥵 Canicule : 9 jours consécutifs ≥ 30°C. Sorties bloquées en journée.");
-      score = 1; // La canicule vide les rues en journée
-    }
-    if (mois === 7 && jour >= 7 && jour <= 17) {
-      alertesMeteo.push(jour === 11 ? "🚨 Canicule Extrême : Pic Annuel à 41.5°C !" : "🥵 Alerte Canicule : Températures étouffantes (11j ≥ 30°C)");
-      score = 1; // Ville totalement vidée par la chaleur
-    }
-
-    const libellesNiveaux: Record<number, string> = {
-      1: "Peu de monde (Basse affluence) 🔴",
-      2: "Modéré (Affluence normale) 🟡",
-      3: "Beaucoup de monde (Forte affluence !) 🟢"
-    };
+    meteoTypes = Array.from(new Set(meteoTypes));
 
     return NextResponse.json({
       date: dateString,
       score: score,
-      affluenceTexte: libellesNiveaux[score],
+      affluenceTexte: { 1: "Peu de monde 🔴", 2: "Modéré 🟡", 3: "Beaucoup de monde 🟢" }[score] || "Modéré",
       details: contextes.join(" | "),
-      meteo: alertesMeteo.length > 0 ? alertesMeteo.join(" / ") : "☀️ Météo clémente ou conforme aux normales."
+      meteo: alertesMeteo.length > 0 ? alertesMeteo.join(" / ") : "Météo standard.",
+      meteoTypes: meteoTypes,
+      estFerie: estFerie,
+      estVacances: estVacances,
+      nomVacances: nomVacances
     });
-
-  } catch (error) {
-    return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Erreur" }, { status: 500 });
   }
 }
