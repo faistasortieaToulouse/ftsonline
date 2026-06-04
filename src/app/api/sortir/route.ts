@@ -40,6 +40,37 @@ const FERIES_2025 = [
   "2025-06-09", "2025-07-14", "2025-08-15", "2025-11-01", "2025-11-11", "2025-12-25"
 ];
 
+// Liste de vos 14 repères de semaines à forte affluence
+const SEMAINES_CHOC_2025 = [
+  "2025-01-14", "2025-02-04", "2025-02-11", "2025-02-18", "2025-02-25",
+  "2025-03-04", "2025-03-11", "2025-03-25", "2025-06-24", "2025-09-02",
+  "2025-09-29", "2025-10-14", "2025-10-14", "2025-11-04"
+];
+
+/**
+ * Permet de savoir si une date donnée appartient à la même semaine 
+ * (du lundi au dimanche) qu'une des dates cibles de forte affluence.
+ */
+function appartientASemaineForte(dateVerifiee: Date): boolean {
+  return SEMAINES_CHOC_2025.some(dateChocStr => {
+    const dateChoc = new Date(dateChocStr);
+    
+    // Trouver le lundi de la semaine de la date choc
+    const jourSemaineChoc = dateChoc.getDay();
+    const lissageLundi = jourSemaineChoc === 0 ? -6 : 1 - jourSemaineChoc;
+    const lundiChoc = new Date(dateChoc);
+    lundiChoc.setDate(dateChoc.getDate() + lissageLundi);
+    lundiChoc.setHours(0,0,0,0);
+
+    // Trouver le dimanche de la semaine de la date choc
+    const dimancheChoc = new Date(lundiChoc);
+    dimancheChoc.setDate(lundiChoc.getDate() + 6);
+    dimancheChoc.setHours(23,59,59,999);
+
+    return dateVerifiee >= lundiChoc && dateVerifiee <= dimancheChoc;
+  });
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -48,7 +79,7 @@ export async function GET(request: Request) {
     const jour = targetDate.getDate();
     const mois = targetDate.getMonth(); 
     
-    let score = 2;
+    let score = 2; // Par défaut modéré (Score 2)
     let contextes: string[] = [];
     let alertesMeteo: string[] = [];
     let meteoTypes: string[] = [];
@@ -56,69 +87,76 @@ export async function GET(request: Request) {
     let estVacances = false;
     let nomVacances = "";
 
-    // 1. Durée du jour > 19h30 (Mai à Août)
+    // 1. Détection des 14 semaines de forte affluence (Priorité Haute : Force le Score 3)
+    const estSemaineForte = appartientASemaineForte(targetDate);
+    if (estSemaineForte) {
+      score = 3;
+      contextes.push("🔥 Semaine Haute Fréquentation (Validée 14 Semaines)");
+    }
+
+    // 2. Durée du jour > 19h30 (Mai à Août)
     if (mois >= 4 && mois <= 7) {
       meteoTypes.push('jour-long');
       contextes.push("⌛ Journée longue (Durée du jour > 19h30)");
     }
 
-    // 2. Températures mensuelles par défaut
-    if (mois === 0) {
-      score = 1;
-      meteoTypes.push('grand-froid');
-      contextes.push("🥶 Grand froid : < 5°C en moyenne");
-    } else if (mois === 1 || mois === 10) {
-      score = 1;
-      meteoTypes.push('frais');
-      contextes.push("🧥 Fraîcheur : Entre 5°C et 10°C");
-    } else if (mois === 4) {
-      score = 3; contextes.push("🌸 Mai : Jours longs, forte animation urbaine");
-    } else if (mois === 7) {
-      score = 1; contextes.push("❌ Août : Ville déserte");
-    } else if (mois === 8 || mois === 9) {
-      score = 3; contextes.push("🎓 Période de rentrée : Très forte dynamique");
+    // 3. Températures mensuelles par défaut (Si hors semaines chocs)
+    if (!estSemaineForte) {
+      if (mois === 0) {
+        score = 1;
+        meteoTypes.push('grand-froid');
+        contextes.push("🥶 Grand froid : < 5°C en moyenne");
+      } else if (mois === 1 || mois === 10) {
+        score = 1;
+        meteoTypes.push('frais');
+        contextes.push("🧥 Fraîcheur : Entre 5°C et 10°C");
+      } else if (mois === 7) {
+        score = 1; contextes.push("❌ Août : Ville déserte");
+      }
     }
 
-    // 3. Jours Fériés Civils
+    // 4. Jours Fériés Civils (Baisse l'affluence à 1)
     if (FERIES_2025.includes(dateString)) {
       score = 1; 
       estFerie = true;
       contextes.push("🛑 Jour Férié Officiel");
     }
 
-    // 4. Vacances Scolaires Officielles 2025 - Zone C (Toulouse)
+    // 5. Vacances Scolaires Officielles 2025 - Zone C (Toulouse)
     if (dateString >= "2025-02-15" && dateString <= "2025-03-03") {
       estVacances = true;
-      nomVacances = "🎒 Vacances d'Hiver (Zone C - Toulouse)";
+      nomVacances = "🎒 Vacances d'Hiver (Zone C)";
       contextes.push(nomVacances);
     } else if (dateString >= "2025-04-12" && dateString <= "2025-04-28") {
       estVacances = true;
-      nomVacances = "🌱 Vacances de Printemps (Zone C - Toulouse)";
+      nomVacances = "🌱 Vacances de Printemps (Zone C)";
       contextes.push(nomVacances);
     } else if (dateString >= "2025-07-05" && dateString <= "2025-09-01") {
       estVacances = true;
-      nomVacances = "🏖️ Vacances d'Été (Zone C - Toulouse)";
+      nomVacances = "🏖️ Vacances d'Été (Zone C)";
       contextes.push(nomVacances);
     } else if (dateString >= "2025-10-18" && dateString <= "2025-11-03") {
       estVacances = true;
-      nomVacances = "🍂 Vacances de la Toussaint (Zone C - Toulouse)";
+      nomVacances = "🍂 Vacances de la Toussaint (Zone C)";
       contextes.push(nomVacances);
     } else if (dateString >= "2025-12-20" || dateString <= "2025-01-05") {
       estVacances = true;
-      nomVacances = "🎄 Vacances de Noël (Zone C - Toulouse)";
+      nomVacances = "🎄 Vacances de Noël (Zone C)";
       contextes.push(nomVacances);
     }
 
-    // 5. Lecture Matrice
+    // 6. Lecture Matrice Excel (Ajustements fins si hors contrainte absolue)
     const codeCellule = MATRICE_CALENDRIER_2025[jour]?.[mois] || "";
     if (codeCellule) {
       contextes.push(`Cellule Excel : "${codeCellule}"`);
-      if (codeCellule.includes("mardi 3") || codeCellule.includes("V3") || codeCellule.includes("D3")) score = 3;
-      else if (codeCellule.includes("mardi 1") || codeCellule.includes("V1") || codeCellule.includes("D1")) score = 1;
-      else if (codeCellule.includes("🌞") && (mois >= 4 && mois <= 7)) score = 3;
+      if (!estSemaineForte && !estFerie) {
+        if (codeCellule.includes("mardi 3") || codeCellule.includes("V3") || codeCellule.includes("D3")) score = 3;
+        else if (codeCellule.includes("mardi 1") || codeCellule.includes("V1") || codeCellule.includes("D1")) score = 1;
+        else if (codeCellule.includes("🌞") && (mois >= 4 && mois <= 7)) score = 3;
+      }
     }
 
-    // 6. Alertes Météo Critiques
+    // 7. Alertes Météo Critiques (Peuvent faire baisser le score pour cause d'intempéries)
     if ((mois === 4 && jour === 31) || (mois === 5 && [1, 3].includes(jour))) {
       meteoTypes.push('orage');
       alertesMeteo.push("⛈️ Orages violents en soirée");
@@ -145,7 +183,7 @@ export async function GET(request: Request) {
     }
     if (mois === 5 && jour >= 17 && jour <= 25) {
       meteoTypes.push('canicule');
-      alertesMeteo.push("🥵 Canicule : Blocage de chaleur ≥ 30°C sur 9 jours consécutifs");
+      alertesMeteo.push("🥵 Canicule : Chaleur ≥ 30°C sur 9 jours");
       score = 1;
     }
     if (mois === 7 && jour >= 7 && jour <= 17) {
