@@ -78,10 +78,10 @@ export default function TableDeBordSorties() {
 
   const getColorForNiveau = (score: number) => {
     switch (score) {
-      case 1: return '#fca5a5'; // Rouge pastel
-      case 2: return '#fef08a'; // Jaune pastel
-      case 3: return '#86efac'; // Vert pastel
-      default: return '#ffffff';
+case 1: return '#fef08a'; // 🟨 Jaune (ex: #fef08a ou #fde047)
+    case 2: return '#fed7aa'; // 🟧 Orange (ex: #fed7aa ou #fb923c)
+    case 3: return '#86efac'; // 🟩 Vert (ex: #86efac ou #4ade80)
+    default: return '#ffffff';
     }
   };
 
