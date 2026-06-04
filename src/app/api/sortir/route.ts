@@ -1,48 +1,34 @@
 import { NextResponse } from 'next/server';
 
-// Définition des types pour sécuriser la structure des données
-interface TendanceMensuelle {
-  score: number;
-  label: string;
-}
-
-interface CorrectionTerrain {
-  code: string;
-  score: number;
-}
-
-interface DonniesCalendrier {
-  mensuel: Record<number, TendanceMensuelle>;
-  corrections: Record<string, CorrectionTerrain>;
-}
-
-// 1. Base de données des règles extraites de votre fichier
-const CALENDRIER_2025: DonniesCalendrier = {
-  mensuel: {
-    0: { score: 1, label: "Très calme (Post-fêtes, froid)" },  // Janvier (0)
-    1: { score: 2, label: "Calme (Froid, fatigue)" },          // Février
-    2: { score: 3, label: "Moyen (Météo instable)" },          // Mars
-    3: { score: 4, label: "Bon (Retour des beaux jours)" },    // Avril
-    4: { score: 5, label: "Très animé (Jours longs, ponts)" }, // Mai
-    5: { score: 3, label: "Mixte (Examens / Partiels)" },      // Juin
-    6: { score: 3, label: "Spécial (Vacances d'été)" },        // Juillet
-    7: { score: 0, label: "Très vide (Ville désertée)" },      // Août
-    8: { score: 5, label: "Très animé (Rentrée, nouveaux arrivants)" }, // Septembre
-    9: { score: 5, label: "Animé (Météo clémente)" },          // Octobre
-    10: { score: 2, label: "Calme (Mauvaise météo)" },         // Novembre
-    11: { score: 3, label: "Très variable (Fêtes de Noël)" }   // Décembre
-  },
-  // Dates clés de vérification / corrections manuelles issues du terrain
-  corrections: {
-    "2025-01-14": { code: "mardi 2", score: 2 },
-    "2025-02-04": { code: "mardi 2", score: 2 },
-    "2025-02-11": { code: "mardi 3", score: 3 }, // Réajusté selon vos notes (encadré noir)
-    "2025-09-02": { code: "mardi 3", score: 3 }, // Top rentrée
-    "2025-10-07": { code: "mardi 3", score: 3 }
-  }
+// Dictionnaire strict de vos données terrain nettoyées (Format AAAA-MM-JJ)
+const DATA_TERRAIN_2025: Record<string, number> = {
+  // Janvier
+  "2025-01-07": 1, "2025-01-14": 3, "2025-01-21": 1, "2025-01-28": 1,
+  // Février
+  "2025-02-04": 3, "2025-02-11": 3, "2025-02-18": 3, "2025-02-25": 3,
+  // Mars
+  "2025-03-04": 3, "2025-03-11": 3, "2025-03-18": 2, "2025-03-25": 3,
+  // Avril
+  "2025-04-01": 2, "2025-04-15": 2, "2025-04-22": 1, "2025-04-29": 1,
+  // Mai
+  "2025-05-06": 2, "2025-05-13": 2, "2025-05-20": 2, "2025-05-27": 3,
+  // Juin
+  "2025-03-06": 2, "2025-06-10": 2, "2025-06-17": 2, "2025-06-24": 3,
+  // Juillet
+  "2025-07-01": 3, "2025-07-08": 2, "2025-07-15": 2, "2025-07-22": 2, "2025-07-29": 3,
+  // Août
+  "2025-08-05": 3, "2025-08-12": 1, "2025-08-19": 1, "2025-08-26": 3,
+  // Septembre
+  "2025-09-02": 3, "2025-09-09": 1, "2025-09-16": 2, "2025-09-23": 1, "2025-09-30": 3,
+  // Octobre
+  "2025-01-07": 3, "2025-10-14": 3, "2025-10-21": 1, "2025-10-28": 1,
+  // Novembre
+  "2025-11-04": 1, "2025-11-12": 1, "2025-11-18": 1, "2025-11-25": 1,
+  // Décembre
+  "2025-12-02": 1, "2025-12-09": 1, "2025-12-16": 1, "2025-12-23": 1, "2025-12-30": 1
 };
 
-// Jours fériés France 2025
+// Jours fériés 2025 impactant les sorties
 const FERIES_2025: string[] = [
   "2025-01-01", "2025-04-21", "2025-05-01", "2025-05-08", 
   "2025-05-29", "2025-06-09", "2025-07-14", "2025-08-15", 
@@ -54,48 +40,50 @@ export async function GET(request: Request) {
   const dateString = searchParams.get('date') || new Date().toISOString().split('T')[0];
   
   const targetDate = new Date(dateString);
-  const month = targetDate.getMonth();
   const dayOfWeek = targetDate.getDay(); // 0 = Dimanche, 2 = Mardi, 5 = Vendredi...
+  
+  let niveauCalculé = 1;
+  let sourceInfo = "Calculé par extrapolation";
 
-  // Récupération de la tendance de base du mois
-  const tendanceMois = CALENDRIER_2025.mensuel[month] || { score: 2, label: "Inconnu" };
-  let niveauAffluence = tendanceMois.score; 
-  let details = `Tendance globale de ce mois : ${tendanceMois.label}.`;
-
-  // Check si une correction manuelle terrain existe
-  if (CALENDRIER_2025.corrections[dateString]) {
-    const correction = CALENDRIER_2025.corrections[dateString];
-    niveauAffluence = correction.score;
-    details += ` (Donnée terrain validée pour ce jour : ${correction.code})`;
+  // 1. Si la date demandée est explicitement dans vos données de référence (vos Mardis)
+  if (DATA_TERRAIN_2025[dateString] !== undefined) {
+    niveauCalculé = DATA_TERRAIN_2025[dateString];
+    sourceInfo = "Donnée terrain exacte (Mardi)";
   } else {
-    // Logique algorithmique par défaut (Règles générales de votre fichier)
-    if (dayOfWeek === 2 || dayOfWeek === 5) { 
-      // Les mardis et vendredis profitent de la dynamique des mois forts
-      if (niveauAffluence >= 4) niveauAffluence = 5; 
-    }
-    if (dayOfWeek === 0 || FERIES_2025.includes(dateString)) {
-      // Dimanches et fériés : baisse générale de l'affluence en ville
-      niveauAffluence = Math.max(1, niveauAffluence - 2);
-      details += " Ralentissement dû au jour férié ou au dimanche.";
+    // 2. Extrapolation pour les autres jours de la semaine
+    // On cherche le mardi le plus proche dans la même semaine pour calquer la tendance mensuelle/hebdomadaire
+    const copieDate = new Date(targetDate);
+    const distanceAuMardi = 2 - dayOfWeek;
+    copieDate.setDate(copieDate.getDate() + distanceAuMains);
+    const mardiProcheStr = copieDate.toISOString().split('T')[0];
+    
+    // Niveau de référence de la semaine courante
+    const niveauReferenceSemaine = DATA_TERRAIN_2025[mardiProcheStr] || 2;
+
+    if (dayOfWeek === 5) { // Vendredi : Forte tendance à sortir
+      niveauCalculé = Math.min(3, niveauReferenceSemaine + 1);
+      sourceInfo = `Extrapolé du Vendredi (Basé sur Mardi Référence niveau ${niveauReferenceSemaine})`;
+    } else if (dayOfWeek === 0 || FERIES_2025.includes(dateString)) { // Dimanche ou Férié : Calme
+      niveauCalculé = 1;
+      sourceInfo = "Jour férié ou Dimanche (Systématiquement calme)";
+    } else { // Lundi, Mercredi, Jeudi, Samedi
+      niveauCalculé = niveauReferenceSemaine;
+      sourceInfo = `Jour de semaine standard (Aligné sur Mardi Référence niveau ${niveauReferenceSemaine})`;
     }
   }
 
-  // Traduction du score (0 à 5) en libellé textuel
-  const libellesScore = [
-    "Désert", 
-    "Très peu de monde (Style V1/D1)", 
-    "Modéré (Style Mardi 2 / V2)", 
-    "Pas mal de monde", 
-    "Beaucoup de monde (Style Mardi 3 / V3)", 
-    "Plein à craquer 🔥"
-  ];
-  
+  // Correspondance stricte avec vos libellés de niveaux
+  const libellesNiveaux: Record<number, string> = {
+    1: "Peu de gens (Niveau 1)",
+    2: "Nombre de gens moyen (Niveau 2)",
+    3: "Beaucoup de monde (Niveau 3)"
+  };
+
   return NextResponse.json({
     date: dateString,
     jourSemaine: targetDate.toLocaleDateString('fr-FR', { weekday: 'long' }),
-    score: niveauAffluence,
-    affluenceTexte: libellesScore[niveauAffluence] || "Non défini",
-    details: details,
-    periodeFavorabilite: niveauAffluence >= 4 ? "Favorable aux sorties" : niveauAffluence <= 2 ? "Défavorable / Calme" : "Moyenne"
+    score: niveauCalculé, // Valeur stricte 1, 2 ou 3
+    affluenceTexte: libellesNiveaux[niveauCalculé] || "Inconnu",
+    details: sourceInfo
   });
 }
