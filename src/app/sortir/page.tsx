@@ -155,7 +155,7 @@ export default function TableDeBordSorties() {
                     {/* Badge discret si météo critique présente */}
                     {aUneAlerte && (
                       <span style={{ position: 'absolute', bottom: '1px', right: '2px', fontSize: '8px' }}>
-                        ⚡
+                        ⚡</span>
                       )}
                   </div>
                 );
