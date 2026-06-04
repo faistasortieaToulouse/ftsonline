@@ -83,7 +83,40 @@ export default function TableDeBordSorties() {
   }
 
   return (
-    <div style={{ padding: '30px', fontFamily: 'sans-serif', backgroundColor: '#fafafa', minHeight: '100vh' }}>
+    <div style={{ padding: '30px', fontFamily: 'sans-serif', backgroundColor: '#fafafa', minHeight: '100vh', position: 'relative' }}>
+      
+      {/* BOUTON RETOUR À L'ACCUEIL */}
+      <div style={{ maxWidth: '1300px', margin: '0 auto 15px auto' }}>
+        <a 
+          href="/" 
+          style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            color: '#4b5563', 
+            textDecoration: 'none', 
+            fontSize: '14px', 
+            fontWeight: '600',
+            padding: '8px 16px',
+            backgroundColor: '#fff',
+            borderRadius: '6px',
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#f3f4f6';
+            e.currentTarget.style.color = '#111827';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fff';
+            e.currentTarget.style.color = '#4b5563';
+          }}
+        >
+          🔙 Retour à l'accueil
+        </a>
+      </div>
+
       <h1 style={{ textAlign: 'center', color: '#111827', margin: '0 0 5px 0', fontSize: '26px' }}>📅 Tableau de Bord de Fréquentation 2025</h1>
       <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: '30px' }}>Configuration Spécifique : <b>Zone C - Académie de Toulouse</b></p>
 
