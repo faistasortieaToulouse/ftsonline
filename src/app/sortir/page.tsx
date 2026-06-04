@@ -7,6 +7,7 @@ interface DayData {
   score: number;
   affluenceTexte: string;
   details: string;
+  meteo: string;
 }
 
 interface MonthData {
@@ -30,11 +31,13 @@ export default function TableDeBordSorties() {
       const structureAnnee: MonthData[] = [];
 
       for (let m = 0; m < 12; m++) {
+        // Récupère le nombre exact de jours pour le mois m
         const nbJours = new Date(annee, m + 1, 0).getDate();
         const promessesJours = [];
 
         for (let j = 1; j <= nbJours; j++) {
           const dateStr = `${annee}-${String(m + 1).padStart(2, '0')}-${String(j).padStart(2, '0')}`;
+          
           promessesJours.push(
             fetch(`/api/sortir?date=${dateStr}`)
               .then(res => res.json())
@@ -43,7 +46,16 @@ export default function TableDeBordSorties() {
                 dayNum: j,
                 score: data.score,
                 affluenceTexte: data.affluenceTexte,
-                details: data.details
+                details: data.details,
+                meteo: data.meteo
+              }))
+              .catch(err => ({
+                date: dateStr,
+                dayNum: j,
+                score: 2,
+                affluenceTexte: "Erreur de chargement",
+                details: "Impossible de joindre l'API",
+                meteo: ""
               }))
           );
         }
@@ -62,7 +74,7 @@ export default function TableDeBordSorties() {
     chargerTouteAnnee();
   }, []);
 
-  // Couleurs associées aux niveaux stricts 1, 2 et 3
+  // Couleurs associées aux niveaux stricts du backend (1, 2 et 3)
   const getColorForNiveau = (score: number) => {
     switch (score) {
       case 1: return '#fca5a5'; // Rouge/Rose (Peu de monde)
@@ -74,8 +86,11 @@ export default function TableDeBordSorties() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'sans-serif' }}>
-        <p style={{ fontSize: '16px', fontWeight: 'bold' }}>🔄 Initialisation du calendrier 2025 selon vos critères terrain...</p>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'sans-serif', backgroundColor: '#fafafa' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#1f2937' }}>🔄 Chargement de la matrice 2025...</p>
+          <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '8px' }}>Injection des données terrain et des critères météo...</p>
+        </div>
       </div>
     );
   }
@@ -83,10 +98,10 @@ export default function TableDeBordSorties() {
   return (
     <div style={{ padding: '30px', fontFamily: 'sans-serif', backgroundColor: '#fafafa', minHeight: '100vh' }}>
       <h1 style={{ textAlign: 'center', color: '#111827', margin: '0 0 5px 0', fontSize: '26px' }}>📅 Calendrier des Sorties & Fréquentation 2025</h1>
-      <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: '30px' }}>Indexation basée sur vos données terrain (Niveaux 1, 2, 3)</p>
+      <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: '30px' }}>Indexation basée sur votre tableau de bord et relevés météo (Niveaux 1, 2, 3)</p>
 
       {/* Légende */}
-      <div style={{ maxWidth: '600px', margin: '0 auto 40px auto', padding: '12px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb', display: 'flex', gap: '20px', justifyContent: 'center' }}>
+      <div style={{ maxWidth: '750px', margin: '0 auto 40px auto', padding: '12px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb', display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
           <div style={{ width: '16px', height: '16px', backgroundColor: '#fca5a5', borderRadius: '4px' }}></div> Niveau 1 (Peu de gens)
         </div>
@@ -95,6 +110,9 @@ export default function TableDeBordSorties() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
           <div style={{ width: '16px', height: '16px', backgroundColor: '#86efac', borderRadius: '4px' }}></div> Niveau 3 (Beaucoup de monde)
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', marginLeft: '10px', borderLeft: '1px solid #e5e7eb', paddingLeft: '15px' }}>
+          <span>⚠️ / 🔥 / ⛈️</span> Événement météo inscrit
         </div>
       </div>
 
@@ -105,33 +123,43 @@ export default function TableDeBordSorties() {
             <h3 style={{ margin: '0 0 15px 0', color: '#1f2937', fontSize: '18px', borderBottom: '1px solid #f3f4f6', paddingBottom: '8px' }}>{month.name}</h3>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
-              {month.days.map((day, dIdx) => (
-                <div
-                  key={dIdx}
-                  onClick={() => setSelectedDay(day)}
-                  style={{
-                    backgroundColor: getColorForNiveau(day.score),
-                    padding: '10px 0',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    border: '1px solid rgba(0, 0, 0, 0.05)',
-                    transition: 'all 0.15s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  {day.dayNum}
-                </div>
-              ))}
+              {month.days.map((day, dIdx) => {
+                const aUneAlerte = day.meteo && day.meteo !== "Météo conforme aux normales saisonnières.";
+                
+                return (
+                  <div
+                    key={dIdx}
+                    onClick={() => setSelectedDay(day)}
+                    style={{
+                      backgroundColor: getColorForNiveau(day.score),
+                      padding: '10px 0',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      border: aUneAlerte ? '2px solid #dc2626' : '1px solid rgba(0, 0, 0, 0.05)',
+                      transition: 'all 0.15s ease',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    {day.dayNum}
+                    {/* Badge discret si météo critique présente */}
+                    {aUneAlerte && (
+                      <span style={{ position: 'absolute', bottom: '1px', right: '2px', fontSize: '8px' }}>
+                        ⚡
+                      )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))}
@@ -139,15 +167,29 @@ export default function TableDeBordSorties() {
 
       {/* Fenêtre de Détail Flottante */}
       {selectedDay && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#1f2937', color: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)', maxWidth: '320px', zIndex: 50 }}>
-          <h4 style={{ margin: '0 0 8px 0', color: '#f9fafb', fontSize: '15px' }}>
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#1f2937', color: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)', maxWidth: '340px', zIndex: 100, border: '1px solid #374151' }}>
+          <h4 style={{ margin: '0 0 10px 0', color: '#f9fafb', fontSize: '15px', textTransform: 'capitalize', borderBottom: '1px solid #4b5563', paddingBottom: '6px' }}>
             {new Date(selectedDay.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
           </h4>
-          <p style={{ margin: '4px 0', fontSize: '14px' }}><strong>Constat :</strong> {selectedDay.affluenceTexte}</p>
-          <p style={{ margin: '4px 0', fontSize: '12px', color: '#9ca3af' }}>🔍 {selectedDay.details}</p>
+          <p style={{ margin: '6px 0', fontSize: '14px' }}><strong>Constat :</strong> {selectedDay.affluenceTexte}</p>
+          <p style={{ margin: '6px 0', fontSize: '13px', color: '#d1d5db' }}>📊 {selectedDay.details}</p>
+          
+          {/* Section d'affichage des alertes météo */}
+          <div style={{ 
+            marginTop: '10px', 
+            padding: '8px', 
+            borderRadius: '6px', 
+            backgroundColor: selectedDay.meteo.includes('⚠️') || selectedDay.meteo.includes('🥵') || selectedDay.meteo.includes('🔥') ? '#991b1b' : '#374151', 
+            fontSize: '12px',
+            lineHeight: '1.4'
+          }}>
+            <strong>🌤️ Alerte & Météo :</strong><br />
+            {selectedDay.meteo}
+          </div>
+
           <button 
             onClick={() => setSelectedDay(null)}
-            style={{ marginTop: '12px', backgroundColor: '#4b5563', border: 'none', color: '#fff', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+            style={{ marginTop: '14px', backgroundColor: '#4b5563', border: 'none', color: '#fff', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', width: '100%', fontWeight: '600' }}
           >
             Masquer le détail
           </button>
