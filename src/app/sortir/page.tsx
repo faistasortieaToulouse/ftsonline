@@ -17,6 +17,7 @@ interface DayData {
 interface MonthData {
   name: string;
   days: DayData[];
+  blankDaysBefore: number; // Pour décaler le début du mois selon le jour de la semaine
 }
 
 export default function TableDeBordSorties() {
@@ -29,6 +30,9 @@ export default function TableDeBordSorties() {
     "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
   ];
 
+  // En-têtes des jours de la semaine (réduits)
+  const joursAbreges = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"];
+
   useEffect(() => {
     const chargerTouteAnnee = async () => {
       const annee = 2025;
@@ -36,6 +40,12 @@ export default function TableDeBordSorties() {
 
       for (let m = 0; m < 12; m++) {
         const nbJours = new Date(annee, m + 1, 0).getDate();
+        
+        // Calculer le décalage pour le premier jour du mois (0 = Lundi, 6 = Dimanche)
+        // native getDay(): 0 = Dimanche, 1 = Lundi... d'où l'ajustement :
+        const premierJourIndex = new Date(annee, m, 1).getDay();
+        const blankDaysBefore = premierJourIndex === 0 ? 6 : premierJourIndex - 1;
+
         const promessesJours = [];
 
         for (let j = 1; j <= nbJours; j++) {
@@ -54,6 +64,7 @@ export default function TableDeBordSorties() {
         const resultatsJours = await Promise.all(promessesJours);
         structureAnnee.push({
           name: moisNoms[m],
+          blankDaysBefore: blankDaysBefore,
           days: resultatsJours.map((d, index) => ({ ...d, dayNum: index + 1 }))
         });
       }
@@ -86,7 +97,7 @@ export default function TableDeBordSorties() {
     <div style={{ padding: '30px', fontFamily: 'sans-serif', backgroundColor: '#fafafa', minHeight: '100vh', position: 'relative' }}>
       
       {/* BOUTON RETOUR À L'ACCUEIL */}
-      <div style={{ maxWidth: '1300px', margin: '0 auto 15px auto' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto 15px auto' }}>
         <a 
           href="/" 
           style={{ 
@@ -123,7 +134,7 @@ export default function TableDeBordSorties() {
       {/* BLOC LÉGENDE COMPLET */}
       <div style={{ maxWidth: '1100px', margin: '0 auto 40px auto', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
         
-        {/* Section 1 : Légende des couleurs d'affluence */}
+        {/* Section 1 : Couleurs */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', padding: '15px', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '14px', fontWeight: '600', color: '#374151' }}>Niveaux de Fréquentation :</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -140,9 +151,9 @@ export default function TableDeBordSorties() {
           </div>
         </div>
 
-        {/* Section 2 : Légende des symboles */}
+        {/* Section 2 : Symboles */}
         <div style={{ padding: '15px', display: 'flex', justifyContent: 'center', gap: '25px', flexWrap: 'wrap', fontSize: '12px', color: '#4b5563' }}>
-          <span>💡 <b>Cliquez sur un jour</b> pour voir le détail des prévisions.</span>
+          <span>💡 <b>Cliquez sur un jour</b> pour voir le détail.</span>
           <span>🛑 <b>Jour Férié</b> (Bordure pointillée)</span>
           <span>🎒 <b>Vacances Toulouse</b> (Bordure Orange Basse)</span>
           <span>⏳ <b>Jour &gt; 19h30</b></span>
@@ -156,12 +167,27 @@ export default function TableDeBordSorties() {
       </div>
 
       {/* Grille des mois */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '25px', maxWidth: '1300px', margin: '0 auto' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '25px', maxWidth: '1400px', margin: '0 auto' }}>
         {calendrier.map((month, idx) => (
-          <div key={idx} style={{ backgroundColor: '#fff', padding: '18px', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
-            <h3 style={{ margin: '0 0 15px 0', color: '#1f2937', fontSize: '16px', borderBottom: '1px solid #f3f4f6', paddingBottom: '6px' }}>{month.name}</h3>
+          <div key={idx} style={{ backgroundColor: '#fff', padding: '18px', borderRadius: '10px', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
+            <h3 style={{ margin: '0 0 12px 0', color: '#1f2937', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px solid #f3f4f6', paddingBottom: '6px' }}>{month.name}</h3>
             
+            {/* Grille Calendrier principale à 7 colonnes */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
+              
+              {/* ÉTAPE A : Rendu des en-têtes Lu, Ma, Me... */}
+              {joursAbreges.map((jAbrev, jIdx) => (
+                <div key={`header-${jIdx}`} style={{ fontSize: '11px', fontWeight: '600', color: '#9ca3af', textAlign: 'center', paddingBottom: '4px' }}>
+                  {jAbrev}
+                </div>
+              ))}
+
+              {/* ÉTAPE B : Cases blanches pour caler le 1er du mois sur le bon jour de la semaine */}
+              {Array.from({ length: month.blankDaysBefore }).map((_, bIdx) => (
+                <div key={`blank-${bIdx}`} style={{ backgroundColor: 'transparent' }} />
+              ))}
+
+              {/* ÉTAPE C : Affichage des jours réels */}
               {month.days.map((day, dIdx) => {
                 const types = day.meteoTypes || [];
                 const aGrosseAlerte = types.includes('canicule') || types.includes('orage') || types.includes('vent');
@@ -172,23 +198,24 @@ export default function TableDeBordSorties() {
                     onClick={() => setSelectedDay(day)}
                     style={{
                       backgroundColor: getColorForNiveau(day.score),
-                      padding: '8px 0 22px 0',
+                      padding: '8px 0 20px 0',
                       borderRadius: '6px',
                       fontSize: '12px',
                       fontWeight: '700',
                       textAlign: 'center',
                       cursor: 'pointer',
                       position: 'relative',
-                      minHeight: '42px',
+                      minHeight: '40px',
                       border: aGrosseAlerte ? '2px solid #dc2626' : (day.estFerie ? '2px dashed #374151' : '1px solid rgba(0, 0, 0, 0.05)'),
                       borderBottom: day.estVacances ? '4px solid #f97316' : undefined,
                       transition: 'transform 0.1s ease'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.03)'}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   >
                     {day.dayNum}
 
+                    {/* Zone des symboles sous le chiffre */}
                     <div style={{ position: 'absolute', bottom: '2px', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '1px', fontSize: '9px' }}>
                       {day.estFerie && <span>🛑</span>}
                       {day.estVacances && <span>🎒</span>}
