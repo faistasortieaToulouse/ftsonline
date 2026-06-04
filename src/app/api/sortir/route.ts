@@ -13,7 +13,7 @@ const DATA_TERRAIN_2025: Record<string, number> = {
   // Mai
   "2025-05-06": 2, "2025-05-13": 2, "2025-05-20": 2, "2025-05-27": 3,
   // Juin
-  "2025-03-06": 2, "2025-06-10": 2, "2025-06-17": 2, "2025-06-24": 3,
+  "2025-06-03": 2, "2025-06-10": 2, "2025-06-17": 2, "2025-06-24": 3,
   // Juillet
   "2025-07-01": 3, "2025-07-08": 2, "2025-07-15": 2, "2025-07-22": 2, "2025-07-29": 3,
   // Août
@@ -21,14 +21,14 @@ const DATA_TERRAIN_2025: Record<string, number> = {
   // Septembre
   "2025-09-02": 3, "2025-09-09": 1, "2025-09-16": 2, "2025-09-23": 1, "2025-09-30": 3,
   // Octobre
-  "2025-01-07": 3, "2025-10-14": 3, "2025-10-21": 1, "2025-10-28": 1,
+  "2025-10-07": 3, "2025-10-14": 3, "2025-10-21": 1, "2025-10-28": 1,
   // Novembre
   "2025-11-04": 1, "2025-11-12": 1, "2025-11-18": 1, "2025-11-25": 1,
   // Décembre
   "2025-12-02": 1, "2025-12-09": 1, "2025-12-16": 1, "2025-12-23": 1, "2025-12-30": 1
 };
 
-// Jours fériés 2025 impactant les sorties
+// Jours fériés France 2025
 const FERIES_2025: string[] = [
   "2025-01-01", "2025-04-21", "2025-05-01", "2025-05-08", 
   "2025-05-29", "2025-06-09", "2025-07-14", "2025-08-15", 
@@ -36,54 +36,66 @@ const FERIES_2025: string[] = [
 ];
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const dateString = searchParams.get('date') || new Date().toISOString().split('T')[0];
-  
-  const targetDate = new Date(dateString);
-  const dayOfWeek = targetDate.getDay(); // 0 = Dimanche, 2 = Mardi, 5 = Vendredi...
-  
-  let niveauCalculé = 1;
-  let sourceInfo = "Calculé par extrapolation";
-
-  // 1. Si la date demandée est explicitement dans vos données de référence (vos Mardis)
-  if (DATA_TERRAIN_2025[dateString] !== undefined) {
-    niveauCalculé = DATA_TERRAIN_2025[dateString];
-    sourceInfo = "Donnée terrain exacte (Mardi)";
-  } else {
-    // 2. Extrapolation pour les autres jours de la semaine
-    // On cherche le mardi le plus proche dans la même semaine pour calquer la tendance mensuelle/hebdomadaire
-    const copieDate = new Date(targetDate);
-    const distanceAuMardi = 2 - dayOfWeek;
-    copieDate.setDate(copieDate.getDate() + distanceAuMains);
-    const mardiProcheStr = copieDate.toISOString().split('T')[0];
+  try {
+    const { searchParams } = new URL(request.url);
+    const dateString = searchParams.get('date') || new Date().toISOString().split('T')[0];
     
-    // Niveau de référence de la semaine courante
-    const niveauReferenceSemaine = DATA_TERRAIN_2025[mardiProcheStr] || 2;
+    const targetDate = new Date(dateString);
+    const dayOfWeek = targetDate.getDay(); // 0 = Dimanche, 2 = Mardi, 5 = Vendredi...
+    
+    let niveauCalcule = 1;
+    let sourceInfo = "Calculé par extrapolation";
 
-    if (dayOfWeek === 5) { // Vendredi : Forte tendance à sortir
-      niveauCalculé = Math.min(3, niveauReferenceSemaine + 1);
-      sourceInfo = `Extrapolé du Vendredi (Basé sur Mardi Référence niveau ${niveauReferenceSemaine})`;
-    } else if (dayOfWeek === 0 || FERIES_2025.includes(dateString)) { // Dimanche ou Férié : Calme
-      niveauCalculé = 1;
-      sourceInfo = "Jour férié ou Dimanche (Systématiquement calme)";
-    } else { // Lundi, Mercredi, Jeudi, Samedi
-      niveauCalculé = niveauReferenceSemaine;
-      sourceInfo = `Jour de semaine standard (Aligné sur Mardi Référence niveau ${niveauReferenceSemaine})`;
+    // 1. Si la date demandée possède sa propre donnée terrain de référence (nos Mardis)
+    if (DATA_TERRAIN_2025[dateString] !== undefined) {
+      niveauCalcule = DATA_TERRAIN_2025[dateString];
+      sourceInfo = "Donnée terrain exacte (Mardi)";
+    } else {
+      // 2. Extrapolation pour les autres jours de la semaine
+      // On cherche le mardi le plus proche dans la même semaine
+      const copieDate = new Date(targetDate);
+      const distanceAuMardi = 2 - dayOfWeek;
+      
+      copieDate.setDate(copieDate.getDate() + distanceAuMardi);
+      const mardiProcheStr = copieDate.toISOString().split('T')[0];
+      
+      // Niveau de référence du mardi de la semaine courante (par défaut niveau 2 si introuvable)
+      const niveauReferenceSemaine = DATA_TERRAIN_2025[mardiProcheStr] !== undefined ? DATA_TERRAIN_2025[mardiProcheStr] : 2;
+
+      if (dayOfWeek === 5) { 
+        // Vendredi : Dynamique de sortie plus forte que le mardi
+        niveauCalcule = Math.min(3, niveauReferenceSemaine + 1);
+        sourceInfo = `Extrapolé pour Vendredi (Basé sur le Mardi de référence de Niveau ${niveauReferenceSemaine})`;
+      } else if (dayOfWeek === 0 || FERIES_2025.includes(dateString)) { 
+        // Dimanche ou Férié : Calme par défaut
+        niveauCalcule = 1;
+        sourceInfo = "Jour férié ou Dimanche (Systématiquement calme)";
+      } else { 
+        // Lundi, Mercredi, Jeudi, Samedi
+        niveauCalcule = niveauReferenceSemaine;
+        sourceInfo = `Jour standard (Calibré sur le Mardi de référence de Niveau ${niveauReferenceSemaine})`;
+      }
     }
+
+    // Correspondance stricte avec vos libellés de niveaux
+    const libellesNiveaux: Record<number, string> = {
+      1: "Peu de gens (Niveau 1)",
+      2: "Nombre de gens moyen (Niveau 2)",
+      3: "Beaucoup de monde (Niveau 3)"
+    };
+
+    return NextResponse.json({
+      date: dateString,
+      jourSemaine: targetDate.toLocaleDateString('fr-FR', { weekday: 'long' }),
+      score: niveauCalcule, // Valeur stricte 1, 2 ou 3
+      affluenceTexte: libellesNiveaux[niveauCalcule] || "Inconnu",
+      details: sourceInfo
+    });
+
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Erreur interne lors du calcul de la date." },
+      { status: 500 }
+    );
   }
-
-  // Correspondance stricte avec vos libellés de niveaux
-  const libellesNiveaux: Record<number, string> = {
-    1: "Peu de gens (Niveau 1)",
-    2: "Nombre de gens moyen (Niveau 2)",
-    3: "Beaucoup de monde (Niveau 3)"
-  };
-
-  return NextResponse.json({
-    date: dateString,
-    jourSemaine: targetDate.toLocaleDateString('fr-FR', { weekday: 'long' }),
-    score: niveauCalculé, // Valeur stricte 1, 2 ou 3
-    affluenceTexte: libellesNiveaux[niveauCalculé] || "Inconnu",
-    details: sourceInfo
-  });
 }
