@@ -31,7 +31,6 @@ export default function TableDeBordSorties() {
       const structureAnnee: MonthData[] = [];
 
       for (let m = 0; m < 12; m++) {
-        // Récupère le nombre exact de jours pour le mois m
         const nbJours = new Date(annee, m + 1, 0).getDate();
         const promessesJours = [];
 
@@ -49,12 +48,12 @@ export default function TableDeBordSorties() {
                 details: data.details,
                 meteo: data.meteo
               }))
-              .catch(err => ({
+              .catch(() => ({
                 date: dateStr,
                 dayNum: j,
                 score: 2,
-                affluenceTexte: "Erreur de chargement",
-                details: "Impossible de joindre l'API",
+                affluenceTexte: "Erreur",
+                details: "Erreur API",
                 meteo: ""
               }))
           );
@@ -74,12 +73,11 @@ export default function TableDeBordSorties() {
     chargerTouteAnnee();
   }, []);
 
-  // Couleurs associées aux niveaux stricts du backend (1, 2 et 3)
   const getColorForNiveau = (score: number) => {
     switch (score) {
-      case 1: return '#fca5a5'; // Rouge/Rose (Peu de monde)
-      case 2: return '#fef08a'; // Jaune pâle (Moyen)
-      case 3: return '#86efac'; // Vert clair (Beaucoup de monde)
+      case 1: return '#fca5a5';
+      case 2: return '#fef08a';
+      case 3: return '#86efac';
       default: return '#ffffff';
     }
   };
@@ -88,8 +86,8 @@ export default function TableDeBordSorties() {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'sans-serif', backgroundColor: '#fafafa' }}>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#1f2937' }}>🔄 Chargement de la matrice 2025...</p>
-          <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '8px' }}>Injection des données terrain et des critères météo...</p>
+          <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#1f2937' }}>🔄 Initialisation de la Matrice 2025...</p>
+          <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '6px' }}>Calcul des indicateurs d'ensoleillement (Durée &gt; 19h30), vacances et alertes climatiques...</p>
         </div>
       </div>
     );
@@ -98,25 +96,25 @@ export default function TableDeBordSorties() {
   return (
     <div style={{ padding: '30px', fontFamily: 'sans-serif', backgroundColor: '#fafafa', minHeight: '100vh' }}>
       <h1 style={{ textAlign: 'center', color: '#111827', margin: '0 0 5px 0', fontSize: '26px' }}>📅 Calendrier des Sorties & Fréquentation 2025</h1>
-      <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: '30px' }}>Indexation basée sur votre tableau de bord et relevés météo (Niveaux 1, 2, 3)</p>
+      <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: '30px' }}>Indexation complète : Météo, Saisons, Vacances scolaires et Jours Fériés</p>
 
       {/* Légende */}
-      <div style={{ maxWidth: '750px', margin: '0 auto 40px auto', padding: '12px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb', display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div style={{ maxWidth: '850px', margin: '0 auto 40px auto', padding: '15px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb', display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-          <div style={{ width: '16px', height: '16px', backgroundColor: '#fca5a5', borderRadius: '4px' }}></div> Niveau 1 (Peu de gens)
+          <div style={{ width: '16px', height: '16px', backgroundColor: '#fca5a5', borderRadius: '4px' }}></div> Niveau 1 (Calme / Férié / Alerte)
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
           <div style={{ width: '16px', height: '16px', backgroundColor: '#fef08a', borderRadius: '4px' }}></div> Niveau 2 (Moyen)
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-          <div style={{ width: '16px', height: '16px', backgroundColor: '#86efac', borderRadius: '4px' }}></div> Niveau 3 (Beaucoup de monde)
+          <div style={{ width: '16px', height: '16px', backgroundColor: '#86efac', borderRadius: '4px' }}></div> Niveau 3 (Forte Affluence)
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', marginLeft: '10px', borderLeft: '1px solid #e5e7eb', paddingLeft: '15px' }}>
-          <span>⚠️ / 🔥 / ⛈️</span> Événement météo inscrit
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', borderLeft: '1px solid #e5e7eb', paddingLeft: '15px' }}>
+          <span>⚡</span> Alerte météo active (Vent, Pluie, Canicule)
         </div>
       </div>
 
-      {/* Grille Annuelle */}
+      {/* Grille */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '25px', maxWidth: '1300px', margin: '0 auto' }}>
         {calendrier.map((month, idx) => (
           <div key={idx} style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '10px', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
@@ -124,7 +122,7 @@ export default function TableDeBordSorties() {
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
               {month.days.map((day, dIdx) => {
-                const aUneAlerte = day.meteo && day.meteo !== "Météo conforme aux normales saisonnières.";
+                const aUneAlerte = day.meteo && day.meteo !== "☀️ Météo clémente ou conforme aux normales.";
                 
                 return (
                   <div
@@ -152,11 +150,11 @@ export default function TableDeBordSorties() {
                     }}
                   >
                     {day.dayNum}
-                    {/* Badge discret si météo critique présente */}
                     {aUneAlerte && (
                       <span style={{ position: 'absolute', bottom: '1px', right: '2px', fontSize: '8px' }}>
-                        ⚡</span>
-                      )}
+                        ⚡
+                      </span>
+                    )}
                   </div>
                 );
               })}
@@ -165,33 +163,32 @@ export default function TableDeBordSorties() {
         ))}
       </div>
 
-      {/* Fenêtre de Détail Flottante */}
+      {/* Fenêtre Flottante */}
       {selectedDay && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#1f2937', color: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)', maxWidth: '340px', zIndex: 100, border: '1px solid #374151' }}>
-          <h4 style={{ margin: '0 0 10px 0', color: '#f9fafb', fontSize: '15px', textTransform: 'capitalize', borderBottom: '1px solid #4b5563', paddingBottom: '6px' }}>
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#1f2937', color: '#fff', padding: '25px', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)', maxWidth: '360px', zIndex: 100, border: '1px solid #374151' }}>
+          <h4 style={{ margin: '0 0 12px 0', color: '#f9fafb', fontSize: '16px', textTransform: 'capitalize', borderBottom: '1px solid #4b5563', paddingBottom: '8px' }}>
             {new Date(selectedDay.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
           </h4>
-          <p style={{ margin: '6px 0', fontSize: '14px' }}><strong>Constat :</strong> {selectedDay.affluenceTexte}</p>
-          <p style={{ margin: '6px 0', fontSize: '13px', color: '#d1d5db' }}>📊 {selectedDay.details}</p>
+          <p style={{ margin: '8px 0', fontSize: '14px' }}><strong>Constat :</strong> {selectedDay.affluenceTexte}</p>
+          <p style={{ margin: '8px 0', fontSize: '13px', color: '#d1d5db', lineHeight: '1.4' }}><strong>🔍 Facteurs :</strong> {selectedDay.details}</p>
           
-          {/* Section d'affichage des alertes météo */}
           <div style={{ 
-            marginTop: '10px', 
-            padding: '8px', 
+            marginTop: '12px', 
+            padding: '10px', 
             borderRadius: '6px', 
-            backgroundColor: selectedDay.meteo.includes('⚠️') || selectedDay.meteo.includes('🥵') || selectedDay.meteo.includes('🔥') ? '#991b1b' : '#374151', 
+            backgroundColor: selectedDay.meteo.includes('⚠️') || selectedDay.meteo.includes('🥵') || selectedDay.meteo.includes('🌪️') || selectedDay.meteo.includes('⛈️') ? '#991b1b' : '#374151', 
             fontSize: '12px',
             lineHeight: '1.4'
           }}>
-            <strong>🌤️ Alerte & Météo :</strong><br />
+            <strong>🌤️ Relevé Climat :</strong><br />
             {selectedDay.meteo}
           </div>
 
           <button 
             onClick={() => setSelectedDay(null)}
-            style={{ marginTop: '14px', backgroundColor: '#4b5563', border: 'none', color: '#fff', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', width: '100%', fontWeight: '600' }}
+            style={{ marginTop: '16px', backgroundColor: '#4b5563', border: 'none', color: '#fff', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', width: '100%', fontWeight: '600' }}
           >
-            Masquer le détail
+            Fermer le volet
           </button>
         </div>
       )}
