@@ -67,9 +67,9 @@ export default function TableDeBordSorties() {
 
   const getColorForNiveau = (score: number) => {
     switch (score) {
-      case 1: return '#fca5a5';
-      case 2: return '#fef08a';
-      case 3: return '#86efac';
+      case 1: return '#fca5a5'; // Rouge pastel
+      case 2: return '#fef08a'; // Jaune pastel
+      case 3: return '#86efac'; // Vert pastel
       default: return '#ffffff';
     }
   };
@@ -87,22 +87,42 @@ export default function TableDeBordSorties() {
       <h1 style={{ textAlign: 'center', color: '#111827', margin: '0 0 5px 0', fontSize: '26px' }}>📅 Tableau de Bord de Fréquentation 2025</h1>
       <p style={{ textAlign: 'center', color: '#6b7280', marginBottom: '30px' }}>Configuration Spécifique : <b>Zone C - Académie de Toulouse</b></p>
 
-      {/* Légende */}
-      <div style={{ maxWidth: '1100px', margin: '0 auto 40px auto', padding: '15px', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '25px', flexWrap: 'wrap', fontSize: '12px', color: '#4b5563' }}>
-          <span>🥶 <b>&lt; 5°C</b> (Grand froid)</span>
-          <span>🧥 <b>5°C à 10°C</b> (Frais)</span>
-          <span>🥵 <b>Canicule</b></span>
-          <span>💨 <b>Vent / Tempête</b></span>
-          <span>🌧️ <b>Forte Pluie</b></span>
-          <span>⛈️ <b>Orage</b></span>
-          <span>⏳ <b>Jour &gt; 19h30</b></span>
+      {/* BLOC LÉGENDE COMPLET */}
+      <div style={{ maxWidth: '1100px', margin: '0 auto 40px auto', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+        
+        {/* Section 1 : Légende des couleurs d'affluence */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', padding: '15px', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: '600', color: '#374151' }}>Niveaux de Fréquentation :</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#fca5a5', borderRadius: '4px', border: '1px solid rgba(0,0,0,0.1)' }}></div>
+            <span style={{ fontSize: '13px', color: '#4b5563' }}><b>Score 1 :</b> Peu de monde 🔴</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#fef08a', borderRadius: '4px', border: '1px solid rgba(0,0,0,0.1)' }}></div>
+            <span style={{ fontSize: '13px', color: '#4b5563' }}><b>Score 2 :</b> Moyennement de monde 🟡</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ width: '20px', height: '20px', backgroundColor: '#86efac', borderRadius: '4px', border: '1px solid rgba(0,0,0,0.1)' }}></div>
+            <span style={{ fontSize: '13px', color: '#4b5563' }}><b>Score 3 :</b> Beaucoup de monde 🟢</span>
+          </div>
+        </div>
+
+        {/* Section 2 : Légende des symboles */}
+        <div style={{ padding: '15px', display: 'flex', justifyContent: 'center', gap: '25px', flexWrap: 'wrap', fontSize: '12px', color: '#4b5563' }}>
+          <span>💡 <b>Cliquez sur un jour</b> pour voir le détail des prévisions.</span>
           <span>🛑 <b>Jour Férié</b> (Bordure pointillée)</span>
           <span>🎒 <b>Vacances Toulouse</b> (Bordure Orange Basse)</span>
+          <span>⏳ <b>Jour &gt; 19h30</b></span>
+          <span>🥶 <b>&lt; 5°C</b></span>
+          <span>🧥 <b>5°C à 10°C</b></span>
+          <span>🥵 <b>Canicule</b></span>
+          <span>💨 <b>Vent / Tempête</b></span>
+          <span>🌧️ <b>Pluie</b></span>
+          <span>⛈️ <b>Orage</b></span>
         </div>
       </div>
 
-      {/* Grille */}
+      {/* Grille des mois */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '25px', maxWidth: '1300px', margin: '0 auto' }}>
         {calendrier.map((month, idx) => (
           <div key={idx} style={{ backgroundColor: '#fff', padding: '18px', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
@@ -155,7 +175,7 @@ export default function TableDeBordSorties() {
         ))}
       </div>
 
-      {/* Fenêtre Flottante */}
+      {/* Fenêtre Flottante de Détails */}
       {selectedDay && (
         <div style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#1f2937', color: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)', maxWidth: '350px', zIndex: 200, border: '1px solid #374151' }}>
           <h4 style={{ margin: '0 0 10px 0', textTransform: 'capitalize', borderBottom: '1px solid #4b5563', paddingBottom: '6px' }}>
