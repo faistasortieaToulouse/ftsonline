@@ -107,6 +107,13 @@ const ICAL_GROUPS: string[][] = [
     "https://www.meetup.com/meetup-group-fazhited/events/ical/",
     "https://www.meetup.com/pages-social-readers/events/ical/",
     "https://www.meetup.com/mtg-toulouse/events/ical/"   
+  ],
+    // Lot 8
+  [
+    "https://www.meetup.com/french-speaking-bootcamp-for-expats/events/ical/",
+    "https://www.meetup.com/muret-reality-meetup-group/events/ical/",
+    "https://www.meetup.com/lespetitsatelierdejulie/events/ical/",
+    "https://www.meetup.com/experiences-a-lunion/events/ical/"   
   ]
 ];
 
