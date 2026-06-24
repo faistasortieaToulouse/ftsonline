@@ -1,0 +1,172 @@
+{
+  "theme": "Histoire de l'esclavage",
+  "message_general": {
+    "resume": "L'esclavage a existé dans de nombreuses civilisations et régions du monde. Il ne fut pas propre à un peuple, une religion ou un continent particulier.",
+    "points_cles": [
+      "L'esclavage est attesté dans de nombreuses sociétés humaines.",
+      "Les formes d'esclavage variaient selon les époques et les régions.",
+      "Toutes les formes d'esclavage ne sont pas équivalentes.",
+      "La traite atlantique se distingue par son ampleur, son caractère héréditaire et sa dimension raciale."
+    ]
+  },
+  "civilisations_pratiquant_esclavage": [
+    {
+      "civilisation": "Égypte antique",
+      "caracteristiques": [
+        "Servitude et esclavage de prisonniers de guerre",
+        "Système différent de l'esclavage romain"
+      ]
+    },
+    {
+      "civilisation": "Grèce antique",
+      "caracteristiques": [
+        "Institution importante",
+        "Part significative de la population dans certaines cités"
+      ]
+    },
+    {
+      "civilisation": "Empire romain",
+      "caracteristiques": [
+        "Esclavage omniprésent",
+        "Travail agricole, minier, domestique et administratif"
+      ]
+    },
+    {
+      "civilisation": "Monde musulman médiéval et moderne",
+      "caracteristiques": [
+        "Réseaux commerciaux reliant Afrique, Europe et Asie",
+        "Traite orientale sur plusieurs siècles"
+      ]
+    },
+    {
+      "civilisation": "Afrique précoloniale",
+      "caracteristiques": [
+        "Présence de systèmes esclavagistes avant l'arrivée des Européens",
+        "Importance variable selon les régions"
+      ]
+    },
+    {
+      "civilisation": "Asie",
+      "caracteristiques": [
+        "Existence de formes d'esclavage en Chine, Inde, Corée et Japon"
+      ]
+    },
+    {
+      "civilisation": "Amériques précolombiennes",
+      "caracteristiques": [
+        "Captivité de guerre",
+        "Servitude",
+        "Esclavage chez certains peuples comme les Aztèques"
+      ]
+    }
+  ],
+  "formes_esclavage": [
+    "Esclavage domestique",
+    "Esclavage pour dettes",
+    "Captivité de guerre",
+    "Esclavage avec possibilité d'affranchissement",
+    "Esclavage de plantation"
+  ],
+  "traite_atlantique": {
+    "periode": "XVe - XIXe siècle",
+    "principaux_acteurs": {
+      "fournisseurs": [
+        "Royaumes africains",
+        "États africains",
+        "Marchands africains",
+        "Intermédiaires locaux"
+      ],
+      "organisateurs_transport": [
+        "Marchands européens",
+        "Armateurs européens"
+      ],
+      "acheteurs_finaux": [
+        "Colonies européennes des Amériques",
+        "Propriétaires de plantations"
+      ]
+    },
+    "demande": [
+      "Sucre",
+      "Coton",
+      "Tabac",
+      "Café"
+    ]
+  },
+  "traite_orientale": {
+    "acteurs": [
+      "Marchands arabes",
+      "Marchands berbères",
+      "Marchands persans",
+      "Empire ottoman"
+    ],
+    "zones": [
+      "Afrique",
+      "Moyen-Orient",
+      "Asie centrale",
+      "Inde",
+      "Méditerranée"
+    ]
+  },
+  "empire_ottoman": {
+    "pratiques": [
+      "Utilisation d'esclaves",
+      "Commerce d'esclaves"
+    ],
+    "origines_captifs": [
+      "Afrique",
+      "Europe orientale",
+      "Caucase"
+    ]
+  },
+  "royaumes_africains_impliques_dans_traite_atlantique": [
+    {
+      "nom": "Royaume du Dahomey",
+      "actuel": "Bénin",
+      "role": [
+        "Captures lors de campagnes militaires",
+        "Vente de captifs aux Européens"
+      ]
+    },
+    {
+      "nom": "Empire d'Oyo",
+      "actuel": "Nigeria",
+      "role": [
+        "Production de captifs lors des guerres",
+        "Participation aux réseaux de traite"
+      ]
+    },
+    {
+      "nom": "Royaume du Kongo",
+      "actuel": "Angola, République du Congo, RDC",
+      "role": [
+        "Participation partielle à la traite",
+        "Tentatives de limitation par certains souverains"
+      ]
+    },
+    {
+      "nom": "Royaume du Ndongo et États voisins",
+      "actuel": "Angola",
+      "role": [
+        "Importante source de captifs pour les Portugais"
+      ]
+    },
+    {
+      "nom": "Empire Ashanti",
+      "actuel": "Ghana",
+      "role": [
+        "Commerce avec les Européens",
+        "Vente de prisonniers de guerre"
+      ]
+    }
+  ],
+  "nuances_historiques": [
+    "L'Afrique n'était pas un acteur unique mais un ensemble de peuples et de royaumes.",
+    "Certains royaumes africains participaient à la traite tandis que d'autres en étaient victimes.",
+    "La majorité des victimes de ces captures étaient elles-mêmes africaines.",
+    "Les Européens n'étaient pas les seuls acteurs de la traite mais jouaient un rôle central dans le transport, le financement et l'exploitation coloniale.",
+    "Comprendre l'esclavage nécessite d'étudier l'ensemble de la chaîne : capture, commerce, transport, vente et exploitation."
+  ],
+  "formulation_synthetique": {
+    "texte": "L'esclavage a existé dans de nombreuses civilisations. Durant la traite atlantique, des royaumes et marchands africains fournissaient souvent des captifs, tandis que les Européens organisaient principalement le transport maritime, le financement et l'exploitation dans les colonies. D'autres réseaux esclavagistes impliquaient également des marchands arabes, berbères, persans et ottomans. La responsabilité historique est donc répartie entre différents acteurs selon les périodes et les régions."
+  }
+}
