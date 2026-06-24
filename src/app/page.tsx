@@ -78,7 +78,7 @@ const nbLittératureEt = 7;
 const nbLittératureFr = 23;
 const nbPrix = 21;
 const nbArchitecture = 4;
-const nbEurope = 6;
+const nbEurope = 7;
 const nbFete = 2;
 const nbFrancais = 3;
 const nbHierarchie = 24;
@@ -534,11 +534,12 @@ const categories = [
       { title: "Membres de l'Union Eruopéenne", href: "/membresue" },
       { title: "États associés à l'UE", href: "/associeseurope" },
       { title: "Villes de l'Europe", href: "/villeseurope" },
+      { title: "Multinationales européennes", href: "/multinationales" },
       { title: "Membres de l'OTAN", href: "/OTAN" },
       { title: "Partenaires de l'OTAN", href: "/OTANsup" }
     ] 
   },
-//  const nbEurope = 6;
+//  const nbEurope = 7;
 
   { title: "Savoirs : Fêtes", href: "/datefetes", icon: PartyPopper, isOccitanie: true, occitanieSources: [
     { title: "Dates des fêtes", href: "/datefetes" },
