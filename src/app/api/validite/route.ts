@@ -8,7 +8,7 @@ export async function GET() {
     { nom: "Taxe Foncière - L'Horte", categorie: "Administration", fournisseur: "Impots.gouv", dernierPaiement: "Automne 2025", prochaineEcheance: "2026-10-15", prix: "Selon avis", mode: "Manuel" },
     
     // --- TÉLÉPHONIE & CARTES PRÉPAYÉES ---
-    { nom: "Ligne SFR - 06-...-41", categorie: "Téléphonie", fournisseur: "SFR", dernierPaiement: "05/2026", prochaineEcheance: "2026-11-01", prix: "À recharger (6 mois)", mode: "Manuel" },
+    { nom: "Ligne SFR - 06-...-41", categorie: "Téléphonie", fournisseur: "SFR", dernierPaiement: "12/06/2026", prochaineEcheance: "2026-12-12", prix: "À recharger (6 mois)", mode: "Manuel" },
     { nom: "Ligne SFR - 06-...-85", categorie: "Téléphonie", fournisseur: "SFR", dernierPaiement: "05/2026", prochaineEcheance: "2026-11-01", prix: "À recharger (6 mois)", mode: "Manuel" },
     { nom: "Ligne SYMA - 07-...-22", categorie: "Téléphonie", fournisseur: "SYMA", dernierPaiement: "06/10/2025", prochaineEcheance: "2026-10-06", prix: "À recharger (1 an)", mode: "Manuel" },
     { nom: "Ligne SYMA 2 - 07-...-16", categorie: "Téléphonie", fournisseur: "SYMA", dernierPaiement: "06/10/2025", prochaineEcheance: "2026-10-06", prix: "À recharger (1 an)", mode: "Manuel" },
