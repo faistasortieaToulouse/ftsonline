@@ -104,7 +104,15 @@ const ICAL_GROUPS: string[][] = [
   "https://www.meetup.com/toulouse-web-development-meetup-group/events/ical/",
   "https://www.meetup.com/web-atrio-toulouse/events/ical/",
   "https://www.meetup.com/sfeir-toulouse/events/ical/",
-  "https://www.meetup.com/fr-FR/mach-africa-insights-marketing-strategie-finance/events/ical/"
+  "https://www.meetup.com/fr-FR/mach-africa-insights-marketing-strategie-finance/events/ical/",
+  "https://www.meetup.com/sfeir-toulouse/events/ical/",
+  "https://www.meetup.com/occitanie-open-source/ical/",
+  "https://www.meetup.com/acceleration-toulouse/ical/"
+],
+    // Lot 8
+[
+  "https://www.meetup.com/web-atrio-toulouse/ical/",
+  "https://www.meetup.com/toulouse-audio-engineering-meetup-group/ical/"
 ]
 ];
 
