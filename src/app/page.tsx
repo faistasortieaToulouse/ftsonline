@@ -82,7 +82,7 @@ const nbEurope = 7;
 const nbFete = 2;
 const nbFrancais = 3;
 const nbHierarchie = 24;
-const nbSaHistoire = 13;
+const nbSaHistoire = 14;
 const nbLangue = 2;
 const nbMondeEconomie = 8;
 const nbMondeGeo = 6;
@@ -596,8 +596,9 @@ const categories = [
     { title: "Royaumes France Simple", href: "/royaumes_france_simple" },
     { title: "Entrée des Etats aux USA", href: "/EtatsUSA" },
 	{ title: "Empires", href: "/empire" },
+	{ title: "Esclavage", href: "/esclavage" },
   ]},
-//  const nbSaHistoire = 13;
+//  const nbSaHistoire = 14;
 
   // --- SAVOIRS : LANGUES ---
   { 
