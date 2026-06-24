@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
+// Cette ligne force Next.js / Vercel à inclure le dossier data dans le bundle
+export const config = {
+  unstable_includeFiles: ["data/mondecategories/esclavage.json"],
+};
+
 export async function GET() {
   try {
     const filePath = path.join(
