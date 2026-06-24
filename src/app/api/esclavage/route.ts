@@ -11,13 +11,13 @@ export async function GET() {
       "esclavage.json"
     );
 
-    const fileContent = fs.readFileSync(filePath, "utf-8");
-    const data = JSON.parse(fileContent);
+    const file = fs.readFileSync(filePath, "utf-8");
+    const json = JSON.parse(file);
 
-    return NextResponse.json(data);
+    return NextResponse.json(json);
   } catch (error) {
     return NextResponse.json(
-      { error: "Impossible de charger les données esclavage" },
+      { error: "Erreur chargement esclavage" },
       { status: 500 }
     );
   }
