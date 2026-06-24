@@ -381,5 +381,20 @@
         "Canicule"
       ]
     }
+  },
+  "2026-06-24": {
+    "toulouse": {
+      "couleur": "rouge",
+      "risques": [
+        "Orages",
+        "Canicule"
+      ]
+    },
+    "lezignan": {
+      "couleur": "jaune",
+      "risques": [
+        "Canicule"
+      ]
+    }
   }
 }
