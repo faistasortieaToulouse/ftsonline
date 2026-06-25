@@ -14,7 +14,7 @@ export async function GET() {
   { "nom": "Ligne SYMA 2 - 07-...-16", "categorie": "Téléphonie", "fournisseur": "SYMA", "dernierPaiement": "06/10/2025", "prochaineEcheance": "2026-10-06", "prix": "À recharger (1 an)", "mode": "Manuel", "emplacement": "Nokia Orange" },
   { "nom": "Ligne SYMA 3 - 06-...95", "categorie": "Téléphonie", "fournisseur": "SYMA", "dernierPaiement": "11/11/2025 (Réactivée)", "prochaineEcheance": "2026-11-11", "prix": "À recharger (1 an)", "mode": "Manuel", "emplacement": "Orange Dive" },
   { "nom": "Carte SIM Orange", "categorie": "Téléphonie", "fournisseur": "Orange", "dernierPaiement": "N/A", "prochaineEcheance": "N/A", "prix": "N/A", "mode": "Manuel", "emplacement": "Orange Dive" },
-  { "nom": "Carte Free mobile - 06-...-13", "categorie": "Téléphonie", "fournisseur": "Free", "dernierPaiement": "N/A", "prochaineEcheance": "N/A", "prix": "N/A", "mode": "Manuel", "emplacement": "Wiko Y51" }
+  { "nom": "Carte Free mobile - 06-...-13", "categorie": "Téléphonie", "fournisseur": "Free", "dernierPaiement": "N/A", "prochaineEcheance": "N/A", "prix": "N/A", "mode": "Manuel", "emplacement": "Wiko Y51" },
     
     // --- NOMS DE DOMAINE ---
     { nom: "cafedeslanguestoulouse.com", categorie: "Domaines", fournisseur: "Infomaniak", dernierPaiement: "12/10/2024", prochaineEcheance: "2025-10-12", prix: "12,00 € / an", mode: "Automatique" },
