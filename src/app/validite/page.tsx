@@ -20,7 +20,7 @@ export default function ValiditePage() {
     { id: "Domaines", label: "🌐 Noms de Domaine", color: "border-blue-500 text-blue-700 bg-blue-50" },
     { id: "Applications", label: "📱 Abonnements Applications", color: "border-purple-500 text-purple-700 bg-purple-50" },
     { id: "Téléphonie", label: "📞 Téléphonie & Cartes", color: "border-amber-500 text-amber-700 bg-amber-50" },
-    { id: "Administration", label: "🏛️ Administration & Impôts", color: "border-slate-500 text-slate-700 bg-slate-50" }
+    { id: "Administration", label: "🏛️ Administration & Impôts", color: "border-slate-500 text-slate-700 bg-slate-50" },
     { id: "Association", label: "🤝 Association", color: "border-emerald-500 text-emerald-700 bg-emerald-50" },
     { id: "Université", label: "🎓 Université & Retraite", color: "border-rose-500 text-rose-700 bg-rose-50" }
   ];
