@@ -9,6 +9,7 @@ interface Validite {
   prochaineEcheance: string;
   prix: string;
   mode: string;
+  emplacement: string; // <-- Ajoute cette ligne
 }
 
 export default function ValiditePage() {
@@ -120,6 +121,15 @@ export default function ValiditePage() {
                             <span>Dernier paiement :</span>
                             <span className="font-medium text-slate-700">{item.dernierPaiement}</span>
                           </div>
+
+                          {/* AJOUT DE L'EMPLACEMENT ICI */}
+                            {item.emplacement && (
+                              <div className="flex justify-between text-xs text-slate-500">
+                                <span>Emplacement :</span>
+                                <span className="font-medium text-slate-700">📱 {item.emplacement}</span>
+                              </div>
+                            )}
+                          
                           <div className="flex justify-between text-xs text-slate-500">
                             <span>Tarif observé :</span>
                             <span className="font-semibold text-slate-800">{item.prix}</span>
