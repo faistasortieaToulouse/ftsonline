@@ -23,7 +23,15 @@ export async function GET() {
     { nom: "ftstoulouse.online", categorie: "Domaines", fournisseur: "Namecheap", dernierPaiement: "05/02/2026", prochaineEcheance: "2027-02-05", prix: "~$34.98 / an", mode: "Automatique" },
 
     // --- ABONNEMENTS APPLICATIONS ---
-    { nom: "Meetup Standard (12 mois)", categorie: "Applications", fournisseur: "Meetup", dernierPaiement: "14/06/2025", prochaineEcheance: "2026-06-14", prix: "$174.99 / an (HT)", mode: "Automatique" }
+    { nom: "Meetup Standard (12 mois)", categorie: "Applications", fournisseur: "Meetup", dernierPaiement: "14/06/2025", prochaineEcheance: "2026-06-14", prix: "$174.99 / an (HT)", mode: "Automatique" },
+
+    // --- ASSOCIATION ---
+    { nom: "Assurance GMF", categorie: "Association", fournisseur: "GMF", dernierPaiement: "Mars 2025", prochaineEcheance: "2026-03-31", prix: "À l'année (1 an)", mode: "Manuel" },
+
+    // --- UNIVERSITÉ ---
+    { nom: "Abonnement Tisséo", categorie: "Université", fournisseur: "Tisséo", dernierPaiement: "N/A", prochaineEcheance: "2026-09-01", prix: "Tarif Étudiant", mode: "Manuel" },
+    { nom: "CET (Compte Épargne Temps)", categorie: "Université", fournisseur: "Université", dernierPaiement: "N/A", prochaineEcheance: "2026-10-01", prix: "N/A", mode: "Manuel" },
+    { nom: "RAFP (Retraite Additionnelle)", categorie: "Université", fournisseur: "RAFP", dernierPaiement: "N/A", prochaineEcheance: "2026-11-01", prix: "N/A", mode: "Manuel" }
 
   ];
 
