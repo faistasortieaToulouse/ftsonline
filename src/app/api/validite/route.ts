@@ -8,11 +8,13 @@ export async function GET() {
     { nom: "Taxe Foncière - L'Horte", categorie: "Administration", fournisseur: "Impots.gouv", dernierPaiement: "Automne 2025", prochaineEcheance: "2026-10-15", prix: "Selon avis", mode: "Manuel" },
     
     // --- TÉLÉPHONIE & CARTES PRÉPAYÉES ---
-    { nom: "Ligne SFR - 06-...-41", categorie: "Téléphonie", fournisseur: "SFR", dernierPaiement: "12/06/2026", prochaineEcheance: "2026-12-12", prix: "À recharger (6 mois)", mode: "Manuel" },
-    { nom: "Ligne SFR - 06-...-85", categorie: "Téléphonie", fournisseur: "SFR", dernierPaiement: "05/2026", prochaineEcheance: "2026-11-01", prix: "À recharger (6 mois)", mode: "Manuel" },
-    { nom: "Ligne SYMA - 07-...-22", categorie: "Téléphonie", fournisseur: "SYMA", dernierPaiement: "06/10/2025", prochaineEcheance: "2026-10-06", prix: "À recharger (1 an)", mode: "Manuel" },
-    { nom: "Ligne SYMA 2 - 07-...-16", categorie: "Téléphonie", fournisseur: "SYMA", dernierPaiement: "06/10/2025", prochaineEcheance: "2026-10-06", prix: "À recharger (1 an)", mode: "Manuel" },
-    { nom: "Ligne SYMA 3 - 06-...5", categorie: "Téléphonie", fournisseur: "SYMA", dernierPaiement: "11/11/2025 (Réactivée)", prochaineEcheance: "2026-11-11", prix: "À recharger (1 an)", mode: "Manuel" },
+  { "nom": "Ligne SFR - 06-...-41", "categorie": "Téléphonie", "fournisseur": "SFR", "dernierPaiement": "12/06/2026", "prochaineEcheance": "2026-12-12", "prix": "À recharger (6 mois)", "mode": "Manuel", "emplacement": "LG" },
+  { "nom": "Ligne SFR - 06-...-85", "categorie": "Téléphonie", "fournisseur": "SFR", "dernierPaiement": "05/2026", "prochaineEcheance": "2026-11-01", "prix": "À recharger (6 mois)", "mode": "Manuel", "emplacement": "Wiko Power U30" },
+  { "nom": "Ligne SYMA - 07-...-22", "categorie": "Téléphonie", "fournisseur": "SYMA", "dernierPaiement": "06/10/2025", "prochaineEcheance": "2026-10-06", "prix": "À recharger (1 an)", "mode": "Manuel", "emplacement": "Wiko Y31" },
+  { "nom": "Ligne SYMA 2 - 07-...-16", "categorie": "Téléphonie", "fournisseur": "SYMA", "dernierPaiement": "06/10/2025", "prochaineEcheance": "2026-10-06", "prix": "À recharger (1 an)", "mode": "Manuel", "emplacement": "Nokia Orange" },
+  { "nom": "Ligne SYMA 3 - 06-...95", "categorie": "Téléphonie", "fournisseur": "SYMA", "dernierPaiement": "11/11/2025 (Réactivée)", "prochaineEcheance": "2026-11-11", "prix": "À recharger (1 an)", "mode": "Manuel", "emplacement": "Orange Dive" },
+  { "nom": "Carte SIM Orange", "categorie": "Téléphonie", "fournisseur": "Orange", "dernierPaiement": "N/A", "prochaineEcheance": "N/A", "prix": "N/A", "mode": "Manuel", "emplacement": "Orange Dive" },
+  { "nom": "Carte Free mobile - 06-...-13", "categorie": "Téléphonie", "fournisseur": "Free", "dernierPaiement": "N/A", "prochaineEcheance": "N/A", "prix": "N/A", "mode": "Manuel", "emplacement": "Wiko Y51" }
     
     // --- NOMS DE DOMAINE ---
     { nom: "cafedeslanguestoulouse.com", categorie: "Domaines", fournisseur: "Infomaniak", dernierPaiement: "12/10/2024", prochaineEcheance: "2025-10-12", prix: "12,00 € / an", mode: "Automatique" },
