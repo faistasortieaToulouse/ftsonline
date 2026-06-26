@@ -414,8 +414,9 @@
   },
   "2026-06-26": {
     "toulouse": {
-      "couleur": "orange",
+      "couleur": "rouge",
       "risques": [
+        "Canicule",
         "Canicule"
       ]
     },
