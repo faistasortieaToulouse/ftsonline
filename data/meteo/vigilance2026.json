@@ -431,8 +431,8 @@
     "toulouse": {
       "couleur": "orange",
       "risques": [
-        "Orages",
-        "Canicule"
+        "Canicule",
+        "Orages"
       ]
     },
     "lezignan": {
