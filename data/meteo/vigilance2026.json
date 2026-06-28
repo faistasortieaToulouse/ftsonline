@@ -447,15 +447,15 @@
       "couleur": "orange",
       "risques": [
         "Orages",
-        "Canicule",
-        "Orages"
+        "Canicule"
       ]
     },
     "lezignan": {
-      "couleur": "jaune",
+      "couleur": "orange",
       "risques": [
         "Orages",
-        "Canicule"
+        "Canicule",
+        "Orages"
       ]
     }
   }
