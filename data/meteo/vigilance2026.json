@@ -446,14 +446,12 @@
     "toulouse": {
       "couleur": "orange",
       "risques": [
-        "Canicule",
         "Orages"
       ]
     },
     "lezignan": {
       "couleur": "orange",
       "risques": [
-        "Orages",
         "Orages",
         "Canicule"
       ]
