@@ -1,6 +1,6 @@
 {
   "city": "Toulouse",
-  "updated": "2026-06-26",
+  "updated": "2026-06-30",
   "applications": [
     {
       "id": 1,
@@ -662,6 +662,17 @@
   "url": "https://cotable.fr",
   "description": "Plateforme toulousaine de social dining permettant d’organiser ou partager des repas chez l’habitant ou entre inconnus afin de favoriser les rencontres et la convivialité.",
   "tags": ["social-dining", "repas-partagés", "rencontres", "toulouse", "gastronomie"]
+  },
+  {
+  "id": 61,
+  "name": "BlaBlaResto",
+  "slug": "blablaresto",
+  "type": "plateforme",
+  "categories": ["social", "restauration", "rencontres", "communautés", "gastronomie"],
+  "city": "France",
+  "url": "https://www.blablaresto.fr",
+  "description": "Plateforme de social dining qui forme des tablées de cinq personnes compatibles pour partager un repas au restaurant et favoriser les rencontres conviviales, sans logique de dating. Chaque participant règle sa propre consommation.",
+  "tags": ["social-dining", "repas-partagés", "rencontres", "restaurant", "tablées", "communauté", "france"]
   }
   ]
 }
