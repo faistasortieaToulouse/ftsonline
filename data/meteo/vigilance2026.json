@@ -616,7 +616,6 @@
     "toulouse": {
       "couleur": "orange",
       "risques": [
-        "Orages",
         "Canicule"
       ]
     },
@@ -624,8 +623,7 @@
       "couleur": "jaune",
       "risques": [
         "Orages",
-        "Canicule",
-        "Orages"
+        "Canicule"
       ]
     }
   }
