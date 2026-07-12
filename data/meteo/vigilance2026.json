@@ -626,5 +626,20 @@
         "Orages"
       ]
     }
+  },
+  "2026-07-12": {
+    "toulouse": {
+      "couleur": "orange",
+      "risques": [
+        "Canicule"
+      ]
+    },
+    "lezignan": {
+      "couleur": "jaune",
+      "risques": [
+        "Canicule",
+        "Orages"
+      ]
+    }
   }
 }
