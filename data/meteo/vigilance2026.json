@@ -635,11 +635,8 @@
       ]
     },
     "lezignan": {
-      "couleur": "jaune",
-      "risques": [
-        "Canicule",
-        "Orages"
-      ]
+      "couleur": "vert",
+      "risques": []
     }
   }
 }
