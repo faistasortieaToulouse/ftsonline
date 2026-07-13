@@ -638,5 +638,17 @@
       "couleur": "vert",
       "risques": []
     }
+  },
+  "2026-07-13": {
+    "toulouse": {
+      "couleur": "orange",
+      "risques": [
+        "Canicule"
+      ]
+    },
+    "lezignan": {
+      "couleur": "vert",
+      "risques": []
+    }
   }
 }
