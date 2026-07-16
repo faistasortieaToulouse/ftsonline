@@ -683,16 +683,16 @@
     "toulouse": {
       "couleur": "orange",
       "risques": [
+        "Orages",
         "Canicule",
-        "Canicule",
-        "Orages"
+        "Canicule"
       ]
     },
     "lezignan": {
       "couleur": "jaune",
       "risques": [
-        "Canicule",
-        "Orages"
+        "Orages",
+        "Canicule"
       ]
     }
   }
