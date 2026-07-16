@@ -681,10 +681,9 @@
   },
   "2026-07-16": {
     "toulouse": {
-      "couleur": "orange",
+      "couleur": "jaune",
       "risques": [
         "Orages",
-        "Canicule",
         "Canicule"
       ]
     },
