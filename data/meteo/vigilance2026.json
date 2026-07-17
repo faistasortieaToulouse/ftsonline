@@ -707,7 +707,8 @@
     "lezignan": {
       "couleur": "jaune",
       "risques": [
-        "Canicule"
+        "Canicule",
+        "Orages"
       ]
     }
   }
