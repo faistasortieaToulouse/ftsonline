@@ -700,15 +700,14 @@
     "toulouse": {
       "couleur": "jaune",
       "risques": [
-        "Orages",
-        "Canicule"
+        "Canicule",
+        "Orages"
       ]
     },
     "lezignan": {
       "couleur": "jaune",
       "risques": [
-        "Canicule",
-        "Orages"
+        "Canicule"
       ]
     }
   }
