@@ -738,7 +738,8 @@
     "toulouse": {
       "couleur": "jaune",
       "risques": [
-        "Orages"
+        "Orages",
+        "Canicule"
       ]
     },
     "lezignan": {
