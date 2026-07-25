@@ -811,15 +811,13 @@
     "toulouse": {
       "couleur": "jaune",
       "risques": [
-        "Canicule",
         "Orages"
       ]
     },
     "lezignan": {
       "couleur": "jaune",
       "risques": [
-        "Orages",
-        "Canicule"
+        "Orages"
       ]
     }
   }
