@@ -876,5 +876,19 @@
         "Canicule"
       ]
     }
+  },
+  "2026-07-31": {
+    "toulouse": {
+      "couleur": "jaune",
+      "risques": [
+        "Canicule"
+      ]
+    },
+    "lezignan": {
+      "couleur": "jaune",
+      "risques": [
+        "Canicule"
+      ]
+    }
   }
 }
