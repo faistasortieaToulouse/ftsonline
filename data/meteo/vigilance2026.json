@@ -889,5 +889,18 @@
         "Orages"
       ]
     }
+  },
+  "2026-08-01": {
+    "toulouse": {
+      "couleur": "vert",
+      "risques": []
+    },
+    "lezignan": {
+      "couleur": "jaune",
+      "risques": [
+        "Canicule",
+        "Orages"
+      ]
+    }
   }
 }
