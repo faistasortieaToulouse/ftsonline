@@ -922,18 +922,17 @@
   },
   "2026-08-03": {
     "toulouse": {
-      "couleur": "orange",
+      "couleur": "jaune",
       "risques": [
-        "Orages",
         "Orages"
       ]
     },
     "lezignan": {
-      "couleur": "orange",
+      "couleur": "jaune",
       "risques": [
-        "Canicule",
         "Orages",
-        "Pluie"
+        "Pluie",
+        "Canicule"
       ]
     }
   }
