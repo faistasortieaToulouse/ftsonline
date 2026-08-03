@@ -925,6 +925,7 @@
       "couleur": "orange",
       "risques": [
         "Orages",
+        "Orages",
         "Orages"
       ]
     },
@@ -933,7 +934,8 @@
       "risques": [
         "Canicule",
         "Orages",
-        "Pluie"
+        "Pluie",
+        "Orages"
       ]
     }
   }
