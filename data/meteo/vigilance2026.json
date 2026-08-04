@@ -945,8 +945,8 @@
       "couleur": "jaune",
       "risques": [
         "Canicule",
-        "Pluie",
-        "Orages"
+        "Orages",
+        "Pluie"
       ]
     }
   }
