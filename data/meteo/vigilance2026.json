@@ -974,14 +974,14 @@
   },
   "2026-08-07": {
     "toulouse": {
-      "couleur": "jaune",
-      "risques": [
-        "Orages"
-      ]
-    },
-    "lezignan": {
       "couleur": "vert",
       "risques": []
+    },
+    "lezignan": {
+      "couleur": "jaune",
+      "risques": [
+        "Canicule"
+      ]
     }
   }
 }
