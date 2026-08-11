@@ -1041,10 +1041,11 @@
       ]
     },
     "lezignan": {
-      "couleur": "jaune",
+      "couleur": "orange",
       "risques": [
+        "Orages",
         "Canicule",
-        "Orages"
+        "Canicule"
       ]
     }
   }
