@@ -1141,12 +1141,15 @@
   },
   "2026-08-19": {
     "toulouse": {
-      "couleur": "vert",
-      "risques": []
+      "couleur": "jaune",
+      "risques": [
+        "Orages"
+      ]
     },
     "lezignan": {
       "couleur": "jaune",
       "risques": [
+        "Orages",
         "Canicule"
       ]
     }
