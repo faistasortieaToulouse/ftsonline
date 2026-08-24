@@ -1205,12 +1205,14 @@
       "couleur": "orange",
       "risques": [
         "Orages",
+        "Orages",
         "Orages"
       ]
     },
     "lezignan": {
       "couleur": "orange",
       "risques": [
+        "Orages",
         "Orages",
         "Orages"
       ]
