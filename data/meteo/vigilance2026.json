@@ -1287,5 +1287,15 @@
       "couleur": "vert",
       "risques": []
     }
+  },
+  "2026-09-01": {
+    "toulouse": {
+      "couleur": "vert",
+      "risques": []
+    },
+    "lezignan": {
+      "couleur": "vert",
+      "risques": []
+    }
   }
 }
