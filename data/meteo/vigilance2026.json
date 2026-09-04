@@ -1321,5 +1321,17 @@
         "Canicule"
       ]
     }
+  },
+  "2026-09-04": {
+    "toulouse": {
+      "couleur": "vert",
+      "risques": []
+    },
+    "lezignan": {
+      "couleur": "jaune",
+      "risques": [
+        "Canicule"
+      ]
+    }
   }
 }
