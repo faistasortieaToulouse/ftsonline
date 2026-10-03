@@ -1663,8 +1663,8 @@
     "lezignan": {
       "couleur": "jaune",
       "risques": [
-        "Pluie",
-        "Orages"
+        "Orages",
+        "Pluie"
       ]
     }
   }
