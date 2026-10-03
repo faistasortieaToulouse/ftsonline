@@ -1655,17 +1655,12 @@
   },
   "2026-10-03": {
     "toulouse": {
-      "couleur": "jaune",
-      "risques": [
-        "Orages"
-      ]
+      "couleur": "vert",
+      "risques": []
     },
     "lezignan": {
-      "couleur": "jaune",
-      "risques": [
-        "Orages",
-        "Pluie"
-      ]
+      "couleur": "vert",
+      "risques": []
     }
   }
 }
