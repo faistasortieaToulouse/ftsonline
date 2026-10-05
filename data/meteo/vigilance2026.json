@@ -1676,5 +1676,18 @@
         "Pluie"
       ]
     }
+  },
+  "2026-10-05": {
+    "toulouse": {
+      "couleur": "vert",
+      "risques": []
+    },
+    "lezignan": {
+      "couleur": "jaune",
+      "risques": [
+        "Pluie",
+        "Orages"
+      ]
+    }
   }
 }
