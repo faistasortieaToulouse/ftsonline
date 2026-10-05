@@ -1683,11 +1683,8 @@
       "risques": []
     },
     "lezignan": {
-      "couleur": "jaune",
-      "risques": [
-        "Orages",
-        "Pluie"
-      ]
+      "couleur": "vert",
+      "risques": []
     }
   }
 }
