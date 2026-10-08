@@ -1719,14 +1719,12 @@
     "toulouse": {
       "couleur": "jaune",
       "risques": [
-        "Orages"
+        "Pluie"
       ]
     },
     "lezignan": {
-      "couleur": "jaune",
-      "risques": [
-        "Orages"
-      ]
+      "couleur": "vert",
+      "risques": []
     }
   }
 }
