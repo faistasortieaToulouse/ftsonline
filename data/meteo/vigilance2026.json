@@ -1836,5 +1836,17 @@
         "Orages"
       ]
     }
+  },
+  "2026-10-20": {
+    "toulouse": {
+      "couleur": "vert",
+      "risques": []
+    },
+    "lezignan": {
+      "couleur": "jaune",
+      "risques": [
+        "Orages"
+      ]
+    }
   }
 }
