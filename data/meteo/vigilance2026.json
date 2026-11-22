@@ -2171,16 +2171,12 @@
   },
   "2026-11-22": {
     "toulouse": {
-      "couleur": "jaune",
-      "risques": [
-        "Vent"
-      ]
+      "couleur": "vert",
+      "risques": []
     },
     "lezignan": {
-      "couleur": "jaune",
-      "risques": [
-        "Vent"
-      ]
+      "couleur": "vert",
+      "risques": []
     }
   }
 }
